@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const Admin = require("../models/admin.model");
+const AdminStaff = require("../models/adminStaff.model")
 const { request, response } = require("express");
 
 // const saltRounds = 10;
@@ -64,6 +65,47 @@ exports.adminLogin = (request,response)=>{
                 response.json({"status": "Invalid Username or Password !!!"})
             }
 
+        }
+    })
+}
+
+
+exports.create = (request,response)=>{
+    const adminstaff = new AdminStaff({
+        AdStaffName:request.body.AdStaffName,
+        PhNo:request.body.PhNo,
+        Address:request.body.Address,
+        AadharNo:request.body.AadharNo,
+        Email:request.body.Email,
+        Password:request.body.Password
+    })
+
+    const token = request.body.token
+
+    AdminStaff.create(adminstaff,(err,data)=>{
+        if (adminstaff.AdStaffName!="" && adminstaff.AdStaffName!= null) {
+            if (err) {
+                response.json({"status":err})
+                
+            } 
+
+                jwt.verify(token, "lmsapp" , (error, decoded)=>{
+                    if (decoded) {
+                        response.json({"status":"success","data":data})
+                        
+                    } else {
+                        response.json({"status":"Unauthorized User!!"})
+                        
+                    }
+                })
+               
+                
+            
+            
+            
+        } else {
+            response.json({"status":"Content cannot be empty."})
+            
         }
     })
 }
