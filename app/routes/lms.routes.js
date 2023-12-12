@@ -7,6 +7,8 @@ router.post("/", lmsController.adminLogin)
 
 router.post("/addadmstaff",lmsController.create)
 
+router.post("/addCollege",lmsController.collegeCreate)
+
 
 
 
