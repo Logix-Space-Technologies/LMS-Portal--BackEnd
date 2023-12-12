@@ -37,8 +37,4 @@ AdminStaff.create = (newAdminStaff, result)=>{
 }
 
 
-
-
-
-
 module.exports = AdminStaff

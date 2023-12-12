@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const Admin = require("../models/admin.model");
 const AdminStaff = require("../models/adminStaff.model")
+const College = require("../models/college.model")
 const { request, response } = require("express");
 
 // const saltRounds = 10;
@@ -103,6 +104,42 @@ exports.create = (request,response)=>{
             
             
             
+        } else {
+            response.json({"status":"Content cannot be empty."})
+            
+        }
+    })
+}
+
+exports.collegeCreate = (request,response)=>{
+    const college = new College({
+        collegeName:request.body.collegeName,
+        collegeAddress:request.body.collegeAddress,
+        website:request.body.website,
+        email:request.body.email,
+        collegePhNo:request.body.collegePhNo,
+        collegeImage:request.body.collegeImage
+    })
+
+    const collegeToken = request.body.token
+
+    College.collegeCreate(college,(err,data)=>{
+        if (college.collegeName!="" && college.collegeName!= null) {
+            if (err) {
+                response.json({"status":err})
+                
+            } 
+
+                jwt.verify(collegeToken, "lmsapp" , (err, decoded)=>{
+                    if (decoded) {
+                        response.json({"status":"success","data":data})
+                        
+                    } else {
+                        response.json({"status":"Unauthorized User!!"})
+                        
+                    }
+                })
+                  
         } else {
             response.json({"status":"Content cannot be empty."})
             
