@@ -5,6 +5,7 @@ const Admin = function(admin){
     this.Password = admin.Password
 }
 
+
 // Admin.create = (newAdmin, result) =>{
 //     db.query("INSERT INTO admin SET ?", newAdmin,(err,res)=>{
 
