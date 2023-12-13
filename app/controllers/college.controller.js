@@ -54,3 +54,27 @@ exports.collegeCreate = (request, response) => {
     }
     )
 };
+
+
+
+
+
+
+exports.viewCollege=(request,response)=>{
+    const collegeToken = request.body.token
+    College.getAll((err,data)=>{
+       if(err){
+        console.log(err)
+        response.json({"status":err})
+       } 
+       //response.json(data)
+        jwt.verify(collegeToken, "lmsapp", (err, decoded)=>{
+            if (decoded) {
+                response.json(data)
+            } else {
+                response.json({ "status": "Unauthorized User!!" });
+            }
+        } )
+       
+    })
+}

@@ -8,5 +8,7 @@ router.post("/", AdminController.adminLogin)
 
 router.post("/addCollege",CollegeController.collegeCreate)
 
+router.post("/viewCollege",CollegeController.viewCollege)
+
 
 module.exports = router
