@@ -111,38 +111,34 @@ exports.create = (request,response)=>{
     })
 }
 
-exports.collegeCreate = (request,response)=>{
+exports.collegeCreate = (request, response) => {
     const college = new College({
-        collegeName:request.body.collegeName,
-        collegeAddress:request.body.collegeAddress,
-        website:request.body.website,
-        email:request.body.email,
-        collegePhNo:request.body.collegePhNo,
-        collegeImage:request.body.collegeImage
-    })
+        collegeName: request.body.collegeName,
+        collegeAddress: request.body.collegeAddress,
+        website: request.body.website,
+        email: request.body.email,
+        collegePhNo: request.body.collegePhNo,
+        collegeImage: request.body.collegeImage
+    });
 
-    const collegeToken = request.body.token
+    const collegeToken = request.body.token;
 
-    College.collegeCreate(college,(err,data)=>{
-        if (college.collegeName!="" && college.collegeName!= null) {
+    if (college.collegeName !== "" && college.collegeName !== null) {
+        College.collegeCreate(college, (data,err) => {
             if (err) {
-                response.json({"status":err})
-                
-            } 
-
-                jwt.verify(collegeToken, "lmsapp" , (err, decoded)=>{
+                response.json({ "status": err });
+            } else {
+                jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
                     if (decoded) {
-                        response.json({"status":"success","data":data})
-                        
+                        response.json({ "status": "success", "data": data });
                     } else {
-                        response.json({"status":"Unauthorized User!!"})
-                        
+                        response.json({ "status": "Unauthorized User!!" });
                     }
-                })
-                  
-        } else {
-            response.json({"status":"Content cannot be empty."})
-            
-        }
-    })
-}
+                });
+            }
+        });
+    } else {
+        response.json({ "status": "Content cannot be empty." });
+    }
+};
+
