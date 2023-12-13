@@ -1,13 +1,14 @@
 const express = require('express')
 const router = express.Router()
-const lmsController = require("../controllers/lms.controller")
+const AdminController = require('../controllers/admin.controller')
+const CollegeController = require('../controllers/college.controller')
 
 // router.post("/", admin.adminRegister)
-router.post("/", lmsController.adminLogin)
+router.post("/", AdminController.adminLogin)
 
-router.post("/addadmstaff",lmsController.create)
+router.post("/addCollege",CollegeController.collegeCreate)
 
-
+router.post("/viewCollege",CollegeController.viewCollege)
 
 
 module.exports = router
