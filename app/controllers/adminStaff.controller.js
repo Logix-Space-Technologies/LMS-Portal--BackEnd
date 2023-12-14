@@ -51,5 +51,22 @@ exports.create = (request, response) => {
     });
 };
 
+exports.viewadmstaff=(request,response)=>{
+    const admstaffToken = request.body.token
+    AdminStaff.getAlladmstaff((err,data)=>{
+        if (err) {
+            console.log(err)
+            response.json({"status":err})
+        } else {
+           jwt.verify(admstaffToken,"lmsapp",(err,decoded)=>{
+            if (decoded) {
+                response.json(data)
+            } else {
+                response.json({ "status": "Unauthorized User!!" })
+            }
+           })
+        }
+    })
+}
 
 

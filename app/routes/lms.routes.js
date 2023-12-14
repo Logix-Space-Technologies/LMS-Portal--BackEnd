@@ -13,6 +13,6 @@ router.post("/viewCollege",CollegeController.viewCollege)
 
 router.post("/addAdminStaff",AdminStaffController.create)
 
-
+router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
 
 module.exports = router
