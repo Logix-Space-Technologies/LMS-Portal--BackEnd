@@ -51,7 +51,6 @@ exports.create = (request, response) => {
     });
 };
 
-
 exports.viewadmstaff=(request,response)=>{
     const admstaffToken = request.body.token
     AdminStaff.getAlladmstaff((err,data)=>{
