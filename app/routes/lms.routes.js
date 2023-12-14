@@ -19,6 +19,9 @@ router.post("/addclgstaff",ClgStaffController.clgStaffCreate)
 
 router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
 
+
 router.post("/viewcollegestaff",ClgStaffController.viewCollegeStaff)
+
+router.post("/updateClgStaff/:id", ClgStaffController.collegeStaffUpdate);
 
 module.exports = router

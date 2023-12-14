@@ -84,3 +84,46 @@ exports.viewCollegeStaff=(request,response)=>{
      
   })
 }
+
+
+exports.collegeStaffUpdate = (req, res) => {
+  upload(req, res, function (err) {
+    if (err) {
+      console.error("Error uploading image:", err);
+      return res.json({ "status": "Error uploading image" });
+    }
+
+    const clgstaff = new CollegeStaff({
+      collegeId: req.body.collegeId,
+      collegeStaffName: req.body.collegeStaffName,
+      email: req.body.email,
+      phNo: req.body.phNo,
+      aadharNo: req.body.aadharNo,
+      clgStaffAddress: req.body.clgStaffAddress,
+      profilePic: req.file ? req.file.filename : null,
+      department: req.body.department,
+    });
+
+    const id = req.params.id; 
+    const updatedStaff = req.body;
+
+    CollegeStaff.updateCollegeStaff(id, clgstaff, (err, data) => {
+      if (err) {
+          if (err.kind === "not_found") {
+              return res.json({ "status": "not_found", "message": "College staff not found with the provided ID" });
+          } else {
+              return res.status(500).json({ "status": "error", "message": "Internal Server Error" });
+          }
+      }
+      const token = req.body.token;
+      jwt.verify(token, "lmsapp", (error, decoded) => {
+          if (decoded) {
+              return res.json({ "status": "success", "data": data });
+          } else {
+              return res.json({ "status": "Unauthorized access!!" });
+          }
+      });
+    });
+  });
+};
+
