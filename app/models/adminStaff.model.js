@@ -33,7 +33,7 @@ AdminStaff.create = (newAdminStaff, result) => {
                         console.log(newAdminStaff)
                         if (err) {
                             console.log("error: ", err)
-                            result(err, null)
+                            result(null, err)
                             return
 
                         } else {

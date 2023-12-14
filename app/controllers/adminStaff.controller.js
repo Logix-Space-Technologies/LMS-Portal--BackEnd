@@ -12,20 +12,22 @@ exports.create = (request, response) => {
         Address: request.body.Address,
         AadharNo: request.body.AadharNo,
         Email: request.body.Email,
+
         Password: request.body.Password,
     });
 
     const token = request.body.token;
 
-    
+
     bcrypt.hash(adminstaff.Password, saltRounds, (err, hashedPassword) => {
         if (err) {
             response.json({ "status": err });
         } else {
             adminstaff.Password = hashedPassword;
 
-            AdminStaff.create(adminstaff, (err, data) => {
-                if (adminstaff.AdStaffName != "" && adminstaff.AdStaffName != null) {
+
+            if (adminstaff.AdStaffName != "" && adminstaff.AdStaffName != null) {
+                AdminStaff.create(adminstaff, (data, err) => {
                     if (err) {
                         response.json({ "status": err });
                     } else {
@@ -37,10 +39,15 @@ exports.create = (request, response) => {
                             }
                         });
                     }
-                } else {
-                    response.json({ "status": "Content cannot be empty." });
-                }
-            });
+
+                });
+
+            } else {
+                response.json({ "status": "Content cannot be empty." });
+            }
+
+
+
         }
     });
 };
