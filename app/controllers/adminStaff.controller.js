@@ -68,4 +68,3 @@ exports.viewadmstaff=(request,response)=>{
         }
     })
 }
-
