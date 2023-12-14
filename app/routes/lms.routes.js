@@ -13,6 +13,8 @@ router.post("/viewCollege",CollegeController.viewCollege)
 
 router.post("/addAdminStaff",AdminStaffController.create)
 
+
 router.post("/addclgstaff",ClgStaffController.clgStaffCreate)
+
 
 module.exports = router
