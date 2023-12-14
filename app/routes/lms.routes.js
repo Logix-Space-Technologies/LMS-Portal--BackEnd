@@ -12,7 +12,7 @@ router.post("/addCollege",CollegeController.collegeCreate)
 router.post("/viewCollege",CollegeController.viewCollege)
 
 router.post("/addAdminStaff",AdminStaffController.create)
-
+//View Admin Staff Routing
 router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
 
 module.exports = router
