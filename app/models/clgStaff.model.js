@@ -49,6 +49,21 @@ CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
 
 }
 
+CollegeStaff.getAll = async(result) =>{
+    let query ="SELECT * FROM college_staff"
+    db.query(query, (err, response) => {
+        if(err){
+            console.log("error: ",err)
+            result(null,err)
+            return
+        }else{
+            console.log("College staff: ",response)
+            result(null,response)
+        }
+    })
+}
+
+
 
 
 module.exports = CollegeStaff
