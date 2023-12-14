@@ -15,4 +15,6 @@ router.post("/addAdminStaff",AdminStaffController.create)
 
 router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
 
+router.post('/deleteCollege/:id',CollegeController.deleteCollege)
+
 module.exports = router

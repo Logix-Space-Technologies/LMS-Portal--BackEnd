@@ -58,8 +58,6 @@ exports.collegeCreate = (request, response) => {
 
 
 
-
-
 exports.viewCollege=(request,response)=>{
     const collegeToken = request.body.token
     College.getAll((err,data)=>{
@@ -76,5 +74,29 @@ exports.viewCollege=(request,response)=>{
             }
         } )
        
+    })
+}
+
+
+
+exports.deleteCollege = (request, response)=>{
+    const collegedeleteToken = request.body.token
+    const id = request.params.id
+    College.delete(id, (err, data)=>{
+        if (err) {
+            if (err.kind === "not_found") {
+                console.log(({status: "College id not found."}))
+                
+            } else {
+                res.send({ message: "Error deleting employee." })
+            }
+        } else {
+        jwt.verify(collegedeleteToken, "lmsapp", (err, decoded)=>{
+            if (decoded) {
+                response.json(data)
+            } else {
+                response.json({ "status": "Unauthorized User!!" });
+            }
+        } ) }
     })
 }

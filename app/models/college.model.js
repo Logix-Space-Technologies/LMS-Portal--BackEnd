@@ -59,5 +59,23 @@ College.getAll = async(result) =>{
 }
 
 
+College.delete = async (id, result) =>{
+    db.query("UPDATE college SET deleteStatus=1 WHERE id = ?", id, (err, res)=>{
+        if(err){
+            console.error("Error deleting college: ", err)
+            result(err, null)
+            return
+        }
+
+        if(res.affectedRows === 0){
+            result({ kind: "not_found"}, null)
+            return
+        }
+
+        console.log("Delete college with id: ", id)
+        result(null, res)
+    } )
+}
+
 
 module.exports = College;
