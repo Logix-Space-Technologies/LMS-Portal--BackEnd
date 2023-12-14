@@ -13,8 +13,4 @@ router.post("/viewCollege",CollegeController.viewCollege)
 
 router.post("/addAdminStaff",AdminStaffController.create)
 
-router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
-//view admin staff routing
-
-
 module.exports = router
