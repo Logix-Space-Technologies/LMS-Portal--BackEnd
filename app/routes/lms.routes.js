@@ -16,5 +16,6 @@ router.post("/addAdminStaff",AdminStaffController.create)
 
 router.post("/addclgstaff",ClgStaffController.clgStaffCreate)
 
+router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
 
 module.exports = router
