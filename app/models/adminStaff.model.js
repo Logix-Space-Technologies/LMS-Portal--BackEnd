@@ -58,8 +58,6 @@ AdminStaff.create = (newAdminStaff, result) => {
     }
 }
 
-
-
 AdminStaff.getAlladmstaff = async (result) => {
     let query = "SELECT * FROM admin_staff"
     db.query(query, (err, res) => {
@@ -74,6 +72,5 @@ AdminStaff.getAlladmstaff = async (result) => {
         }
     })
 }
-
 
 module.exports = AdminStaff
