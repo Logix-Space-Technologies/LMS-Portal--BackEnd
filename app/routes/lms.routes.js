@@ -4,6 +4,7 @@ const AdminController = require('../controllers/admin.controller')
 const CollegeController = require('../controllers/college.controller')
 const AdminStaffController = require('../controllers/adminStaff.controller')
 const ClgStaffController=require("../controllers/clgStaff.controller")
+
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
 
@@ -18,7 +19,9 @@ router.post("/addclgstaff",ClgStaffController.clgStaffCreate)
 
 router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
 
-router.post("/updateClgStaff/:id", ClgStaffController.collegeStaffUpdate);
 
+router.post("/viewcollegestaff",ClgStaffController.viewCollegeStaff)
+
+router.post("/updateClgStaff/:id", ClgStaffController.collegeStaffUpdate);
 
 module.exports = router

@@ -49,6 +49,22 @@ CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
 
 }
 
+
+CollegeStaff.getAll = async(result) =>{
+    let query ="SELECT * FROM college_staff"
+    db.query(query, (err, response) => {
+        if(err){
+            console.log("error: ",err)
+            result(null,err)
+            return
+        }else{
+            console.log("College staff: ",response)
+            result(null,response)
+        }
+    })
+}
+
+
 CollegeStaff.updateCollegeStaff = (id, clgstaff, result) => {
     db.query("UPDATE college_staff SET collegeId=?,collegeStaffName=?,email=?,phNo=?,aadharNo=?,clgStaffAddress=?,profilePic=?,department=?,updatedDate = CURRENT_DATE() WHERE id=?",
         [clgstaff.collegeId, clgstaff.collegeStaffName, clgstaff.email, clgstaff.phNo, clgstaff.aadharNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, id],
