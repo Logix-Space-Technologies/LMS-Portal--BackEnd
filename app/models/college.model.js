@@ -2,6 +2,7 @@ const db=require('../models/db')
 const {response}=require('express')
 
 
+
 const College = function(college) {
     this.collegeName = college.collegeName;
     this.collegeAddress = college.collegeAddress;
@@ -41,5 +42,22 @@ College.collegeCreate = (newCollege, result) => {
         result(null, { "status": "Content cannot be empty!" });
     }
 };
+
+
+College.getAll = async(result) =>{
+    let query ="SELECT * FROM college"
+    db.query(query, (err, response) => {
+        if(err){
+            console.log("error: ",err)
+            result(null,err)
+            return
+        }else{
+            console.log("College: ",response)
+            result(null,response)
+        }
+    })
+}
+
+
 
 module.exports = College;
