@@ -78,4 +78,23 @@ College.delete = async (id, result) =>{
 }
 
 
+
+College.updateCollege = (id,clgUpdate,result)=>{
+    db.query("UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, email = ?, collegePhNo = ?, collegeImage = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
+    [clgUpdate.collegeName, clgUpdate.collegeAddress, clgUpdate.website, clgUpdate.email, clgUpdate.collegePhNo, clgUpdate.collegeImage, id],
+    (err,res)=>{
+        if (err) {
+            console.log("error : ", err)
+
+        if (res.affectedRows == 0) {
+            result({kind : "not_found"}, null)
+            return
+        }
+
+        console.log("Updated College Details : ", {id : id, ...clgUpdate})
+        result(null,{id : id, ...clgUpdate})
+    })
+}
+
+
 module.exports = College;
