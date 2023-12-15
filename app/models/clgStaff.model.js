@@ -51,8 +51,22 @@ CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
 
 
 CollegeStaff.getAll = async(result) =>{
-    let query ="SELECT * FROM college_staff"
+    let query = "SELECT c.collegeName, cs.* FROM college_staff cs JOIN college c ON cs.collegeId = c.id";
     db.query(query, (err, response) => {
+        if(err){
+            console.log("error: ",err)
+            result(null,err)
+            return
+        }else{
+            console.log("College staff: ",response)
+            result(null,response)
+        }
+    })
+}
+
+CollegeStaff.getOne = async(collegeId,result) =>{
+    let query = "SELECT c.collegeName, cs.* FROM college_staff cs JOIN college c ON cs.collegeId = c.id WHERE cs.collegeId = ?";
+    db.query(query,[collegeId], (err, response) => {
         if(err){
             console.log("error: ",err)
             result(null,err)

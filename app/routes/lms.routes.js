@@ -20,8 +20,10 @@ router.post("/addclgstaff",ClgStaffController.clgStaffCreate)
 router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
 
 
-router.post("/viewcollegestaff",ClgStaffController.viewCollegeStaff)
+router.post("/viewallcollegestaff", ClgStaffController.viewCollegeStaff);
 
 router.post("/updateClgStaff/:id", ClgStaffController.collegeStaffUpdate);
+
+router.post("/viewonecollegestaff", ClgStaffController.viewOneCollegeStaff) //for viewing college staffs of a single college
 
 module.exports = router
