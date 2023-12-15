@@ -18,4 +18,6 @@ router.post("/addclgstaff",ClgStaffController.clgStaffCreate)
 
 router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
 
+router.post("/updateCollege/:id", CollegeController.updateCollege)
+
 module.exports = router
