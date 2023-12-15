@@ -149,6 +149,7 @@ exports.collegeStaffUpdate = (req, res) => {
     }
 
     const clgstaff = new CollegeStaff({
+      'id': req.body.id,
       collegeId: req.body.collegeId,
       collegeStaffName: req.body.collegeStaffName,
       email: req.body.email,
@@ -159,9 +160,8 @@ exports.collegeStaffUpdate = (req, res) => {
       department: req.body.department,
     });
 
-    const id = req.params.id; 
 
-    CollegeStaff.updateCollegeStaff(id, clgstaff, (err, data) => {
+    CollegeStaff.updateCollegeStaff(clgstaff, (err, data) => {
       if (err) {
           if (err.kind === "not_found") {
               return res.json({ "status": "College staff not found with the provided ID" });

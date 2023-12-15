@@ -19,6 +19,8 @@ router.post("/addclgstaff",ClgStaffController.clgStaffCreate)
 
 router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
 
+router.post("/updateClgStaff", ClgStaffController.collegeStaffUpdate);
+
 router.post("/deletecolgstaff/:id",ClgStaffController.clgStaffDelete);
 
 router.post("/updateCollege/:id", CollegeController.updateCollege)
@@ -26,8 +28,6 @@ router.post("/updateCollege/:id", CollegeController.updateCollege)
 router.post('/deleteCollege/:id',CollegeController.deleteCollege)
 
 router.post("/viewallcollegestaff", ClgStaffController.viewCollegeStaff);
-
-router.post("/updateClgStaff/:id", ClgStaffController.collegeStaffUpdate);
 
 router.post("/viewonecollegestaff", ClgStaffController.viewOneCollegeStaff) //for viewing college staffs of a single college
 
