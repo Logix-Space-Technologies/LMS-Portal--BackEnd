@@ -12,8 +12,9 @@ exports.create = (request, response) => {
         Address: request.body.Address,
         AadharNo: request.body.AadharNo,
         Email: request.body.Email,
+        Password: request.body.Password
 
-        Password: request.body.Password,
+        
     });
 
     const token = request.body.token;
@@ -27,7 +28,7 @@ exports.create = (request, response) => {
 
 
             if (adminstaff.AdStaffName != "" && adminstaff.AdStaffName != null) {
-                AdminStaff.create(adminstaff, (data, err) => {
+                AdminStaff.create(adminstaff, (err, data) => {
                     if (err) {
                         response.json({ "status": err });
                     } else {
@@ -51,3 +52,6 @@ exports.create = (request, response) => {
         }
     });
 };
+
+
+

@@ -8,6 +8,8 @@ const AdminStaff = function (adminStaff) {
     this.AadharNo = adminStaff.AadharNo
     this.Email = adminStaff.Email
     this.Password = adminStaff.Password
+   
+    
 
 }
 
@@ -18,12 +20,12 @@ AdminStaff.create = (newAdminStaff, result) => {
         db.query("SELECT * FROM admin_staff WHERE Email=?", newAdminStaff.Email, (err, res) => {
             if (err) {
                 console.log("error: ", err);
-                result(null, err);
+                result(err, null);
                 return;
             } else {
                 if (res.length > 0) {
                     console.log("Email already exists");
-                    result(null, "Email already exists");
+                    result("Email already exists",null );
                     return;
 
                 } else {
@@ -33,7 +35,7 @@ AdminStaff.create = (newAdminStaff, result) => {
                         console.log(newAdminStaff)
                         if (err) {
                             console.log("error: ", err)
-                            result(null, err)
+                            result(err, null)
                             return
 
                         } else {
@@ -57,6 +59,9 @@ AdminStaff.create = (newAdminStaff, result) => {
 
     }
 }
+
+
+
 
 
 
