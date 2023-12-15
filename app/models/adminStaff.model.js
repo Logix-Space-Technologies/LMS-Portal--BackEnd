@@ -73,4 +73,20 @@ AdminStaff.getAlladmstaff = async (result) => {
     })
 }
 
+
+AdminStaff.deleteStaff =async(id,result)=>{
+    db.query("UPDATE admin_staff SET deleteStatus=1 WHERE id=?",id,(err,res)=>{
+        if(err){
+            console.error("Error deleting admin_staff: ",err)
+            result(err,null)
+            return
+        }
+        if(res.affectedRows===0){
+            result({kind:"not_found"},null)
+            return
+        }
+        console.log("Delete adminStaff with id: ",id)
+        result(null,res)
+    })
+}
 module.exports = AdminStaff

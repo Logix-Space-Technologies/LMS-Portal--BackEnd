@@ -68,3 +68,28 @@ exports.viewadmstaff=(request,response)=>{
         }
     })
 }
+
+exports.deleteAdmStaff=(request,response)=>{
+    const admStaffdeleteToken=request.body.token
+    const id=request.params.id
+    AdminStaff.deleteStaff(id,(err,data)=>{
+        if(err){
+            if(err.kind==="not_found"){
+                console.log(({status:"Admin Staff id not found"}))
+            }
+            else{
+                res.send({message:"Error Deleting adminstaff"})
+            }
+        }else{
+        jwt.verify(admStaffdeleteToken,"lmsapp",(err,decoded)=>{
+            if(decoded){
+                response.json(data)
+            }  else{
+                response.json({"status":"Unauthorized User!!"})
+            }
+            })
+
+        }
+        
+    })
+}

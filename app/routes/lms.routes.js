@@ -26,5 +26,6 @@ router.post("/viewcollegestaff",ClgStaffController.viewCollegeStaff)
 
 router.post("/updateClgStaff/:id", ClgStaffController.collegeStaffUpdate);
 
+router.post("/deleteadmstaff/:id",AdminStaffController.deleteAdmStaff)
 
 module.exports = router
