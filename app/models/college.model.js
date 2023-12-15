@@ -17,12 +17,12 @@ College.collegeCreate = (newCollege, result) => {
         db.query("SELECT * FROM college WHERE email=?", newCollege.email, (err, res) => {
             if (err) {
                 console.log("error: ", err);
-                result(null, err);
+                result(err, null);
                 return;
             } else {
                 if (res.length > 0) {
                     console.log("Email already exists");
-                    result(null, "Email already exists" );
+                    result("Email already exists", null );
                     return;
                 } else {
                     db.query("INSERT INTO college SET ?", newCollege, (err, res) => {

@@ -35,7 +35,7 @@ exports.collegeCreate = (request, response) => {
         const collegeToken = request.body.token;
 
         if (college.collegeName !== "" && college.collegeName !== null) {
-            College.collegeCreate(college, (data, err) => {
+            College.collegeCreate(college, (err,data) => {
                 if (err) {
                     response.json({ "status": err });
                 } else {
