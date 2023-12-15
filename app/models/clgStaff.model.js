@@ -2,6 +2,7 @@ const { response } = require("express")
 const db = require("../models/db")
 
 const CollegeStaff = function (collegestaff) {
+    this.id=collegestaff.id
     this.collegeId = collegestaff.collegeId
     this.collegeStaffName = collegestaff.collegeStaffName
     this.email = collegestaff.email
@@ -49,9 +50,9 @@ CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
 
 }
 
-CollegeStaff.updateCollegeStaff = (id, clgstaff, result) => {
+CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
     db.query("UPDATE college_staff SET collegeId=?,collegeStaffName=?,email=?,phNo=?,aadharNo=?,clgStaffAddress=?,profilePic=?,department=?,updatedDate = CURRENT_DATE() WHERE id=?",
-        [clgstaff.collegeId, clgstaff.collegeStaffName, clgstaff.email, clgstaff.phNo, clgstaff.aadharNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, id],
+        [clgstaff.collegeId, clgstaff.collegeStaffName, clgstaff.email, clgstaff.phNo, clgstaff.aadharNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, clgstaff.id],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -64,8 +65,8 @@ CollegeStaff.updateCollegeStaff = (id, clgstaff, result) => {
                 return;
             }
 
-            console.log("updated college staff details: ", { id: id, ...clgstaff });
-            result(null, { id: id, ...clgstaff });
+            console.log("updated college staff details: ", { id: clgstaff.id, ...clgstaff });
+            result(null, { id: clgstaff.id, ...clgstaff });
         });
 }
 
