@@ -25,9 +25,11 @@ router.post("/updateCollege/:id", CollegeController.updateCollege)
 
 router.post('/deleteCollege/:id',CollegeController.deleteCollege)
 
-router.post("/viewcollegestaff",ClgStaffController.viewCollegeStaff)
+router.post("/viewallcollegestaff", ClgStaffController.viewCollegeStaff);
 
 router.post("/updateClgStaff/:id", ClgStaffController.collegeStaffUpdate);
+
+router.post("/viewonecollegestaff", ClgStaffController.viewOneCollegeStaff) //for viewing college staffs of a single college
 
 router.post("/addBatches",BatchesController.batchCreate)
 
