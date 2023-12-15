@@ -60,7 +60,7 @@ College.getAll = async(result) =>{
 
 
 College.delete = async (id, result) =>{
-    db.query("UPDATE college SET deleteStatus=1 WHERE id = ?", id, (err, res)=>{
+    db.query("UPDATE college SET isActive=0, deleteStatus=1 WHERE id = ?", id, (err, res)=>{
         if(err){
             console.error("Error deleting college: ", err)
             result(err, null)

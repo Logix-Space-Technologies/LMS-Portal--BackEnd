@@ -88,7 +88,7 @@ exports.deleteCollege = (request, response)=>{
                 console.log(({status: "College id not found."}))
                 
             } else {
-                res.send({ message: "Error deleting employee." })
+                res.send({ message: "Error deleting College." })
             }
         } else {
         jwt.verify(collegedeleteToken, "lmsapp", (err, decoded)=>{
