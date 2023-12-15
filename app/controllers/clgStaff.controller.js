@@ -129,14 +129,13 @@ exports.collegeStaffUpdate = (req, res) => {
     });
 
     const id = req.params.id; 
-    const updatedStaff = req.body;
 
     CollegeStaff.updateCollegeStaff(id, clgstaff, (err, data) => {
       if (err) {
           if (err.kind === "not_found") {
-              return res.json({ "status": "not_found", "message": "College staff not found with the provided ID" });
+              return res.json({ "status": "College staff not found with the provided ID" });
           } else {
-              return res.status(500).json({ "status": "error", "message": "Internal Server Error" });
+              return res.json({ "status": "Internal Server Error" });
           }
       }
       const token = req.body.token;
