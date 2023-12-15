@@ -51,7 +51,7 @@ exports.clgStaffCreate = (req, res) => {
             return res.json({ "status": err });
           }
 
-          jwt.verify(token, "lmsapp", (error, decoded) => {
+          jwt.verify(token, "lmsapp", (decoded,error) => {
             if (decoded) {
               return res.json({ "status": "success", "data": data });
             } else {
@@ -63,5 +63,28 @@ exports.clgStaffCreate = (req, res) => {
         return res.json({ "status": "Content cannot be empty." });
       }
     });
+  });
+};
+
+exports.clgStaffDelete = (request, response) => {
+  const deleteToken = request.body.token
+  const staffId = request.params.id;
+  CollegeStaff.clgStaffDelete(staffId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        console.log(({ status: "College Staff id not found." }))
+
+      } else {
+        response.send({ message: "Error deleting Staff." })
+      }
+    } else {
+      jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+          response.json({"status": "Deleted"})
+        } else {
+          response.json({ "status": "Unauthorized User!!" });
+        }
+      })
+    }
   });
 };

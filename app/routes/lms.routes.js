@@ -18,4 +18,6 @@ router.post("/addclgstaff",ClgStaffController.clgStaffCreate)
 
 router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
 
+router.post("/deletecolgstaff/:id",ClgStaffController.clgStaffDelete);
+
 module.exports = router

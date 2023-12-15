@@ -11,7 +11,6 @@ const CollegeStaff = function (collegestaff) {
     this.profilePic = collegestaff.profilePic
     this.department = collegestaff.department
     this.password = collegestaff.password
-
 }
 
 CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
@@ -49,6 +48,23 @@ CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
 
 }
 
+CollegeStaff.clgStaffDelete = (staffId, result) => {
+    db.query("UPDATE college_staff SET isActive=0, deleteStatus=1 WHERE id=?", staffId, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err,null);
+        return;
+      } 
+      if(res.affectedRows === 0){
+        result({ kind: "not_found"}, null)
+        return
+    }
+
+    console.log("Delete college staff with id: ", staffId)
+    result(null,res)
+    });
+  };
+  
 
 
 module.exports = CollegeStaff
