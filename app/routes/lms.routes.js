@@ -14,16 +14,23 @@ router.post("/viewCollege",CollegeController.viewCollege)
 
 router.post("/addAdminStaff",AdminStaffController.create)
 
-
 router.post("/addclgstaff",ClgStaffController.clgStaffCreate)
 
 router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
 
+router.post("/deletecolgstaff/:id",ClgStaffController.clgStaffDelete);
+
+router.post("/updateCollege/:id", CollegeController.updateCollege)
 
 router.post('/deleteCollege/:id',CollegeController.deleteCollege)
 
 router.post("/viewcollegestaff",ClgStaffController.viewCollegeStaff)
 
 router.post("/updateClgStaff/:id", ClgStaffController.collegeStaffUpdate);
+
+
+
+
+
 
 module.exports = router
