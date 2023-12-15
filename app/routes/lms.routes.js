@@ -4,6 +4,7 @@ const AdminController = require('../controllers/admin.controller')
 const CollegeController = require('../controllers/college.controller')
 const AdminStaffController = require('../controllers/adminStaff.controller')
 const ClgStaffController=require("../controllers/clgStaff.controller")
+const BatchesController= require("../controllers/batches.controller") 
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -27,6 +28,8 @@ router.post('/deleteCollege/:id',CollegeController.deleteCollege)
 router.post("/viewcollegestaff",ClgStaffController.viewCollegeStaff)
 
 router.post("/updateClgStaff/:id", ClgStaffController.collegeStaffUpdate);
+
+router.post("/addBatches",BatchesController.batchCreate)
 
 
 
