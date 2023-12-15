@@ -46,7 +46,7 @@ exports.clgStaffCreate = (req, res) => {
       clgstaff.password = hashedPassword;
 
       if (clgstaff.collegeStaffName.trim() !== "") {
-        CollegeStaff.clgStaffCreate(clgstaff, (data, err) => {
+        CollegeStaff.clgStaffCreate(clgstaff, (err, data) => {
           if (err) {
             return res.json({ "status": err });
           }

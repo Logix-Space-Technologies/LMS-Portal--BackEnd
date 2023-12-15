@@ -25,13 +25,13 @@ CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
             } else {
                 if (res.length > 0) {
                     console.log("Email already exists");
-                    result(null, "Email already exists");
+                    result("Email already exists",null);
                     return;
                 } else {
                     db.query("INSERT INTO college_staff SET ?", newClgStaff, (err, res) => {
                         if (err) {
                             console.log("error: ", err);
-                            result(null, err);
+                            result(err,null);
                             return;
                         } else {
                             console.log("Added College staff: ", { id: res.id, ...newClgStaff });
