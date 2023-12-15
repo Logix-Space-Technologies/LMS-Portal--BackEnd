@@ -112,6 +112,8 @@ exports.updateCollege = (request, response) => {
                 }
             })
         })
+    })
+}
 
 
 exports.deleteCollege = (request, response)=>{
