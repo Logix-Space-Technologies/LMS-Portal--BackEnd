@@ -110,6 +110,37 @@ exports.viewCollegeStaff=(request,response)=>{
 }
 
 
+
+
+exports.viewOneCollegeStaff = (request, response) => {
+  const collegeToken = request.body.token;
+  const collegeId = request.body.collegeId;
+  
+  if (!collegeId) {
+      return response.json({ "status": "College Name is required." });
+  }
+
+  CollegeStaff.getOne(collegeId, (err, data) => {
+      if (err) {
+          console.log(err);
+          response.json({ "status": err });
+      } else {
+          jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
+              if (decoded) {
+                  response.json(data);
+              } else {
+                  response.json({ "status": "Unauthorized User!!" });
+              }
+          });
+      }
+  });
+};
+
+
+
+
+
+
 exports.collegeStaffUpdate = (req, res) => {
   upload(req, res, function (err) {
     if (err) {
@@ -118,6 +149,7 @@ exports.collegeStaffUpdate = (req, res) => {
     }
 
     const clgstaff = new CollegeStaff({
+      'id': req.body.id,
       collegeId: req.body.collegeId,
       collegeStaffName: req.body.collegeStaffName,
       email: req.body.email,
@@ -128,9 +160,8 @@ exports.collegeStaffUpdate = (req, res) => {
       department: req.body.department,
     });
 
-    const id = req.params.id; 
 
-    CollegeStaff.updateCollegeStaff(id, clgstaff, (err, data) => {
+    CollegeStaff.updateCollegeStaff(clgstaff, (err, data) => {
       if (err) {
           if (err.kind === "not_found") {
               return res.json({ "status": "College staff not found with the provided ID" });
