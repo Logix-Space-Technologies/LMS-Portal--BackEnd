@@ -4,7 +4,11 @@ const AdminController = require('../controllers/admin.controller')
 const CollegeController = require('../controllers/college.controller')
 const AdminStaffController = require('../controllers/adminStaff.controller')
 const ClgStaffController=require("../controllers/clgStaff.controller")
+
+const taskController = require("../controllers/task.controller");
+
 const BatchesController= require("../controllers/batches.controller") 
+
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -39,7 +43,7 @@ router.post("/admchangepwd",AdminController.adminChangePwd)
 
 router.post("/viewBatches",BatchesController.batchView)
 
-
+router.post("/addtask", taskController.createTask);
 
 
 
