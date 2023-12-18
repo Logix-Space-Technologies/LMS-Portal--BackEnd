@@ -69,27 +69,25 @@ exports.viewadmstaff=(request,response)=>{
     })
 }
 
-exports.deleteAdmStaff=(request,response)=>{
-    const admStaffdeleteToken=request.body.token
-    const id=request.params.id
-    AdminStaff.deleteStaff(id,(err,data)=>{
-        if(err){
-            if(err.kind==="not_found"){
-                console.log(({status:"Admin Staff id not found"}))
-            }
-            else{
-                res.send({message:"Error Deleting adminstaff"})
-            }
-        }else{
-        jwt.verify(admStaffdeleteToken,"lmsapp",(err,decoded)=>{
-            if(decoded){
-                response.json(data)
-            }  else{
-                response.json({"status":"Unauthorized User!!"})
-            }
-            })
-
+exports.admStaffDelete = (request, response) => {
+    const deleteToken = request.body.token
+    const admStaffId = request.params.id;
+    AdminStaff.admStaffDelete(admStaffId, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          console.log(({ status: "Admin Staff id not found." }))
+  
+        } else {
+          response.send({ message: "Error deleting Staff." })
         }
-        
-    })
-}
+      } else {
+        jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
+          if (decoded) {
+            response.json({"status": "Deleted"})
+          } else {
+            response.json({ "status": "Unauthorized User!!" });
+          }
+        })
+      }
+    });
+  };

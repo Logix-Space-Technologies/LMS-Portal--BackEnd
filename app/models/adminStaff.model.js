@@ -74,6 +74,26 @@ AdminStaff.getAlladmstaff = async (result) => {
 }
 
 
+AdminStaff.admStaffDelete = (admStaffId, result) => {
+    db.query("UPDATE admin_staff SET isActive=0, deleteStatus=1 WHERE id=?", admStaffId, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err,null);
+        return;
+      } 
+      if(res.affectedRows === 0){
+        result({ kind: "not_found"}, null)
+        return
+    }
+
+    console.log("Delete admin staff with id: ", admStaffId)
+    result(null,res)
+    });
+  };
+  
+
+
+
 AdminStaff.deleteStaff =async(id,result)=>{
     db.query("UPDATE admin_staff SET deleteStatus=1 WHERE id=?",id,(err,res)=>{
         if(err){
@@ -89,4 +109,5 @@ AdminStaff.deleteStaff =async(id,result)=>{
         result(null,res)
     })
 }
+
 module.exports = AdminStaff
