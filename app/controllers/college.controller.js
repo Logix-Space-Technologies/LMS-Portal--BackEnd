@@ -118,19 +118,21 @@ exports.updateCollege = (request, response) => {
 
 exports.deleteCollege = (request, response)=>{
     const collegedeleteToken = request.body.token
-    const id = request.params.id
-    College.delete(id, (err, data)=>{
+    const clgDlt = new College({
+        'id' : request.body.id
+    })
+    College.delete(clgDlt, (err, data)=>{
         if (err) {
             if (err.kind === "not_found") {
                 console.log(({status: "College id not found."}))
                 
             } else {
-                res.send({ message: "Error deleting College." })
+                response.send({ message: "Error deleting College." })
             }
         } else {
         jwt.verify(collegedeleteToken, "lmsapp", (err, decoded)=>{
             if (decoded) {
-                response.json(data)
+                response.json({"status": "Deleted Succesfully"})
             } else {
                 response.json({ "status": "Unauthorized User!!" });
             }
