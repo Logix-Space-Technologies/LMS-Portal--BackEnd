@@ -29,7 +29,7 @@ router.post("/deletecolgstaff", ClgStaffController.clgStaffDelete);
 
 router.post("/updateCollege/:id", CollegeController.updateCollege)
 
-router.post('/deleteCollege/:id',CollegeController.deleteCollege)
+router.post('/deleteCollege',CollegeController.deleteCollege)
 
 router.post("/viewallcollegestaff", ClgStaffController.viewCollegeStaff);
 
