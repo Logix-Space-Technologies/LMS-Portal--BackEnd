@@ -37,6 +37,8 @@ router.post("/viewonecollegestaff", ClgStaffController.viewOneCollegeStaff) //fo
 
 router.post("/addBatches",BatchesController.batchCreate)
 
+router.post("/deletebatch", BatchesController.batchDelete)
+
 router.post("/deleteadmstaff",AdminStaffController.admStaffDelete)
 
 router.post("/admchangepwd",AdminController.adminChangePwd)
