@@ -21,7 +21,7 @@ router.post("/addAdminStaff",AdminStaffController.create)
 
 router.post("/addclgstaff",ClgStaffController.clgStaffCreate)
 
-router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
+router.post("/viewalladmstaff",AdminStaffController.viewalladmstaff)
 
 router.post("/updateClgStaff", ClgStaffController.collegeStaffUpdate);
 
