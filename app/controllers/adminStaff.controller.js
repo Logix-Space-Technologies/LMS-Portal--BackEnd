@@ -71,9 +71,7 @@ exports.create = (request, response) => {
 };
 
 
-
-
-exports.viewadmstaff = (request, response) => {
+exports.viewalladmstaff=(request,response)=>{
     const admstaffToken = request.body.token
     AdminStaff.getAlladmstaff((err, data) => {
         if (err) {
@@ -90,6 +88,7 @@ exports.viewadmstaff = (request, response) => {
         }
     })
 }
+
 
 
 exports.adminStaffUpdate = (req, res) => {
@@ -148,4 +147,29 @@ exports.adminStaffUpdate = (req, res) => {
         });
     });
 };
+
+exports.admStaffDelete = (request, response) => {
+    const deleteToken = request.body.token
+    const admstaff = new AdminStaff({
+        'id': request.body.id
+      });
+    AdminStaff.admStaffDelete(admstaff, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          console.log(({ status: "Admin Staff id not found." }))
+  
+        } else {
+          response.send({ message: "Error deleting Staff." })
+        }
+      } else {
+        jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
+          if (decoded) {
+            response.json({"status": "Deleted"})
+          } else {
+            response.json({ "status": "Unauthorized User!!" });
+          }
+        })
+      }
+    });
+  };
 

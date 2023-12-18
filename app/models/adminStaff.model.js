@@ -27,6 +27,7 @@ AdminStaff.create = (newAdminStaff, result) => {
                 result("Email already exists", null);
                 return;
             } else {
+
                 // Continue with the existing code for database insertion
                 db.query("INSERT INTO admin_staff SET ?", newAdminStaff, (err, res) => {
                     console.log(newAdminStaff)
@@ -39,6 +40,7 @@ AdminStaff.create = (newAdminStaff, result) => {
                         result(null, { id: res.id, ...newAdminStaff })
                     }
                 })
+
             }
         }
     })
@@ -63,6 +65,7 @@ AdminStaff.getAlladmstaff = async (result) => {
 }
 
 
+
 AdminStaff.updateAdminStaff = (adminStaff, result) => {
     db.query("UPDATE admin_staff SET AdStaffName = ? , PhNo = ? , Address = ? , AadharNo =? , Email =? , updatedDate = CURRENT_DATE() WHERE id = ?",
         [adminStaff.AdStaffName, adminStaff.PhNo, adminStaff.Address, adminStaff.AadharNo, adminStaff.Email,adminStaff.id],
@@ -81,6 +84,31 @@ AdminStaff.updateAdminStaff = (adminStaff, result) => {
             result(null , {id : adminStaff.id, ...adminStaff});
         });
 }
+
+
+AdminStaff.admStaffDelete = (admStaffId, result) => {
+    db.query("UPDATE admin_staff SET isActive=0, deleteStatus=1 WHERE id=?",[admStaffId.id], (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err,null);
+        return;
+      } 
+      if(res.affectedRows === 0){
+        result({ kind: "not_found"}, null)
+        return
+    }
+
+    console.log("Delete admin staff with id: ",{id:admStaffId.id})
+    result(null,{id:admStaffId.id})
+    });
+  };
+  
+
+
+
+
+
+
 
 
 module.exports = AdminStaff
