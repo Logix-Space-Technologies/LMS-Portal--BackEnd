@@ -41,4 +41,17 @@ Batches.batchCreate = (newBatch, result) =>{
     }
 }
 
+Batches.batchView = (result) => {
+    db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id  ", (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null)
+            return
+        } else {
+            console.log("Batches: ", res);
+            result(null, res)
+        }
+    })
+}
+
 module.exports = Batches;
