@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Batches = require("../models/batches.model");
 const { request, response } = require("express");
+const { collegeCreate } = require("../models/college.model");
 
 exports.batchCreate = (request, response) => {
     const batches = new Batches({
@@ -32,3 +33,26 @@ exports.batchCreate = (request, response) => {
         response.json({ "status": "Content cannot be empty." });
     }
 };
+
+
+exports.batchDelete = (request, response) => {
+    const deleteToken = request.body.token
+    const batchId = request.body.id
+    Batches.batchDelete(batchId, (err, data)=>{
+        if (err) {
+            if (err.kind === "not_found") {
+                console.log({"status" : "Batch Not Found." })
+            } else {
+                response.json({"message" : "Error Deleting Batch."})
+            }
+        } else {
+            jwt.verify(deleteToken, "lmsapp", (err, decoded)=>{
+                if (decoded) {
+                    response.json({"status" : "Batch Deleted."})
+                } else {
+                    response.json({"status" : "Unauthorized User!!"})
+                }
+            })
+        }
+    })
+}

@@ -41,4 +41,22 @@ Batches.batchCreate = (newBatch, result) =>{
     }
 }
 
+
+Batches.batchDelete = (batchId, result) => {
+    db.query("UPDATE batches SET isActive = 0, deleteStatus = 1 WHERE id = ?", batchId, (err,res) => {
+        if (err) {
+            console.log("error : ", err)
+            result(err, null)
+            return
+        }
+        if(res.affectedRows === 0){
+            result({ kind: "not_found"}, null)
+            return
+        }
+
+        console.log("Delete Batch with id : ", batchId)
+        result(null, res)
+    })
+}
+
 module.exports = Batches;
