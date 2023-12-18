@@ -126,7 +126,7 @@ exports.deleteCollege = (request, response)=>{
                 
             } else {
                 res.send({ message: "Error deleting College." })
-            }
+             }
         } else {
         jwt.verify(collegedeleteToken, "lmsapp", (err, decoded)=>{
             if (decoded) {
