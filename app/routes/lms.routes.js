@@ -4,7 +4,11 @@ const AdminController = require('../controllers/admin.controller')
 const CollegeController = require('../controllers/college.controller')
 const AdminStaffController = require('../controllers/adminStaff.controller')
 const ClgStaffController=require("../controllers/clgStaff.controller")
+
+const taskController = require("../controllers/task.controller");
+
 const BatchesController= require("../controllers/batches.controller") 
+
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -17,7 +21,7 @@ router.post("/addAdminStaff",AdminStaffController.create)
 
 router.post("/addclgstaff",ClgStaffController.clgStaffCreate)
 
-router.post("/viewadmstaff",AdminStaffController.viewadmstaff)
+router.post("/viewalladmstaff",AdminStaffController.viewalladmstaff)
 
 router.post("/updateClgStaff", ClgStaffController.collegeStaffUpdate);
 
@@ -35,7 +39,13 @@ router.post("/addBatches",BatchesController.batchCreate)
 
 router.post("/deletebatch", BatchesController.batchDelete)
 
+router.post("/deleteadmstaff",AdminStaffController.admStaffDelete)
 
+router.post("/admchangepwd",AdminController.adminChangePwd)
+
+router.post("/viewBatches",BatchesController.batchView)
+
+router.post("/addtask", taskController.createTask);
 
 
 

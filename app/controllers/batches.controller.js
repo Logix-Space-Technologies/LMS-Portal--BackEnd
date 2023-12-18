@@ -57,3 +57,20 @@ exports.batchDelete = (request, response) => {
         }
     })
 }
+
+exports.batchView = (request, response) => {
+    const batchToken = request.body.batchToken;
+    jwt.verify(batchToken, "lmsapp", (decoded, err) => {
+        if (decoded) {
+            Batches.batchView((err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    response.json({ status: "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+}
