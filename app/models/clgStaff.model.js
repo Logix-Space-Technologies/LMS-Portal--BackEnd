@@ -50,6 +50,8 @@ CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
 }
 
 
+
+
 CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
     db.query("UPDATE college_staff SET collegeId=?,collegeStaffName=?,email=?,phNo=?,aadharNo=?,clgStaffAddress=?,profilePic=?,department=?,updatedDate = CURRENT_DATE() WHERE id=?",
         [clgstaff.collegeId, clgstaff.collegeStaffName, clgstaff.email, clgstaff.phNo, clgstaff.aadharNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, clgstaff.id],
@@ -70,21 +72,25 @@ CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
         });
 }
 
-CollegeStaff.clgStaffDelete = (staffId, result) => {
-    db.query("UPDATE college_staff SET isActive=0, deleteStatus=1 WHERE id=?", staffId, (err, res) => {
-      if (err) {
-        console.log("error: ", err);
-        result(err,null);
-        return;
-      } 
-      if(res.affectedRows === 0){
-        result({ kind: "not_found"}, null)
-        return
-    }
 
-    console.log("Delete college staff with id: ", staffId)
-    result(null,res)
-    });
+
+CollegeStaff.clgStaffDelete = (collegeStaffId, result) => {
+    db.query("UPDATE college_staff SET isActive=0, deleteStatus=1 WHERE id=?",[collegeStaffId.id], 
+      (err, res) => {
+        if (err) {
+          console.log("error: ", err);
+          result(err, null);
+          return;
+        }
+        if (res.affectedRows === 0) {
+          result({ kind: "not_found" }, null);
+          return;
+        }
+  
+        console.log("Delete college staff with id: ", { id: collegeStaffId.id });
+        result(null, { id: collegeStaffId.id });
+      }
+    );
   };
   
 
