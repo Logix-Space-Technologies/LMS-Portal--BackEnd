@@ -29,7 +29,7 @@ College.collegeCreate = (newCollege, result) => {
                     db.query("INSERT INTO college SET ?", newCollege, (err, res) => {
                         if (err) {
                             console.log("error: ", err);
-                            result(null, err);
+                            result(err, null);
                             return;
                         } else {
                             console.log("Added College: ", { id: res.id, ...newCollege });
