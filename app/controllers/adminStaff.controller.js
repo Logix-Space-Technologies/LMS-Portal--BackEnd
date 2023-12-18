@@ -6,7 +6,7 @@ const saltRounds = 10;
 
 exports.create = (request, response) => {
     const { AdStaffName, PhNo, Address, AadharNo, Email, Password } = request.body;
-    const adstaffToken=request.body.token
+    const adstaffToken = request.body.token
     // Validation for AdStaffName
     if (!AdStaffName || AdStaffName.trim() === "") {
         return response.json({ "status": "AdStaffName cannot be empty" });
@@ -14,29 +14,29 @@ exports.create = (request, response) => {
 
     // Validation for PhNo
     if (!PhNo || !/^\+91[6-9][0-9]{9}$/.test(PhNo)) {
-        return response.json({ "status":"Invalid Phone Number" });
+        return response.json({ "status": "Invalid Phone Number" });
     }
 
     // Validation for Address
     if (!Address || Address.length > 100) {
-        return response.json({ "status":"Address cannot be empty and should not exceed 100 characters" });
+        return response.json({ "status": "Address cannot be empty and should not exceed 100 characters" });
     }
 
     // Validation for AadharNo
     if (!AadharNo || !/^\d{12}$/.test(AadharNo)) {
-        return response.json({ "status":"Invalid Aadhar Number" });
+        return response.json({ "status": "Invalid Aadhar Number" });
     }
 
     // Validation for Email
     if (!Email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(Email)) {
-        return response.json({ "status":"Invalid Email" });
+        return response.json({ "status": "Invalid Email" });
     }
 
     // Validation for Password
     if (!Password || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!*#a-zA-Z\d]).{8,12}$/.test(Password)) {
         return response.json({ "status": "Password should have minimum 8 and maximum 12 characters and have at least one lowercase letter, one uppercase letter, and one digit." });
     }
-    
+
 
     // Generate a salt and hash the password
     bcrypt.hash(Password, saltRounds, (err, hashedPassword) => {
@@ -57,11 +57,11 @@ exports.create = (request, response) => {
             if (err) {
                 response.json({ "status": err });
             } else {
-                jwt.verify(adstaffToken,"lmsapp",(err,decoded)=>{
+                jwt.verify(adstaffToken, "lmsapp", (err, decoded) => {
                     if (decoded) {
                         response.json({ "status": "success", "data": data });
                     } else {
-                        response.json({ "status": "Unauthorized User !!! "});
+                        response.json({ "status": "Unauthorized User !!! " });
                     }
                 })
             }
@@ -73,22 +73,80 @@ exports.create = (request, response) => {
 
 exports.viewalladmstaff=(request,response)=>{
     const admstaffToken = request.body.token
-    AdminStaff.getAlladmstaff((err,data)=>{
+    AdminStaff.getAlladmstaff((err, data) => {
         if (err) {
             console.log(err)
-            response.json({"status":err})
+            response.json({ "status": err })
         } else {
-           jwt.verify(admstaffToken,"lmsapp",(err,decoded)=>{
-            if (decoded) {
-                response.json(data)
-            } else {
-                response.json({ "status": "Unauthorized User!!" })
-            }
-           })
+            jwt.verify(admstaffToken, "lmsapp", (err, decoded) => {
+                if (decoded) {
+                    response.json(data)
+                } else {
+                    response.json({ "status": "Unauthorized User!!" })
+                }
+            })
         }
     })
 }
 
+
+
+exports.adminStaffUpdate = (req, res) => {
+    const { AdStaffName, PhNo, Address, AadharNo, Email } = req.body;
+    // Validation for AdStaffName
+    if (!AdStaffName || AdStaffName.trim() === "") {
+        return res.json({ "status": "AdStaffName cannot be empty" });
+    }
+
+    // Validation for PhNo
+    if (!PhNo || !/^\+91[6-9][0-9]{9}$/.test(PhNo)) {
+        return res.json({ "status": "Invalid Phone Number" });
+    }
+
+    // Validation for Address
+    if (!Address || Address.length > 100) {
+        return res.json({ "status": "Address cannot be empty and should not exceed 100 characters" });
+    }
+
+    // Validation for AadharNo
+    if (!AadharNo || !/^\d{12}$/.test(AadharNo)) {
+        return res.json({ "status": "Invalid Aadhar Number" });
+    }
+
+    // Validation for Email
+    if (!Email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(Email)) {
+        return res.json({ "status": "Invalid Email" });
+    }
+
+    
+
+    const admStaff = new AdminStaff({
+        'id': req.body.id,
+        AdStaffName:AdStaffName ,
+        PhNo: PhNo,
+        Address: Address,
+        AadharNo: AadharNo,
+        Email: Email,
+    });
+    AdminStaff.updateAdminStaff(admStaff, (err, data) => {
+        if (err) {
+            if (err.kind === "not_found") {
+                return res.json({ "status": "Admin Staff with the provided id is not found" });
+            } else {
+                return res.json({ "status": "Internal server error" });
+            }
+
+        }
+        const token = req.body.token;
+        jwt.verify(token, "lmsapp", (error, decoded) => {
+            if (decoded) {
+                return res.json({ "status": "success", "data": data });
+            } else {
+                return res.json({ "status": "Unauthorized access!!" });
+            }
+        });
+    });
+};
 
 exports.admStaffDelete = (request, response) => {
     const deleteToken = request.body.token
@@ -114,3 +172,4 @@ exports.admStaffDelete = (request, response) => {
       }
     });
   };
+
