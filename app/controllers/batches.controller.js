@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Batches = require("../models/batches.model");
-const { request, response } = require("express");
-const { collegeCreate } = require("../models/college.model");
+
 
 exports.batchCreate = (request, response) => {
     const batches = new Batches({
@@ -37,8 +36,10 @@ exports.batchCreate = (request, response) => {
 
 exports.batchDelete = (request, response) => {
     const deleteToken = request.body.token
-    const batchId = request.body.id
-    Batches.batchDelete(batchId, (err, data)=>{
+    const batch = new Batches({
+        'id' : request.body.id
+    })
+    Batches.batchDelete(batch, (err, data)=>{
         if (err) {
             if (err.kind === "not_found") {
                 console.log({"status" : "Batch Not Found." })

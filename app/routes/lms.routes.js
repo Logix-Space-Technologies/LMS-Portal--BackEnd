@@ -33,7 +33,7 @@ router.post("/viewonecollegestaff", ClgStaffController.viewOneCollegeStaff) //fo
 
 router.post("/addBatches",BatchesController.batchCreate)
 
-router.post("/deleteBatch", BatchesController.batchDelete)
+router.post("/deletebatch", BatchesController.batchDelete)
 
 
 

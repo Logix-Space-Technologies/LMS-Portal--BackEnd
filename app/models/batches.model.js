@@ -2,6 +2,7 @@ const db = require('../models/db')
 const { response } = require('express')
 
 const Batches = function (batches) {
+    this.id = batches.id;
     this.collegeId = batches.collegeId;
     this.batchName = batches.batchName;
     this.regStartDate = batches.regStartDate;
@@ -43,7 +44,7 @@ Batches.batchCreate = (newBatch, result) =>{
 
 
 Batches.batchDelete = (batchId, result) => {
-    db.query("UPDATE batches SET isActive = 0, deleteStatus = 1 WHERE id = ?", batchId, (err,res) => {
+    db.query("UPDATE batches SET isActive = 0, deleteStatus = 1 WHERE id = ?", [batchId.id], (err,res) => {
         if (err) {
             console.log("error : ", err)
             result(err, null)
@@ -54,8 +55,8 @@ Batches.batchDelete = (batchId, result) => {
             return
         }
 
-        console.log("Delete Batch with id : ", batchId)
-        result(null, res)
+        console.log("Delete Batch with id : ", {id : batchId.id})
+        result(null, {id : batchId.id})
     })
 }
 
