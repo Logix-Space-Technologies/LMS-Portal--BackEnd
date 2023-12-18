@@ -2,6 +2,7 @@ const { response } = require("express")
 const db = require("../models/db")
 
 const AdminStaff = function (adminStaff) {
+    this.id=adminStaff.id
     this.AdStaffName = adminStaff.AdStaffName
     this.PhNo = adminStaff.PhNo
     this.Address = adminStaff.Address
@@ -23,7 +24,7 @@ AdminStaff.create = (newAdminStaff, result) => {
             } else {
                 if (res.length > 0) {
                     console.log("Email already exists");
-                    result(null, "Email already exists");
+                    result(null, "Email already exists",null);
                     return;
 
                 } else {
@@ -75,7 +76,7 @@ AdminStaff.getAlladmstaff = async (result) => {
 
 
 AdminStaff.admStaffDelete = (admStaffId, result) => {
-    db.query("UPDATE admin_staff SET isActive=0, deleteStatus=1 WHERE id=?", admStaffId, (err, res) => {
+    db.query("UPDATE admin_staff SET isActive=0, deleteStatus=1 WHERE id=?",[admStaffId.id], (err, res) => {
       if (err) {
         console.log("error: ", err);
         result(err,null);
@@ -86,28 +87,14 @@ AdminStaff.admStaffDelete = (admStaffId, result) => {
         return
     }
 
-    console.log("Delete admin staff with id: ", admStaffId)
-    result(null,res)
+    console.log("Delete admin staff with id: ",{id:admStaffId.id})
+    result(null,{id:admStaffId.id})
     });
   };
   
 
 
 
-AdminStaff.deleteStaff =async(id,result)=>{
-    db.query("UPDATE admin_staff SET deleteStatus=1 WHERE id=?",id,(err,res)=>{
-        if(err){
-            console.error("Error deleting admin_staff: ",err)
-            result(err,null)
-            return
-        }
-        if(res.affectedRows===0){
-            result({kind:"not_found"},null)
-            return
-        }
-        console.log("Delete adminStaff with id: ",id)
-        result(null,res)
-    })
-}
+
 
 module.exports = AdminStaff

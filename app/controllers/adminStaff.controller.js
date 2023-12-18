@@ -71,8 +71,10 @@ exports.viewadmstaff=(request,response)=>{
 
 exports.admStaffDelete = (request, response) => {
     const deleteToken = request.body.token
-    const admStaffId = request.params.id;
-    AdminStaff.admStaffDelete(admStaffId, (err, data) => {
+    const admstaff = new AdminStaff({
+        'id': request.body.id
+      });
+    AdminStaff.admStaffDelete(admstaff, (err, data) => {
       if (err) {
         if (err.kind === "not_found") {
           console.log(({ status: "Admin Staff id not found." }))
