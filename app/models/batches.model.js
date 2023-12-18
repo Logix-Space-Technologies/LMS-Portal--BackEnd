@@ -20,7 +20,7 @@ Batches.batchCreate = (newBatch, result) =>{
             } else {
                 if (res.length > 0) {
                     console.log("Batch already exists.");
-                    result("Batch Name already exists", null)
+                    result("Batch Name already exists.", null)
                     return
                 } else {
                     db.query("INSERT INTO batches SET ?", newBatch, (err, res)=>{
@@ -39,6 +39,19 @@ Batches.batchCreate = (newBatch, result) =>{
     } else {
         result(null, {"status": "Content cannot be empty"})
     }
+}
+
+Batches.batchView = (result) => {
+    db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id  ", (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null)
+            return
+        } else {
+            console.log("Batches: ", res);
+            result(null, res)
+        }
+    })
 }
 
 module.exports = Batches;
