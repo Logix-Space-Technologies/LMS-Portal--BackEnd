@@ -14,7 +14,7 @@ const AdminStaff = function (adminStaff) {
 
 
 AdminStaff.create = (newAdminStaff, result) => {
-    
+
     db.query("SELECT * FROM admin_staff WHERE Email=?", newAdminStaff.Email, (err, res) => {
         if (err) {
             console.log("error: ", err);
@@ -43,6 +43,23 @@ AdminStaff.create = (newAdminStaff, result) => {
     })
 };
 
+
+
+
+AdminStaff.getAlladmstaff = async (result) => {
+    let query = "SELECT * FROM admin_staff"
+    db.query(query, (err, res) => {
+        if (err) {
+            console.log("error: ",err)
+            result(null,err)
+            return
+        } else {
+            console.log("Adminstaffs: ",res)
+            result(null,res)
+
+        }
+    })
+}
 
 
 module.exports = AdminStaff
