@@ -1,6 +1,9 @@
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const College = require("../models/college.model");
+const { request, response } = require("express");
 const multer = require("multer");
+const path = require("path");
 
 const storage = multer.diskStorage({
     destination: (request, file, cb) => {
@@ -12,80 +15,79 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = function (req, file, cb) {
+    // Accept only JPG and JPEG files
     const allowedExtensions = /\.(jpg|jpeg|png|webp|heif)$/;
 
     if (allowedExtensions.test(path.extname(file.originalname).toLowerCase())) {
         return cb(null, true);
     } else {
-        return cb('Only JPG,JPEG,PNG,WEBP,HEIF files are allowed!', false);
+        return cb('Only JPG, JPEG, PNG, WEBP and HEIF files are allowed!', false);
     }
 };
 
-
-const upload = multer({ storage: storage }).single('collegeImage');
+const upload = multer({ storage: storage, limits: { fileSize: 1000000 } ,fileFilter: fileFilter }).single('collegeImage');
 
 exports.collegeCreate = (request, response) => {
-    const { collegeName, collegeAddress, website, email, collegePhNo, collegeMobileNumber} = request.body;
-    console.log(request.body);
-    if (!collegeName || collegeName.trim() === "") {
-        return response.json({ "status": "College Name cannot be empty" });
-    }    
-    if (!collegeAddress || collegeAddress.trim() === "") {
-        return response.json({ "status": "College Address cannot be empty" });
-    }
-    if (!website || !/^www\.[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/.test(website)) {
-        return response.json({ "status": "Website must be in the format www.example.com" });
-    }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return response.json({ "status": "Invalid Email" });
-    }
-    if (!collegePhNo || !/^\d{2,4}-\d{6,8}$/.test(collegePhNo)) {
-        return response.json({ "status": "Invalid Phone Number" });
-    }
-    if (!collegeMobileNumber || !/^\+91[6-9][0-9]{9}$/.test(collegeMobileNumber)) {
-        return response.json({ "status": "Invalid Mobile Number" });
-    }
-
-    const collegeImage = request.file ? request.file.filename : null;
-
     upload(request, response, function (err) {
         if (err) {
             console.error("Error uploading image:", err);
-            return response.json({ "status": "Error uploading image" });
+            return response.json({ "status": err });
         }
 
-        const college = new College({
-            collegeName: request.body.collegeName,
-            collegeAddress: request.body.collegeAddress,
-            website: request.body.website,
-            email: request.body.email,
-            collegePhNo: request.body.collegePhNo,
-            collegeMobileNumber: request.body.collegeMobileNumber,
-            collegeImage: collegeImage
-        });
-
+        const { collegeName, collegeAddress, website, email, collegePhNo, collegeMobileNumber } = request.body;
         const collegeToken = request.body.token;
 
-        if (college.collegeName !== "" && college.collegeName !== null) {
+        if (!collegeName || collegeName.trim() === "") {
+            return response.json({ "status": "College name cannot be empty." });
+        }
+
+        if (!collegePhNo || !/^\d{2,4}-\d{6,8}$/.test(collegePhNo)) {
+            return response.json({ "status": "Invalid Phone Number" });
+        }
+
+        if (!collegeMobileNumber || !/^\+91[6-9][0-9]{9}$/.test(collegeMobileNumber)) {
+            return response.json({ "status": "Invalid Mobile Number" });
+        }
+
+        if (!collegeAddress || collegeAddress.length > 100) {
+            return response.json({ "status": "Address cannot be empty and should not exceed 100 characters" });
+        }
+
+        if (!website || !/^www\.[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/.test(website)) {
+            return response.json({ "status": "Website must be in the format www.example.com" });
+        }
+
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return response.json({ "status": "Invalid Email" });
+        }
+
+        const collegeImage = request.file ? request.file.filename : null;
+
+        const college = new College({
+            collegeName: collegeName,
+            collegeAddress: collegeAddress,
+            website: website,
+            email: email,
+            collegePhNo: collegePhNo,
+            collegeMobileNumber: collegeMobileNumber,
+            collegeImage: collegeImage 
+        });
+
+        College.collegeCreate(college, (err, data) => {
+            if (err) {
+                return response.json({ "status": err });
+            }
+
             jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
                 if (decoded) {
-                    College.create(college, (err, data) => {
-                        if (err) {
-                            return response.json({ "status": err });
-                        } else {
-                            return response.json({ "status": "success", "data": data });
-                        }
-                    });
+                    return response.json({ "status": "success", "data": data });
                 } else {
                     return response.json({ "status": "Unauthorized User!!" });
                 }
             });
-        } else {
-            return response.json({ "status": "Content cannot be empty." });
-        }
+        });
     });
 };
-
 exports.viewCollege = (request, response) => {
     const collegeToken = request.body.token
     College.getAll((err, data) => {

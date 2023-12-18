@@ -1,15 +1,15 @@
-const db=require('../models/db')
-const {response}=require('express')
+const db = require('../models/db')
+const { response } = require('express')
 
 
 
-const College = function(college) {
+const College = function (college) {
     this.collegeName = college.collegeName;
     this.collegeAddress = college.collegeAddress;
     this.website = college.website;
     this.email = college.email;
     this.collegePhNo = college.collegePhNo;
-    this.collegeMobileNumber = college.collegeMobileNumber;
+    this.collegeMobileNumber=college.collegeMobileNumber;
     this.collegeImage = college.collegeImage;
 };
 
@@ -23,7 +23,7 @@ College.collegeCreate = (newCollege, result) => {
             } else {
                 if (res.length > 0) {
                     console.log("Email already exists");
-                    result("Email already exists", null );
+                    result("Email already exists", null);
                     return;
                 } else {
                     db.query("INSERT INTO college SET ?", newCollege, (err, res) => {
@@ -43,7 +43,6 @@ College.collegeCreate = (newCollege, result) => {
         result(null, { "status": "Content cannot be empty!" });
     }
 };
-
 
 College.getAll = async(result) =>{
     let query ="SELECT * FROM college"
