@@ -54,4 +54,20 @@ Batches.batchView = (result) => {
     })
 }
 
+Batches.searchBatch = (search, result) => {
+    const searchTerm = '%' + search + '%';
+    db.query(
+        "SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.batchName LIKE ? OR c.collegeName LIKE ? OR b.batchDesc LIKE ?",
+        [searchTerm, searchTerm, searchTerm], (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null)
+            return
+        } else {
+            console.log("Batches: ", res);
+            result(null, res)
+        }
+    })
+}
+
 module.exports = Batches;

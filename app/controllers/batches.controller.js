@@ -49,3 +49,26 @@ exports.batchView = (request, response) => {
         }
     });
 }
+
+exports.searchBatch = (request, response) => {
+    const batchQuery = request.body.batchQuery;
+    const batchToken = request.body.batchToken;
+
+    jwt.verify(batchToken, "lmsapp", (decoded, err) => {
+        if (decoded) {
+            Batches.searchBatch(batchQuery, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ status:"No search items found." });
+                    } else {
+                        response.json({ status: "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+}
