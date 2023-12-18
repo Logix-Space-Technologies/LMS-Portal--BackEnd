@@ -10,6 +10,7 @@ const College = function (college) {
     this.website = college.website;
     this.email = college.email;
     this.collegePhNo = college.collegePhNo;
+    this.collegeMobileNumber=college.collegeMobileNumber;
     this.collegeImage = college.collegeImage;
 };
 
@@ -43,7 +44,6 @@ College.collegeCreate = (newCollege, result) => {
         result(null, { "status": "Content cannot be empty!" });
     }
 };
-
 
 College.getAll = async (result) => {
     let query = "SELECT * FROM college"
