@@ -28,6 +28,7 @@ exports.collegeCreate = (request, response) => {
             website: request.body.website,
             email: request.body.email,
             collegePhNo: request.body.collegePhNo,
+            collegeMobileNumber: request.body.collegeMobileNumber,
             collegeImage: request.file ? request.file.filename : null
 
         });
