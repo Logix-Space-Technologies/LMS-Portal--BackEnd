@@ -37,6 +37,8 @@ router.post("/admchangepwd",AdminController.adminChangePwd)
 
 router.post("/viewBatches",BatchesController.batchView)
 
+router.post("/updateAdminStaff",AdminStaffController.adminStaffUpdate)
+
 
 
 

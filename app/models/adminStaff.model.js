@@ -2,6 +2,7 @@ const { response } = require("express")
 const db = require("../models/db")
 
 const AdminStaff = function (adminStaff) {
+    this.id=adminStaff.id
     this.AdStaffName = adminStaff.AdStaffName
     this.PhNo = adminStaff.PhNo
     this.Address = adminStaff.Address
@@ -50,15 +51,35 @@ AdminStaff.getAlladmstaff = async (result) => {
     let query = "SELECT * FROM admin_staff"
     db.query(query, (err, res) => {
         if (err) {
-            console.log("error: ",err)
-            result(null,err)
+            console.log("error: ", err)
+            result(null, err)
             return
         } else {
-            console.log("Adminstaffs: ",res)
-            result(null,res)
+            console.log("Adminstaffs: ", res)
+            result(null, res)
 
         }
     })
+}
+
+
+AdminStaff.updateAdminStaff = (adminStaff, result) => {
+    db.query("UPDATE admin_staff SET AdStaffName = ? , PhNo = ? , Address = ? , AadharNo =? , Email =? , updatedDate = CURRENT_DATE() WHERE id = ?",
+        [adminStaff.AdStaffName, adminStaff.PhNo, adminStaff.Address, adminStaff.AadharNo, adminStaff.Email,adminStaff.id],
+        (err , res) => {
+            if (err){
+                console.log("error: ", err);
+                result(err, null); 
+                return;
+
+            }
+            if (res.affectedRows == 0) {
+                result({ kind: "not_found" }, null);
+                return;
+            }
+            console.log("Updated Admin Staff details: ", {id : adminStaff.id,...adminStaff});
+            result(null , {id : adminStaff.id, ...adminStaff});
+        });
 }
 
 
