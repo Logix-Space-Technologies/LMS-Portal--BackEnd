@@ -4,6 +4,52 @@ const Validator = require("../config/data.validate")
 
 
 exports.batchCreate = (request, response) => {
+
+    const batchToken = request.body.batchToken;
+
+    //checking validations
+    const validationErrors = {};
+
+    if (Validator.isEmpty(request.body.collegeId).isValid) {
+        validationErrors.name = Validator.isEmpty(request.body.batchName).message;
+    }
+
+    if (Validator.isEmpty(request.body.batchName).isValid) {
+        validationErrors.name = Validator.isEmpty(request.body.batchName).message;
+    }
+    if (!Validator.isValidName(request.body.batchName).isValid) {
+        validationErrors.name = Validator.isValidName(request.body.batchName).message
+    }
+
+    if (Validator.isEmpty(request.body.regStartDate).isValid) {
+        validationErrors.regstartdate = Validator.isEmpty(request.body.regStartDate).message;
+    }
+    if (!Validator.isValidDate(request.body.regStartDate).isValid) {
+        validationErrors.regstartdate = Validator.isValidDate(request.body.regStartDate).message
+    }
+
+    if (Validator.isEmpty(request.body.regEndDate).isValid) {
+        validationErrors.regenddate = Validator.isEmpty(request.body.regEndDate).message
+    }
+    if (!Validator.isValidDate(request.body.regEndDate).isValid) {
+        validationErrors.regenddate = Validator.isValidDate(request.body.regEndDate).message
+    }
+
+    if (Validator.isEmpty(request.body.batchDesc).isValid) {
+        validationErrors.description = Validator.isEmpty(request.body.batchDesc).message
+    }
+
+    if (Validator.isEmpty(request.body.batchAmount).isValid) {
+        validationErrors.amount = Validator.isEmpty(request.body.batchAmount).message
+    }
+
+
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors })
+    }
+
+
+
     const batches = new Batches({
         collegeId: request.body.collegeId,
         batchName: request.body.batchName,
@@ -13,46 +59,42 @@ exports.batchCreate = (request, response) => {
         batchAmount: request.body.batchAmount
     });
 
-    const batchToken = request.body.batchToken;
 
-    if (batches.batchName !== "" && batches.batchName !== null) {
-        Batches.batchCreate(batches, (err,data) => {
-            if (err) {
-                response.json({ "status": err });
+    Batches.batchCreate(batches, (err, data) => {
+        if (err) {
+            response.json({ "status": err });
+        }
+        jwt.verify(batchToken, "lmsapp", (decoded, err) => {
+            if (decoded) {
+                response.json({ status: "success", "data": data });
             } else {
-                jwt.verify(batchToken, "lmsapp", (decoded, err) => {
-                    if (decoded) {
-                        response.json({ status: "success", "data": data });
-                    } else {
-                        response.json({ "status": "Unauthorized User!!" });
-                    }
-                });
+                response.json({ "status": "Unauthorized User!!" });
             }
         });
-    } else {
-        response.json({ "status": "Content cannot be empty." });
-    }
-};
+    });
+
+}
+
 
 
 exports.batchDelete = (request, response) => {
     const deleteToken = request.body.token
     const batch = new Batches({
-        'id' : request.body.id
+        'id': request.body.id
     })
-    Batches.batchDelete(batch, (err, data)=>{
+    Batches.batchDelete(batch, (err, data) => {
         if (err) {
             if (err.kind === "not_found") {
-                console.log({"status" : "Batch Not Found." })
+                console.log({ "status": "Batch Not Found." })
             } else {
-                response.json({"message" : "Error Deleting Batch."})
+                response.json({ "message": "Error Deleting Batch." })
             }
         } else {
-            jwt.verify(deleteToken, "lmsapp", (err, decoded)=>{
+            jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
                 if (decoded) {
-                    response.json({"status" : "Batch Deleted."})
+                    response.json({ "status": "Batch Deleted." })
                 } else {
-                    response.json({"status" : "Unauthorized User!!"})
+                    response.json({ "status": "Unauthorized User!!" })
                 }
             })
         }
