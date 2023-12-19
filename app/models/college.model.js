@@ -3,6 +3,7 @@ const { response } = require('express')
 
 
 
+
 const College = function (college) {
     this.id = college.id
     this.collegeName = college.collegeName;
@@ -10,6 +11,7 @@ const College = function (college) {
     this.website = college.website;
     this.email = college.email;
     this.collegePhNo = college.collegePhNo;
+    this.collegeMobileNumber=college.collegeMobileNumber;
     this.collegeImage = college.collegeImage;
 };
 
@@ -45,8 +47,9 @@ College.collegeCreate = (newCollege, result) => {
 };
 
 
-College.getAll = async (result) => {
-    let query = "SELECT * FROM college"
+
+College.collegeViewAll = async(result) =>{
+    let query ="SELECT * FROM college WHERE deleteStatus= 0 AND isActive= 1"
     db.query(query, (err, response) => {
         if (err) {
             console.log("error: ", err)
