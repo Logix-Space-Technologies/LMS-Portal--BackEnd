@@ -52,8 +52,10 @@ exports.taskDelete = (request , response) => {
             jwt.verify(deleteToken,"lmsapp",(err , decoded) =>{
 
                 if (decoded) {
-                    response.json({"status":"Unauthorized user"})
+                    response.json({"status":"Task Deleted."})
                 } else {
+
+                    response.json({"status":"Unauthorized User!!"})
                     
                 }
             })
