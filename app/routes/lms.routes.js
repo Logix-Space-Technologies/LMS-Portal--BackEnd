@@ -43,7 +43,7 @@ router.post("/deleteadmstaff",AdminStaffController.admStaffDelete)
 
 router.post("/admchangepwd",AdminController.adminChangePwd)
 
-router.post("/viewBatches",BatchesController.batchView)
+router.post("/viewAllBatches",BatchesController.batchView)
 
 router.post("/updateAdminStaff",AdminStaffController.adminStaffUpdate)
 

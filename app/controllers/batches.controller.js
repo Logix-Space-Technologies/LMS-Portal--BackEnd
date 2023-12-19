@@ -65,7 +65,11 @@ exports.batchView = (request, response) => {
             Batches.batchView((err, data) => {
                 if (err) {
                     response.json({ "status": err });
-                } else {
+                } 
+                if(data.length == 0) {
+                    response.json({ status: "No batches found!" });
+                }
+                else {
                     response.json({ status: "success", "data": data });
                 }
             });
