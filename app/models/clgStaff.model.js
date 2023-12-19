@@ -95,22 +95,8 @@ CollegeStaff.clgStaffDelete = (collegeStaffId, result) => {
   
 
 CollegeStaff.getAll = async(result) =>{
-    let query = "SELECT c.collegeName, cs.* FROM college_staff cs JOIN college c ON cs.collegeId = c.id";
+    let query = "SELECT c.collegeName, cs.* FROM college_staff cs JOIN college c ON cs.collegeId = c.id WHERE cs.deleteStatus = 0 AND cs.isActive = 1";
     db.query(query, (err, response) => {
-        if(err){
-            console.log("error: ",err)
-            result(null,err)
-            return
-        }else{
-            console.log("College staff: ",response)
-            result(null,response)
-        }
-    })
-}
-
-CollegeStaff.getOne = async(collegeId,result) =>{
-    let query = "SELECT c.collegeName, cs.* FROM college_staff cs JOIN college c ON cs.collegeId = c.id WHERE cs.collegeId = ?";
-    db.query(query,[collegeId], (err, response) => {
         if(err){
             console.log("error: ",err)
             result(null,err)

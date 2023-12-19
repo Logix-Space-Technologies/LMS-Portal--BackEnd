@@ -87,3 +87,37 @@ exports.createTask = (request, response) => {
     })
 
 };
+
+
+exports.taskDelete = (request , response) => {
+    const deleteToken = request.body.token
+    const task = new Tasks({
+        'id': request.body.id
+    });
+
+    Tasks.taskDelete(task,(err, data)=>{
+        if (err) {
+            if (err.kind === "not_found") {
+                console.log("Task is not found")
+                response.json({status:"Task is not found"})
+                
+            } else {
+                response.json({status:"Error deleting task"})
+                
+            }
+            
+        } else {
+            jwt.verify(deleteToken,"lmsapp",(err , decoded) =>{
+
+                if (decoded) {
+                    response.json({"status":"Task Deleted."})
+                } else {
+
+                    response.json({"status":"Unauthorized User!!"})
+                    
+                }
+            })
+            
+        }
+    })
+}

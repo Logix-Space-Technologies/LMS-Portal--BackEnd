@@ -59,6 +59,14 @@ function isValidMobileNumber(mobileNumber) {
     };
 }
 
+function isValidAmount(amount) {
+    return {
+        isValid: amount > 0,
+        message: "Amount must be greater than zero"
+    };
+}
+
+
 function isValidAddress(address) {
     return {
         isValid: !address || address.length <= 100,
@@ -82,8 +90,8 @@ function isValidEmail(email) {
 
 function isValidPassword(password) {
     return {
-        isValid: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(password),
-        message: "Password must contain at least 8 characters, including UPPER/lowercase and numbers"
+        isValid: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,12}$/.test(password),
+        message: "Password must contain at least 8 characters, including upper and lowercase letters and numbers"
     };
 }
 
@@ -101,6 +109,16 @@ function isValidDate(date) {
         isValid: /^\d{4}-\d{2}-\d{2}$/.test(date),
         message: "Date must be in the format YYYY-MM-DD"
     };
+}
+
+function isDateGreaterThanToday(date) {
+    const inputDate = new Date(date);
+    const currentDate = new Date();
+
+    return {
+        isValid: inputDate > currentDate,
+        message: "Select a date greater than today."
+    };
 }
 
 function isValidTime(time) {
@@ -132,7 +150,9 @@ module.exports = {
     isValidDate,
     isValidTime,
     isValidImageWith1mbConstratint,
-    isValidAadharNumber
+    isValidAadharNumber,
+    isValidAmount,
+    isDateGreaterThanToday
 };
 
 
