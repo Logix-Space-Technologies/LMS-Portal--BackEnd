@@ -49,7 +49,6 @@ router.post("/updateAdminStaff",AdminStaffController.adminStaffUpdate)
 
 router.post("/addtask", taskController.createTask);
 
-router.post("/updateBatch", BatchesController.batchUpdate);
 
 
 
