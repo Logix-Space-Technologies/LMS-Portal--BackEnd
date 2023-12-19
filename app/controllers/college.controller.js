@@ -189,6 +189,7 @@ exports.updateCollege = (request, response) => {
         College.updateCollege(clgUpdate, (err, data) => {
             if (err) {
                 if (err.kind === "not_found") {
+                    console.log("College Details Not Found!!")
                     response.json({ "status": "College Details Not Found!!" })
                 } else {
                     response.json({ "status": "Error Updating College Details !!!" })
