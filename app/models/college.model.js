@@ -3,6 +3,7 @@ const { response } = require('express')
 
 
 
+
 const College = function (college) {
     this.id = college.id
     this.collegeName = college.collegeName;
@@ -16,6 +17,7 @@ const College = function (college) {
 
 College.collegeCreate = (newCollege, result) => {
     if (newCollege.collegeName !== "" && newCollege.collegeName !== null) {
+        // Check if email already exists
         db.query("SELECT * FROM college WHERE email=?", newCollege.email, (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -27,14 +29,30 @@ College.collegeCreate = (newCollege, result) => {
                     result("Email already exists", null);
                     return;
                 } else {
-                    db.query("INSERT INTO college SET ?", newCollege, (err, res) => {
+                    // Check if website already exists
+                    db.query("SELECT * FROM college WHERE website=?", newCollege.website, (err, res) => {
                         if (err) {
                             console.log("error: ", err);
                             result(err, null);
                             return;
                         } else {
-                            console.log("Added College: ", { id: res.id, ...newCollege });
-                            result(null, { id: res.id, ...newCollege });
+                            if (res.length > 0) {
+                                console.log("Website already exists");
+                                result("Website already exists", null);
+                                return;
+                            } else {
+                                // Insert new college if email and website do not exist
+                                db.query("INSERT INTO college SET ?", newCollege, (err, res) => {
+                                    if (err) {
+                                        console.log("error: ", err);
+                                        result(err, null);
+                                        return;
+                                    } else {
+                                        console.log("Added College: ", { id: res.id, ...newCollege });
+                                        result(null, { id: res.id, ...newCollege });
+                                    }
+                                });
+                            }
                         }
                     });
                 }
@@ -45,8 +63,24 @@ College.collegeCreate = (newCollege, result) => {
     }
 };
 
+
 College.getAll = async (result) => {
     let query = "SELECT * FROM college"
+    db.query(query, (err, response) => {
+        if (err) {
+            console.log("error: ", err)
+            result(null, err)
+            return
+        } else {
+            console.log("College: ", response)
+            result(null, response)
+        }
+    })
+}
+
+
+College.collegeViewAll = async(result) =>{
+    let query ="SELECT * FROM college WHERE deleteStatus= 0 AND isActive= 1"
     db.query(query, (err, response) => {
         if (err) {
             console.log("error: ", err)
@@ -82,9 +116,9 @@ College.delete = async (clgId, result) =>{
 
 
 
-College.updateCollege = (id, clgUpdate, result) => {
-    db.query("UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, email = ?, collegePhNo = ?, collegeImage = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
-        [clgUpdate.collegeName, clgUpdate.collegeAddress, clgUpdate.website, clgUpdate.email, clgUpdate.collegePhNo, clgUpdate.collegeImage, id],
+College.updateCollege = (clgUpdate, result) => {
+    db.query("UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, email = ?, collegePhNo = ?, collegeMobileNumber = ?, collegeImage = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
+        [clgUpdate.collegeName, clgUpdate.collegeAddress, clgUpdate.website, clgUpdate.email, clgUpdate.collegePhNo, clgUpdate.collegeMobileNumber, clgUpdate.collegeImage, clgUpdate.id],
         (err, res) => {
             if (err) {
                 console.log("error : ", err)
@@ -96,8 +130,8 @@ College.updateCollege = (id, clgUpdate, result) => {
                 return
             }
 
-            console.log("Updated College Details : ", { id: id, ...clgUpdate })
-            result(null, { id: id, ...clgUpdate })
+            console.log("Updated College Details : ", { id: clgUpdate.id, ...clgUpdate })
+            result(null, { id: clgUpdate.id, ...clgUpdate })
         })
 }
 

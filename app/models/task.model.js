@@ -1,7 +1,9 @@
 const db = require('../models/db');
 const { response } = require('express')
 
+
 const Tasks = function (tasks) {
+    this.id = tasks.id
     this.batchId = tasks.batchId;
     this.taskTitle = tasks.taskTitle;
     this.taskDesc = tasks.taskDesc;
@@ -9,6 +11,7 @@ const Tasks = function (tasks) {
     this.taskFileUpload = tasks.taskFileUpload
     this.totalScore = tasks.totalScore;
     this.dueDate = tasks.dueDate
+
 };
 
 Tasks.taskCreate = (newTask, result) => {
@@ -38,4 +41,23 @@ Tasks.taskCreate = (newTask, result) => {
     });
 };
 
+Tasks.taskDelete = (taskId, result) => {
+    db.query("UPDATE task SET isActive=0 , deleteStatus = 1 WHERE id = ? ", [taskId.id], (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return
+        }
+        if (res.affectedRows === 0) {
+            result({ kind: "not_found" }, null)
+            return
+
+        }
+        console.log("Delete task with id: ", { id: taskId.id })
+        result(null, { id: taskId.id })
+    });
+};
+
+
 module.exports = Tasks;
+

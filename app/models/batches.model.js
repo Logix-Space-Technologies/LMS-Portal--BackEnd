@@ -61,7 +61,7 @@ Batches.batchDelete = (batchId, result) => {
 }
 
 Batches.batchView = (result) => {
-    db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id  ", (err, res) => {
+    db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus=0 AND b.isActive= 1;", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)
@@ -74,4 +74,23 @@ Batches.batchView = (result) => {
 }
 
 
+Batches.searchBatch = (search, result) => {
+    const searchTerm = '%' + search + '%';
+    db.query(
+        "SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND (b.batchName LIKE ? OR c.collegeName LIKE ? OR b.batchDesc LIKE ?)",
+        [searchTerm, searchTerm, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Batches: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
+
 module.exports = Batches;
+
