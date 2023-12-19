@@ -33,8 +33,6 @@ router.post('/deleteCollege',CollegeController.deleteCollege)
 
 router.post("/viewallcollegestaff", ClgStaffController.viewCollegeStaff);
 
-router.post("/viewonecollegestaff", ClgStaffController.viewOneCollegeStaff) //for viewing college staffs of a single college
-
 router.post("/addBatches",BatchesController.batchCreate)
 
 router.post("/deletebatch", BatchesController.batchDelete)
