@@ -73,6 +73,7 @@ Batches.batchView = (result) => {
     })
 }
 
+
 Batches.searchBatch = (search, result) => {
     const searchTerm = '%' + search + '%';
     db.query(
@@ -92,3 +93,4 @@ Batches.searchBatch = (search, result) => {
 };
 
 module.exports = Batches;
+

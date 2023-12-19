@@ -79,6 +79,7 @@ exports.batchView = (request, response) => {
     });
 }
 
+
 exports.searchBatch = (request, response) => {
     const batchQuery = request.body.batchQuery;
     const batchToken = request.body.batchToken;
@@ -101,3 +102,4 @@ exports.searchBatch = (request, response) => {
         }
     });
 }
+
