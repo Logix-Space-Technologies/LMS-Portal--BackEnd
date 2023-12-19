@@ -30,3 +30,34 @@ exports.createTask = (request, response) => {
         response.json({ "status": "Content cannot be empty." });
     }
 };
+
+
+exports.taskDelete = (request , response) => {
+    const deleteToken = request.body.token
+    const task = new Task({
+        'id': request.body.id
+    });
+
+    Task.taskDelete(task,(err, data)=>{
+        if (err) {
+            if (err.kind === "not_found") {
+                console.log(({status:"Task is not found"}))
+                
+            } else {
+                response.send({messege:"Error deleting task"})
+                
+            }
+            
+        } else {
+            jwt.verify(deleteToken,"lmsapp",(err , decoded) =>{
+
+                if (decoded) {
+                    response.json({"status":"Unauthorized user"})
+                } else {
+                    
+                }
+            })
+            
+        }
+    })
+}
