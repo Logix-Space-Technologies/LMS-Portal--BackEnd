@@ -91,17 +91,18 @@ exports.createTask = (request, response) => {
 
 exports.taskDelete = (request , response) => {
     const deleteToken = request.body.token
-    const task = new Task({
+    const task = new Tasks({
         'id': request.body.id
     });
 
-    Task.taskDelete(task,(err, data)=>{
+    Tasks.taskDelete(task,(err, data)=>{
         if (err) {
             if (err.kind === "not_found") {
-                console.log(({status:"Task is not found"}))
+                console.log("Task is not found")
+                response.json({status:"Task is not found"})
                 
             } else {
-                response.send({messege:"Error deleting task"})
+                response.json({status:"Error deleting task"})
                 
             }
             
