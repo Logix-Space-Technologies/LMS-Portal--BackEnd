@@ -74,3 +74,59 @@ exports.batchView = (request, response) => {
         }
     });
 }
+
+// batch.controller.js
+
+exports.batchUpdate = (request, response) => {
+    const {
+        id,
+        collegeId,
+        batchName,
+        regStartDate,
+        regEndDate,
+        batchDesc,
+        batchAmount,
+        
+    } = request.body;
+
+    // Validation for batchName
+    if (!batchName || batchName.trim() === "") {
+        return response.json({ "status": "BatchName cannot be empty" });
+    }
+
+    // Validation for batchDesc
+    if (!batchDesc || batchDesc.trim() === "") {
+        return response.json({ "status": "BatchDesc cannot be empty" });
+    }
+
+    // Validation for batchAmount
+    if (!batchAmount || isNaN(batchAmount) || batchAmount <= 0) {
+        return response.json({ "status": "Invalid BatchAmount" });
+    }
+
+    const updatedBatch = new Batches({
+        id: id,
+        collegeId: collegeId,
+        batchName: batchName,
+        regStartDate: regStartDate,
+        regEndDate: regEndDate,
+        batchDesc: batchDesc,
+        batchAmount: batchAmount
+    });
+
+    Batches.updateBatch(updatedBatch, (err, data) => {
+        if (err) {
+            response.json({ "status": err });
+        } else {
+            const batchToken =  request.body.token;
+            jwt.verify(batchToken, "lmsapp", (decoded, err) => {
+                if (decoded) {
+                    response.json({ status: "Updated Batch Details", "data": data });
+                } else {
+                    response.json({ "status": "Unauthorized User!!" });
+                }
+            });
+        }
+    });
+};
+
