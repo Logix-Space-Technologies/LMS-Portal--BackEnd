@@ -1,6 +1,7 @@
 const db = require('../models/db');
 const { response } = require('express')
 
+
 const Tasks = function (tasks) {
     this.batchId = tasks.batchId;
     this.taskTitle = tasks.taskTitle;
@@ -9,6 +10,7 @@ const Tasks = function (tasks) {
     this.taskFileUpload = tasks.taskFileUpload
     this.totalScore = tasks.totalScore;
     this.dueDate = tasks.dueDate
+
 };
 
 Tasks.taskCreate = (newTask, result) => {
@@ -38,4 +40,6 @@ Tasks.taskCreate = (newTask, result) => {
     });
 };
 
+
 module.exports = Tasks;
+

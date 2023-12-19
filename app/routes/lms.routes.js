@@ -15,7 +15,7 @@ router.post("/", AdminController.adminLogin)
 
 router.post("/addCollege",CollegeController.collegeCreate)
 
-router.post("/viewCollege",CollegeController.viewCollege)
+router.post("/viewallcolleges",CollegeController.collegeAllView)
 
 router.post("/addAdminStaff",AdminStaffController.create)
 
@@ -49,6 +49,7 @@ router.post("/updateAdminStaff",AdminStaffController.adminStaffUpdate)
 
 router.post("/addtask", taskController.createTask);
 
+router.post("/deleteTask",taskController.taskDelete)
 
 
 
