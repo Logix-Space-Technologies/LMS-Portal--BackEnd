@@ -4,7 +4,6 @@ const multer = require("multer")
 const adminRoutes = require("./app/routes/lms.routes")
 const app = express()
 
-
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
