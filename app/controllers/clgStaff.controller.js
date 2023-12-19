@@ -68,24 +68,27 @@ exports.clgStaffCreate = (req, res) => {
 
 
 exports.clgStaffDelete = (request, response) => {
-  const deleteToken = request.body.token
-  const staffId = request.params.id;
-  CollegeStaff.clgStaffDelete(staffId, (err, data) => {
+  const deleteToken = request.body.token;
+  const staffId = request.body.id;
+  const collegeStaff = new CollegeStaff({
+    'id': staffId
+  });
+
+  CollegeStaff.clgStaffDelete(collegeStaff, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
-        console.log(({ status: "College Staff id not found." }))
-
+        console.log({ status: "College Staff id not found." });
       } else {
-        response.send({ message: "Error deleting Staff." })
+        response.send({ message: "Error deleting Staff." });
       }
     } else {
       jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
         if (decoded) {
-          response.json({"status": "Deleted"})
+          response.json({ status: "Deleted Successfullly" });
         } else {
-          response.json({ "status": "Unauthorized User!!" });
+          response.json({ status: "Unauthorized User!!" });
         }
-      })
+      });
     }
   });
 };

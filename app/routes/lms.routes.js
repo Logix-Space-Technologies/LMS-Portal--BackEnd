@@ -25,11 +25,11 @@ router.post("/viewalladmstaff",AdminStaffController.viewalladmstaff)
 
 router.post("/updateClgStaff", ClgStaffController.collegeStaffUpdate);
 
-router.post("/deletecolgstaff/:id",ClgStaffController.clgStaffDelete);
+router.post("/deletecolgstaff", ClgStaffController.clgStaffDelete);
 
 router.post("/updateCollege/:id", CollegeController.updateCollege)
 
-router.post('/deleteCollege/:id',CollegeController.deleteCollege)
+router.post('/deleteCollege',CollegeController.deleteCollege)
 
 router.post("/viewallcollegestaff", ClgStaffController.viewCollegeStaff);
 
@@ -37,13 +37,18 @@ router.post("/viewonecollegestaff", ClgStaffController.viewOneCollegeStaff) //fo
 
 router.post("/addBatches",BatchesController.batchCreate)
 
+router.post("/deletebatch", BatchesController.batchDelete)
+
 router.post("/deleteadmstaff",AdminStaffController.admStaffDelete)
 
 router.post("/admchangepwd",AdminController.adminChangePwd)
 
 router.post("/viewBatches",BatchesController.batchView)
 
+router.post("/updateAdminStaff",AdminStaffController.adminStaffUpdate)
+
 router.post("/addtask", taskController.createTask);
+
 
 
 
