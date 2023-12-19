@@ -243,7 +243,7 @@ exports.collegeStaffUpdate = (req, res) => {
         if (err.kind === "not_found") {
           return res.json({ "status": "College staff not found with the provided ID" });
         } else {
-          return res.json({ "status": "Internal Server Error" });
+          return res.json({ "status": "Error updating college staff" });
         }
       }
       jwt.verify(staffUpdateToken, "lmsapp", (err, decoded) => {

@@ -16,6 +16,7 @@ function isValidPhoneNumber(phoneNumber) {
     };
 }
 
+
 function isValidImageWith1mbConstratint(file) {
     // Accept only JPG and JPEG files
     const allowedExtensions = /\.(jpg|jpeg|png|webp|heif)$/;
@@ -116,6 +117,8 @@ function isValidAadharNumber(aadharNumber) {
         message: "Aadhar Number must be 12 digits"
     };
 }
+
+
 
 
 
