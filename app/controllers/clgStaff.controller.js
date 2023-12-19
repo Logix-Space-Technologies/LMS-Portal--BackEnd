@@ -2,10 +2,12 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { request, response } = require("express");
 const CollegeStaff = require("../models/clgStaff.model");
-
+const multer=require("multer")
+const path=require("path")
+const Validator=require("../config/data.validate")
 const saltRounds = 10;
 
-const multer = require("multer");
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
@@ -15,50 +17,22 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage }).single('profilePic');
+const upload = multer({storage:storage}).single(profilePic)
 
 exports.clgStaffCreate = (request, response) => {
-  const { collegeId,collegeStaffName, phNo, email, clgStaffAddress, aadharNo, profilePic, department, password } = request.body
-  const clgStaffToken = request.body
-  //Validation for collegeStaffName
-  if (!collegeStaffName || collegeStaffName.trim() === "") {
-    return response.json({ "status": "collegeStaffName cannot be empty" })
-  }
-  //Validation for PhNo
-  if (!phNo || !/^\+91[6-9][0-9]{9}$/.test(phNo)) {
-    return response.json({ "status": "Invalid Phone Number" });
-  }
-  //Validation for clgStaffAddress
-  if (!clgStaffAddress || clgStaffAddress.length > 2000) {
-    return response.json({ "status": "Address cannot be empty" })
-  }
-  //validation for aadharNO
-  if (!aadharNo || !/^\d{12}$/.test(aadharNo)) {
-    return response.json({ "status": "Invalid Aadhar Number" });
-  }
-  // Validation for Email
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return response.json({ "status": "Invalid Email" });
-  }
-  //validation for department
-  if (!department || department.length > 200) {
-    return response.json({ "status": "Invalid department" })
-  }
-
-  // Validation for Password
-  if (!password || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!*#a-zA-Z\d]).{8,12}$/.test(password)) {
-    return response.json({ "status": "Password should have minimum 8 and maximum 12 characters and have at least one lowercase letter, one uppercase letter, and one digit." });
-  }
-  //Validation for collegeId
-  if (!collegeId) {
-    return response.json({ "status": "Batch Id cannot be empty." });
-}
-
-  upload(req, res, function (err) {
+  
+  upload(request, response, function (err) {
     if (err) {
       console.error("Error uploading image:", err);
       return res.json({ "status": "Error uploading image" });
     }
+    const clgStaffToken=request.body.token
+    const profilePic=request.file ? request.file.filename:null
+
+    //Checking validations
+    const validationErrors={}
+
+    
 
     const clgstaff = new CollegeStaff({
       'id':req.body.id,
