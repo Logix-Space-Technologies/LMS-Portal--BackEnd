@@ -15,7 +15,7 @@ const Tasks = function (tasks) {
 
 };
 
-Task.taskCreate = (newTask, result) => {
+Tasks.taskCreate = (newTask, result) => {
     if (newTask.taskTitle !== "" && newTask.taskTitle !== null) {
         db.query("SELECT * FROM task WHERE taskTitle=? AND batchId=?", [newTask.taskTitle, newTask.batchId], (err, res) => {
             if (err) {
@@ -64,7 +64,7 @@ Tasks.taskDelete = (taskId, result) => {
 };
 
 
-Task.updateTask = (taskUpdate, result) =>{
+Tasks.updateTask = (taskUpdate, result) =>{
     db.query("UPDATE task SET batchId=?,taskTitle=?,taskDesc=?,taskType=?,taskFileUpload=?,totalScore=?,dueDate=?,updatedDate= CURRENT_DATE() WHERE id =?", 
     [taskUpdate.batchId, taskUpdate.taskTitle, taskUpdate.taskDesc, taskUpdate.taskType, taskUpdate.taskFileUpload, taskUpdate.totalScore, taskUpdate.dueDate, taskUpdate.id],
     (err, res)=>{
@@ -83,4 +83,4 @@ Task.updateTask = (taskUpdate, result) =>{
     })
 }
 
-module.exports = Task;
+module.exports = Tasks;
