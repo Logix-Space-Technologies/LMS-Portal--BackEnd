@@ -136,7 +136,7 @@ exports.clgStaffDelete = (request, response) => {
   });
 };
 
-exports.viewCollegeStaff = (request, response) => {
+exports.viewAllCollegeStaff = (request, response) => {
   const collegeToken = request.body.token
   CollegeStaff.getAll((err, data) => {
     if (err) {

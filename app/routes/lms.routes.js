@@ -31,7 +31,7 @@ router.post("/updateCollege", CollegeController.updateCollege)
 
 router.post('/deleteCollege',CollegeController.deleteCollege)
 
-router.post("/viewallcollegestaff", ClgStaffController.viewCollegeStaff);
+router.post("/viewallcollegestaff", ClgStaffController.viewAllCollegeStaff);
 
 router.post("/addBatches",BatchesController.batchCreate)
 
