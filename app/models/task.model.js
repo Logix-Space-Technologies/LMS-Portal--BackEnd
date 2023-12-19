@@ -1,12 +1,18 @@
 const db = require('../models/db');
 const { response } = require('express')
 
-const Task = function (task) {
-    this.batchId = task.batchId;
-    this.taskTitle = task.taskTitle;
-    this.taskDesc = task.taskDesc;
-    this.taskType = task.taskType;
-    this.totalScore = task.totalScore;
+
+
+const Tasks = function (tasks) {
+    this.id = tasks.id
+    this.batchId = tasks.batchId;
+    this.taskTitle = tasks.taskTitle;
+    this.taskDesc = tasks.taskDesc;
+    this.taskType = tasks.taskType;
+    this.taskFileUpload = tasks.taskFileUpload
+    this.totalScore = tasks.totalScore;
+    this.dueDate = tasks.dueDate
+
 };
 
 Task.taskCreate = (newTask, result) => {
@@ -39,5 +45,42 @@ Task.taskCreate = (newTask, result) => {
         result(null, { "status": "Task Title cannot be empty" });
     }
 };
+
+Tasks.taskDelete = (taskId, result) => {
+    db.query("UPDATE task SET isActive=0 , deleteStatus = 1 WHERE id = ? ", [taskId.id], (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return
+        }
+        if (res.affectedRows === 0) {
+            result({ kind: "not_found" }, null)
+            return
+
+        }
+        console.log("Delete task with id: ", { id: taskId.id })
+        result(null, { id: taskId.id })
+    });
+};
+
+
+Task.updateTask = (taskUpdate, result) =>{
+    db.query("UPDATE task SET batchId=?,taskTitle=?,taskDesc=?,taskType=?,taskFileUpload=?,totalScore=?,dueDate=?,updatedDate= CURRENT_DATE() WHERE id =?", 
+    [taskUpdate.batchId, taskUpdate.taskTitle, taskUpdate.taskDesc, taskUpdate.taskType, taskUpdate.taskFileUpload, taskUpdate.totalScore, taskUpdate.dueDate, taskUpdate.id],
+    (err, res)=>{
+        if (err) {
+            console.log("error: ", err)
+            result(err, null)
+            return
+        }
+
+        if (res.affectedRows === 0) {
+            result({ kind: "not_found" }, null)
+            return
+        }
+        console.log("Updated Task Details: ", {id : taskUpdate.id, ...taskUpdate})
+        result(null, {id: taskUpdate.id, ...taskUpdate})
+    })
+}
 
 module.exports = Task;
