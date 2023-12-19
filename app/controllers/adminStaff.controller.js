@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const AdminStaff = require("../models/adminStaff.model");
+const Validator = require("../config/data.validate")
 
 const saltRounds = 10;
 
@@ -26,23 +27,23 @@ exports.create = (request, response) => {
     }
 
     // Validation for Address
-    if (!Address || Address.length > 100) {
-        return response.json({ "status": "Address cannot be empty and should not exceed 100 characters" });
+    if (!Validator.isValidAddress(request.body.Address).isValid) {
+        validationErrors.address = Validator.isValidAddress(request.body.Address).message;
     }
 
     // Validation for AadharNo
-    if (!AadharNo || !/^\d{12}$/.test(AadharNo)) {
-        return response.json({ "status": "Invalid Aadhar Number" });
+    if (!Validator.isValidAadharNumber(request.body.AadharNo).isValid) {
+        validationErrors.aadharno = Validator.isValidAadharNumber(request.body.AadharNo).message;
     }
 
     // Validation for Email
-    if (!Email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(Email)) {
-        return response.json({ "status": "Invalid Email" });
+    if (!Validator.isValidEmail(request.body.Email).isValid) {
+        validationErrors.email = Validator.isValidEmail(request.body.Email).message;
     }
 
     // Validation for Password
-    if (!Password || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!*#a-zA-Z\d]).{8,12}$/.test(Password)) {
-        return response.json({ "status": "Password should have minimum 8 and maximum 12 characters and have at least one lowercase letter, one uppercase letter, and one digit." });
+    if (!Validator.isValidPassword(request.body.Password).isValid) {
+        validationErrors.password = Validator.isValidPassword(request.body.Password).message;
     }
 
      // If validation fails
