@@ -45,7 +45,7 @@ College.collegeCreate = (newCollege, result) => {
 };
 
 
-College.collegeView = async(result) =>{
+College.collegeViewAll = async(result) =>{
     let query ="SELECT * FROM college WHERE deleteStatus= 0 AND isActive= 1"
     db.query(query, (err, response) => {
         if(err){
