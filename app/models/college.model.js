@@ -18,7 +18,7 @@ const College = function (college) {
 College.collegeCreate = (newCollege, result) => {
     if (newCollege.collegeName !== "" && newCollege.collegeName !== null) {
         // Check if email already exists
-        db.query("SELECT * FROM college WHERE email=?", newCollege.email, (err, res) => {
+        db.query("SELECT * FROM college WHERE email=? AND deleteStatus=0 AND isActive=1", newCollege.email, (err, res) => {
             if (err) {
                 console.log("error: ", err);
                 result(err, null);
@@ -30,7 +30,7 @@ College.collegeCreate = (newCollege, result) => {
                     return;
                 } else {
                     // Check if website already exists
-                    db.query("SELECT * FROM college WHERE website=?", newCollege.website, (err, res) => {
+                    db.query("SELECT * FROM college WHERE website=? AND deleteStatus=0 AND isActive=1", newCollege.website, (err, res) => {
                         if (err) {
                             console.log("error: ", err);
                             result(err, null);
