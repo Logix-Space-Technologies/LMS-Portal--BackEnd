@@ -67,3 +67,40 @@ exports.adminLogin = (request,response)=>{
 }
 
 
+
+exports.adminChangePwd = (request, response) => {
+    const { userName, oldPassword, newPassword, token } = request.body;
+
+    Admin.changePassword({ userName, oldPassword, newPassword }, (err, result) => {
+        if (err) {
+            response.json({ status: err });
+            return;
+        }
+
+        if (result.status === "Password Updated Successfully!!!") {
+            
+            const hashedNewPassword = bcrypt.hashSync(newPassword, 10);
+
+            
+            Admin.changePassword({ userName, oldPassword, newPassword: hashedNewPassword }, (updateErr, updateResult) => {
+                if (updateErr) {
+                    response.json({ status: updateErr });
+                    return;
+                }
+
+                
+                jwt.verify(token, "lmsapp", (error, decoded) => {
+                    if (decoded) {
+                        response.json({ status: "Password Successfully Updated!!!" });
+                    } else {
+                        response.json({ status: "Unauthorized User!!!" });
+                    }
+                });
+            });
+        } else {
+            response.json(result);
+        }
+    });
+};
+
+
