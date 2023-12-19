@@ -60,21 +60,20 @@ exports.collegeCreate = (request, response) => {
 
 
 
-exports.viewCollege=(request,response)=>{
-    const collegeToken = request.body.token
-    College.getAll((err,data)=>{
-       if(err){
-        console.log(err)
-        response.json({"status":err})
-       } 
-       //response.json(data)
-        jwt.verify(collegeToken, "lmsapp", (err, decoded)=>{
-            if (decoded) {
-                response.json(data)
-            } else {
-                response.json({ "status": "Unauthorized User!!" });
-            }
-        } )
-       
-    })
+exports.collegeView=(request,response)=>{
+    const clgToken = request.body.token
+    console.log(clgToken)
+    jwt.verify(clgToken, "lmsapp", (decoded, err)=>{
+        if (decoded) {
+            College.collegeView((err, data)=>{
+                if (err) {
+                    response.json({"status": err})
+                } else {
+                    response.json({ status: "success", "data": data });
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    } )
 }
