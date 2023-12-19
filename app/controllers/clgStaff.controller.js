@@ -136,7 +136,7 @@ exports.clgStaffDelete = (request, response) => {
   });
 };
 
-exports.viewCollegeStaff = (request, response) => {
+exports.viewAllCollegeStaff = (request, response) => {
   const collegeToken = request.body.token
   CollegeStaff.getAll((err, data) => {
     if (err) {
@@ -154,36 +154,6 @@ exports.viewCollegeStaff = (request, response) => {
 
   })
 }
-
-
-
-
-exports.viewOneCollegeStaff = (request, response) => {
-  const collegeToken = request.body.token;
-  const collegeId = request.body.collegeId;
-
-  if (!collegeId) {
-    return response.json({ "status": "College Name is required." });
-  }
-
-  CollegeStaff.getOne(collegeId, (err, data) => {
-    if (err) {
-      console.log(err);
-      response.json({ "status": err });
-    } else {
-      jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
-        if (decoded) {
-          response.json(data);
-        } else {
-          response.json({ "status": "Unauthorized User!!" });
-        }
-      });
-    }
-  });
-};
-
-
-
 
 
 
