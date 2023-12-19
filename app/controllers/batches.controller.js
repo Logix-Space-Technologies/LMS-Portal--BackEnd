@@ -24,14 +24,14 @@ exports.batchCreate = (request, response) => {
     if (Validator.isEmpty(request.body.regStartDate).isValid) {
         validationErrors.regstartdate = Validator.isEmpty(request.body.regStartDate).message;
     }
-    if (Validator.isValidDate(request.body.regStartDate).isValid) {
+    if (!Validator.isValidDate(request.body.regStartDate).isValid) {
         validationErrors.regstartdate = Validator.isValidDate(request.body.regStartDate).message
     }
 
     if (Validator.isEmpty(request.body.regEndDate).isValid) {
         validationErrors.regenddate = Validator.isEmpty(request.body.regEndDate).message
     }
-    if (Validator.isValidDate(request.body.regEndDate).isValid) {
+    if (!Validator.isValidDate(request.body.regEndDate).isValid) {
         validationErrors.regenddate = Validator.isValidDate(request.body.regEndDate).message
     }
 
