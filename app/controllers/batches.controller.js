@@ -5,17 +5,13 @@ const Validator = require("../config/data.validate")
 
 exports.batchCreate = (request, response) => {
 
-    const batchToken = request.body.batchToken;
+    const batchToken = request.body.token;
 
     //checking validations
     const validationErrors = {};
 
     if (Validator.isEmpty(request.body.collegeId).isValid) {
-        validationErrors.name = Validator.isEmpty(request.body.batchName).message;
-    }
-
-    if (Validator.isEmpty(request.body.batchName).isValid) {
-        validationErrors.name = Validator.isEmpty(request.body.batchName).message;
+        validationErrors.value = Validator.isEmpty(request.body.collegeId).message;
     }
     if (!Validator.isValidName(request.body.batchName).isValid) {
         validationErrors.name = Validator.isValidName(request.body.batchName).message
@@ -39,8 +35,8 @@ exports.batchCreate = (request, response) => {
         validationErrors.description = Validator.isEmpty(request.body.batchDesc).message
     }
 
-    if (Validator.isEmpty(request.body.batchAmount).isValid) {
-        validationErrors.amount = Validator.isEmpty(request.body.batchAmount).message
+    if (!Validator.isValidAmount(request.body.batchAmount).isValid) {
+        validationErrors.amount = Validator.isValidAmount(request.body.batchAmount).message
     }
 
 
@@ -64,7 +60,7 @@ exports.batchCreate = (request, response) => {
         if (err) {
             response.json({ "status": err });
         }
-        jwt.verify(batchToken, "lmsapp", (decoded, err) => {
+        jwt.verify(batchToken, "lmsapp", (err, decoded) => {
             if (decoded) {
                 response.json({ status: "success", "data": data });
             } else {
