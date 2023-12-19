@@ -3,12 +3,15 @@ const { response } = require('express')
 
 
 
+
 const College = function (college) {
+    this.id = college.id
     this.collegeName = college.collegeName;
     this.collegeAddress = college.collegeAddress;
     this.website = college.website;
     this.email = college.email;
     this.collegePhNo = college.collegePhNo;
+    this.collegeMobileNumber=college.collegeMobileNumber;
     this.collegeImage = college.collegeImage;
 };
 
@@ -28,7 +31,7 @@ College.collegeCreate = (newCollege, result) => {
                     db.query("INSERT INTO college SET ?", newCollege, (err, res) => {
                         if (err) {
                             console.log("error: ", err);
-                            result(null, err);
+                            result(err, null);
                             return;
                         } else {
                             console.log("Added College: ", { id: res.id, ...newCollege });
@@ -44,8 +47,9 @@ College.collegeCreate = (newCollege, result) => {
 };
 
 
-College.getAll = async (result) => {
-    let query = "SELECT * FROM college"
+
+College.collegeViewAll = async(result) =>{
+    let query ="SELECT * FROM college WHERE deleteStatus= 0 AND isActive= 1"
     db.query(query, (err, response) => {
         if (err) {
             console.log("error: ", err)
@@ -60,29 +64,30 @@ College.getAll = async (result) => {
 
 
 
-College.delete = async (id, result) =>{
-    db.query("UPDATE college SET isActive=0, deleteStatus=1 WHERE id = ?", id, (err, res)=>{
+College.delete = async (clgId, result) =>{
+    db.query("UPDATE college SET isActive=0, deleteStatus=1 WHERE id = ?", [clgId.id], (err, res)=>{
         if(err){
             console.error("Error deleting college: ", err)
             result(err, null)
             return
         }
 
-        if (res.affectedRows === 0) {
-            result({ kind: "not_found" }, null)
+        if(res.affectedRows === 0){
+            result({ kind: "not_found"}, null)
             return
         }
 
-        console.log("Delete college with id: ", id)
-        result(null, res)
-    })
+        console.log("Delete college with id: ", {id : clgId.id})
+        result(null, {id:clgId.id})
+    } )
 }
 
 
 
-College.updateCollege = (id, clgUpdate, result) => {
-    db.query("UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, email = ?, collegePhNo = ?, collegeImage = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
-        [clgUpdate.collegeName, clgUpdate.collegeAddress, clgUpdate.website, clgUpdate.email, clgUpdate.collegePhNo, clgUpdate.collegeImage, id],
+
+College.updateCollege = (clgUpdate, result) => {
+    db.query("UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, email = ?, collegePhNo = ?, collegeMobileNumber = ?, collegeImage = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
+        [clgUpdate.collegeName, clgUpdate.collegeAddress, clgUpdate.website, clgUpdate.email, clgUpdate.collegePhNo, clgUpdate.collegeMobileNumber, clgUpdate.collegeImage, clgUpdate.id],
         (err, res) => {
             if (err) {
                 console.log("error : ", err)
@@ -94,8 +99,8 @@ College.updateCollege = (id, clgUpdate, result) => {
                 return
             }
 
-            console.log("Updated College Details : ", { id: id, ...clgUpdate })
-            result(null, { id: id, ...clgUpdate })
+            console.log("Updated College Details : ", { id: clgUpdate.id, ...clgUpdate })
+            result(null, { id: clgUpdate.id, ...clgUpdate })
         })
 }
 
