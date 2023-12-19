@@ -15,7 +15,7 @@ router.post("/", AdminController.adminLogin)
 
 router.post("/addCollege",CollegeController.collegeCreate)
 
-router.post("/viewCollege",CollegeController.viewCollege)
+router.post("/viewallcolleges",CollegeController.collegeAllView)
 
 router.post("/addAdminStaff",AdminStaffController.create)
 
@@ -27,7 +27,7 @@ router.post("/updateClgStaff", ClgStaffController.collegeStaffUpdate);
 
 router.post("/deletecolgstaff", ClgStaffController.clgStaffDelete);
 
-router.post("/updateCollege/:id", CollegeController.updateCollege)
+router.post("/updateCollege", CollegeController.updateCollege)
 
 router.post('/deleteCollege',CollegeController.deleteCollege)
 
@@ -43,12 +43,13 @@ router.post("/deleteadmstaff",AdminStaffController.admStaffDelete)
 
 router.post("/admchangepwd",AdminController.adminChangePwd)
 
-router.post("/viewBatches",BatchesController.batchView)
+router.post("/viewAllBatches",BatchesController.batchView)
 
 router.post("/updateAdminStaff",AdminStaffController.adminStaffUpdate)
 
 router.post("/addtask", taskController.createTask);
 
+router.post("/deleteTask",taskController.taskDelete)
 
 
 
