@@ -85,9 +85,9 @@ College.delete = async (clgId, result) =>{
 
 
 
-College.updateCollege = (id, clgUpdate, result) => {
-    db.query("UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, email = ?, collegePhNo = ?, collegeImage = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
-        [clgUpdate.collegeName, clgUpdate.collegeAddress, clgUpdate.website, clgUpdate.email, clgUpdate.collegePhNo, clgUpdate.collegeImage, id],
+College.updateCollege = (clgUpdate, result) => {
+    db.query("UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, email = ?, collegePhNo = ?, collegeMobileNumber = ?, collegeImage = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
+        [clgUpdate.collegeName, clgUpdate.collegeAddress, clgUpdate.website, clgUpdate.email, clgUpdate.collegePhNo, clgUpdate.collegeMobileNumber, clgUpdate.collegeImage, clgUpdate.id],
         (err, res) => {
             if (err) {
                 console.log("error : ", err)
@@ -99,8 +99,8 @@ College.updateCollege = (id, clgUpdate, result) => {
                 return
             }
 
-            console.log("Updated College Details : ", { id: id, ...clgUpdate })
-            result(null, { id: id, ...clgUpdate })
+            console.log("Updated College Details : ", { id: clgUpdate.id, ...clgUpdate })
+            result(null, { id: clgUpdate.id, ...clgUpdate })
         })
 }
 
