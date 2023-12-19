@@ -2,6 +2,7 @@ const db = require('../models/db')
 const { response } = require('express')
 
 const Batches = function (batches) {
+    this.id = batches.id;
     this.collegeId = batches.collegeId;
     this.batchName = batches.batchName;
     this.regStartDate = batches.regStartDate;
@@ -41,8 +42,26 @@ Batches.batchCreate = (newBatch, result) =>{
     }
 }
 
+
+Batches.batchDelete = (batchId, result) => {
+    db.query("UPDATE batches SET isActive = 0, deleteStatus = 1 WHERE id = ?", [batchId.id], (err,res) => {
+        if (err) {
+            console.log("error : ", err)
+            result(err, null)
+            return
+        }
+        if(res.affectedRows === 0){
+            result({ kind: "not_found"}, null)
+            return
+        }
+
+        console.log("Delete Batch with id : ", {id : batchId.id})
+        result(null, {id : batchId.id})
+    })
+}
+
 Batches.batchView = (result) => {
-    db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id  ", (err, res) => {
+    db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus=0 AND b.isActive= 1;", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)
