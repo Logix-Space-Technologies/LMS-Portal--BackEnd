@@ -7,14 +7,22 @@ const saltRounds = 10;
 exports.create = (request, response) => {
     const { AdStaffName, PhNo, Address, AadharNo, Email, Password } = request.body;
     const adstaffToken = request.body.token
+
+     // Checking validations
+     const validationErrors = {};
+
+
     // Validation for AdStaffName
-    if (!AdStaffName || AdStaffName.trim() === "") {
-        return response.json({ "status": "AdStaffName cannot be empty" });
+    if (Validator.isEmpty(request.body.AdStaffName).isValid) {
+        validationErrors.name = Validator.isEmpty(request.body.AdStaffName).message;
+    }
+    if (!Validator.isValidName(request.body.AdStaffName).isValid) {
+        validationErrors.name = Validator.isValidName(request.body.AdStaffName).message
     }
 
-    // Validation for PhNo
-    if (!PhNo || !/^\+91[6-9][0-9]{9}$/.test(PhNo)) {
-        return response.json({ "status": "Invalid Phone Number" });
+    // Validation for mobile number
+    if (!Validator.isValidMobileNumber(request.body.PhNo).isValid) {
+        validationErrors.mobile = Validator.isValidMobileNumber(request.body.PhNo).message;
     }
 
     // Validation for Address
@@ -37,6 +45,10 @@ exports.create = (request, response) => {
         return response.json({ "status": "Password should have minimum 8 and maximum 12 characters and have at least one lowercase letter, one uppercase letter, and one digit." });
     }
 
+     // If validation fails
+     if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
 
     // Generate a salt and hash the password
     bcrypt.hash(Password, saltRounds, (err, hashedPassword) => {
