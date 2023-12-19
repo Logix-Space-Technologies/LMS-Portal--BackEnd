@@ -15,7 +15,7 @@ router.post("/", AdminController.adminLogin)
 
 router.post("/addCollege",CollegeController.collegeCreate)
 
-router.post("/viewCollege",CollegeController.viewCollege)
+router.post("/viewallcolleges",CollegeController.collegeAllView)
 
 router.post("/addAdminStaff",AdminStaffController.create)
 
