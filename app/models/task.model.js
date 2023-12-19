@@ -42,23 +42,22 @@ Task.taskCreate = (newTask, result) => {
 };
 
 
-Task.updateTask = (taskUpdate, result) =>{
-    db.query("UPDATE task SET batchId=?,taskTitle=?,taskDesc=?,taskType=?,taskFileUpload=?,totalScore=?,dueDate=?,updatedDate= CURRENT_DATE() WHERE id =?", 
-    [taskUpdate.batchId, taskUpdate.taskTitle, taskUpdate.taskDesc, taskUpdate.taskType, taskUpdate.taskFileUpload, taskUpdate.totalScore, taskUpdate.dueDate, taskUpdate.id],
-    (err, res)=>{
-        if (err) {
-            console.log("error: ", err)
-            result(err, null)
+Task.updateTask = (updatedTask, result) =>{
+    db.query("SELECT * FROM task WHERE id = ? AND deleteStatus=0 AND isActive=1" [updatedTask, result], 
+    (taskErr, taskRes) =>{
+        if (taskErr) {
+            console.log("error checking task: ", taskErr)
+            result(taskErr, null)
             return
         }
 
-        if (res.affectedRows === 0) {
-            result({ kind: "not_found" }, null)
+        if (taskRes.length === 0) {
+            result("College not found", null)
             return
-        }
-        console.log("Updated Task Details: ", {id : taskUpdate.id, ...taskUpdate})
-        result(null, {id: taskUpdate.id, ...taskUpdate})
-    })
+        }
+
+        db.query("UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, taskType = ?, ")
+    })
 }
 
 module.exports = Task;

@@ -65,33 +65,7 @@ exports.taskUpdate = (req, res) => {
 
     const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = req.body;
 
-    // validation for batchId
-    if (!batchId) {
-        return res.json({ "status": "Batch Id cannot be empty." })
-    }
-
-    // validation for task Title
-    if (!taskTitle || taskTitle.trim() === "") {
-        return res.json({ "status": "Task Tiltle Cannot be Empty." })
-    }
-
-    //validation for task description
-    if (!taskDesc || taskDesc.length > 100) {
-        return res.json({ "status": "Description cannot be empty and should not exceed 100 characters" })
-    }
-    // validation for task Type
-    if (!taskType || taskType.trim() === "") {
-        return res.json({ "status": "Task Type Cannot be Empty." })
-    }
-    //validation for total score
-    if (!totalScore) {
-        return res.json({"status": "Total Score Cannot be Empty"})
-    }
-    //validation for due date
-    if (!dueDate) {
-        return res.json({"status": "Due date cannot be empty Cannot be Empty"})
-    }
-
+    
 
     const taskFileUpload = req.file ? req.file.filename : null;
 
