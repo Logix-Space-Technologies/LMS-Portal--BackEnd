@@ -49,6 +49,7 @@ router.post("/updateAdminStaff",AdminStaffController.adminStaffUpdate)
 
 router.post("/addtask", taskController.createTask);
 
+router.post("/deleteTask",taskController.taskDelete)
 
 
 
