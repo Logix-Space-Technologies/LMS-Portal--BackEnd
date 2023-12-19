@@ -35,7 +35,7 @@ router.post("/addBatches",BatchesController.batchCreate)
 
 router.post("/admchangepwd",AdminController.adminChangePwd)
 
-router.post("/viewBatches",BatchesController.batchView)
+router.post("/viewAllBatches",BatchesController.batchView)
 
 
 

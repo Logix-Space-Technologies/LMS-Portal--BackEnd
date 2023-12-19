@@ -42,7 +42,7 @@ Batches.batchCreate = (newBatch, result) =>{
 }
 
 Batches.batchView = (result) => {
-    db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id  ", (err, res) => {
+    db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus=0 AND b.isActive= 1;", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)
