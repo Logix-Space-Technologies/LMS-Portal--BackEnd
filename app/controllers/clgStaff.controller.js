@@ -9,15 +9,15 @@ const saltRounds = 10;
 
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (request, file, cb) => {
     cb(null, 'uploads/');
   },
-  filename: (req, file, cb) => {
+  filename: (request, file, cb) => {
     cb(null, Date.now() + file.originalname);
   },
 });
 
-const upload = multer({storage:storage}).single(profilePic)
+const upload = multer({storage:storage}).single("profilePic")
 
 exports.clgStaffCreate = (request, response) => {
   
@@ -32,45 +32,79 @@ exports.clgStaffCreate = (request, response) => {
     //Checking validations
     const validationErrors={}
 
-    
+    if(Validator.isEmpty(request.body.collegeStaffName).isValid){
+      validationErrors.name=Validator.isEmpty(request.body.collegeStaffName).message
+    }
+    if (!Validator.isValidName(request.body.collegeStaffName).isValid) {
+      validationErrors.name = Validator.isValidName(request.body.collegeStaffName).message
+  }
+  if (!Validator.isValidAddress(request.body.clgStaffAddress).isValid) {
+    validationErrors.address = Validator.isValidAddress(request.body.clgStaffAddress).message;
+}
+if (!Validator.isValidEmail(request.body.email).isValid) {
+  validationErrors.email = Validator.isValidEmail(request.body.email).message;
+}
+if (!Validator.isValidMobileNumber(request.body.phNo).isValid) {
+  validationErrors.phone = Validator.isValidMobileNumber(request.body.phNo).message;
+}
+if (!Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+  validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+}
+if (!Validator.isValidName(request.body.department).isValid) {
+  validationErrors.name = Validator.isValidName(request.body.department).message
+}
+if (Validator.isEmpty(request.body.department).isValid) {
+  validationErrors.name = Validator.isEmpty(request.body.department).message;
+}
+if(!Validator.isValidPassword(request.body.password).isValid){
+  validationErrors.password=Validator.isValidPassword(request.body.password).message
+}
+
+//If Validation fails
+if (Object.keys(validationErrors).length > 0) {
+  return response.json({ "status": "Validation failed", "data": validationErrors });
+}
+
+
+
 
     const clgstaff = new CollegeStaff({
-      'id':req.body.id,
-      collegeId: req.body.collegeId,
-      collegeStaffName: req.body.collegeStaffName,
-      email: req.body.email,
-      phNo: req.body.phNo,
-      aadharNo: req.body.aadharNo,
-      clgStaffAddress: req.body.clgStaffAddress,
-      profilePic: req.file ? req.file.filename : null,
-      department: req.body.department,
-      password: req.body.password,
+      
+      collegeId: request.body.collegeId,
+      collegeStaffName: request.body.collegeStaffName,
+      email: request.body.email,
+      phNo: request.body.phNo,
+      aadharNo: request.body.aadharNo,
+      clgStaffAddress: request.body.clgStaffAddress,
+      profilePic: profilePic,
+      department: request.body.department,
+      password: request.body.password,
     });
 
-    const token = req.body.token;
+    
 
     bcrypt.hash(clgstaff.password, saltRounds, (err, hashedPassword) => {
       if (err) {
-        return res.json({ "status": err });
+        return response.json({ "status": err });
       }
 
       clgstaff.password = hashedPassword;
 
-      if (clgstaff.collegeStaffName.trim() !== "") {
+    
         CollegeStaff.clgStaffCreate(clgstaff, (err, data) => {
           if (err) {
-            return res.json({ "status": err });
+            return response.json({ "status": err });
           }
 
-          jwt.verify(token, "lmsapp", (decoded, error) => {
+          jwt.verify(clgStaffToken, "lmsapp", (err,decoded) => {
             if (decoded) {
-              return res.json({ "status": "success", "data": data });
+              return response.json({ "status": "success", "data": data });
             } else {
-              return res.json({ "status": "Unauthorized access!!" });
+              return response.json({ "status": "Unauthorized access!!" });
             }
           });
         });
-      }
+      
     });
   });
 };
