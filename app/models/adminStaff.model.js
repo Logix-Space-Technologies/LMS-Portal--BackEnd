@@ -50,19 +50,19 @@ AdminStaff.create = (newAdminStaff, result) => {
 
 
 AdminStaff.getAlladmstaff = async (result) => {
-    let query = "SELECT * FROM admin_staff"
+    let query = "SELECT id, AdStaffName, PhNo, Address, AadharNo, Email, emailVerified, addedDate, updatedDate, deleteStatus, isActive, pwdUpdateStatus FROM admin_staff WHERE deleteStatus = 0 AND isActive = 1;";
     db.query(query, (err, res) => {
         if (err) {
-            console.log("error: ",err)
-            result(null,err)
-            return
+            console.log("error: ", err);
+            result(err, null);
+            return;
         } else {
-            console.log("Adminstaffs: ",res)
-            result(null,res)
-
+            console.log("Adminstaffs: ", res);
+            result(null, res);
         }
-    })
+    });
 }
+
 
 
 
