@@ -56,8 +56,7 @@ router.post("/addtask", taskController.createTask);
 
 router.post("/deleteTask",taskController.taskDelete)
 
-
-
+router.post("/updateBatch", BatchesController.batchUpdate);
 
 
 
