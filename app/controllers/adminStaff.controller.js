@@ -150,8 +150,8 @@ exports.adminStaffUpdate = (req, res) => {
             }
 
         }
-        const token = req.body.token;
-        jwt.verify(token, "lmsapp", (error, decoded) => {
+        const updateAdmtoken = req.body.token;
+        jwt.verify(updateAdmtoken, "lmsapp", (error, decoded) => {
             if (decoded) {
                 return res.json({ "status": "success", "data": data });
             } else {

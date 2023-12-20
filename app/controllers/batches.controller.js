@@ -82,8 +82,8 @@ exports.batchDelete = (request, response) => {
     Batches.batchDelete(batch, (err, data) => {
         if (err) {
             if (err.kind === "not_found") {
-                console.log({"status" : "Batch Not Found." })
-                response.json({"status" : "Batch Not Found." })
+                console.log({ "status": "Batch Not Found." })
+                response.json({ "status": "Batch Not Found." })
             } else {
                 response.json({ "message": "Error Deleting Batch." })
             }
@@ -101,13 +101,13 @@ exports.batchDelete = (request, response) => {
 
 exports.batchView = (request, response) => {
     const batchToken = request.body.token;
-    jwt.verify(batchToken, "lmsapp", (decoded, err) => {
+    jwt.verify(batchToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             Batches.batchView((err, data) => {
                 if (err) {
                     response.json({ "status": err });
-                } 
-                if(data.length == 0) {
+                }
+                if (data.length == 0) {
                     response.json({ status: "No batches found!" });
                 }
                 else {
@@ -123,16 +123,16 @@ exports.batchView = (request, response) => {
 
 exports.searchBatch = (request, response) => {
     const batchQuery = request.body.batchQuery;
-    const batchToken = request.body.batchToken;
+    const batchToken = request.body.token;
 
-    jwt.verify(batchToken, "lmsapp", (decoded, err) => {
+    jwt.verify(batchToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             Batches.searchBatch(batchQuery, (err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ status:"No search items found." });
+                        response.json({ status: "No search items found." });
                     } else {
                         response.json({ status: "success", "data": data });
                     }
@@ -164,7 +164,7 @@ exports.batchUpdate = (request, response) => {
     if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
         validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
     }
-    
+
     if (!Validator.isDateGreaterThanToday(regEndDate).isValid) {
         validationErrors.regEndDate = Validator.isDateGreaterThanToday(regEndDate).message;
     }
