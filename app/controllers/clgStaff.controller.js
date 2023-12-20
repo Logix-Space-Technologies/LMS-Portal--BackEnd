@@ -200,3 +200,29 @@ exports.collegeStaffUpdate = (req, res) => {
 };
 
 
+exports.searchCollegeStaff = (request, response) => {
+  const searchQuery = request.body.searchQuery;
+  const collegeStaffToken = request.body.token;
+
+  jwt.verify(collegeStaffToken, "lmsapp", (err, decoded) => {
+      if (decoded) {
+          if (searchQuery === null || searchQuery === undefined || searchQuery.trim() === "") {
+              return response.json({ "status": "Search query is required." });
+          }
+
+          CollegeStaff.searchCollegeStaff(searchQuery, (err, data) => {
+              if (err) {
+                  response.json({ "status": err });
+              } else {
+                  if (data.length === 0) {
+                      response.json({ status: "No search items found." });
+                  } else {
+                      response.json({ status: "success", "data": data });
+                  }
+              }
+          });
+      } else {
+          response.json({ "status": "Unauthorized User!!" });
+      }
+  });
+};
