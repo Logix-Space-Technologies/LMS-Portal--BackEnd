@@ -3,6 +3,7 @@ const { response } = require('express')
 
 
 
+
 const Tasks = function (tasks) {
     this.id = tasks.id
     this.batchId = tasks.batchId;
@@ -13,7 +14,7 @@ const Tasks = function (tasks) {
     this.totalScore = tasks.totalScore;
     this.dueDate = tasks.dueDate
 
-};
+
 
 Tasks.taskCreate = (newTask, result) => {
     if (newTask.taskTitle !== "" && newTask.taskTitle !== null) {
@@ -84,3 +85,5 @@ Tasks.updateTask = (taskUpdate, result) =>{
 }
 
 module.exports = Tasks;
+
+
