@@ -59,6 +59,14 @@ function isValidMobileNumber(mobileNumber) {
     };
 }
 
+function isValidAmount(amount) {
+    return {
+        isValid: amount > 0,
+        message: "Amount must be greater than zero"
+    };
+}
+
+
 function isValidAddress(address) {
     return {
         isValid: !address || address.length <= 100,
@@ -103,12 +111,23 @@ function isValidDate(date) {
     };
 }
 
+function isDateGreaterThanToday(date) {
+    const inputDate = new Date(date);
+    const currentDate = new Date();
+
+    return {
+        isValid: inputDate > currentDate,
+        message: "Select a date greater than today."
+    };
+}
+
 function isValidTime(time) {
     return {
         isValid: /^\d{2}:\d{2}:\d{2}$/.test(time),
         message: "Time must be in the format HH:MM:SS"
     };
 }
+
 
 function isValidAadharNumber(aadharNumber) {
     return {
@@ -132,7 +151,9 @@ module.exports = {
     isValidDate,
     isValidTime,
     isValidImageWith1mbConstratint,
-    isValidAadharNumber
+    isValidAadharNumber,
+    isValidAmount,
+    isDateGreaterThanToday
 };
 
 

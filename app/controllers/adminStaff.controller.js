@@ -1,42 +1,55 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const AdminStaff = require("../models/adminStaff.model");
+const Validator = require("../config/data.validate")
 
 const saltRounds = 10;
 
 exports.create = (request, response) => {
     const { AdStaffName, PhNo, Address, AadharNo, Email, Password } = request.body;
     const adstaffToken = request.body.token
+
+     // Checking validations
+     const validationErrors = {};
+
+
     // Validation for AdStaffName
-    if (!AdStaffName || AdStaffName.trim() === "") {
-        return response.json({ "status": "AdStaffName cannot be empty" });
+    if (Validator.isEmpty(request.body.AdStaffName).isValid) {
+        validationErrors.name = Validator.isEmpty(request.body.AdStaffName).message;
+    }
+    if (!Validator.isValidName(request.body.AdStaffName).isValid) {
+        validationErrors.name = Validator.isValidName(request.body.AdStaffName).message
     }
 
-    // Validation for PhNo
-    if (!PhNo || !/^\+91[6-9][0-9]{9}$/.test(PhNo)) {
-        return response.json({ "status": "Invalid Phone Number" });
+    // Validation for mobile number
+    if (!Validator.isValidMobileNumber(request.body.PhNo).isValid) {
+        validationErrors.mobile = Validator.isValidMobileNumber(request.body.PhNo).message;
     }
 
     // Validation for Address
-    if (!Address || Address.length > 100) {
-        return response.json({ "status": "Address cannot be empty and should not exceed 100 characters" });
+    if (!Validator.isValidAddress(request.body.Address).isValid) {
+        validationErrors.address = Validator.isValidAddress(request.body.Address).message;
     }
 
     // Validation for AadharNo
-    if (!AadharNo || !/^\d{12}$/.test(AadharNo)) {
-        return response.json({ "status": "Invalid Aadhar Number" });
+    if (!Validator.isValidAadharNumber(request.body.AadharNo).isValid) {
+        validationErrors.aadharno = Validator.isValidAadharNumber(request.body.AadharNo).message;
     }
 
     // Validation for Email
-    if (!Email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(Email)) {
-        return response.json({ "status": "Invalid Email" });
+    if (!Validator.isValidEmail(request.body.Email).isValid) {
+        validationErrors.email = Validator.isValidEmail(request.body.Email).message;
     }
 
     // Validation for Password
-    if (!Password || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!*#a-zA-Z\d]).{8,12}$/.test(Password)) {
-        return response.json({ "status": "Password should have minimum 8 and maximum 12 characters and have at least one lowercase letter, one uppercase letter, and one digit." });
+    if (!Validator.isValidPassword(request.body.Password).isValid) {
+        validationErrors.password = Validator.isValidPassword(request.body.Password).message;
     }
 
+     // If validation fails
+     if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
 
     // Generate a salt and hash the password
     bcrypt.hash(Password, saltRounds, (err, hashedPassword) => {
@@ -137,8 +150,8 @@ exports.adminStaffUpdate = (req, res) => {
             }
 
         }
-        const token = req.body.token;
-        jwt.verify(token, "lmsapp", (error, decoded) => {
+        const updateAdmtoken = req.body.token;
+        jwt.verify(updateAdmtoken, "lmsapp", (error, decoded) => {
             if (decoded) {
                 return res.json({ "status": "success", "data": data });
             } else {
