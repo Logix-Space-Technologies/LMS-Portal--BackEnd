@@ -8,7 +8,9 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/');
     },
     filename: (request, file, cb) => {
-        cb(null, Date.now() + file.originalname);
+        // Remove whitespaces and replace with underscores
+        const sanitizedFileName = Date.now() + file.originalname.replace(/\s/g, '_');
+        cb(null, sanitizedFileName);
     },
 });
 
@@ -56,9 +58,10 @@ exports.createTask = (request, response) => {
             return response.json({ "status": "Total Score cannot be empty." });
         }
 
-        if (!dueDate || !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
-            return response.json({ "status": "Invalid Date Format." });
+        if (!dueDate || !/^\d{2}\/\d{2}\/\d{4}$/.test(dueDate)) {
+            return response.json({ "status": "Invalid Date Format. Please use DD/MM/YYYY." });
         }
+
 
         const addtask = new Tasks({
             batchId: batchId,
@@ -75,7 +78,7 @@ exports.createTask = (request, response) => {
                 return response.json({ "status": err });
             } else {
                 console.log(taskToken)
-                jwt.verify(taskToken, "lmsapp", (err,decoded) => {
+                jwt.verify(taskToken, "lmsapp", (err, decoded) => {
                     if (decoded) {
                         return response.json({ "status": "success", "data": data });
                     } else {

@@ -12,7 +12,7 @@ const Tasks = function (tasks) {
 };
 
 Tasks.taskCreate = (newTask, result) => {
-    db.query("SELECT * FROM batches WHERE id=?", [newTask.batchId], (err, batchRes) => {
+    db.query("SELECT * FROM batches WHERE id=? AND deleteStatus = 0 AND isActive = 1", [newTask.batchId], (err, batchRes) => {
         if (err) {
             console.error("Error checking existing batch: ", err);
             result(err, null);
