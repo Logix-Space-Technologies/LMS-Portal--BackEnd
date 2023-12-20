@@ -60,6 +60,10 @@ exports.clgStaffCreate = (request, response) => {
       validationErrors.password = Validator.isValidPassword(request.body.password).message
     }
 
+    if (!Validator.isValidAadharNumber(request.body.aadharNo).isValid) {
+      validationErrors.aadharnumber = Validator.isValidAadharNumber(request.body.aadharNo).message
+    }
+
     //If Validation fails
     if (Object.keys(validationErrors).length > 0) {
       return response.json({ "status": "Validation failed", "data": validationErrors });
@@ -136,7 +140,7 @@ exports.clgStaffDelete = (request, response) => {
   });
 };
 
-exports.viewCollegeStaff = (request, response) => {
+exports.viewAllCollegeStaff = (request, response) => {
   const collegeToken = request.body.token
   CollegeStaff.getAll((err, data) => {
     if (err) {
@@ -154,7 +158,6 @@ exports.viewCollegeStaff = (request, response) => {
 
   })
 }
-
 
 
 
@@ -257,4 +260,30 @@ exports.collegeStaffUpdate = (req, res) => {
 
 
 
+exports.searchCollegeStaff = (request, response) => {
+  const searchQuery = request.body.searchQuery;
+  const collegeStaffToken = request.body.token;
+
+  jwt.verify(collegeStaffToken, "lmsapp", (err, decoded) => {
+      if (decoded) {
+          if (searchQuery === null || searchQuery === undefined || searchQuery.trim() === "") {
+              return response.json({ "status": "Search query is required." });
+          }
+
+          CollegeStaff.searchCollegeStaff(searchQuery, (err, data) => {
+              if (err) {
+                  response.json({ "status": err });
+              } else {
+                  if (data.length === 0) {
+                      response.json({ status: "No search items found." });
+                  } else {
+                      response.json({ status: "success", "data": data });
+                  }
+              }
+          });
+      } else {
+          response.json({ "status": "Unauthorized User!!" });
+      }
+  });
+};
 

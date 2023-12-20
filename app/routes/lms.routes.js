@@ -31,9 +31,7 @@ router.post("/updateCollege", CollegeController.updateCollege)
 
 router.post('/deleteCollege',CollegeController.deleteCollege)
 
-router.post("/viewallcollegestaff", ClgStaffController.viewCollegeStaff);
-
-router.post("/viewonecollegestaff", ClgStaffController.viewOneCollegeStaff) //for viewing college staffs of a single college
+router.post("/viewallcollegestaff", ClgStaffController.viewAllCollegeStaff);
 
 router.post("/addBatches",BatchesController.batchCreate)
 
@@ -47,9 +45,20 @@ router.post("/viewAllBatches",BatchesController.batchView)
 
 router.post("/updateAdminStaff",AdminStaffController.adminStaffUpdate)
 
+
+router.post("/searchBatch",BatchesController.searchBatch)
+
+
 router.post("/addtask", taskController.createTask);
 
+router.post("/updatetask", taskController.taskUpdate);
+
+
 router.post("/deleteTask",taskController.taskDelete)
+
+router.post("/updateBatch", BatchesController.batchUpdate);
+
+router.post('/searchCollegeStaff', ClgStaffController.searchCollegeStaff);
 
 
 

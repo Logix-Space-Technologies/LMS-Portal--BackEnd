@@ -1,7 +1,8 @@
 const Tasks = require("../models/task.model");
 const jwt = require("jsonwebtoken");
-const multer = require("multer")
 const path = require("path")
+const { request, response } = require("express");
+const multer =  require("multer")
 
 const storage = multer.diskStorage({
     destination: (request, file, cb) => {
@@ -89,6 +90,7 @@ exports.createTask = (request, response) => {
 };
 
 
+
 exports.taskDelete = (request , response) => {
     const deleteToken = request.body.token
     const task = new Tasks({
@@ -121,3 +123,49 @@ exports.taskDelete = (request , response) => {
         }
     })
 }
+
+exports.taskUpdate = (req, res) => {
+    upload(request, response, function (err) {
+        if (err) {
+            console.error("Error uploading file:", err);
+            return response.json({ "status": err });
+        }
+
+    const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = req.body;
+
+    
+
+    const taskFileUpload = req.file ? req.file.filename : null;
+
+
+
+    const task = new Tasks({
+        'id': req.body.id,
+        batchId: batchId,
+        taskTitle: taskTitle,
+        taskDesc: taskDesc,
+        taskType: taskType,
+        taskFileUpload: taskFileUpload,
+        totalScore: totalScore,
+        dueDate: dueDate
+    })
+    Tasks.updateTask(task, (err, data) => {
+        if (err) {
+            if (err.kind === "not_found") {
+                return res.json({ "status": "Task with provided Id is not found." })
+            } else {
+                return res.json({ "status": "Internal server error" })
+            }
+        }
+        const updateTasktoken = req.body.token;
+        jwt.verify(updateTasktoken, "lmsapp", (error, decoded) => {
+            if (decoded) {
+                return res.json({ "status": "success", "data": data })
+            } else {
+                return res.json({ "status": "Unauthorized access!!" })
+            }
+        })
+        })
+    })
+}
+
