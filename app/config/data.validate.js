@@ -128,6 +128,7 @@ function isValidTime(time) {
     };
 }
 
+
 function isValidAadharNumber(aadharNumber) {
     return {
         isValid: /^\d{12}$/.test(aadharNumber),
