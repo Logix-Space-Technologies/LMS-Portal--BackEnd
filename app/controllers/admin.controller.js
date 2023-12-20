@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const Admin = require("../models/admin.model");
 const { request, response } = require("express");
+const Validator = require('../config/data.validate')
 
 // const saltRounds = 10;
 
@@ -32,34 +33,34 @@ const { request, response } = require("express");
 //     })
 // }
 
-exports.adminLogin = (request,response)=>{
-    const {userName,Password} = request.body
+exports.adminLogin = (request, response) => {
+    const { userName, Password } = request.body
 
     const getUserName = request.body.userName
     const getPassword = request.body.Password
 
-    Admin.findByUserName(userName, (err,admin)=>{
+    Admin.findByUserName(userName, (err, admin) => {
 
         if (err) {
-            if (err.kind==="not_found") {
-                response.json({"status" : "Admin does not Exist."})
+            if (err.kind === "not_found") {
+                response.json({ "status": "Admin does not Exist." })
             } else {
-                response.json({"status" : "Error retrieving Admin Details."})
+                response.json({ "status": "Error retrieving Admin Details." })
             }
         } else {
-            const passwordMatch = bcrypt.compareSync(Password,admin.Password)
+            const passwordMatch = bcrypt.compareSync(Password, admin.Password)
 
             if (passwordMatch) {
-                jwt.sign({userName : getUserName, Password : getPassword }, "lmsapp", {expiresIn: "1d"},
-                (error, token)=>{
-                    if (error) {
-                        response.json({"status" : "Unauthorized User!!"})
-                    } else {
-                        response.json({"status" : "Success", "data" : admin, "token" : token})
-                    }
-                })
+                jwt.sign({ userName: getUserName, Password: getPassword }, "lmsapp", { expiresIn: "1d" },
+                    (error, token) => {
+                        if (error) {
+                            response.json({ "status": "Unauthorized User!!" })
+                        } else {
+                            response.json({ "status": "Success", "data": admin, "token": token })
+                        }
+                    })
             } else {
-                response.json({"status": "Invalid Username or Password !!!"})
+                response.json({ "status": "Invalid Username or Password !!!" })
             }
 
         }
@@ -77,18 +78,25 @@ exports.adminChangePwd = (request, response) => {
             return;
         }
 
+        const validationErrors = {};
+
+        const passwordValidation = Validator.isValidPassword(newPassword);
+
+        if (!passwordValidation.isValid) {
+            validationErrors.password = passwordValidation.message;
+            response.json({ status: validationErrors });
+            return;
+        }
+
         if (result.status === "Password Updated Successfully!!!") {
-            
             const hashedNewPassword = bcrypt.hashSync(newPassword, 10);
 
-            
             Admin.changePassword({ userName, oldPassword, newPassword: hashedNewPassword }, (updateErr, updateResult) => {
                 if (updateErr) {
                     response.json({ status: updateErr });
                     return;
                 }
 
-                
                 jwt.verify(token, "lmsapp", (error, decoded) => {
                     if (decoded) {
                         response.json({ status: "Password Successfully Updated!!!" });
@@ -102,5 +110,6 @@ exports.adminChangePwd = (request, response) => {
         }
     });
 };
+
 
 
