@@ -16,39 +16,66 @@ const CollegeStaff = function (collegestaff) {
 
 CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
     if (newClgStaff.collegeStaffName !== "" && newClgStaff.collegeStaffName !== null) {
-        db.query("SELECT * FROM college_staff WHERE email=? ", newClgStaff.email, (err, res) => {
-            console.log(newClgStaff)
+        // Check if college_id exists in the college table
+        db.query("SELECT * FROM college WHERE id = ? AND deleteStatus=0 AND isActive=1 ", [newClgStaff.collegeId], (err, collegeResult) => {
             if (err) {
-                console.log("error: ", err)
-                result(null, err)
-                return
-
+                console.log("error: ", err);
+                result(null, err);
+                return;
             } else {
-                if (res.length > 0) {
-                    console.log("Email already exists");
-                    result("Email already exists",null);
+                if (collegeResult.length === 0) {
+                    console.log("College ID does not exist");
+                    result("College ID does not exist", null);
                     return;
-                } else {
-                    db.query("INSERT INTO college_staff SET ?", newClgStaff, (err, res) => {
-                        if (err) {
-                            console.log("error: ", err);
-                            result(err,null);
+                }
+                // Unique aadhar checks
+                db.query("SELECT * FROM college_staff WHERE aadharNo=? AND deleteStatus=0 AND isActive=1" , [newClgStaff.aadharNo], (err, res) => {
+                    if (err) {
+                        console.log("error: ", err);
+                        result(null, err);
+                        return;
+                    } else {
+                        if (res.length > 0) {
+                            console.log("Aadhar already exists");
+                            result("Aadhar already exists", null);
                             return;
                         } else {
-                            console.log("Added College staff: ", { id: res.id, ...newClgStaff });
-                            result(null, { id: res.id, ...newClgStaff });
+                            // College ID exists, proceed with checking email and inserting college staff
+                            db.query("SELECT * FROM college_staff WHERE email=? AND deleteStatus=0 AND isActive=1 ", [newClgStaff.email], (err, res) => {
+                                console.log(newClgStaff);
+                                if (err) {
+                                    console.log("error: ", err);
+                                    result(null, err);
+                                    return;
+                                } else {
+                                    if (res.length > 0) {
+                                        console.log("Email already exists");
+                                        result("Email already exists", null);
+                                        return;
+                                    } else {
+                                        // Insert the new college staff
+                                        db.query("INSERT INTO college_staff SET ?", [newClgStaff], (err, res) => {
+                                            if (err) {
+                                                console.log("error: ", err);
+                                                result(err, null);
+                                                return;
+                                            } else {
+                                                console.log("Added College staff: ", { id: res.insertId, ...newClgStaff });
+                                                result(null, { id: res.insertId, ...newClgStaff });
+                                            }
+                                        });
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
-
+                    }
+                });
             }
-        })
+        });
     } else {
-        response.json({ "status": "Cannot be empty." })
+        result({ "status": "Cannot be empty." }, null);
     }
-
-}
-
+};
 
 
 

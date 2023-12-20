@@ -59,7 +59,9 @@ if (Validator.isEmpty(request.body.department).isValid) {
 if(!Validator.isValidPassword(request.body.password).isValid){
   validationErrors.password=Validator.isValidPassword(request.body.password).message
 }
-
+if (!Validator.isValidAadharNumber(request.body.aadharNo).isValid){
+  validationErrors.aadharnumber=Validator.isValidAadharNumber(request.body.aadharNo).message
+}
 //If Validation fails
 if (Object.keys(validationErrors).length > 0) {
   return response.json({ "status": "Validation failed", "data": validationErrors });
