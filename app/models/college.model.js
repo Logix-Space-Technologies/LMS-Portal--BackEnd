@@ -29,32 +29,46 @@ College.collegeCreate = (newCollege, result) => {
                     result("Email already exists", null);
                     return;
                 } else {
-                    // Check if website already exists
-                    db.query("SELECT * FROM college WHERE website=? AND deleteStatus=0 AND isActive=1", newCollege.website, (err, res) => {
-                        if (err) {
-                            console.log("error: ", err);
-                            result(err, null);
-                            return;
-                        } else {
-                            if (res.length > 0) {
-                                console.log("Website already exists");
-                                result("Website already exists", null);
+                    // Check if website already exists only if it is provided
+                    if (newCollege.website !== "") {
+                        db.query("SELECT * FROM college WHERE website=? AND deleteStatus=0 AND isActive=1", newCollege.website, (err, res) => {
+                            if (err) {
+                                console.log("error: ", err);
+                                result(err, null);
                                 return;
                             } else {
-                                // Insert new college if email and website do not exist
-                                db.query("INSERT INTO college SET ?", newCollege, (err, res) => {
-                                    if (err) {
-                                        console.log("error: ", err);
-                                        result(err, null);
-                                        return;
-                                    } else {
-                                        console.log("Added College: ", { id: res.id, ...newCollege });
-                                        result(null, { id: res.id, ...newCollege });
-                                    }
-                                });
+                                if (res.length > 0) {
+                                    console.log("Website already exists");
+                                    result("Website already exists", null);
+                                    return;
+                                } else {
+                                    // Insert new college if email and website do not exist
+                                    db.query("INSERT INTO college SET ?", newCollege, (err, res) => {
+                                        if (err) {
+                                            console.log("error: ", err);
+                                            result(err, null);
+                                            return;
+                                        } else {
+                                            console.log("Added College: ", { id: res.id, ...newCollege });
+                                            result(null, { id: res.id, ...newCollege });
+                                        }
+                                    });
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        // Insert new college if email exists and website is not provided
+                        db.query("INSERT INTO college SET ?", newCollege, (err, res) => {
+                            if (err) {
+                                console.log("error: ", err);
+                                result(err, null);
+                                return;
+                            } else {
+                                console.log("Added College: ", { id: res.id, ...newCollege });
+                                result(null, { id: res.id, ...newCollege });
+                            }
+                        });
+                    }
                 }
             }
         });
