@@ -13,6 +13,7 @@ const Tasks = function (tasks) {
     this.taskFileUpload = tasks.taskFileUpload
     this.totalScore = tasks.totalScore;
     this.dueDate = tasks.dueDate
+};
 
 
 
