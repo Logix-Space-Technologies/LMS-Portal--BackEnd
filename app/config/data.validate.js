@@ -149,7 +149,7 @@ function isValidAadharNumber(aadharNumber) {
 }
 
 function isValidFile(file) {
-    // Accept only JPG and JPEG files
+    // Accept only PDF and DOCX files
     const allowedExtensions = /\.(pdf|docx)$/;
 
     // Check file extension
