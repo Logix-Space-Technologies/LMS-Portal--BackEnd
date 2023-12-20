@@ -10,6 +10,11 @@ function isEmpty(value) {
 
 
 function isValidPhoneNumber(phoneNumber) {
+    if (phoneNumber === null || phoneNumber === "") {
+        return {
+            isValid: true,
+        };
+    }
     return {
         isValid: /^\d{2,5}-?\d{6,8}$/.test(phoneNumber),
         message: "Invalid Phone Number"
@@ -75,11 +80,18 @@ function isValidAddress(address) {
 }
 
 function isValidWebsite(website) {
+    if (website === null || website === "") {
+        return {
+            isValid: true,
+        };
+    }
+
     return {
         isValid: /^www\.[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/.test(website),
         message: "Website must be in the format www.example.com"
     };
 }
+
 
 function isValidEmail(email) {
     return {
@@ -118,7 +130,7 @@ function isDateGreaterThanToday(date) {
     return {
         isValid: inputDate > currentDate,
         message: "Select a date greater than today."
-    };
+    };
 }
 
 function isValidTime(time) {
