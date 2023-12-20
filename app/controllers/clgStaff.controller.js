@@ -241,7 +241,7 @@ exports.collegeStaffUpdate = (req, res) => {
               return res.json({ "status": "College staff not found with the provided ID" });
             } else {
               console.error("Internal Server Error:", err);
-              return res.json({ "status": "Internal Server Error" });
+              return res.json({ "status": "No College found with the provided ID" });
             }
           }
 
