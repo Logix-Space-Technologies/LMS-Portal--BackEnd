@@ -184,74 +184,76 @@ exports.viewOneCollegeStaff = (request, response) => {
 
 
 exports.collegeStaffUpdate = (req, res) => {
-  const Updatetoken = req.body.token;
-
-  jwt.verify(Updatetoken, "lmsapp", (error, decoded) => {
-    if (error) {
-      return res.json({ "status": "Unauthorized access!!" });
-    }
-    // Token is verified, proceed with updating the data
-    upload(req, res, function (err) {
-      if (err) {
-        console.error("Error uploading image:", err);
-        return res.json({ "status": "Error uploading image" });
-      }
-      const validationErrors = {}
-    const profilePic = req.file ? req.file.filename : null
-
-    //Checking validations
-    if (Validator.isEmpty(req.body.collegeStaffName).isValid) {
-      validationErrors.name = Validator.isEmpty(req.body.collegeStaffName).message
-    }
-    if (!Validator.isValidName(req.body.collegeStaffName).isValid) {
-      validationErrors.name = Validator.isValidName(req.body.collegeStaffName).message
-    }
-    if (!Validator.isValidAddress(req.body.clgStaffAddress).isValid) {
-      validationErrors.address = Validator.isValidAddress(req.body.clgStaffAddress).message;
-    }
-    if (Validator.isEmpty(req.body.clgStaffAddress).isValid) {
-      validationErrors.clgStaffAddress = Validator.isEmpty(req.body.clgStaffAddress).message
-    }
-    if (!Validator.isValidMobileNumber(req.body.phNo).isValid) {
-      validationErrors.phone = Validator.isValidMobileNumber(req.body.phNo).message;
-    }
-    if (Validator.isEmpty(req.body.phNo).isValid) {
-      validationErrors.phone = Validator.isEmpty(req.body.phNo).message
-    }
-    if (!Validator.isValidImageWith1mbConstratint(req.file).isValid) {
-      validationErrors.image = Validator.isValidImageWith1mbConstratint(req.file).message;
-    }
-    if (!Validator.isValidName(req.body.department).isValid) {
-      validationErrors.name = Validator.isValidName(req.body.department).message
-    }
-    if (Validator.isEmpty(req.body.department).isValid) {
-      validationErrors.name = Validator.isEmpty(req.body.department).message;
+  upload(req, res, function (err) {
+    if (err) {
+      console.error("Error uploading image:", err);
+      return res.json({ "status": "Error uploading image" });
     }
 
-      const clgstaff = new CollegeStaff({
-        'id': req.body.id,
-        collegeId: req.body.collegeId,
-        collegeStaffName: req.body.collegeStaffName,
-        phNo: req.body.phNo,
-        clgStaffAddress: req.body.clgStaffAddress,
-        profilePic: profilePic,
-        department: req.body.department,
-      });
-
-      CollegeStaff.updateCollegeStaff(clgstaff, (err, data) => {
-        if (err) {
-          if (err.kind === "not_found") {
-            return res.json({ "status": "College staff not found with the provided ID" });
-          } else {
-            return res.json({ "status": "Internal Server Error" });
-          }
+    const Updatetoken = req.body.token;
+    console.log(Updatetoken)
+    const validationErrors = {};
+    if(!req.file){
+      return res.json({ "status": "Image is required." });
+    }
+    jwt.verify(Updatetoken, "lmsapp", (error, decoded) => {
+      if (decoded) {
+        if (!Validator.isValidName(req.body.collegeStaffName).isValid) {
+          validationErrors.name = Validator.isValidName(req.body.collegeStaffName).message;
+        }
+        if (!Validator.isValidAddress(req.body.clgStaffAddress).isValid) {
+          validationErrors.address = Validator.isValidAddress(req.body.clgStaffAddress).message;
+        }
+        if (!Validator.isValidMobileNumber(req.body.phNo).isValid) {
+          validationErrors.phone = Validator.isValidMobileNumber(req.body.phNo).message;
+        }
+        if (!req.body.phNo) {
+          validationErrors.phone = "Phone number is required.";
+        }
+        if (!req.file || !Validator.isValidImageWith1mbConstratint(req.file).isValid) {
+          validationErrors.image = Validator.isValidImageWith1mbConstratint(req.file).message;
+        }
+        if (!Validator.isValidName(req.body.department).isValid) {
+          validationErrors.department = Validator.isValidName(req.body.department).message;
+        }
+        if (!req.body.department) {
+          validationErrors.department = "Department is required.";
         }
 
-        return res.json({ "status": "success", "data": data });
-      });
+        if (Object.keys(validationErrors).length > 0) {
+          return res.json({ "status": "Validation failed", "data": validationErrors });
+        }
+
+        const profilePic = req.file ? req.file.filename : null;
+        const clgstaff = new CollegeStaff({
+          id: req.body.id,
+          collegeId: req.body.collegeId,
+          collegeStaffName: req.body.collegeStaffName,
+          phNo: req.body.phNo,
+          clgStaffAddress: req.body.clgStaffAddress,
+          profilePic: profilePic,
+          department: req.body.department,
+        });
+
+        CollegeStaff.updateCollegeStaff(clgstaff, (err, data) => {
+          if (err) {
+            if (err.status === "not_found") {
+              return res.json({ "status": "College staff not found with the provided ID" });
+            } else {
+              console.error("Internal Server Error:", err);
+              return res.json({ "status": "Internal Server Error" });
+            }
+          }
+
+          return res.json({ "status": "success", "data": data });
+        });
+      } else {
+        return res.json({ "status": "Unauthorized User!!" });
+      }
     });
   });
 };
+
 
 
 

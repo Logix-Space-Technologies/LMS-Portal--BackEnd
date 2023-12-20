@@ -54,42 +54,39 @@ CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
 
 CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
     // Check if the collegeId exists in the college table
-    db.query("SELECT * FROM college WHERE id = ? AND deleteStatus=0 AND isActive=1", [clgstaff.collegeId], (err, collegeResult) => {
-        if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return;
+    db.query("SELECT * FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [clgstaff.collegeId], (err, collegeResult) => {
+      if (err) {
+        console.error("Error checking college existence:", err);
+        return result(err, null);
+      }
+  
+      if (collegeResult.length === 0) {
+        // College with the provided id not found
+        return result({ "status": "College not found with the provided ID" }, null);
+      }
+  
+      // Update college staff details
+      db.query(
+        "UPDATE college_staff SET collegeId=?, collegeStaffName=?, phNo=?, clgStaffAddress=?, profilePic=?, department=?, updatedDate = CURRENT_DATE() WHERE id=?",
+        [clgstaff.collegeId, clgstaff.collegeStaffName, clgstaff.phNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, clgstaff.id],
+        (updateErr, res) => {
+          if (updateErr) {
+            console.error("Error updating college staff details:", updateErr);
+            return result(updateErr, null);
+          }
+  
+          if (res.affectedRows === 0) {
+            // College staff not found with the provided ID
+            return result({ "status": "College Staff Not Found!" }, null);
+          }
+  
+          console.log("Updated college staff details:", { id: clgstaff.id, ...clgstaff });
+          return result(null, { id: clgstaff.id, ...clgstaff });
         }
-
-        if (collegeResult.length === 0) {
-            // College with the provided id not found
-            result({ "status": "College not found with the provided ID" }, null);
-            return;
-        }
-
-        // Update college staff details
-        db.query(
-            "UPDATE college_staff SET collegeId=?,collegeStaffName=?,phNo=?,clgStaffAddress=?,profilePic=?,department=?,updatedDate = CURRENT_DATE() WHERE id=?",
-            [clgstaff.collegeId, clgstaff.collegeStaffName, clgstaff.phNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, clgstaff.id],
-            (updateErr, res) => {
-                if (updateErr) {
-                    console.log("error: ", updateErr);
-                    result(updateErr, null);
-                    return;
-                }
-
-                if (res.affectedRows == 0) {
-                    // College staff not found with the provided ID
-                    result({ "status": "College Staff Not Found!" }, null);
-                    return;
-                }
-
-                console.log("updated college staff details: ", { id: clgstaff.id, ...clgstaff });
-                result(null, { id: clgstaff.id, ...clgstaff });
-            }
-        );
+      );
     });
-};
+  };
+
 
 
 
