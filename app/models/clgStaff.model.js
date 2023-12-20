@@ -53,8 +53,8 @@ CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
 
 
 CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
-    db.query("UPDATE college_staff SET collegeId=?,collegeStaffName=?,email=?,phNo=?,aadharNo=?,clgStaffAddress=?,profilePic=?,department=?,updatedDate = CURRENT_DATE() WHERE id=?",
-        [clgstaff.collegeId, clgstaff.collegeStaffName, clgstaff.email, clgstaff.phNo, clgstaff.aadharNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, clgstaff.id],
+    db.query("UPDATE college_staff SET collegeId=?,collegeStaffName=?,email=?,phNo=?,clgStaffAddress=?,profilePic=?,department=?,updatedDate = CURRENT_DATE() WHERE id=?",
+        [clgstaff.collegeId, clgstaff.collegeStaffName, clgstaff.email, clgstaff.phNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, clgstaff.id],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
