@@ -136,6 +136,27 @@ CollegeStaff.getAll = async(result) =>{
 }
 
 
+CollegeStaff.searchCollegeStaff = (search, result) => {
+    const searchTerm = `%${search}%`;
+
+    db.query(
+        "SELECT c.collegeName, cs.* FROM college_staff cs JOIN college c ON cs.collegeId = c.id WHERE cs.deleteStatus = 0 AND cs.isActive = 1 AND (cs.collegeStaffName LIKE ? OR c.collegeName LIKE ? OR cs.email LIKE ? OR cs.phNo LIKE ? OR cs.department LIKE ?)",
+        [searchTerm, searchTerm, searchTerm, searchTerm, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("College Staff: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
+
+
+
 
 
 module.exports = CollegeStaff
