@@ -5,17 +5,13 @@ const Validator = require("../config/data.validate")
 
 exports.batchCreate = (request, response) => {
 
-    const batchToken = request.body.batchToken;
+    const batchToken = request.body.token;
 
     //checking validations
     const validationErrors = {};
 
     if (Validator.isEmpty(request.body.collegeId).isValid) {
-        validationErrors.name = Validator.isEmpty(request.body.batchName).message;
-    }
-
-    if (Validator.isEmpty(request.body.batchName).isValid) {
-        validationErrors.name = Validator.isEmpty(request.body.batchName).message;
+        validationErrors.value = Validator.isEmpty(request.body.collegeId).message;
     }
     if (!Validator.isValidName(request.body.batchName).isValid) {
         validationErrors.name = Validator.isValidName(request.body.batchName).message
@@ -39,8 +35,8 @@ exports.batchCreate = (request, response) => {
         validationErrors.description = Validator.isEmpty(request.body.batchDesc).message
     }
 
-    if (Validator.isEmpty(request.body.batchAmount).isValid) {
-        validationErrors.amount = Validator.isEmpty(request.body.batchAmount).message
+    if (!Validator.isValidAmount(request.body.batchAmount).isValid) {
+        validationErrors.amount = Validator.isValidAmount(request.body.batchAmount).message
     }
 
 
@@ -62,17 +58,18 @@ exports.batchCreate = (request, response) => {
 
     Batches.batchCreate(batches, (err, data) => {
         if (err) {
-            response.json({ "status": err });
+            return response.json({ "status": err });
         }
-        jwt.verify(batchToken, "lmsapp", (decoded, err) => {
+
+        // Verify token using middleware or another appropriate place
+        jwt.verify(batchToken, "lmsapp", (err, decoded) => {
             if (decoded) {
-                response.json({ status: "success", "data": data });
+                return response.json({ "status": "success", "data": data });
             } else {
-                response.json({ "status": "Unauthorized User!!" });
+                return response.json({ "status": "Unauthorized User!!" });
             }
         });
     });
-
 }
 
 
@@ -86,6 +83,7 @@ exports.batchDelete = (request, response) => {
         if (err) {
             if (err.kind === "not_found") {
                 console.log({ "status": "Batch Not Found." })
+                response.json({ "status": "Batch Not Found." })
             } else {
                 response.json({ "message": "Error Deleting Batch." })
             }
@@ -102,14 +100,14 @@ exports.batchDelete = (request, response) => {
 }
 
 exports.batchView = (request, response) => {
-    const batchToken = request.body.batchToken;
-    jwt.verify(batchToken, "lmsapp", (decoded, err) => {
+    const batchToken = request.body.token;
+    jwt.verify(batchToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             Batches.batchView((err, data) => {
                 if (err) {
                     response.json({ "status": err });
-                } 
-                if(data.length == 0) {
+                }
+                if (data.length == 0) {
                     response.json({ status: "No batches found!" });
                 }
                 else {
@@ -125,16 +123,16 @@ exports.batchView = (request, response) => {
 
 exports.searchBatch = (request, response) => {
     const batchQuery = request.body.batchQuery;
-    const batchToken = request.body.batchToken;
+    const batchToken = request.body.token;
 
-    jwt.verify(batchToken, "lmsapp", (decoded, err) => {
+    jwt.verify(batchToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             Batches.searchBatch(batchQuery, (err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ status:"No search items found." });
+                        response.json({ status: "No search items found." });
                     } else {
                         response.json({ status: "success", "data": data });
                     }
@@ -166,7 +164,7 @@ exports.batchUpdate = (request, response) => {
     if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
         validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
     }
-    
+
     if (!Validator.isDateGreaterThanToday(regEndDate).isValid) {
         validationErrors.regEndDate = Validator.isDateGreaterThanToday(regEndDate).message;
     }

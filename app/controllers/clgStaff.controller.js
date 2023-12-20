@@ -2,9 +2,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { request, response } = require("express");
 const CollegeStaff = require("../models/clgStaff.model");
-const multer=require("multer")
-const path=require("path")
-const Validator=require("../config/data.validate")
+const multer = require("multer")
+const path = require("path")
+const Validator = require("../config/data.validate")
 const saltRounds = 10;
 
 
@@ -17,59 +17,61 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({storage:storage}).single("profilePic")
+const upload = multer({ storage: storage }).single("profilePic")
 
 exports.clgStaffCreate = (request, response) => {
-  
+
   upload(request, response, function (err) {
     if (err) {
       console.error("Error uploading image:", err);
       return res.json({ "status": "Error uploading image" });
     }
-    const clgStaffToken=request.body.token
-    const profilePic=request.file ? request.file.filename:null
+    const clgStaffToken = request.body.token
+    const profilePic = request.file ? request.file.filename : null
 
     //Checking validations
-    const validationErrors={}
+    const validationErrors = {}
 
-    if(Validator.isEmpty(request.body.collegeStaffName).isValid){
-      validationErrors.name=Validator.isEmpty(request.body.collegeStaffName).message
+    if (Validator.isEmpty(request.body.collegeStaffName).isValid) {
+      validationErrors.name = Validator.isEmpty(request.body.collegeStaffName).message
     }
     if (!Validator.isValidName(request.body.collegeStaffName).isValid) {
       validationErrors.name = Validator.isValidName(request.body.collegeStaffName).message
-  }
-  if (!Validator.isValidAddress(request.body.clgStaffAddress).isValid) {
-    validationErrors.address = Validator.isValidAddress(request.body.clgStaffAddress).message;
-}
-if (!Validator.isValidEmail(request.body.email).isValid) {
-  validationErrors.email = Validator.isValidEmail(request.body.email).message;
-}
-if (!Validator.isValidMobileNumber(request.body.phNo).isValid) {
-  validationErrors.phone = Validator.isValidMobileNumber(request.body.phNo).message;
-}
-if (!Validator.isValidImageWith1mbConstratint(request.file).isValid) {
-  validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
-}
-if (!Validator.isValidName(request.body.department).isValid) {
-  validationErrors.name = Validator.isValidName(request.body.department).message
-}
-if (Validator.isEmpty(request.body.department).isValid) {
-  validationErrors.name = Validator.isEmpty(request.body.department).message;
-}
-if(!Validator.isValidPassword(request.body.password).isValid){
-  validationErrors.password=Validator.isValidPassword(request.body.password).message
-}
-
-//If Validation fails
-if (Object.keys(validationErrors).length > 0) {
-  return response.json({ "status": "Validation failed", "data": validationErrors });
-}
+    }
+    if (!Validator.isValidAddress(request.body.clgStaffAddress).isValid) {
+      validationErrors.address = Validator.isValidAddress(request.body.clgStaffAddress).message;
+    }
+    if (!Validator.isValidEmail(request.body.email).isValid) {
+      validationErrors.email = Validator.isValidEmail(request.body.email).message;
+    }
+    if (!Validator.isValidMobileNumber(request.body.phNo).isValid) {
+      validationErrors.phone = Validator.isValidMobileNumber(request.body.phNo).message;
+    }
+    if (!Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+      validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+    }
+    if (!Validator.isValidName(request.body.department).isValid) {
+      validationErrors.name = Validator.isValidName(request.body.department).message
+    }
+    if (Validator.isEmpty(request.body.department).isValid) {
+      validationErrors.name = Validator.isEmpty(request.body.department).message;
+    }
+    if (!Validator.isValidPassword(request.body.password).isValid) {
+      validationErrors.password = Validator.isValidPassword(request.body.password).message
+    }
+    if (!Validator.isValidAadharNumber(request.body.aadharNo).isValid) {
+      validationErrors.aadharnumber = Validator.isValidAadharNumber(request.body.aadharNo).message
+    }
+    //If Validation fails
+    if (Object.keys(validationErrors).length > 0) {
+      return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
 
 
 
 
     const clgstaff = new CollegeStaff({
-      
+
       collegeId: request.body.collegeId,
       collegeStaffName: request.body.collegeStaffName,
       email: request.body.email,
@@ -81,7 +83,7 @@ if (Object.keys(validationErrors).length > 0) {
       password: request.body.password,
     });
 
-    
+
 
     bcrypt.hash(clgstaff.password, saltRounds, (err, hashedPassword) => {
       if (err) {
@@ -90,21 +92,21 @@ if (Object.keys(validationErrors).length > 0) {
 
       clgstaff.password = hashedPassword;
 
-    
-        CollegeStaff.clgStaffCreate(clgstaff, (err, data) => {
-          if (err) {
-            return response.json({ "status": err });
-          }
 
-          jwt.verify(clgStaffToken, "lmsapp", (err,decoded) => {
-            if (decoded) {
-              return response.json({ "status": "success", "data": data });
-            } else {
-              return response.json({ "status": "Unauthorized access!!" });
-            }
-          });
+      CollegeStaff.clgStaffCreate(clgstaff, (err, data) => {
+        if (err) {
+          return response.json({ "status": err });
+        }
+
+        jwt.verify(clgStaffToken, "lmsapp", (err, decoded) => {
+          if (decoded) {
+            return response.json({ "status": "success", "data": data });
+          } else {
+            return response.json({ "status": "Unauthorized access!!" });
+          }
         });
-      
+      });
+
     });
   });
 };
@@ -185,8 +187,8 @@ exports.collegeStaffUpdate = (req, res) => {
           return res.json({ "status": "Internal Server Error" });
         }
       }
-      const token = req.body.token;
-      jwt.verify(token, "lmsapp", (error, decoded) => {
+      const updateClgtoken = req.body.token;
+      jwt.verify(updateClgtoken, "lmsapp", (error, decoded) => {
         if (decoded) {
           return res.json({ "status": "success", "data": data });
         } else {

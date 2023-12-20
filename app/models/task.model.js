@@ -3,6 +3,7 @@ const { response } = require('express')
 
 
 
+
 const Tasks = function (tasks) {
     this.id = tasks.id
     this.batchId = tasks.batchId;
@@ -12,10 +13,11 @@ const Tasks = function (tasks) {
     this.taskFileUpload = tasks.taskFileUpload
     this.totalScore = tasks.totalScore;
     this.dueDate = tasks.dueDate
-
 };
 
-Task.taskCreate = (newTask, result) => {
+
+
+Tasks.taskCreate = (newTask, result) => {
     if (newTask.taskTitle !== "" && newTask.taskTitle !== null) {
         db.query("SELECT * FROM task WHERE taskTitle=? AND batchId=?", [newTask.taskTitle, newTask.batchId], (err, res) => {
             if (err) {
@@ -64,23 +66,25 @@ Tasks.taskDelete = (taskId, result) => {
 };
 
 
-Task.updateTask = (taskUpdate, result) =>{
-    db.query("UPDATE task SET batchId=?,taskTitle=?,taskDesc=?,taskType=?,taskFileUpload=?,totalScore=?,dueDate=?,updatedDate= CURRENT_DATE() WHERE id =?", 
-    [taskUpdate.batchId, taskUpdate.taskTitle, taskUpdate.taskDesc, taskUpdate.taskType, taskUpdate.taskFileUpload, taskUpdate.totalScore, taskUpdate.dueDate, taskUpdate.id],
-    (err, res)=>{
-        if (err) {
-            console.log("error: ", err)
-            result(err, null)
-            return
-        }
+Tasks.updateTask = (taskUpdate, result) => {
+    db.query("UPDATE task SET batchId=?,taskTitle=?,taskDesc=?,taskType=?,taskFileUpload=?,totalScore=?,dueDate=?,updatedDate= CURRENT_DATE() WHERE id =?",
+        [taskUpdate.batchId, taskUpdate.taskTitle, taskUpdate.taskDesc, taskUpdate.taskType, taskUpdate.taskFileUpload, taskUpdate.totalScore, taskUpdate.dueDate, taskUpdate.id],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err)
+                result(err, null)
+                return
+            }
 
-        if (res.affectedRows === 0) {
-            result({ kind: "not_found" }, null)
-            return
-        }
-        console.log("Updated Task Details: ", {id : taskUpdate.id, ...taskUpdate})
-        result(null, {id: taskUpdate.id, ...taskUpdate})
-    })
+            if (res.affectedRows === 0) {
+                result({ kind: "not_found" }, null)
+                return
+            }
+            console.log("Updated Task Details: ", { id: taskUpdate.id, ...taskUpdate })
+            result(null, { id: taskUpdate.id, ...taskUpdate })
+        })
 }
 
-module.exports = Task;
+module.exports = Tasks;
+
+
