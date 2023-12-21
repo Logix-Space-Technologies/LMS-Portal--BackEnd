@@ -32,6 +32,9 @@ exports.create = (request, response) => {
         }
 
         // Validation for Address
+        if (Validator.isEmpty(request.body.Address).isValid) {
+            validationErrors.address = Validator.isEmpty(request.body.Address).message;
+        }
         if (!Validator.isValidAddress(request.body.Address).isValid) {
             validationErrors.address = Validator.isValidAddress(request.body.Address).message;
         }
