@@ -77,8 +77,7 @@ CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
     }
 };
 
-
-
+//model
 CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
     // Check if the collegeId exists in the college table
     db.query("SELECT * FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [clgstaff.collegeId], (err, collegeResult) => {
@@ -89,13 +88,13 @@ CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
   
       if (collegeResult.length === 0) {
         // College with the provided id not found
-        return result({ "status": "College not found with the provided ID" }, null);
+        return result("College not found with the provided ID", null);
       }
   
       // Update college staff details
       db.query(
-        "UPDATE college_staff SET collegeId=?, collegeStaffName=?, phNo=?, clgStaffAddress=?, profilePic=?, department=?, updatedDate = CURRENT_DATE() WHERE id=?",
-        [clgstaff.collegeId, clgstaff.collegeStaffName, clgstaff.phNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, clgstaff.id],
+        "UPDATE college_staff SET collegeId=?, collegeStaffName=?,aadharNo=?,phNo=?, clgStaffAddress=?, profilePic=?, department=?, updatedDate = CURRENT_DATE(),updateStatus=1 WHERE id=? AND deleteStatus = 0 AND isActive = 1",
+        [clgstaff.collegeId, clgstaff.collegeStaffName,clgstaff.aadharNo, clgstaff.phNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, clgstaff.id],
         (updateErr, res) => {
           if (updateErr) {
             console.error("Error updating college staff details:", updateErr);
@@ -104,7 +103,7 @@ CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
   
           if (res.affectedRows === 0) {
             // College staff not found with the provided ID
-            return result({ "status": "College Staff Not Found!" }, null);
+            return result("College Staff Not Found!", null);
           }
   
           console.log("Updated college staff details:", { id: clgstaff.id, ...clgstaff });
@@ -113,6 +112,8 @@ CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
       );
     });
   };
+
+
 
 
 
