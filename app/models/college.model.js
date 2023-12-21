@@ -141,7 +141,7 @@ College.updateCollege = (clgUpdate, result) => {
                             result("Website Already Exists.", null)
                             return
                         } else {
-                            db.query("UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, collegePhNo = ?, collegeMobileNumber = ?, collegeImage = ?, updatedDate = CURRENT_DATE(), updatedStatus = 1 WHERE id = ?",
+                            db.query("UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, collegePhNo = ?, collegeMobileNumber = ?, collegeImage = ?, updatedDate = CURRENT_DATE(), updatedStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
                                 [clgUpdate.collegeName, clgUpdate.collegeAddress, clgUpdate.website, clgUpdate.collegePhNo, clgUpdate.collegeMobileNumber, clgUpdate.collegeImage, clgUpdate.id],
                                 (err, res) => {
                                     if (err) {
