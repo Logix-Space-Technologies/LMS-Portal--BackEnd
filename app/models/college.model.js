@@ -115,7 +115,6 @@ College.delete = async (clgId, result) => {
 
 
 
-
 College.updateCollege = (clgUpdate, result) => {
     // Check if College exists
     db.query("SELECT * FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [clgUpdate.id], (clgErr, clgRes) => {
