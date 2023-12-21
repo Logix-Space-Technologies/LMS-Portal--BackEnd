@@ -86,7 +86,7 @@ Tasks.updateTask = (updatedTask, result) => {
             }
 
             // Check if the task title already exists for the same batchId
-            db.query("SELECT COUNT(*) as count FROM task WHERE taskTitle LIKE ? AND batchId = ? AND id != ?",
+            db.query("SELECT COUNT(*) as count FROM task WHERE taskTitle LIKE ? AND batchId = ? AND id != ? AND deleteStatus = 0 AND isActive = 1",
                 [updatedTask.taskTitle, updatedTask.batchId, updatedTask.id],
                 (titleErr, titleRes) => {
                     if (titleErr) {
