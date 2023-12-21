@@ -100,7 +100,7 @@ Tasks.updateTask = (updatedTask, result) => {
                     }
 
                     // Update data in the task table
-                    db.query("UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, taskType = ?, taskFileUpload = ?, dueDate = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
+                    db.query("UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, taskType = ?, taskFileUpload = ?, dueDate = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
                         [
                             updatedTask.batchId,
                             updatedTask.taskTitle,
