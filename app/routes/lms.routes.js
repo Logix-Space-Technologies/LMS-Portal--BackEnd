@@ -58,6 +58,9 @@ router.post("/deleteTask",taskController.taskDelete)
 
 router.post("/updateBatch", BatchesController.batchUpdate);
 
+router.post('/searchCollegeStaff', ClgStaffController.searchCollegeStaff);
+
+
 
 
 module.exports = router

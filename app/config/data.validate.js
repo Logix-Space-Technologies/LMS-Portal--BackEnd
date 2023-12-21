@@ -21,6 +21,7 @@ function isValidPhoneNumber(phoneNumber) {
     };
 }
 
+
 function isValidImageWith1mbConstratint(file) {
     // Accept only JPG and JPEG files
     const allowedExtensions = /\.(jpg|jpeg|png|webp|heif)$/;
@@ -95,7 +96,7 @@ function isValidWebsite(website) {
 
 function isValidEmail(email) {
     return {
-        isValid: /^[a-zA-Z0-9_!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z]+\.([a-zA-Z]+)$/.test(email),
+        isValid: /^[a-zA-Z0-9_!#$%&'*+/=?^_`{|}~-]+@[a-z]+\.([a-z]+)$/.test(email),
         message: "Invalid Email"
     };
 }
@@ -118,8 +119,8 @@ function isValidName(name) {
 
 function isValidDate(date) {
     return {
-        isValid: /^\d{4}-\d{2}-\d{2}$/.test(date),
-        message: "Date must be in the format YYYY-MM-DD"
+        isValid: /^([0-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/\d{4}$/.test(date),
+        message: "Date must be in the format DD/MM/YYYY"
     };
 }
 
@@ -148,6 +149,41 @@ function isValidAadharNumber(aadharNumber) {
     };
 }
 
+function isValidFile(file) {
+    // Accept only PDF and DOCX files
+    const allowedExtensions = /\.(pdf|docx)$/;
+
+    // Check file extension
+    const extensionIsValid = allowedExtensions.test(path.extname(file.filename).toLowerCase());
+
+    // Check file size (max 1 MB)
+    const maxFileSize = 1 * 1024 * 1024; // 1 MB in bytes
+    const sizeIsValid = file.size <= maxFileSize;
+
+    if (!extensionIsValid && !sizeIsValid) {
+        return {
+            isValid: false,
+            message: 'Invalid file format and size exceeds the limit of 1 MB.'
+        };
+    } else if (!extensionIsValid) {
+        return {
+            isValid: false,
+            message: 'Invalid file format. Only PDF and DOCX files are allowed.'
+        };
+    } else if (!sizeIsValid) {
+        return {
+            isValid: false,
+            message: 'Image size exceeds the limit of 1 MB.'
+        };
+    }
+
+    return {
+        isValid: true,
+        message: 'Image is valid'
+    };
+}
+
+
 
 
 
@@ -165,8 +201,6 @@ module.exports = {
     isValidImageWith1mbConstratint,
     isValidAadharNumber,
     isValidAmount,
-    isDateGreaterThanToday
+    isDateGreaterThanToday,
+    isValidFile
 };
-
-
-

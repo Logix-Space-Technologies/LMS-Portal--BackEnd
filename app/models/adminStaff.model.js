@@ -27,7 +27,8 @@ AdminStaff.create = (newAdminStaff, result) => {
                 result("Email already exists", null);
                 return;
             } else {
-                db.query("SELECT * FROM admin_staff WHERE AadharNo=?", newAdminStaff.AadharNo, (err, res) => {
+                //checking aadhar number
+                db.query("SELECT * FROM admin_staff WHERE AadharNo=? AND deleteStatus = 0 AND isActive = 1", newAdminStaff.AadharNo, (err, res) => {
                     if (err) {
                         console.log("error: ", err);
                         result(err, null);
