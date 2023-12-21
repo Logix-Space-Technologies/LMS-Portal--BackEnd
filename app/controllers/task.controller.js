@@ -201,8 +201,29 @@ exports.taskUpdate = (request, response) => {
                 });
             } else {
                 return response.json({ "status": "Unauthorized access!!" });
-            }
+            } 
         });
     });
 };
+
+exports.taskView=(request,response)=>{
+    const taskToken=request.body.token
+    jwt.verify(taskToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            Tasks.taskView((err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                }
+                if (data.length == 0) {
+                    response.json({ status: "No tasks found!" });
+                }
+                else {
+                    response.json({ status: "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
 

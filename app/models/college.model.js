@@ -129,44 +129,29 @@ College.updateCollege = (clgUpdate, result) => {
                 result("College Not Found", null)
                 return
             } else {
-                // Check if the new email is different and already in use by another college
-                db.query("SELECT * FROM college WHERE email = ? AND id != ? AND deleteStatus = 0 AND isActive = 1", [clgUpdate.email, clgUpdate.id], (err, emailCheck) => {
+                // Check if the new website is already in use by another college
+                db.query("SELECT * FROM college WHERE website = ? AND id != ? AND deleteStatus = 0 AND isActive = 1", [clgUpdate.website, clgUpdate.id], (err, websiteCheck) => {
                     if (err) {
                         console.log("error : ", err)
                         result(err, null)
                         return
                     } else {
-                        if (emailCheck.length > 0) {
-                            console.log("Email Already Exists.")
-                            result("Email Already Exists", null)
+                        if (websiteCheck.length > 0) {
+                            console.log("Website Already Exists.")
+                            result("Website Already Exists.", null)
                             return
                         } else {
-                            // Check if the new website is already in use by another college
-                            db.query("SELECT * FROM college WHERE website = ? AND id != ? AND deleteStatus = 0 AND isActive = 1", [clgUpdate.website, clgUpdate.id], (err, websiteCheck) => {
-                                if (err) {
-                                    console.log("error : ", err)
-                                    result(err, null)
-                                    return
-                                } else {
-                                    if (websiteCheck.length > 0) {
-                                        console.log("Website Already Exists.")
-                                        result("Website Already Exists.", null)
+                            db.query("UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, collegePhNo = ?, collegeMobileNumber = ?, collegeImage = ?, updatedDate = CURRENT_DATE(), updatedStatus = 1 WHERE id = ?",
+                                [clgUpdate.collegeName, clgUpdate.collegeAddress, clgUpdate.website, clgUpdate.collegePhNo, clgUpdate.collegeMobileNumber, clgUpdate.collegeImage, clgUpdate.id],
+                                (err, res) => {
+                                    if (err) {
+                                        console.log("error : ", err)
+                                        result(err, null)
                                         return
-                                    } else {
-                                        db.query("UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, email = ?, collegePhNo = ?, collegeMobileNumber = ?, collegeImage = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
-                                            [clgUpdate.collegeName, clgUpdate.collegeAddress, clgUpdate.website, clgUpdate.email, clgUpdate.collegePhNo, clgUpdate.collegeMobileNumber, clgUpdate.collegeImage, clgUpdate.id],
-                                            (err, res) => {
-                                                if (err) {
-                                                    console.log("error : ", err)
-                                                    result(err, null)
-                                                    return
-                                                }
-                                                console.log("Updated College Details : ", { id: clgUpdate.id, ...clgUpdate })
-                                                result(null, { id: clgUpdate.id, ...clgUpdate })
-                                            })
                                     }
-                                }
-                            })
+                                    console.log("Updated College Details : ", { id: clgUpdate.id, ...clgUpdate })
+                                    result(null, { id: clgUpdate.id, ...clgUpdate })
+                                })
                         }
                     }
                 })
