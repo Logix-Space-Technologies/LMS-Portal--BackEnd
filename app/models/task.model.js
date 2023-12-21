@@ -3,6 +3,7 @@ const { response } = require('express')
 
 
 
+
 const Tasks = function (tasks) {
     this.id = tasks.id
     this.batchId = tasks.batchId;
@@ -12,8 +13,9 @@ const Tasks = function (tasks) {
     this.taskFileUpload = tasks.taskFileUpload
     this.totalScore = tasks.totalScore;
     this.dueDate = tasks.dueDate
-
 };
+
+
 
 Tasks.taskCreate = (newTask, result) => {
     if (newTask.taskTitle !== "" && newTask.taskTitle !== null) {
@@ -64,23 +66,62 @@ Tasks.taskDelete = (taskId, result) => {
 };
 
 
-Tasks.updateTask = (taskUpdate, result) =>{
-    db.query("UPDATE task SET batchId=?,taskTitle=?,taskDesc=?,taskType=?,taskFileUpload=?,totalScore=?,dueDate=?,updatedDate= CURRENT_DATE() WHERE id =?", 
-    [taskUpdate.batchId, taskUpdate.taskTitle, taskUpdate.taskDesc, taskUpdate.taskType, taskUpdate.taskFileUpload, taskUpdate.totalScore, taskUpdate.dueDate, taskUpdate.id],
-    (err, res)=>{
-        if (err) {
-            console.log("error: ", err)
-            result(err, null)
-            return
-        }
+Tasks.updateTask = (updatedTask, result) => {
+    // Check if the batch exists in the batches table
+    db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+        [updatedTask.batchId],
+        (batchErr, batchRes) => {
+            if (batchErr) {
+                console.error("Error checking batch: ", batchErr);
+                return result(batchErr, null);
+            }
 
-        if (res.affectedRows === 0) {
-            result({ kind: "not_found" }, null)
-            return
-        }
-        console.log("Updated Task Details: ", {id : taskUpdate.id, ...taskUpdate})
-        result(null, {id: taskUpdate.id, ...taskUpdate})
-    })
-}
+            if (batchRes.length === 0) {
+                console.log("Batch does not exist or is inactive/deleted.");
+                return result("Batch does not exist or is inactive/deleted.", null);
+            }
 
+            // Check if the task title already exists for the same batchId
+            db.query("SELECT COUNT(*) as count FROM task WHERE taskTitle LIKE ? AND batchId = ? AND id != ?",
+                [updatedTask.taskTitle, updatedTask.batchId, updatedTask.id],
+                (titleErr, titleRes) => {
+                    if (titleErr) {
+                        console.error("Error checking task title: ", titleErr);
+                        return result(titleErr, null);
+                    }
+
+                    if (titleRes[0].count > 0) {
+                        console.log("Title already exists for the same batchId.");
+                        return result("Title already exists for the same batchId.", null);
+                    }
+
+                    // Update data in the task table
+                    db.query("UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, taskType = ?, taskFileUpload = ?, dueDate = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
+                        [
+                            updatedTask.batchId,
+                            updatedTask.taskTitle,
+                            updatedTask.taskDesc,
+                            updatedTask.taskType,
+                            updatedTask.taskFileUpload,
+                            updatedTask.dueDate,
+                            updatedTask.id
+                        ],
+                        (updateErr, updateRes) => {
+                            if (updateErr) {
+                                console.error("Error updating task: ", updateErr);
+                                return result(updateErr, null);
+                            }
+
+                            if (updateRes.affectedRows === 0) {
+                                return result({ kind: "not_found" }, null);
+                            }
+
+                            console.log("Updated Task Details: ", { id: updatedTask.id, ...updatedTask });
+                            result(null, { id: updatedTask.id, ...updatedTask });
+                        });
+                });
+        });
+};
 module.exports = Tasks;
+
+
