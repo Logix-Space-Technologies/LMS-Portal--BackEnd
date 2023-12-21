@@ -10,18 +10,24 @@ function isEmpty(value) {
 
 
 function isValidPhoneNumber(phoneNumber) {
+    if (phoneNumber === null || phoneNumber === "") {
+        return {
+            isValid: true,
+        };
+    }
     return {
         isValid: /^\d{2,5}-?\d{6,8}$/.test(phoneNumber),
         message: "Invalid Phone Number"
     };
 }
 
+
 function isValidImageWith1mbConstratint(file) {
     // Accept only JPG and JPEG files
     const allowedExtensions = /\.(jpg|jpeg|png|webp|heif)$/;
 
     // Check file extension
-    const extensionIsValid = allowedExtensions.test(path.extname(file.filename).toLowerCase());
+    const extensionIsValid = allowedExtensions.test(path.extname(file.filename.replace(/[^\w\-.]/g, '')).toLowerCase());
 
     // Check file size (max 1 MB)
     const maxFileSize = 1 * 1024 * 1024; // 1 MB in bytes
@@ -59,6 +65,14 @@ function isValidMobileNumber(mobileNumber) {
     };
 }
 
+function isValidAmount(amount) {
+    return {
+        isValid: amount > 0,
+        message: "Amount must be greater than zero"
+    };
+}
+
+
 function isValidAddress(address) {
     return {
         isValid: !address || address.length <= 100,
@@ -67,15 +81,22 @@ function isValidAddress(address) {
 }
 
 function isValidWebsite(website) {
+    if (website === null || website === "") {
+        return {
+            isValid: true,
+        };
+    }
+
     return {
         isValid: /^www\.[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/.test(website),
         message: "Website must be in the format www.example.com"
     };
 }
 
+
 function isValidEmail(email) {
     return {
-        isValid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+        isValid: /^[a-zA-Z0-9_!#$%&'*+/=?^_`{|}~-]+@[a-z]+\.([a-z]+)$/.test(email),
         message: "Invalid Email"
     };
 }
@@ -98,8 +119,18 @@ function isValidName(name) {
 
 function isValidDate(date) {
     return {
-        isValid: /^\d{4}-\d{2}-\d{2}$/.test(date),
-        message: "Date must be in the format YYYY-MM-DD"
+        isValid: /^([0-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/\d{4}$/.test(date),
+        message: "Date must be in the format DD/MM/YYYY"
+    };
+}
+
+function isDateGreaterThanToday(date) {
+    const inputDate = new Date(date);
+    const currentDate = new Date();
+
+    return {
+        isValid: inputDate > currentDate,
+        message: "Select a date greater than today."
     };
 }
 
@@ -118,6 +149,51 @@ function isValidAadharNumber(aadharNumber) {
     };
 }
 
+function isValidFile(file) {
+    // Accept only PDF and DOCX files
+    const allowedExtensions = /\.(pdf|docx)$/;
+
+    // Check file extension
+    const extensionIsValid = allowedExtensions.test(path.extname(file.filename.replace(/[^\w\-.]/g, '')).toLowerCase());
+    console.log(file.filename)
+    // Check file size (max 1 MB)
+    const maxFileSize = 1 * 1024 * 1024; // 1 MB in bytes
+    const sizeIsValid = file.size <= maxFileSize;
+
+    if (!extensionIsValid && !sizeIsValid) {
+        return {
+            isValid: false,
+            message: 'Invalid file format and size exceeds the limit of 1 MB.'
+        };
+    } else if (!extensionIsValid) {
+        return {
+            isValid: false,
+            message: 'Invalid file format. Only PDF and DOCX files are allowed.'
+        };
+    } else if (!sizeIsValid) {
+        return {
+            isValid: false,
+            message: 'Image size exceeds the limit of 1 MB.'
+        };
+    }
+
+    return {
+        isValid: true,
+        message: 'Image is valid'
+    };
+}
+
+function isDate1GreaterThanDate2(date1, date2) {
+    const inputDate1 = new Date(date1);
+    const inputDate2 = new Date(date2);
+
+    return {
+        isValid: inputDate1 > inputDate2,
+        message: "Select a date greater than the previous date."
+    };
+}
+
+
 
 
 
@@ -133,8 +209,9 @@ module.exports = {
     isValidDate,
     isValidTime,
     isValidImageWith1mbConstratint,
-    isValidAadharNumber
+    isValidAadharNumber,
+    isValidAmount,
+    isDateGreaterThanToday,
+    isValidFile,
+    isDate1GreaterThanDate2
 };
-
-
-
