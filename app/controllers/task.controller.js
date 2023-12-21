@@ -139,7 +139,7 @@ exports.taskUpdate = (req, res) => {
 
 
 
-    const task = new Task({
+    const task = new Tasks({
         'id': req.body.id,
         batchId: batchId,
         taskTitle: taskTitle,
@@ -149,7 +149,7 @@ exports.taskUpdate = (req, res) => {
         totalScore: totalScore,
         dueDate: dueDate
     })
-    Task.updateTask(task, (err, data) => {
+    Tasks.updateTask(task, (err, data) => {
         if (err) {
             if (err.kind === "not_found") {
                 return res.json({ "status": "Task with provided Id is not found." })
@@ -157,8 +157,8 @@ exports.taskUpdate = (req, res) => {
                 return res.json({ "status": "Internal server error" })
             }
         }
-        const token = req.body.token;
-        jwt.verify(token, "lmsapp", (error, decoded) => {
+        const updateTasktoken = req.body.token;
+        jwt.verify(updateTasktoken, "lmsapp", (error, decoded) => {
             if (decoded) {
                 return res.json({ "status": "success", "data": data })
             } else {

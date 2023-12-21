@@ -7,84 +7,84 @@ const saltRounds = 10;
 
 exports.create = (request, response) => {
     const { AdStaffName, PhNo, Address, AadharNo, Email, Password } = request.body;
-    const adstaffToken = request.body.token
+    const adstaffToken = request.body.token;
 
-     // Checking validations
-     const validationErrors = {};
-
-
-    // Validation for AdStaffName
-    if (Validator.isEmpty(request.body.AdStaffName).isValid) {
-        validationErrors.name = Validator.isEmpty(request.body.AdStaffName).message;
-    }
-    if (!Validator.isValidName(request.body.AdStaffName).isValid) {
-        validationErrors.name = Validator.isValidName(request.body.AdStaffName).message
-    }
-
-    // Validation for mobile number
-    if (!Validator.isValidMobileNumber(request.body.PhNo).isValid) {
-        validationErrors.mobile = Validator.isValidMobileNumber(request.body.PhNo).message;
-    }
-
-    // Validation for Address
-    if (!Validator.isValidAddress(request.body.Address).isValid) {
-        validationErrors.address = Validator.isValidAddress(request.body.Address).message;
-    }
-
-    // Validation for AadharNo
-    if (!Validator.isValidAadharNumber(request.body.AadharNo).isValid) {
-        validationErrors.aadharno = Validator.isValidAadharNumber(request.body.AadharNo).message;
-    }
-
-    // Validation for Email
-    if (!Validator.isValidEmail(request.body.Email).isValid) {
-        validationErrors.email = Validator.isValidEmail(request.body.Email).message;
-    }
-
-    // Validation for Password
-    if (!Validator.isValidPassword(request.body.Password).isValid) {
-        validationErrors.password = Validator.isValidPassword(request.body.Password).message;
-    }
-
-     // If validation fails
-     if (Object.keys(validationErrors).length > 0) {
-        return response.json({ "status": "Validation failed", "data": validationErrors });
-    }
-
-    // Generate a salt and hash the password
-    bcrypt.hash(Password, saltRounds, (err, hashedPassword) => {
-        if (err) {
-            return response.json({ "status": err });
+    // Checking token validation
+    jwt.verify(adstaffToken, "lmsapp", (tokenError, decoded) => {
+        if (!decoded) {
+            return response.json({ "status": "Unauthorized User !!! " });
         }
 
-        const newAdminStaff = new AdminStaff({
-            AdStaffName: AdStaffName,
-            PhNo: PhNo,
-            Address: Address,
-            AadharNo: AadharNo,
-            Email: Email,
-            Password: hashedPassword
-        });
+        // Checking validations
+        const validationErrors = {};
 
-        AdminStaff.create(newAdminStaff, (err, data) => {
-            if (err) {
-                response.json({ "status": err });
-            } else {
-                jwt.verify(adstaffToken, "lmsapp", (err, decoded) => {
-                    if (decoded) {
-                        response.json({ "status": "success", "data": data });
-                    } else {
-                        response.json({ "status": "Unauthorized User !!! " });
-                    }
-                })
+        // Validation for AdStaffName
+        if (Validator.isEmpty(request.body.AdStaffName).isValid) {
+            validationErrors.name = Validator.isEmpty(request.body.AdStaffName).message;
+        }
+        if (!Validator.isValidName(request.body.AdStaffName).isValid) {
+            validationErrors.name = Validator.isValidName(request.body.AdStaffName).message
+        }
+
+        // Validation for mobile number
+        if (!Validator.isValidMobileNumber(request.body.PhNo).isValid) {
+            validationErrors.mobile = Validator.isValidMobileNumber(request.body.PhNo).message;
+        }
+
+        // Validation for Address
+        if (!Validator.isValidAddress(request.body.Address).isValid) {
+            validationErrors.address = Validator.isValidAddress(request.body.Address).message;
+        }
+
+        // Validation for AadharNo
+        if (!Validator.isValidAadharNumber(request.body.AadharNo).isValid) {
+            validationErrors.aadharno = Validator.isValidAadharNumber(request.body.AadharNo).message;
+        }
+
+        // Validation for Email
+        if (!Validator.isValidEmail(request.body.Email).isValid) {
+            validationErrors.email = Validator.isValidEmail(request.body.Email).message;
+        }
+
+        // Validation for Password
+        if (!Validator.isValidPassword(request.body.Password).isValid) {
+            validationErrors.password = Validator.isValidPassword(request.body.Password).message;
+        }
+
+        // If validation fails
+        if (Object.keys(validationErrors).length > 0) {
+            return response.json({ "status": "Validation failed", "data": validationErrors });
+        }
+
+        // Generate a salt and hash the password
+        bcrypt.hash(Password, saltRounds, (hashError, hashedPassword) => {
+            if (hashError) {
+                return response.json({ "status": hashError });
             }
 
+            const newAdminStaff = new AdminStaff({
+                AdStaffName: AdStaffName,
+                PhNo: PhNo,
+                Address: Address,
+                AadharNo: AadharNo,
+                Email: Email,
+                Password: hashedPassword
+            });
+
+            AdminStaff.create(newAdminStaff, (createError, data) => {
+                if (createError) {
+                    response.json({ "status": createError });
+                } else {
+                    response.json({ "status": "success", "data": data });
+                }
+            });
         });
     });
 };
 
 
-exports.viewalladmstaff=(request,response)=>{
+
+exports.viewalladmstaff = (request, response) => {
     const admstaffToken = request.body.token
     AdminStaff.getAlladmstaff((err, data) => {
         if (err) {
@@ -131,11 +131,11 @@ exports.adminStaffUpdate = (req, res) => {
         return res.json({ "status": "Invalid Email" });
     }
 
-    
+
 
     const admStaff = new AdminStaff({
         'id': req.body.id,
-        AdStaffName:AdStaffName ,
+        AdStaffName: AdStaffName,
         PhNo: PhNo,
         Address: Address,
         AadharNo: AadharNo,
@@ -150,8 +150,8 @@ exports.adminStaffUpdate = (req, res) => {
             }
 
         }
-        const token = req.body.token;
-        jwt.verify(token, "lmsapp", (error, decoded) => {
+        const updateAdmtoken = req.body.token;
+        jwt.verify(updateAdmtoken, "lmsapp", (error, decoded) => {
             if (decoded) {
                 return res.json({ "status": "success", "data": data });
             } else {
@@ -165,24 +165,24 @@ exports.admStaffDelete = (request, response) => {
     const deleteToken = request.body.token
     const admstaff = new AdminStaff({
         'id': request.body.id
-      });
-    AdminStaff.admStaffDelete(admstaff, (err, data) => {
-      if (err) {
-        if (err.kind === "not_found") {
-          console.log(({ status: "Admin Staff id not found." }))
-  
-        } else {
-          response.send({ message: "Error deleting Staff." })
-        }
-      } else {
-        jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
-          if (decoded) {
-            response.json({"status": "Deleted"})
-          } else {
-            response.json({ "status": "Unauthorized User!!" });
-          }
-        })
-      }
     });
-  };
+    AdminStaff.admStaffDelete(admstaff, (err, data) => {
+        if (err) {
+            if (err.kind === "not_found") {
+                console.log(({ status: "Admin Staff id not found." }))
+
+            } else {
+                response.send({ message: "Error deleting Staff." })
+            }
+        } else {
+            jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
+                if (decoded) {
+                    response.json({ "status": "Deleted" })
+                } else {
+                    response.json({ "status": "Unauthorized User!!" });
+                }
+            })
+        }
+    });
+};
 
