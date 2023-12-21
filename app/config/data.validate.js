@@ -183,6 +183,16 @@ function isValidFile(file) {
     };
 }
 
+function isDate1GreaterThanDate2(date1, date2) {
+    const inputDate1 = new Date(date1);
+    const inputDate2 = new Date(date2);
+
+    return {
+        isValid: inputDate1 > inputDate2,
+        message: "Select a date greater than the previous date."
+    };
+}
+
 
 
 
@@ -202,5 +212,6 @@ module.exports = {
     isValidAadharNumber,
     isValidAmount,
     isDateGreaterThanToday,
-    isValidFile
+    isValidFile,
+    isDate1GreaterThanDate2
 };
