@@ -60,6 +60,7 @@ router.post("/updateBatch", BatchesController.batchUpdate);
 
 router.post('/searchCollegeStaff', ClgStaffController.searchCollegeStaff);
 
+router.post("/viewtasks",taskController.taskView)
 
 
 
