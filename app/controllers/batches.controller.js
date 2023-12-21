@@ -7,11 +7,16 @@ exports.batchCreate = (request, response) => {
 
     const batchToken = request.body.token;
 
-    //checking validations
+    jwt.verify(batchToken, "lmsapp", (err, decoded) => {
+            if (decoded) {
+                //checking validations
     const validationErrors = {};
 
     if (Validator.isEmpty(request.body.collegeId).isValid) {
         validationErrors.value = Validator.isEmpty(request.body.collegeId).message;
+    }
+    if (!Validator.isValidAmount(request.body.collegeId).isValid) {
+        validationErrors.collegeid = Validator.isValidAmount(request.body.collegeId).message; //validation for college id
     }
     if (!Validator.isValidName(request.body.batchName).isValid) {
         validationErrors.name = Validator.isValidName(request.body.batchName).message
@@ -26,6 +31,9 @@ exports.batchCreate = (request, response) => {
 
     if (Validator.isEmpty(request.body.regEndDate).isValid) {
         validationErrors.regenddate = Validator.isEmpty(request.body.regEndDate).message
+    }
+    if (!Validator.isDate1GreaterThanDate2(request.body.regEndDate, request.body.regStartDate).isValid) {
+        validationErrors.regenddate = Validator.isDate1GreaterThanDate2(request.body.regEndDate, request.body.regStartDate).message
     }
     if (!Validator.isValidDate(request.body.regEndDate).isValid) {
         validationErrors.regenddate = Validator.isValidDate(request.body.regEndDate).message
@@ -59,19 +67,15 @@ exports.batchCreate = (request, response) => {
     Batches.batchCreate(batches, (err, data) => {
         if (err) {
             return response.json({ "status": err });
-        }
-
-        // Verify token using middleware or another appropriate place
-        jwt.verify(batchToken, "lmsapp", (err, decoded) => {
-            if (decoded) {
-                return response.json({ "status": "success", "data": data });
+        } else {
+		return response.json({ "status": "success", "data": data });
+		}
+    });
             } else {
                 return response.json({ "status": "Unauthorized User!!" });
             }
         });
-    });
 }
-
 
 
 exports.batchDelete = (request, response) => {
