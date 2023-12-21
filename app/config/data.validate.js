@@ -96,7 +96,7 @@ function isValidWebsite(website) {
 
 function isValidEmail(email) {
     return {
-        isValid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+        isValid: /^[a-zA-Z0-9_!#$%&'*+/=?^_`{|}~-]+@[a-z]+\.([a-z]+)$/.test(email),
         message: "Invalid Email"
     };
 }
