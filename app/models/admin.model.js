@@ -1,9 +1,10 @@
 const db = require('../models/db')
-
+const bcrypt=require('bcrypt')
 const Admin = function(admin){
     this.userName = admin.userName
     this.Password = admin.Password
 }
+
 
 // Admin.create = (newAdmin, result) =>{
 //     db.query("INSERT INTO admin SET ?", newAdmin,(err,res)=>{
@@ -43,6 +44,42 @@ Admin.findByUserName = (username,result)=>{
 }
 
 
+
+Admin.changePassword = (ad, result) => {
+    // Retrieve the hashed old password from the database
+    const getPasswordQuery = "SELECT Password FROM admin WHERE userName = ?";
+    db.query(getPasswordQuery, [ad.userName], (getPasswordErr, getPasswordRes) => {
+        if (getPasswordErr) {
+            console.log("Error: ", getPasswordErr);
+            result(getPasswordErr, null);
+            return;
+        }
+
+        if (getPasswordRes.length > 0) {
+            const hashedOldPassword = getPasswordRes[0].Password;
+
+            // Compare the hashed old password with the provided old password
+            if (bcrypt.compareSync(ad.oldPassword, hashedOldPassword)) {
+                const updatePasswordQuery = "UPDATE admin SET Password = ?, updateStatus = 1 WHERE userName = ?";
+                const hashedNewPassword = bcrypt.hashSync(ad.newPassword, 10);
+
+                db.query(updatePasswordQuery, [hashedNewPassword, ad.userName], (updateErr) => {
+                    if (updateErr) {
+                        console.log("Error: ", updateErr);
+                        result(updateErr, null);
+                        return;
+                    } else {
+                        result(null, { status: "Password Updated Successfully!!!" });
+                    }
+                });
+            } else {
+                result(null, { status: "Incorrect Old Password!!!" });
+            }
+        } else {
+            result(null, { status: "User not found!!!" });
+        }
+    });
+};
 
 
 

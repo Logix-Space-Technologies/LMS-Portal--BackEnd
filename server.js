@@ -1,7 +1,7 @@
 const express = require("express")
 const cors = require("cors")
+const multer = require("multer")
 const adminRoutes = require("./app/routes/lms.routes")
-
 const app = express()
 
 app.use(express.json())
