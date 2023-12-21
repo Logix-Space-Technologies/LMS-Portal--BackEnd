@@ -9,9 +9,11 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/');
     },
     filename: (request, file, cb) => {
-        cb(null, Date.now() + file.originalname.trim());
+        const fileNameWithoutSpaces = Date.now() + file.originalname.replace(/\s/g, '');
+        cb(null, fileNameWithoutSpaces);
     },
 });
+
 
 const upload = multer({ storage: storage}).single('collegeImage');
 
@@ -26,7 +28,9 @@ exports.collegeCreate = (request, response) => {
         console.log(collegeToken)
 
         const { collegeName, collegeAddress, website, email, collegePhNo, collegeMobileNumber } = request.body;
-
+        if(!request.file){  
+            return response.json({ "status": "Please upload an image" });
+        }
         jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
             if (decoded) {
 
@@ -42,13 +46,18 @@ exports.collegeCreate = (request, response) => {
                 if (!Validator.isValidAddress(collegeAddress).isValid) {
                     validationErrors.address = Validator.isValidAddress(collegeAddress).message;
                 }
-        
+                if(Validator.isEmpty(collegeAddress).isValid){
+                    validationErrors.address = Validator.isEmpty(collegeAddress).message;
+                }
                 if (!Validator.isValidWebsite(website).isValid) {
                     validationErrors.website = Validator.isValidWebsite(website).message;
                 }
         
                 if (!Validator.isValidEmail(email).isValid) {
                     validationErrors.email = Validator.isValidEmail(email).message;
+                }
+                if(Validator.isEmpty(email).isValid){
+                    validationErrors.email = Validator.isEmpty(email).message;
                 }
         
                 if (!Validator.isValidPhoneNumber(collegePhNo).isValid) {
@@ -57,6 +66,9 @@ exports.collegeCreate = (request, response) => {
         
                 if (!Validator.isValidMobileNumber(collegeMobileNumber).isValid) {
                     validationErrors.mobile = Validator.isValidMobileNumber(collegeMobileNumber).message;
+                }
+                if(Validator.isEmpty(collegeMobileNumber).isValid){
+                    validationErrors.mobile = Validator.isEmpty(collegeMobileNumber).message;
                 }
         
                 if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
