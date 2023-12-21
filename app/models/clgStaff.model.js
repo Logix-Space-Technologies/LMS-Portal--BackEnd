@@ -77,7 +77,7 @@ CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
     }
 };
 
-//model
+
 CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
     // Check if the collegeId exists in the college table
     db.query("SELECT * FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [clgstaff.collegeId], (err, collegeResult) => {
