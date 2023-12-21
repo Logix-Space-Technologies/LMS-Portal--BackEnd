@@ -193,7 +193,17 @@ function isDate1GreaterThanDate2(date1, date2) {
     };
 }
 
-
+function isValidAadharNumberUpdate(aadharNumber) {
+    if (aadharNumber === null || aadharNumber === "") {
+        return {
+            isValid: true,
+        };
+    }
+    return {
+        isValid: /^\d{12}$/.test(aadharNumber),
+        message: "Aadhar Number must be 12 digits"
+    };
+}
 
 
 
@@ -213,5 +223,6 @@ module.exports = {
     isValidAmount,
     isDateGreaterThanToday,
     isValidFile,
-    isDate1GreaterThanDate2
+    isDate1GreaterThanDate2,
+    isValidAadharNumberUpdate
 };
