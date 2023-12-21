@@ -134,6 +134,26 @@ function isDateGreaterThanToday(date) {
     };
 }
 
+function isValidDateOfBirth(date) {
+    const inputDate = new Date(date);
+    const currentDate = new Date();
+
+    return {
+        isValid: inputDate < currentDate,
+        message: "Select a date less than today."
+    };
+}   
+
+function isDate1GreaterThanDate2(date1, date2) {
+    const inputDate1 = new Date(date1);
+    const inputDate2 = new Date(date2);
+
+    return {
+        isValid: inputDate1 > inputDate2,
+        message: "Select a date greater than the previous date."
+    };
+}
+
 function isValidTime(time) {
     return {
         isValid: /^\d{2}:\d{2}:\d{2}$/.test(time),
