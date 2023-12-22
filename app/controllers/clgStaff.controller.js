@@ -162,21 +162,20 @@ exports.clgStaffDelete = (request, response) => {
 
 exports.viewAllCollegeStaff = (request, response) => {
   const collegeToken = request.body.token
-  CollegeStaff.getAll((err, data) => {
+  jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
+      if (decoded) {
+	  CollegeStaff.getAll((err, data) => {
     if (err) {
       console.log(err)
       response.json({ "status": err })
-    }
-    //response.json(data)
-    jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
-      if (decoded) {
-        response.json(data)
+    } else {
+	  response.json(data)
+	}
+  })
       } else {
         response.json({ "status": "Unauthorized User!!" });
       }
     })
-
-  })
 }
 
 
