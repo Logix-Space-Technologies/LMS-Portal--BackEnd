@@ -19,4 +19,20 @@ const logCollegeStaff = (clgStaffId, action) =>{
      })
 }
 
+
+CollegeStaffLog.getAll = async(result) => {
+    let query = "SELECT cs.collegeStaffName, csl.* FROM clgstafflog csl JOIN college_staff cs ON csl.ClgStaffId = cs.id WHERE cs.deleteStatus = 0 AND cs.isActive = 1"
+    db.query(query, (err, response) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            return
+        } else {
+            console.log("College Staff Log : ", response)
+            result(null, response)
+        }
+    })
+}
+
+
 module.exports = {CollegeStaffLog, logCollegeStaff}
