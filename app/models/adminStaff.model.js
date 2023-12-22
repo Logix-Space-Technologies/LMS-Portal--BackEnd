@@ -105,7 +105,7 @@ AdminStaff.updateAdminStaff = (adminStaff, result) => {
 
             // Update AdminStaff details in the database
             db.query(
-                "UPDATE admin_staff SET AdStaffName = ?, PhNo = ?, Address = ?, AadharNo = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
+                "UPDATE admin_staff SET AdStaffName = ?, PhNo = ?, Address = ?, AadharNo = ?, updatedDate = CURRENT_DATE(),updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
                 [adminStaff.AdStaffName, adminStaff.PhNo, adminStaff.Address, adminStaff.AadharNo, adminStaff.id],
                 (updateErr, updateRes) => {
                     if (updateErr) {
