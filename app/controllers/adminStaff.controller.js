@@ -86,23 +86,20 @@ exports.create = (request, response) => {
 };
 
 
-
-
-
 exports.viewalladmstaff = (request, response) => {
     const admstaffToken = request.body.token
-    AdminStaff.getAlladmstaff((err, data) => {
-        if (err) {
-            console.log(err)
-            response.json({ "status": err })
-        } else {
-            jwt.verify(admstaffToken, "lmsapp", (err, decoded) => {
-                if (decoded) {
-                    response.json(data)
+    jwt.verify(admstaffToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            AdminStaff.getAlladmstaff((err, data) => {
+                if (err) {
+                    console.log(err)
+                    response.json({ "status": err })
                 } else {
-                    response.json({ "status": "Unauthorized User!!" })
+                    response.json(data)
                 }
             })
+        } else {
+            response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -129,7 +126,6 @@ exports.adminStaffUpdate = (request, res) => {
         if (!Validator.isValidName(request.body.AdStaffName).isValid) {
             validationErrors.name = Validator.isValidName(request.body.AdStaffName).message
         }
-
         // Validation for mobile number
         if (!Validator.isValidMobileNumber(request.body.PhNo).isValid) {
             validationErrors.mobile = Validator.isValidMobileNumber(request.body.PhNo).message;
