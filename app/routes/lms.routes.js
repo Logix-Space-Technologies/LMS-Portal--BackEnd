@@ -51,11 +51,18 @@ router.post("/searchBatch",BatchesController.searchBatch)
 
 router.post("/addtask", taskController.createTask);
 
+router.post("/updatetask", taskController.taskUpdate);
+
 
 router.post("/deleteTask",taskController.taskDelete)
 
+router.post("/updateBatch", BatchesController.batchUpdate);
 
+router.post('/searchCollegeStaff', ClgStaffController.searchCollegeStaff);
 
+router.post("/viewtasks",taskController.taskView)
+
+router.post("/searchCollege",CollegeController.searchCollege)
 
 
 
