@@ -27,19 +27,38 @@ AdminStaff.create = (newAdminStaff, result) => {
                 result("Email already exists", null);
                 return;
             } else {
-
-                // Continue with the existing code for database insertion
-                db.query("INSERT INTO admin_staff SET ?", newAdminStaff, (err, res) => {
-                    console.log(newAdminStaff)
+                //checking aadhar number
+                db.query("SELECT * FROM admin_staff WHERE AadharNo=? AND deleteStatus = 0 AND isActive = 1", newAdminStaff.AadharNo, (err, res) => {
                     if (err) {
-                        console.log("error: ", err)
-                        result(err, null)
-                        return
+                        console.log("error: ", err);
+                        result(err, null);
+                        return;
                     } else {
-                        console.log("Added Admin Staff: ", { id: res.id, ...newAdminStaff })
-                        result(null, { id: res.id, ...newAdminStaff })
+                        if (res.length > 0) {
+                            console.log("Aadhar Number already exists");
+                            result("Aadhar Number already exists", null);
+                            return;
+                        } else {
+                            // Code for database insertion
+                            db.query("INSERT INTO admin_staff SET ?", newAdminStaff, (err, res) => {
+                                console.log(newAdminStaff)
+                                if (err) {
+                                    console.log("error: ", err)
+                                    result(err, null)
+                                    return
+                                } else {
+                                    console.log("Added Admin Staff: ", { id: res.id, ...newAdminStaff })
+                                    result(null, { id: res.id, ...newAdminStaff })
+                                }
+                            })
+
+                        }
+
+
                     }
                 })
+
+
 
             }
         }
@@ -50,18 +69,18 @@ AdminStaff.create = (newAdminStaff, result) => {
 
 
 AdminStaff.getAlladmstaff = async (result) => {
-    let query = "SELECT * FROM admin_staff"
+    let query = "SELECT id, AdStaffName, PhNo, Address, AadharNo, Email, emailVerified, addedDate, updatedDate, deleteStatus, isActive, pwdUpdateStatus FROM admin_staff WHERE deleteStatus = 0 AND isActive = 1;";
     db.query(query, (err, res) => {
         if (err) {
-            console.log("error: ", err)
-            result(null, err)
-            return
+            console.log("error: ", err);
+            result(err, null);
+            return;
         } else {
-            console.log("Adminstaffs: ", res)
-            result(null, res)
+            console.log("Adminstaffs: ", res);
+            result(null, res);
 
         }
-    })
+    });
 }
 
 
