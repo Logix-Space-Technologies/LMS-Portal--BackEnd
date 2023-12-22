@@ -22,4 +22,20 @@ const logAdminStaff = (admStaffId, action) => {
     });
 };
 
+AdminStaffLog.getAll = async(result) => {
+    let query = "SELECT asg.AdStaffName,asl.* FROM adminstafflog asl JOIN admin_staff asg ON asl.AdmStaffId=asg.id WHERE asg.deleteStatus=0 AND asg.isActive=1"
+    db.query(query, (err, response) => {
+        if (err) {
+            console.log("Error : ",err)
+            result(err, null)
+            return           
+        } else {
+            console.log("Admin Staff Log : ", response)
+            result(null, response)
+        }
+    })
+
+}
+
+
 module.exports = { AdminStaffLog, logAdminStaff }

@@ -9,6 +9,7 @@ const taskController = require("../controllers/task.controller");
 
 const BatchesController= require("../controllers/batches.controller") 
 const ClgStaffLogController  = require("../controllers/collegeStaffLog.controller")
+const AdminStaffLogController = require("../controllers/adminStaffLog.controller")
 
 
 // router.post("/", admin.adminRegister)
@@ -68,6 +69,8 @@ router.post("/searchCollege",CollegeController.searchCollege)
 router.post("/searchAdminStaff",AdminStaffController.adminStaffSearch)
 
 router.post("/viewClgStaffLog",ClgStaffLogController.viewCollegeStaffLog)
+
+router.post("/viewalladmstafflog",AdminStaffLogController.viewAdminStaffLog)
 
 
 module.exports = router
