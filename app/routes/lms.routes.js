@@ -62,6 +62,8 @@ router.post('/searchCollegeStaff', ClgStaffController.searchCollegeStaff);
 
 router.post("/viewtasks",taskController.taskView)
 
+router.post("/searchCollege",CollegeController.searchCollege)
+
 
 
 module.exports = router

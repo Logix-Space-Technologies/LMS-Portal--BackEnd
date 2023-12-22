@@ -240,3 +240,31 @@ exports.deleteCollege = (request, response) => {
     })
 }
 
+
+
+exports.searchCollege = (request, response) => {
+    const collegeSearchQuery = request.body.collegeSearchQuery
+    const collegeSearchToken = request.body.token
+
+    jwt.verify(collegeSearchToken, "lmsapp", (err, decoded) =>{
+        if (decoded) {
+            if (!collegeSearchQuery) {
+                console.log("Search Item is required.")
+                return response.json({"status" : "Search Item is required."})
+            }
+            College.searchCollege(collegeSearchQuery, (err, data) => {
+                if (err) {
+                    response.json({"status" : err})
+                } else {
+                    if (data.length === 0) {
+                        response.json({"status" : "No Search Items Found."})
+                    } else {
+                        response.json({"status" : "Result Found", "data" : data})
+                    }
+                }
+            })
+        } else {
+            response.json({"status" : "Unauthorized User!!"})
+        }
+    })
+}
