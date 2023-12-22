@@ -71,20 +71,20 @@ exports.create = (request, response) => {
 };
 
 
-exports.viewalladmstaff=(request,response)=>{
+exports.viewalladmstaff = (request, response) => {
     const admstaffToken = request.body.token
-    AdminStaff.getAlladmstaff((err, data) => {
-        if (err) {
-            console.log(err)
-            response.json({ "status": err })
-        } else {
-            jwt.verify(admstaffToken, "lmsapp", (err, decoded) => {
-                if (decoded) {
-                    response.json(data)
+    jwt.verify(admstaffToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            AdminStaff.getAlladmstaff((err, data) => {
+                if (err) {
+                    console.log(err)
+                    response.json({ "status": err })
                 } else {
-                    response.json({ "status": "Unauthorized User!!" })
+                    response.json(data)
                 }
             })
+        } else {
+            response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -118,11 +118,11 @@ exports.adminStaffUpdate = (req, res) => {
         return res.json({ "status": "Invalid Email" });
     }
 
-    
+
 
     const admStaff = new AdminStaff({
         'id': req.body.id,
-        AdStaffName:AdStaffName ,
+        AdStaffName: AdStaffName,
         PhNo: PhNo,
         Address: Address,
         AadharNo: AadharNo,
@@ -152,24 +152,24 @@ exports.admStaffDelete = (request, response) => {
     const deleteToken = request.body.token
     const admstaff = new AdminStaff({
         'id': request.body.id
-      });
-    AdminStaff.admStaffDelete(admstaff, (err, data) => {
-      if (err) {
-        if (err.kind === "not_found") {
-          console.log(({ status: "Admin Staff id not found." }))
-  
-        } else {
-          response.send({ message: "Error deleting Staff." })
-        }
-      } else {
-        jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
-          if (decoded) {
-            response.json({"status": "Deleted"})
-          } else {
-            response.json({ "status": "Unauthorized User!!" });
-          }
-        })
-      }
     });
-  };
+    AdminStaff.admStaffDelete(admstaff, (err, data) => {
+        if (err) {
+            if (err.kind === "not_found") {
+                console.log(({ status: "Admin Staff id not found." }))
+
+            } else {
+                response.send({ message: "Error deleting Staff." })
+            }
+        } else {
+            jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
+                if (decoded) {
+                    response.json({ "status": "Deleted" })
+                } else {
+                    response.json({ "status": "Unauthorized User!!" });
+                }
+            })
+        }
+    });
+};
 
