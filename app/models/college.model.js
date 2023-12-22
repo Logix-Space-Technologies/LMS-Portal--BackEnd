@@ -109,7 +109,7 @@ College.delete = async (clgId, result) => {
             return result("College does not exist or is inactive/deleted.", null);
         }
 
-        db.query("UPDATE college SET isActive=0, deleteStatus=1 WHERE id = ?", [clgId.id], (err, res) => {
+        db.query("UPDATE college SET isActive=0, deleteStatus=1 WHERE id = ? AND isActive = 1 AND deleteStatus = 0", [clgId.id], (err, res) => {
             if (err) {
                 console.error("Error deleting college: ", err)
                 result(err, null)
