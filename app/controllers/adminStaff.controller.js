@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const AdminStaff = require("../models/adminStaff.model");
-const Validator = require("../config/data.validate")
+const Validator = require("../config/data.validate");
+const { request, response } = require("express");
 
 const saltRounds = 10;
 
@@ -194,3 +195,30 @@ exports.admStaffDelete = (request, response) => {
     });
 };
 
+
+exports.adminStaffSearch =(request,response)=>{
+    const adminStaffSearchQuery = request.body.adminStaffSearchQuery
+    const adminStaffSearcToken = request.body.token
+
+    jwt.verify(adminStaffSearcToken, "lmsapp", (err, decoded) =>{
+        if (decoded) {
+            if (!adminStaffSearchQuery) {
+                console.log("Search Item is required.")
+                return response.json({"status" : "Search Item is required."})
+            }
+            AdminStaff.adminStaffSearch(adminStaffSearchQuery, (err, data) => {
+                if (err) {
+                    response.json({"status" : err})
+                } else {
+                    if (data.length === 0) {
+                        response.json({"status" : "No Search Items Found."})
+                    } else {
+                        response.json({"status" : "Result Found", "data" : data})
+                    }
+                }
+            })
+        } else {
+            response.json({"status" : "Unauthorized User!!"})
+        }
+    })
+} 

@@ -64,6 +64,9 @@ router.post("/viewtasks",taskController.taskView)
 
 router.post("/searchCollege",CollegeController.searchCollege)
 
+router.post("/searchAdminStaff",AdminStaffController.adminStaffSearch)
+
+
 
 
 module.exports = router
