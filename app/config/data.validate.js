@@ -60,7 +60,7 @@ function isValidImageWith1mbConstratint(file) {
 function isValidMobileNumber(mobileNumber) {
     // Check if the number is in the format +91XXYYYYYYYY or XXYYYYYYYY with the first digit after +91 greater than 5
     return {
-        isValid: /^\+91[6-9]\d{9}$|^[6-9]\d{9}$/.test(mobileNumber),
+        isValid: /^\+91[6-9]\d{9}$|^\+91\s?[6-9]\d{9}$|^[6-9]\d{9}$/.test(mobileNumber),
         message: "Invalid Mobile Number"
     };
 }

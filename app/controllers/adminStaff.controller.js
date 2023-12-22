@@ -109,9 +109,9 @@ exports.viewalladmstaff = (request, response) => {
 
 
 
-exports.adminStaffUpdate = (req, res) => {
-    const { AdStaffName, PhNo, Address, AadharNo } = req.body;
-    const token = req.body.token;
+exports.adminStaffUpdate = (request, res) => {
+    const { AdStaffName, PhNo, Address, AadharNo } = request.body;
+    const token = request.body.token;
 
     // Token verification
     jwt.verify(token, "lmsapp", (tokenError, decoded) => {
@@ -150,7 +150,7 @@ exports.adminStaffUpdate = (req, res) => {
         }
 
         const admStaff = new AdminStaff({
-            'id': req.body.id,
+            'id': request.body.id,
             AdStaffName: AdStaffName,
             PhNo: PhNo,
             Address: Address,
