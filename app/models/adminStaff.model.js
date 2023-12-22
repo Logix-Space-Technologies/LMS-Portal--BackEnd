@@ -146,6 +146,21 @@ AdminStaff.admStaffDelete = (admStaffId, result) => {
     });
 };
 
+AdminStaff.adminStaffSearch = (search, result) => {
+    const searchString = '%' + search + '%'
+    db.query("SELECT id, AdStaffName, PhNo, Address, AadharNo, Email, emailVerified, addedDate, updatedDate, pwdUpdateStatus, updateStatus FROM admin_staff WHERE deleteStatus = 0 AND isActive = 1 AND (AdStaffName LIKE ? OR PhNo LIKE ? OR Address LIKE ? OR AadharNo LIKE ? OR Email LIKE ?)",
+        [searchString, searchString, searchString, searchString, searchString],
+        (err, res) => {
+            if (err) {
+                console.log("Error: ", err)
+                result(err, null)
+                result
+            } else {
+                console.log("Admin staff  Details: ", res)
+                result(null, res)
+            }
+        });
+};
 
 
 
