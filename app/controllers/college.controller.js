@@ -226,12 +226,13 @@ exports.deleteCollege = (request, response) => {
             College.delete(clgDlt, (err, data) => {
                 if (err) {
                     if (err.kind === "not_found") {
-                        console.log(({ "status": "College id not found." }))
-
+                        console.log({ "status": "College id not found." })
+                        return response.json({ "status": "College id not found." })
                     } else {
-                        response.send({ "status": err })
+                        return response.json({ "status": err })
                     }
                 } 
+                return response.json({ "status": "College deleted." })
             })
         }else {
             response.json({ "status": "Unauthorized User!!" });
