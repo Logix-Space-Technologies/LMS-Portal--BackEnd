@@ -139,7 +139,7 @@ exports.updateCollege = (request, response) => {
         const collegeImage = request.file ? request.file.filename : null
 
         if (!request.file) {
-            return response.json({"status" : "Image cannot be empty!!"})
+            return response.json({ "status": "Image cannot be empty!!" })
         }
         jwt.verify(collegeUpdateToken, "lmsapp", (err, decoded) => {
             if (decoded) {
@@ -217,26 +217,25 @@ exports.updateCollege = (request, response) => {
 
 exports.deleteCollege = (request, response) => {
     const collegedeleteToken = request.body.token
-    const clgDlt = new College({
-        'id': request.body.id
-    })
-    College.delete(clgDlt, (err, data) => {
-        if (err) {
-            if (err.kind === "not_found") {
-                console.log(({ status: "College id not found." }))
-
-            } else {
-                response.send({ message: "Error deleting College." })
-            }
-        } else {
-            jwt.verify(collegedeleteToken, "lmsapp", (err, decoded) => {
-                if (decoded) {
-                    response.json({ "status": "Deleted Succesfully" })
-                } else {
-                    response.json({ "status": "Unauthorized User!!" });
-                }
+    console.log(collegedeleteToken)
+    jwt.verify(collegedeleteToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            const clgDlt = new College({
+                'id': request.body.id
             })
-        }
+            College.delete(clgDlt, (err, data) => {
+                if (err) {
+                    if (err.kind === "not_found") {
+                        console.log(({ "status": "College id not found." }))
 
+                    } else {
+                        response.send({ "status": err })
+                    }
+                } 
+            })
+        }else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
     })
 }
+
