@@ -67,7 +67,7 @@ exports.createTask = (request, response) => {
                 return response.json({ "status": err });
             } else {
                 console.log(taskToken)
-                jwt.verify(taskToken, "lmsapp", (err,decoded) => {
+                jwt.verify(taskToken, "lmsapp", (err, decoded) => {
                     if (decoded) {
                         return response.json({ "status": "success", "data": data });
                     } else {
@@ -88,32 +88,29 @@ exports.taskDelete = (request , response) => {
         'id': request.body.id
     });
 
-    Tasks.taskDelete(task,(err, data)=>{
-        if (err) {
-            if (err.kind === "not_found") {
-                console.log("Task is not found")
-                response.json({status:"Task is not found"})
-                
-            } else {
-                response.json({status:"Error deleting task"})
-                
-            }
-            
-        } else {
-            jwt.verify(deleteToken,"lmsapp",(err , decoded) =>{
-
-                if (decoded) {
-                    response.json({"status":"Task Deleted."})
-                } else {
-
-                    response.json({"status":"Unauthorized User!!"})
-                    
-                }
-            })
-            
+    // Verify JWT token
+    jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
+        if (!decoded) {
+            return response.json({ "status": "Unauthorized User!!" });
         }
-    })
-}
+
+        // Task deletion
+        Tasks.taskDelete(task, (err, data) => {
+            if (err) {
+                if (err.kind === "not_found") {
+                    console.log("Task is not found");
+                    return response.json({ status: "Task is not found" });
+                } else {
+                    return response.json({ status: "Error deleting task" });
+                }
+            } else {
+                return response.json({ "status": "Task Deleted." });
+            }
+        });
+    });
+};
+
+         
 
 exports.taskUpdate = (request, response) => {
     upload(request, response, function (err) {
@@ -226,4 +223,5 @@ exports.taskView=(request,response)=>{
         }
     })
 }
+
 
