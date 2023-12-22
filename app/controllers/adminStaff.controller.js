@@ -87,6 +87,8 @@ exports.create = (request, response) => {
 
 
 
+
+
 exports.viewalladmstaff = (request, response) => {
     const admstaffToken = request.body.token
     AdminStaff.getAlladmstaff((err, data) => {
@@ -108,61 +110,68 @@ exports.viewalladmstaff = (request, response) => {
 
 
 exports.adminStaffUpdate = (req, res) => {
-    const { AdStaffName, PhNo, Address, AadharNo, Email } = req.body;
-    // Validation for AdStaffName
-    if (!AdStaffName || AdStaffName.trim() === "") {
-        return res.json({ "status": "AdStaffName cannot be empty" });
-    }
+    const { AdStaffName, PhNo, Address, AadharNo } = req.body;
+    const token = req.body.token;
 
-    // Validation for PhNo
-    if (!PhNo || !/^\+91[6-9][0-9]{9}$/.test(PhNo)) {
-        return res.json({ "status": "Invalid Phone Number" });
-    }
-
-    // Validation for Address
-    if (!Address || Address.length > 100) {
-        return res.json({ "status": "Address cannot be empty and should not exceed 100 characters" });
-    }
-
-    // Validation for AadharNo
-    if (!AadharNo || !/^\d{12}$/.test(AadharNo)) {
-        return res.json({ "status": "Invalid Aadhar Number" });
-    }
-
-    // Validation for Email
-    if (!Email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(Email)) {
-        return res.json({ "status": "Invalid Email" });
-    }
-
-
-
-    const admStaff = new AdminStaff({
-        'id': req.body.id,
-        AdStaffName: AdStaffName,
-        PhNo: PhNo,
-        Address: Address,
-        AadharNo: AadharNo,
-        Email: Email,
-    });
-    AdminStaff.updateAdminStaff(admStaff, (err, data) => {
-        if (err) {
-            if (err.kind === "not_found") {
-                return res.json({ "status": "Admin Staff with the provided id is not found" });
-            } else {
-                return res.json({ "status": "Internal server error" });
-            }
-
+    // Token verification
+    jwt.verify(token, "lmsapp", (tokenError, decoded) => {
+        if (!decoded) {
+            return res.json({ "status": "Unauthorized access!!" });
         }
-        const updateAdmtoken = req.body.token;
-        jwt.verify(updateAdmtoken, "lmsapp", (error, decoded) => {
-            if (decoded) {
-                return res.json({ "status": "success", "data": data });
-            } else {
-                return res.json({ "status": "Unauthorized access!!" });
+
+        // Checking validations
+        const validationErrors = {};
+
+        // Validation for AdStaffName
+        if (Validator.isEmpty(request.body.AdStaffName).isValid) {
+            validationErrors.name = Validator.isEmpty(request.body.AdStaffName).message;
+        }
+        if (!Validator.isValidName(request.body.AdStaffName).isValid) {
+            validationErrors.name = Validator.isValidName(request.body.AdStaffName).message
+        }
+
+        // Validation for mobile number
+        if (!Validator.isValidMobileNumber(request.body.PhNo).isValid) {
+            validationErrors.mobile = Validator.isValidMobileNumber(request.body.PhNo).message;
+        }
+        // Validation for Address
+        if (!Validator.isValidAddress(request.body.Address).isValid) {
+            validationErrors.address = Validator.isValidAddress(request.body.Address).message;
+        }
+
+        // Validation for AadharNo
+        if (!Validator.isValidAadharNumber(request.body.AadharNo).isValid) {
+            validationErrors.aadharno = Validator.isValidAadharNumber(request.body.AadharNo).message;
+        }
+
+        // If validation fails
+        if (Object.keys(validationErrors).length > 0) {
+            return res.json({ "status": "Validation failed", "data": validationErrors });
+        }
+
+        const admStaff = new AdminStaff({
+            'id': req.body.id,
+            AdStaffName: AdStaffName,
+            PhNo: PhNo,
+            Address: Address,
+            AadharNo: AadharNo,
+            
+        });
+
+        AdminStaff.updateAdminStaff(admStaff, (err, data) => {
+            if (err) {
+                if (err.kind === "not_found") {
+                    return res.json({ "status": "Admin Staff with the provided id is not found" });
+                } else {
+                    return res.json({ "status": "Internal server error" });
+                }
             }
+
+            return res.json({ "status": "success", "data": data });
         });
     });
 };
+
 
 exports.admStaffDelete = (request, response) => {
     const deleteToken = request.body.token
