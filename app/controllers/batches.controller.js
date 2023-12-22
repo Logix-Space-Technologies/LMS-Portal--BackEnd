@@ -7,97 +7,103 @@ exports.batchCreate = (request, response) => {
 
     const batchToken = request.body.token;
 
-    //checking validations
-    const validationErrors = {};
+    jwt.verify(batchToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            //checking validations
+            const validationErrors = {};
 
-    if (Validator.isEmpty(request.body.collegeId).isValid) {
-        validationErrors.value = Validator.isEmpty(request.body.collegeId).message;
-    }
-    if (!Validator.isValidName(request.body.batchName).isValid) {
-        validationErrors.name = Validator.isValidName(request.body.batchName).message
-    }
-
-    if (Validator.isEmpty(request.body.regStartDate).isValid) {
-        validationErrors.regstartdate = Validator.isEmpty(request.body.regStartDate).message;
-    }
-    if (!Validator.isValidDate(request.body.regStartDate).isValid) {
-        validationErrors.regstartdate = Validator.isValidDate(request.body.regStartDate).message
-    }
-
-    if (Validator.isEmpty(request.body.regEndDate).isValid) {
-        validationErrors.regenddate = Validator.isEmpty(request.body.regEndDate).message
-    }
-    if (!Validator.isValidDate(request.body.regEndDate).isValid) {
-        validationErrors.regenddate = Validator.isValidDate(request.body.regEndDate).message
-    }
-
-    if (Validator.isEmpty(request.body.batchDesc).isValid) {
-        validationErrors.description = Validator.isEmpty(request.body.batchDesc).message
-    }
-
-    if (!Validator.isValidAmount(request.body.batchAmount).isValid) {
-        validationErrors.amount = Validator.isValidAmount(request.body.batchAmount).message
-    }
-
-
-    if (Object.keys(validationErrors).length > 0) {
-        return response.json({ "status": "Validation failed", "data": validationErrors })
-    }
-
-
-
-    const batches = new Batches({
-        collegeId: request.body.collegeId,
-        batchName: request.body.batchName,
-        regStartDate: request.body.regStartDate,
-        regEndDate: request.body.regEndDate,
-        batchDesc: request.body.batchDesc,
-        batchAmount: request.body.batchAmount
-    });
-
-
-    Batches.batchCreate(batches, (err, data) => {
-        if (err) {
-            return response.json({ "status": err });
-        }
-
-        // Verify token using middleware or another appropriate place
-        jwt.verify(batchToken, "lmsapp", (err, decoded) => {
-            if (decoded) {
-                return response.json({ "status": "success", "data": data });
-            } else {
-                return response.json({ "status": "Unauthorized User!!" });
+            if (Validator.isEmpty(request.body.collegeId).isValid) {
+                validationErrors.value = Validator.isEmpty(request.body.collegeId).message;
             }
-        });
+            if (!Validator.isValidAmount(request.body.collegeId).isValid) {
+                validationErrors.collegeid = Validator.isValidAmount(request.body.collegeId).message; //validation for college id
+            }
+            if (!Validator.isValidName(request.body.batchName).isValid) {
+                validationErrors.name = Validator.isValidName(request.body.batchName).message
+            }
+
+            if (Validator.isEmpty(request.body.regStartDate).isValid) {
+                validationErrors.regstartdate = Validator.isEmpty(request.body.regStartDate).message;
+            }
+            if (!Validator.isValidDate(request.body.regStartDate).isValid) {
+                validationErrors.regstartdate = Validator.isValidDate(request.body.regStartDate).message
+            }
+
+            if (Validator.isEmpty(request.body.regEndDate).isValid) {
+                validationErrors.regenddate = Validator.isEmpty(request.body.regEndDate).message
+            }
+            if (!Validator.isDate1GreaterThanDate2(request.body.regEndDate, request.body.regStartDate).isValid) {
+                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(request.body.regEndDate, request.body.regStartDate).message
+            }
+            if (!Validator.isValidDate(request.body.regEndDate).isValid) {
+                validationErrors.regenddate = Validator.isValidDate(request.body.regEndDate).message
+            }
+
+            if (Validator.isEmpty(request.body.batchDesc).isValid) {
+                validationErrors.description = Validator.isEmpty(request.body.batchDesc).message
+            }
+
+            if (!Validator.isValidAmount(request.body.batchAmount).isValid) {
+                validationErrors.amount = Validator.isValidAmount(request.body.batchAmount).message
+            }
+
+
+            if (Object.keys(validationErrors).length > 0) {
+                return response.json({ "status": "Validation failed", "data": validationErrors })
+            }
+
+
+
+            const batches = new Batches({
+                collegeId: request.body.collegeId,
+                batchName: request.body.batchName,
+                regStartDate: request.body.regStartDate,
+                regEndDate: request.body.regEndDate,
+                batchDesc: request.body.batchDesc,
+                batchAmount: request.body.batchAmount
+            });
+
+
+            Batches.batchCreate(batches, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
     });
 }
-
 
 
 exports.batchDelete = (request, response) => {
     const deleteToken = request.body.token
-    const batch = new Batches({
-        'id': request.body.id
-    })
-    Batches.batchDelete(batch, (err, data) => {
-        if (err) {
-            if (err.kind === "not_found") {
-                console.log({ "status": "Batch Not Found." })
-                response.json({ "status": "Batch Not Found." })
-            } else {
-                response.json({ "message": "Error Deleting Batch." })
-            }
-        } else {
-            jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
-                if (decoded) {
-                    response.json({ "status": "Batch Deleted." })
+    jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            const batch = new Batches({
+                'id': request.body.id
+            })
+            Batches.batchDelete(batch, (err, data) => {
+                if (err) {
+                    if (err.kind === "not_found") {
+                        console.log({ "status": "Batch Not Found." })
+                        response.json({ "status": "Batch Not Found." })
+                    } else {
+                        response.json({ "message": "Error Deleting Batch." })
+                    }
                 } else {
-                    response.json({ "status": "Unauthorized User!!" })
+                    response.json({ "status": "Batch Deleted." })
+
                 }
             })
+        } else {
+            response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
+
 
 exports.batchView = (request, response) => {
     const batchToken = request.body.token;

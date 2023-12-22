@@ -60,11 +60,8 @@ Batches.batchCreate = (newBatch, result) => {
 
 
 
-
-
-
 Batches.batchDelete = (batchId, result) => {
-    db.query("UPDATE batches SET isActive = 0, deleteStatus = 1 WHERE id = ?", [batchId.id], (err, res) => {
+    db.query("UPDATE batches SET isActive = 0, deleteStatus = 1 WHERE id = ? AND isActive = 1 AND deleteStatus = 0", [batchId.id], (err, res) => {
         if (err) {
             console.log("error : ", err)
             result(err, null)
@@ -79,6 +76,7 @@ Batches.batchDelete = (batchId, result) => {
         result(null, { id: batchId.id })
     })
 }
+
 
 Batches.batchView = (result) => {
     db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus=0 AND b.isActive= 1;", (err, res) => {

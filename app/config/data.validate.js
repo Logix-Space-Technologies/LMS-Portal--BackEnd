@@ -16,7 +16,7 @@ function isValidPhoneNumber(phoneNumber) {
         };
     }
     return {
-        isValid: /^\d{2,5}-?\d{6,8}$/.test(phoneNumber),
+        isValid: /^\d{4,5}\s?\d{6,7}$/.test(phoneNumber),
         message: "Invalid Phone Number"
     };
 }
@@ -60,7 +60,7 @@ function isValidImageWith1mbConstratint(file) {
 function isValidMobileNumber(mobileNumber) {
     // Check if the number is in the format +91XXYYYYYYYY or XXYYYYYYYY with the first digit after +91 greater than 5
     return {
-        isValid: /^\+91[6-9]\d{9}$|^[6-9]\d{9}$/.test(mobileNumber),
+        isValid: /^\+91[6-9]\d{9}$|^\+91\s?[6-9]\d{9}$|^[6-9]\d{9}$/.test(mobileNumber),
         message: "Invalid Mobile Number"
     };
 }
@@ -97,7 +97,7 @@ function isValidWebsite(website) {
 function isValidEmail(email) {
     return {
         isValid: /^[a-zA-Z0-9_!#$%&'*+/=?^_`{|}~-]+@[a-z]+\.([a-z]+)$/.test(email),
-        message: "Invalid Email"
+        message: "Email cannot be empty or Invalid Email! "
     };
 }
 
@@ -145,7 +145,7 @@ function isValidTime(time) {
 function isValidAadharNumber(aadharNumber) {
     return {
         isValid: /^\d{12}$/.test(aadharNumber),
-        message: "Aadhar Number must be 12 digits"
+        message: "Aadhar Number cannot be empty and must be of 12 digits"
     };
 }
 
@@ -183,7 +183,27 @@ function isValidFile(file) {
     };
 }
 
+function isDate1GreaterThanDate2(date1, date2) {
+    const inputDate1 = new Date(date1);
+    const inputDate2 = new Date(date2);
 
+    return {
+        isValid: inputDate1 > inputDate2,
+        message: "Select a date greater than the previous date."
+    };
+}
+
+function isValidAadharNumberUpdate(aadharNumber) {
+    if (aadharNumber === null || aadharNumber === "") {
+        return {
+            isValid: true,
+        };
+    }
+    return {
+        isValid: /^\d{12}$/.test(aadharNumber),
+        message: "Aadhar Number must be 12 digits"
+    };
+}
 
 
 
@@ -202,5 +222,7 @@ module.exports = {
     isValidAadharNumber,
     isValidAmount,
     isDateGreaterThanToday,
-    isValidFile
+    isValidFile,
+    isDate1GreaterThanDate2,
+    isValidAadharNumberUpdate
 };
