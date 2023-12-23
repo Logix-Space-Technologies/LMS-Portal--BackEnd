@@ -21,75 +21,91 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single('taskFileUpload');
 
 exports.createTask = (request, response) => {
-    const taskCreateToken = request.body.token;
-    console.log(taskCreateToken)
+    upload(request, response, function (err) {
+        if (err) {
+            console.log("Error Uploading Image: ", err)
+            return response.json({ "status": err })
+        }
 
-    jwt.verify(taskCreateToken, "lmsapp", (err, decoded) => {
-        if (decoded) {
-            // File upload
-            upload(request, response, function (uploadErr) {
-                if (uploadErr) {
-                    console.log("Error Uploading File: ", uploadErr);
-                    return response.json({ "status": uploadErr });
-                }
-          
+        const { batchId, taskTitle, taskDesc, taskType, totalScore} = request.body
+        const dueDate  = request.body.dueDate
+        console.log(dueDate)
+        const taskToken = request.body.token
+        console.log(taskToken)
+
+        jwt.verify(taskToken, "lmsapp", (err, decoded) => {
+            if (decoded) {
+
                 const validationErrors = {};
-                const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = request.body;
-       
+
                 if (Validator.isEmpty(batchId).isValid) {
-                    validationErrors.batchId = Validator.isEmpty(batchId).message;
+                    validationErrors.value = Validator.isEmpty(batchId).message;
                 }
-    
-                if (Validator.isEmpty(taskTitle).isValid) {
-                    validationErrors.taskTitle = "Task Title cannot be empty.";
+                if (!Validator.isValidAmount(batchId).isValid) {
+                    validationErrors.amount = Validator.isValidAmount(batchId).message; //validation for batch id
                 }
-    
-                if (Validator.isEmpty(taskDesc).isValid) {
-                    validationErrors.taskDesc = "Task Description cannot be empty and should not exceed 100 characters.";
-                }
-    
-                if (Validator.isEmpty(taskType).isValid) {
-                    validationErrors.taskType = "Task Type cannot be empty.";
-                }
-    
-                if (Validator.isEmpty(totalScore).isValid) {
-                    validationErrors.totalScore = "Total Score cannot be empty.";
-                }
-    
-                if (Validator.isEmpty(dueDate).isValid) {
-                    validationErrors.dueDate = "Invalid Date Format. Please use DD/MM/YYYY.";
+                if (!Validator.isValidName(taskTitle).isValid) {
+                    validationErrors.name = Validator.isValidName(taskTitle).message;
                 }
 
+                if (!Validator.isValidAddress(taskDesc).isValid) {
+                    validationErrors.address = Validator.isValidAddress(taskDesc).message; //validation for task description.
+                }
+
+                if (!Validator.isValidName(taskType).isValid) {
+                    validationErrors.name = Validator.isValidName(taskType).message; //validation for task type
+                }
+
+                if (!Validator.isValidAmount(totalScore).isValid) {
+                    validationErrors.totalScore = Validator.isValidAmount(totalScore).message; //validation for total score
+                }
+
+                if (!Validator.isValidDate(dueDate).isValid) {
+                    validationErrors.date = Validator.isValidDate(dueDate).message; //validation for date
+                }
+
+
+                if (!Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).isValid) {
+                    validationErrors.date = Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).message; //validation for date
+                }
+
+
+                if (request.file && !Validator.isValidFile(request.file).isValid) {
+                    validationErrors.image = Validator.isValidFile(request.file).message;
+                }
+
+                // If validation fails
                 if (Object.keys(validationErrors).length > 0) {
                     return response.json({ "status": "Validation failed", "data": validationErrors });
                 }
 
-                const taskFileUpload = request.file ? request.file.filename : null;
 
-                // Creating a new task
+                const taskFileUpload = request.file ? request.file.filename : null
+
                 const addtask = new Tasks({
-                    batchId,
-                    taskTitle,
-                    taskDesc,
-                    taskType,
-                    taskFileUpload,
-                    totalScore,
-                    dueDate
+                    batchId: batchId,
+                    taskTitle: taskTitle,
+                    taskDesc: taskDesc,
+                    taskType: taskType,
+                    taskFileUpload: taskFileUpload,
+                    totalScore: totalScore,
+                    dueDate: dueDate
                 });
 
-                // Saving the task
                 Tasks.taskCreate(addtask, (err, data) => {
                     if (err) {
                         return response.json({ "status": err });
                     } else {
                         return response.json({ "status": "success", "data": data });
                     }
-                });
-            });
-        } else {
-            return response.json({ "status": "Unauthorized User!!" });
-        }
-    });
+                })
+            } else {
+                return response.json({ "status": "Unauthorized User!!" });
+            }
+        });
+
+    })
+
 };
 
 

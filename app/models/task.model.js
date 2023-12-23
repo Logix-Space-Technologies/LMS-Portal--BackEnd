@@ -18,43 +18,43 @@ const Tasks = function (tasks) {
 
 
 Tasks.taskCreate = (newTask, result) => {
-        // Check if the batchId exists in the batches table
-        db.query("SELECT * FROM batches WHERE batchId = ? AND deleteStatus = 0 AND isActive = 1 ", [newTask.batchId], (err, batchRes) => {
-            if (err) {
-                console.error("Error checking existing batch: ", err);
-                result(err, null);
-                return;
-            } else if (batchRes.length === 0) {
-                console.log("No such batch exists.");
-                result("No such batch exists.", null);
-                return;
-            } else {
-                // Check if the task already exists
-                db.query("SELECT * FROM task WHERE taskTitle=? AND batchId=?", [newTask.taskTitle, newTask.batchId], (err, res) => {
-                    if (err) {
-                        console.error("Error checking existing task: ", err);
-                        result(err, null);
-                        return;
-                    } else if (res.length > 0) {
-                        console.log("Task already exists.");
-                        result("Task Title already exists.", null);
-                        return;
-                    } else {
-                        // Insert the new task
-                        db.query("INSERT INTO task SET ?", newTask, (err, res) => {
-                            if (err) {
-                                console.error("Error inserting task: ", err);
-                                result(err, null);
-                                return;
-                            } else {
-                                console.log("Task inserted: ", { id: res.id, ...newTask });
-                                result(null, { id: res.id, ...newTask });
-                            }
-                        });
-                    }
-                });
-            }
-        });
+    // Check if the batchId exists in the batches table
+    db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1 ", [newTask.batchId], (err, batchRes) => {
+        if (err) {
+            console.error("Error checking existing batch: ", err);
+            result(err, null);
+            return;
+        } else if (batchRes.length === 0) {
+            console.log("No such batch exists.");
+            result("No such batch exists.", null);
+            return;
+        } else {
+            // Check if the task already exists
+            db.query("SELECT * FROM task WHERE taskTitle=? AND batchId=? AND deleteStatus = 0 AND isActive = 1", [newTask.taskTitle, newTask.batchId], (err, res) => {
+                if (err) {
+                    console.error("Error checking existing task: ", err);
+                    result(err, null);
+                    return;
+                } else if (res.length > 0) {
+                    console.log("Task already exists.");
+                    result("Task Title already exists.", null);
+                    return;
+                } else {
+                    // Insert the new task
+                    db.query("INSERT INTO task SET ?", newTask, (err, res) => {
+                        if (err) {
+                            console.error("Error inserting task: ", err);
+                            result(err, null);
+                            return;
+                        } else {
+                            console.log("Task inserted: ", { id: res.id, ...newTask });
+                            result(null, { id: res.id, ...newTask });
+                        }
+                    });
+                }
+            });
+        }
+    });
 
 };
 
@@ -138,8 +138,8 @@ Tasks.updateTask = (updatedTask, result) => {
 };
 
 
-Tasks.taskView=(result)=>{
-    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1",(err,res)=>{
+Tasks.taskView = (result) => {
+    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)
