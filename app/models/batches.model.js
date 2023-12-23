@@ -5,8 +5,8 @@ const Batches = function (batches) {
     this.id = batches.id;
     this.collegeId = batches.collegeId;
     this.batchName = batches.batchName;
-    this.regStartDate = batches.regStartDate.split('/').reverse().join('-');
-    this.regEndDate = batches.regEndDate.split('/').reverse().join('-');
+    this.regStartDate = batches.regStartDate;
+    this.regEndDate = batches.regEndDate;
     this.batchDesc = batches.batchDesc;
     this.batchAmount = batches.batchAmount;
 }

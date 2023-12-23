@@ -12,7 +12,7 @@ const Tasks = function (tasks) {
     this.taskType = tasks.taskType;
     this.taskFileUpload = tasks.taskFileUpload
     this.totalScore = tasks.totalScore;
-    this.dueDate = tasks.dueDate.split('/').reverse().join('-')
+    this.dueDate = tasks.dueDate;
 };
 
 

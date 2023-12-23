@@ -89,7 +89,7 @@ exports.createTask = (request, response) => {
                     taskType: taskType,
                     taskFileUpload: taskFileUpload,
                     totalScore: totalScore,
-                    dueDate: dueDate
+                    dueDate: dueDate.split('/').reverse().join('-')
                 });
 
                 Tasks.taskCreate(addtask, (err, data) => {
@@ -185,8 +185,8 @@ exports.taskUpdate = (request, response) => {
                 }
 
 
-                if (!Validator.isDateGreaterThanToday(dueDate).isValid) {
-                    validationErrors.date = Validator.isDateGreaterThanToday(dueDate).message; //validation for date
+                if (!Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).isValid) {
+                    validationErrors.date = Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).message; //validation for date
                 }
 
 
@@ -211,7 +211,7 @@ exports.taskUpdate = (request, response) => {
                     taskType: taskType,
                     taskFileUpload: taskFileUpload,
                     totalScore: totalScore,
-                    dueDate: dueDate
+                    dueDate: dueDate.split('/').reverse().join('-')
                 });
 
                 Tasks.updateTask(task, (err, data) => {
