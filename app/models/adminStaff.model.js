@@ -16,7 +16,7 @@ const AdminStaff = function (adminStaff) {
 
 AdminStaff.create = (newAdminStaff, result) => {
 
-    db.query("SELECT * FROM admin_staff WHERE Email=?", newAdminStaff.Email, (err, res) => {
+    db.query("SELECT * FROM admin_staff WHERE Email=? ", newAdminStaff.Email, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
