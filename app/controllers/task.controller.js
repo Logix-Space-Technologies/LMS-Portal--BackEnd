@@ -3,9 +3,12 @@ const jwt = require("jsonwebtoken");
 const path = require("path")
 const { request, response } = require("express");
 const multer = require("multer")
-const Validator = require("../config/data.validate")
+const Validator = require("../config/data.validate");
+const { log } = require("console");
 
 
+
+// multer setup for file uploads
 const storage = multer.diskStorage({
     destination: (request, file, cb) => {
         cb(null, 'uploads/');
@@ -15,89 +18,80 @@ const storage = multer.diskStorage({
     },
 });
 
-
 const upload = multer({ storage: storage }).single('taskFileUpload');
 
-
 exports.createTask = (request, response) => {
-    const taskToken = request.body.token;
+    const taskCreateToken = request.body.token;
+    console.log(taskCreateToken)
 
-    // Checking token validation
-    jwt.verify(taskToken, "lmsapp", (tokenError, decoded) => {
-        if (!decoded) {
-            return response.json({ "status": "Unauthorized User!!" });
-        }
-
-        // Proceed with file upload and other logic after successful token verification
-        upload(request, response, function (err) {
-            if (err) {
-                console.log("Error Uploading File: ", err)
-                return response.json({ "status": err })
-            }
-
-            const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = request.body;
-            const taskFileUpload = request.file ? request.file.filename : null;
-
-            if (!batchId) {
-                return response.json({ "status": "Batch Id cannot be empty." });
-            }
-    
-            if (!taskTitle || taskTitle.trim() === "") {
-                return response.json({ "status": "Task Title cannot be empty." });
-            }
-    
-            if (!taskDesc || taskDesc.length > 100) {
-                return response.json({ "status": "Task Description cannot be empty and should not exceed 100 characters." });
-            }
-    
-            if (!taskType || taskType.trim() === "") {
-                return response.json({ "status": "Task Type cannot be empty." });
-            }
-    
-            if (!totalScore) {
-                return response.json({ "status": "Total Score cannot be empty." });
-            }
-    
-            if (!dueDate || !/^\d{2}\/\d{2}\/\d{4}$/.test(dueDate)) {
-                return response.json({ "status": "Invalid Date Format. Please use DD/MM/YYYY." });
-            }
-
-            const addtask = new Tasks({
-                batchId,
-                taskTitle,
-                taskDesc,
-                taskType,
-                taskFileUpload,
-                totalScore,
-                dueDate
-            });
-
-            Tasks.taskCreate(addtask, (err, data) => {
-                if (err) {
-                    return response.json({ "status": err });
-                } else {
-                    return response.json({ "status": "success", "data": data });
+    jwt.verify(taskCreateToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            // File upload
+            upload(request, response, function (uploadErr) {
+                if (uploadErr) {
+                    console.log("Error Uploading File: ", uploadErr);
+                    return response.json({ "status": uploadErr });
                 }
-            });
-        });
+          
+                const validationErrors = {};
+                const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = request.body;
+       
+                if (Validator.isEmpty(batchId).isValid) {
+                    validationErrors.batchId = Validator.isEmpty(batchId).message;
+                }
+    
+                if (Validator.isEmpty(taskTitle).isValid) {
+                    validationErrors.taskTitle = "Task Title cannot be empty.";
+                }
+    
+                if (Validator.isEmpty(taskDesc).isValid) {
+                    validationErrors.taskDesc = "Task Description cannot be empty and should not exceed 100 characters.";
+                }
+    
+                if (Validator.isEmpty(taskType).isValid) {
+                    validationErrors.taskType = "Task Type cannot be empty.";
+                }
+    
+                if (Validator.isEmpty(totalScore).isValid) {
+                    validationErrors.totalScore = "Total Score cannot be empty.";
+                }
+    
+                if (Validator.isEmpty(dueDate).isValid) {
+                    validationErrors.dueDate = "Invalid Date Format. Please use DD/MM/YYYY.";
+                }
 
-        Tasks.taskCreate(addtask, (err, data) => {
-            if (err) {
-                return response.json({ "status": err });
-            } else {
-                console.log(taskToken)
-                jwt.verify(taskToken, "lmsapp", (err, decoded) => {
-                    if (decoded) {
-                        return response.json({ "status": "success", "data": data });
+                if (Object.keys(validationErrors).length > 0) {
+                    return response.json({ "status": "Validation failed", "data": validationErrors });
+                }
+
+                const taskFileUpload = request.file ? request.file.filename : null;
+
+                // Creating a new task
+                const addtask = new Tasks({
+                    batchId,
+                    taskTitle,
+                    taskDesc,
+                    taskType,
+                    taskFileUpload,
+                    totalScore,
+                    dueDate
+                });
+
+                // Saving the task
+                Tasks.taskCreate(addtask, (err, data) => {
+                    if (err) {
+                        return response.json({ "status": err });
                     } else {
-                        return response.json({ "status": "Unauthorized User!!" });
+                        return response.json({ "status": "success", "data": data });
                     }
                 });
-            }
-        })
-    })
-
+            });
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    });
 };
+
 
 
 

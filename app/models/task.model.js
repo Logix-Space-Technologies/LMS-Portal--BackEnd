@@ -12,41 +12,52 @@ const Tasks = function (tasks) {
     this.taskType = tasks.taskType;
     this.taskFileUpload = tasks.taskFileUpload
     this.totalScore = tasks.totalScore;
-    this.dueDate = tasks.dueDate
+    this.dueDate = tasks.dueDate.split('/').reverse().join('-')
 };
 
 
 
 Tasks.taskCreate = (newTask, result) => {
-    if (newTask.taskTitle !== "" && newTask.taskTitle !== null) {
-        db.query("SELECT * FROM task WHERE taskTitle=? AND batchId=?", [newTask.taskTitle, newTask.batchId], (err, res) => {
+        // Check if the batchId exists in the batches table
+        db.query("SELECT * FROM batches WHERE batchId = ? AND deleteStatus = 0 AND isActive = 1 ", [newTask.batchId], (err, batchRes) => {
             if (err) {
-                console.error("Error checking existing task: ", err);
+                console.error("Error checking existing batch: ", err);
                 result(err, null);
                 return;
+            } else if (batchRes.length === 0) {
+                console.log("No such batch exists.");
+                result("No such batch exists.", null);
+                return;
             } else {
-                if (res.length > 0) {
-                    console.log("Task already exists.");
-                    result("Task Title already exists.", null)
-                    return;
-                } else {
-                    db.query("INSERT INTO task SET ?", newTask, (err, res) => {
-                        if (err) {
-                            console.error("Error inserting task: ", err);
-                            result(err, null);
-                            return;
-                        } else {
-                            console.log("Task inserted: ", { id: res.id, ...newTask });
-                            result(null, { id: res.id, ...newTask });
-                        }
-                    });
-                }
+                // Check if the task already exists
+                db.query("SELECT * FROM task WHERE taskTitle=? AND batchId=?", [newTask.taskTitle, newTask.batchId], (err, res) => {
+                    if (err) {
+                        console.error("Error checking existing task: ", err);
+                        result(err, null);
+                        return;
+                    } else if (res.length > 0) {
+                        console.log("Task already exists.");
+                        result("Task Title already exists.", null);
+                        return;
+                    } else {
+                        // Insert the new task
+                        db.query("INSERT INTO task SET ?", newTask, (err, res) => {
+                            if (err) {
+                                console.error("Error inserting task: ", err);
+                                result(err, null);
+                                return;
+                            } else {
+                                console.log("Task inserted: ", { id: res.id, ...newTask });
+                                result(null, { id: res.id, ...newTask });
+                            }
+                        });
+                    }
+                });
             }
         });
-    } else {
-        result(null, { "status": "Task Title cannot be empty" });
-    }
+
 };
+
 
 
 
