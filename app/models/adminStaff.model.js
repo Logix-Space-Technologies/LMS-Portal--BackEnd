@@ -1,5 +1,6 @@
 const { response } = require("express")
 const db = require("../models/db")
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
 const AdminStaff = function (adminStaff) {
     this.id = adminStaff.id
@@ -16,7 +17,8 @@ const AdminStaff = function (adminStaff) {
 
 AdminStaff.create = (newAdminStaff, result) => {
 
-    db.query("SELECT * FROM admin_staff WHERE Email=? ", newAdminStaff.Email, (err, res) => {
+    db.query("SELECT * FROM admin_staff WHERE Email=?", newAdminStaff.Email, (err, res) => {
+
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -27,7 +29,7 @@ AdminStaff.create = (newAdminStaff, result) => {
                 result("Email already exists", null);
                 return;
             } else {
-                //checking aadhar number
+                // checking Aadhar number
                 db.query("SELECT * FROM admin_staff WHERE AadharNo=? AND deleteStatus = 0 AND isActive = 1", newAdminStaff.AadharNo, (err, res) => {
                     if (err) {
                         console.log("error: ", err);
@@ -41,28 +43,25 @@ AdminStaff.create = (newAdminStaff, result) => {
                         } else {
                             // Code for database insertion
                             db.query("INSERT INTO admin_staff SET ?", newAdminStaff, (err, res) => {
-                                console.log(newAdminStaff)
+                                console.log(newAdminStaff);
                                 if (err) {
-                                    console.log("error: ", err)
-                                    result(err, null)
-                                    return
+                                    console.log("error: ", err);
+                                    result(err, null);
+                                    return;
                                 } else {
-                                    console.log("Added Admin Staff: ", { id: res.id, ...newAdminStaff })
-                                    result(null, { id: res.id, ...newAdminStaff })
+                                    // Log the admin staff addition
+                                    logAdminStaff(res.insertId, "Admin Staff Added");
+
+                                    console.log("Added Admin Staff: ", { id: res.insertId, ...newAdminStaff });
+                                    result(null, { id: res.insertId, ...newAdminStaff });
                                 }
-                            })
-
+                            });
                         }
-
-
                     }
-                })
-
-
-
+                });
             }
         }
-    })
+    });
 };
 
 
@@ -82,7 +81,6 @@ AdminStaff.getAlladmstaff = async (result) => {
         }
     });
 }
-
 
 
 AdminStaff.updateAdminStaff = (adminStaff, result) => {
@@ -119,6 +117,9 @@ AdminStaff.updateAdminStaff = (adminStaff, result) => {
                         return;
                     }
 
+                    // Log the admin staff profile update
+                    logAdminStaff(adminStaff.id, "Profile Updated");
+
                     console.log("Updated Admin Staff details: ", { id: adminStaff.id, ...adminStaff });
                     result(null, { id: adminStaff.id, ...adminStaff });
                 }
@@ -129,23 +130,54 @@ AdminStaff.updateAdminStaff = (adminStaff, result) => {
 
 
 
-AdminStaff.admStaffDelete = (admStaffId, result) => {
-    db.query("UPDATE admin_staff SET isActive=0, deleteStatus=1 WHERE id=?", [admStaffId.id], (err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return;
+
+AdminStaff.admStaffDelete = async (admStaffId, result) => {
+    db.query("SELECT * FROM admin_staff WHERE deleteStatus=0 AND isActive=1", [admStaffId.id], (admStfErr, admStfres) => {
+        if (admStfErr) {
+            console.error("Error Checking admin staff", admStfErr)
+            return result(admStfErr, null)
+
         }
-        if (res.affectedRows === 0) {
-            result({ kind: "not_found" }, null)
-            return
+        console.log(admStfres.length)
+        if (admStfres.length === 0) {
+            console.log("Admin staff does not exists or inactive/deleted")
+            return result("Admin staff does not exist or is inactive/deleted", null)
         }
 
-        console.log("Delete admin staff with id: ", { id: admStaffId.id })
-        result(null, { id: admStaffId.id })
-    });
+
+        db.query("UPDATE admin_staff SET isActive=0, deleteStatus=1 WHERE id=? AND isActive = 1 AND deleteStatus = 0", [admStaffId.id], (err, res) => {
+            if (err) {
+                console.error("error: ", err);
+                result(err, null);
+                return;
+            }
+            if (res.affectedRows === 0) {
+                result({ kind: "not_found" }, null)
+                return
+            }
+
+            console.log("Delete admin staff with id: ", { id: admStaffId.id })
+            result(null, { id: admStaffId.id })
+        });
+    })
+       
 };
 
+AdminStaff.adminStaffSearch = (search, result) => {
+    const searchString = '%' + search + '%'
+    db.query("SELECT id, AdStaffName, PhNo, Address, AadharNo, Email, emailVerified, addedDate, updatedDate, pwdUpdateStatus, updateStatus FROM admin_staff WHERE deleteStatus = 0 AND isActive = 1 AND (AdStaffName LIKE ? OR PhNo LIKE ? OR Address LIKE ? OR AadharNo LIKE ? OR Email LIKE ?)",
+        [searchString, searchString, searchString, searchString, searchString],
+        (err, res) => {
+            if (err) {
+                console.log("Error: ", err)
+                result(err, null)
+                result
+            } else {
+                console.log("Admin staff  Details: ", res)
+                result(null, res)
+            }
+        });
+};
 
 
 

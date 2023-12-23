@@ -32,8 +32,8 @@ exports.batchCreate = (request, response) => {
             if (Validator.isEmpty(request.body.regEndDate).isValid) {
                 validationErrors.regenddate = Validator.isEmpty(request.body.regEndDate).message
             }
-            if (!Validator.isDate1GreaterThanDate2(request.body.regEndDate, request.body.regStartDate).isValid) {
-                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(request.body.regEndDate, request.body.regStartDate).message
+            if (!Validator.isDate1GreaterThanDate2(request.body.regStartDate, request.body.regEndDate).isValid) {
+                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(request.body.regStartDate, request.body.regEndDate).message
             }
             if (!Validator.isValidDate(request.body.regEndDate).isValid) {
                 validationErrors.regenddate = Validator.isValidDate(request.body.regEndDate).message
@@ -95,7 +95,6 @@ exports.batchDelete = (request, response) => {
                     }
                 } else {
                     response.json({ "status": "Batch Deleted." })
-
                 }
             })
         } else {
@@ -103,6 +102,7 @@ exports.batchDelete = (request, response) => {
         }
     })
 }
+
 
 
 exports.batchView = (request, response) => {
@@ -132,6 +132,9 @@ exports.searchBatch = (request, response) => {
     const batchToken = request.body.token;
 
     jwt.verify(batchToken, "lmsapp", (err, decoded) => {
+        if(!batchQuery){
+            return response.json({"status":"Search query cannot be empty"})
+        }
         if (decoded) {
             Batches.searchBatch(batchQuery, (err, data) => {
                 if (err) {
@@ -161,54 +164,65 @@ exports.batchUpdate = (request, response) => {
         batchAmount,
     } = request.body;
 
-    const validationErrors = {};
+    const batchUpdateToken = request.body.token;
+    console.log(batchUpdateToken)
+    jwt.verify(batchUpdateToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
 
-    if (!Validator.isValidName(batchName).isValid) {
-        validationErrors.batchName = Validator.isValidName(batchName).message;
-    }
+            const validationErrors = {};
 
-    if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
-        validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
-    }
 
-    if (!Validator.isDateGreaterThanToday(regEndDate).isValid) {
-        validationErrors.regEndDate = Validator.isDateGreaterThanToday(regEndDate).message;
-    }
+            if (!Validator.isValidName(batchName).isValid) {
+                validationErrors.batchName = Validator.isValidName(batchName).message;
+            }
 
-    if (Validator.isEmpty(batchDesc).isValid) {
-        validationErrors.batchDesc = Validator.isEmpty(batchDesc).message;
-    }
+            if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
+                validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
+            }
+            if (!Validator.isDate1GreaterThanDate2(regStartDate,regEndDate).isValid){
+                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(regStartDate,regEndDate).message
+            }
 
-    if (!Validator.isValidAmount(batchAmount).isValid) {
-        validationErrors.batchAmount = Validator.isValidAmount(batchAmount).message;
-    }
+            if (!Validator.isDateGreaterThanToday(regEndDate).isValid) {
+                validationErrors.regEndDate = Validator.isDateGreaterThanToday(regEndDate).message;
+            }
 
-    if (Object.keys(validationErrors).length > 0) {
-        return response.json({ "status": "Validation Failed", "data": validationErrors });
-    }
+            if (Validator.isEmpty(batchDesc).isValid) {
+                validationErrors.batchDesc = Validator.isEmpty(batchDesc).message;
+            }
 
-    const updatedBatch = new Batches({
-        id: id,
-        collegeId: collegeId,
-        batchName: batchName,
-        regStartDate: regStartDate,
-        regEndDate: regEndDate,
-        batchDesc: batchDesc,
-        batchAmount: batchAmount
-    });
+            if (!Validator.isValidAmount(batchAmount).isValid) {
+                validationErrors.batchAmount = Validator.isValidAmount(batchAmount).message;
+            }
 
-    Batches.updateBatch(updatedBatch, (err, data) => {
-        if (err) {
-            response.json({ "status": err });
-        } else {
-            const batchToken = request.body.token;
-            jwt.verify(batchToken, "lmsapp", (decoded, err) => {
-                if (decoded) {
-                    response.json({ status: "Updated Batch Details", "data": data });
+            if (Object.keys(validationErrors).length > 0) {
+                return response.json({ "status": "Validation Failed", "data": validationErrors });
+            }
+
+            const updatedBatch = new Batches({
+                id: id,
+                collegeId: collegeId,
+                batchName: batchName,
+                regStartDate: regStartDate,
+                regEndDate: regEndDate,
+                batchDesc: batchDesc,
+                batchAmount: batchAmount
+            });
+
+            Batches.updateBatch(updatedBatch, (err, data) => {
+                if (err) {
+                    if (err.kind === "not_found") {
+                        return response.json({ "status": "Batch with provided Id is not found." });
+                    } else {
+                        return response.json({ "status": err });
+                    }
+
                 } else {
-                    response.json({ "status": "Unauthorized User!!" });
+                    response.json({ "status": "Updated Batch Details", "data": data });
                 }
             });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
         }
     });
 };

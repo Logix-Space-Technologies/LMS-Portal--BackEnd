@@ -85,6 +85,7 @@ Tasks.taskDelete = (taskId, result) => {
                     result(null, { id: taskId.id });
                 }
             );
+
         }
     );
 };
