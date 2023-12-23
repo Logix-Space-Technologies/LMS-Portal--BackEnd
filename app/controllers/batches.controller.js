@@ -132,6 +132,9 @@ exports.searchBatch = (request, response) => {
     const batchToken = request.body.token;
 
     jwt.verify(batchToken, "lmsapp", (err, decoded) => {
+        if(!batchQuery){
+            return response.json({"status":"Search query cannot be empty"})
+        }
         if (decoded) {
             Batches.searchBatch(batchQuery, (err, data) => {
                 if (err) {
