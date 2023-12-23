@@ -32,8 +32,8 @@ exports.batchCreate = (request, response) => {
             if (Validator.isEmpty(request.body.regEndDate).isValid) {
                 validationErrors.regenddate = Validator.isEmpty(request.body.regEndDate).message
             }
-            if (!Validator.isDate1GreaterThanDate2(request.body.regEndDate, request.body.regStartDate).isValid) {
-                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(request.body.regEndDate, request.body.regStartDate).message
+            if (!Validator.isDate1GreaterThanDate2(request.body.regStartDate, request.body.regEndDate).isValid) {
+                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(request.body.regStartDate, request.body.regEndDate).message
             }
             if (!Validator.isValidDate(request.body.regEndDate).isValid) {
                 validationErrors.regenddate = Validator.isValidDate(request.body.regEndDate).message
