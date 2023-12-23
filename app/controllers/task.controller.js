@@ -2,7 +2,7 @@ const Tasks = require("../models/task.model");
 const jwt = require("jsonwebtoken");
 const path = require("path")
 const { request, response } = require("express");
-const multer =  require("multer")
+const multer = require("multer")
 const Validator = require("../config/data.validate")
 
 const storage = multer.diskStorage({
@@ -82,7 +82,7 @@ exports.createTask = (request, response) => {
 
 
 
-exports.taskDelete = (request , response) => {
+exports.taskDelete = (request, response) => {
     const deleteToken = request.body.token
     const task = new Tasks({
         'id': request.body.id
@@ -110,7 +110,7 @@ exports.taskDelete = (request , response) => {
     });
 };
 
-         
+
 
 exports.taskUpdate = (request, response) => {
     upload(request, response, function (err) {
@@ -190,7 +190,7 @@ exports.taskUpdate = (request, response) => {
                         if (err.kind === "not_found") {
                             return response.json({ "status": "Task with provided Id is not found." });
                         } else {
-                            return response.json({ "status": err});
+                            return response.json({ "status": err });
                         }
                     } else {
                         return response.json({ "status": "success", "data": data });
@@ -198,13 +198,13 @@ exports.taskUpdate = (request, response) => {
                 });
             } else {
                 return response.json({ "status": "Unauthorized access!!" });
-            } 
+            }
         });
     });
 };
 
-exports.taskView=(request,response)=>{
-    const taskToken=request.body.token
+exports.taskView = (request, response) => {
+    const taskToken = request.body.token
     jwt.verify(taskToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             Tasks.taskView((err, data) => {
@@ -224,4 +224,27 @@ exports.taskView=(request,response)=>{
     })
 }
 
-
+exports.searchTask = (request, response) => {
+    const taskQuery = request.body.taskQuery;
+    const taskSearchToken = request.body.token;
+    jwt.verify(taskSearchToken, "lmsapp", (err, decoded) => {
+        if(!taskQuery){
+            return response.json({"status":"Provide a search query"})
+        }
+        if (decoded) {
+            Tasks.searchTasks(taskQuery, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ status: "No Search Items Found" });
+                    } else {
+                        response.json({ status: "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
