@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const AdminStaff = require("../models/adminStaff.model");
-const Validator = require("../config/data.validate")
+const Validator = require("../config/data.validate");
+const { request, response } = require("express");
 
 const saltRounds = 10;
 
@@ -159,7 +160,7 @@ exports.adminStaffUpdate = (request, res) => {
                 if (err.kind === "not_found") {
                     return res.json({ "status": "Admin Staff with the provided id is not found" });
                 } else {
-                    return res.json({ "status": "Internal server error" });
+                    return res.json({ "status": err });
                 }
             }
 
@@ -171,26 +172,55 @@ exports.adminStaffUpdate = (request, res) => {
 
 exports.admStaffDelete = (request, response) => {
     const deleteToken = request.body.token
-    const admstaff = new AdminStaff({
-        'id': request.body.id
-    });
-    AdminStaff.admStaffDelete(admstaff, (err, data) => {
-        if (err) {
-            if (err.kind === "not_found") {
-                console.log(({ status: "Admin Staff id not found." }))
+    console.log(deleteToken)
+    jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            const admStfDlt = new AdminStaff({
+                'id': request.body.id
+            });
+            AdminStaff.admStaffDelete(admStfDlt, (err, data) => {
+                if (err) {
+                    if (err.kind === "not_found") {
+                        console.log(({ status: "Admin Staff id not found." }))
 
-            } else {
-                response.send({ message: "Error deleting Staff." })
-            }
-        } else {
-            jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
-                if (decoded) {
-                    response.json({ "status": "Deleted" })
-                } else {
-                    response.json({ "status": "Unauthorized User!!" });
+                    } else {
+                        return response.send({"status": err })
+                    }
                 }
-            })
+                return response.json({"status":"Delete admin staff"})
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
         }
-    });
+    })
+
+
 };
 
+
+exports.adminStaffSearch =(request,response)=>{
+    const adminStaffSearchQuery = request.body.adminStaffSearchQuery
+    const adminStaffSearcToken = request.body.token
+
+    jwt.verify(adminStaffSearcToken, "lmsapp", (err, decoded) =>{
+        if (decoded) {
+            if (!adminStaffSearchQuery) {
+                console.log("Search Item is required.")
+                return response.json({"status" : "Search Item is required."})
+            }
+            AdminStaff.adminStaffSearch(adminStaffSearchQuery, (err, data) => {
+                if (err) {
+                    response.json({"status" : err})
+                } else {
+                    if (data.length === 0) {
+                        response.json({"status" : "No Search Items Found."})
+                    } else {
+                        response.json({"status" : "Result Found", "data" : data})
+                    }
+                }
+            })
+        } else {
+            response.json({"status" : "Unauthorized User!!"})
+        }
+    })
+} 

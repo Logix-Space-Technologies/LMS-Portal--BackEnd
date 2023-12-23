@@ -16,7 +16,9 @@ const AdminStaff = function (adminStaff) {
 
 
 AdminStaff.create = (newAdminStaff, result) => {
-    db.query("SELECT * FROM admin_staff WHERE Email=?", newAdminStaff.Email, (err, res) => {
+
+    db.query("SELECT * FROM admin_staff WHERE Email=? AND deleteStatus = 0 AND isActive = 1", newAdminStaff.Email, (err, res) => {
+
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -95,7 +97,7 @@ AdminStaff.updateAdminStaff = (adminStaff, result) => {
 
             if (checkRes.length > 0) {
                 // Duplicate Aadhar number found
-                result({ kind: "validation_error", message: "Aadhar Number already exists" }, null);
+                result( "Aadhar Number already exists" , null);
                 return;
             }
 
@@ -129,23 +131,53 @@ AdminStaff.updateAdminStaff = (adminStaff, result) => {
 
 
 
-AdminStaff.admStaffDelete = (admStaffId, result) => {
-    db.query("UPDATE admin_staff SET isActive=0, deleteStatus=1 WHERE id=?", [admStaffId.id], (err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return;
+AdminStaff.admStaffDelete = async (admStaffId, result) => {
+    db.query("SELECT * FROM admin_staff WHERE deleteStatus=0 AND isActive=1", [admStaffId.id], (admStfErr, admStfres) => {
+        if (admStfErr) {
+            console.error("Error Checking admin staff", admStfErr)
+            return result(admStfErr, null)
+
         }
-        if (res.affectedRows === 0) {
-            result({ kind: "not_found" }, null)
-            return
+        console.log(admStfres.length)
+        if (admStfres.length === 0) {
+            console.log("Admin staff does not exists or inactive/deleted")
+            return result("Admin staff does not exist or is inactive/deleted", null)
         }
-        logAdminStaff(admStaffId.id, "Admin Staff Deleted");
-        console.log("Delete admin staff with id: ", { id: admStaffId.id })
-        result(null, { id: admStaffId.id })
-    });
+
+
+        db.query("UPDATE admin_staff SET isActive=0, deleteStatus=1 WHERE id=? AND isActive = 1 AND deleteStatus = 0", [admStaffId.id], (err, res) => {
+            if (err) {
+                console.error("error: ", err);
+                result(err, null);
+                return;
+            }
+            if (res.affectedRows === 0) {
+                result({ kind: "not_found" }, null)
+                return
+            }
+
+            console.log("Delete admin staff with id: ", { id: admStaffId.id })
+            result(null, { id: admStaffId.id })
+        });
+    })
+       
 };
 
+AdminStaff.adminStaffSearch = (search, result) => {
+    const searchString = '%' + search + '%'
+    db.query("SELECT id, AdStaffName, PhNo, Address, AadharNo, Email, emailVerified, addedDate, updatedDate, pwdUpdateStatus, updateStatus FROM admin_staff WHERE deleteStatus = 0 AND isActive = 1 AND (AdStaffName LIKE ? OR PhNo LIKE ? OR Address LIKE ? OR AadharNo LIKE ? OR Email LIKE ?)",
+        [searchString, searchString, searchString, searchString, searchString],
+        (err, res) => {
+            if (err) {
+                console.log("Error: ", err)
+                result(err, null)
+                result
+            } else {
+                console.log("Admin staff  Details: ", res)
+                result(null, res)
+            }
+        });
+};
 
 
 

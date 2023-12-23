@@ -96,35 +96,10 @@ CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
         // College with the provided id not found
         return result("College not found with the provided ID", null);
       }
-  
-      // Update college staff details
-      db.query(
-        "UPDATE college_staff SET collegeId=?, collegeStaffName=?,aadharNo=?,phNo=?, clgStaffAddress=?, profilePic=?, department=?, updatedDate = CURRENT_DATE(),updateStatus=1 WHERE id=? AND deleteStatus = 0 AND isActive = 1",
-        [clgstaff.collegeId, clgstaff.collegeStaffName,clgstaff.aadharNo, clgstaff.phNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, clgstaff.id],
-        (updateErr, res) => {
-          if (updateErr) {
-            console.error("Error updating college staff details:", updateErr);
-            return result(updateErr, null);
-          }
-  
-          if (res.affectedRows === 0) {
-            // College staff not found with the provided ID
-            return result("College Staff Not Found!", null);
-          }
-  
-          console.log("Updated college staff details:", { id: clgstaff.id, ...clgstaff });
-          return result(null, { id: clgstaff.id, ...clgstaff });
-
-        }
-
-        if (collegeResult.length === 0) {
-            // College with the provided id not found
-            return result({ "status": "College not found with the provided ID" }, null);
-        }
 
         // Update college staff details
         db.query(
-            "UPDATE college_staff SET collegeId=?, collegeStaffName=?, phNo=?, clgStaffAddress=?, profilePic=?, department=?, updatedDate = CURRENT_DATE() WHERE id=?",
+            "UPDATE college_staff SET collegeId=?, collegeStaffName=?, phNo=?, clgStaffAddress=?, profilePic=?, department=?, updatedDate = CURRENT_DATE() WHERE id=? AND deleteStatus = 0 AND isActive = 1",
             [clgstaff.collegeId, clgstaff.collegeStaffName, clgstaff.phNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, clgstaff.id],
             (updateErr, res) => {
                 if (updateErr) {
@@ -154,7 +129,7 @@ CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
 
 
 CollegeStaff.clgStaffDelete = (collegeStaffId, result) => {
-    db.query("UPDATE college_staff SET isActive=0, deleteStatus=1 WHERE id=?", [collegeStaffId.id],
+    db.query("UPDATE college_staff SET isActive=0, deleteStatus=1 WHERE id=? AND deleteStatus = 0 AND isActive = 1", [collegeStaffId.id],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
