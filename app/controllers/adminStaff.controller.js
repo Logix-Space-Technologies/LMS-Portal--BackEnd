@@ -172,27 +172,29 @@ exports.adminStaffUpdate = (request, res) => {
 
 exports.admStaffDelete = (request, response) => {
     const deleteToken = request.body.token
-    const admstaff = new AdminStaff({
-        'id': request.body.id
-    });
-    AdminStaff.admStaffDelete(admstaff, (err, data) => {
-        if (err) {
-            if (err.kind === "not_found") {
-                console.log(({ status: "Admin Staff id not found." }))
+    console.log(deleteToken)
+    jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            const admStfDlt = new AdminStaff({
+                'id': request.body.id
+            });
+            AdminStaff.admStaffDelete(admStfDlt, (err, data) => {
+                if (err) {
+                    if (err.kind === "not_found") {
+                        console.log(({ status: "Admin Staff id not found." }))
 
-            } else {
-                response.send({ message: "Error deleting Staff." })
-            }
-        } else {
-            jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
-                if (decoded) {
-                    response.json({ "status": "Deleted" })
-                } else {
-                    response.json({ "status": "Unauthorized User!!" });
+                    } else {
+                        return response.send({"status": err })
+                    }
                 }
-            })
+                return response.json({"status":"Delete admin staff"})
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
         }
-    });
+    })
+
+
 };
 
 
