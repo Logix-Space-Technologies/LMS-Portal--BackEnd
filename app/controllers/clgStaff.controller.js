@@ -51,7 +51,7 @@ exports.clgStaffCreate = (req, res) => {
             return res.json({ "status": err });
           }
 
-          jwt.verify(token, "lmsapp", (decoded,error) => {
+          jwt.verify(token, "lmsapp", (decoded, error) => {
             if (decoded) {
               return res.json({ "status": "success", "data": data });
             } else {
@@ -70,47 +70,48 @@ exports.clgStaffCreate = (req, res) => {
 exports.clgStaffDelete = (request, response) => {
   const deleteToken = request.body.token;
   const staffId = request.body.id;
-  const collegeStaff = new CollegeStaff({
-    'id': staffId
-  });
+  jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
+    if (decoded) {
+      const collegeStaff = new CollegeStaff({
+        'id': staffId
+      });
 
-  CollegeStaff.clgStaffDelete(collegeStaff, (err, data) => {
-    if (err) {
-      if (err.kind === "not_found") {
-        response.json({ "status": "College Staff ID not found." });
-      } else {
-        console.error(err); 
-        response.json({ "status" : "Error deleting Staff." });
-      }
-    } else {
-      jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
-        if (decoded) {
-          response.json({ "status": "Deleted successfully" });
+      CollegeStaff.clgStaffDelete(collegeStaff, (err, data) => {
+        if (err) {
+          if (err.kind === "not_found") {
+            response.json({ "status": "College Staff ID not found." });
+          } else {
+            console.error(err);
+            response.json({ "status": "Error deleting Staff." });
+          }
         } else {
-          response.json({"status": "Unauthorized User!!" });
+          response.json({ "status": "Deleted successfully" });
         }
       });
+
+    } else {
+      response.json({ "status": "Unauthorized User!!" });
     }
   });
 };
 
 
-exports.viewCollegeStaff=(request,response)=>{
+exports.viewCollegeStaff = (request, response) => {
   const collegeToken = request.body.token
-  CollegeStaff.getAll((err,data)=>{
-     if(err){
+  CollegeStaff.getAll((err, data) => {
+    if (err) {
       console.log(err)
-      response.json({"status":err})
-     } 
-     //response.json(data)
-      jwt.verify(collegeToken, "lmsapp", (err, decoded)=>{
-          if (decoded) {
-              response.json(data)
-          } else {
-              response.json({ "status": "Unauthorized User!!" });
-          }
-      } )
-     
+      response.json({ "status": err })
+    }
+    //response.json(data)
+    jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
+      if (decoded) {
+        response.json(data)
+      } else {
+        response.json({ "status": "Unauthorized User!!" });
+      }
+    })
+
   })
 }
 
@@ -120,24 +121,24 @@ exports.viewCollegeStaff=(request,response)=>{
 exports.viewOneCollegeStaff = (request, response) => {
   const collegeToken = request.body.token;
   const collegeId = request.body.collegeId;
-  
+
   if (!collegeId) {
-      return response.json({ "status": "College Name is required." });
+    return response.json({ "status": "College Name is required." });
   }
 
   CollegeStaff.getOne(collegeId, (err, data) => {
-      if (err) {
-          console.log(err);
-          response.json({ "status": err });
-      } else {
-          jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
-              if (decoded) {
-                  response.json(data);
-              } else {
-                  response.json({ "status": "Unauthorized User!!" });
-              }
-          });
-      }
+    if (err) {
+      console.log(err);
+      response.json({ "status": err });
+    } else {
+      jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+          response.json(data);
+        } else {
+          response.json({ "status": "Unauthorized User!!" });
+        }
+      });
+    }
   });
 };
 
@@ -168,19 +169,19 @@ exports.collegeStaffUpdate = (req, res) => {
 
     CollegeStaff.updateCollegeStaff(clgstaff, (err, data) => {
       if (err) {
-          if (err.kind === "not_found") {
-              return res.json({ "status": "College staff not found with the provided ID" });
-          } else {
-              return res.json({ "status": "Internal Server Error" });
-          }
+        if (err.kind === "not_found") {
+          return res.json({ "status": "College staff not found with the provided ID" });
+        } else {
+          return res.json({ "status": "Internal Server Error" });
+        }
       }
       const token = req.body.token;
       jwt.verify(token, "lmsapp", (error, decoded) => {
-          if (decoded) {
-              return res.json({ "status": "success", "data": data });
-          } else {
-              return res.json({ "status": "Unauthorized access!!" });
-          }
+        if (decoded) {
+          return res.json({ "status": "success", "data": data });
+        } else {
+          return res.json({ "status": "Unauthorized access!!" });
+        }
       });
     });
   });
