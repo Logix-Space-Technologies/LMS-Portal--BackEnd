@@ -52,20 +52,44 @@ Tasks.taskCreate = (newTask, result) => {
 
 
 Tasks.taskDelete = (taskId, result) => {
-    db.query("UPDATE task SET isActive=0 , deleteStatus = 1 WHERE id = ? ", [taskId.id], (err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return
+    db.query(
+        "SELECT * FROM task WHERE deleteStatus = 0 AND isActive = 1",
+        [taskId.id],
+        (taskErr, taskRes) => {
+            if (taskErr) {
+                console.error("Error checking task: ", taskErr);
+                return result(taskErr, null);
+            }
+            console.log(taskRes.length);
+            if (taskRes.length === 0) {
+                console.log("Task does not exist or is inactive/deleted.");
+                return result("Task does not exist or is inactive/deleted.", null);
+            }
+
+            db.query(
+                "UPDATE task SET isActive=0, deleteStatus=1 WHERE id = ? AND isActive = 1 AND deleteStatus = 0",
+                [taskId.id],
+                (err, res) => {
+                    if (err) {
+                        console.error("Error deleting task: ", err);
+                        result(err, null);
+                        return;
+                    }
+
+                    if (res.affectedRows === 0) {
+                        result({ kind: "not_found" }, null);
+                        return;
+                    }
+
+                    console.log("Delete task with id: ", { id: taskId.id });
+                    result(null, { id: taskId.id });
+                }
+            );
+
         }
-        if (res.affectedRows === 0) {
-            result({ kind: "not_found" }, null)
-            return
-        }
-        console.log("Delete task with id: ", { id: taskId.id })
-        result(null, { id: taskId.id })
-    });
+    );
 };
+
 
 
 

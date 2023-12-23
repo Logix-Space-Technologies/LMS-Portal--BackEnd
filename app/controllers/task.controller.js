@@ -117,10 +117,10 @@ exports.taskDelete = (request, response) => {
         Tasks.taskDelete(task, (err, data) => {
             if (err) {
                 if (err.kind === "not_found") {
-                    console.log("Task is not found");
-                    return response.json({ status: "Task is not found" });
+                    console.log("Task not found");
+                    return response.json({ "status": "Task not found" });
                 } else {
-                    return response.json({ status: "Error deleting task" });
+                    return response.json({ "status": err  });
                 }
             } else {
                 return response.json({ "status": "Task Deleted." });
