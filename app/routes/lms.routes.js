@@ -8,6 +8,8 @@ const ClgStaffController=require("../controllers/clgStaff.controller")
 const taskController = require("../controllers/task.controller");
 
 const BatchesController= require("../controllers/batches.controller") 
+const ClgStaffLogController  = require("../controllers/collegeStaffLog.controller")
+const AdminStaffLogController = require("../controllers/adminStaffLog.controller")
 
 
 // router.post("/", admin.adminRegister)
@@ -31,9 +33,7 @@ router.post("/updateCollege", CollegeController.updateCollege)
 
 router.post('/deleteCollege',CollegeController.deleteCollege)
 
-router.post("/viewallcollegestaff", ClgStaffController.viewCollegeStaff);
-
-router.post("/viewonecollegestaff", ClgStaffController.viewOneCollegeStaff) //for viewing college staffs of a single college
+router.post("/viewallcollegestaff", ClgStaffController.viewAllCollegeStaff);
 
 router.post("/addBatches",BatchesController.batchCreate)
 
@@ -53,11 +53,24 @@ router.post("/searchBatch",BatchesController.searchBatch)
 
 router.post("/addtask", taskController.createTask);
 
+router.post("/updatetask", taskController.taskUpdate);
+
 
 router.post("/deleteTask",taskController.taskDelete)
 
 router.post("/updateBatch", BatchesController.batchUpdate);
 
+router.post('/searchCollegeStaff', ClgStaffController.searchCollegeStaff);
+
+router.post("/viewtasks",taskController.taskView)
+
+router.post("/searchCollege",CollegeController.searchCollege)
+
+router.post("/searchAdminStaff",AdminStaffController.adminStaffSearch)
+
+router.post("/viewClgStaffLog",ClgStaffLogController.viewCollegeStaffLog)
+
+router.post("/viewalladmstafflog",AdminStaffLogController.viewAdminStaffLog)
 
 
 module.exports = router

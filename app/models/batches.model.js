@@ -12,39 +12,56 @@ const Batches = function (batches) {
 }
 
 Batches.batchCreate = (newBatch, result) => {
-    if (newBatch.batchName !== "" && newBatch.batchName !== null) {
-        db.query("SELECT * FROM batches WHERE batchName=? AND collegeId=?", [newBatch.batchName, newBatch.collegeId], (err, res) => {
-            if (err) {
-                console.log("error: ", err);
-                result(err, null);
-                return;
-            } else {
-                if (res.length > 0) {
-                    console.log("Batch already exists.");
-                    result("Batch Name already exists.", null)
-                    return
-                } else {
-                    db.query("INSERT INTO batches SET ?", newBatch, (err, res) => {
-                        if (err) {
-                            console.log("error: ", err);
-                            result(null, err);
-                            return;
-                        } else {
-                            console.log("Added Batches: ", { id: res.id, ...newBatch })
-                            result(null, { id: res.id, ...newBatch })
-                        }
-                    })
-                }
+    // Check if the collegeId exists in the college table
+    db.query(
+        "SELECT * FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+        [newBatch.collegeId],
+        (collegeErr, collegeRes) => {
+            if (collegeErr) {
+                console.error("Error checking college:", collegeErr);
+                return result(collegeErr, null);
             }
-        })
-    } else {
-        result(null, { "status": "Content cannot be empty" })
-    }
-}
+
+            if (collegeRes.length === 0 || !collegeRes.every(record => record.deleteStatus === 0 && record.isActive === 1)) {
+                console.log("College does not exist or is inactive/deleted.");
+                return result("College does not exist or is inactive/deleted.", null);
+            }
+
+            // Check if the batchName already exists for the same collegeId
+            db.query(
+                "SELECT COUNT(*) as count FROM batches WHERE batchName LIKE ? AND collegeId = ?",
+                [newBatch.batchName, newBatch.collegeId],
+                (err, res) => {
+                    if (err) {
+                        console.error("Error checking batchName:", err);
+                        return result(err, null);
+                    }
+
+                    if (res[0].count > 0) {
+                        console.log("Batch already exists for the same collegeId.");
+                        return result("Batch Name already exists for the same collegeId.", null);
+                    }
+
+                    // Insert data into batches table
+                    db.query("INSERT INTO batches SET ?", newBatch, (insertErr, insertRes) => {
+                        if (insertErr) {
+                            console.error("Error inserting data:", insertErr);
+                            return result(insertErr, null);
+                        }
+
+                        console.log("Added Batches:", { id: insertRes.id, ...newBatch });
+                        result(null, { id: insertRes.id, ...newBatch });
+                    });
+                }
+            );
+        }
+    );
+};
+
 
 
 Batches.batchDelete = (batchId, result) => {
-    db.query("UPDATE batches SET isActive = 0, deleteStatus = 1 WHERE id = ?", [batchId.id], (err, res) => {
+    db.query("UPDATE batches SET isActive = 0, deleteStatus = 1 WHERE id = ? AND isActive = 1 AND deleteStatus = 0", [batchId.id], (err, res) => {
         if (err) {
             console.log("error : ", err)
             result(err, null)
@@ -59,6 +76,7 @@ Batches.batchDelete = (batchId, result) => {
         result(null, { id: batchId.id })
     })
 }
+
 
 Batches.batchView = (result) => {
     db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus=0 AND b.isActive= 1;", (err, res) => {
