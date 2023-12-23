@@ -11,10 +11,10 @@ const Batches = function (batches) {
     this.batchAmount = batches.batchAmount;
 }
 
-Batches.batchCreate = (newBatch, result) =>{
-    if (newBatch.batchName !=="" && newBatch.batchName !== null) {
+Batches.batchCreate = (newBatch, result) => {
+    if (newBatch.batchName !== "" && newBatch.batchName !== null) {
         db.query("SELECT * FROM batches WHERE batchName=? AND collegeId=?", [newBatch.batchName, newBatch.collegeId], (err, res) => {
-            if(err) {
+            if (err) {
                 console.log("error: ", err);
                 result(err, null);
                 return;
@@ -24,39 +24,39 @@ Batches.batchCreate = (newBatch, result) =>{
                     result("Batch Name already exists.", null)
                     return
                 } else {
-                    db.query("INSERT INTO batches SET ?", newBatch, (err, res)=>{
+                    db.query("INSERT INTO batches SET ?", newBatch, (err, res) => {
                         if (err) {
                             console.log("error: ", err);
                             result(null, err);
                             return;
                         } else {
-                            console.log("Added Batches: ", { id: res.id, ...newBatch})
-                            result(null, { id: res.id, ...newBatch})
+                            console.log("Added Batches: ", { id: res.id, ...newBatch })
+                            result(null, { id: res.id, ...newBatch })
                         }
                     })
                 }
             }
         })
     } else {
-        result(null, {"status": "Content cannot be empty"})
+        result(null, { "status": "Content cannot be empty" })
     }
 }
 
 
 Batches.batchDelete = (batchId, result) => {
-    db.query("UPDATE batches SET isActive = 0, deleteStatus = 1 WHERE id = ?", [batchId.id], (err,res) => {
+    db.query("UPDATE batches SET isActive = 0, deleteStatus = 1 WHERE id = ?", [batchId.id], (err, res) => {
         if (err) {
             console.log("error : ", err)
             result(err, null)
             return
         }
-        if(res.affectedRows === 0){
-            result({ kind: "not_found"}, null)
+        if (res.affectedRows === 0) {
+            result({ kind: "not_found" }, null)
             return
         }
 
-        console.log("Delete Batch with id : ", {id : batchId.id})
-        result(null, {id : batchId.id})
+        console.log("Delete Batch with id : ", { id: batchId.id })
+        result(null, { id: batchId.id })
     })
 }
 
@@ -99,18 +99,18 @@ Batches.updateBatch = (updatedBatch, result) => {
         (collegeErr, collegeRes) => {
             if (collegeErr) {
                 console.log("error checking college: ", collegeErr);
-                result(collegeErr, null);
-                return;
-            }
-            
-            if (collegeRes.length === 0) {
-                result("College not found", null);
-                return;
+                return result(collegeErr, null);
+
             }
 
-            
+            if (collegeRes.length === 0) {
+                return result("College not found", null);
+
+            }
+
+
             db.query(
-                "UPDATE batches SET collegeId = ?, batchName = ?, regStartDate = ?, regEndDate = ?, batchDesc = ?, batchAmount = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
+                "UPDATE batches SET collegeId = ?, batchName = ?, regStartDate = ?, regEndDate = ?, batchDesc = ?, batchAmount = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
                 [
                     updatedBatch.collegeId,
                     updatedBatch.batchName,
