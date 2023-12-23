@@ -184,13 +184,22 @@ function isValidFile(file) {
 }
 
 function isDate1GreaterThanDate2(date1, date2) {
-    const inputDate1 = new Date(date1);
-    const inputDate2 = new Date(date2);
+    // Parse dates in "dd/mm/yyyy" format
+    const [day1, month1, year1] = date1.split('/').map(Number);
+    const inputDate1 = new Date(year1, month1 - 1, day1);
+
+    const [day2, month2, year2] = date2.split('/').map(Number);
+    const inputDate2 = new Date(year2, month2 - 1, day2);
+
+    // Add one year to inputDate1
+    const oneYearLater = new Date(inputDate1);
+    oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
 
     return {
-        isValid: inputDate1 > inputDate2,
-        message: "Select a date greater than the previous date."
+        isValid: inputDate2 >= oneYearLater,
+        message: "Select a date greater than or equal to one year after the previous date."
     };
+
 }
 
 function isValidAadharNumberUpdate(aadharNumber) {
