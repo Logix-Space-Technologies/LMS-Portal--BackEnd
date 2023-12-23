@@ -140,7 +140,7 @@ AdminStaff.admStaffDelete = async (admStaffId, result) => {
         }
         console.log(admStfres.length)
         if (admStfres.length === 0) {
-            console.log("Admin staff does not exists or inactive/deleted")
+            console.log("Admin staff does not exist or inactive/deleted")
             return result("Admin staff does not exist or is inactive/deleted", null)
         }
 

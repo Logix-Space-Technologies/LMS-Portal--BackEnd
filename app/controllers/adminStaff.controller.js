@@ -181,13 +181,14 @@ exports.admStaffDelete = (request, response) => {
             AdminStaff.admStaffDelete(admStfDlt, (err, data) => {
                 if (err) {
                     if (err.kind === "not_found") {
-                        console.log(({ status: "Admin Staff id not found." }))
+                        console.log("Admin Staff id not found.")
+                        response.json({"status":"Admin Staff id not found."})
 
                     } else {
                         return response.send({"status": err })
                     }
                 }
-                return response.json({"status":"Delete admin staff"})
+                return response.json({"status":"Admin Staff Deleted."})
             });
         } else {
             response.json({ "status": "Unauthorized User!!" });
