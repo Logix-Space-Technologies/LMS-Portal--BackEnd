@@ -112,6 +112,7 @@ exports.clgStaffCreate = (request, response) => {
             return response.json({ "status": err });
           }
 
+
           clgstaff.password = hashedPassword;
 
 
@@ -134,74 +135,52 @@ exports.clgStaffCreate = (request, response) => {
 
 exports.clgStaffDelete = (request, response) => {
   const deleteToken = request.body.token;
-  const staffId = request.body.id;
-  const collegeStaff = new CollegeStaff({
-    'id': staffId
-  });
-
-  CollegeStaff.clgStaffDelete(collegeStaff, (err, data) => {
-    if (err) {
-      if (err.kind === "not_found") {
-        console.log({ status: "College Staff id not found." });
-      } else {
-        response.send({ message: "Error deleting Staff." });
+  
+  jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
+    if (decoded) {
+      const collegeStaff = new CollegeStaff({
+        'id': request.body.id
+      });
+      if (!request.body.id) {
+        return response.json({"status":"College staff id should not be empty"})
       }
-    } else {
-      jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
-        if (decoded) {
-          response.json({ status: "Deleted Successfullly" });
+      CollegeStaff.clgStaffDelete(collegeStaff, (err, data) => {
+        if (err) {
+          if (err.kind === "not_found") {
+            response.json({ "status": "College Staff ID not found." });
+          } else {
+            console.error(err);
+            response.json({ "status": "Error deleting Staff." });
+          }
         } else {
-          response.json({ status: "Unauthorized User!!" });
+          response.json({ "status": "Deleted successfully" });
         }
       });
+
+    } else {
+      response.json({ "status": "Unauthorized User!!" });
     }
   });
 };
 
+
 exports.viewAllCollegeStaff = (request, response) => {
   const collegeToken = request.body.token
-  CollegeStaff.getAll((err, data) => {
+  jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
+      if (decoded) {
+	  CollegeStaff.getAll((err, data) => {
     if (err) {
       console.log(err)
       response.json({ "status": err })
-    }
-    //response.json(data)
-    jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
-      if (decoded) {
-        response.json(data)
+    } else {
+	  response.json(data)
+	}
+  })
       } else {
         response.json({ "status": "Unauthorized User!!" });
       }
     })
-
-  })
 }
-
-
-
-exports.viewOneCollegeStaff = (request, response) => {
-  const collegeToken = request.body.token;
-  const collegeId = request.body.collegeId;
-
-  if (!collegeId) {
-    return response.json({ "status": "College Name is required." });
-  }
-
-  CollegeStaff.getOne(collegeId, (err, data) => {
-    if (err) {
-      console.log(err);
-      response.json({ "status": err });
-    } else {
-      jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
-        if (decoded) {
-          response.json(data);
-        } else {
-          response.json({ "status": "Unauthorized User!!" });
-        }
-      });
-    }
-  });
-};
 
 
 exports.collegeStaffUpdate = (req, res) => {
@@ -282,9 +261,6 @@ exports.collegeStaffUpdate = (req, res) => {
 };
 
 
-
-
-
 exports.searchCollegeStaff = (request, response) => {
   const searchQuery = request.body.searchQuery;
   const collegeStaffToken = request.body.token;
@@ -304,6 +280,7 @@ exports.searchCollegeStaff = (request, response) => {
           } else {
             response.json({ status: "success", "data": data });
           }
+
         }
       });
     } else {
