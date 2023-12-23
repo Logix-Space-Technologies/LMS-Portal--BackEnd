@@ -135,13 +135,15 @@ exports.clgStaffCreate = (request, response) => {
 
 exports.clgStaffDelete = (request, response) => {
   const deleteToken = request.body.token;
-  const staffId = request.body.id;
+  
   jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
     if (decoded) {
       const collegeStaff = new CollegeStaff({
-        'id': staffId
+        'id': request.body.id
       });
-
+      if (!request.body.id) {
+        return response.json({"status":"College staff id should not be empty"})
+      }
       CollegeStaff.clgStaffDelete(collegeStaff, (err, data) => {
         if (err) {
           if (err.kind === "not_found") {
