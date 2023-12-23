@@ -57,8 +57,8 @@ exports.batchCreate = (request, response) => {
             const batches = new Batches({
                 collegeId: request.body.collegeId,
                 batchName: request.body.batchName,
-                regStartDate: request.body.regStartDate,
-                regEndDate: request.body.regEndDate,
+                regStartDate: request.body.regStartDate.split('/').reverse().join('-'),
+                regEndDate: request.body.regEndDate.split('/').reverse().join('-'),
                 batchDesc: request.body.batchDesc,
                 batchAmount: request.body.batchAmount
             });
@@ -203,8 +203,8 @@ exports.batchUpdate = (request, response) => {
                 id: id,
                 collegeId: collegeId,
                 batchName: batchName,
-                regStartDate: regStartDate,
-                regEndDate: regEndDate,
+                regStartDate: regStartDate.split('/').reverse().join('-'),
+                regEndDate: regEndDate.split('/').reverse().join('-'),
                 batchDesc: batchDesc,
                 batchAmount: batchAmount
             });

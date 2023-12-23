@@ -16,7 +16,9 @@ const AdminStaff = function (adminStaff) {
 
 
 AdminStaff.create = (newAdminStaff, result) => {
-    db.query("SELECT * FROM admin_staff WHERE Email=?", newAdminStaff.Email, (err, res) => {
+
+    db.query("SELECT * FROM admin_staff WHERE Email=? AND deleteStatus = 0 AND isActive = 1", newAdminStaff.Email, (err, res) => {
+
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -95,7 +97,7 @@ AdminStaff.updateAdminStaff = (adminStaff, result) => {
 
             if (checkRes.length > 0) {
                 // Duplicate Aadhar number found
-                result({ kind: "validation_error", message: "Aadhar Number already exists" }, null);
+                result( "Aadhar Number already exists" , null);
                 return;
             }
 

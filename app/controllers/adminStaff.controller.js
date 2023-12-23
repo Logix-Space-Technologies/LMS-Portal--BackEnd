@@ -160,7 +160,7 @@ exports.adminStaffUpdate = (request, res) => {
                 if (err.kind === "not_found") {
                     return res.json({ "status": "Admin Staff with the provided id is not found" });
                 } else {
-                    return res.json({ "status": "Internal server error" });
+                    return res.json({ "status": err });
                 }
             }
 
