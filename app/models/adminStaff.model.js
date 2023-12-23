@@ -97,7 +97,7 @@ AdminStaff.updateAdminStaff = (adminStaff, result) => {
 
             if (checkRes.length > 0) {
                 // Duplicate Aadhar number found
-                result({ kind: "validation_error", message: "Aadhar Number already exists" }, null);
+                result( "Aadhar Number already exists" , null);
                 return;
             }
 
