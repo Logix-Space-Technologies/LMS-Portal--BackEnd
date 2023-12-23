@@ -5,8 +5,8 @@ const Batches = function (batches) {
     this.id = batches.id;
     this.collegeId = batches.collegeId;
     this.batchName = batches.batchName;
-    this.regStartDate = batches.regStartDate;
-    this.regEndDate = batches.regEndDate;
+    this.regStartDate = batches.regStartDate.split('/').reverse().join('-');
+    this.regEndDate = batches.regEndDate.split('/').reverse().join('-');
     this.batchDesc = batches.batchDesc;
     this.batchAmount = batches.batchAmount;
 }
@@ -29,7 +29,7 @@ Batches.batchCreate = (newBatch, result) => {
 
             // Check if the batchName already exists for the same collegeId
             db.query(
-                "SELECT COUNT(*) as count FROM batches WHERE batchName LIKE ? AND collegeId = ?",
+                "SELECT COUNT(*) as count FROM batches WHERE batchName LIKE ? AND collegeId = ? AND deleteStatus = 0 AND isActive = 1",
                 [newBatch.batchName, newBatch.collegeId],
                 (err, res) => {
                     if (err) {
@@ -117,18 +117,18 @@ Batches.updateBatch = (updatedBatch, result) => {
         (collegeErr, collegeRes) => {
             if (collegeErr) {
                 console.log("error checking college: ", collegeErr);
-                result(collegeErr, null);
-                return;
-            }
-            
-            if (collegeRes.length === 0) {
-                result("College not found", null);
-                return;
+                return result(collegeErr, null);
+
             }
 
-            
+            if (collegeRes.length === 0) {
+                return result("College not found", null);
+
+            }
+
+
             db.query(
-                "UPDATE batches SET collegeId = ?, batchName = ?, regStartDate = ?, regEndDate = ?, batchDesc = ?, batchAmount = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
+                "UPDATE batches SET collegeId = ?, batchName = ?, regStartDate = ?, regEndDate = ?, batchDesc = ?, batchAmount = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
                 [
                     updatedBatch.collegeId,
                     updatedBatch.batchName,
