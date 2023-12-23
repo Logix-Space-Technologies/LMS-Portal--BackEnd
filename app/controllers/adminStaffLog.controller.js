@@ -1,0 +1,23 @@
+const jwt = require("jsonwebtoken")
+const AdminStaffLog = require("../models/adminStaffLog.model")
+const { request, response } = require("express")
+
+
+exports.viewAdminStaffLog = (request, response) => {
+    const adminStaffLogToken = request.body.token
+    jwt.verify(adminStaffLogToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            AdminStaffLog.AdminStaffLog.getAll((err, data) => {
+                if (err) {
+                    console.log(err)
+                    response.json({ "status": err })
+
+                } else {
+                    response.json(data)
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" })
+        }
+    })
+}
