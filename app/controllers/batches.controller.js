@@ -176,6 +176,9 @@ exports.batchUpdate = (request, response) => {
             if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
                 validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
             }
+            if (!Validator.isDate1GreaterThanDate2(regStartDate,regEndDate).isValid){
+                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(regStartDate,regEndDate).message
+            }
 
             if (!Validator.isDateGreaterThanToday(regEndDate).isValid) {
                 validationErrors.regEndDate = Validator.isDateGreaterThanToday(regEndDate).message;
@@ -212,7 +215,7 @@ exports.batchUpdate = (request, response) => {
                     }
 
                 } else {
-                    response.json({ status: "Updated Batch Details", "data": data });
+                    response.json({ "status": "Updated Batch Details", "data": data });
                 }
             });
         } else {
