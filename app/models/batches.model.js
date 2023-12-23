@@ -29,7 +29,7 @@ Batches.batchCreate = (newBatch, result) => {
 
             // Check if the batchName already exists for the same collegeId
             db.query(
-                "SELECT COUNT(*) as count FROM batches WHERE batchName LIKE ? AND collegeId = ?",
+                "SELECT COUNT(*) as count FROM batches WHERE batchName LIKE ? AND collegeId = ? AND deleteStatus = 0 AND isActive = 1",
                 [newBatch.batchName, newBatch.collegeId],
                 (err, res) => {
                     if (err) {
