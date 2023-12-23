@@ -12,24 +12,35 @@ const Tasks = function (tasks) {
     this.taskType = tasks.taskType;
     this.taskFileUpload = tasks.taskFileUpload
     this.totalScore = tasks.totalScore;
-    this.dueDate = tasks.dueDate
+    this.dueDate = tasks.dueDate.split('/').reverse().join('-')
 };
 
 
 
 Tasks.taskCreate = (newTask, result) => {
-    if (newTask.taskTitle !== "" && newTask.taskTitle !== null) {
-        db.query("SELECT * FROM task WHERE taskTitle=? AND batchId=?", [newTask.taskTitle, newTask.batchId], (err, res) => {
-            if (err) {
-                console.error("Error checking existing task: ", err);
-                result(err, null);
-                return;
-            } else {
-                if (res.length > 0) {
+    // Check if the batchId exists in the batches table
+    db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1 ", [newTask.batchId], (err, batchRes) => {
+        if (err) {
+            console.error("Error checking existing batch: ", err);
+            result(err, null);
+            return;
+        } else if (batchRes.length === 0) {
+            console.log("No such batch exists.");
+            result("No such batch exists.", null);
+            return;
+        } else {
+            // Check if the task already exists
+            db.query("SELECT * FROM task WHERE taskTitle=? AND batchId=? AND deleteStatus = 0 AND isActive = 1", [newTask.taskTitle, newTask.batchId], (err, res) => {
+                if (err) {
+                    console.error("Error checking existing task: ", err);
+                    result(err, null);
+                    return;
+                } else if (res.length > 0) {
                     console.log("Task already exists.");
-                    result("Task Title already exists.", null)
+                    result("Task Title already exists.", null);
                     return;
                 } else {
+                    // Insert the new task
                     db.query("INSERT INTO task SET ?", newTask, (err, res) => {
                         if (err) {
                             console.error("Error inserting task: ", err);
@@ -41,32 +52,55 @@ Tasks.taskCreate = (newTask, result) => {
                         }
                     });
                 }
-            }
-        });
-    } else {
-        result(null, { "status": "Task Title cannot be empty" });
-    }
+            });
+        }
+    });
+
 };
+
 
 
 
 
 Tasks.taskDelete = (taskId, result) => {
-    db.query("UPDATE task SET isActive=0 , deleteStatus = 1 WHERE id = ? ", [taskId.id], (err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return
-        }
-        if (res.affectedRows === 0) {
-            result({ kind: "not_found" }, null)
-            return
+    db.query(
+        "SELECT * FROM task WHERE deleteStatus = 0 AND isActive = 1",
+        [taskId.id],
+        (taskErr, taskRes) => {
+            if (taskErr) {
+                console.error("Error checking task: ", taskErr);
+                return result(taskErr, null);
+            }
+            console.log(taskRes.length);
+            if (taskRes.length === 0) {
+                console.log("Task does not exist or is inactive/deleted.");
+                return result("Task does not exist or is inactive/deleted.", null);
+            }
+
+            db.query(
+                "UPDATE task SET isActive=0, deleteStatus=1 WHERE id = ? AND isActive = 1 AND deleteStatus = 0",
+                [taskId.id],
+                (err, res) => {
+                    if (err) {
+                        console.error("Error deleting task: ", err);
+                        result(err, null);
+                        return;
+                    }
+
+                    if (res.affectedRows === 0) {
+                        result({ kind: "not_found" }, null);
+                        return;
+                    }
+
+                    console.log("Delete task with id: ", { id: taskId.id });
+                    result(null, { id: taskId.id });
+                }
+            );
 
         }
-        console.log("Delete task with id: ", { id: taskId.id })
-        result(null, { id: taskId.id })
-    });
+    );
 };
+
 
 
 
@@ -128,8 +162,8 @@ Tasks.updateTask = (updatedTask, result) => {
 };
 
 
-Tasks.taskView=(result)=>{
-    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1",(err,res)=>{
+Tasks.taskView = (result) => {
+    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)
@@ -140,6 +174,25 @@ Tasks.taskView=(result)=>{
         }
     })
 }
+
+
+
+Tasks.searchTasks = (searchString, result) => {
+    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ?  OR t.taskType LIKE ? OR b.batchName LIKE ?)",
+        [`%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null)
+                return
+            } else {
+                console.log("Tasks: ", res);
+                result(null, res)
+            }
+        })
+}
+
+
 module.exports = Tasks;
 
 

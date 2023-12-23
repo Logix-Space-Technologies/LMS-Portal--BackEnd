@@ -129,7 +129,7 @@ CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
 
 
 CollegeStaff.clgStaffDelete = (collegeStaffId, result) => {
-    db.query("UPDATE college_staff SET isActive=0, deleteStatus=1 WHERE id=?", [collegeStaffId.id],
+    db.query("UPDATE college_staff SET isActive=0, deleteStatus=1 WHERE id=? AND deleteStatus = 0 AND isActive = 1", [collegeStaffId.id],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);

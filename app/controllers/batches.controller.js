@@ -32,8 +32,8 @@ exports.batchCreate = (request, response) => {
             if (Validator.isEmpty(request.body.regEndDate).isValid) {
                 validationErrors.regenddate = Validator.isEmpty(request.body.regEndDate).message
             }
-            if (!Validator.isDate1GreaterThanDate2(request.body.regEndDate, request.body.regStartDate).isValid) {
-                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(request.body.regEndDate, request.body.regStartDate).message
+            if (!Validator.isDate1GreaterThanDate2(request.body.regStartDate, request.body.regEndDate).isValid) {
+                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(request.body.regStartDate, request.body.regEndDate).message
             }
             if (!Validator.isValidDate(request.body.regEndDate).isValid) {
                 validationErrors.regenddate = Validator.isValidDate(request.body.regEndDate).message
@@ -132,6 +132,9 @@ exports.searchBatch = (request, response) => {
     const batchToken = request.body.token;
 
     jwt.verify(batchToken, "lmsapp", (err, decoded) => {
+        if(!batchQuery){
+            return response.json({"status":"Search query cannot be empty"})
+        }
         if (decoded) {
             Batches.searchBatch(batchQuery, (err, data) => {
                 if (err) {
