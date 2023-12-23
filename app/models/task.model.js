@@ -61,7 +61,6 @@ Tasks.taskDelete = (taskId, result) => {
         if (res.affectedRows === 0) {
             result({ kind: "not_found" }, null)
             return
-
         }
         console.log("Delete task with id: ", { id: taskId.id })
         result(null, { id: taskId.id })
@@ -157,7 +156,6 @@ Tasks.searchTasks = (searchString, result) => {
             }
         })
 }
-
 
 
 module.exports = Tasks;
