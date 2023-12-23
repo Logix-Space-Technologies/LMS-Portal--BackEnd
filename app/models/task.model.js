@@ -48,6 +48,9 @@ Tasks.taskCreate = (newTask, result) => {
     }
 };
 
+
+
+
 Tasks.taskDelete = (taskId, result) => {
     db.query("UPDATE task SET isActive=0 , deleteStatus = 1 WHERE id = ? ", [taskId.id], (err, res) => {
         if (err) {
@@ -58,12 +61,12 @@ Tasks.taskDelete = (taskId, result) => {
         if (res.affectedRows === 0) {
             result({ kind: "not_found" }, null)
             return
-
         }
         console.log("Delete task with id: ", { id: taskId.id })
         result(null, { id: taskId.id })
     });
 };
+
 
 
 Tasks.updateTask = (updatedTask, result) => {
@@ -82,7 +85,7 @@ Tasks.updateTask = (updatedTask, result) => {
             }
 
             // Check if the task title already exists for the same batchId
-            db.query("SELECT COUNT(*) as count FROM task WHERE taskTitle LIKE ? AND batchId = ? AND id != ?",
+            db.query("SELECT COUNT(*) as count FROM task WHERE taskTitle LIKE ? AND batchId = ? AND id != ? AND deleteStatus = 0 AND isActive = 1",
                 [updatedTask.taskTitle, updatedTask.batchId, updatedTask.id],
                 (titleErr, titleRes) => {
                     if (titleErr) {
@@ -96,7 +99,7 @@ Tasks.updateTask = (updatedTask, result) => {
                     }
 
                     // Update data in the task table
-                    db.query("UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, taskType = ?, taskFileUpload = ?, dueDate = ?, updatedDate = CURRENT_DATE() WHERE id = ?",
+                    db.query("UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, taskType = ?, taskFileUpload = ?, dueDate = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
                         [
                             updatedTask.batchId,
                             updatedTask.taskTitle,
@@ -122,6 +125,39 @@ Tasks.updateTask = (updatedTask, result) => {
                 });
         });
 };
+
+
+Tasks.taskView=(result)=>{
+    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1",(err,res)=>{
+        if (err) {
+            console.log("error: ", err);
+            result(err, null)
+            return
+        } else {
+            console.log("Tasks: ", res);
+            result(null, res)
+        }
+    })
+}
+
+
+
+Tasks.searchTasks = (searchString, result) => {
+    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ?  OR t.taskType LIKE ? OR b.batchName LIKE ?)",
+        [`%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null)
+                return
+            } else {
+                console.log("Tasks: ", res);
+                result(null, res)
+            }
+        })
+}
+
+
 module.exports = Tasks;
 
 

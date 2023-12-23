@@ -2,8 +2,9 @@ const Tasks = require("../models/task.model");
 const jwt = require("jsonwebtoken");
 const path = require("path")
 const { request, response } = require("express");
-const multer =  require("multer")
+const multer = require("multer")
 const Validator = require("../config/data.validate")
+
 
 const storage = multer.diskStorage({
     destination: (request, file, cb) => {
@@ -17,49 +18,67 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single('taskFileUpload');
 
+
 exports.createTask = (request, response) => {
-    upload(request, response, function (err) {
-        if (err) {
-            console.log("Error Uploading Image: ", err)
-            return response.json({ "status": err })
+    const taskToken = request.body.token;
+
+    // Checking token validation
+    jwt.verify(taskToken, "lmsapp", (tokenError, decoded) => {
+        if (!decoded) {
+            return response.json({ "status": "Unauthorized User!!" });
         }
 
-        const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = request.body
-        const taskToken = request.body.token
-        const taskFileUpload = request.file ? request.file.filename : null
+        // Proceed with file upload and other logic after successful token verification
+        upload(request, response, function (err) {
+            if (err) {
+                console.log("Error Uploading File: ", err)
+                return response.json({ "status": err })
+            }
 
-        if (!batchId) {
-            return response.json({ "status": "Batch Id cannot be empty." });
-        }
+            const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = request.body;
+            const taskFileUpload = request.file ? request.file.filename : null;
 
-        if (!taskTitle || taskTitle.trim() === "") {
-            return response.json({ "status": "Task Title cannot be empty." });
-        }
+            if (!batchId) {
+                return response.json({ "status": "Batch Id cannot be empty." });
+            }
+    
+            if (!taskTitle || taskTitle.trim() === "") {
+                return response.json({ "status": "Task Title cannot be empty." });
+            }
+    
+            if (!taskDesc || taskDesc.length > 100) {
+                return response.json({ "status": "Task Description cannot be empty and should not exceed 100 characters." });
+            }
+    
+            if (!taskType || taskType.trim() === "") {
+                return response.json({ "status": "Task Type cannot be empty." });
+            }
+    
+            if (!totalScore) {
+                return response.json({ "status": "Total Score cannot be empty." });
+            }
+    
+            if (!dueDate || !/^\d{2}\/\d{2}\/\d{4}$/.test(dueDate)) {
+                return response.json({ "status": "Invalid Date Format. Please use DD/MM/YYYY." });
+            }
 
-        if (!taskDesc || taskDesc.length > 100) {
-            return response.json({ "status": "Task Description cannot be empty and should not exceed 100 characters." });
-        }
+            const addtask = new Tasks({
+                batchId,
+                taskTitle,
+                taskDesc,
+                taskType,
+                taskFileUpload,
+                totalScore,
+                dueDate
+            });
 
-        if (!taskType || taskType.trim() === "") {
-            return response.json({ "status": "Task Type cannot be empty." });
-        }
-
-        if (!totalScore) {
-            return response.json({ "status": "Total Score cannot be empty." });
-        }
-
-        if (!dueDate || !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
-            return response.json({ "status": "Invalid Date Format." });
-        }
-
-        const addtask = new Tasks({
-            batchId: batchId,
-            taskTitle: taskTitle,
-            taskDesc: taskDesc,
-            taskType: taskType,
-            taskFileUpload: taskFileUpload,
-            totalScore: totalScore,
-            dueDate: dueDate
+            Tasks.taskCreate(addtask, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
         });
 
         Tasks.taskCreate(addtask, (err, data) => {
@@ -67,7 +86,7 @@ exports.createTask = (request, response) => {
                 return response.json({ "status": err });
             } else {
                 console.log(taskToken)
-                jwt.verify(taskToken, "lmsapp", (err,decoded) => {
+                jwt.verify(taskToken, "lmsapp", (err, decoded) => {
                     if (decoded) {
                         return response.json({ "status": "success", "data": data });
                     } else {
@@ -82,38 +101,35 @@ exports.createTask = (request, response) => {
 
 
 
-exports.taskDelete = (request , response) => {
+exports.taskDelete = (request, response) => {
     const deleteToken = request.body.token
     const task = new Tasks({
         'id': request.body.id
     });
 
-    Tasks.taskDelete(task,(err, data)=>{
-        if (err) {
-            if (err.kind === "not_found") {
-                console.log("Task is not found")
-                response.json({status:"Task is not found"})
-                
-            } else {
-                response.json({status:"Error deleting task"})
-                
-            }
-            
-        } else {
-            jwt.verify(deleteToken,"lmsapp",(err , decoded) =>{
-
-                if (decoded) {
-                    response.json({"status":"Task Deleted."})
-                } else {
-
-                    response.json({"status":"Unauthorized User!!"})
-                    
-                }
-            })
-            
+    // Verify JWT token
+    jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
+        if (!decoded) {
+            return response.json({ "status": "Unauthorized User!!" });
         }
-    })
-}
+
+        // Task deletion
+        Tasks.taskDelete(task, (err, data) => {
+            if (err) {
+                if (err.kind === "not_found") {
+                    console.log("Task is not found");
+                    return response.json({ status: "Task is not found" });
+                } else {
+                    return response.json({ status: "Error deleting task" });
+                }
+            } else {
+                return response.json({ "status": "Task Deleted." });
+            }
+        });
+    });
+};
+
+
 
 exports.taskUpdate = (request, response) => {
     upload(request, response, function (err) {
@@ -193,7 +209,7 @@ exports.taskUpdate = (request, response) => {
                         if (err.kind === "not_found") {
                             return response.json({ "status": "Task with provided Id is not found." });
                         } else {
-                            return response.json({ "status": err});
+                            return response.json({ "status": err });
                         }
                     } else {
                         return response.json({ "status": "success", "data": data });
@@ -206,3 +222,48 @@ exports.taskUpdate = (request, response) => {
     });
 };
 
+exports.taskView = (request, response) => {
+    const taskToken = request.body.token
+    jwt.verify(taskToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            Tasks.taskView((err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                }
+                if (data.length == 0) {
+                    response.json({ status: "No tasks found!" });
+                }
+                else {
+                    response.json({ status: "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+
+exports.searchTask = (request, response) => {
+    const taskQuery = request.body.taskQuery;
+    const taskSearchToken = request.body.token;
+    jwt.verify(taskSearchToken, "lmsapp", (err, decoded) => {
+        if(!taskQuery){
+            return response.json({"status":"Provide a search query"})
+        }
+        if (decoded) {
+            Tasks.searchTasks(taskQuery, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ status: "No Search Items Found" });
+                    } else {
+                        response.json({ status: "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
