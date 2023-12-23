@@ -139,7 +139,7 @@ exports.updateCollege = (request, response) => {
         const collegeImage = request.file ? request.file.filename : null
 
         if (!request.file) {
-            return response.json({"status" : "Image cannot be empty!!"})
+            return response.json({ "status": "Image cannot be empty!!" })
         }
         jwt.verify(collegeUpdateToken, "lmsapp", (err, decoded) => {
             if (decoded) {
@@ -217,26 +217,54 @@ exports.updateCollege = (request, response) => {
 
 exports.deleteCollege = (request, response) => {
     const collegedeleteToken = request.body.token
-    const clgDlt = new College({
-        'id': request.body.id
+    console.log(collegedeleteToken)
+    jwt.verify(collegedeleteToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            const clgDlt = new College({
+                'id': request.body.id
+            })
+            College.delete(clgDlt, (err, data) => {
+                if (err) {
+                    if (err.kind === "not_found") {
+                        console.log({ "status": "College id not found." })
+                        return response.json({ "status": "College id not found." })
+                    } else {
+                        return response.json({ "status": err })
+                    }
+                } 
+                return response.json({ "status": "College deleted." })
+            })
+        }else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
     })
-    College.delete(clgDlt, (err, data) => {
-        if (err) {
-            if (err.kind === "not_found") {
-                console.log(({ status: "College id not found." }))
+}
 
-            } else {
-                response.send({ message: "Error deleting College." })
+
+
+exports.searchCollege = (request, response) => {
+    const collegeSearchQuery = request.body.collegeSearchQuery
+    const collegeSearchToken = request.body.token
+
+    jwt.verify(collegeSearchToken, "lmsapp", (err, decoded) =>{
+        if (decoded) {
+            if (!collegeSearchQuery) {
+                console.log("Search Item is required.")
+                return response.json({"status" : "Search Item is required."})
             }
-        } else {
-            jwt.verify(collegedeleteToken, "lmsapp", (err, decoded) => {
-                if (decoded) {
-                    response.json({ "status": "Deleted Succesfully" })
+            College.searchCollege(collegeSearchQuery, (err, data) => {
+                if (err) {
+                    response.json({"status" : err})
                 } else {
-                    response.json({ "status": "Unauthorized User!!" });
+                    if (data.length === 0) {
+                        response.json({"status" : "No Search Items Found."})
+                    } else {
+                        response.json({"status" : "Result Found", "data" : data})
+                    }
                 }
             })
+        } else {
+            response.json({"status" : "Unauthorized User!!"})
         }
-
     })
 }
