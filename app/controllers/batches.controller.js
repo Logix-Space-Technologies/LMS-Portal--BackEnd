@@ -32,8 +32,8 @@ exports.batchCreate = (request, response) => {
             if (Validator.isEmpty(request.body.regEndDate).isValid) {
                 validationErrors.regenddate = Validator.isEmpty(request.body.regEndDate).message
             }
-            if (!Validator.isDate1GreaterThanDate2(request.body.regEndDate, request.body.regStartDate).isValid) {
-                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(request.body.regEndDate, request.body.regStartDate).message
+            if (!Validator.isDate1GreaterThanDate2(request.body.regStartDate, request.body.regEndDate).isValid) {
+                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(request.body.regStartDate, request.body.regEndDate).message
             }
             if (!Validator.isValidDate(request.body.regEndDate).isValid) {
                 validationErrors.regenddate = Validator.isValidDate(request.body.regEndDate).message
@@ -57,8 +57,8 @@ exports.batchCreate = (request, response) => {
             const batches = new Batches({
                 collegeId: request.body.collegeId,
                 batchName: request.body.batchName,
-                regStartDate: request.body.regStartDate,
-                regEndDate: request.body.regEndDate,
+                regStartDate: request.body.regStartDate.split('/').reverse().join('-'),
+                regEndDate: request.body.regEndDate.split('/').reverse().join('-'),
                 batchDesc: request.body.batchDesc,
                 batchAmount: request.body.batchAmount
             });
@@ -203,8 +203,8 @@ exports.batchUpdate = (request, response) => {
                 id: id,
                 collegeId: collegeId,
                 batchName: batchName,
-                regStartDate: regStartDate,
-                regEndDate: regEndDate,
+                regStartDate: regStartDate.split('/').reverse().join('-'),
+                regEndDate: regEndDate.split('/').reverse().join('-'),
                 batchDesc: batchDesc,
                 batchAmount: batchAmount
             });

@@ -89,7 +89,7 @@ exports.createTask = (request, response) => {
                     taskType: taskType,
                     taskFileUpload: taskFileUpload,
                     totalScore: totalScore,
-                    dueDate: dueDate
+                    dueDate: dueDate.split('/').reverse().join('-')
                 });
 
                 Tasks.taskCreate(addtask, (err, data) => {
@@ -127,10 +127,10 @@ exports.taskDelete = (request, response) => {
         Tasks.taskDelete(task, (err, data) => {
             if (err) {
                 if (err.kind === "not_found") {
-                    console.log("Task is not found");
-                    return response.json({ status: "Task is not found" });
+                    console.log("Task not found");
+                    return response.json({ "status": "Task not found" });
                 } else {
-                    return response.json({ status: "Error deleting task" });
+                    return response.json({ "status": err  });
                 }
             } else {
                 return response.json({ "status": "Task Deleted." });
@@ -185,8 +185,8 @@ exports.taskUpdate = (request, response) => {
                 }
 
 
-                if (!Validator.isDateGreaterThanToday(dueDate).isValid) {
-                    validationErrors.date = Validator.isDateGreaterThanToday(dueDate).message; //validation for date
+                if (!Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).isValid) {
+                    validationErrors.date = Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).message; //validation for date
                 }
 
 
@@ -211,7 +211,7 @@ exports.taskUpdate = (request, response) => {
                     taskType: taskType,
                     taskFileUpload: taskFileUpload,
                     totalScore: totalScore,
-                    dueDate: dueDate
+                    dueDate: dueDate.split('/').reverse().join('-')
                 });
 
                 Tasks.updateTask(task, (err, data) => {
