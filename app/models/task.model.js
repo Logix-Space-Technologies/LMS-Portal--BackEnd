@@ -140,6 +140,26 @@ Tasks.taskView=(result)=>{
         }
     })
 }
+
+
+
+Tasks.searchTasks = (searchString, result) => {
+    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ?  OR t.taskType LIKE ? OR b.batchName LIKE ?)",
+        [`%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null)
+                return
+            } else {
+                console.log("Tasks: ", res);
+                result(null, res)
+            }
+        })
+}
+
+
+
 module.exports = Tasks;
 
 

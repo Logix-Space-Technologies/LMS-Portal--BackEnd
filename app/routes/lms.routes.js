@@ -72,5 +72,8 @@ router.post("/viewClgStaffLog",ClgStaffLogController.viewCollegeStaffLog)
 
 router.post("/viewalladmstafflog",AdminStaffLogController.viewAdminStaffLog)
 
+router.post("/searchTasks",taskController.searchTask)
+
+
 
 module.exports = router
