@@ -106,21 +106,34 @@ AdminStaff.updateAdminStaff = (adminStaff, result) => {
 
 
 
-AdminStaff.admStaffDelete = (admStaffId, result) => {
-    db.query("UPDATE admin_staff SET isActive=0, deleteStatus=1 WHERE id=?", [admStaffId.id], (err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return;
+AdminStaff.admStaffDelete = async (admStaffId, result) => {
+    db.query("SELECT * FROM admin_staff WHERE deleteStatus=0 AND isActive=1", [admStaffId.id], (admStfErr, admStfres) => {
+        if (admStfErr) {
+            console.error("Error Checking admin staff", admStfErr)
+            return result(admStfErr, null)
+
         }
-        if (res.affectedRows === 0) {
-            result({ kind: "not_found" }, null)
-            return
+        console.log(admStfres.length)
+        if (admStfres.length === 0) {
+            console.log("Admin staff does not exists or inactive/deleted")
+            return result("Admin staff does not exist or is inactive/deleted", null)
         }
 
-        console.log("Delete admin staff with id: ", { id: admStaffId.id })
-        result(null, { id: admStaffId.id })
-    });
+        db.query("UPDATE admin_staff SET isActive=0, deleteStatus=1 WHERE id=? AND isActive = 1 AND deleteStatus = 0", [admStaffId.id], (err, res) => {
+            if (err) {
+                console.error("error: ", err);
+                result(err, null);
+                return;
+            }
+            if (res.affectedRows === 0) {
+                result({ kind: "not_found" }, null)
+                return
+            }
+
+            console.log("Delete admin staff with id: ", { id: admStaffId.id })
+            result(null, { id: admStaffId.id })
+        });
+    })
 };
 
 
