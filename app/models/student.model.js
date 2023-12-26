@@ -102,34 +102,100 @@ Student.create = (newStudent, result) => {
 
                                                                             newStudent.membership_no = finalMembershipNo;
 
-                                                                            // Insert new student
-                                                                            db.query("INSERT INTO student SET ?", newStudent, (err, res) => {
-                                                                                if (err) {
-                                                                                    console.error("Error while inserting a new student: ", err);
-                                                                                    result(err, null);
-                                                                                    return;
-                                                                                }
+                                                                            db.query("SELECT * FROM student WHERE membership_no = ? AND deleteStatus = 0 AND isActive = 1",
+                                                                                [newStudent.membership_no], (err, res) => {
+                                                                                    if (err) {
+                                                                                        console.error("Error while checking uniqueness: ", err);
+                                                                                        result(err, null);
+                                                                                        return;
+                                                                                    } else {
+                                                                                        if (res.length > 0) {
+                                                                                            db.query("UPDATE counter SET Counter = Counter + 1", (err, updateRes) => {
+                                                                                                if (err) {
+                                                                                                    console.error("Error while updating counter: ", err);
+                                                                                                    result(err, null);
+                                                                                                    return;
+                                                                                                }
 
-                                                                                console.log("New student added: ", { id: res.insertId, ...newStudent });
-                                                                                payStudId = res.insertId;
-                                                                                Payment.create = (newPayment, result) => {
-                                                                                    newPayment.studId = payStudId;
-                                                                                    db.query(
-                                                                                        "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
-                                                                                        [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
-                                                                                        (err, paymentRes) => {
-                                                                                            if (err) {
-                                                                                                console.error("Error during payment: ", err);
-                                                                                                return result(err, null);
-                                                                                            }
+                                                                                                db.query("SELECT Counter FROM counter", (err, counterRes) => {
+                                                                                                    if (err) {
+                                                                                                        console.error("Error while fetching counter value: ", err);
+                                                                                                        result(err, null);
+                                                                                                        return;
+                                                                                                    }
 
-                                                                                            console.log("Payment: ", { id: paymentRes.insertId, ...newPayment });
-                                                                                            result(null, { id: paymentRes.insertId, ...newPayment });
+                                                                                                    const currentCounter = counterRes[0].Counter.toString().padStart(5, "0");
+                                                                                                    const finalMembershipNo = `${membershipNoPrefix}${currentYear}${currentMonth}${currentCounter}`;
+
+                                                                                                    newStudent.membership_no = finalMembershipNo;
+
+
+
+                                                                                                    // Insert new student
+                                                                                                    db.query("INSERT INTO student SET ?", newStudent, (err, res) => {
+                                                                                                        if (err) {
+                                                                                                            console.error("Error while inserting a new student: ", err);
+                                                                                                            result(err, null);
+                                                                                                            return;
+                                                                                                        }
+
+                                                                                                        console.log("New student added: ", { id: res.insertId, ...newStudent });
+                                                                                                        payStudId = res.insertId;
+                                                                                                        Payment.create = (newPayment, result) => {
+                                                                                                            newPayment.studId = payStudId;
+                                                                                                            db.query(
+                                                                                                                "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
+                                                                                                                [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
+                                                                                                                (err, paymentRes) => {
+                                                                                                                    if (err) {
+                                                                                                                        console.error("Error during payment: ", err);
+                                                                                                                        return result(err, null);
+                                                                                                                    }
+
+                                                                                                                    console.log("Payment: ", { id: paymentRes.insertId, ...newPayment });
+                                                                                                                    result(null, { id: paymentRes.insertId, ...newPayment });
+                                                                                                                }
+                                                                                                            );
+                                                                                                        };
+                                                                                                        result(null, { id: res.insertId, ...newStudent })
+                                                                                                    });
+
+                                                                                                });
+                                                                                            });
+
+                                                                                        } else {
+                                                                                            db.query("INSERT INTO student SET ?", newStudent, (err, res) => {
+                                                                                                if (err) {
+                                                                                                    console.error("Error while inserting a new student: ", err);
+                                                                                                    result(err, null);
+                                                                                                    return;
+                                                                                                }
+
+                                                                                                console.log("New student added: ", { id: res.insertId, ...newStudent });
+                                                                                                payStudId = res.insertId;
+                                                                                                Payment.create = (newPayment, result) => {
+                                                                                                    newPayment.studId = payStudId;
+                                                                                                    db.query(
+                                                                                                        "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
+                                                                                                        [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
+                                                                                                        (err, paymentRes) => {
+                                                                                                            if (err) {
+                                                                                                                console.error("Error during payment: ", err);
+                                                                                                                return result(err, null);
+                                                                                                            }
+
+                                                                                                            console.log("Payment: ", { id: paymentRes.insertId, ...newPayment });
+                                                                                                            result(null, { id: paymentRes.insertId, ...newPayment });
+                                                                                                        }
+                                                                                                    );
+                                                                                                };
+                                                                                                result(null, { id: res.insertId, ...newStudent })
+                                                                                            });
+
                                                                                         }
-                                                                                    );
-                                                                                };
-                                                                                result(null, { id: res.insertId, ...newStudent })
-                                                                            });
+
+                                                                                    }
+                                                                                })
                                                                         });
                                                                     });
 

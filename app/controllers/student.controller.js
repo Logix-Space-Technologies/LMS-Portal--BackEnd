@@ -68,6 +68,10 @@ exports.createStudent = (req, res) => {
             validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
         }
 
+        if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+            validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+        }
+
 
         // If validation fails
         if (Object.keys(validationErrors).length > 0) {
