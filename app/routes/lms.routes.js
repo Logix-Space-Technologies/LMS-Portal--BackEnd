@@ -75,6 +75,7 @@ router.post("/viewalladmstafflog",AdminStaffLogController.viewAdminStaffLog)
 
 router.post("/searchTasks",taskController.searchTask)
 
+router.post("/clgStaffLogin",ClgStaffController.collegeStaffLogin)
 
 router.post("/studreg",StudentController.createStudent)
 
