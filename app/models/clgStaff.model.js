@@ -185,6 +185,23 @@ CollegeStaff.searchCollegeStaff = (search, result) => {
 };
 
 
+// College Staff Login
+CollegeStaff.findByClgStaffEmail = (email, result) => {
+    db.query("SELECT * FROM college_staff WHERE email = ? AND deleteStatus = 0 AND isActive = 1", email, (err, res) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            return
+        }
+        if (res.length) {
+            result(null, res[0])
+            return
+        }
+        result({ kind: "not_found" }, null)
+    })
+    // console.log("College Staff is Inactive or does not Exist.")
+    // result("College Staff is Inactive or does not Exist.", null)
+}
 
 
 

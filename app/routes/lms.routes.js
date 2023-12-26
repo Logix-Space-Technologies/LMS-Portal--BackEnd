@@ -76,6 +76,6 @@ router.post("/searchTasks",taskController.searchTask)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
-
+router.post("/clgStaffLogin",ClgStaffController.collegeStaffLogin)
 
 module.exports = router
