@@ -75,6 +75,10 @@ router.post("/viewalladmstafflog",AdminStaffLogController.viewAdminStaffLog)
 
 router.post("/searchTasks",taskController.searchTask)
 
+
 router.post("/studreg",StudentController.createStudent)
+
+router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
+
 
 module.exports = router

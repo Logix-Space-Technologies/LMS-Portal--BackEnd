@@ -179,7 +179,23 @@ AdminStaff.adminStaffSearch = (search, result) => {
         });
 };
 
+AdminStaff.findByEmail = (email , result)=>{
+    db.query("SELECT * FROM admin_staff WHERE Email = ? AND isActive=1 AND deleteStatus=0 ",email, (err,res)=>{
 
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            return
+            
+        }
+        if (res.length){
+            result(null, res[0])
+            return
+        }
+
+        result({kind : "not_found"}, null)
+    })
+}
 
 
 
