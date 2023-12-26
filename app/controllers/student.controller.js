@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const {Student,Payment} = require("../models/student.model");
+const { Student, Payment } = require("../models/student.model");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const Validator = require("../config/data.validate");

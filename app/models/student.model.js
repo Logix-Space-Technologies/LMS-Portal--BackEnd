@@ -26,7 +26,7 @@ const Payment = function (payment) {
 };
 
 let payStudId;
- 
+
 
 Student.create = (newStudent, result) => {
     const currentYear = new Date().getFullYear();
@@ -111,7 +111,7 @@ Student.create = (newStudent, result) => {
                                                                                 }
 
                                                                                 console.log("New student added: ", { id: res.insertId, ...newStudent });
-                                                                                payStudId=res.insertId;        
+                                                                                payStudId = res.insertId;
                                                                                 Payment.create = (newPayment, result) => {
                                                                                     newPayment.studId = payStudId;
                                                                                     db.query(
@@ -122,12 +122,13 @@ Student.create = (newStudent, result) => {
                                                                                                 console.error("Error during payment: ", err);
                                                                                                 return result(err, null);
                                                                                             }
-                                                                                
+
                                                                                             console.log("Payment: ", { id: paymentRes.insertId, ...newPayment });
                                                                                             result(null, { id: paymentRes.insertId, ...newPayment });
                                                                                         }
                                                                                     );
                                                                                 };
+                                                                                result(null, { id: res.insertId, ...newStudent })
                                                                             });
                                                                         });
                                                                     });
