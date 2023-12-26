@@ -28,7 +28,7 @@ const Payment = function (payment) {
 let payStudId;
  
 
-Student.create = (newStudent, newPayment, result) => {
+Student.create = (newStudent, result) => {
     const currentYear = new Date().getFullYear();
     const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, "0");
     const membershipNoPrefix = "LUC";
@@ -112,7 +112,22 @@ Student.create = (newStudent, newPayment, result) => {
 
                                                                                 console.log("New student added: ", { id: res.insertId, ...newStudent });
                                                                                 payStudId=res.insertId;        
-                                                                                Payment.create(newPayment, result);
+                                                                                Payment.create = (newPayment, result) => {
+                                                                                    newPayment.studId = payStudId;
+                                                                                    db.query(
+                                                                                        "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
+                                                                                        [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
+                                                                                        (err, paymentRes) => {
+                                                                                            if (err) {
+                                                                                                console.error("Error during payment: ", err);
+                                                                                                return result(err, null);
+                                                                                            }
+                                                                                
+                                                                                            console.log("Payment: ", { id: paymentRes.insertId, ...newPayment });
+                                                                                            result(null, { id: paymentRes.insertId, ...newPayment });
+                                                                                        }
+                                                                                    );
+                                                                                };
                                                                             });
                                                                         });
                                                                     });
@@ -135,21 +150,6 @@ Student.create = (newStudent, newPayment, result) => {
         });
 };
 
-Payment.create = (newPayment, result) => {
-    newPayment.studId = payStudId;
-    db.query(
-        "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
-        [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
-        (err, paymentRes) => {
-            if (err) {
-                console.error("Error during payment: ", err);
-                return result(err, null);
-            }
 
-            console.log("Payment: ", { id: paymentRes.insertId, ...newPayment });
-            result(null, { id: paymentRes.insertId, ...newPayment });
-        }
-    );
-};
 
 module.exports = { Student, Payment };
