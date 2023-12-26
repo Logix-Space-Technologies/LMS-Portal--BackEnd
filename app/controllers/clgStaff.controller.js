@@ -24,7 +24,7 @@ exports.clgStaffCreate = (request, response) => {
   upload(request, response, function (err) {
     if (err) {
       console.error("Error uploading image:", err);
-      return res.json({ "status": "Error uploading image" });
+      return response.json({ "status": "Error uploading image" });
     }
     const clgStaffToken = request.body.token
     console.log(clgStaffToken)
