@@ -29,6 +29,17 @@ let payStudId;
 
 
 Student.create = (newStudent, result) => {
+    const currentDate = new Date();
+    const oneyrfromnow = new Date(currentDate);
+    oneyrfromnow.setFullYear(currentDate.getFullYear() + 1);
+    const oneAfterYear = oneyrfromnow.toDateString();
+
+    // Convert to "YYYY-MM-DD" format
+    const year = oneyrfromnow.getFullYear();
+    const month = String(oneyrfromnow.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const day = String(oneyrfromnow.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
     const currentYear = new Date().getFullYear();
     const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, "0");
     const membershipNoPrefix = "LUC";
@@ -101,6 +112,7 @@ Student.create = (newStudent, result) => {
                                                                             const finalMembershipNo = `${membershipNoPrefix}${currentYear}${currentMonth}${currentCounter}`;
 
                                                                             newStudent.membership_no = finalMembershipNo;
+                                                                            newStudent.validity = formattedDate;
 
                                                                             // Checking if membership_no already exists
 
@@ -130,8 +142,6 @@ Student.create = (newStudent, result) => {
                                                                                                     const finalMembershipNo = `${membershipNoPrefix}${currentYear}${currentMonth}${currentCounter}`;
 
                                                                                                     newStudent.membership_no = finalMembershipNo;
-
-
 
                                                                                                     // Insert new student
                                                                                                     db.query("INSERT INTO student SET ?", newStudent, (err, res) => {
