@@ -10,6 +10,7 @@ const taskController = require("../controllers/task.controller");
 const BatchesController= require("../controllers/batches.controller") 
 const ClgStaffLogController  = require("../controllers/collegeStaffLog.controller")
 const AdminStaffLogController = require("../controllers/adminStaffLog.controller")
+const StudentController=require('../controllers/student.controller')
 
 
 // router.post("/", admin.adminRegister)
@@ -74,8 +75,10 @@ router.post("/viewalladmstafflog",AdminStaffLogController.viewAdminStaffLog)
 
 router.post("/searchTasks",taskController.searchTask)
 
-router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
+router.post("/studreg",StudentController.createStudent)
+
+router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
 
 module.exports = router
