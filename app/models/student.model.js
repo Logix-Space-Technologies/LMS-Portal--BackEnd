@@ -102,6 +102,8 @@ Student.create = (newStudent, result) => {
 
                                                                             newStudent.membership_no = finalMembershipNo;
 
+                                                                            // Checking if membership_no already exists
+
                                                                             db.query("SELECT * FROM student WHERE membership_no = ? AND deleteStatus = 0 AND isActive = 1",
                                                                                 [newStudent.membership_no], (err, res) => {
                                                                                     if (err) {
