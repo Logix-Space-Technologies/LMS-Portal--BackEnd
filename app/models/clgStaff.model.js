@@ -205,7 +205,6 @@ CollegeStaff.findByClgStaffEmail = (email, result) => {
 
 //To view batch
 CollegeStaff.viewBatch = (collegeId, result) => {
-    // Assuming batchId is the parameter for the batch's ID
     db.query(
         "SELECT DISTINCT b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND cs.collegeId = ?",
         [collegeId],
