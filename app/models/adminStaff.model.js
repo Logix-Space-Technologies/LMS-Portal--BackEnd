@@ -1,5 +1,6 @@
 const { response } = require("express")
 const db = require("../models/db")
+const bcrypt = require("bcrypt")
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
 const AdminStaff = function (adminStaff) {
@@ -17,7 +18,7 @@ const AdminStaff = function (adminStaff) {
 
 AdminStaff.create = (newAdminStaff, result) => {
 
-    db.query("SELECT * FROM admin_staff WHERE Email=? AND deleteStatus = 0 AND isActive = 1", newAdminStaff.Email, (err, res) => {
+    db.query("SELECT * FROM admin_staff WHERE  Email=? AND deleteStatus = 0 AND isActive = 1", newAdminStaff.Email, (err, res) => {
 
         if (err) {
             console.log("error: ", err);
@@ -97,7 +98,7 @@ AdminStaff.updateAdminStaff = (adminStaff, result) => {
 
             if (checkRes.length > 0) {
                 // Duplicate Aadhar number found
-                result( "Aadhar Number already exists" , null);
+                result("Aadhar Number already exists", null);
                 return;
             }
 
@@ -160,7 +161,7 @@ AdminStaff.admStaffDelete = async (admStaffId, result) => {
             result(null, { id: admStaffId.id })
         });
     })
-       
+
 };
 
 AdminStaff.adminStaffSearch = (search, result) => {
@@ -180,25 +181,59 @@ AdminStaff.adminStaffSearch = (search, result) => {
 };
 
 AdminStaff.findByEmail = (email , result)=>{
-    db.query("SELECT * FROM admin_staff WHERE Email = ? AND isActive=1 AND deleteStatus=0 ",email, (err,res)=>{
+    db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND isActive=1 AND deleteStatus=0 ",email, (err,res)=>{
 
         if (err) {
             console.log("Error : ", err)
             result(err, null)
             return
-            
+
         }
-        if (res.length){
+        if (res.length) {
             result(null, res[0])
             return
         }
 
-        result({kind : "not_found"}, null)
+        result({ kind: "not_found" }, null)
     })
 }
 
 
+// Admin-Staff Change Password
+AdminStaff.asChangePassword = (adsf, result) => {
+    // Retrieve the hashed old password from the database
+    const getAstaffPasswordQuery = "SELECT Password FROM admin_staff WHERE BINARY Email = ? AND deleteStatus = 0 AND isActive = 1"
+    db.query(getAstaffPasswordQuery, [adsf.Email], (getAstaffPasswordErr, getAstaffPasswordRes) => {
+        if (getAstaffPasswordErr) {
+            console.log("Error : ", getAstaffPasswordErr)
+            result(getAstaffPasswordErr, null)
+            return;
+        }
+        if (getAstaffPasswordRes.length > 0) {
+            const hashedOldPassword = getAstaffPasswordRes[0].Password;
 
+            // Compare the hashed old password with the provided old password
+            if (bcrypt.compareSync(adsf.oldAdSfPassword, hashedOldPassword)) {
+                const updateAstaffPasswordQuery = "UPDATE admin_staff SET Password = ?, updateStatus = 1 WHERE Email = ? AND deleteStatus = 0 AND isActive = 1"
+                const hashedNewPassword = bcrypt.hashSync(adsf.newAdSfPassword, 10)
+
+                db.query(updateAstaffPasswordQuery, [hashedNewPassword, adsf.Email], (updateErr) => {
+                    if (updateErr) {
+                        console.log("Error : ", updateErr)
+                        result(updateErr, null)
+                        return;
+                    } else {
+                        result(null, { "status": "Password Updated Successfully." })
+                    }
+                })
+            } else {
+                result(null, { "status": "Incorrect Old Password!!!" })
+            }
+        } else {
+            result(null, { "status": "User Not Found!!!" })
+        }
+    })
+}
 
 
 

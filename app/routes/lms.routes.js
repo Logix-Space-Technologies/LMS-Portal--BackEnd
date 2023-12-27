@@ -80,13 +80,17 @@ router.post("/clgStaffLogin",ClgStaffController.collegeStaffLogin)
 
 router.post("/studreg",StudentController.createStudent)
 
+router.post("/studViewTask",StudentController.studentTaskView)
+
 router.post("/studentLogin",StudentController.studLog)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
 router.post("/CollegeStaffViewBatch", ClgStaffController.collegeStaffViewBatch)
 
+router.post("/searchStudent",ClgStaffController.searchStudentByCollegeId)
 
+router.post("/adminStaffChangePassword",AdminStaffController.adminStaffChangePswd)
 
 
 module.exports = router

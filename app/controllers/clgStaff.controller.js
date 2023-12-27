@@ -6,7 +6,7 @@ const multer = require("multer")
 const path = require("path")
 const Validator = require("../config/data.validate")
 const saltRounds = 10;
-
+const { Student } = require("../models/student.model")
 
 const storage = multer.diskStorage({
   destination: (request, file, cb) => {
@@ -331,6 +331,7 @@ exports.collegeStaffLogin = (request, response) => {
   })
 }
 
+
 exports.collegeStaffViewBatch = (request, response) => {
   const collegeStaffViewBatchToken = request.body.token;
   jwt.verify(collegeStaffViewBatchToken, "lmsapptwo", (err, decoded) => {
@@ -352,3 +353,31 @@ exports.collegeStaffViewBatch = (request, response) => {
       }
   });
 };
+
+exports.searchStudentByCollegeId = (req, res) => {
+  const searchQuery = req.body.searchQuery;
+  const collegeId = req.body.collegeId;
+  const searchstudToken = req.body.token;
+  jwt.verify(searchstudToken, "lmsapptwo", (err, decoded) => {
+    if (decoded) {
+      if (!searchQuery) {
+        return res.json({ "status": "Search query is empty!!" });
+      }
+      Student.searchStudentByCollege(searchQuery, collegeId, (err, data) => {
+        if (err) {
+          return res.json({ "status": err });
+        } else {
+          if (data.length === 0) {
+            return res.json({ "status": "No search items found." });
+          } else {
+            return res.json({ "status": "success", "data": data });
+          }
+        }
+      });
+    } else {
+      return res.json({ "status": "Unauthorized User!!" });
+    }
+  });
+
+}
+
