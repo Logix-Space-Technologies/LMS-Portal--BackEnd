@@ -239,7 +239,7 @@ exports.adminStaffLogin = (request, response) => {
             if (err.kind === "not_found") {
                 response.json({ "status": "Admin Staff does not exist" })
             } else {
-                response.json({ "Status": "Error retrieving Admin Staff details" })
+                response.json({ "status": "Error retrieving Admin Staff details" })
 
             }
 
@@ -260,6 +260,46 @@ exports.adminStaffLogin = (request, response) => {
             } else {
                 response.json({ "status": "Invalid Email or Password!!!" })
             }
+        }
+    })
+}
+
+
+
+// Admin-Staff Change Password
+exports.adminStaffChangePswd = (request, response) => {
+    const {Email, oldAdSfPassword, newAdSfPassword, token} = request.body
+
+    jwt.verify(token, "lmsappone", (error, decoded) => {
+        if (decoded) {
+            AdminStaff.asChangePassword({Email, oldAdSfPassword, newAdSfPassword}, (err, result) => {
+                if (err) {
+                    return response.json({"status" : err})
+                }
+                const validationErrors = {}
+
+                const passwordValidation = Validator.isValidPassword(newAdSfPassword)
+                if (!passwordValidation.isValid) {
+                    validationErrors.password = passwordValidation.message
+                    return response.json({"status" : validationErrors})
+                }
+
+                if (result.status === "Password Updated Successfully.") {
+                    const hashedNewPassword = bcrypt.hashSync(newAdSfPassword, 10)
+
+                    AdminStaff.asChangePassword({Email, oldAdSfPassword, newAdSfPassword : hashedNewPassword}, (updateErr, UpdateResult) => {
+                        if (updateErr) {
+                            return response.json({"status" : updateErr})
+                        } else {
+                            return response.json({"status" : "Password Updated Successfully."})
+                        }
+                    })
+                } else {
+                    return response.json(result)
+                }
+            })
+        } else {
+            return response.json({"status" : "Unauthorized User!!"})
         }
     })
 }

@@ -87,15 +87,15 @@ CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
     // Check if the collegeId exists in the college table
     db.query("SELECT * FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [clgstaff.collegeId], (err, collegeResult) => {
 
-      if (err) {
-        console.error("Error checking college existence:", err);
-        return result(err, null);
-      }
-  
-      if (collegeResult.length === 0) {
-        // College with the provided id not found
-        return result("College not found with the provided ID", null);
-      }
+        if (err) {
+            console.error("Error checking college existence:", err);
+            return result(err, null);
+        }
+
+        if (collegeResult.length === 0) {
+            // College with the provided id not found
+            return result("College not found with the provided ID", null);
+        }
 
         // Update college staff details
         db.query(
@@ -187,7 +187,7 @@ CollegeStaff.searchCollegeStaff = (search, result) => {
 
 // College Staff Login
 CollegeStaff.findByClgStaffEmail = (email, result) => {
-    db.query("SELECT * FROM college_staff WHERE email = ? AND deleteStatus = 0 AND isActive = 1", email, (err, res) => {
+    db.query("SELECT * FROM college_staff WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1", email, (err, res) => {
         if (err) {
             console.log("Error : ", err)
             result(err, null)
@@ -203,11 +203,11 @@ CollegeStaff.findByClgStaffEmail = (email, result) => {
     // result("College Staff is Inactive or does not Exist.", null)
 }
 
-//College Staff to view Student
 
-CollegeStaff.viewStudent = (collegeId, result) => {
+//To view batch
+CollegeStaff.viewBatch = (collegeId, result) => {
     db.query(
-        "SELECT DISTINCT c.collegeName, s.batchId, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilepic, s.aadharNo, s.membership_no FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND cs.collegeId = ?",
+        "SELECT DISTINCT b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND cs.collegeId = ?",
         [collegeId],
         (err, res) => {
             if (err) {
@@ -215,7 +215,7 @@ CollegeStaff.viewStudent = (collegeId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Student Details: ", res);
+                console.log("Batch Details: ", res);
                 result(null, res);
             }
         }
