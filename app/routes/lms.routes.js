@@ -101,9 +101,12 @@ router.post("/collegeStaffViewStudent",ClgStaffController.collegeStaffViewStuden
 
 router.post("/studentChangePassword",StudentController.StdChangePassword)
 
-router.post('/deleteCollegeStaffByAdminStaff', AdminStaffController.collegeStaffDelete)
+router.post("/collegeStaffChangePassword",ClgStaffController.collegeStaffChangePassword)
+
+router.post("/deleteCollegeStaffByAdminStaff", AdminStaffController.collegeStaffDelete)
 
 router.post("/searchcollegesByAdminStaff", AdminStaffController.searchCollegesByAdminStaff)
+
 
 
 module.exports = router
