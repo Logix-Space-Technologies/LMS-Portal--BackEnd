@@ -385,3 +385,50 @@ exports.searchStudentByCollegeId = (req, res) => {
 
 
 
+exports.collegeStaffChangePassword = (request, response) => {
+  const { email, oldPassword, newPassword, token } = request.body;
+
+  // Verify the JWT token
+  jwt.verify(token, "lmsappthree", (err, decoded) => {
+      if (err || !decoded) {
+          response.json({ "status": "Unauthorized User!!" });
+          return;
+      }
+
+      // Validate old and new passwords
+      const validationErrors = {};
+
+      if (!oldPassword) {
+          validationErrors.oldPassword = "Old password is required.";
+      }
+
+      const passwordValidation = Validator.isValidPassword(newPassword);
+      if (!passwordValidation.isValid) {
+          validationErrors.newPassword = passwordValidation.message;
+      }
+
+      if (Object.keys(validationErrors).length > 0) {
+          return response.json({ "status": "Validation failed", "data": validationErrors });
+      }
+
+      // Check old password and update if valid
+      CollegeStaff.collegeStaffPasswordChange({ email, oldPassword, newPassword }, (err, data) => {
+          if (err) {
+              response.json({ "status": err });
+              return;
+          }
+          if(oldPassword === newPassword){
+              response.json({ "status": "Old password and new password cannot be same." });
+              return;
+          }
+
+          if (data.status === "Incorrect Old Password!!") {
+              response.json({ "status": "Incorrect Old Password!!" });
+          } else if (data.status === "college staff not found") {
+              response.json({ "status": "User Not Found!!!" });
+          } else {
+              response.json({ "status": "Password Updated Successfully." });
+          }
+      });
+  });
+};

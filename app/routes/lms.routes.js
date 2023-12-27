@@ -96,7 +96,7 @@ router.post("/refundRequest",RefundController.createRefundRequest)
 
 router.post("/adminStaffChangePassword",AdminStaffController.adminStaffChangePswd)
 
-
+router.post("/collegeStaffChangePassword",ClgStaffController.collegeStaffChangePassword)
 
 
 module.exports = router
