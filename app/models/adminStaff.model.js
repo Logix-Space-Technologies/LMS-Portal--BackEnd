@@ -17,7 +17,7 @@ const AdminStaff = function (adminStaff) {
 
 AdminStaff.create = (newAdminStaff, result) => {
 
-    db.query("SELECT * FROM admin_staff WHERE Email=? AND deleteStatus = 0 AND isActive = 1", newAdminStaff.Email, (err, res) => {
+    db.query("SELECT * FROM admin_staff WHERE BINARY Email=? AND deleteStatus = 0 AND isActive = 1", newAdminStaff.Email, (err, res) => {
 
         if (err) {
             console.log("error: ", err);
