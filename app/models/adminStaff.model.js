@@ -202,7 +202,7 @@ AdminStaff.findByEmail = (email , result)=>{
 // Admin-Staff Change Password
 AdminStaff.asChangePassword = (adsf, result) => {
     // Retrieve the hashed old password from the database
-    const getAstaffPasswordQuery = "SELECT Password FROM admin_staff WHERE Email = ? AND deleteStatus = 0 AND isActive = 1"
+    const getAstaffPasswordQuery = "SELECT Password FROM admin_staff WHERE BINARY Email = ? AND deleteStatus = 0 AND isActive = 1"
     db.query(getAstaffPasswordQuery, [adsf.Email], (getAstaffPasswordErr, getAstaffPasswordRes) => {
         if (getAstaffPasswordErr) {
             console.log("Error : ", getAstaffPasswordErr)
