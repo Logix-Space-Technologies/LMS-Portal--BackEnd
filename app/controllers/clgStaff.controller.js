@@ -331,7 +331,7 @@ exports.collegeStaffLogin = (request, response) => {
   })
 }
 
-//To view all student
+//To view student
 
 exports.collegeStaffViewStudent = (request, response) => {
   const collegeStaffViewStudent = request.body.token;

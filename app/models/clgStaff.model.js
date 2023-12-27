@@ -203,7 +203,7 @@ CollegeStaff.findByClgStaffEmail = (email, result) => {
     // result("College Staff is Inactive or does not Exist.", null)
 }
 
-//College Staff view Student
+//College Staff to view Student
 
 CollegeStaff.viewStudent = (studentId, result) => {
     // Assuming studentId is the parameter for the student's ID
