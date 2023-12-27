@@ -35,9 +35,13 @@ exports.createStudent = (req, res) => {
         if (Validator.isEmpty(collegeId).isValid) {
             validationErrors.collegeId = Validator.isEmpty(collegeId).message;
         }
-
+        
         if (Validator.isEmpty(batchId).isValid) {
             validationErrors.batchId = Validator.isEmpty(batchId).message;
+        }
+
+        if (Validator.isEmpty(studName).isValid) {
+            validationErrors.studName = Validator.isEmpty(studName).message;
         }
 
         if (!Validator.isValidName(studName).isValid) {
@@ -60,6 +64,18 @@ exports.createStudent = (req, res) => {
             validationErrors.course = Validator.isEmpty(course).message;
         }
 
+        if (Validator.isEmpty(aadharNo).isValid) {
+            validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
+        }
+
+        if (!Validator.isValidAadharNumber(aadharNo).isValid) {
+            validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
+        }
+
+        if (Validator.isEmpty(studEmail).isValid) {
+            validationErrors.studEmail = Validator.isEmpty(studEmail).message;
+        }
+
         if (!Validator.isValidEmail(studEmail).isValid) {
             validationErrors.studEmail = Validator.isValidEmail(studEmail).message;
         }
@@ -68,9 +84,14 @@ exports.createStudent = (req, res) => {
             validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
         }
 
+        if (!Validator.isValidPassword(password).isValid) {
+            validationErrors.password = Validator.isValidPassword(password).message;
+        }
+
         if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
             validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
         }
+
 
 
         // If validation fails
