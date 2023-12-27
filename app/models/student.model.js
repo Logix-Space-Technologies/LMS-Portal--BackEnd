@@ -247,4 +247,31 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
 };
 
 
+Student.findByEmail = (Email, result) =>{
+    db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1", [Email],
+    (err, res) =>{
+        if (err) {
+            console.log("Error : ", err)
+            return result(err, null)
+            
+        }
+
+        if (res.length > 0) {
+            result(null, res[0])
+            return
+        }
+
+        if (res.length === 0) {
+            console.log("Email and Password cannot be null")
+            result({status:"Null"}, null)
+            return
+        }
+
+        result({kind : "not_found"}, null)
+    })
+}
+
+
+
+
 module.exports = { Student, Payment };
