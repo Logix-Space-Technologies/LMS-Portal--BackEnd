@@ -382,67 +382,57 @@ exports.searchStudentByCollegeId = (req, res) => {
 }
 
 
-
 exports.collegeStaffChangePassword = (request, response) => {
   const { email, oldPassword, newPassword, token } = request.body;
 
+  // Check if email is provided
+  if (!email) {
+      return response.json({ "status": "Email is required for password update." });
+  }
+
   // Verify the JWT token
   jwt.verify(token, "lmsapptwo", (err, decoded) => {
-    if (err || !decoded) {
-      response.json({ "status": "Unauthorized User!!" });
-      return;
-    }
-
-    // Validate old and new passwords
-    const validationErrors = {};
-
-    if (!oldPassword) {
-      validationErrors.oldPassword = "Old password is required.";
-    }
-
-    const passwordValidation = Validator.isValidPassword(newPassword);
-    if (!passwordValidation.isValid) {
-      validationErrors.newPassword = passwordValidation.message;
-    }
-
-    if (Object.keys(validationErrors).length > 0) {
-      return response.json({ "status": "Validation failed", "data": validationErrors });
-    }
-
-    // Check old password and update if valid
-    CollegeStaff.findByClgStaffEmail(email, (err, collegeStaff) => {
-      if (err) {
-        response.json({ "status": err });
-        return;
+      if (err || !decoded) {
+          response.json({ "status": "Unauthorized User!!" });
+          return;
       }
 
-      if (collegeStaff) {
-        const hashedOldPassword = collegeStaff.password;
+      // Validate old and new passwords
+      const validationErrors = {};
 
-        if (bcrypt.compareSync(oldPassword, hashedOldPassword)) {
-          if (oldPassword === newPassword) {
-            response.json({ "status": "Old password and new password cannot be the same." });
-            return;
+      if (!oldPassword) {
+          validationErrors.oldPassword = "Old password is required.";
+      }
+
+      const passwordValidation = Validator.isValidPassword(newPassword);
+      if (!passwordValidation.isValid) {
+          validationErrors.newPassword = passwordValidation.message;
+      }
+
+      if (Object.keys(validationErrors).length > 0) {
+          return response.json({ "status": "Validation failed", "data": validationErrors });
+      }
+
+      // Check old password and update if valid
+      CollegeStaff.collegeStaffChangePassword({ email, oldPassword, newPassword }, (err, data) => {
+          if (err) {
+              response.json({ "status": err });
+              return;
           }
 
-          const hashedNewPassword = bcrypt.hashSync(newPassword, 10);
-
-          // Update college staff password
-          CollegeStaff.updatePassword(email, hashedNewPassword, (updateErr, data) => {
-            if (updateErr) {
-              response.json({ "status": updateErr });
+          if (oldPassword === newPassword) {
+              response.json({ "status": "Old password and new password cannot be the same." });
               return;
-            }
+          }
 
-            response.json({ "status": "Password Updated Successfully." });
-          });
-        } else {
-          response.json({ "status": "Incorrect Old Password!!" });
-        }
-      } else {
-        response.json({ "status": "College Staff Not Found" });
-      }
-    });
+          if (data.status === "Incorrect Old Password!!") {
+              response.json({ "status": "Incorrect Old Password!!" });
+          } else if (data.status === "No college staff Found") {
+              response.json({ "status": "User Not Found!!!" });
+          } else {
+              response.json({ "status": "Password Updated Successfully." });
+          }
+      });
   });
 };
 
