@@ -203,6 +203,25 @@ CollegeStaff.findByClgStaffEmail = (email, result) => {
     // result("College Staff is Inactive or does not Exist.", null)
 }
 
+//College Staff view Student
+
+CollegeStaff.viewStudent = (studentId, result) => {
+    // Assuming studentId is the parameter for the student's ID
+    db.query(
+        "SELECT c.collegeName, s.collegeID, s.batchId, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilepic, s.aadharNo, s.membership_no FROM student s JOIN college c ON s.collegeID = c.id WHERE s.id = ?",
+        [studentId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Student Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
 
 
 module.exports = CollegeStaff
