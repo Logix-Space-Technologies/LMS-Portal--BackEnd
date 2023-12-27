@@ -266,10 +266,21 @@ AdminStaff.collegeStaffDelete = async (collegeStaffId, result) => {
     });
 };
 
-// ...
 
-
-
+AdminStaff.searchCollegesByAdminStaff = (search, result) => {
+    const searchString = '%' + search + '%';
+    db.query("SELECT id, collegeName, collegeAddress, collegePhNo, email, addedDate, updatedDate, deleteStatus, isActive FROM college WHERE deleteStatus = 0 AND isActive = 1 AND (id  LIKE ? OR collegeName LIKE ? OR collegeAddress LIKE ? OR collegePhNo LIKE ? OR collegeMobileNumber LIKE ? OR email LIKE ?)",
+        [searchString, searchString, searchString, searchString, searchString, searchString],
+        (err, res) => {
+            if (err) {
+                console.log("Error: ", err);
+                result(err, null);
+            } else {
+                console.log("Colleges Details: ", res);
+                result(null, res);
+            }
+        });
+};
 
 
 
