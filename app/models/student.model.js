@@ -1,4 +1,17 @@
 const db = require("../models/db");
+const { response } = require("express")
+
+
+const Tasks = function (tasks) {
+    this.id = tasks.id
+    this.batchId = tasks.batchId;
+    this.taskTitle = tasks.taskTitle;
+    this.taskDesc = tasks.taskDesc;
+    this.taskType = tasks.taskType;
+    this.taskFileUpload = tasks.taskFileUpload
+    this.totalScore = tasks.totalScore;
+    this.dueDate = tasks.dueDate;
+};
 
 const Student = function (student) {
     this.id = student.id;
@@ -274,6 +287,24 @@ Student.findByEmail = (Email, result) =>{
 }
 
 
+Tasks.studentTaskView = (studId, result) => {
+    db.query("SELECT s.batchId, t.* FROM task t JOIN student s ON s.batchId = t.batchId  WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1", [studId],
+    (err, res) =>{
+        if (err) {
+            console.log("error: ", err);
+            result(err, null)
+            return
+        } else {
+            console.log("Tasks: ", res);
+            result(null, res)
+            return
+        }
+    })
+}
 
 
-module.exports = { Student, Payment };
+
+
+
+module.exports = { Student, Payment, Tasks };
+

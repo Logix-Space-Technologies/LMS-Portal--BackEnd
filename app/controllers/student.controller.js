@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const { Student, Payment } = require("../models/student.model");
+const { Student, Payment, Tasks } = require("../models/student.model");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -180,5 +180,29 @@ exports.studLog = (request, response) => {
             return response.json({ "status": "Invalid Email or Password !!!" })
         }
 
+    })
+}
+
+
+
+exports.studentTaskView = (request, response) =>{
+    const studId = request.body.id
+    const studTaskToken = request.body.token
+    jwt.verify(studTaskToken, "lmsappthree", (err, decoded) =>{
+        if (decoded) {
+            Tasks.studentTaskView(studId,(err, data)=>{
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No tasks found!" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
     })
 }
