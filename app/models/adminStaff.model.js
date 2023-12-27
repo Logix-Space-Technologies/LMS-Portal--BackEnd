@@ -202,39 +202,38 @@ AdminStaff.findByEmail = (email , result)=>{
 // Admin-Staff Change Password
 AdminStaff.asChangePassword = (adsf, result) => {
     // Retrieve the hashed old password from the database
-    const getAstaffPasswordQuery = "SELECT Password FROM admin_staff WHERE Email = ? AND deleteStatus = 0 AND isActive = 1"; // Change 'userName' to 'Email'
-    
+    const getAstaffPasswordQuery = "SELECT Password FROM admin_staff WHERE Email = ? AND deleteStatus = 0 AND isActive = 1"
     db.query(getAstaffPasswordQuery, [adsf.Email], (getAstaffPasswordErr, getAstaffPasswordRes) => {
         if (getAstaffPasswordErr) {
-            console.log("Error : ", getAstaffPasswordErr);
-            result(getAstaffPasswordErr, null);
+            console.log("Error : ", getAstaffPasswordErr)
+            result(getAstaffPasswordErr, null)
             return;
         }
-        
         if (getAstaffPasswordRes.length > 0) {
             const hashedOldPassword = getAstaffPasswordRes[0].Password;
 
             // Compare the hashed old password with the provided old password
             if (bcrypt.compareSync(adsf.oldAdSfPassword, hashedOldPassword)) {
-                const updateAstaffPasswordQuery = "UPDATE admin_staff SET Password = ?, updateStatus = 1 WHERE Email = ? AND deleteStatus = 0 AND isActive = 1";
-                const hashedNewPassword = bcrypt.hashSync(adsf.newAdSfPassword, 10);
+                const updateAstaffPasswordQuery = "UPDATE admin_staff SET Password = ?, updateStatus = 1 WHERE Email = ? AND deleteStatus = 0 AND isActive = 1"
+                const hashedNewPassword = bcrypt.hashSync(adsf.newAdSfPassword, 10)
 
                 db.query(updateAstaffPasswordQuery, [hashedNewPassword, adsf.Email], (updateErr) => {
                     if (updateErr) {
-                        console.log("Error : ", updateErr);
-                        result(updateErr, null);
+                        console.log("Error : ", updateErr)
+                        result(updateErr, null)
+                        return;
                     } else {
-                        result(null, { "status": "Password Updated Successfully." });
+                        result(null, { "status": "Password Updated Successfully." })
                     }
-                });
+                })
             } else {
-                result(null, { "status": "Incorrect Old Password!!!" });
+                result(null, { "status": "Incorrect Old Password!!!" })
             }
         } else {
-            result(null, { "status": "User Not Found!!!" });
+            result(null, { "status": "User Not Found!!!" })
         }
-    });
-};
+    })
+}
 
 
 

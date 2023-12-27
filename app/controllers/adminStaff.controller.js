@@ -268,40 +268,38 @@ exports.adminStaffLogin = (request, response) => {
 
 // Admin-Staff Change Password
 exports.adminStaffChangePswd = (request, response) => {
-    const { Email, oldAdSfPassword, newAdSfPassword, token } = request.body;
-    console.log(request.body.token)
+    const {Email, oldAdSfPassword, newAdSfPassword, token} = request.body
 
     jwt.verify(token, "lmsappone", (error, decoded) => {
         if (decoded) {
-            AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword }, (err, result) => {
+            AdminStaff.asChangePassword({Email, oldAdSfPassword, newAdSfPassword}, (err, result) => {
                 if (err) {
-                    return response.json({ "status": err });
+                    return response.json({"status" : err})
                 }
+                const validationErrors = {}
 
-                const validationErrors = {};
-
-                const passwordValidation = Validator.isValidPassword(newAdSfPassword);
+                const passwordValidation = Validator.isValidPassword(newAdSfPassword)
                 if (!passwordValidation.isValid) {
-                    validationErrors.password = passwordValidation.message;
-                    return response.json({ "status": validationErrors });
+                    validationErrors.password = passwordValidation.message
+                    return response.json({"status" : validationErrors})
                 }
 
                 if (result.status === "Password Updated Successfully.") {
-                    const hashedNewPassword = bcrypt.hashSync(newAdSfPassword, 10);
+                    const hashedNewPassword = bcrypt.hashSync(newAdSfPassword, 10)
 
-                    AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword: hashedNewPassword }, (updateErr, UpdateResult) => {
+                    AdminStaff.asChangePassword({Email, oldAdSfPassword, newAdSfPassword : hashedNewPassword}, (updateErr, UpdateResult) => {
                         if (updateErr) {
-                            return response.json({ "status": updateErr });
+                            return response.json({"status" : updateErr})
                         } else {
-                            return response.json({ "status": "Password Updated Successfully." });
+                            return response.json({"status" : "Password Updated Successfully."})
                         }
-                    });
+                    })
                 } else {
-                    return response.json(result);
+                    return response.json(result)
                 }
-            });
+            })
         } else {
-            return response.json({ "status": "Unauthorized User!!" });
+            return response.json({"status" : "Unauthorized User!!"})
         }
-    });
-};
+    })
+}
