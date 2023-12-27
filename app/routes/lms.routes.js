@@ -95,13 +95,13 @@ router.post("/searchStudent",ClgStaffController.searchStudentByCollegeId)
 router.post("/refundRequest",RefundController.createRefundRequest)
 
 
-
 router.post("/adminStaffChangePassword",AdminStaffController.adminStaffChangePswd)
-
-
-router.post("/collegeStaffChangePassword",ClgStaffController.collegeStaffChangePassword)
 
 router.post("/collegeStaffViewStudent",ClgStaffController.collegeStaffViewStudent)
 
 router.post("/studentChangePassword",StudentController.StdChangePassword)
+
+router.post('/deleteCollegeStaffByAdminStaff', AdminStaffController.collegeStaffDelete)
+
+
 module.exports = router
