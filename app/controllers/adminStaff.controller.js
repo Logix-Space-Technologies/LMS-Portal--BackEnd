@@ -263,3 +263,18 @@ exports.adminStaffLogin = (request, response) => {
         }
     })
 }
+
+
+
+// Admin-Staff Change Password
+exports.adminStaffChangePswd = (request, response) => {
+    const {Email, oldAdSfPassword, newAdSfPassword, token} = request.body
+
+    jwt.verify(token, "lmsappone", (error, decoded) => {
+        if (condition) {
+            
+        } else {
+            
+        }
+    })
+}
