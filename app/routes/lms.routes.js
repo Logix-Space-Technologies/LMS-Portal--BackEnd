@@ -84,6 +84,8 @@ router.post("/studentLogin",StudentController.studLog)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
+router.post("/CollegeStaffViewBatch", ClgStaffController.collegeStaffViewBatch)
+
 
 
 

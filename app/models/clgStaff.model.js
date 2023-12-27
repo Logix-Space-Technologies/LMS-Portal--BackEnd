@@ -87,15 +87,15 @@ CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
     // Check if the collegeId exists in the college table
     db.query("SELECT * FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [clgstaff.collegeId], (err, collegeResult) => {
 
-      if (err) {
-        console.error("Error checking college existence:", err);
-        return result(err, null);
-      }
-  
-      if (collegeResult.length === 0) {
-        // College with the provided id not found
-        return result("College not found with the provided ID", null);
-      }
+        if (err) {
+            console.error("Error checking college existence:", err);
+            return result(err, null);
+        }
+
+        if (collegeResult.length === 0) {
+            // College with the provided id not found
+            return result("College not found with the provided ID", null);
+        }
 
         // Update college staff details
         db.query(
@@ -203,6 +203,24 @@ CollegeStaff.findByClgStaffEmail = (email, result) => {
     // result("College Staff is Inactive or does not Exist.", null)
 }
 
+//To view batch
+CollegeStaff.viewBatch = (collegeId, result) => {
+    // Assuming batchId is the parameter for the batch's ID
+    db.query(
+        "SELECT DISTINCT b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND cs.collegeId = ?",
+        [collegeId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Batch Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
 
 
 module.exports = CollegeStaff
