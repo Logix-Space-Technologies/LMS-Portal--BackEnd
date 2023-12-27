@@ -331,7 +331,6 @@ exports.collegeStaffLogin = (request, response) => {
   })
 }
 
-
 exports.collegeStaffViewBatch = (request, response) => {
   const collegeStaffViewBatchToken = request.body.token;
   jwt.verify(collegeStaffViewBatchToken, "lmsapptwo", (err, decoded) => {

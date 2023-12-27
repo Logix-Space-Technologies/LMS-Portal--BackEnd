@@ -203,6 +203,7 @@ CollegeStaff.findByClgStaffEmail = (email, result) => {
     // result("College Staff is Inactive or does not Exist.", null)
 }
 
+
 //To view batch
 CollegeStaff.viewBatch = (collegeId, result) => {
     db.query(

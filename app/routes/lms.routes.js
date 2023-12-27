@@ -86,12 +86,14 @@ router.post("/studentLogin",StudentController.studLog)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
+
 router.post("/CollegeStaffViewBatch", ClgStaffController.collegeStaffViewBatch)
 
 router.post("/searchStudent",ClgStaffController.searchStudentByCollegeId)
 
 
 router.post("/refundRequest",RefundController.createRefundRequest)
+
 
 
 router.post("/adminStaffChangePassword",AdminStaffController.adminStaffChangePswd)
