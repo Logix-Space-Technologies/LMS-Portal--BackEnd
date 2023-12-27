@@ -152,7 +152,7 @@ exports.adminStaffUpdate = (request, res) => {
             PhNo: PhNo,
             Address: Address,
             AadharNo: AadharNo,
-            
+
         });
 
         AdminStaff.updateAdminStaff(admStaff, (err, data) => {
@@ -182,13 +182,13 @@ exports.admStaffDelete = (request, response) => {
                 if (err) {
                     if (err.kind === "not_found") {
                         console.log("Admin Staff id not found.")
-                        response.json({"status":"Admin Staff id not found."})
+                        response.json({ "status": "Admin Staff id not found." })
 
                     } else {
-                        return response.send({"status": err })
+                        return response.send({ "status": err })
                     }
                 }
-                return response.json({"status":"Admin Staff Deleted."})
+                return response.json({ "status": "Admin Staff Deleted." })
             });
         } else {
             response.json({ "status": "Unauthorized User!!" });
@@ -199,29 +199,67 @@ exports.admStaffDelete = (request, response) => {
 };
 
 
-exports.adminStaffSearch =(request,response)=>{
+exports.adminStaffSearch = (request, response) => {
     const adminStaffSearchQuery = request.body.adminStaffSearchQuery
     const adminStaffSearcToken = request.body.token
 
-    jwt.verify(adminStaffSearcToken, "lmsapp", (err, decoded) =>{
+    jwt.verify(adminStaffSearcToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             if (!adminStaffSearchQuery) {
                 console.log("Search Item is required.")
-                return response.json({"status" : "Search Item is required."})
+                return response.json({ "status": "Search Item is required." })
             }
             AdminStaff.adminStaffSearch(adminStaffSearchQuery, (err, data) => {
                 if (err) {
-                    response.json({"status" : err})
+                    response.json({ "status": err })
                 } else {
                     if (data.length === 0) {
-                        response.json({"status" : "No Search Items Found."})
+                        response.json({ "status": "No Search Items Found." })
                     } else {
-                        response.json({"status" : "Result Found", "data" : data})
+                        response.json({ "status": "Result Found", "data": data })
                     }
                 }
             })
         } else {
-            response.json({"status" : "Unauthorized User!!"})
+            response.json({ "status": "Unauthorized User!!" })
         }
     })
-} 
+}
+
+
+
+exports.adminStaffLogin = (request, response) => {
+    const{Email,Password} = request.body
+    
+    const getEmail = request.body.Email
+    const getPassword = request.body.Password
+
+    AdminStaff.findByEmail(Email, (err, admin_staff) => {
+        if (err) {
+            if (err.kind === "not_found") {
+                response.json({ "status": "Admin Staff does not exist" })
+            } else {
+                response.json({ "Status": "Error retrieving Admin Staff details" })
+
+            }
+
+        } else {
+            const passwordMatch = bcrypt.compareSync(Password, admin_staff.Password)
+
+            if (passwordMatch) {
+                jwt.sign({ Email: getEmail, Password: getPassword }, "lmsappone", { expiresIn: "1d" },
+                    (error, token) => {
+                        if (error) {
+                            response.json({ "status": "Unauthorized user!!" })
+                        } else {
+                            response.json({ "status": "Success", "data": admin_staff, "token": token })
+                        }
+                    }
+
+                )
+            } else {
+                response.json({ "status": "Invalid Email or Password!!!" })
+            }
+        }
+    })
+}
