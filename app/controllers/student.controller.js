@@ -2,8 +2,9 @@ const { request, response } = require("express");
 const { Student, Payment } = require("../models/student.model");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const Validator = require("../config/data.validate");
-const jwt = require("jsonwebtoken")
+
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -144,6 +145,7 @@ exports.createStudent = (req, res) => {
         });
     });
 };
+
 
 
 exports.studLog = (request, response) => {
