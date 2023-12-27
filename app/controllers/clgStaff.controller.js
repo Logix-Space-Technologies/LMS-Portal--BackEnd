@@ -331,6 +331,29 @@ exports.collegeStaffLogin = (request, response) => {
   })
 }
 
+
+exports.collegeStaffViewBatch = (request, response) => {
+  const collegeStaffViewBatchToken = request.body.token;
+  jwt.verify(collegeStaffViewBatchToken, "lmsapptwo", (err, decoded) => {
+      if (decoded) {
+          // Assuming you have batchId in the request parameters or body
+          const collegeId = request.body.collegeId;
+          CollegeStaff.viewBatch(collegeId, (err, data) => {
+              if (err) {
+                  response.json({ "status": err });
+              }
+              if ( data.length === 0) {
+                  response.json({ "status": "No Batch found!" });
+              } else {
+                  response.json({ "status": "success", "data": data });
+              }
+          });
+      } else {
+          response.json({ "status": "Unauthorized User!!" });
+      }
+  });
+};
+
 exports.searchStudentByCollegeId = (req, res) => {
   const searchQuery = req.body.searchQuery;
   const collegeId = req.body.collegeId;
@@ -357,3 +380,4 @@ exports.searchStudentByCollegeId = (req, res) => {
   });
 
 }
+
