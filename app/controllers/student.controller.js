@@ -168,7 +168,7 @@ exports.studLog = (request, response) => {
         
         const passwordMatch = bcrypt.compareSync(password, stud.password)
         if (passwordMatch) {
-            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsapp", { expiresIn: "1d" },
+            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsappthree", { expiresIn: "1d" },
                 (error, token) => {
                     if (error) {
                         return response.json({ "status": "Unauthorized User!!" })
