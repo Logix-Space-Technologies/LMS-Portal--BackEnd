@@ -254,17 +254,4 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
 
 
 
-
-
-
-
-
-
-
-  
-
-
-
-
-
 module.exports = CollegeStaff
