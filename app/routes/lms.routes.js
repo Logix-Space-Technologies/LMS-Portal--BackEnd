@@ -81,5 +81,7 @@ router.post("/studreg",StudentController.createStudent)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
+router.post("/searchStudent",StudentController.searchStudentByCollegeId)
+
 
 module.exports = router

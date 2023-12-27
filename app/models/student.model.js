@@ -229,6 +229,22 @@ Student.create = (newStudent, result) => {
         });
 };
 
+Student.searchStudentByCollege = (searchKey, collegeId, result) => {
+    const searchTerm = `%${searchKey}%`;
+    db.query("SELECT * FROM student WHERE studName LIKE ? OR rollNo LIKE ? OR studDept LIKE ? OR course LIKE ?   AND deleteStatus = 0 AND isActive = 1 AND collegeId = ?", [searchTerm,searchTerm,searchTerm,searchTerm,collegeId], (err, res) => {
+        if (err) {
+            console.error("Error while searching student: ", err);
+            result(err, null);
+            return;
+        }
+
+        else {
+            console.log("Student found: ", res);
+            result(null, res);
+            return;
+        }
+    });
+};
 
 
 module.exports = { Student, Payment };
