@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const { Student, Payment } = require("../models/student.model");
+const { Student, Payment, Tasks } = require("../models/student.model");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const Validator = require("../config/data.validate");
@@ -166,7 +166,7 @@ exports.studLog = (request, response) => {
         
         const passwordMatch = bcrypt.compareSync(password, stud.password)
         if (passwordMatch) {
-            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsapp", { expiresIn: "1d" },
+            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsappthree", { expiresIn: "1d" },
                 (error, token) => {
                     if (error) {
                         return response.json({ "status": "Unauthorized User!!" })
@@ -178,5 +178,29 @@ exports.studLog = (request, response) => {
             return response.json({ "status": "Invalid Email or Password !!!" })
         }
 
+    })
+}
+
+
+
+exports.studentTaskView = (request, response) =>{
+    const studId = request.body.id
+    const studTaskToken = request.body.token
+    jwt.verify(studTaskToken, "lmsappthree", (err, decoded) =>{
+        if (decoded) {
+            Tasks.studentTaskView(studId,(err, data)=>{
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No tasks found!" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
     })
 }
