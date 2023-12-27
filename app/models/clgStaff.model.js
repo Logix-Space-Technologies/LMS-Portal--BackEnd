@@ -222,6 +222,29 @@ CollegeStaff.viewBatch = (collegeId, result) => {
 };
 
 
+CollegeStaff.updatePassword = (email, newPassword, result) => {
+    db.query(
+      "UPDATE college_staff SET password = ? WHERE email = ? AND deleteStatus = 0 AND isActive = 1",
+      [newPassword, email],
+      (err, res) => {
+        if (err) {
+          console.log("Error updating password:", err);
+          result(err, null);
+          return;
+        }
+  
+        if (res.affectedRows === 0) {
+          result({ "status": "College Staff Not Found!" }, null);
+          return;
+        }
+  
+        result(null, { "status": "Password Updated Successfully." });
+      }
+    );
+  };
+  
+
+
 
 
 
