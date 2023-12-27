@@ -4,7 +4,7 @@ const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Validator = require("../config/data.validate");
-const jwt = require("jsonwebtoken")
+
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -181,26 +181,4 @@ exports.studLog = (request, response) => {
         }
 
     })
-
-exports.searchStudentByCollegeId = (req, res) => {
-    const searchQuery = req.body.searchQuery;
-    const collegeId = req.body.collegeId;
-    // const searchToken = req.body.searchToken;
-    // jwt.verify(searchToken, "lmsapp", (err, decoded) => {
-        if(!searchQuery){
-            return res.json({ "status": "Search query is empty!!" });
-        }
-        // if (decoded) {
-            Student.searchStudentByCollegeId(searchQuery, collegeId, (err, data) => {
-                if (err) {
-                    return res.json({ "status": err });
-                } else {
-                    return res.json({ "status": "success", "data": data });
-                }
-            });
-    //     } else {
-    //         return res.json({ "status": "Unauthorized User!!" });
-    //     }
-    // });
-
 }
