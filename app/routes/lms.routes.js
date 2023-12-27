@@ -100,5 +100,5 @@ router.post("/adminStaffChangePassword",AdminStaffController.adminStaffChangePsw
 
 router.post("/collegeStaffViewStudent",ClgStaffController.collegeStaffViewStudent)
 
-
+router.post("/studentChangePassword",StudentController.StdChangePassword)
 module.exports = router
