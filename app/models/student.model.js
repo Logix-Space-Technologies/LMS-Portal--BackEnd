@@ -236,8 +236,8 @@ Student.findByEmail = (Email, result) =>{
     (err, res) =>{
         if (err) {
             console.log("Error : ", err)
-            result(err, null)
-            return
+            return result(err, null)
+            
         }
 
         if (res.length > 0) {
