@@ -237,4 +237,40 @@ AdminStaff.asChangePassword = (adsf, result) => {
 
 
 
+AdminStaff.collegeStaffDelete = async (collegeStaffId, result) => {
+    db.query("SELECT * FROM college_staff WHERE deleteStatus = 0 AND isActive = 1 AND id=?", [collegeStaffId.id], (collegeStaffErr, collegeStaffRes) => {
+        if (collegeStaffErr) {
+            console.error("Error Checking college staff", collegeStaffErr)
+            return result(collegeStaffErr, null);
+        }
+
+        if (collegeStaffRes.length === 0) {
+            console.log("College staff does not exist or inactive/deleted");
+            return result("College staff does not exist or is inactive/deleted", null);
+        }
+
+        db.query("UPDATE college_staff SET isActive=0, deleteStatus=1 WHERE id=? AND isActive = 1 AND deleteStatus = 0", [collegeStaffId.id], (err, res) => {
+            if (err) {
+                console.error("error: ", err);
+                result(err, null);
+                return;
+            }
+            if (res.affectedRows === 0) {
+                result({ kind: "not_found" }, null);
+                return;
+            }
+
+            console.log("Delete college staff with id: ", { id: collegeStaffId.id });
+            result(null, { id: collegeStaffId.id });
+        });
+    });
+};
+
+// ...
+
+
+
+
+
+
 module.exports = AdminStaff
