@@ -229,6 +229,51 @@ Student.create = (newStudent, result) => {
         });
 };
 
+Student.searchStudentByCollege = (searchKey, collegeId, result) => {
+    const searchTerm = '%' + searchKey + '%';
+    db.query(
+        "SELECT c.collegeName, s.batchId, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.validity FROM student s JOIN college c ON s.collegeId = c.id WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.isPaid = 1 AND s.emailVerified = 1 AND s.collegeId = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND s.validity > CURRENT_DATE AND (s.studName LIKE ? OR s.rollNo LIKE ? OR s.studDept LIKE ? OR s.course LIKE ? OR s.admNo LIKE ? )",
+        [collegeId, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.error("Error while searching student: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Student found: ", res);
+                result(null, res);
+                return;
+            }
+        }
+    );
+};
+
+
+Student.findByEmail = (Email, result) =>{
+    db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1", [Email],
+    (err, res) =>{
+        if (err) {
+            console.log("Error : ", err)
+            return result(err, null)
+            
+        }
+
+        if (res.length > 0) {
+            result(null, res[0])
+            return
+        }
+
+        if (res.length === 0) {
+            console.log("Email and Password cannot be null")
+            result({status:"Null"}, null)
+            return
+        }
+
+        result({kind : "not_found"}, null)
+    })
+}
+
+
 
 
 module.exports = { Student, Payment };

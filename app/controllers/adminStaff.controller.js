@@ -239,7 +239,7 @@ exports.adminStaffLogin = (request, response) => {
             if (err.kind === "not_found") {
                 response.json({ "status": "Admin Staff does not exist" })
             } else {
-                response.json({ "Status": "Error retrieving Admin Staff details" })
+                response.json({ "status": "Error retrieving Admin Staff details" })
 
             }
 

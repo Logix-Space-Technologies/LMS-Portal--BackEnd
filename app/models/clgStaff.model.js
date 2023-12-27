@@ -187,7 +187,7 @@ CollegeStaff.searchCollegeStaff = (search, result) => {
 
 // College Staff Login
 CollegeStaff.findByClgStaffEmail = (email, result) => {
-    db.query("SELECT * FROM college_staff WHERE email = ? AND deleteStatus = 0 AND isActive = 1", email, (err, res) => {
+    db.query("SELECT * FROM college_staff WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1", email, (err, res) => {
         if (err) {
             console.log("Error : ", err)
             result(err, null)
