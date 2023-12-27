@@ -82,7 +82,7 @@ router.post("/studreg",StudentController.createStudent)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
-
+router.post("/adminStaffChangePassword",AdminStaffController.adminStaffChangePswd)
 
 
 module.exports = router
