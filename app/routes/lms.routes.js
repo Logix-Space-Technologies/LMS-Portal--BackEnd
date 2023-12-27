@@ -80,6 +80,8 @@ router.post("/clgStaffLogin",ClgStaffController.collegeStaffLogin)
 
 router.post("/studreg",StudentController.createStudent)
 
+router.post("/studentLogin",StudentController.studLog)
+
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
 

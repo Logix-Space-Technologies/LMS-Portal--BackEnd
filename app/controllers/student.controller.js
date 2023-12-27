@@ -3,6 +3,7 @@ const { Student, Payment } = require("../models/student.model");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const Validator = require("../config/data.validate");
+const jwt = require("jsonwebtoken")
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -122,3 +123,36 @@ exports.createStudent = (req, res) => {
         });
     });
 };
+
+
+exports.studLog = (request, response) => {
+    const { studEmail, password } = request.body
+
+    const getStudEmail = request.body.studEmail
+    const getPassword = request.body.password
+
+    Student.findByEmail(studEmail, (err, stud) => {
+        if (err) {
+            if (err.kind === "not_found") {
+                response.json({ "status": "Student does not Exist." })
+            } else {
+                response.json({ "status": "Error retrieving student details" })
+            }
+        }
+        
+        const passwordMatch = bcrypt.compareSync(password, stud.password)
+        if (passwordMatch) {
+            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsapp", { expiresIn: "1d" },
+                (error, token) => {
+                    if (error) {
+                        response.json({ "status": "Unauthorized User!!" })
+                    } else {
+                        response.json({ "status": "Success", "data": stud, "token": token })
+                    }
+                })
+        } else {
+            response.json({ "status": "Invalid Email or Password !!!" })
+        }
+
+    })
+}
