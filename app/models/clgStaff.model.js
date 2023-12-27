@@ -204,6 +204,7 @@ CollegeStaff.findByClgStaffEmail = (email, result) => {
     // result("College Staff is Inactive or does not Exist.", null)
 }
 
+
 //To view batch
 CollegeStaff.viewBatch = (collegeId, result) => {
     db.query(
@@ -221,6 +222,7 @@ CollegeStaff.viewBatch = (collegeId, result) => {
         }
     );
 };
+
 
 CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
     const collegeStaffPassword = "SELECT password FROM college_staff WHERE email=? AND deleteStatus = 0 AND isActive = 1 ";
@@ -252,6 +254,26 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
     });
 };
 
+
+
+//College Staff to view Student
+
+CollegeStaff.viewStudent = (collegeId, result) => {
+    db.query(
+        "SELECT DISTINCT c.collegeName, s.batchId, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilepic, s.aadharNo, s.membership_no FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND cs.collegeId = ?",
+        [collegeId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Student Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
 
 
 module.exports = CollegeStaff
