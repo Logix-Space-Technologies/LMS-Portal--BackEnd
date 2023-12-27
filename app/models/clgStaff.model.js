@@ -222,4 +222,8 @@ CollegeStaff.viewBatch = (collegeId, result) => {
 };
 
 
+
+  
+
+
 module.exports = CollegeStaff
