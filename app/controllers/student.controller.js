@@ -133,10 +133,13 @@ exports.studLog = (request, response) => {
 
     Student.findByEmail(studEmail, (err, stud) => {
         if (err) {
+            if (err.status === "Null") {
+                return response.json({"status" : "Email and Password cannot be null"})
+            }
             if (err.kind === "not_found") {
-                response.json({ "status": "Student does not Exist." })
+                return response.json({ "status": "Student does not Exist." })
             } else {
-                response.json({ "status": "Error retrieving student details" })
+                return response.json({ "status": "Error retrieving student details" })
             }
         }
         
@@ -145,13 +148,13 @@ exports.studLog = (request, response) => {
             jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsapp", { expiresIn: "1d" },
                 (error, token) => {
                     if (error) {
-                        response.json({ "status": "Unauthorized User!!" })
+                        return response.json({ "status": "Unauthorized User!!" })
                     } else {
-                        response.json({ "status": "Success", "data": stud, "token": token })
+                        return response.json({ "status": "Success", "data": stud, "token": token })
                     }
                 })
         } else {
-            response.json({ "status": "Invalid Email or Password !!!" })
+            return response.json({ "status": "Invalid Email or Password !!!" })
         }
 
     })
