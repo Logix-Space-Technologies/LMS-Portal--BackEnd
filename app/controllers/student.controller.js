@@ -2,8 +2,9 @@ const { request, response } = require("express");
 const { Student, Payment } = require("../models/student.model");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const Validator = require("../config/data.validate");
-const jwt = require("jsonwebtoken")
+
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -36,9 +37,13 @@ exports.createStudent = (req, res) => {
         if (Validator.isEmpty(collegeId).isValid) {
             validationErrors.collegeId = Validator.isEmpty(collegeId).message;
         }
-
+        
         if (Validator.isEmpty(batchId).isValid) {
             validationErrors.batchId = Validator.isEmpty(batchId).message;
+        }
+
+        if (Validator.isEmpty(studName).isValid) {
+            validationErrors.studName = Validator.isEmpty(studName).message;
         }
 
         if (!Validator.isValidName(studName).isValid) {
@@ -61,6 +66,18 @@ exports.createStudent = (req, res) => {
             validationErrors.course = Validator.isEmpty(course).message;
         }
 
+        if (Validator.isEmpty(aadharNo).isValid) {
+            validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
+        }
+
+        if (!Validator.isValidAadharNumber(aadharNo).isValid) {
+            validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
+        }
+
+        if (Validator.isEmpty(studEmail).isValid) {
+            validationErrors.studEmail = Validator.isEmpty(studEmail).message;
+        }
+
         if (!Validator.isValidEmail(studEmail).isValid) {
             validationErrors.studEmail = Validator.isValidEmail(studEmail).message;
         }
@@ -69,9 +86,14 @@ exports.createStudent = (req, res) => {
             validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
         }
 
+        if (!Validator.isValidPassword(password).isValid) {
+            validationErrors.password = Validator.isValidPassword(password).message;
+        }
+
         if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
             validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
         }
+
 
 
         // If validation fails
@@ -125,6 +147,7 @@ exports.createStudent = (req, res) => {
 };
 
 
+
 exports.studLog = (request, response) => {
     const { studEmail, password } = request.body
 
@@ -145,7 +168,7 @@ exports.studLog = (request, response) => {
         
         const passwordMatch = bcrypt.compareSync(password, stud.password)
         if (passwordMatch) {
-            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsapp", { expiresIn: "1d" },
+            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsappthree", { expiresIn: "1d" },
                 (error, token) => {
                     if (error) {
                         return response.json({ "status": "Unauthorized User!!" })
