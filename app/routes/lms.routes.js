@@ -84,7 +84,7 @@ router.post("/studentLogin",StudentController.studLog)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
-router.post("/searchStudent",StudentController.searchStudentByCollegeId)
+router.post("/searchStudent",ClgStaffController.searchStudentByCollegeId)
 
 
 
