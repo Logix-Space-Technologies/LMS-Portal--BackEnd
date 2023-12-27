@@ -12,6 +12,7 @@ const ClgStaffLogController  = require("../controllers/collegeStaffLog.controlle
 const AdminStaffLogController = require("../controllers/adminStaffLog.controller")
 
 const StudentController=require('../controllers/student.controller')
+const MaterialController=require('../controllers/material.controller')
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -81,6 +82,8 @@ router.post("/clgStaffLogin",ClgStaffController.collegeStaffLogin)
 router.post("/studreg",StudentController.createStudent)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
+
+router.post("/AddMaterials",MaterialController.createMaterial)
 
 
 
