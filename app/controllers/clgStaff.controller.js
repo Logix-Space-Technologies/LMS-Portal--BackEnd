@@ -380,3 +380,25 @@ exports.searchStudentByCollegeId = (req, res) => {
 
 }
 
+//To view student
+
+exports.collegeStaffViewStudent = (request, response) => {
+  const collegeStaffViewStudent = request.body.token;
+  jwt.verify(collegeStaffViewStudent, "lmsapptwo", (err, decoded) => {
+      if (decoded) {
+          const collegeId = request.body.collegeId;
+          CollegeStaff.viewStudent(collegeId, (err, data) => {
+              if (err) {
+                  response.json({ "status": err });
+              }
+              if (!data || data.length === 0) {
+                  response.json({ "status": "No Student found!" });
+              } else {
+                  response.json({ "status": "success", "data": data });
+              }
+          });
+      } else {
+          response.json({ "status": "Unauthorized User!!" });
+      }
+  });
+};

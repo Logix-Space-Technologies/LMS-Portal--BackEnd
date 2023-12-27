@@ -222,5 +222,24 @@ CollegeStaff.viewBatch = (collegeId, result) => {
     );
 };
 
+//College Staff to view Student
+
+CollegeStaff.viewStudent = (collegeId, result) => {
+    db.query(
+        "SELECT DISTINCT c.collegeName, s.batchId, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilepic, s.aadharNo, s.membership_no FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND cs.collegeId = ?",
+        [collegeId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Student Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
+
 
 module.exports = CollegeStaff
