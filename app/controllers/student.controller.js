@@ -128,12 +128,12 @@ exports.createStudent = (req, res) => {
 exports.searchStudentByCollegeId = (req, res) => {
     const searchQuery = req.body.searchQuery;
     const collegeId = req.body.collegeId;
-    const searchToken = req.body.searchToken;
-    jwt.verify(searchToken, "lmsapp", (err, decoded) => {
+    // const searchToken = req.body.searchToken;
+    // jwt.verify(searchToken, "lmsapp", (err, decoded) => {
         if(!searchQuery){
             return res.json({ "status": "Search query is empty!!" });
         }
-        if (decoded) {
+        // if (decoded) {
             Student.searchStudentByCollegeId(searchQuery, collegeId, (err, data) => {
                 if (err) {
                     return res.json({ "status": err });
@@ -141,8 +141,8 @@ exports.searchStudentByCollegeId = (req, res) => {
                     return res.json({ "status": "success", "data": data });
                 }
             });
-        } else {
-            return res.json({ "status": "Unauthorized User!!" });
-        }
-    });
+    //     } else {
+    //         return res.json({ "status": "Unauthorized User!!" });
+    //     }
+    // });
 }
