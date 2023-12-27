@@ -24,7 +24,7 @@ exports.clgStaffCreate = (request, response) => {
   upload(request, response, function (err) {
     if (err) {
       console.error("Error uploading image:", err);
-      return res.json({ "status": "Error uploading image" });
+      return response.json({ "status": "Error uploading image" });
     }
     const clgStaffToken = request.body.token
     console.log(clgStaffToken)
@@ -135,14 +135,14 @@ exports.clgStaffCreate = (request, response) => {
 
 exports.clgStaffDelete = (request, response) => {
   const deleteToken = request.body.token;
-  
+
   jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
     if (decoded) {
       const collegeStaff = new CollegeStaff({
         'id': request.body.id
       });
       if (!request.body.id) {
-        return response.json({"status":"College staff id should not be empty"})
+        return response.json({ "status": "College staff id should not be empty" })
       }
       CollegeStaff.clgStaffDelete(collegeStaff, (err, data) => {
         if (err) {
@@ -167,19 +167,19 @@ exports.clgStaffDelete = (request, response) => {
 exports.viewAllCollegeStaff = (request, response) => {
   const collegeToken = request.body.token
   jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
-      if (decoded) {
-	  CollegeStaff.getAll((err, data) => {
-    if (err) {
-      console.log(err)
-      response.json({ "status": err })
+    if (decoded) {
+      CollegeStaff.getAll((err, data) => {
+        if (err) {
+          console.log(err)
+          response.json({ "status": err })
+        } else {
+          response.json(data)
+        }
+      })
     } else {
-	  response.json(data)
-	}
+      response.json({ "status": "Unauthorized User!!" });
+    }
   })
-      } else {
-        response.json({ "status": "Unauthorized User!!" });
-      }
-    })
 }
 
 
@@ -193,7 +193,7 @@ exports.collegeStaffUpdate = (req, res) => {
     const Updatetoken = req.body.token;
     console.log(Updatetoken)
     const validationErrors = {};
-    if(!req.file){
+    if (!req.file) {
       return res.json({ "status": "Image is required." });
     }
     jwt.verify(Updatetoken, "lmsapp", (error, decoded) => {
@@ -249,8 +249,8 @@ exports.collegeStaffUpdate = (req, res) => {
 
         CollegeStaff.updateCollegeStaff(clgstaff, (err, data) => {
           if (err) {
-               return res.json({ "status": err });
-            }
+            return res.json({ "status": err });
+          }
           return res.json({ "status": "success", "data": data });
         });
       } else {
@@ -289,3 +289,44 @@ exports.searchCollegeStaff = (request, response) => {
   });
 };
 
+
+//College Staff Login
+exports.collegeStaffLogin = (request, response) => {
+  const { email, password } = request.body
+
+  const getClgStaffEmail = request.body.email
+  const getClgStaffPassword = request.body.password
+  const validationErrors = {}
+
+  if (!Validator.isValidEmail(email).isValid) {
+    validationErrors.email = Validator.isValidEmail(email).message;
+  }
+
+  if (Object.keys(validationErrors).length > 0) {
+    return response.json({ "status": "Validation failed", "data": validationErrors });
+  }
+
+  CollegeStaff.findByClgStaffEmail(email, (err, clgstaff) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        return response.json({ "status": "College Staff does not Exist." })
+      } else {
+        return response.json({ "status": "Error retrieving College Staff Details." })
+      }
+    } else {
+      const clgStaffPasswordMatch = bcrypt.compareSync(password, clgstaff.password)
+      if (clgStaffPasswordMatch) {
+        jwt.sign({ email: getClgStaffEmail, password: getClgStaffPassword }, "lmsapptwo", { expiresIn: "1d" },
+          (error, token) => {
+            if (error) {
+              return response.json({ "status": "Unauthorized User!!" })
+            } else {
+              return response.json({ "status": "Success", "data": clgstaff, "token": token })
+            }
+          })
+      } else {
+        return response.json({ "status": "Invalid Email or Password!!!" })
+      }
+    }
+  })
+}
