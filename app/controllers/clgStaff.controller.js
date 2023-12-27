@@ -334,22 +334,22 @@ exports.collegeStaffLogin = (request, response) => {
 exports.collegeStaffViewBatch = (request, response) => {
   const collegeStaffViewBatchToken = request.body.token;
   jwt.verify(collegeStaffViewBatchToken, "lmsapptwo", (err, decoded) => {
-      if (decoded) {
-          // Assuming you have batchId in the request parameters or body
-          const collegeId = request.body.collegeId;
-          CollegeStaff.viewBatch(collegeId, (err, data) => {
-              if (err) {
-                  response.json({ "status": err });
-              }
-              if ( data.length === 0) {
-                  response.json({ "status": "No Batch found!" });
-              } else {
-                  response.json({ "status": "success", "data": data });
-              }
-          });
-      } else {
-          response.json({ "status": "Unauthorized User!!" });
-      }
+    if (decoded) {
+      // Assuming you have batchId in the request parameters or body
+      const collegeId = request.body.collegeId;
+      CollegeStaff.viewBatch(collegeId, (err, data) => {
+        if (err) {
+          response.json({ "status": err });
+        }
+        if (data.length === 0) {
+          response.json({ "status": "No Batch found!" });
+        } else {
+          response.json({ "status": "success", "data": data });
+        }
+      });
+    } else {
+      response.json({ "status": "Unauthorized User!!" });
+    }
   });
 };
 
@@ -380,6 +380,61 @@ exports.searchStudentByCollegeId = (req, res) => {
 
 }
 
+
+exports.collegeStaffChangePassword = (request, response) => {
+  const { email, oldPassword, newPassword, token } = request.body;
+
+  // Check if email is provided
+  if (!email) {
+      return response.json({ "status": "Email is required for password update." });
+  }
+
+  // Verify the JWT token
+  jwt.verify(token, "lmsapptwo", (err, decoded) => {
+      if (err || !decoded) {
+          response.json({ "status": "Unauthorized User!!" });
+          return;
+      }
+
+      // Validate old and new passwords
+      const validationErrors = {};
+
+      if (!oldPassword) {
+          validationErrors.oldPassword = "Old password is required.";
+      }
+
+      const passwordValidation = Validator.isValidPassword(newPassword);
+      if (!passwordValidation.isValid) {
+          validationErrors.newPassword = passwordValidation.message;
+      }
+
+      if (Object.keys(validationErrors).length > 0) {
+          return response.json({ "status": "Validation failed", "data": validationErrors });
+      }
+
+      // Check old password and update if valid
+      CollegeStaff.collegeStaffChangePassword({ email, oldPassword, newPassword }, (err, data) => {
+          if (err) {
+              response.json({ "status": err });
+              return;
+          }
+
+          if (oldPassword === newPassword) {
+              response.json({ "status": "Old password and new password cannot be the same." });
+              return;
+          }
+
+          if (data.status === "Incorrect Old Password!!") {
+              response.json({ "status": "Incorrect Old Password!!" });
+          } else if (data.status === "No college staff Found") {
+              response.json({ "status": "User Not Found!!!" });
+          } else {
+              response.json({ "status": "Password Updated Successfully." });
+          }
+      });
+  });
+};
+
 //To view student
 
 exports.collegeStaffViewStudent = (request, response) => {
@@ -402,3 +457,4 @@ exports.collegeStaffViewStudent = (request, response) => {
       }
   });
 };
+
