@@ -32,9 +32,10 @@ exports.collegeCreate = (request, response) => {
         if (!request.file) {
             return response.json({ "status": "Please upload an image" });
         }
-        jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
+        key=request.body.key
+        jwt.verify(collegeToken, key, (err, decoded) => {
             if (decoded) {
-
+                console.log("decoded", decoded);
                 const validationErrors = {};
 
                 if (Validator.isEmpty(collegeName).isValid) {
