@@ -116,4 +116,6 @@ router.post("/studentViewProfile",StudentController.studentViewProfile)
 
 router.post("/searchMaterial",MaterialController.searchMaterial)
 
+router.post("/clgstaffviewtask",ClgStaffController.clgStaffViewTask)
+
 module.exports = router
