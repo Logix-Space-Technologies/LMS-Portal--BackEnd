@@ -107,5 +107,7 @@ router.post('/deleteCollegeStaffByAdminStaff', AdminStaffController.collegeStaff
 
 router.post("/searchcollegesByAdminStaff", AdminStaffController.searchCollegesByAdminStaff)
 
+router.post("/studentViewProfile",StudentController.studentViewProfile)
+
 
 module.exports = router
