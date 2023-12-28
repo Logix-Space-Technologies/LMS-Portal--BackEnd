@@ -166,7 +166,8 @@ exports.clgStaffDelete = (request, response) => {
 
 exports.viewAllCollegeStaff = (request, response) => {
   const collegeToken = request.body.token
-  jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
+  key=request.body.key
+  jwt.verify(collegeToken,key, (err, decoded) => {
     if (decoded) {
       CollegeStaff.getAll((err, data) => {
         if (err) {
