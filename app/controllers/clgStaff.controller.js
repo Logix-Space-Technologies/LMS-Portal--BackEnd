@@ -316,7 +316,7 @@ exports.collegeStaffLogin = (request, response) => {
     } else {
       const clgStaffPasswordMatch = bcrypt.compareSync(password, clgstaff.password)
       if (clgStaffPasswordMatch) {
-        jwt.sign({ email: getClgStaffEmail, password: getClgStaffPassword }, "lmsapptwo", { expiresIn: "1d" },
+        jwt.sign({ email: getClgStaffEmail, password: getClgStaffPassword }, "lmsappclgstaff", { expiresIn: "1d" },
           (error, token) => {
             if (error) {
               return response.json({ "status": "Unauthorized User!!" })
@@ -333,23 +333,23 @@ exports.collegeStaffLogin = (request, response) => {
 
 exports.collegeStaffViewBatch = (request, response) => {
   const collegeStaffViewBatchToken = request.body.token;
-  jwt.verify(collegeStaffViewBatchToken, "lmsapptwo", (err, decoded) => {
-      if (decoded) {
-          // Assuming you have batchId in the request parameters or body
-          const collegeId = request.body.collegeId;
-          CollegeStaff.viewBatch(collegeId, (err, data) => {
-              if (err) {
-                  response.json({ "status": err });
-              }
-              if ( data.length === 0) {
-                  response.json({ "status": "No Batch found!" });
-              } else {
-                  response.json({ "status": "success", "data": data });
-              }
-          });
-      } else {
-          response.json({ "status": "Unauthorized User!!" });
-      }
+  jwt.verify(collegeStaffViewBatchToken, "lmsappclgstaff", (err, decoded) => {
+    if (decoded) {
+      // Assuming you have batchId in the request parameters or body
+      const collegeId = request.body.collegeId;
+      CollegeStaff.viewBatch(collegeId, (err, data) => {
+        if (err) {
+          response.json({ "status": err });
+        }
+        if (data.length === 0) {
+          response.json({ "status": "No Batch found!" });
+        } else {
+          response.json({ "status": "success", "data": data });
+        }
+      });
+    } else {
+      response.json({ "status": "Unauthorized User!!" });
+    }
   });
 };
 
@@ -357,7 +357,7 @@ exports.searchStudentByCollegeId = (req, res) => {
   const searchQuery = req.body.searchQuery;
   const collegeId = req.body.collegeId;
   const searchstudToken = req.body.token;
-  jwt.verify(searchstudToken, "lmsapptwo", (err, decoded) => {
+  jwt.verify(searchstudToken, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
       if (!searchQuery) {
         return res.json({ "status": "Search query is empty!!" });
@@ -379,6 +379,61 @@ exports.searchStudentByCollegeId = (req, res) => {
   });
 
 }
+
+
+exports.collegeStaffChangePassword = (request, response) => {
+  const { email, oldPassword, newPassword, token } = request.body;
+
+  // Check if email is provided
+  if (!email) {
+      return response.json({ "status": "Email is required for password update." });
+  }
+
+  // Verify the JWT token
+  jwt.verify(token, "lmsappclgstaff", (err, decoded) => {
+      if (err || !decoded) {
+          response.json({ "status": "Unauthorized User!!" });
+          return;
+      }
+
+      // Validate old and new passwords
+      const validationErrors = {};
+
+      if (!oldPassword) {
+          validationErrors.oldPassword = "Old password is required.";
+      }
+
+      const passwordValidation = Validator.isValidPassword(newPassword);
+      if (!passwordValidation.isValid) {
+          validationErrors.newPassword = passwordValidation.message;
+      }
+
+      if (Object.keys(validationErrors).length > 0) {
+          return response.json({ "status": "Validation failed", "data": validationErrors });
+      }
+
+      // Check old password and update if valid
+      CollegeStaff.collegeStaffChangePassword({ email, oldPassword, newPassword }, (err, data) => {
+          if (err) {
+              response.json({ "status": err });
+              return;
+          }
+
+          if (oldPassword === newPassword) {
+              response.json({ "status": "Old password and new password cannot be the same." });
+              return;
+          }
+
+          if (data.status === "Incorrect Old Password!!") {
+              response.json({ "status": "Incorrect Old Password!!" });
+          } else if (data.status === "No college staff Found") {
+              response.json({ "status": "User Not Found!!!" });
+          } else {
+              response.json({ "status": "Password Updated Successfully." });
+          }
+      });
+  });
+};
 
 //To view student
 
@@ -402,3 +457,4 @@ exports.collegeStaffViewStudent = (request, response) => {
       }
   });
 };
+

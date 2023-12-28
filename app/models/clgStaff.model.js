@@ -1,5 +1,6 @@
 const { response } = require("express")
 const db = require("../models/db")
+const bcrypt = require('bcrypt')
 const { CollegeStaffLog, logCollegeStaff } = require("../models/collegeStaffLog.model")
 
 const CollegeStaff = function (collegestaff) {
@@ -221,6 +222,39 @@ CollegeStaff.viewBatch = (collegeId, result) => {
         }
     );
 };
+
+
+CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
+    const collegeStaffPassword = "SELECT password FROM college_staff WHERE email=? AND deleteStatus = 0 AND isActive = 1 ";
+    db.query(collegeStaffPassword, [college_staff.email], (err, res) => {
+        if (err) {
+            console.log("Error:", err);
+            result(err, null);
+            return;
+        }
+        if (res.length) {
+            const hashedOldPassword = res[0].password;
+            if (bcrypt.compareSync(college_staff.oldPassword, hashedOldPassword)) {
+                const updateCollegeStaffPasswordQuery = "UPDATE college_Staff SET password = ?, pwdUpdateStatus = 1 WHERE email = ? AND deleteStatus = 0 AND isActive = 1 ";
+                const hashedNewPassword = bcrypt.hashSync(college_staff.newPassword, 10);
+                db.query(updateCollegeStaffPasswordQuery, [hashedNewPassword, college_staff.email], (updateErr) => {
+                    if (updateErr) {
+                        console.log("Error : ", updateErr);
+                        result(updateErr, null);
+                    } else {
+                        result(null, { "status": "Password Updated Successfully." });
+                    }
+                });
+            } else {
+                result(null, { status: "Incorrect Old Password!!" });
+            }
+        } else {
+            result(null, { status: "College staff not found" });
+        }
+    });
+};
+
+
 
 //College Staff to view Student
 
