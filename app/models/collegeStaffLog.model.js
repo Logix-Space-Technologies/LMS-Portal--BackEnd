@@ -35,4 +35,9 @@ CollegeStaffLog.getAll = async(result) => {
 }
 
 
+
+
+
+
+
 module.exports = {CollegeStaffLog, logCollegeStaff}
