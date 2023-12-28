@@ -6,8 +6,9 @@ const Validator = require("../config/data.validate")
 exports.batchCreate = (request, response) => {
 
     const batchToken = request.body.token;
+    key=request.body.key
 
-    jwt.verify(batchToken, "lmsapp", (err, decoded) => {
+    jwt.verify(batchToken,key, (err, decoded) => {
         if (decoded) {
             //checking validations
             const validationErrors = {};
@@ -107,7 +108,8 @@ exports.batchDelete = (request, response) => {
 
 exports.batchView = (request, response) => {
     const batchToken = request.body.token;
-    jwt.verify(batchToken, "lmsapp", (err, decoded) => {
+    key=request.body.key // key for respective tokens
+    jwt.verify(batchToken, key, (err, decoded) => {
         if (decoded) {
             Batches.batchView((err, data) => {
                 if (err) {
@@ -130,8 +132,10 @@ exports.batchView = (request, response) => {
 exports.searchBatch = (request, response) => {
     const batchQuery = request.body.batchQuery;
     const batchToken = request.body.token;
-
-    jwt.verify(batchToken, "lmsapp", (err, decoded) => {
+    //key for respective token
+    key=request.body.key;
+    
+    jwt.verify(batchToken, key, (err, decoded) => {
         if(!batchQuery){
             return response.json({"status":"Search query cannot be empty"})
         }
@@ -141,9 +145,9 @@ exports.searchBatch = (request, response) => {
                     response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ status: "No search items found." });
+                        response.json({ "status": "No search items found." });
                     } else {
-                        response.json({ status: "success", "data": data });
+                        response.json({ "status": "success", "data": data });
                     }
                 }
             });

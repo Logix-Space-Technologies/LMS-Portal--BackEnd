@@ -12,7 +12,12 @@ const ClgStaffLogController  = require("../controllers/collegeStaffLog.controlle
 const AdminStaffLogController = require("../controllers/adminStaffLog.controller")
 
 const StudentController=require('../controllers/student.controller')
+
+const MaterialController=require('../controllers/material.controller')
+
+
 const RefundController = require("../controllers/refund.controller")
+
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
 
@@ -86,6 +91,8 @@ router.post("/studentLogin",StudentController.studLog)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
+router.post("/AddMaterials",MaterialController.createMaterial)
+
 
 router.post("/CollegeStaffViewBatch", ClgStaffController.collegeStaffViewBatch)
 
@@ -103,10 +110,24 @@ router.post("/studentChangePassword",StudentController.StdChangePassword)
 
 router.post("/collegeStaffChangePassword",ClgStaffController.collegeStaffChangePassword)
 
+
 router.post("/deleteCollegeStaffByAdminStaff", AdminStaffController.collegeStaffDelete)
+
 
 router.post("/searchcollegesByAdminStaff", AdminStaffController.searchCollegesByAdminStaff)
 
+router.post("/studentViewProfile",StudentController.studentViewProfile)
+
+
+router.post("/studentUpdateProfile",StudentController.profileUpdateStudent)
+
+router.post("/searchMaterial",MaterialController.searchMaterial)
+
+router.post("/getAllRefundRequests",RefundController.getRefundRequests)
+
+router.post("/clgstaffviewtask",ClgStaffController.clgStaffViewTask)
+
+router.post("/studentverificationbyCollegeStaff", ClgStaffController.studentVerificationByCollegeStaff)
 
 
 module.exports = router
