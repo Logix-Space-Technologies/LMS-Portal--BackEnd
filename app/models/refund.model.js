@@ -111,6 +111,11 @@ Refund.getRefundRequests = (result) => {
                 result(err, null);
                 return;
             }
+            if (res.length === 0) {
+                console.log("No refund requests found");
+                result(null, { "status": "No refund requests found." });
+                return;
+            }
 
             // Return all refund requests
             result(null, res);
