@@ -122,4 +122,7 @@ router.post("/getAllRefundRequests",RefundController.getRefundRequests)
 
 router.post("/clgstaffviewtask",ClgStaffController.clgStaffViewTask)
 
+router.post("/studentverificationbyCollegeStaff", ClgStaffController.studentVerificationByCollegeStaff)
+
+
 module.exports = router
