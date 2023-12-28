@@ -152,8 +152,8 @@ exports.taskUpdate = (request, response) => {
 
         const updateTasktoken = request.body.token;
         console.log(updateTasktoken)
-
-        jwt.verify(updateTasktoken, "lmsapp", (error, decoded) => {
+        key=request.body.key
+        jwt.verify(updateTasktoken,key, (error, decoded) => {
             if (decoded) {
 
                 const validationErrors = {};
