@@ -107,8 +107,4 @@ router.post('/deleteCollegeStaffByAdminStaff', AdminStaffController.collegeStaff
 
 router.post("/searchcollegesByAdminStaff", AdminStaffController.searchCollegesByAdminStaff)
 
-router.post("/studentverificationbyCollegeStaff", ClgStaffController.studentVerificationByCollegeStaff)
-
-
-
 module.exports = router
