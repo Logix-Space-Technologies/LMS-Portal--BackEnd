@@ -390,7 +390,7 @@ exports.collegeStaffChangePassword = (request, response) => {
   }
 
   // Verify the JWT token
-  jwt.verify(token, "lmsapptwo", (err, decoded) => {
+  jwt.verify(token, "lmsappclgstaff", (err, decoded) => {
       if (err || !decoded) {
           response.json({ "status": "Unauthorized User!!" });
           return;
