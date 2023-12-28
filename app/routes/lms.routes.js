@@ -12,7 +12,12 @@ const ClgStaffLogController  = require("../controllers/collegeStaffLog.controlle
 const AdminStaffLogController = require("../controllers/adminStaffLog.controller")
 
 const StudentController=require('../controllers/student.controller')
+
+const MaterialController=require('../controllers/material.controller')
+
+
 const RefundController = require("../controllers/refund.controller")
+
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
 
@@ -85,6 +90,8 @@ router.post("/studViewTask",StudentController.studentTaskView)
 router.post("/studentLogin",StudentController.studLog)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
+
+router.post("/AddMaterials",MaterialController.createMaterial)
 
 
 router.post("/CollegeStaffViewBatch", ClgStaffController.collegeStaffViewBatch)
