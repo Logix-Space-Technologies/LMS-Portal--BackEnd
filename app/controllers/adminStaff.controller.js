@@ -304,32 +304,6 @@ exports.adminStaffChangePswd = (request, response) => {
     })
 }
 
-
-exports.collegeStaffDelete = (request, response) => {
-    const deleteToken = request.body.token;
-    const collegeStaffId = request.body.id;
-
-    jwt.verify(deleteToken, "lmsappone", (err, decoded) => {
-        if (decoded) {
-            const collegeStaffToDelete = { id: collegeStaffId };
-            AdminStaff.collegeStaffDelete(collegeStaffToDelete, (err, data) => {
-                if (err) {
-                    if (err.kind === "not_found") {
-                        console.log("College Staff id not found.");
-                        response.json({ "status": "College Staff id not found." });
-                    } else {
-                        return response.send({ "status": err });
-                    }
-                }
-                return response.json({ "status": "College Staff Deleted." });
-            });
-        } else {
-            response.json({ "status": "Unauthorized User!!" });
-        }
-    });
-};
-
-
 exports.searchCollegesByAdminStaff = (request, response) => {
     const collegeSearchQuery = request.body.collegeSearchQuery;
     const collegeSearchToken = request.body.token;
