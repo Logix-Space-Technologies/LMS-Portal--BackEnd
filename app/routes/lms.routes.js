@@ -118,4 +118,6 @@ router.post("/searchMaterial",MaterialController.searchMaterial)
 
 router.post("/clgstaffviewtask",ClgStaffController.clgStaffViewTask)
 
+router.post("/getAllRefundRequests",RefundController.getRefundRequests)
+
 module.exports = router
