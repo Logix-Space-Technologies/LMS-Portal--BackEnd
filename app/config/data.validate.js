@@ -96,15 +96,15 @@ function isValidWebsite(website) {
 
 function isValidEmail(email) {
     return {
-        isValid: /^[a-z0-9_!#$%&'*+/=?^_`{|}~-]+@[a-z]+\.([a-z]+)$/.test(email),
+        isValid: /^[a-z0-9._!#$%&'*+/=?^_`{|}~-]+@[a-z]+(\.[a-z]+)+$/.test(email),
         message: "Email cannot be empty or Invalid Email! "
     };
 }
 
 function isValidPassword(password) {
     return {
-        isValid: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,12}$/.test(password),
-        message: "Password must contain at least 8 characters, including upper and lowercase letters and numbers"
+        isValid: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(password),
+        message: "Password must include at least 8 characters, one uppercase letter, one lowercase letter, numbers and special characters"
     };
 }
 
