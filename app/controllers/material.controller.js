@@ -6,8 +6,6 @@ const multer = require("multer")
 const Validator = require("../config/data.validate");
 const { log } = require("console");
 
-
-
 // multer setup for file uploads
 const storage = multer.diskStorage({
     destination: (request, file, cb) => {
@@ -20,39 +18,33 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single('uploadFile');
 
-exports.createMaterial = (request, rsponse) => {
-    upload(request, response,function(err){
+exports.createMaterial = (request, response) => {  // Corrected parameter name rsponse to response
+    upload(request, response, function (err) {
         if (err) {
             console.log("Error Uploading file: ", err)
             return response.json({ "status": err })
         }
 
-        const { batchId, fileName, materialDesc,remarks  } = request.body
+        const { batchId, fileName, materialDesc, remarks } = request.body
         const materialToken = request.body.token
-        
-        jwt.verify(materialToken, "lmsappone" , (err, decoded) =>{
+
+        jwt.verify(materialToken, "lmsappone", (err, decoded) => {
             if (decoded) {
-                
-                const validationErrors ={};
-
-
-
+                const validationErrors = {};
 
                 if (Validator.isEmpty(batchId).isValid) {
                     validationErrors.value = Validator.isEmpty(batchId).message;
                 }
                 if (!Validator.isValidAmount(batchId).isValid) {
-                    validationErrors.amount = Validator.isValidAmount(batchId).message; //validation for batch id
+                    validationErrors.amount = Validator.isValidAmount(batchId).message;
                 }
                 if (!Validator.isValidName(fileName).isValid) {
                     validationErrors.name = Validator.isValidName(fileName).message;
                 }
 
                 if (!Validator.isValidAddress(materialDesc).isValid) {
-                    validationErrors.address = Validator.isValidAddress(materialDesc).message; //validation for task description.
+                    validationErrors.address = Validator.isValidAddress(materialDesc).message;
                 }
-
-               
 
                 // If validation fails
                 if (Object.keys(validationErrors).length > 0) {
@@ -64,12 +56,12 @@ exports.createMaterial = (request, rsponse) => {
                 const addMaterial = new Material({
                     batchId: batchId,
                     fileName: fileName,
-                    materialDesc:materialDesc,
-                    remarks:remarks
-                    
+                    materialDesc: materialDesc,
+                    remarks: remarks,
+                    uploadFile: uploadFile
                 })
 
-                Material.materialCreate(addMaterial, (err, data)=>{
+                Material.materialCreate(addMaterial, (err, data) => {
                     if (err) {
                         return response.json({ "status": err });
                     } else {
@@ -79,10 +71,9 @@ exports.createMaterial = (request, rsponse) => {
 
             } else {
                 return response.json({ "status": "Unauthorized User!!" });
-                
             }
         })
-        
-    } )
+
+    })
 
 }
