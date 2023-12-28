@@ -1,4 +1,18 @@
 const db = require("../models/db");
+const { response, request } = require("express")
+const bcrypt = require("bcrypt")
+
+
+const Tasks = function (tasks) {
+    this.id = tasks.id
+    this.batchId = tasks.batchId;
+    this.taskTitle = tasks.taskTitle;
+    this.taskDesc = tasks.taskDesc;
+    this.taskType = tasks.taskType;
+    this.taskFileUpload = tasks.taskFileUpload
+    this.totalScore = tasks.totalScore;
+    this.dueDate = tasks.dueDate;
+};
 
 const Student = function (student) {
     this.id = student.id;
@@ -249,31 +263,94 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
 };
 
 
-Student.findByEmail = (Email, result) =>{
+Student.findByEmail = (Email, result) => {
     db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1", [Email],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                return result(err, null)
+
+            }
+
+            if (res.length > 0) {
+                result(null, res[0])
+                return
+            }
+
+            if (res.length === 0) {
+                console.log("Email and Password cannot be null")
+                result({ status: "Null" }, null)
+                return
+            }
+
+            result({ kind: "not_found" }, null)
+        })
+}
+
+
+Tasks.studentTaskView = (studId, result) => {
+    db.query("SELECT s.batchId, t.* FROM task t JOIN student s ON s.batchId = t.batchId  WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1", [studId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null)
+                return
+            } else {
+                console.log("Tasks: ", res);
+                result(null, res)
+                return
+            }
+        })
+}
+
+Student.StdChangePassword = (student, result) => {
+    const studentPassword = "SELECT password FROM student WHERE studEmail=? AND deleteStatus = 0 AND isActive = 1 AND ispaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
+    db.query(studentPassword, [student.studEmail], (err, res) => {
+        if (err) {
+            console.log("Error:", err);
+            result(err, null);
+            return;
+        }
+        if (res.length) {
+            const hashedOldPassword = res[0].password;
+            if (bcrypt.compareSync(student.oldPassword, hashedOldPassword)) {
+                const updateStudentPasswordQuery = "UPDATE student SET password = ?, pwdUpdateStatus = 1 WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1 AND ispaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
+                const hashedNewPassword = bcrypt.hashSync(student.newPassword, 10);
+                db.query(updateStudentPasswordQuery, [hashedNewPassword, student.studEmail], (updateErr) => {
+                    if (updateErr) {
+                        console.log("Error : ", updateErr);
+                        result(updateErr, null);
+                    } else {
+                        result(null, { "status": "Password Updated Successfully." });
+                    }
+                });
+            } else {
+                result(null, { status: "Incorrect Old Password!!" });
+            }
+        } else {
+            result(null, { status: "No Student Found" });
+        }
+    });
+};
+
+
+Student.viewStudentProfile = (studId, result) =>{
+    db.query("SELECT collegeId,batchId,membership_no,studName,admNo,studDept,course,studEmail,studPhNo,studProfilePic,aadharNo,addedDate,validity FROM student WHERE deleteStatus=0 AND isActive=1 AND id=?", [studId],
     (err, res) =>{
         if (err) {
-            console.log("Error : ", err)
-            return result(err, null)
-            
-        }
-
-        if (res.length > 0) {
-            result(null, res[0])
+            console.log("error: ", err);
+            result(err, null)
+            return
+        } else {
+            console.log("Profile: ", res);
+            result(null, res)
             return
         }
-
-        if (res.length === 0) {
-            console.log("Email and Password cannot be null")
-            result({status:"Null"}, null)
-            return
-        }
-
-        result({kind : "not_found"}, null)
-    })
+    }  )
 }
 
 
 
 
-module.exports = { Student, Payment };
+module.exports = { Student, Payment, Tasks };
+
