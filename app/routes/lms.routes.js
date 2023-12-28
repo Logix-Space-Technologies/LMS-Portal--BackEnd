@@ -110,11 +110,10 @@ router.post("/studentChangePassword",StudentController.StdChangePassword)
 
 router.post("/collegeStaffChangePassword",ClgStaffController.collegeStaffChangePassword)
 
-router.post('/deleteCollegeStaffByAdminStaff', AdminStaffController.collegeStaffDelete)
-
 router.post("/searchcollegesByAdminStaff", AdminStaffController.searchCollegesByAdminStaff)
 
 router.post("/studentViewProfile",StudentController.studentViewProfile)
 
+router.post("/searchMaterial",MaterialController.searchMaterial)
 
 module.exports = router

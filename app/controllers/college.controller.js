@@ -32,9 +32,10 @@ exports.collegeCreate = (request, response) => {
         if (!request.file) {
             return response.json({ "status": "Please upload an image" });
         }
-        jwt.verify(collegeToken, "lmsapp", (err, decoded) => {
+        key=request.body.key
+        jwt.verify(collegeToken, key, (err, decoded) => {
             if (decoded) {
-
+                console.log("decoded", decoded);
                 const validationErrors = {};
 
                 if (Validator.isEmpty(collegeName).isValid) {
@@ -137,11 +138,11 @@ exports.updateCollege = (request, response) => {
         }
         const collegeUpdateToken = request.body.token
         const collegeImage = request.file ? request.file.filename : null
-
+        key=request.body.key // key for respective tokens
         if (!request.file) {
             return response.json({ "status": "Image cannot be empty!!" })
         }
-        jwt.verify(collegeUpdateToken, "lmsapp", (err, decoded) => {
+        jwt.verify(collegeUpdateToken, key, (err, decoded) => {
             if (decoded) {
 
                 const validationErrors = {}
