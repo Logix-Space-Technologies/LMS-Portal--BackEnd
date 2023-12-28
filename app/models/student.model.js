@@ -350,7 +350,9 @@ Student.viewStudentProfile = (studId, result) =>{
 }
 
 
-
+Student.updateStudentProfile = (studId, result) => {
+    db.query("UPDATE student SET studName = ?, admNo = ?, rollNo = ?, studDept = 'Communication', course = ?, studPhNo = ?, studProfilePic = ?, aadharNo = ?, updatedDate = CURRENT_DATE() WHERE id = ? AND deleteStatus = 0 AND isActive = 1 AND EXISTS (SELECT 1 FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1)  AND NOT EXISTS (SELECT 1 FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1")
+}
 
 module.exports = { Student, Payment, Tasks };
 
