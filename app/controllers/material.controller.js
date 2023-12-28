@@ -25,7 +25,7 @@ exports.createMaterial = (request, response) => {  // Corrected parameter name r
             return response.json({ "status": err })
         }
 
-        const { batchId, fileName, materialDesc, remarks } = request.body
+        const { batchId, fileName, materialDesc, remarks} = request.body
         const materialToken = request.body.token
 
         jwt.verify(materialToken, "lmsappone", (err, decoded) => {
@@ -44,6 +44,10 @@ exports.createMaterial = (request, response) => {  // Corrected parameter name r
 
                 if (!Validator.isValidAddress(materialDesc).isValid) {
                     validationErrors.address = Validator.isValidAddress(materialDesc).message;
+                }
+
+                if (request.file && !Validator.isValidFile(request.file).isValid) {
+                    validationErrors.file = Validator.isValidFile(request.file).message;
                 }
 
                 // If validation fails
@@ -77,3 +81,29 @@ exports.createMaterial = (request, response) => {  // Corrected parameter name r
     })
 
 }
+
+exports.searchMaterial = (request, response) => {
+    const materialQuery = request.body.materialQuery;
+    const materialSearchToken = request.body.token;
+
+    jwt.verify(materialSearchToken, "lmsappone", (err, decoded) => {
+        if (!materialQuery) {
+            return response.json({ "status": "Provide a search query" });
+        }
+        if (decoded) {
+            Material.searchMaterial(materialQuery, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No Search Items Found" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};

@@ -148,12 +148,12 @@ exports.taskUpdate = (request, response) => {
             return response.json({ "status": err });
         }
 
-        const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = request.body;
+        const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate,key } = request.body;
 
         const updateTasktoken = request.body.token;
         console.log(updateTasktoken)
 
-        jwt.verify(updateTasktoken, "lmsapp", (error, decoded) => {
+        jwt.verify(updateTasktoken,key, (error, decoded) => {
             if (decoded) {
 
                 const validationErrors = {};
@@ -240,11 +240,11 @@ exports.taskView = (request, response) => {
                 if (err) {
                     response.json({ "status": err });
                 }
-                if (data.length === 0) {
-                    response.json({ "status": "No tasks found!" });
+                if (data.length == 0) {
+                    response.json({ status: "No tasks found!" });
                 }
                 else {
-                    response.json({ "status": "success", "data": data });
+                    response.json({ status: "success", "data": data });
                 }
             });
         } else {
@@ -256,7 +256,8 @@ exports.taskView = (request, response) => {
 exports.searchTask = (request, response) => {
     const taskQuery = request.body.taskQuery;
     const taskSearchToken = request.body.token;
-    jwt.verify(taskSearchToken, "lmsapp", (err, decoded) => {
+    key=request.body.key
+    jwt.verify(taskSearchToken, key, (err, decoded) => {
         if(!taskQuery){
             return response.json({"status":"Provide a search query"})
         }
@@ -266,9 +267,9 @@ exports.searchTask = (request, response) => {
                     response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ status: "No Search Items Found" });
+                        response.json({ "status": "No Search Items Found" });
                     } else {
-                        response.json({ status: "success", "data": data });
+                        response.json({ "status": "success", "data": data });
                     }
                 }
             });
