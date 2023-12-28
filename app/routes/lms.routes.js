@@ -118,4 +118,6 @@ router.post("/studentUpdateProfile",StudentController.profileUpdateStudent)
 
 router.post("/searchMaterial",MaterialController.searchMaterial)
 
+router.post("/getAllRefundRequests",RefundController.getRefundRequests)
+
 module.exports = router

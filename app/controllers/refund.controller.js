@@ -31,3 +31,23 @@ exports.createRefundRequest = (request, response) => {
     });
 };
 
+exports.getRefundRequests = (request, response) => {
+    refundtoken = request.body.token;
+    key = request.body.key;
+    jwt.verify(refundtoken, key, (err, decoded) => {
+        if (decoded) {
+            Refund.getRefundRequests((err, data) => {
+                if (err) {
+                    console.log(err);
+                    response.json({ "status": "Failed to retrieve refund requests." });
+                } else {
+                    console.log("Refund requests successfully retrieved");
+                    response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
+
