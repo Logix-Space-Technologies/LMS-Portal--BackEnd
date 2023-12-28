@@ -289,7 +289,49 @@ CollegeStaff.viewTask=(collegeId,result)=>{
 }
 
 
+CollegeStaff.verifyStudent = (collegeStaffId, studentId, result) => {
+    const associationQuery = "SELECT * FROM student s JOIN college_staff c ON s.collegeId = c.collegeId WHERE s.id = ? AND c.id = ? AND s.deleteStatus = 0 AND s.isActive = 1";
 
+    db.query(associationQuery, [studentId, collegeStaffId], (assocErr, assocRes) => {
+        if (assocErr) {
+            console.error("Error checking CollegeStaff and Student association: ", assocErr);
+            result(assocErr, null);
+            return;
+        }
+
+        if (assocRes.length === 0) {
+            result("CollegeStaff and Student are not associated", null);
+            return;
+        }
+
+        const verificationQuery = "SELECT * FROM student WHERE id = ? AND isVerified = 1";
+
+        db.query(verificationQuery, [studentId], (verifErr, verifRes) => {
+            if (verifErr) {
+                console.error("Error checking student verification status: ", verifErr);
+                result(verifErr, null);
+                return;
+            }
+
+            if (verifRes.length > 0) {
+                result("Student is already verified", null);
+                return;
+            }
+
+            const updateQuery = "UPDATE student SET isVerified = 1 WHERE id = ?";
+
+            db.query(updateQuery, [studentId], (updateErr, updateRes) => {
+                if (updateErr) {
+                    console.error("Error updating student verification status: ", updateErr);
+                    result(updateErr, null);
+                    return;
+                }
+
+                result(null, "Student verification successful");
+            });
+        });
+    });
+};
 
 
 
