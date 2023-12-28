@@ -114,5 +114,6 @@ router.post("/searchcollegesByAdminStaff", AdminStaffController.searchCollegesBy
 
 router.post("/studentViewProfile",StudentController.studentViewProfile)
 
+router.post("/searchMaterial",MaterialController.searchMaterial)
 
 module.exports = router

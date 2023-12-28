@@ -77,3 +77,29 @@ exports.createMaterial = (request, response) => {  // Corrected parameter name r
     })
 
 }
+
+exports.searchMaterial = (request, response) => {
+    const materialQuery = request.body.materialQuery;
+    const materialSearchToken = request.body.token;
+
+    jwt.verify(materialSearchToken, "lmsappone", (err, decoded) => {
+        if (!materialQuery) {
+            return response.json({ "status": "Provide a search query" });
+        }
+        if (decoded) {
+            Material.searchMaterial(materialQuery, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No Search Items Found" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};

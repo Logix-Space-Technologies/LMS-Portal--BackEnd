@@ -59,5 +59,20 @@ Material.materialCreate = (newMaterial, result) => {
     })
 }
 
+Material.searchMaterial = (searchString, result) => {
+    db.query("SELECT m.fileName,m.materialDesc,m.uploadFile,m.remarks,b.batchName FROM materials m JOIN batches b ON m.batchId = b.id WHERE m.deleteStatus=0 AND m.isActive=1 AND b.deleteStatus=0 AND b.isActive=1 AND (fileName LIKE ? OR materialDesc LIKE ?)",
+        [`%${searchString}%`, `%${searchString}%`],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Materials: ", res);
+                result(null, res);
+            }
+        });
+}
+
 
 module.exports = Material
