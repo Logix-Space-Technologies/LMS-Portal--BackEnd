@@ -256,7 +256,8 @@ exports.taskView = (request, response) => {
 exports.searchTask = (request, response) => {
     const taskQuery = request.body.taskQuery;
     const taskSearchToken = request.body.token;
-    jwt.verify(taskSearchToken, "lmsapp", (err, decoded) => {
+    key=request.body.key
+    jwt.verify(taskSearchToken, key, (err, decoded) => {
         if(!taskQuery){
             return response.json({"status":"Provide a search query"})
         }
