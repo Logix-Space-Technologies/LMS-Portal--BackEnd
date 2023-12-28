@@ -234,7 +234,8 @@ exports.taskUpdate = (request, response) => {
 
 exports.taskView = (request, response) => {
     const taskToken = request.body.token
-    jwt.verify(taskToken, "lmsapp", (err, decoded) => {
+    key = request.body.key
+    jwt.verify(taskToken, key, (err, decoded) => {
         if (decoded) {
             Tasks.taskView((err, data) => {
                 if (err) {
