@@ -25,7 +25,7 @@ const Admin = function(admin){
 
 
 Admin.findByUserName = (username,result)=>{
-    db.query("SELECT * FROM admin WHERE userName = ?", username, (err,res)=>{
+    db.query("SELECT * FROM admin WHERE BINARY userName = ?", username, (err,res)=>{
 
         if (err) {
             console.log("Error : ", err)

@@ -148,12 +148,12 @@ exports.taskUpdate = (request, response) => {
             return response.json({ "status": err });
         }
 
-        const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = request.body;
+        const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate,key } = request.body;
 
         const updateTasktoken = request.body.token;
         console.log(updateTasktoken)
 
-        jwt.verify(updateTasktoken, "lmsapp", (error, decoded) => {
+        jwt.verify(updateTasktoken,key, (error, decoded) => {
             if (decoded) {
 
                 const validationErrors = {};
@@ -266,9 +266,9 @@ exports.searchTask = (request, response) => {
                     response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ status: "No Search Items Found" });
+                        response.json({ "status": "No Search Items Found" });
                     } else {
-                        response.json({ status: "success", "data": data });
+                        response.json({ "status": "success", "data": data });
                     }
                 }
             });
