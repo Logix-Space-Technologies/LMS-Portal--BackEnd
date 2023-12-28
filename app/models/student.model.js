@@ -334,25 +334,78 @@ Student.StdChangePassword = (student, result) => {
 };
 
 
-Student.viewStudentProfile = (studId, result) =>{
+Student.viewStudentProfile = (studId, result) => {
     db.query("SELECT collegeId,batchId,membership_no,studName,admNo,studDept,course,studEmail,studPhNo,studProfilePic,aadharNo,addedDate,validity FROM student WHERE deleteStatus=0 AND isActive=1 AND id=?", [studId],
-    (err, res) =>{
-        if (err) {
-            console.log("error: ", err);
-            result(err, null)
-            return
-        } else {
-            console.log("Profile: ", res);
-            result(null, res)
-            return
-        }
-    }  )
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null)
+                return
+            } else {
+                console.log("Profile: ", res);
+                result(null, res)
+                return
+            }
+        })
 }
 
 
-Student.updateStudentProfile = (studId, result) => {
-    db.query("UPDATE student SET studName = ?, admNo = ?, rollNo = ?, studDept = 'Communication', course = ?, studPhNo = ?, studProfilePic = ?, aadharNo = ?, updatedDate = CURRENT_DATE() WHERE id = ? AND deleteStatus = 0 AND isActive = 1 AND EXISTS (SELECT 1 FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1)  AND NOT EXISTS (SELECT 1 FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1")
+Student.updateStudentProfile = (student, result) => {
+
+    db.query("SELECT * FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+        [student.collegeId],
+        (collegeErr, collegeRes) => {
+            if (collegeErr) {
+                console.error("Error checking college: ", collegeErr);
+                return result(collegeErr, null);
+            }
+            if (collegeRes.length === 0) {
+                console.log("college does not exist or is inactive/deleted.");
+                return result("college does not exist or is inactive/deleted.", null);
+            }
+
+            db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+                [student.batchId],
+                (batchErr, batchRes) => {
+                    if (batchErr) {
+                        console.error("Error checking batch: ", batchErr);
+                        return result(batchErr, null);
+                    }
+                    if (batchRes.length === 0) {
+                        console.log("Batch does not exist or is inactive/deleted.");
+                        return result("Batch does not exist or is inactive/deleted.", null);
+                    }
+
+                    db.query("UPDATE student SET studName = ?, admNo = ?, rollNo = ?, studDept = ?, course = ?, studPhNo = ?, studProfilePic = ?, aadharNo = ?, updatedDate = CURRENT_DATE() WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+                        [
+                            student.studName,
+                            student.admNo,
+                            student.rollNo,
+                            student.studDept,
+                            student.course,
+                            student.studPhNo,
+                            student.studProfilePic,
+                            student.aadharNo,
+                            student.id
+                        ],
+                        (updateErr, updateRes) => {
+                            if (updateErr) {
+                                console.error("Error updating student: ", updateErr);
+                                return result(updateErr, null);
+                            }
+
+                            if (updateRes.affectedRows === 0) {
+                                return result({ kind: "not_found" }, null);
+                            }
+
+                            console.log("Updated Student Details: ", { id: student.id, ...student });
+                            result(null, { id: student.id, ...student });
+                        });
+                });
+        });
 }
+
+
 
 module.exports = { Student, Payment, Tasks };
 
