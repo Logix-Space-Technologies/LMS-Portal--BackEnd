@@ -335,7 +335,7 @@ exports.searchStudentByCollegeId = (req, res) => {
   const searchQuery = req.body.searchQuery;
   const collegeId = req.body.collegeId;
   const searchstudToken = req.body.token;
-  jwt.verify(searchstudToken, "lmsapptwo", (err, decoded) => {
+  jwt.verify(searchstudToken, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
       if (!searchQuery) {
         return res.json({ "status": "Search query is empty!!" });
