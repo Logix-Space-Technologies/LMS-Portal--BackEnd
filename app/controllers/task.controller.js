@@ -266,9 +266,9 @@ exports.searchTask = (request, response) => {
                     response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ status: "No Search Items Found" });
+                        response.json({ "status": "No Search Items Found" });
                     } else {
-                        response.json({ status: "success", "data": data });
+                        response.json({ "status": "success", "data": data });
                     }
                 }
             });

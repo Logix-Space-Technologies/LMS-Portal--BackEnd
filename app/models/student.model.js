@@ -1,5 +1,5 @@
 const db = require("../models/db");
-const { response } = require("express")
+const { response, request } = require("express")
 const bcrypt = require("bcrypt")
 
 
@@ -332,6 +332,24 @@ Student.StdChangePassword = (student, result) => {
         }
     });
 };
+
+
+Student.viewStudentProfile = (studId, result) =>{
+    db.query("SELECT collegeId,batchId,membership_no,studName,admNo,studDept,course,studEmail,studPhNo,studProfilePic,aadharNo,addedDate,validity FROM student WHERE deleteStatus=0 AND isActive=1 AND id=?", [studId],
+    (err, res) =>{
+        if (err) {
+            console.log("error: ", err);
+            result(err, null)
+            return
+        } else {
+            console.log("Profile: ", res);
+            result(null, res)
+            return
+        }
+    }  )
+}
+
+
 
 
 module.exports = { Student, Payment, Tasks };
