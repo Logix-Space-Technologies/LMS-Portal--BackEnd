@@ -131,9 +131,9 @@ exports.batchView = (request, response) => {
 exports.searchBatch = (request, response) => {
     const batchQuery = request.body.batchQuery;
     const batchToken = request.body.token;
-
+    //key for respective token
     key=request.body.key;
-
+    
     jwt.verify(batchToken, key, (err, decoded) => {
         if(!batchQuery){
             return response.json({"status":"Search query cannot be empty"})
