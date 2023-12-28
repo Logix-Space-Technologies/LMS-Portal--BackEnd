@@ -458,3 +458,28 @@ exports.collegeStaffViewStudent = (request, response) => {
   });
 };
 
+exports.clgStaffViewTask = (request, response) => {
+  const clgStaffViewTaskToken = request.body.token
+  jwt.verify(clgStaffViewTaskToken, "lmsappclgstaff", (err, decoded) => {
+    if (decoded) {
+
+
+      //Assuming that we have task id in the request params body
+      const collegeId = request.body.collegeId
+      CollegeStaff.viewTask(collegeId, (err, data) => {
+        if (err) {
+          response.json({ "status": err })
+        }
+        if (data.length === 0) {
+
+          response.json({ "Status": "No task found" })
+        } else {
+          response.json({ "status": "success", "data": data })
+        }
+      })
+    } else {
+      response.json({ "status": "Unauthorized User!!" })
+    }
+  })
+}
+
