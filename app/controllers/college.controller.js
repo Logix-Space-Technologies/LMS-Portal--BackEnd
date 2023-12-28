@@ -138,11 +138,11 @@ exports.updateCollege = (request, response) => {
         }
         const collegeUpdateToken = request.body.token
         const collegeImage = request.file ? request.file.filename : null
-
+        key=request.body.key
         if (!request.file) {
             return response.json({ "status": "Image cannot be empty!!" })
         }
-        jwt.verify(collegeUpdateToken, "lmsapp", (err, decoded) => {
+        jwt.verify(collegeUpdateToken, key, (err, decoded) => {
             if (decoded) {
 
                 const validationErrors = {}
