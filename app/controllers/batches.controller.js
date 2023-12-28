@@ -6,8 +6,9 @@ const Validator = require("../config/data.validate")
 exports.batchCreate = (request, response) => {
 
     const batchToken = request.body.token;
+    key=request.body.key
 
-    jwt.verify(batchToken, "lmsapp", (err, decoded) => {
+    jwt.verify(batchToken,key, (err, decoded) => {
         if (decoded) {
             //checking validations
             const validationErrors = {};
