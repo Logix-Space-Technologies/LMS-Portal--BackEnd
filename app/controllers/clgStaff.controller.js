@@ -316,7 +316,7 @@ exports.collegeStaffLogin = (request, response) => {
     } else {
       const clgStaffPasswordMatch = bcrypt.compareSync(password, clgstaff.password)
       if (clgStaffPasswordMatch) {
-        jwt.sign({ email: getClgStaffEmail, password: getClgStaffPassword }, "lmsapptwo", { expiresIn: "1d" },
+        jwt.sign({ email: getClgStaffEmail, password: getClgStaffPassword }, "lmsappclgstaff", { expiresIn: "1d" },
           (error, token) => {
             if (error) {
               return response.json({ "status": "Unauthorized User!!" })
