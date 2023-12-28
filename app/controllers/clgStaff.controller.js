@@ -384,7 +384,7 @@ exports.searchStudentByCollegeId = (req, res) => {
 
 exports.collegeStaffViewStudent = (request, response) => {
   const collegeStaffViewStudent = request.body.token;
-  jwt.verify(collegeStaffViewStudent, "lmsapptwo", (err, decoded) => {
+  jwt.verify(collegeStaffViewStudent, "lmsappclgstaff", (err, decoded) => {
       if (decoded) {
           const collegeId = request.body.collegeId;
           CollegeStaff.viewStudent(collegeId, (err, data) => {
