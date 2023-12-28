@@ -168,7 +168,7 @@ exports.studLog = (request, response) => {
         
         const passwordMatch = bcrypt.compareSync(password, stud.password)
         if (passwordMatch) {
-            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsappthree", { expiresIn: "1d" },
+            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsappstud", { expiresIn: "1d" },
                 (error, token) => {
                     if (error) {
                         return response.json({ "status": "Unauthorized User!!" })
@@ -188,7 +188,7 @@ exports.studLog = (request, response) => {
 exports.studentTaskView = (request, response) =>{
     const studId = request.body.id
     const studTaskToken = request.body.token
-    jwt.verify(studTaskToken, "lmsappthree", (err, decoded) =>{
+    jwt.verify(studTaskToken, "lmsappstud", (err, decoded) =>{
         if (decoded) {
             Tasks.studentTaskView(studId,(err, data)=>{
                 if (err) {
@@ -212,7 +212,7 @@ exports.StdChangePassword = (request, response) => {
     const { studEmail, oldPassword, newPassword, token } = request.body;
 
     // Verify the JWT token
-    jwt.verify(token, "lmsappthree", (err, decoded) => {
+    jwt.verify(token, "lmsappstud", (err, decoded) => {
         if (err || !decoded) {
             response.json({ "status": "Unauthorized User!!" });
             return;
@@ -261,7 +261,7 @@ exports.studentViewProfile = (request, response) =>{
     const studId = request.body.studId
     const studProfileToken = request.body.token
 
-    jwt.verify(studProfileToken, "lmsappthree", (err, decoded) =>{
+    jwt.verify(studProfileToken, "lmsappstud", (err, decoded) =>{
         if (decoded) {
             Student.viewStudentProfile(studId, (err, data)=>{
                 if (err) {
