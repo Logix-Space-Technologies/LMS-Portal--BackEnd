@@ -3,7 +3,7 @@ const Refund = require("../models/refund.model");
 
 exports.createRefundRequest = (request, response) => {
     refundtoken = request.body.token;
-    jwt.verify(refundtoken, "lmsappthree", (err, decoded) => {
+    jwt.verify(refundtoken, "lmsappstud", (err, decoded) => {
         if (decoded) {
             const newRefund = new Refund({
                 studId: request.body.studId, // Use studId instead of studid
