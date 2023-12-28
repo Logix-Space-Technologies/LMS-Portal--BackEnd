@@ -138,7 +138,7 @@ exports.updateCollege = (request, response) => {
         }
         const collegeUpdateToken = request.body.token
         const collegeImage = request.file ? request.file.filename : null
-        key=request.body.key
+        key=request.body.key // key for respective tokens
         if (!request.file) {
             return response.json({ "status": "Image cannot be empty!!" })
         }
