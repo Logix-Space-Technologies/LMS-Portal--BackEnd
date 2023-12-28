@@ -107,7 +107,8 @@ exports.batchDelete = (request, response) => {
 
 exports.batchView = (request, response) => {
     const batchToken = request.body.token;
-    jwt.verify(batchToken, "lmsapp", (err, decoded) => {
+    key=request.body.key // key for respective tokens
+    jwt.verify(batchToken, key, (err, decoded) => {
         if (decoded) {
             Batches.batchView((err, data) => {
                 if (err) {
