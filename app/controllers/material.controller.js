@@ -25,7 +25,7 @@ exports.createMaterial = (request, response) => {  // Corrected parameter name r
             return response.json({ "status": err })
         }
 
-        const { batchId, fileName, materialDesc, remarks } = request.body
+        const { batchId, fileName, materialDesc, remarks, uploadFile } = request.body
         const materialToken = request.body.token
 
         jwt.verify(materialToken, "lmsappone", (err, decoded) => {
@@ -44,6 +44,10 @@ exports.createMaterial = (request, response) => {  // Corrected parameter name r
 
                 if (!Validator.isValidAddress(materialDesc).isValid) {
                     validationErrors.address = Validator.isValidAddress(materialDesc).message;
+                }
+
+                if (request.uploadFile && !Validator.isValidFile(request.uploadFile).isValid) {
+                    validationErrors.file = Validator.isValidFile(request.uploadFile).message;
                 }
 
                 // If validation fails
