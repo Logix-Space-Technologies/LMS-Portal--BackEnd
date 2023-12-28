@@ -459,6 +459,7 @@ exports.collegeStaffViewStudent = (request, response) => {
   });
 };
 
+
 exports.clgStaffViewTask = (request, response) => {
   const clgStaffViewTaskToken = request.body.token
   jwt.verify(clgStaffViewTaskToken, "lmsappclgstaff", (err, decoded) => {
@@ -483,4 +484,5 @@ exports.clgStaffViewTask = (request, response) => {
     }
   })
 }
+
 
