@@ -272,6 +272,10 @@ exports.adminStaffChangePswd = (request, response) => {
 
     jwt.verify(token, "lmsappone", (error, decoded) => {
         if (decoded) {
+            if(oldAdSfPassword === newAdSfPassword){
+                response.json({ "status": "Old password and new password cannot be same." });
+                return;
+            }
             AdminStaff.asChangePassword({Email, oldAdSfPassword, newAdSfPassword}, (err, result) => {
                 if (err) {
                     return response.json({"status" : err})
