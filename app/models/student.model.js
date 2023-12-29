@@ -1,7 +1,10 @@
 const db = require("../models/db");
 const { response, request } = require("express")
 const bcrypt = require("bcrypt")
+
 const { StudentLog, logStudent } = require("../models/studentLog.model")
+
+
 
 
 const Tasks = function (tasks) {
@@ -38,6 +41,16 @@ const Payment = function (payment) {
     this.rpPaymentId = payment.rpPaymentId;
     this.rpOrderId = payment.rpOrderId;
     this.rpAmount = payment.rpAmount;
+};
+
+
+const SubmitTask = function (submitTask) {
+    this.studId = submitTask.studId;
+    this.taskId = submitTask.taskId;
+    this.gitLink = submitTask.gitLink;
+    this.remarks = submitTask.remarks;
+    this.subDate = new Date(); // Current date
+
 };
 
 let payStudId;
@@ -478,5 +491,8 @@ Student.viewAllStudentByAdmin = (result) => {
         })
 }
 
-module.exports = { Student, Payment, Tasks };
+
+
+
+module.exports = { Student, Payment, Tasks, SubmitTask };
 
