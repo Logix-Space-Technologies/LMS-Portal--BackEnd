@@ -1,4 +1,5 @@
 const db = require("../models/db");
+const { StudentLog, logStudent } = require("../models/studentLog.model")
 
 const Refund = function (refund) {
     this.studId = refund.studId;
@@ -89,6 +90,9 @@ Refund.createRefundRequest = (newRefund, result) => {
                             result(refundErr, null);
                             return;
                         }
+
+                        // Log student added
+                        logStudent(newRefund.studId, "Refund request sent")
 
                         console.log("Created refund:", { id: refundRes.insertId, ...newRefund });
                         result(null, { id: refundRes.insertId, ...newRefund });

@@ -11,6 +11,7 @@ const BatchesController= require("../controllers/batches.controller")
 const ClgStaffLogController  = require("../controllers/collegeStaffLog.controller")
 const AdminStaffLogController = require("../controllers/adminStaffLog.controller")
 
+
 const StudentController=require('../controllers/student.controller')
 
 const MaterialController=require('../controllers/material.controller')
@@ -125,6 +126,8 @@ router.post("/clgstaffviewtask",ClgStaffController.clgStaffViewTask)
 router.post("/studentverificationbyCollegeStaff", ClgStaffController.studentVerificationByCollegeStaff)
 
 router.post("/unverifiedStudents", StudentController.viewUnverifiedStudents)
+
+router.post("/collegeStaffSearchTasks",taskController.collegeStaffSearchTasks)
 
 
 module.exports = router
