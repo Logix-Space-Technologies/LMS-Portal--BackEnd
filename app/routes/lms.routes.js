@@ -129,5 +129,7 @@ router.post("/unverifiedStudents", StudentController.viewUnverifiedStudents)
 
 router.post("/collegeStaffSearchTasks",taskController.collegeStaffSearchTasks)
 
+router.post("/viewAllStudByAdmin",StudentController.viewAllStudsByAdmin)
+
 
 module.exports = router

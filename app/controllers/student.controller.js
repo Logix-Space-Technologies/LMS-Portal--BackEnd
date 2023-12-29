@@ -394,3 +394,22 @@ exports.viewUnverifiedStudents = (request, response) => {
         }
     });
 };
+
+// View All Students By Admin
+exports.viewAllStudsByAdmin = (request, response) => {
+    const viewAllStudentByAdminToken = request.body.token
+    key = request.body.key
+    jwt.verify(viewAllStudentByAdminToken, key, (err, decoded) => {
+        if (decoded) {
+            Student.viewAllStudentByAdmin((err, data) => {
+                if (err) {
+                    return response.json({"status" : err})
+                } else {
+                    return response.json({"status" : "Success", "data" : data})
+                }
+            })
+        } else {
+            return response.json({"status" : "Unauthorized User!!"})
+        }
+    })
+}
