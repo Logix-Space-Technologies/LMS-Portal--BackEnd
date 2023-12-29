@@ -277,9 +277,9 @@ exports.searchCollegeStaff = (request, response) => {
           response.json({ "status": err });
         } else {
           if (data.length === 0) {
-            response.json({ status: "No search items found." });
+            response.json({ "status": "No search items found." });
           } else {
-            response.json({ status: "success", "data": data });
+            response.json({ "status": "success", "data": data });
           }
 
         }
