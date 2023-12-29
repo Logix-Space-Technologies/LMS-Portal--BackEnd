@@ -11,6 +11,7 @@ const BatchesController= require("../controllers/batches.controller")
 const ClgStaffLogController  = require("../controllers/collegeStaffLog.controller")
 const AdminStaffLogController = require("../controllers/adminStaffLog.controller")
 
+
 const StudentController=require('../controllers/student.controller')
 
 const MaterialController=require('../controllers/material.controller')
@@ -110,11 +111,9 @@ router.post("/studentChangePassword",StudentController.StdChangePassword)
 
 router.post("/collegeStaffChangePassword",ClgStaffController.collegeStaffChangePassword)
 
-
 router.post("/searchcollegesByAdminStaff", AdminStaffController.searchCollegesByAdminStaff)
 
 router.post("/studentViewProfile",StudentController.studentViewProfile)
-
 
 router.post("/studentUpdateProfile",StudentController.profileUpdateStudent)
 
@@ -126,6 +125,14 @@ router.post("/clgstaffviewtask",ClgStaffController.clgStaffViewTask)
 
 router.post("/studentverificationbyCollegeStaff", ClgStaffController.studentVerificationByCollegeStaff)
 
-router.post('/tasksubmissionByStudent', StudentController.taskSubmissionByStudent);
+router.post("/unverifiedStudents", StudentController.viewUnverifiedStudents)
+
+router.post("/collegeStaffSearchTasks",taskController.collegeStaffSearchTasks)
+
+router.post("/adminDashboard", AdminController.adminDashBoards);
+
+router.post("/viewAllStudByAdmin",StudentController.viewAllStudsByAdmin)
+
+
 
 module.exports = router

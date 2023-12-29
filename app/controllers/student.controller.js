@@ -162,7 +162,7 @@ exports.studLog = (request, response) => {
             if (err.kind === "not_found") {
                 return response.json({ "status": "Student does not Exist." })
             } else {
-                return response.json({ "status": "Error retrieving student details" })
+                return response.json({ "status": err })
             }
         }
 
@@ -375,55 +375,43 @@ exports.profileUpdateStudent = (request, response) => {
 }
 
 
-
-exports.taskSubmissionByStudent = (request, response) => {
-    const submissionData = request.body;
+exports.viewUnverifiedStudents = (request, response) => {
     const token = request.body.token;
-    jwt.verify(token, "lmsappstud", (err, decoded) => {
+
+    jwt.verify(token, "lmsappclgstaff", (err, decoded) => {
         if (err) {
-            response.json({"status":"Unauthorized Access!!"})
-            return;
-        }
-        const validationErrors = {};
-
-        if (Validator.isEmpty(submissionData.gitLink).isValid) {
-            validationErrors.gitLink = Validator.isEmpty(submissionData.gitLink).message;
+            return response.json({ "status": "Unauthorized User!!" });
         }
 
-        if (!Validator.isValidGitLink(submissionData.gitLink).isValid) {
-            validationErrors.gitLink = Validator.isValidGitLink(submissionData.gitLink).message;
+        if (decoded) {
+            collegeId=request.body.collegeId;
+            Student.viewUnverifiedStudents(collegeId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    response.json({ "status": "success", "data": data });
+                }
+            });
         }
-
-        if (Validator.isEmpty(submissionData.remarks).isValid) {
-            validationErrors.Remarks = Validator.isEmpty(submissionData.remarks).message;
-        }
-
-        // If validation fails
-        if (Object.keys(validationErrors).length > 0) {
-            return response.json({ "status": "Validation failed", "data": validationErrors });
-        }
-
-        Student.taskSubmissionByStudent(submissionData, (err, data) => {
-            if (err) {
-                return response.json({ "status": err });
-            }
-    
-            return response.json({ "status": "success", "data": data});
-        });
     });
-    
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
+// View All Students By Admin
+exports.viewAllStudsByAdmin = (request, response) => {
+    const viewAllStudentByAdminToken = request.body.token
+    key = request.body.key
+    jwt.verify(viewAllStudentByAdminToken, key, (err, decoded) => {
+        if (decoded) {
+            Student.viewAllStudentByAdmin((err, data) => {
+                if (err) {
+                    return response.json({"status" : err})
+                } else {
+                    return response.json({"status" : "Success", "data" : data})
+                }
+            })
+        } else {
+            return response.json({"status" : "Unauthorized User!!"})
+        }
+    })
+}
 

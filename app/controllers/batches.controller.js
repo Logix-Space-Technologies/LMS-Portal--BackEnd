@@ -116,10 +116,10 @@ exports.batchView = (request, response) => {
                     response.json({ "status": err });
                 }
                 if (data.length == 0) {
-                    response.json({ status: "No batches found!" });
+                    response.json({ "status": "No batches found!" });
                 }
                 else {
-                    response.json({ status: "success", "data": data });
+                    response.json({ "status": "success", "data": data });
                 }
             });
         } else {
@@ -170,7 +170,8 @@ exports.batchUpdate = (request, response) => {
 
     const batchUpdateToken = request.body.token;
     console.log(batchUpdateToken)
-    jwt.verify(batchUpdateToken, "lmsapp", (err, decoded) => {
+    key = request.body.key
+    jwt.verify(batchUpdateToken, key , (err, decoded) => {
         if (decoded) {
 
             const validationErrors = {};

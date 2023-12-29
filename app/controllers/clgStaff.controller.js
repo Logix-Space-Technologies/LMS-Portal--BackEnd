@@ -27,8 +27,9 @@ exports.clgStaffCreate = (request, response) => {
       return response.json({ "status": "Error uploading image" });
     }
     const clgStaffToken = request.body.token
+    key = request.body.key;
     console.log(clgStaffToken)
-    jwt.verify(clgStaffToken, "lmsapp", (err, decoded) => {
+    jwt.verify(clgStaffToken, key, (err, decoded) => {
       if (decoded) {
         const profilePic = request.file ? request.file.filename : null
         if (!request.file) {
@@ -197,7 +198,8 @@ exports.collegeStaffUpdate = (req, res) => {
     if (!req.file) {
       return res.json({ "status": "Image is required." });
     }
-    jwt.verify(Updatetoken, "lmsapp", (error, decoded) => {
+    key = request.body.key
+    jwt.verify(Updatetoken, key , (error, decoded) => {
       if (decoded) {
         if (!req.body.collegeStaffName) {
           validationErrors.name = "Name is required.";
@@ -277,9 +279,9 @@ exports.searchCollegeStaff = (request, response) => {
           response.json({ "status": err });
         } else {
           if (data.length === 0) {
-            response.json({ status: "No search items found." });
+            response.json({ "status": "No search items found." });
           } else {
-            response.json({ status: "success", "data": data });
+            response.json({ "status": "success", "data": data });
           }
 
         }
@@ -474,7 +476,7 @@ exports.clgStaffViewTask = (request, response) => {
         }
         if (data.length === 0) {
 
-          response.json({ "Status": "No task found" })
+          response.json({ "status": "No task found" })
         } else {
           response.json({ "status": "success", "data": data })
         }
@@ -490,20 +492,20 @@ exports.studentVerificationByCollegeStaff = (req, res) => {
   const { collegeStaffId, studentId, token } = req.body;
 
   if (!collegeStaffId || !studentId || !token) {
-      return res.json({ status: "Validation failed", data: "CollegeStaff ID, Student ID, and Token are required" });
+      return res.json({ "status": "Validation failed", "data": "CollegeStaff ID, Student ID, and Token are required" });
   }
 
   jwt.verify(token, "lmsapptwo", (jwtErr, decoded) => {
       if (jwtErr) {
-          return res.json({ status: "Error", data: "JWT verification failed" });
+          return res.json({ "status": "Error", "data": "JWT verification failed" });
       }
 
       CollegeStaff.verifyStudent(collegeStaffId, studentId, (err, result) => {
           if (err) {
-              return res.json({ status: "Error", data: err });
+              return res.json({ "status": "Error", "data": err });
           }
 
-          return res.json({ status: "Success", data: result });
+          return res.json({ "status": "Success", "data": result });
       });
   });
 };

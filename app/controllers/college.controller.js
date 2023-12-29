@@ -122,7 +122,7 @@ exports.collegeAllView = (request, response) => {
                 if (err) {
                     response.json({ "status": err })
                 } else {
-                    response.json({ status: "success", "data": data });
+                    response.json({ "status": "success", "data": data });
                 }
             })
         } else {
