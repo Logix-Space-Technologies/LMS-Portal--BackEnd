@@ -124,5 +124,7 @@ router.post("/clgstaffviewtask",ClgStaffController.clgStaffViewTask)
 
 router.post("/studentverificationbyCollegeStaff", ClgStaffController.studentVerificationByCollegeStaff)
 
+router.post("/collegeStaffSearchTasks",taskController.collegeStaffSearchTasks)
+
 
 module.exports = router
