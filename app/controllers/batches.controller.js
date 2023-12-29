@@ -170,7 +170,8 @@ exports.batchUpdate = (request, response) => {
 
     const batchUpdateToken = request.body.token;
     console.log(batchUpdateToken)
-    jwt.verify(batchUpdateToken, "lmsapp", (err, decoded) => {
+    key = request.body.key
+    jwt.verify(batchUpdateToken, key , (err, decoded) => {
         if (decoded) {
 
             const validationErrors = {};
