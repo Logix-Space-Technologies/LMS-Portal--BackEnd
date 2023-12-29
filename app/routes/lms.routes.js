@@ -129,5 +129,6 @@ router.post("/unverifiedStudents", StudentController.viewUnverifiedStudents)
 
 router.post("/collegeStaffSearchTasks",taskController.collegeStaffSearchTasks)
 
+router.post("/adminDashboard", AdminController.adminDashBoards);
 
 module.exports = router
