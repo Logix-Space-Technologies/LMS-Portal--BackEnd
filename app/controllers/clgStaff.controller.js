@@ -474,7 +474,7 @@ exports.clgStaffViewTask = (request, response) => {
         }
         if (data.length === 0) {
 
-          response.json({ "Status": "No task found" })
+          response.json({ "status": "No task found" })
         } else {
           response.json({ "status": "success", "data": data })
         }
