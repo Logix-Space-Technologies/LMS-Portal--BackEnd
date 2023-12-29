@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const { Student, Payment } = require("../models/student.model");
+const { Student, Payment, Tasks } = require("../models/student.model");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -37,7 +37,7 @@ exports.createStudent = (req, res) => {
         if (Validator.isEmpty(collegeId).isValid) {
             validationErrors.collegeId = Validator.isEmpty(collegeId).message;
         }
-        
+
         if (Validator.isEmpty(batchId).isValid) {
             validationErrors.batchId = Validator.isEmpty(batchId).message;
         }
@@ -157,7 +157,7 @@ exports.studLog = (request, response) => {
     Student.findByEmail(studEmail, (err, stud) => {
         if (err) {
             if (err.status === "Null") {
-                return response.json({"status" : "Email and Password cannot be null"})
+                return response.json({ "status": "Email and Password cannot be null" })
             }
             if (err.kind === "not_found") {
                 return response.json({ "status": "Student does not Exist." })
@@ -165,10 +165,10 @@ exports.studLog = (request, response) => {
                 return response.json({ "status": "Error retrieving student details" })
             }
         }
-        
+
         const passwordMatch = bcrypt.compareSync(password, stud.password)
         if (passwordMatch) {
-            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsappthree", { expiresIn: "1d" },
+            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsappstud", { expiresIn: "1d" },
                 (error, token) => {
                     if (error) {
                         return response.json({ "status": "Unauthorized User!!" })
@@ -182,3 +182,195 @@ exports.studLog = (request, response) => {
 
     })
 }
+
+
+
+exports.studentTaskView = (request, response) => {
+    const studId = request.body.id
+    const studTaskToken = request.body.token
+    jwt.verify(studTaskToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Tasks.studentTaskView(studId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No tasks found!" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+
+
+exports.StdChangePassword = (request, response) => {
+    const { studEmail, oldPassword, newPassword, token } = request.body;
+
+    // Verify the JWT token
+    jwt.verify(token, "lmsappstud", (err, decoded) => {
+        if (err || !decoded) {
+            response.json({ "status": "Unauthorized User!!" });
+            return;
+        }
+
+        // Validate old and new passwords
+        const validationErrors = {};
+
+        if (!oldPassword) {
+            validationErrors.oldPassword = "Old password is required.";
+        }
+
+        const passwordValidation = Validator.isValidPassword(newPassword);
+        if (!passwordValidation.isValid) {
+            validationErrors.newPassword = passwordValidation.message;
+        }
+
+        if (Object.keys(validationErrors).length > 0) {
+            return response.json({ "status": "Validation failed", "data": validationErrors });
+        }
+
+        // Check old password and update if valid
+        Student.StdChangePassword({ studEmail, oldPassword, newPassword }, (err, data) => {
+            if (err) {
+                response.json({ "status": err });
+                return;
+            }
+            if (oldPassword === newPassword) {
+                response.json({ "status": "Old password and new password cannot be same." });
+                return;
+            }
+
+            if (data.status === "Incorrect Old Password!!") {
+                response.json({ "status": "Incorrect Old Password!!" });
+            } else if (data.status === "No Student Found") {
+                response.json({ "status": "User Not Found!!!" });
+            } else {
+                response.json({ "status": "Password Updated Successfully." });
+            }
+        });
+    });
+};
+
+
+exports.studentViewProfile = (request, response) => {
+    const studId = request.body.studId
+    const studProfileToken = request.body.token
+
+    jwt.verify(studProfileToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Student.viewStudentProfile(studId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err })
+                } else {
+                    response.json({ "status": "success", "data": data });
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+
+
+exports.profileUpdateStudent = (request, response) => {
+    upload(request, response, function (err) {
+        if (err) {
+            console.error("Error uploading file:", err);
+            return response.json({ "status": err });
+        }
+
+        const { studName, admNo, rollNo, studDept, course, studPhNo, studProfilePic, aadharNo } = request.body
+ 
+        const updateProfileToken = request.body.token
+
+        jwt.verify(updateProfileToken, "lmsappstud", (err, decoded) => {
+            if (decoded) {
+                // Validation
+                const validationErrors = {};
+
+                if (Validator.isEmpty(studName).isValid) {
+                    validationErrors.studName = Validator.isEmpty(studName).message;
+                }
+
+                if (!Validator.isValidName(studName).isValid) {
+                    validationErrors.studName = Validator.isValidName(studName).message;
+                }
+
+                if (Validator.isEmpty(admNo).isValid) {
+                    validationErrors.admNo = Validator.isEmpty(admNo).message;
+                }
+
+                if (Validator.isEmpty(rollNo).isValid) {
+                    validationErrors.rollNo = Validator.isEmpty(rollNo).message;
+                }
+
+                if (Validator.isEmpty(studDept).isValid) {
+                    validationErrors.studDept = Validator.isEmpty(studDept).message;
+                }
+
+                if (Validator.isEmpty(course).isValid) {
+                    validationErrors.course = Validator.isEmpty(course).message;
+                }
+
+                if (Validator.isEmpty(aadharNo).isValid) {
+                    validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
+                }
+
+                if (!Validator.isValidAadharNumber(aadharNo).isValid) {
+                    validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
+                }
+
+                if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+                    validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
+                }
+
+
+                if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+                    validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+                }
+
+
+                // If validation fails
+                if (Object.keys(validationErrors).length > 0) {
+                    return res.json({ "status": "Validation failed", "data": validationErrors });
+                }
+
+
+                const newStudent = new Student({
+                    'id':request.body.id,
+                    collegeId: request.body.collegeId,
+                    batchId:request.body.batchId,
+                    studName: studName,
+                    admNo: admNo,
+                    rollNo: rollNo,
+                    studDept: studDept,
+                    course: course,
+                    studPhNo: studPhNo,
+                    studProfilePic: studProfilePic,
+                    aadharNo: aadharNo
+                });
+
+                Student.updateStudentProfile(newStudent, (err, data) => {
+                    if (err) {
+                        if (err.kind === "not_found") {
+                            return response.json({ "status": "Student with provided Id and batchId is not found." });
+                        } else {
+                            return response.json({ "status": err });
+                        }
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                })
+
+            } else {
+                response.json({ "status": "Unauthorized User!!" });
+            }
+        })
+    })
+}
+

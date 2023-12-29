@@ -163,7 +163,7 @@ Tasks.updateTask = (updatedTask, result) => {
 
 
 Tasks.taskView = (result) => {
-    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1", (err, res) => {
+    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND b.deleteStatus = 0 AND b.isActive = 1", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)
@@ -191,6 +191,8 @@ Tasks.searchTasks = (searchString, result) => {
             }
         })
 }
+
+
 
 
 module.exports = Tasks;
