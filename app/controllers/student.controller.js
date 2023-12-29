@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const { Student, Payment, Tasks } = require("../models/student.model");
+const { Student, Payment, Tasks, SubmitTask } = require("../models/student.model");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -374,6 +374,7 @@ exports.profileUpdateStudent = (request, response) => {
     })
 }
 
+
 exports.viewUnverifiedStudents = (request, response) => {
     const token = request.body.token;
 
@@ -413,3 +414,43 @@ exports.viewAllStudsByAdmin = (request, response) => {
         }
     })
 }
+
+
+exports.taskSubmissionByStudent = (request, response) => {
+    const submissionData = request.body;
+    const token = request.body.token;
+    jwt.verify(token, "lmsappstud", (err, decoded) => {
+        if (err) {
+            response.json({"status":"Unauthorized Access!!"})
+            return;
+        }
+        const validationErrors = {};
+
+        if (Validator.isEmpty(submissionData.gitLink).isValid) {
+            validationErrors.gitLink = Validator.isEmpty(submissionData.gitLink).message;
+        }
+
+        if (!Validator.isValidGitLink(submissionData.gitLink).isValid) {
+            validationErrors.gitLink = Validator.isValidGitLink(submissionData.gitLink).message;
+        }
+
+        if (Validator.isEmpty(submissionData.remarks).isValid) {
+            validationErrors.Remarks = Validator.isEmpty(submissionData.remarks).message;
+        }
+
+        // If validation fails
+        if (Object.keys(validationErrors).length > 0) {
+            return response.json({ "status": "Validation failed", "data": validationErrors });
+        }
+
+        Student.taskSubmissionByStudent(submissionData, (err, data) => {
+            if (err) {
+                return response.json({ "status": err });
+            }
+    
+            return response.json({ "status": "success", "data": data});
+        });
+    });
+    
+};
+
