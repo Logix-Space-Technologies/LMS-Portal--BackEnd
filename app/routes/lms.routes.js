@@ -133,6 +133,8 @@ router.post("/adminDashboard", AdminController.adminDashBoards);
 
 router.post("/viewAllStudByAdmin",StudentController.viewAllStudsByAdmin)
 
+router.post("/admstaffLogout",AdminStaffController.adminStaffLogout)
+
 
 
 module.exports = router

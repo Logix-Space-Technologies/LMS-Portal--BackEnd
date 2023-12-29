@@ -217,7 +217,6 @@ function isValidAadharNumberUpdate(aadharNumber) {
 }
 
 
-
 module.exports = {
     isEmpty,
     isValidPhoneNumber,

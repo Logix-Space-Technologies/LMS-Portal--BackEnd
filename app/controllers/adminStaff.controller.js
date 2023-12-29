@@ -336,3 +336,19 @@ exports.searchCollegesByAdminStaff = (request, response) => {
     });
 };
 
+
+exports.adminStaffLogout = (request, response) => {
+    const token = request.body.token;
+    if (!token) {
+        response.json({ "status": "No token found" });
+        return;
+    }
+    jwt.verify(token, 'lmsapp', (err, decoded) => {
+        if (err) {
+            response.json({ "status": "Token is invalid or expired" });
+        } else {
+            response.clearCookie('token');
+            response.json({ "status": "Logout successful" });
+        }
+    });
+};
