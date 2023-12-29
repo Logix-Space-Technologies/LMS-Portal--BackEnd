@@ -234,17 +234,18 @@ exports.taskUpdate = (request, response) => {
 
 exports.taskView = (request, response) => {
     const taskToken = request.body.token
-    jwt.verify(taskToken, "lmsapp", (err, decoded) => {
+    key = request.body.key
+    jwt.verify(taskToken, key, (err, decoded) => {
         if (decoded) {
             Tasks.taskView((err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 }
                 if (data.length == 0) {
-                    response.json({ status: "No tasks found!" });
+                    response.json({ "status": "No tasks found!" });
                 }
                 else {
-                    response.json({ status: "success", "data": data });
+                    response.json({ "status": "success", "data": data });
                 }
             });
         } else {
@@ -256,12 +257,39 @@ exports.taskView = (request, response) => {
 exports.searchTask = (request, response) => {
     const taskQuery = request.body.taskQuery;
     const taskSearchToken = request.body.token;
-    jwt.verify(taskSearchToken, "lmsapp", (err, decoded) => {
+    key=request.body.key
+    jwt.verify(taskSearchToken, key, (err, decoded) => {
         if(!taskQuery){
             return response.json({"status":"Provide a search query"})
         }
         if (decoded) {
             Tasks.searchTasks(taskQuery, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No Search Items Found" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
+
+exports.collegeStaffSearchTasks = (request, response) => {
+    const taskQuery = request.body.taskQuery;
+    const AdStafftaskSearchToken = request.body.token;
+    const collegeId = request.body.collegeId;
+    jwt.verify(AdStafftaskSearchToken, "lmsappclgstaff", (err, decoded) => {
+        if(!taskQuery){
+            return response.json({"status":"Provide a search query"})
+        }
+        if (decoded) {
+            Tasks.collegeStaffSearchTasks(taskQuery, collegeId,(err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 } else {

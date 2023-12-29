@@ -114,14 +114,15 @@ exports.collegeCreate = (request, response) => {
 
 exports.collegeAllView = (request, response) => {
     const clgviewToken = request.body.token
+    key=request.body.key
     console.log(clgviewToken)
-    jwt.verify(clgviewToken, "lmsapp", (err, decoded) => {
+    jwt.verify(clgviewToken, key, (err, decoded) => {
         if (decoded) {
             College.collegeViewAll((err, data) => {
                 if (err) {
                     response.json({ "status": err })
                 } else {
-                    response.json({ status: "success", "data": data });
+                    response.json({ "status": "success", "data": data });
                 }
             })
         } else {

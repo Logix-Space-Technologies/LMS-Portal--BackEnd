@@ -1,4 +1,5 @@
 const db = require("../models/db");
+const { StudentLog, logStudent } = require("../models/studentLog.model")
 
 const Refund = function (refund) {
     this.studId = refund.studId;
@@ -90,6 +91,9 @@ Refund.createRefundRequest = (newRefund, result) => {
                             return;
                         }
 
+                        // Log student added
+                        logStudent(newRefund.studId, "Refund request sent")
+
                         console.log("Created refund:", { id: refundRes.insertId, ...newRefund });
                         result(null, { id: refundRes.insertId, ...newRefund });
                     });
@@ -102,5 +106,25 @@ Refund.createRefundRequest = (newRefund, result) => {
     );
 };
 
+Refund.getRefundRequests = (result) => {
+    db.query(
+        "SELECT student.studName, college.collegeName, refund.studId, refund.requestedDate, refund.reason, refund.refundAmnt, refund.approvedAmnt FROM refund JOIN student ON refund.studId = student.id JOIN college ON student.collegeId = college.id WHERE refund.cancelStatus = 0 AND student.deleteStatus = 0 AND student.isActive = 1 AND student.isVerified = 1 ORDER BY refund.requestedDate DESC",
+        (err, res) => {
+            if (err) {
+                console.error("Error retrieving refund requests:", err);
+                result(err, null);
+                return;
+            }
+            if (res.length === 0) {
+                console.log("No refund requests found");
+                result(null, { "status": "No refund requests found." });
+                return;
+            }
+
+            // Return all refund requests
+            result(null, res);
+        }
+    );
+};
 
 module.exports = Refund;

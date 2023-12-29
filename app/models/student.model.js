@@ -1,6 +1,7 @@
 const db = require("../models/db");
 const { response, request } = require("express")
 const bcrypt = require("bcrypt")
+const { StudentLog, logStudent } = require("../models/studentLog.model")
 
 
 const Tasks = function (tasks) {
@@ -274,8 +275,11 @@ Student.findByEmail = (Email, result) => {
 
             if (res.length > 0) {
                 result(null, res[0])
+                //Log for student login
+                logStudent(res[0].id, "Student logged In")
                 return
             }
+            
 
             if (res.length === 0) {
                 console.log("Email and Password cannot be null")
@@ -304,7 +308,7 @@ Tasks.studentTaskView = (studId, result) => {
 }
 
 Student.StdChangePassword = (student, result) => {
-    const studentPassword = "SELECT password FROM student WHERE studEmail=? AND deleteStatus = 0 AND isActive = 1 AND ispaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
+    const studentPassword = "SELECT password, id FROM student WHERE studEmail=? AND deleteStatus = 0 AND isActive = 1 AND ispaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
     db.query(studentPassword, [student.studEmail], (err, res) => {
         if (err) {
             console.log("Error:", err);
@@ -313,6 +317,7 @@ Student.StdChangePassword = (student, result) => {
         }
         if (res.length) {
             const hashedOldPassword = res[0].password;
+            const id = res[0].id;
             if (bcrypt.compareSync(student.oldPassword, hashedOldPassword)) {
                 const updateStudentPasswordQuery = "UPDATE student SET password = ?, pwdUpdateStatus = 1 WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1 AND ispaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
                 const hashedNewPassword = bcrypt.hashSync(student.newPassword, 10);
@@ -321,6 +326,8 @@ Student.StdChangePassword = (student, result) => {
                         console.log("Error : ", updateErr);
                         result(updateErr, null);
                     } else {
+                        // Assuming logStudent function takes student ID as the first parameter
+                        logStudent(id, "password changed");
                         result(null, { "status": "Password Updated Successfully." });
                     }
                 });
@@ -334,22 +341,98 @@ Student.StdChangePassword = (student, result) => {
 };
 
 
-Student.viewStudentProfile = (studId, result) =>{
+Student.viewStudentProfile = (studId, result) => {
     db.query("SELECT collegeId,batchId,membership_no,studName,admNo,studDept,course,studEmail,studPhNo,studProfilePic,aadharNo,addedDate,validity FROM student WHERE deleteStatus=0 AND isActive=1 AND id=?", [studId],
-    (err, res) =>{
-        if (err) {
-            console.log("error: ", err);
-            result(err, null)
-            return
-        } else {
-            console.log("Profile: ", res);
-            result(null, res)
-            return
-        }
-    }  )
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null)
+                return
+            } else {
+                console.log("Profile: ", res);
+                result(null, res)
+                return
+            }
+        })
 }
 
 
+Student.updateStudentProfile = (student, result) => {
+
+    db.query("SELECT * FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+        [student.collegeId],
+        (collegeErr, collegeRes) => {
+            if (collegeErr) {
+                console.error("Error checking college: ", collegeErr);
+                return result(collegeErr, null);
+            }
+            if (collegeRes.length === 0) {
+                console.log("college does not exist or is inactive/deleted.");
+                return result("college does not exist or is inactive/deleted.", null);
+            }
+
+            db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+                [student.batchId],
+                (batchErr, batchRes) => {
+                    if (batchErr) {
+                        console.error("Error checking batch: ", batchErr);
+                        return result(batchErr, null);
+                    }
+                    if (batchRes.length === 0) {
+                        console.log("Batch does not exist or is inactive/deleted.");
+                        return result("Batch does not exist or is inactive/deleted.", null);
+                    }
+
+                    db.query("UPDATE student SET studName = ?, admNo = ?, rollNo = ?, studDept = ?, course = ?, studPhNo = ?, studProfilePic = ?, aadharNo = ?, updatedDate = CURRENT_DATE() WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+                        [
+                            student.studName,
+                            student.admNo,
+                            student.rollNo,
+                            student.studDept,
+                            student.course,
+                            student.studPhNo,
+                            student.studProfilePic,
+                            student.aadharNo,
+                            student.id
+                        ],
+                        (updateErr, updateRes) => {
+                            if (updateErr) {
+                                console.error("Error updating student: ", updateErr);
+                                return result(updateErr, null);
+                            }
+
+                            if (updateRes.affectedRows === 0) {
+                                return result({ kind: "not_found" }, null);
+                            }
+
+                            // Log the student profile update
+                            logStudent(student.id, "Profile Updated");
+
+                            console.log("Updated Student Details: ", { id: student.id, ...student });
+                            result(null, { id: student.id, ...student });
+                        });
+                });
+        });
+}
+
+Student.viewUnverifiedStudents = (collegeId, result) => {
+    db.query("SELECT * FROM student WHERE deleteStatus = 0 AND isVerified = 0 AND isActive=1 AND emailVerified = 1 AND collegeId = ?",
+        [collegeId],
+        
+        (err, res) => {
+            if (err) {
+                console.error("Error while fetching unverified students: ", err);
+                return result(err, null);
+            }
+            if (res.length === 0) {
+                console.log("No unverified students found.");
+                return result("No unverified students found.", null);
+            }
+
+            console.log("Unverified students: ", res);
+            result(null, res);
+        });
+}
 
 
 module.exports = { Student, Payment, Tasks };

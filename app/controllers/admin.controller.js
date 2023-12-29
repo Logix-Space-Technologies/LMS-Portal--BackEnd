@@ -93,9 +93,9 @@ exports.adminChangePwd = (request, response) => {
 
                     Admin.changePassword({ userName, oldPassword, newPassword: hashedNewPassword }, (updateErr, updateResult) => {
                         if (updateErr) {
-                            return response.json({ status: updateErr });
+                            return response.json({ "status": updateErr });
                         } else {
-                            return response.json({ status: "Password Successfully Updated!!!" });
+                            return response.json({ "status": "Password Successfully Updated!!!" });
                         }
                     });
                 } else {
@@ -104,7 +104,7 @@ exports.adminChangePwd = (request, response) => {
             });
 
         } else {
-            response.json({ status: "Unauthorized User!!!" });
+            response.json({ "status": "Unauthorized User!!!" });
         }
     });
 };
