@@ -32,8 +32,9 @@ exports.createTask = (request, response) => {
         console.log(dueDate)
         const taskToken = request.body.token
         console.log(taskToken)
+        key = request.body.key
 
-        jwt.verify(taskToken, "lmsapp", (err, decoded) => {
+        jwt.verify(taskToken, key, (err, decoded) => {
             if (decoded) {
 
                 const validationErrors = {};
