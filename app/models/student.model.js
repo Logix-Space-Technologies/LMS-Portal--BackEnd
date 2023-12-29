@@ -434,6 +434,20 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
         });
 }
 
+// View All Students By Admin
+Student.viewAllStudentByAdmin = (result) => {
+    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1",
+    (err, response) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(null, err)
+            return
+        } else {
+            console.log("College : ", response)
+            result(null, response)
+        }
+    })
+}
 
 module.exports = { Student, Payment, Tasks };
 
