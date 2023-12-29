@@ -131,5 +131,7 @@ router.post("/collegeStaffSearchTasks",taskController.collegeStaffSearchTasks)
 
 router.post("/viewAllStudByAdmin",StudentController.viewAllStudsByAdmin)
 
+router.post("/clgStaffSearchBatch",ClgStaffController.clgStaffSearchBatches)
+
 
 module.exports = router

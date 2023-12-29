@@ -509,3 +509,32 @@ exports.studentVerificationByCollegeStaff = (req, res) => {
       });
   });
 };
+
+
+//College Staff Search Batches
+exports.clgStaffSearchBatches = (request, response) => {
+  const clgStaffBatchSearchQuery = request.body.clgStaffBatchSearchQuery
+  const ClgStaffSearchToken = request.body.token
+  const collegeId = request.body.collegeId
+  jwt.verify(ClgStaffSearchToken, "lmsappclgstaff", (err, decoded) => {
+      if (decoded) {
+          if (!clgStaffBatchSearchQuery) {
+              console.log("Search Item is required.")
+              return response.json({ "status": "Search Item is required." })
+          }
+          CollegeStaff.collegeStaffSearchBatch(clgStaffBatchSearchQuery, collegeId, (err, data) => {
+              if (err) {
+                  response.json({ "status": err })
+              } else {
+                  if (data.length === 0) {
+                      response.json({ "status": "No Search Items Found" })
+                  } else {
+                      response.json({ "status": "Result Found", "data": data })
+                  }
+              }
+          })
+      } else {
+          response.json({ "status": "Unauthorized User!!" })
+      }
+  })
+}
