@@ -214,7 +214,7 @@ AdminStaff.asChangePassword = (adsf, result) => {
 
             // Compare the hashed old password with the provided old password
             if (bcrypt.compareSync(adsf.oldAdSfPassword, hashedOldPassword)) {
-                const updateAstaffPasswordQuery = "UPDATE admin_staff SET Password = ?, updateStatus = 1 WHERE Email = ? AND deleteStatus = 0 AND isActive = 1"
+                const updateAstaffPasswordQuery = "UPDATE admin_staff SET Password = ?, updateStatus = 1, pwdUpdateStatus = 1, updatedDate = CURRENT_DATE() WHERE Email = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1"
                 const hashedNewPassword = bcrypt.hashSync(adsf.newAdSfPassword, 10)
 
                 db.query(updateAstaffPasswordQuery, [hashedNewPassword, adsf.Email], (updateErr) => {
@@ -230,7 +230,7 @@ AdminStaff.asChangePassword = (adsf, result) => {
                 result(null, { "status": "Incorrect Old Password!!!" })
             }
         } else {
-            result(null, { "status": "User Not Found!!!" })
+            result(null, { "status": "Admin Staff Not Found!!!" })
         }
     })
 }
