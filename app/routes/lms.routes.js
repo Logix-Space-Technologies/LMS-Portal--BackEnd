@@ -129,7 +129,10 @@ router.post("/unverifiedStudents", StudentController.viewUnverifiedStudents)
 
 router.post("/collegeStaffSearchTasks",taskController.collegeStaffSearchTasks)
 
+router.post("/adminDashboard", AdminController.adminDashBoards);
+
 router.post("/viewAllStudByAdmin",StudentController.viewAllStudsByAdmin)
+
 
 
 module.exports = router
