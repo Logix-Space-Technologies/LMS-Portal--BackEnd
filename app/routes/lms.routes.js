@@ -125,6 +125,8 @@ router.post("/clgstaffviewtask",ClgStaffController.clgStaffViewTask)
 
 router.post("/studentverificationbyCollegeStaff", ClgStaffController.studentVerificationByCollegeStaff)
 
+router.post("/unverifiedStudents", StudentController.viewUnverifiedStudents)
+
 router.post("/collegeStaffSearchTasks",taskController.collegeStaffSearchTasks)
 
 

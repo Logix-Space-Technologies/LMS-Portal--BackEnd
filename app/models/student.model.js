@@ -415,6 +415,24 @@ Student.updateStudentProfile = (student, result) => {
         });
 }
 
+Student.viewUnverifiedStudents = (collegeId, result) => {
+    db.query("SELECT * FROM student WHERE deleteStatus = 0 AND isVerified = 0 AND isActive=1 AND emailVerified = 1 AND collegeId = ?",
+        [collegeId],
+        
+        (err, res) => {
+            if (err) {
+                console.error("Error while fetching unverified students: ", err);
+                return result(err, null);
+            }
+            if (res.length === 0) {
+                console.log("No unverified students found.");
+                return result("No unverified students found.", null);
+            }
+
+            console.log("Unverified students: ", res);
+            result(null, res);
+        });
+}
 
 
 module.exports = { Student, Payment, Tasks };

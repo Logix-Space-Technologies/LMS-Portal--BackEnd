@@ -374,3 +374,23 @@ exports.profileUpdateStudent = (request, response) => {
     })
 }
 
+exports.viewUnverifiedStudents = (request, response) => {
+    const token = request.body.token;
+
+    jwt.verify(token, "lmsappclgstaff", (err, decoded) => {
+        if (err) {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+
+        if (decoded) {
+            collegeId=request.body.collegeId;
+            Student.viewUnverifiedStudents(collegeId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    response.json({ "status": "success", "data": data });
+                }
+            });
+        }
+    });
+};
