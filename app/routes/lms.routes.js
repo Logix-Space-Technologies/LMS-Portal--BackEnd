@@ -129,7 +129,11 @@ router.post("/unverifiedStudents", StudentController.viewUnverifiedStudents)
 
 router.post("/collegeStaffSearchTasks",taskController.collegeStaffSearchTasks)
 
+router.post("/adminDashboard", AdminController.adminDashBoards);
+
 router.post("/viewAllStudByAdmin",StudentController.viewAllStudsByAdmin)
+
+router.post('/tasksubmissionByStudent', StudentController.taskSubmissionByStudent);
 
 router.post("/clgStaffSearchBatch",ClgStaffController.clgStaffSearchBatches)
 
