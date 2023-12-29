@@ -111,9 +111,6 @@ router.post("/studentChangePassword",StudentController.StdChangePassword)
 router.post("/collegeStaffChangePassword",ClgStaffController.collegeStaffChangePassword)
 
 
-router.post("/deleteCollegeStaffByAdminStaff", AdminStaffController.collegeStaffDelete)
-
-
 router.post("/searchcollegesByAdminStaff", AdminStaffController.searchCollegesByAdminStaff)
 
 router.post("/studentViewProfile",StudentController.studentViewProfile)
@@ -129,5 +126,6 @@ router.post("/clgstaffviewtask",ClgStaffController.clgStaffViewTask)
 
 router.post("/studentverificationbyCollegeStaff", ClgStaffController.studentVerificationByCollegeStaff)
 
+router.post('/tasksubmissionByStudent', StudentController.taskSubmissionByStudent);
 
 module.exports = router

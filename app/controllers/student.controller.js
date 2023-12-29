@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const { Student, Payment, Tasks } = require("../models/student.model");
+const { Student, Payment, Tasks, SubmitTask } = require("../models/student.model");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -373,4 +373,31 @@ exports.profileUpdateStudent = (request, response) => {
         })
     })
 }
+
+
+
+exports.taskSubmissionByStudent = (request, response) => {
+    const submissionData = request.body;
+
+    Student.taskSubmissionByStudent(submissionData, (err, data) => {
+        if (err) {
+            return response.json({ status: err });
+        }
+
+        return response.json({ status: "success", data });
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
