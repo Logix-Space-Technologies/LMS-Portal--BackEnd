@@ -135,5 +135,7 @@ router.post("/viewAllStudByAdmin",StudentController.viewAllStudsByAdmin)
 
 router.post('/tasksubmissionByStudent', StudentController.taskSubmissionByStudent);
 
+router.post("/clgStaffSearchBatch",ClgStaffController.clgStaffSearchBatches)
+
 
 module.exports = router
