@@ -198,7 +198,8 @@ exports.collegeStaffUpdate = (req, res) => {
     if (!req.file) {
       return res.json({ "status": "Image is required." });
     }
-    jwt.verify(Updatetoken, "lmsapp", (error, decoded) => {
+    key = request.body.key
+    jwt.verify(Updatetoken, key , (error, decoded) => {
       if (decoded) {
         if (!req.body.collegeStaffName) {
           validationErrors.name = "Name is required.";

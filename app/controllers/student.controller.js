@@ -162,7 +162,7 @@ exports.studLog = (request, response) => {
             if (err.kind === "not_found") {
                 return response.json({ "status": "Student does not Exist." })
             } else {
-                return response.json({ "status": "Error retrieving student details" })
+                return response.json({ "status": err })
             }
         }
 

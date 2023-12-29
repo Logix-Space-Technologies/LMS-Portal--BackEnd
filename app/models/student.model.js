@@ -265,29 +265,54 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
 
 
 Student.findByEmail = (Email, result) => {
-    db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1", [Email],
-        (err, res) => {
-            if (err) {
-                console.log("Error : ", err)
-                return result(err, null)
-
+    db.query("SELECT * FROM student WHERE isVerified = 1", [Email],
+        (verifyErr, verifyRes) => {
+            if (verifyErr) {
+                console.log("Error: ", verifyErr)
+                return result(verifyErr, null)
             }
-
-            if (res.length > 0) {
-                result(null, res[0])
-                //Log for student login
-                logStudent(res[0].id, "Student logged In")
-                return
+            if (verifyRes.length === 0) {
+                console.log("Account is under progress/not verified")
+                return result("Account is under progress/not verified", null)
             }
+      
+            db.query("SELECT * FROM student WHERE validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
+                (validityErr, validityRes) => {
+                    if (validityErr) {
+                        console.log("Error: ", validityErr)
+                        return result(validityErr, null)
+                    }
+                    if (validityRes.length === 0) {
+                        console.log("Account expired. Please Renew Your Plan.")
+                        return result("Account expired. Please Renew Your Plan", null)
+                    }
 
 
-            if (res.length === 0) {
-                console.log("Email and Password cannot be null")
-                result({ status: "Null" }, null)
-                return
-            }
+                    db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1", [Email],
+                        (err, res) => {
+                            if (err) {
+                                console.log("Error : ", err)
+                                return result(err, null)
 
-            result({ kind: "not_found" }, null)
+                            }
+
+                            if (res.length > 0) {
+                                result(null, res[0])
+                                //Log for student login
+                                logStudent(res[0].id, "Student logged In")
+                                return
+                            }
+
+
+                            if (res.length === 0) {
+                                console.log("Email and Password cannot be null")
+                                result({ status: "Null" }, null)
+                                return
+                            }
+
+                            result({ kind: "not_found" }, null)
+                        })
+                })
         })
 }
 
