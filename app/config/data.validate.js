@@ -8,6 +8,14 @@ function isEmpty(value) {
     };
 }
 
+function isValidGitLink(gitLink) {
+    return {
+        isValid: /^https:\/\/github\.com\/[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/i.test(gitLink),
+        message: "Invalid Git Link"
+    };
+}
+
+
 
 function isValidPhoneNumber(phoneNumber) {
     if (phoneNumber === null || phoneNumber === "") {
@@ -235,5 +243,6 @@ module.exports = {
     isDateGreaterThanToday,
     isValidFile,
     isDate1GreaterThanDate2,
-    isValidAadharNumberUpdate
+    isValidAadharNumberUpdate,
+    isValidGitLink
 };

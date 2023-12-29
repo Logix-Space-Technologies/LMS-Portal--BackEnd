@@ -47,7 +47,7 @@ const SubmitTask = function (submitTask) {
     this.gitLink = submitTask.gitLink;
     this.remarks = submitTask.remarks;
     this.subDate = new Date(); // Current date
-     
+
 };
 
 let payStudId;
@@ -420,53 +420,48 @@ Student.updateStudentProfile = (student, result) => {
 
 
 Student.taskSubmissionByStudent = (submissionData, result) => {
-    const { studId, taskId, gitLink, remarks, token } = submissionData;
+    const { studId, taskId, gitLink, remarks } = submissionData;
+    const currentDate = new Date()
 
-    jwt.verify(token, "lmsappstud", (err, decoded) => {
-        if (err) {
-            console.error("Error verifying token: ", err);
-            result({ status: "Unauthorized access!!" }, null);
+     // Check if student is valid
+     db.query("SELECT * FROM student WHERE id = ? AND isActive = 1 AND deleteStatus = 0 AND emailVerified = 1 AND isPaid = 1 AND isVerified = 1", [studId], (studentErr, studentRes) => {
+        if (studentErr) {
+            console.error("Error checking student validity: ", studentErr);
+            result(studentErr, null);
             return;
         }
 
-        // Check if student is valid
-        db.query("SELECT * FROM student WHERE id = ? AND isActive = 1 AND deleteStatus = 0 AND emailVerified = 1 AND isPaid = 1 AND isVerified = 1", [studId], (studentErr, studentRes) => {
-            if (studentErr) {
-                console.error("Error checking student validity: ", studentErr);
-                result(studentErr, null);
+        if (studentRes.length === 0) {
+            result("Invalid student details!", null);
+            return;
+        }
+
+        // Check if the task exists and is active
+        db.query("SELECT * FROM task WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [taskId], (taskErr, taskRes) => {
+            if (taskErr) {
+                console.error("Error checking task: ", taskErr);
+                result(taskErr, null);
                 return;
             }
 
-            if (studentRes.length === 0) {
-                result({ status: "Invalid student details!" }, null);
+            if (taskRes.length === 0) {
+                result("Task not found or inactive." , null);
                 return;
             }
 
-            // Check if the task exists and is active
-            db.query("SELECT * FROM task WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [taskId], (taskErr, taskRes) => {
-                if (taskErr) {
-                    console.error("Error checking task: ", taskErr);
-                    result(taskErr, null);
+            const task = taskRes[0];
+
+
+            // Check if the student has already submitted for this task
+            db.query("SELECT * FROM submit_task WHERE studId = ? AND taskId = ?", [studId, taskId], (previousSubmissionErr, previousSubmissionRes) => {
+                if (previousSubmissionErr) {
+                    console.error("Error checking previous submission: ", previousSubmissionErr);
+                    result(previousSubmissionErr, null);
                     return;
                 }
 
-                if (taskRes.length === 0) {
-                    result({ status: "Task not found or inactive." }, null);
-                    return;
-                }
-
-                const task = taskRes[0];
-
-                // Check if submission date is greater than or equal to task added date
-                const currentDate = new Date().toISOString().split('T')[0];
-                if (currentDate < task.addedDate) {
-                    result({ status: "Submission date cannot be earlier than task added date." }, null);
-                    return;
-                }
-
-                // Check if submission date is greater than due date
-                if (currentDate > task.dueDate) {
-                    result({ status: "Submission date is past the due date." }, null);
+                if (previousSubmissionRes.length > 0) {
+                    result("Task already submitted by the student.", null);
                     return;
                 }
 
@@ -479,6 +474,12 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
                     subDate: currentDate
                 };
 
+                // Check if submission date is greater than due date
+                if (currentDate > task.dueDate) {
+                    submission.lateSubDate = currentDate;
+                }
+
+
                 db.query("INSERT INTO submit_task SET ?", submission, (submissionErr, submissionRes) => {
                     if (submissionErr) {
                         console.error("Error saving submission: ", submissionErr);
@@ -488,23 +489,24 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
 
                     // Update lateSubDate in task table if submission date is greater than due date
                     if (currentDate > task.dueDate) {
-                        db.query("UPDATE task SET lateSubDate = ? WHERE id = ?", [currentDate, taskId], (updateErr, updateRes) => {
+                        db.query("UPDATE submit_task SET lateSubDate = ? WHERE id = ?", [currentDate, taskId], (updateErr, updateRes) => {
                             if (updateErr) {
                                 console.error("Error updating lateSubDate: ", updateErr);
                                 result(updateErr, null);
                                 return;
                             }
 
-                            result(null, { status: "Submission saved successfully." });
+                            result("Submission saved successfully.", null);
                         });
                     } else {
-                        result(null, { status: "Submission saved successfully." });
+                        result("Submission saved successfully.", null);
                     }
                 });
             });
         });
     });
 };
+
 
 
 module.exports = { Student, Payment, Tasks, SubmitTask };
