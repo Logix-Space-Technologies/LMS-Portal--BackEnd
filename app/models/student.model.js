@@ -1,6 +1,7 @@
 const db = require("../models/db");
 const { response, request } = require("express")
 const bcrypt = require("bcrypt")
+const { StudentLog, logStudent } = require("../models/studentLog.model")
 
 
 const Tasks = function (tasks) {
@@ -274,8 +275,11 @@ Student.findByEmail = (Email, result) => {
 
             if (res.length > 0) {
                 result(null, res[0])
+                //Log for student login
+                logStudent(res[0].id, "Student logged In")
                 return
             }
+            
 
             if (res.length === 0) {
                 console.log("Email and Password cannot be null")
@@ -304,7 +308,7 @@ Tasks.studentTaskView = (studId, result) => {
 }
 
 Student.StdChangePassword = (student, result) => {
-    const studentPassword = "SELECT password FROM student WHERE studEmail=? AND deleteStatus = 0 AND isActive = 1 AND ispaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
+    const studentPassword = "SELECT password, id FROM student WHERE studEmail=? AND deleteStatus = 0 AND isActive = 1 AND ispaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
     db.query(studentPassword, [student.studEmail], (err, res) => {
         if (err) {
             console.log("Error:", err);
@@ -313,6 +317,7 @@ Student.StdChangePassword = (student, result) => {
         }
         if (res.length) {
             const hashedOldPassword = res[0].password;
+            const id = res[0].id;
             if (bcrypt.compareSync(student.oldPassword, hashedOldPassword)) {
                 const updateStudentPasswordQuery = "UPDATE student SET password = ?, pwdUpdateStatus = 1 WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1 AND ispaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
                 const hashedNewPassword = bcrypt.hashSync(student.newPassword, 10);
@@ -321,6 +326,8 @@ Student.StdChangePassword = (student, result) => {
                         console.log("Error : ", updateErr);
                         result(updateErr, null);
                     } else {
+                        // Assuming logStudent function takes student ID as the first parameter
+                        logStudent(id, "password changed");
                         result(null, { "status": "Password Updated Successfully." });
                     }
                 });
@@ -397,6 +404,9 @@ Student.updateStudentProfile = (student, result) => {
                             if (updateRes.affectedRows === 0) {
                                 return result({ kind: "not_found" }, null);
                             }
+
+                            // Log the student profile update
+                            logStudent(student.id, "Profile Updated");
 
                             console.log("Updated Student Details: ", { id: student.id, ...student });
                             result(null, { id: student.id, ...student });
