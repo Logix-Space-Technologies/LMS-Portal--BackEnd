@@ -27,8 +27,9 @@ exports.clgStaffCreate = (request, response) => {
       return response.json({ "status": "Error uploading image" });
     }
     const clgStaffToken = request.body.token
+    key = request.body.key;
     console.log(clgStaffToken)
-    jwt.verify(clgStaffToken, "lmsapp", (err, decoded) => {
+    jwt.verify(clgStaffToken, key, (err, decoded) => {
       if (decoded) {
         const profilePic = request.file ? request.file.filename : null
         if (!request.file) {
