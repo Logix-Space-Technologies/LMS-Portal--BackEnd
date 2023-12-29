@@ -279,4 +279,28 @@ exports.searchTask = (request, response) => {
     });
 };
 
-
+exports.collegeStaffSearchTasks = (request, response) => {
+    const taskQuery = request.body.taskQuery;
+    const AdStafftaskSearchToken = request.body.token;
+    const collegeId = request.body.collegeId;
+    jwt.verify(AdStafftaskSearchToken, "lmsappclgstaff", (err, decoded) => {
+        if(!taskQuery){
+            return response.json({"status":"Provide a search query"})
+        }
+        if (decoded) {
+            Tasks.collegeStaffSearchTasks(taskQuery, collegeId,(err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No Search Items Found" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
