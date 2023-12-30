@@ -147,6 +147,8 @@ router.post("/evaluateTask",SubmitTaskController.evaluateTask)
 
 router.post("/viewRefundStatus",RefundController.getRefundStatus)
 
+router.post("/studentViewEvaluatedTask",StudentController.viewEvaluatedTasks)
+
 
 
 module.exports = router

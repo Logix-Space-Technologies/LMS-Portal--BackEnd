@@ -454,3 +454,21 @@ exports.taskSubmissionByStudent = (request, response) => {
     
 };
 
+
+exports.viewEvaluatedTasks = (request, response) => {
+    viewEvaluatedToken=request.body.token
+    jwt.verify(viewEvaluatedToken, "lmsappstud", (error, decoded) => {
+        if (decoded) {
+            const studId=request.body.studId
+            SubmitTask.viewEvaluatedTasks(studId,(error, data) => {
+                if (error) {
+                    return response.json({ "status": error });
+                } else {
+                    return response.json({ "status": "Success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+}
