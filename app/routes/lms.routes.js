@@ -20,6 +20,8 @@ const MaterialController=require('../controllers/material.controller')
 
 const RefundController = require("../controllers/refund.controller")
 
+const SubmitTaskController = require("../controllers/submit_task.controller")
+
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
 
@@ -140,6 +142,8 @@ router.post("/viewStudentLog",studentLogController.viewStudentLog)
 router.post('/tasksubmissionByStudent', StudentController.taskSubmissionByStudent);
 
 router.post("/clgStaffSearchBatch",ClgStaffController.clgStaffSearchBatches)
+
+router.post("/evaluateTask",SubmitTaskController.evaluateTask)
 
 
 
