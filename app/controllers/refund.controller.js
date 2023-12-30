@@ -51,3 +51,22 @@ exports.getRefundRequests = (request, response) => {
     });
 };
 
+exports.getRefundStatus = (request, response) => {
+    refundtoken = request.body.token;
+    jwt.verify(refundtoken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Refund.viewRefundStatus(request.body.studId, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    response.json({ "status": "Failed to retrieve refund status." });
+                } else {
+                    console.log("Refund status successfully retrieved");
+                    response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
+
