@@ -145,6 +145,8 @@ router.post("/clgStaffSearchBatch",ClgStaffController.clgStaffSearchBatches)
 
 router.post("/evaluateTask",SubmitTaskController.evaluateTask)
 
+router.post("/viewRefundStatus",RefundController.getRefundStatus)
+
 
 
 module.exports = router
