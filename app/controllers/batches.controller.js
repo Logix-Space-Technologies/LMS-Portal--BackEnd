@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Batches = require("../models/batches.model");
 const Validator = require("../config/data.validate")
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
 
 exports.batchCreate = (request, response) => {
@@ -69,6 +70,9 @@ exports.batchCreate = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
+                    if(key==="lmsapp"){
+                        logAdminStaff(0,"New Batch Created")
+                    }
                     return response.json({ "status": "success", "data": data });
                 }
             });
