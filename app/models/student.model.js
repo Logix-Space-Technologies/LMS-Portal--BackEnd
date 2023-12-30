@@ -288,7 +288,7 @@ Student.findByEmail = (Email, result) => {
                 console.log("Account is under progress/not verified")
                 return result("Account is under progress/not verified", null)
             }
-      
+
             db.query("SELECT * FROM student WHERE validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
                 (validityErr, validityRes) => {
                     if (validityErr) {
@@ -495,8 +495,8 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
     const { studId, taskId, gitLink, remarks } = submissionData;
     const currentDate = new Date()
 
-     // Check if student is valid
-     db.query("SELECT * FROM student WHERE id = ? AND isActive = 1 AND deleteStatus = 0 AND emailVerified = 1 AND isPaid = 1 AND isVerified = 1", [studId], (studentErr, studentRes) => {
+    // Check if student is valid
+    db.query("SELECT * FROM student WHERE id = ? AND isActive = 1 AND deleteStatus = 0 AND emailVerified = 1 AND isPaid = 1 AND isVerified = 1", [studId], (studentErr, studentRes) => {
         if (studentErr) {
             console.error("Error checking student validity: ", studentErr);
             result(studentErr, null);
@@ -517,7 +517,7 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
             }
 
             if (taskRes.length === 0) {
-                result("Task not found or inactive." , null);
+                result("Task not found or inactive.", null);
                 return;
             }
 
@@ -578,8 +578,44 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
 };
 
 
+SubmitTask.viewEvaluatedTasks = (studId, result) => {
+    // Check if the student ID exists in the student table
+    db.query("SELECT * FROM student WHERE id = ? AND deleteStatus=0 AND isActive=1 AND isPaid = 1 AND emailVerified = 1 AND isVerified=1", [studId], (studentErr, studentRes) => {
+        if (studentErr) {
+            console.error("Error checking student existence:", studentErr);
+            result(studentErr, null);
+            return;
+        }
 
+        if (studentRes.length === 0) {
+            console.log("Student with ID not found.");
+            result("Student with the specified ID not found.", null);
+            return;
+        }
 
+        // Continue to fetch evaluated tasks if student ID exists
+        db.query(
+            "SELECT t.taskTitle,s.gitLink, t.totalScore, s.score, s.evaluatorRemarks,s.evalDate,a.AdStaffName as 'evaluator name' FROM submit_task s JOIN task t ON s.taskId = t.id JOIN admin_staff a ON s.admStaffId=a.id WHERE s.studId = ? AND s.isEvaluated = 1;",
+            [studId],
+            (err, res) => {
+                if (err) {
+                    console.error("Error retrieving evaluated tasks:", err);
+                    result(err, null);
+                    return;
+                }
+
+                if (res.length === 0) {
+                    console.log("No evaluated tasks found");
+                    result("No evaluated tasks found.", null);
+                    return;
+                }
+
+                // Return evaluated tasks
+                result(null, res);
+            }
+        );
+    });
+}
 
 module.exports = { Student, Payment, Tasks, SubmitTask };
 
