@@ -78,6 +78,9 @@ exports.adminChangePwd = (request, response) => {
                 if (err) {
                     return response.json({ status: err });
                 }
+                if (oldPassword === newPassword) {
+                    return response.json({"status":"Old Password and New Password cannot be same."})
+                }
 
                 const validationErrors = {};
 
