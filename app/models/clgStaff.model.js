@@ -352,4 +352,28 @@ CollegeStaff.collegeStaffSearchBatch = (searchTerm, collegeId, result) => {
 }
 
 
+CollegeStaff.viewCollegeStaffProfile = (id, result) => {
+    if (!id || isNaN(id)) {
+        return result("Invalid college staff ID");
+    }
+
+    const query = `
+        SELECT cs.collegeId, cs.collegeStaffName, c.collegeName, cs.profilePic, cs.department, cs.email, cs.phNo, cs.aadharNo, cs.clgStaffAddress 
+        FROM college_staff cs 
+        JOIN college c ON cs.collegeId = c.id 
+        WHERE cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.emailVerified = 1 AND c.emailVerified = 1 AND c.isActive = 1 AND c.deleteStatus = 0 AND cs.id = ?`;
+
+    db.query(query, [id], (err, res) => {
+        if (err) {
+            console.error("Error while fetching profile:", err);
+            return result("Internal Server Error");
+        }
+
+        result(res.length ? null : "College staff profile not found", res[0]);
+    });
+};
+
+
+
+
 module.exports = CollegeStaff

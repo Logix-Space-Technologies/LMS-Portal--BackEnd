@@ -149,6 +149,8 @@ router.post("/viewRefundStatus",RefundController.getRefundStatus)
 
 router.post("/studentViewEvaluatedTask",StudentController.viewEvaluatedTasks)
 
+router.post("/profileViewByCollegeStaff",ClgStaffController.viewCollegeStaffProfile);
+
 
 
 module.exports = router
