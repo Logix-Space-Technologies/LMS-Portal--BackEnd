@@ -353,7 +353,7 @@ CollegeStaff.collegeStaffSearchBatch = (searchTerm, collegeId, result) => {
 
 
 CollegeStaff.viewCollegeStaffProfile = (id, result) => {
-    if (!id || isNaN(id)) {
+    if (!id) {
         return result("Invalid college staff ID");
     }
 

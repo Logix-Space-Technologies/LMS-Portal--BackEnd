@@ -153,9 +153,16 @@ router.post("/profileViewByCollegeStaff",ClgStaffController.viewCollegeStaffProf
 
 router.post("/profileViewByAdmStaff",AdminStaffController.viewAdminStaffProfile)
 
+router.post("/adSfViewSubmittedTask",AdminStaffController.adsfViewSubmttedTask)
+
 router.post("/admStaffRefundApproval",RefundController.approveRefundRequest)
 
+
 router.post("/cancelRefundRequest",RefundController.cancelRefundRequest)
+
+router.post("/rejectRefund",RefundController.rejectRefundRequest)
+
+router.post("/viewSuccessfulRefunds",RefundController.getSuccessfulRefunds)
 
 
 

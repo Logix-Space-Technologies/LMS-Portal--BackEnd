@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Refund = require("../models/refund.model");
+const { request, response } = require("express");
 
 exports.createRefundRequest = (request, response) => {
     refundtoken = request.body.token;
@@ -91,6 +92,48 @@ exports.approveRefundRequest = (request, response) => {
     });
 }
 
+//Admin Staff Reject Refund
+exports.rejectRefundRequest = (request, response) => {
+    const {admStaffId, adminRemarks, refundId} = request.body
+    const rejectRefundToken = request.body.token
+    jwt.verify(rejectRefundToken, "lmsappone", (err, decoded) => {
+        if (decoded) {
+            Refund.rejectRefund(admStaffId, adminRemarks, refundId, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    response.json({ "status": err })
+                } else {
+                    console.log("Refund Request Cancelled.");
+                    response.json({ "status": "Refund Request Cancelled."});
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User!!" })
+        }
+    })
+}
+
+exports.getSuccessfulRefunds = (request, response) => {
+    refundtoken = request.body.token;
+    key = request.body.key;
+    jwt.verify(refundtoken, key, (err, decoded) => {
+        if (decoded) {
+            Refund.getSuccessfulRefunds((err, data) => {
+                if (err) {
+                    console.log(err);
+                    response.json({ "status": "Failed to retrieve successful refunds." });
+                } else {
+                    console.log("Successful refunds successfully retrieved");
+                    response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
+
+//cancel refund request
 exports.cancelRefundRequest= (request, response) => {
     const {refundId} = request.body;
     refundtoken = request.body.token;

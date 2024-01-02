@@ -229,8 +229,8 @@ exports.adminStaffSearch = (request, response) => {
 
 
 exports.adminStaffLogin = (request, response) => {
-    const{Email,Password} = request.body
-    
+    const { Email, Password } = request.body
+
     const getEmail = request.body.Email
     const getPassword = request.body.Password
 
@@ -247,7 +247,7 @@ exports.adminStaffLogin = (request, response) => {
             const passwordMatch = bcrypt.compareSync(Password, admin_staff.Password)
 
             if (passwordMatch) {
-                jwt.sign({ Email: getEmail, Password: getPassword }, "lmsappone", { expiresIn: "1d" },
+                jwt.sign({ Email: getEmail, Password: getPassword }, "lmsappone", { expiresIn: "30m" },
                     (error, token) => {
                         if (error) {
                             response.json({ "status": "Unauthorized user!!" })
@@ -268,34 +268,34 @@ exports.adminStaffLogin = (request, response) => {
 
 // Admin-Staff Change Password
 exports.adminStaffChangePswd = (request, response) => {
-    const {Email, oldAdSfPassword, newAdSfPassword, token} = request.body
+    const { Email, oldAdSfPassword, newAdSfPassword, token } = request.body
 
     jwt.verify(token, "lmsappone", (error, decoded) => {
         if (decoded) {
-            if(oldAdSfPassword === newAdSfPassword){
+            if (oldAdSfPassword === newAdSfPassword) {
                 response.json({ "status": "Old password and new password cannot be same." });
                 return;
             }
-            AdminStaff.asChangePassword({Email, oldAdSfPassword, newAdSfPassword}, (err, result) => {
+            AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword }, (err, result) => {
                 if (err) {
-                    return response.json({"status" : err})
+                    return response.json({ "status": err })
                 }
                 const validationErrors = {}
 
                 const passwordValidation = Validator.isValidPassword(newAdSfPassword)
                 if (!passwordValidation.isValid) {
                     validationErrors.password = passwordValidation.message
-                    return response.json({"status" : validationErrors})
+                    return response.json({ "status": validationErrors })
                 }
 
                 if (result.status === "Password Updated Successfully.") {
                     const hashedNewPassword = bcrypt.hashSync(newAdSfPassword, 10)
 
-                    AdminStaff.asChangePassword({Email, oldAdSfPassword, newAdSfPassword : hashedNewPassword}, (updateErr, UpdateResult) => {
+                    AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword: hashedNewPassword }, (updateErr, UpdateResult) => {
                         if (updateErr) {
-                            return response.json({"status" : updateErr})
+                            return response.json({ "status": updateErr })
                         } else {
-                            return response.json({"status" : "Password Updated Successfully."})
+                            return response.json({ "status": "Password Updated Successfully." })
                         }
                     })
                 } else {
@@ -303,7 +303,7 @@ exports.adminStaffChangePswd = (request, response) => {
                 }
             })
         } else {
-            return response.json({"status" : "Unauthorized User!!"})
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -340,34 +340,50 @@ exports.searchCollegesByAdminStaff = (request, response) => {
 exports.viewAdminStaffProfile = (request, response) => {
     const { id, token: admStaffProfileToken } = request.body;
 
-    if (!id || isNaN(id)) {
-        return response.status(400).json({ status: "Bad Request", message: "Invalid Admin staff ID" });
+    if (!id) {
+        return response.json({ "status": "Invalid Admin staff ID" });
     }
 
     if (!admStaffProfileToken) {
-        return response.status(401).json({ status: "Unauthorized", message: "Token is required." });
+        return response.json({ "status": "Token is required." });
     }
 
     jwt.verify(admStaffProfileToken, "lmsappone", (err, decoded) => {
         if (err) {
             console.error("Token verification failed:", err);
-            return response.status(401).json({ status: "Unauthorized", message: "Invalid or expired token." });
+            return response.json({ "status": err });
         }
 
         if (!decoded) {
-            return response.status(401).json({ status: "Unauthorized", message: "Invalid token." });
+            return response.json({ "status": "Invalid token." });
         }
 
         AdminStaff.viewAdminStaffProfile(id, (err, data) => {
             if (err) {
                 console.error("Error while fetching profile:", err);
-                return response.status(err === "Invalid Admin staff ID" ? 400 : 500).json({ status: "failed", message: "Not permitted to view other profile" });
+                return response.json({ "status": err });
             }
 
-            response.json({ status: "Success", "Profile details": data });
+            response.json({ "status": "success", "data": data });
         });
     });
 };
 
 
-
+// View Submitted Tasks By AdminStaff
+exports.adsfViewSubmttedTask = (request, response) => {
+    viewSubmittedTaskToken = request.body.token
+    jwt.verify(viewSubmittedTaskToken, "lmsappone", (error, decoded) => {
+        if (decoded) {
+            AdminStaff.viewSubmittedTask((error, data) => {
+                if (error) {
+                    return response.json({ "status": error });
+                } else {
+                    return response.json({ "status": "Success", "data": data });
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized access!!" })
+        }
+    })
+}

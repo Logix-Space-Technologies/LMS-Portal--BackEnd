@@ -319,7 +319,7 @@ exports.collegeStaffLogin = (request, response) => {
     } else {
       const clgStaffPasswordMatch = bcrypt.compareSync(password, clgstaff.password)
       if (clgStaffPasswordMatch) {
-        jwt.sign({ email: getClgStaffEmail, password: getClgStaffPassword }, "lmsappclgstaff", { expiresIn: "1d" },
+        jwt.sign({ email: getClgStaffEmail, password: getClgStaffPassword }, "lmsappclgstaff", { expiresIn: "30m" },
           (error, token) => {
             if (error) {
               return response.json({ "status": "Unauthorized User!!" })
@@ -545,31 +545,31 @@ exports.clgStaffSearchBatches = (request, response) => {
 exports.viewCollegeStaffProfile = (request, response) => {
   const { id, token: clgStaffProfileToken } = request.body;
 
-  if (!id || isNaN(id)) {
-      return response.status(400).json({ status: "Bad Request", message: "Invalid college staff ID" });
+  if (!id) {
+      return response.json({ "status": "Invalid college staff ID" });
   }
 
   if (!clgStaffProfileToken) {
-      return response.status(401).json({ status: "Unauthorized", message: "Token is required." });
+      return response.json({ "status": "Token is required." });
   }
 
   jwt.verify(clgStaffProfileToken, "lmsappclgstaff", (err, decoded) => {
       if (err) {
           console.error("Token verification failed:", err);
-          return response.status(401).json({ status: "Unauthorized", message: "Invalid or expired token." });
+          return response.json({ "status": "Invalid or expired token." });
       }
 
       if (!decoded) {
-          return response.status(401).json({ status: "Unauthorized", message: "Invalid token." });
+          return response.json({ "status": "Unauthorized Access !!!"});
       }
 
       CollegeStaff.viewCollegeStaffProfile(id, (err, data) => {
           if (err) {
               console.error("Error while fetching profile:", err);
-              return response.status(err === "Invalid college staff ID" ? 400 : 500).json({ status: "failed", message: "Not permitted to view other profile" });
+              return response.json({ "status": err});
           }
 
-          response.json({ status: "Success", "Profile details": data });
+          response.json({ "status": "success", "data": data });
       });
   });
 };

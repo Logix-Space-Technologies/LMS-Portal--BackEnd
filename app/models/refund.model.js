@@ -212,6 +212,7 @@ Refund.approveRefund = (refundAmnt, admStaffId, transactionNo, adminRemarks, ref
 };
 
 
+
 Refund.cancelRefundRequest = (refundId, result) => {
     // Check if the refund ID exists in the refund table
     db.query("SELECT * FROM refund WHERE id = ? AND cancelStatus = 0", [refundId], (refundErr, refundRes) => {
@@ -249,4 +250,46 @@ Refund.cancelRefundRequest = (refundId, result) => {
         );
     });
 };
+
+//Admin Staff Reject Refund
+Refund.rejectRefund = (admStaffId, adminRemarks, refundId, result) => {
+    db.query("UPDATE refund SET cancelStatus = 1, adminRemarks = ?, AdmStaffId = ? WHERE id = ? AND cancelStatus = 0",
+    [adminRemarks, admStaffId, refundId],
+    (err, res) => {
+        if (err) {
+            console.log("Error Rejecting Refund : ", err)
+            result(err, null)
+            return
+        }
+
+        if (res.affectedRows === 0) {
+            result("Refund Request Not Found.", null)
+            return
+        }
+        result("Refund Rejected.", null)
+    })
+}
+
+Refund.getSuccessfulRefunds = (result) => {
+    db.query(
+        "SELECT s.studName, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, r.approvedAmnt, r.transactionNo FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.refundApprovalStatus=1",
+        (err, res) => {
+            if (err) {
+                console.error("Error retrieving successful refunds:", err);
+                result(err, null);
+                return;
+            }
+            if (res.length === 0) {
+                console.log("No successful refunds found");
+                result("No successful refunds found.", null );
+                return;
+            }
+
+            // Return all successful refunds
+            result(null, res);
+        }
+    );
+};
+
+
 module.exports = Refund;

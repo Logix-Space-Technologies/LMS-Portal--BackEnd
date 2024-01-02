@@ -180,8 +180,8 @@ AdminStaff.adminStaffSearch = (search, result) => {
         });
 };
 
-AdminStaff.findByEmail = (email , result)=>{
-    db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND isActive=1 AND deleteStatus=0 ",email, (err,res)=>{
+AdminStaff.findByEmail = (email, result) => {
+    db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND isActive=1 AND deleteStatus=0 ", email, (err, res) => {
 
         if (err) {
             console.log("Error : ", err)
@@ -253,7 +253,7 @@ AdminStaff.searchCollegesByAdminStaff = (search, result) => {
 
 
 AdminStaff.viewAdminStaffProfile = (id, result) => {
-    if (!id || isNaN(id)) {
+    if (!id) {
         return result("Invalid college staff ID");
     }
 
@@ -273,6 +273,24 @@ AdminStaff.viewAdminStaffProfile = (id, result) => {
 };
 
 
+// View Submitted Tasks By AdminStaff
+AdminStaff.viewSubmittedTask = (result) => {
+    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, t.taskTitle, t.dueDate, st.gitLink, st.remarks, st.subDate, st.evalDate, st.lateSubDate, st.evaluatorRemarks, st.score FROM submit_task st JOIN task t ON st.taskId = t.id JOIN student s ON st.studId = s.id JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.validity > CURRENT_DATE() AND s.isVerified = 1 AND s.isActive = 1 AND s.emailVerified = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1",
+        (err, res) => {
+            if (err) {
+                console.log("Error Viewing Submitted Tasks : ", err)
+                result(err, null)
+                return
+            }
+
+            if (res.length === 0) {
+                console.log("No Submitted Tasks Found.")
+                result("No Submitted Tasks Found.", null)
+                return
+            }
+            result(null, res)
+        })
+}
 
 
 module.exports = AdminStaff
