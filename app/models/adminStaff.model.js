@@ -252,5 +252,27 @@ AdminStaff.searchCollegesByAdminStaff = (search, result) => {
 };
 
 
+AdminStaff.viewAdminStaffProfile = (id, result) => {
+    if (!id || isNaN(id)) {
+        return result("Invalid college staff ID");
+    }
+
+    const query = `
+        SELECT a.id, a.AdStaffName, a.PhNo, a.Address, a.AadharNo, a.Email
+        FROM admin_staff a
+        WHERE a.deleteStatus = 0 AND a.isActive = 1 AND a.emailVerified = 1 AND a.id = ?`;
+
+    db.query(query, [id], (err, res) => {
+        if (err) {
+            console.error("Error while fetching profile:", err);
+            return result("Internal Server Error");
+        }
+
+        result(res.length ? null : "Admin staff profile not found", res[0]);
+    });
+};
+
+
+
 
 module.exports = AdminStaff

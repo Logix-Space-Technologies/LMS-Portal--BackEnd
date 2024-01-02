@@ -151,6 +151,8 @@ router.post("/studentViewEvaluatedTask",StudentController.viewEvaluatedTasks)
 
 router.post("/profileViewByCollegeStaff",ClgStaffController.viewCollegeStaffProfile);
 
+router.post("/profileViewByAdmStaff",AdminStaffController.viewAdminStaffProfile)
+
 
 
 module.exports = router
