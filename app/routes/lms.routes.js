@@ -153,6 +153,7 @@ router.post("/profileViewByCollegeStaff",ClgStaffController.viewCollegeStaffProf
 
 router.post("/profileViewByAdmStaff",AdminStaffController.viewAdminStaffProfile)
 
+router.post("/adSfViewSubmittedTask",AdminStaffController.adsfViewSubmttedTask)
 
 
 module.exports = router
