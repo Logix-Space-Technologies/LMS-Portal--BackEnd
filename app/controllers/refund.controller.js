@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Refund = require("../models/refund.model");
+const { request, response } = require("express");
 
 exports.createRefundRequest = (request, response) => {
     refundtoken = request.body.token;
@@ -89,4 +90,26 @@ exports.approveRefundRequest = (request, response) => {
             response.json({ "status": "Unauthorized User!!" });
         }
     });
+}
+
+
+//Admin Staff Reject Refund
+exports.rejectRefundRequest = (request, response) => {
+    const {admStaffId, adminRemarks, refundId} = request.body
+    const rejectRefundToken = request.body.token
+    jwt.verify(rejectRefundToken, "lmsappone", (err, decoded) => {
+        if (decoded) {
+            Refund.rejectRefund(admStaffId, adminRemarks, refundId, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    response.json({ "status": err })
+                } else {
+                    console.log("Refund Request Cancelled.");
+                    response.json({ "status": "Refund Request Cancelled."});
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User!!" })
+        }
+    })
 }

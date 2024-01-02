@@ -211,4 +211,23 @@ Refund.approveRefund = (refundAmnt, admStaffId, transactionNo, adminRemarks, ref
     });
 };
 
+//Admin Staff Reject Refund
+Refund.rejectRefund = (admStaffId, adminRemarks, refundId, result) => {
+    db.query("UPDATE refund SET cancelStatus = 1, adminRemarks = ?, AdmStaffId = ? WHERE id = ? AND cancelStatus = 0",
+    [adminRemarks, admStaffId, refundId],
+    (err, res) => {
+        if (err) {
+            console.log("Error Rejecting Refund : ", err)
+            result(err, null)
+            return
+        }
+
+        if (res.affectedRows === 0) {
+            result("Refund Request Not Found.", null)
+            return
+        }
+        result("Refund Rejected.", null)
+    })
+}
+
 module.exports = Refund;
