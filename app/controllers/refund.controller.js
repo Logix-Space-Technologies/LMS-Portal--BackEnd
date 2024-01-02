@@ -92,8 +92,6 @@ exports.approveRefundRequest = (request, response) => {
     });
 }
 
-
-
 //Admin Staff Reject Refund
 exports.rejectRefundRequest = (request, response) => {
     const {admStaffId, adminRemarks, refundId} = request.body
@@ -135,4 +133,23 @@ exports.getSuccessfulRefunds = (request, response) => {
     });
 };
 
-
+//cancel refund request
+exports.cancelRefundRequest= (request, response) => {
+    const {refundId} = request.body;
+    refundtoken = request.body.token;
+    jwt.verify(refundtoken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Refund.cancelRefundRequest(refundId, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    response.json({ "status": err });
+                } else {
+                    console.log("Refund request successfully cancelled");
+                    response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+}
