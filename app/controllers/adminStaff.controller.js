@@ -336,3 +336,38 @@ exports.searchCollegesByAdminStaff = (request, response) => {
     });
 };
 
+
+exports.viewAdminStaffProfile = (request, response) => {
+    const { id, token: admStaffProfileToken } = request.body;
+
+    if (!id || isNaN(id)) {
+        return response.status(400).json({ status: "Bad Request", message: "Invalid Admin staff ID" });
+    }
+
+    if (!admStaffProfileToken) {
+        return response.status(401).json({ status: "Unauthorized", message: "Token is required." });
+    }
+
+    jwt.verify(admStaffProfileToken, "lmsappone", (err, decoded) => {
+        if (err) {
+            console.error("Token verification failed:", err);
+            return response.status(401).json({ status: "Unauthorized", message: "Invalid or expired token." });
+        }
+
+        if (!decoded) {
+            return response.status(401).json({ status: "Unauthorized", message: "Invalid token." });
+        }
+
+        AdminStaff.viewAdminStaffProfile(id, (err, data) => {
+            if (err) {
+                console.error("Error while fetching profile:", err);
+                return response.status(err === "Invalid Admin staff ID" ? 400 : 500).json({ status: "failed", message: "Not permitted to view other profile" });
+            }
+
+            response.json({ status: "Success", "Profile details": data });
+        });
+    });
+};
+
+
+
