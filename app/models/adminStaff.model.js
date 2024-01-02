@@ -253,7 +253,7 @@ AdminStaff.searchCollegesByAdminStaff = (search, result) => {
 
 
 AdminStaff.viewAdminStaffProfile = (id, result) => {
-    if (!id || isNaN(id)) {
+    if (!id) {
         return result("Invalid college staff ID");
     }
 
