@@ -485,13 +485,13 @@ exports.refundAmountReceivedStatus = (request, response) => {
             return;
         }
 
-        Student.refundAmountReceivedStatus(studId, token, (err, data) => {
+        Student.refundAmountReceivedStatus(studId, token, (err) => {
             if (err) {
                 console.log(err);
                 response.json({ status: err.status });
             } else {
                 console.log('Refund amount received status successfully updated');
-                response.json({ status: 'success', data });
+                response.json({ status: 'success, Refund amount received status successfully updated' });
             }
         });
     });
