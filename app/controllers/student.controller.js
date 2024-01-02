@@ -472,3 +472,27 @@ exports.viewEvaluatedTasks = (request, response) => {
         }
     });
 }
+
+
+
+
+exports.refundAmountReceivedStatus = (request, response) => {
+    const { studId, token } = request.body;
+
+    jwt.verify(token, 'lmsappstud', (err, decoded) => {
+        if (err) {
+            response.json({ status: 'Unauthorized User!!' });
+            return;
+        }
+
+        Student.refundAmountReceivedStatus(studId, token, (err) => {
+            if (err) {
+                console.log(err);
+                response.json({ status: err.status });
+            } else {
+                console.log('Refund amount received status successfully updated');
+                response.json({ status: 'success, Refund amount received status successfully updated' });
+            }
+        });
+    });
+};

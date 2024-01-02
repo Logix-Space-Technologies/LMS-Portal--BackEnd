@@ -157,6 +157,8 @@ router.post("/adSfViewSubmittedTask",AdminStaffController.adsfViewSubmttedTask)
 
 router.post("/admStaffRefundApproval",RefundController.approveRefundRequest)
 
+router.post("/refundamntrcvdstatus",StudentController.refundAmountReceivedStatus)
+
 
 router.post("/cancelRefundRequest",RefundController.cancelRefundRequest)
 
