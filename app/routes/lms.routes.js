@@ -155,6 +155,8 @@ router.post("/profileViewByAdmStaff",AdminStaffController.viewAdminStaffProfile)
 
 router.post("/admStaffRefundApproval",RefundController.approveRefundRequest)
 
+router.post("/cancelRefundRequest",RefundController.cancelRefundRequest)
+
 
 
 module.exports = router
