@@ -70,3 +70,23 @@ exports.getRefundStatus = (request, response) => {
     });
 };
 
+
+exports.approveRefundRequest = (request, response) => {
+    const {refundAmnt, transactionNo, adminRemarks, admStaffId, refundId} = request.body;
+    refundtoken = request.body.token;
+    jwt.verify(refundtoken, "lmsappone", (err, decoded) => {
+        if (decoded) {
+            Refund.approveRefund(refundAmnt, admStaffId, transactionNo, adminRemarks, refundId, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    response.json({ "status": err });
+                } else {
+                    console.log("Refund request successfully approved");
+                    response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+}
