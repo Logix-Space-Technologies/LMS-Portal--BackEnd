@@ -90,3 +90,24 @@ exports.approveRefundRequest = (request, response) => {
         }
     });
 }
+
+exports.getSuccessfulRefunds = (request, response) => {
+    refundtoken = request.body.token;
+    key = request.body.key;
+    jwt.verify(refundtoken, key, (err, decoded) => {
+        if (decoded) {
+            Refund.getSuccessfulRefunds((err, data) => {
+                if (err) {
+                    console.log(err);
+                    response.json({ "status": "Failed to retrieve successful refunds." });
+                } else {
+                    console.log("Successful refunds successfully retrieved");
+                    response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
+

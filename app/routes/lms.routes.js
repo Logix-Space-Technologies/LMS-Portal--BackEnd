@@ -157,6 +157,8 @@ router.post("/adSfViewSubmittedTask",AdminStaffController.adsfViewSubmttedTask)
 
 router.post("/admStaffRefundApproval",RefundController.approveRefundRequest)
 
+router.post("/viewSuccessfulRefunds",RefundController.getSuccessfulRefunds)
+
 
 
 module.exports = router
