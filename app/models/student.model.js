@@ -617,5 +617,39 @@ SubmitTask.viewEvaluatedTasks = (studId, result) => {
     });
 }
 
+
+
+Student.refundAmountReceivedStatus = (studId, token, result) => {
+    const checkRefundQuery = 'SELECT * FROM refund WHERE studId = ? AND refundApprovalStatus = 1 AND cancelStatus = 0';
+
+    db.query(checkRefundQuery, [studId], (err, res) => {
+        if (err) {
+            console.error('Error checking refund status:', err);
+            result(err, null);
+            return;
+        }
+
+        if (res.length === 0) {
+            result({ status: 'No eligible refund request found.' }, null);
+            return;
+        }
+
+        const refundId = res[0].id;
+
+        const updateQuery = 'UPDATE refund SET AmountReceivedStatus = 1 WHERE id = ?';
+
+        db.query(updateQuery, [refundId], (updateErr, updateRes) => {
+            if (updateErr) {
+                console.error('Error updating refund status:', updateErr);
+                result(updateErr, null);
+                return;
+            }
+
+            result(null, { status: 'Successfully updated refund amount received status' });
+        });
+    });
+};
+
+
 module.exports = { Student, Payment, Tasks, SubmitTask };
 
