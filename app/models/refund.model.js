@@ -172,6 +172,43 @@ Refund.viewRefundStatus = (studId, result) => {
     });
 };
 
+//admin staff refund approval
+Refund.approveRefund = (refundAmnt, admStaffId, transactionNo, adminRemarks, refundId, result) => {
+    // Check if the refund ID exists in the refund table
+    db.query("SELECT * FROM refund WHERE id = ? AND cancelStatus = 0 AND refundApprovalStatus = 0 ", [refundId], (refundErr, refundRes) => {
+        if (refundErr) {
+            console.error("Error checking refund existence:", refundErr);
+            result(refundErr, null);
+            return;
+        }
 
+        if (refundRes.length === 0) {
+            console.log("Refund with ID not found.");
+            result("Refund with the specified ID not found.", null );
+            return;
+        }
+
+        // Continue to approve refund if refund ID exists
+        db.query(
+            "UPDATE refund SET refundApprovalStatus = 1, approvedAmnt = ?, transactionNo = ?, adminRemarks = ?, refundStatus = 1, refundInitiatedDate=CURRENT_DATE(), admStaffId=? WHERE id = ?",
+            [refundAmnt, transactionNo, adminRemarks, admStaffId, refundId],
+            (err, res) => {
+                if (err) {
+                    console.error("Error approving refund:", err);
+                    result(err, null);
+                    return;
+                }
+
+                if (res.affectedRows === 0) {
+                    // Refund with the specified ID not found
+                    result("Refund with the specified ID not found.", null);
+                    return;
+                }
+
+                result("Refund approved successfully.", null);
+            }
+        );
+    });
+};
 
 module.exports = Refund;
