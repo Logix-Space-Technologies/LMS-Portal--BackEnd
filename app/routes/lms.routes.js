@@ -6,6 +6,7 @@ const AdminStaffController = require('../controllers/adminStaff.controller')
 const ClgStaffController=require("../controllers/clgStaff.controller")
 
 const taskController = require("../controllers/task.controller");
+const studentLogController = require("../controllers/studentLog.controller");
 
 const BatchesController= require("../controllers/batches.controller") 
 const ClgStaffLogController  = require("../controllers/collegeStaffLog.controller")
@@ -18,6 +19,8 @@ const MaterialController=require('../controllers/material.controller')
 
 
 const RefundController = require("../controllers/refund.controller")
+
+const SubmitTaskController = require("../controllers/submit_task.controller")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -128,6 +131,28 @@ router.post("/studentverificationbyCollegeStaff", ClgStaffController.studentVeri
 router.post("/unverifiedStudents", StudentController.viewUnverifiedStudents)
 
 router.post("/collegeStaffSearchTasks",taskController.collegeStaffSearchTasks)
+
+router.post("/adminDashboard", AdminController.adminDashBoards);
+
+router.post("/viewAllStudByAdmin",StudentController.viewAllStudsByAdmin)
+
+router.post("/viewStudentLog",studentLogController.viewStudentLog)
+
+
+router.post('/tasksubmissionByStudent', StudentController.taskSubmissionByStudent);
+
+router.post("/clgStaffSearchBatch",ClgStaffController.clgStaffSearchBatches)
+
+router.post("/evaluateTask",SubmitTaskController.evaluateTask)
+
+router.post("/viewRefundStatus",RefundController.getRefundStatus)
+
+router.post("/studentViewEvaluatedTask",StudentController.viewEvaluatedTasks)
+
+router.post("/profileViewByCollegeStaff",ClgStaffController.viewCollegeStaffProfile);
+
+router.post("/profileViewByAdmStaff",AdminStaffController.viewAdminStaffProfile)
+
 
 
 module.exports = router

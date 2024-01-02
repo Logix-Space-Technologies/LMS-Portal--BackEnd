@@ -78,6 +78,9 @@ exports.adminChangePwd = (request, response) => {
                 if (err) {
                     return response.json({ status: err });
                 }
+                if (oldPassword === newPassword) {
+                    return response.json({"status":"Old Password and New Password cannot be same."})
+                }
 
                 const validationErrors = {};
 
@@ -110,4 +113,20 @@ exports.adminChangePwd = (request, response) => {
 };
 
 
+exports.adminDashBoards = (request, response) => {
+    jwt.verify(request.body.token, "lmsapp", (error, decoded) => {
+        if (decoded) {
+            Admin.adminDashBoard((err, result) => {
+                if (err) {
+                    return response.json({ status: err });
+                } else {
+                    return response.json({ "status": "Success", "data": result });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!!" });
+        }
+    });
 
+
+}

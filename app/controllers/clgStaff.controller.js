@@ -167,8 +167,8 @@ exports.clgStaffDelete = (request, response) => {
 
 exports.viewAllCollegeStaff = (request, response) => {
   const collegeToken = request.body.token
-  key=request.body.key
-  jwt.verify(collegeToken,key, (err, decoded) => {
+  key = request.body.key
+  jwt.verify(collegeToken, key, (err, decoded) => {
     if (decoded) {
       CollegeStaff.getAll((err, data) => {
         if (err) {
@@ -199,7 +199,7 @@ exports.collegeStaffUpdate = (req, res) => {
       return res.json({ "status": "Image is required." });
     }
     key = request.body.key
-    jwt.verify(Updatetoken, key , (error, decoded) => {
+    jwt.verify(Updatetoken, key, (error, decoded) => {
       if (decoded) {
         if (!req.body.collegeStaffName) {
           validationErrors.name = "Name is required.";
@@ -389,52 +389,52 @@ exports.collegeStaffChangePassword = (request, response) => {
 
   // Check if email is provided
   if (!email) {
-      return response.json({ "status": "Email is required for password update." });
+    return response.json({ "status": "Email is required for password update." });
   }
 
   // Verify the JWT token
   jwt.verify(token, "lmsappclgstaff", (err, decoded) => {
-      if (err || !decoded) {
-          response.json({ "status": "Unauthorized User!!" });
-          return;
+    if (err || !decoded) {
+      response.json({ "status": "Unauthorized User!!" });
+      return;
+    }
+
+    // Validate old and new passwords
+    const validationErrors = {};
+
+    if (!oldPassword) {
+      validationErrors.oldPassword = "Old password is required.";
+    }
+
+    const passwordValidation = Validator.isValidPassword(newPassword);
+    if (!passwordValidation.isValid) {
+      validationErrors.newPassword = passwordValidation.message;
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
+
+    // Check old password and update if valid
+    CollegeStaff.collegeStaffChangePassword({ email, oldPassword, newPassword }, (err, data) => {
+      if (err) {
+        response.json({ "status": err });
+        return;
       }
 
-      // Validate old and new passwords
-      const validationErrors = {};
-
-      if (!oldPassword) {
-          validationErrors.oldPassword = "Old password is required.";
+      if (oldPassword === newPassword) {
+        response.json({ "status": "Old password and new password cannot be the same." });
+        return;
       }
 
-      const passwordValidation = Validator.isValidPassword(newPassword);
-      if (!passwordValidation.isValid) {
-          validationErrors.newPassword = passwordValidation.message;
+      if (data.status === "Incorrect Old Password!!") {
+        response.json({ "status": "Incorrect Old Password!!" });
+      } else if (data.status === "No college staff Found") {
+        response.json({ "status": "User Not Found!!!" });
+      } else {
+        response.json({ "status": "Password Updated Successfully." });
       }
-
-      if (Object.keys(validationErrors).length > 0) {
-          return response.json({ "status": "Validation failed", "data": validationErrors });
-      }
-
-      // Check old password and update if valid
-      CollegeStaff.collegeStaffChangePassword({ email, oldPassword, newPassword }, (err, data) => {
-          if (err) {
-              response.json({ "status": err });
-              return;
-          }
-
-          if (oldPassword === newPassword) {
-              response.json({ "status": "Old password and new password cannot be the same." });
-              return;
-          }
-
-          if (data.status === "Incorrect Old Password!!") {
-              response.json({ "status": "Incorrect Old Password!!" });
-          } else if (data.status === "No college staff Found") {
-              response.json({ "status": "User Not Found!!!" });
-          } else {
-              response.json({ "status": "Password Updated Successfully." });
-          }
-      });
+    });
   });
 };
 
@@ -443,21 +443,21 @@ exports.collegeStaffChangePassword = (request, response) => {
 exports.collegeStaffViewStudent = (request, response) => {
   const collegeStaffViewStudent = request.body.token;
   jwt.verify(collegeStaffViewStudent, "lmsappclgstaff", (err, decoded) => {
-      if (decoded) {
-          const collegeId = request.body.collegeId;
-          CollegeStaff.viewStudent(collegeId, (err, data) => {
-              if (err) {
-                  response.json({ "status": err });
-              }
-              if (!data || data.length === 0) {
-                  response.json({ "status": "No Student found!" });
-              } else {
-                  response.json({ "status": "success", "data": data });
-              }
-          });
-      } else {
-          response.json({ "status": "Unauthorized User!!" });
-      }
+    if (decoded) {
+      const collegeId = request.body.collegeId;
+      CollegeStaff.viewStudent(collegeId, (err, data) => {
+        if (err) {
+          response.json({ "status": err });
+        }
+        if (!data || data.length === 0) {
+          response.json({ "status": "No Student found!" });
+        } else {
+          response.json({ "status": "success", "data": data });
+        }
+      });
+    } else {
+      response.json({ "status": "Unauthorized User!!" });
+    }
   });
 };
 
@@ -492,20 +492,84 @@ exports.studentVerificationByCollegeStaff = (req, res) => {
   const { collegeStaffId, studentId, token } = req.body;
 
   if (!collegeStaffId || !studentId || !token) {
-      return res.json({ "status": "Validation failed", "data": "CollegeStaff ID, Student ID, and Token are required" });
+    return res.json({ "status": "Validation failed", "data": "CollegeStaff ID, Student ID, and Token are required" });
   }
 
   jwt.verify(token, "lmsapptwo", (jwtErr, decoded) => {
-      if (jwtErr) {
-          return res.json({ "status": "Error", "data": "JWT verification failed" });
+    if (jwtErr) {
+      return res.json({ "status": "Error", "data": "JWT verification failed" });
+    }
+
+    CollegeStaff.verifyStudent(collegeStaffId, studentId, (err, result) => {
+      if (err) {
+        return res.json({ "status": "Error", "data": err });
       }
 
-      CollegeStaff.verifyStudent(collegeStaffId, studentId, (err, result) => {
+      return res.json({ "status": "Success", "data": result });
+    });
+  });
+};
+
+
+//College Staff Search Batches
+exports.clgStaffSearchBatches = (request, response) => {
+  const clgStaffBatchSearchQuery = request.body.clgStaffBatchSearchQuery
+  const ClgStaffSearchToken = request.body.token
+  const collegeId = request.body.collegeId
+  jwt.verify(ClgStaffSearchToken, "lmsappclgstaff", (err, decoded) => {
+    if (decoded) {
+      if (!clgStaffBatchSearchQuery) {
+        console.log("Search Item is required.")
+        return response.json({ "status": "Search Item is required." })
+      }
+      CollegeStaff.collegeStaffSearchBatch(clgStaffBatchSearchQuery, collegeId, (err, data) => {
+        if (err) {
+          response.json({ "status": err })
+        } else {
+          if (data.length === 0) {
+            response.json({ "status": "No Search Items Found" })
+          } else {
+            response.json({ "status": "Result Found", "data": data })
+          }
+        }
+      })
+    } else {
+      response.json({ "status": "Unauthorized User!!" })
+    }
+  })
+}
+
+
+
+
+exports.viewCollegeStaffProfile = (request, response) => {
+  const { id, token: clgStaffProfileToken } = request.body;
+
+  if (!id || isNaN(id)) {
+      return response.status(400).json({ status: "Bad Request", message: "Invalid college staff ID" });
+  }
+
+  if (!clgStaffProfileToken) {
+      return response.status(401).json({ status: "Unauthorized", message: "Token is required." });
+  }
+
+  jwt.verify(clgStaffProfileToken, "lmsappclgstaff", (err, decoded) => {
+      if (err) {
+          console.error("Token verification failed:", err);
+          return response.status(401).json({ status: "Unauthorized", message: "Invalid or expired token." });
+      }
+
+      if (!decoded) {
+          return response.status(401).json({ status: "Unauthorized", message: "Invalid token." });
+      }
+
+      CollegeStaff.viewCollegeStaffProfile(id, (err, data) => {
           if (err) {
-              return res.json({ "status": "Error", "data": err });
+              console.error("Error while fetching profile:", err);
+              return response.status(err === "Invalid college staff ID" ? 400 : 500).json({ status: "failed", message: "Not permitted to view other profile" });
           }
 
-          return res.json({ "status": "Success", "data": result });
+          response.json({ status: "Success", "Profile details": data });
       });
   });
 };

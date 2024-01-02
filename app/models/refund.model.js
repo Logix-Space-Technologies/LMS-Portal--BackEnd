@@ -63,42 +63,42 @@ Refund.createRefundRequest = (newRefund, result) => {
                         console.error("Error calculating days since payment start:", daysSincePaymentStart);
                         result(null, { status: "error", message: "Error calculating days since payment start." });
                         return;
-                    }else{
+                    } else {
                         console.log("Days since payment start:", daysSincePaymentStart);
 
-                    // Assuming the payment plan is for one year (365 days)
-                    const remainingPaymentPeriod = 365 - daysSincePaymentStart;
+                        // Assuming the payment plan is for one year (365 days)
+                        const remainingPaymentPeriod = 365 - daysSincePaymentStart;
 
-                    console.log("Remaining payment period:", remainingPaymentPeriod);
+                        console.log("Remaining payment period:", remainingPaymentPeriod);
 
-                    // Check if the payment date is greater than one year
-                    if (remainingPaymentPeriod <= 0) {
-                        console.log("Refund request expired for student ID:", newRefund.studId);
-                        result(null, { status: "error", message: "Refund request expired. Payment date is greater than one year." });
-                        return;
-                    }
-
-                    // Calculate the remaining payment amount, handling NaN case
-                    const remainingPaymentAmount = (totalPayment / 365) * remainingPaymentPeriod || 0;
-
-                    newRefund.refundAmnt = remainingPaymentAmount.toFixed(2);
-
-
-                    db.query("INSERT INTO refund SET ?", newRefund, (refundErr, refundRes) => {
-                        if (refundErr) {
-                            console.error("Error creating refund:", refundErr);
-                            result(refundErr, null);
+                        // Check if the payment date is greater than one year
+                        if (remainingPaymentPeriod <= 0) {
+                            console.log("Refund request expired for student ID:", newRefund.studId);
+                            result(null, { status: "error", message: "Refund request expired. Payment date is greater than one year." });
                             return;
                         }
 
-                        // Log student added
-                        logStudent(newRefund.studId, "Refund request sent")
+                        // Calculate the remaining payment amount, handling NaN case
+                        const remainingPaymentAmount = (totalPayment / 365) * remainingPaymentPeriod || 0;
 
-                        console.log("Created refund:", { id: refundRes.insertId, ...newRefund });
-                        result(null, { id: refundRes.insertId, ...newRefund });
-                    });
+                        newRefund.refundAmnt = remainingPaymentAmount.toFixed(2);
+
+
+                        db.query("INSERT INTO refund SET ?", newRefund, (refundErr, refundRes) => {
+                            if (refundErr) {
+                                console.error("Error creating refund:", refundErr);
+                                result(refundErr, null);
+                                return;
+                            }
+
+                            // Log student added
+                            logStudent(newRefund.studId, "Refund request sent")
+
+                            console.log("Created refund:", { id: refundRes.insertId, ...newRefund });
+                            result(null, { id: refundRes.insertId, ...newRefund });
+                        });
                     }
-                    
+
                 }
 
             );
@@ -126,5 +126,52 @@ Refund.getRefundRequests = (result) => {
         }
     );
 };
+
+
+Refund.viewRefundStatus = (studId, result) => {
+    // Check if the student ID exists in the student table
+    db.query("SELECT * FROM student WHERE id = ? AND deleteStatus=0 AND isActive=1 AND isPaid = 1 AND emailVerified = 1 AND isVerified=1", [studId], (studentErr, studentRes) => {
+        if (studentErr) {
+            console.error("Error checking student existence:", studentErr);
+            result(studentErr, null);
+            return;
+        }
+
+        if (studentRes.length === 0) {
+            console.log("Student with ID not found.");
+            result(null, { "status": "Student with the specified ID not found." });
+            return;
+        }
+
+        // Continue to fetch refund status if student ID exists
+        db.query(
+           "SELECT s.studName, r.requestedDate, r.reason, r.approvedAmnt, r.refundInitiatedDate, r.refundApprovalStatus, r.refundStatus, r.transactionNo, r.AmountReceivedStatus, r.adminRemarks FROM refund r JOIN student s ON r.studId = s.id WHERE r.studId = ? AND r.cancelStatus = 0;",
+            [studId],
+            (err, res) => {
+                if (err) {
+                    console.error("Error retrieving refund status:", err);
+                    result(err, null);
+                    return;
+                }
+
+                if (res.length === 0) {
+                    console.log("No refund requests found");
+                    result(null, { "status": "No refund requests found." });
+                    return;
+                }
+
+                // Check refund approval status
+                if (res[0].refundApprovalStatus === 0) {
+                    result(null, { "status": "Your application is under processing." });
+                } else {
+                    // Return refund details with student name and college name
+                    result(null, res);
+                }
+            }
+        );
+    });
+};
+
+
 
 module.exports = Refund;

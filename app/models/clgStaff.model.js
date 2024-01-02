@@ -334,6 +334,46 @@ CollegeStaff.verifyStudent = (collegeStaffId, studentId, result) => {
 };
 
 
+//College Staff Search Batches
+CollegeStaff.collegeStaffSearchBatch = (searchTerm, collegeId, result) => {
+    const clgStaffSearchBatchQuery = '%' + searchTerm + '%'
+    db.query("SELECT DISTINCT c.collegeName, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college c ON b.collegeId = c.id JOIN college_staff cs ON c.id = cs.collegeId WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.emailVerified = 1 AND cs.collegeId = ? AND (b.batchName LIKE ? OR b.batchDesc LIKE ?)", 
+    [collegeId, clgStaffSearchBatchQuery, clgStaffSearchBatchQuery, clgStaffSearchBatchQuery], 
+    (err, res) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            return
+        } else {
+            console.log("Batches : ", res)
+            result(null, res)
+        }
+    })
+}
+
+
+CollegeStaff.viewCollegeStaffProfile = (id, result) => {
+    if (!id || isNaN(id)) {
+        return result("Invalid college staff ID");
+    }
+
+    const query = `
+        SELECT cs.collegeId, cs.collegeStaffName, c.collegeName, cs.profilePic, cs.department, cs.email, cs.phNo, cs.aadharNo, cs.clgStaffAddress 
+        FROM college_staff cs 
+        JOIN college c ON cs.collegeId = c.id 
+        WHERE cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.emailVerified = 1 AND c.emailVerified = 1 AND c.isActive = 1 AND c.deleteStatus = 0 AND cs.id = ?`;
+
+    db.query(query, [id], (err, res) => {
+        if (err) {
+            console.error("Error while fetching profile:", err);
+            return result("Internal Server Error");
+        }
+
+        result(res.length ? null : "College staff profile not found", res[0]);
+    });
+};
+
+
 
 
 module.exports = CollegeStaff
