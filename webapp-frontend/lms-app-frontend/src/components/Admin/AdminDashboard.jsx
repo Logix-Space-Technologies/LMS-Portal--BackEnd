@@ -1,15 +1,25 @@
-import React, { useState } from 'react'
-import Calendar from 'react-calendar'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 import 'react-calendar/dist/Calendar.css';
 
 export const AdminDashboard = () => {
-  
-  const [collegeData, setCollegeData]= useState(
+
+  const [collegeData, setCollegeData] = useState(
     []
-  ) 
+  )
 
-  
+  const apiLink = "http://localhost:8080/api/lms/adminDashboard"
 
+  const getData = () => {
+    let token = { "token": sessionStorage.getItem("ustoken") }
+    axios.post(apiLink, token).then(
+      (Response) => {
+        setCollegeData(Response.data.data)
+      }
+    )
+  }
+
+  useEffect(() => { getData() }, [])
 
   return (
     <div className="container-xxl position-relative bg-white d-flex p-0">
@@ -188,17 +198,23 @@ export const AdminDashboard = () => {
               <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-chart-line fa-3x text-primary"></i>
                 <div class="ms-3">
-                  <p class="mb-2">Today Sale</p>
-                  <h6 class="mb-0">$1234</h6>
+                  <p class="mb-2">Total Colleges</p>
+                  {collegeData.map(
+                    (value, index) => {
+                    return <h6 class="mb-0">{value.totalColleges}</h6>
+                  })}
                 </div>
               </div>
             </div>
+
+
+
             <div class="col-sm-6 col-xl-3">
               <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-chart-bar fa-3x text-primary"></i>
                 <div class="ms-3">
                   <p class="mb-2">Total Sale</p>
-                  <h6 class="mb-0">$1234</h6>
+
                 </div>
               </div>
             </div>
