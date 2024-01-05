@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 // import { useNavigate } from 'react-router-dom'
+import '../../config/config'
 
 const CollegeStaffLogin = () => {
     const [inputField, setInputField] = useState(
@@ -10,7 +11,7 @@ const CollegeStaffLogin = () => {
         }
     )
 
-    const apiLink = "http://localhost:8080/api/lms/clgStaffLogin"
+    const apiUrl = global.config.urls.api.server + "/api/lms/clgStaffLogin"
     // const navigate = useNavigate()
 
     const inputHandler = (event) => {
@@ -18,7 +19,7 @@ const CollegeStaffLogin = () => {
     }
 
     const readValue = () => {
-        axios.post(apiLink, inputField).then(
+        axios.post(apiUrl, inputField).then(
             (response) => {
                 if (response.data.status === "Success") {
                     let token = response.data.token
