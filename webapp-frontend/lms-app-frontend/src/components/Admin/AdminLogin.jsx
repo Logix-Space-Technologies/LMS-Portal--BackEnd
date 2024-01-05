@@ -53,9 +53,9 @@ const AdminLogin = () => {
                             <div class="mb-3">
                                 <button type="button" onClick={readValue} class="btn btn-success btn-lg">Login</button>
                             </div>
-                            <div class="mb-3">
+                            {/* <div class="mb-3">
                                 <p class="lead ">Don't have an account? <a href="/register">Register here</a></p>
-                            </div>
+                            </div> */}
                         </div>
 
                         <div class="card-footer text-muted">
