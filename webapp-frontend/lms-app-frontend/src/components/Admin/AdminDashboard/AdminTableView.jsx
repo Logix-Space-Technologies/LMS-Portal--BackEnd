@@ -9,7 +9,7 @@ const AdminTableView = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/adminDashboard"
 
     const getData = () => {
-        let token = { "token": sessionStorage.getItem("ustoken") };
+        let token = { "token": sessionStorage.getItem("admtoken") };
         axios.post(apiUrl, token).then(
             (Response) => {
                 setBatchData(Response.data.data.collegeBatches);
