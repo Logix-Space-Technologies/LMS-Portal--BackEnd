@@ -28,7 +28,12 @@ const CollegeStaffLogin = () => {
                     if (response.data.status === "Validation failed" && response.data.data.email) {
                         alert(response.data.data.email)
                     } else {
-                        alert(response.data.status)
+                        if (response.data.status === "Validation failed" && response.data.data.password) {
+                            alert(response.data.data.password)
+                        } else {
+                            alert(response.data.status)
+                        }
+                        
                     }
                 }
             }
