@@ -1,9 +1,12 @@
 import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { AdminDashboard } from './components/Admin/AdminDashboard';
 import AdminLogin from './components/Admin/AdminLogin';
 import AdminStaffLogin from './components/AdminStaff/AdminStaffLogin';
+import AdminCountView from './components/Admin/AdminDashboard/AdminCountView';
+import AdminNavbar from './components/Admin/AdminDashboard/AdminNavbar';
+import AdminTableView from './components/Admin/AdminDashboard/AdminTableView';
+import AdminSideBar from './components/Admin/AdminDashboard/AdminSideBar';
 
 function App() {
   return (
@@ -11,8 +14,11 @@ function App() {
       <BrowserRouter>
           <Routes>
             <Route path='/' element={<AdminLogin/>}/>
-            <Route path='/admdashboard' element={<AdminDashboard/>}/>
             <Route path='/admstafflogin' element={<AdminStaffLogin/>} />
+            <Route path='/countview' element={<AdminCountView/>}/>
+            <Route path='/admdashboard' element={<AdminNavbar/>}/>
+            <Route path='/admintableview' element={<AdminTableView/>}/>
+            <Route path='/adminsidebar' element={<AdminSideBar/>}/>
           </Routes>
       </BrowserRouter>
     </div>
