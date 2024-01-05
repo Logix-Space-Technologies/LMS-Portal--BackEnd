@@ -5,8 +5,8 @@ import React, { useState } from 'react'
 const CollegeStaffLogin = () => {
     const [inputField, setInputField] = useState(
         {
-            email : "",
-            password : ""
+            email: "",
+            password: ""
         }
     )
 
@@ -14,25 +14,29 @@ const CollegeStaffLogin = () => {
     // const navigate = useNavigate()
 
     const inputHandler = (event) => {
-        setInputField({...inputField, [event.target.name] : event.target.value})
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
     }
 
     const readValue = () => {
         axios.post(apiLink, inputField).then(
             (response) => {
-                if (response.data.status == "Success") {
+                if (response.data.status === "Success") {
                     let token = response.data.token
                     sessionStorage.setItem("clgstaffLogintoken", token)
                     alert(response.data.status)
                 } else {
-                    alert(response.data.status)
+                    if (response.data.status === "Validation failed" && response.data.data.email) {
+                        alert(response.data.data.email)
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
     }
 
-  return (
-    <div class="container">
+    return (
+        <div class="container">
             <div class="row justify-content-center align-items-center min-vh-100">
                 <div class="col col-12 col-sm-8 col-md-12 col-lg-8">
                     <div class="text-center mb-4">
@@ -70,7 +74,7 @@ const CollegeStaffLogin = () => {
                 </div>
             </div>
         </div>
-  )
+    )
 }
 
 export default CollegeStaffLogin
