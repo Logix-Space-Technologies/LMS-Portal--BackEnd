@@ -301,9 +301,17 @@ exports.collegeStaffLogin = (request, response) => {
   const getClgStaffPassword = request.body.password
   const validationErrors = {}
 
+  if (Validator.isEmpty(email).isValid) {
+    validationErrors.email = Validator.isEmpty(email).message;
+  }
   if (!Validator.isValidEmail(email).isValid) {
     validationErrors.email = Validator.isValidEmail(email).message;
   }
+
+  if (Validator.isEmpty(password).isValid) {
+    validationErrors.password = Validator.isEmpty(password).message;
+  }
+
 
   if (Object.keys(validationErrors).length > 0) {
     return response.json({ "status": "Validation failed", "data": validationErrors });
@@ -546,30 +554,30 @@ exports.viewCollegeStaffProfile = (request, response) => {
   const { id, token: clgStaffProfileToken } = request.body;
 
   if (!id) {
-      return response.json({ "status": "Invalid college staff ID" });
+    return response.json({ "status": "Invalid college staff ID" });
   }
 
   if (!clgStaffProfileToken) {
-      return response.json({ "status": "Token is required." });
+    return response.json({ "status": "Token is required." });
   }
 
   jwt.verify(clgStaffProfileToken, "lmsappclgstaff", (err, decoded) => {
+    if (err) {
+      console.error("Token verification failed:", err);
+      return response.json({ "status": "Invalid or expired token." });
+    }
+
+    if (!decoded) {
+      return response.json({ "status": "Unauthorized Access !!!" });
+    }
+
+    CollegeStaff.viewCollegeStaffProfile(id, (err, data) => {
       if (err) {
-          console.error("Token verification failed:", err);
-          return response.json({ "status": "Invalid or expired token." });
+        console.error("Error while fetching profile:", err);
+        return response.json({ "status": err });
       }
 
-      if (!decoded) {
-          return response.json({ "status": "Unauthorized Access !!!"});
-      }
-
-      CollegeStaff.viewCollegeStaffProfile(id, (err, data) => {
-          if (err) {
-              console.error("Error while fetching profile:", err);
-              return response.json({ "status": err});
-          }
-
-          response.json({ "status": "success", "data": data });
-      });
+      response.json({ "status": "success", "data": data });
+    });
   });
 };
