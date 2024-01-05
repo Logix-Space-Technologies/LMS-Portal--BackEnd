@@ -31,14 +31,10 @@ const StudentLogin = () => {
                         if (Response.data.status === "Validation failed" && Response.data.data.password) {
                             alert(Response.data.data.password)
                         } else {
-                            if (Response.data.status === "Email and Password cannot be null") {
+                            if (Response.data.status === "Student does not Exist.") {
                                 alert(Response.data.status)
                             } else {
-                                if (Response.data.status === "Student does not Exist.") {
-                                    alert(Response.data.status)
-                                } else {
-                                    alert(Response.data.status)
-                                }
+                                alert(Response.data.status)
                             }
                         }
                         
