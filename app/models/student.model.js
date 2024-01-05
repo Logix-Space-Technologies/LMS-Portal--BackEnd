@@ -651,5 +651,63 @@ Student.refundAmountReceivedStatus = (studId, token, result) => {
 };
 
 
+
+Student.searchStudentsByAdmAndAdmstf = (search, result) => {
+    const searchString = '%' + search + '%';
+    db.query(
+        `
+        SELECT 
+            s.studName, 
+            s.id, 
+            s.studProfilePic, 
+            c.collegeName, 
+            s.collegeId, 
+            s.batchId, 
+            s.admNo, 
+            s.rollNo, 
+            s.studDept, 
+            s.course, 
+            s.studEmail, 
+            s.studPhNo, 
+            s.aadharNo, 
+            s.membership_no 
+        FROM 
+            student s 
+            LEFT JOIN college c ON s.collegeId = c.id 
+        WHERE 
+            s.deleteStatus = 0 
+            AND s.isActive = 1 
+            AND s.emailVerified = 1 
+            AND s.isPaid = 1 
+            AND s.isVerified = 1 
+            AND (
+                s.id LIKE ? 
+                OR s.collegeId LIKE ? 
+                OR s.batchId LIKE ? 
+                OR s.studName LIKE ? 
+                OR s.admNo LIKE ? 
+                OR s.rollNo LIKE ? 
+                OR s.studDept LIKE ? 
+                OR s.course LIKE ? 
+                OR s.studEmail LIKE ? 
+                OR s.studPhNo LIKE ? 
+                OR s.aadharNo LIKE ? 
+                OR s.membership_no LIKE ?
+            )
+        `,
+        [searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString],
+        (err, res) => {
+            if (err) {
+                console.log("Error: ", err);
+                result(err, null);
+            } else {
+                console.log("Student Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
+
+
 module.exports = { Student, Payment, Tasks, SubmitTask };
 

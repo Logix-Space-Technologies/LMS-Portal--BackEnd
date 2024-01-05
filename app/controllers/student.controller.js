@@ -285,7 +285,7 @@ exports.profileUpdateStudent = (request, response) => {
         }
 
         const { studName, admNo, rollNo, studDept, course, studPhNo, studProfilePic, aadharNo } = request.body
- 
+
         const updateProfileToken = request.body.token
 
         jwt.verify(updateProfileToken, "lmsappstud", (err, decoded) => {
@@ -342,9 +342,9 @@ exports.profileUpdateStudent = (request, response) => {
 
 
                 const newStudent = new Student({
-                    'id':request.body.id,
+                    'id': request.body.id,
                     collegeId: request.body.collegeId,
-                    batchId:request.body.batchId,
+                    batchId: request.body.batchId,
                     studName: studName,
                     admNo: admNo,
                     rollNo: rollNo,
@@ -384,7 +384,7 @@ exports.viewUnverifiedStudents = (request, response) => {
         }
 
         if (decoded) {
-            collegeId=request.body.collegeId;
+            collegeId = request.body.collegeId;
             Student.viewUnverifiedStudents(collegeId, (err, data) => {
                 if (err) {
                     response.json({ "status": err });
@@ -404,13 +404,13 @@ exports.viewAllStudsByAdmin = (request, response) => {
         if (decoded) {
             Student.viewAllStudentByAdmin((err, data) => {
                 if (err) {
-                    return response.json({"status" : err})
+                    return response.json({ "status": err })
                 } else {
-                    return response.json({"status" : "Success", "data" : data})
+                    return response.json({ "status": "Success", "data": data })
                 }
             })
         } else {
-            return response.json({"status" : "Unauthorized User!!"})
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -421,7 +421,7 @@ exports.taskSubmissionByStudent = (request, response) => {
     const token = request.body.token;
     jwt.verify(token, "lmsappstud", (err, decoded) => {
         if (err) {
-            response.json({"status":"Unauthorized Access!!"})
+            response.json({ "status": "Unauthorized Access!!" })
             return;
         }
         const validationErrors = {};
@@ -447,20 +447,20 @@ exports.taskSubmissionByStudent = (request, response) => {
             if (err) {
                 return response.json({ "status": err });
             }
-    
-            return response.json({ "status": "success", "data": data});
+
+            return response.json({ "status": "success", "data": data });
         });
     });
-    
+
 };
 
 
 exports.viewEvaluatedTasks = (request, response) => {
-    viewEvaluatedToken=request.body.token
+    viewEvaluatedToken = request.body.token
     jwt.verify(viewEvaluatedToken, "lmsappstud", (error, decoded) => {
         if (decoded) {
-            const studId=request.body.studId
-            SubmitTask.viewEvaluatedTasks(studId,(error, data) => {
+            const studId = request.body.studId
+            SubmitTask.viewEvaluatedTasks(studId, (error, data) => {
                 if (error) {
                     return response.json({ "status": error });
                 } else {
@@ -494,5 +494,34 @@ exports.refundAmountReceivedStatus = (request, response) => {
                 response.json({ status: 'success, Refund amount received status successfully updated' });
             }
         });
+    });
+};
+
+
+
+exports.searchStudentsByAdmAndAdmstf = (request, response) => {
+    const { studentSearchQuery, token, key } = request.body;
+
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            if (!studentSearchQuery) {
+                console.log("Search Item is required.");
+                return response.json({ "status": "Search Item is required." });
+            }
+            Student.searchStudentsByAdmAndAdmstf(studentSearchQuery, (err, data) => {
+                if (err) {
+                    console.error("Error in searchStudents:", err);
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No Search Items Found." });
+                    } else {
+                        response.json({ "status": "Result Found", "data": data });
+                    }
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
     });
 };
