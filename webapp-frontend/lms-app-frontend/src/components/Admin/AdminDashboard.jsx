@@ -4,9 +4,13 @@ import 'react-calendar/dist/Calendar.css';
 
 export const AdminDashboard = () => {
 
-  const [collegeData, setCollegeData] = useState(
-    []
-  )
+  const [collegeData, setCollegeData] = useState([])
+
+  const [batchData, setBatchData] = useState([])
+
+  const [studData, setStudData] = useState([])
+
+  const [taskData, setTaskData] = useState([])
 
   const apiLink = "http://localhost:8080/api/lms/adminDashboard"
 
@@ -15,9 +19,16 @@ export const AdminDashboard = () => {
     axios.post(apiLink, token).then(
       (Response) => {
         setCollegeData(Response.data.data)
+        setBatchData(Response.data.data.collegeBatches)
+        setStudData(Response.data.data.collegeStudentStatistics)
+        setTaskData(Response.data.data.collegeTaskStatistics)
+
+        console.log(Response.data.data.collegeBatches)
+
       }
     )
   }
+
 
   useEffect(() => { getData() }, [])
 
@@ -104,8 +115,9 @@ export const AdminDashboard = () => {
       <div className="content">
         {/* Navbar Start */}
         <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-          <a href="index.html" className="navbar-brand d-flex d-lg-none me-4">
-            <h2 className="text-primary mb-0"><i className="fa fa-hashtag" /></h2>
+          <a href="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
+            <h2 className="text-primary mb-0">
+            <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
           </a>
           {/* <a href="#" className="sidebar-toggler flex-shrink-0">
             <i className="fa fa-bars" />
@@ -114,7 +126,7 @@ export const AdminDashboard = () => {
             <input className="form-control border-0" type="search" placeholder="Search" />
           </form> */}
           <div className="navbar-nav align-items-center ms-auto">
-            <div className="nav-item dropdown">
+            {/* <div className="nav-item dropdown">
               <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <i className="fa fa-envelope me-lg-2" />
                 <span className="d-none d-lg-inline-flex">Message</span>
@@ -152,11 +164,11 @@ export const AdminDashboard = () => {
                 <hr className="dropdown-divider" />
                 <a href="#" className="dropdown-item text-center">See all message</a>
               </div>
-            </div>
+            </div> */}
             <div className="nav-item dropdown">
               <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <i className="fa fa-bell me-lg-2" />
-                <span className="d-none d-lg-inline-flex">Notificatin</span>
+                <span className="d-none d-lg-inline-flex">Notification</span>
               </a>
               <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                 <a href="#" className="dropdown-item">
@@ -183,9 +195,8 @@ export const AdminDashboard = () => {
                 <span className="d-none d-lg-inline-flex">Admin</span>
               </a>
               <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                <a href="#" className="dropdown-item">My Profile</a>
-                <a href="#" className="dropdown-item">Settings</a>
-                <a href="#" className="dropdown-item">Log Out</a>
+                <a href="#" className="dropdown-item">Change Password</a>
+                <a href="/" className="dropdown-item">Log Out</a>
               </div>
             </div>
           </div>
@@ -195,14 +206,14 @@ export const AdminDashboard = () => {
         <div class="container-fluid pt-4 px-4">
           <div class="row g-4">
             <div class="col-sm-6 col-xl-3">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-line fa-3x text-primary"></i>
+              <div class="shadow p-3 mb-5 text-dark rounded bg-info-subtle rounded d-flex align-items-stretch justify-content-between p-4" >
+                {/* <i class="fa fa-chart-line fa-3x text-primary"></i> */}
                 <div class="ms-3">
                   <p class="mb-2">Total Colleges</p>
-                  {collegeData.map(
+                  {[collegeData].map(
                     (value, index) => {
-                    return <h6 class="mb-0">{value.totalColleges}</h6>
-                  })}
+                      return <h6 class="mb-0">{value.totalColleges}</h6>
+                    })}
                 </div>
               </div>
             </div>
@@ -210,122 +221,115 @@ export const AdminDashboard = () => {
 
 
             <div class="col-sm-6 col-xl-3">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-bar fa-3x text-primary"></i>
+              <div class="shadow p-3 mb-5 text-dark rounded bg-info-subtle rounded d-flex align-items-stretch justify-content-between p-4" >
+                {/* <i class="fa fa-chart-bar fa-3x text-primary"></i> */}
                 <div class="ms-3">
-                  <p class="mb-2">Total Sale</p>
+                  <p class="mb-2">Total Batches</p>
+                  {[collegeData].map(
+                    (value, index) => {
+                      return <h6 class="mb-0">{value.totalBatches}</h6>
+                    })}
 
                 </div>
               </div>
             </div>
             <div class="col-sm-6 col-xl-3">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-area fa-3x text-primary"></i>
+              <div class="shadow p-3 mb-5 text-dark rounded bg-info-subtle rounded d-flex align-items-stretch justify-content-between p-4" >
+                {/* <i class="fa fa-chart-area fa-3x text-primary"></i> */}
                 <div class="ms-3">
-                  <p class="mb-2">Today Revenue</p>
-                  <h6 class="mb-0">$1234</h6>
+                  <p class="mb-2">Total Tasks</p>
+                  {[collegeData].map(
+                    (value, index) => {
+                      return <h6 class="mb-0">{value.totalTasks}</h6>
+                    })}
                 </div>
               </div>
             </div>
             <div class="col-sm-6 col-xl-3">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-pie fa-3x text-primary"></i>
+              <div class="shadow p-3 mb-5 text-dark rounded bg-info-subtle rounded d-flex align-items-stretch justify-content-between p-4" >
+                {/* <i class="fa fa-chart-pie fa-3x text-primary"></i> */}
                 <div class="ms-3">
-                  <p class="mb-2">Total Revenue</p>
-                  <h6 class="mb-0">$1234</h6>
+                  <p class="mb-2">Total Students</p>
+                  {[collegeData].map(
+                    (value, index) => {
+                      return <h6 class="mb-0">{value.totalStudents}</h6>
+                    })}
                 </div>
               </div>
             </div>
             <div class="col-sm-6 col-xl-3">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-line fa-3x text-primary"></i>
+              <div class="shadow p-3 mb-5 text-dark rounded bg-info-subtle rounded d-flex align-items-stretch justify-content-between p-4" >
+                {/* <i class="fa fa-chart-line fa-3x text-primary"></i> */}
                 <div class="ms-3">
-                  <p class="mb-2">Today Sale</p>
-                  <h6 class="mb-0">$1234</h6>
+                  <p class="mb-2">Total Admin Staff</p>
+                  {[collegeData].map(
+                    (value, index) => {
+                      return <h6 class="mb-0">{value.totalAdminStaff}</h6>
+                    })}
                 </div>
               </div>
             </div>
             <div class="col-sm-6 col-xl-3">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-bar fa-3x text-primary"></i>
+              <div class="shadow p-3 mb-5 text-dark rounded bg-info-subtle rounded d-flex align-items-stretch justify-content-between p-4" >
+                {/* <i class="fa fa-chart-bar fa-3x text-primary"></i> */}
                 <div class="ms-3">
-                  <p class="mb-2">Total Sale</p>
-                  <h6 class="mb-0">$1234</h6>
+                  <p class="mb-2">Total College Staff</p>
+                  {[collegeData].map(
+                    (value, index) => {
+                      return <h6 class="mb-0">{value.totalCollegeStaff}</h6>
+                    })}
                 </div>
               </div>
             </div>
             <div class="col-sm-6 col-xl-3">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-area fa-3x text-primary"></i>
+              <div class="shadow p-3 mb-5 text-dark rounded bg-info-subtle rounded d-flex align-items-stretch justify-content-between p-4" >
+                {/* <i class="fa fa-chart-area fa-3x text-primary"></i> */}
                 <div class="ms-3">
-                  <p class="mb-2">Today Revenue</p>
-                  <h6 class="mb-0">$1234</h6>
+                  <p class="mb-2">Total Amount Paid</p>
+                  {[collegeData].map(
+                    (value, index) => {
+                      return <h6 class="mb-0">{value.totalAmountPaid}</h6>
+                    })}
                 </div>
               </div>
             </div>
             <div class="col-sm-6 col-xl-3">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-pie fa-3x text-primary"></i>
+              <div class="shadow p-3 mb-5 text-dark rounded bg-info-subtle rounded d-flex align-items-stretch justify-content-between p-4" >
+                {/* <i class="fa fa-chart-pie fa-3x text-primary"></i> */}
                 <div class="ms-3">
-                  <p class="mb-2">Total Revenue</p>
-                  <h6 class="mb-0">$1234</h6>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-xl-3">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-line fa-3x text-primary"></i>
-                <div class="ms-3">
-                  <p class="mb-2">Today Sale</p>
-                  <h6 class="mb-0">$1234</h6>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-xl-3">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-bar fa-3x text-primary"></i>
-                <div class="ms-3">
-                  <p class="mb-2">Total Sale</p>
-                  <h6 class="mb-0">$1234</h6>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-xl-3">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-area fa-3x text-primary"></i>
-                <div class="ms-3">
-                  <p class="mb-2">Today Revenue</p>
-                  <h6 class="mb-0">$1234</h6>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-xl-3">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-pie fa-3x text-primary"></i>
-                <div class="ms-3">
-                  <p class="mb-2">Total Revenue</p>
-                  <h6 class="mb-0">$1234</h6>
+                  <p class="mb-2">Total Refunds</p>
+                  {[collegeData].map(
+                    (value, index) => {
+                      return <h6 class="mb-0">{value.totalRefunds}</h6>
+                    })}
                 </div>
               </div>
             </div>
             <div class="col-sm-6 col-xl-6">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-area fa-3x text-primary"></i>
+              <div class="shadow p-3 mb-5 text-dark rounded bg-info-subtle rounded d-flex align-items-stretch justify-content-between p-4" >
+                {/* <i class="fa fa-chart-line fa-3x text-primary"></i> */}
                 <div class="ms-3">
-                  <p class="mb-2">Today Revenue</p>
-                  <h6 class="mb-0">$1234</h6>
+                  <p class="mb-2">Total Amount Refunded</p>
+                  {[collegeData].map(
+                    (value, index) => {
+                      return <h6 class="mb-0">{value.totalAmountRefunded}</h6>
+                    })}
                 </div>
               </div>
             </div>
             <div class="col-sm-6 col-xl-6">
-              <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-pie fa-3x text-primary"></i>
+              <div class="shadow p-3 mb-5 text-dark rounded bg-info-subtle rounded d-flex align-items-stretch justify-content-between p-4" >
+                {/* <i class="fa fa-chart-bar fa-3x text-primary"></i> */}
                 <div class="ms-3">
-                  <p class="mb-2">Total Revenue</p>
-                  <h6 class="mb-0">$1234</h6>
+                  <p class="mb-2">Total Materials Added</p>
+                  {[collegeData].map(
+                    (value, index) => {
+                      return <h6 class="mb-0">{value.totalMaterials}</h6>
+                    })}
                 </div>
               </div>
             </div>
+
           </div>
         </div>
         <br />
@@ -365,80 +369,94 @@ export const AdminDashboard = () => {
             </div>
           </div>
         </div> */}
-        {/* Sales Chart End */}
-        {/* Recent Sales Start */}
+        
         <div className="container-fluid pt-4 px-4">
           <div className="bg-light text-center rounded p-4">
             <div className="d-flex align-items-center justify-content-between mb-4">
-              <h6 className="mb-0">Recent Salse</h6>
-              <a href>Show All</a>
+              <h6 className="mb-0">Batch Details</h6>
             </div>
             <div className="table-responsive">
               <table className="table text-start align-middle table-bordered table-hover mb-0">
                 <thead>
                   <tr className="text-dark">
-                    <th scope="col"><input className="form-check-input" type="checkbox" /></th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Invoice</th>
-                    <th scope="col">Customer</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Action</th>
+                    <th scope="col">College</th>
+                    <th scope="col">Batches</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td><input className="form-check-input" type="checkbox" /></td>
-                    <td>01 Jan 2045</td>
-                    <td>INV-0123</td>
-                    <td>Jhon Doe</td>
-                    <td>$123</td>
-                    <td>Paid</td>
-                    <td><a className="btn btn-sm btn-primary" href>Detail</a></td>
-                  </tr>
-                  <tr>
-                    <td><input className="form-check-input" type="checkbox" /></td>
-                    <td>01 Jan 2045</td>
-                    <td>INV-0123</td>
-                    <td>Jhon Doe</td>
-                    <td>$123</td>
-                    <td>Paid</td>
-                    <td><a className="btn btn-sm btn-primary" href>Detail</a></td>
-                  </tr>
-                  <tr>
-                    <td><input className="form-check-input" type="checkbox" /></td>
-                    <td>01 Jan 2045</td>
-                    <td>INV-0123</td>
-                    <td>Jhon Doe</td>
-                    <td>$123</td>
-                    <td>Paid</td>
-                    <td><a className="btn btn-sm btn-primary" href>Detail</a></td>
-                  </tr>
-                  <tr>
-                    <td><input className="form-check-input" type="checkbox" /></td>
-                    <td>01 Jan 2045</td>
-                    <td>INV-0123</td>
-                    <td>Jhon Doe</td>
-                    <td>$123</td>
-                    <td>Paid</td>
-                    <td><a className="btn btn-sm btn-primary" href>Detail</a></td>
-                  </tr>
-                  <tr>
-                    <td><input className="form-check-input" type="checkbox" /></td>
-                    <td>01 Jan 2045</td>
-                    <td>INV-0123</td>
-                    <td>Jhon Doe</td>
-                    <td>$123</td>
-                    <td>Paid</td>
-                    <td><a className="btn btn-sm btn-primary" href>Detail</a></td>
-                  </tr>
+                  {batchData.map(
+                    (value, index) => {
+                      return <tr>
+                        <td>{value.collegeName}</td>
+                        <td>{value.numberOfBatches}</td>
+                      </tr>
+                    })}
+
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-        {/* Recent Sales End */}
-        {/* Widgets Start */}
+        {/* student details */}
+        <div className="container-fluid pt-4 px-4">
+          <div className="bg-light text-center rounded p-4">
+            <div className="d-flex align-items-center justify-content-between mb-4">
+              <h6 className="mb-0">Student Details</h6>
+            </div>
+            <div className="table-responsive">
+              <table className="table text-start align-middle table-bordered table-hover mb-0">
+                <thead>
+                  <tr className="text-dark">
+                    <th scope="col">College</th>
+                    <th scope="col">No. Of Students </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {studData.map(
+                    (value, index) => {
+                      return <tr>
+                        <td>{value.collegeName}</td>
+                        <td>{value.noofstudents}</td>
+                      </tr>
+                    })}
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        {/* Task completion details */}
+        <div className="container-fluid pt-4 px-4">
+          <div className="bg-light text-center rounded p-4">
+            <div className="d-flex align-items-center justify-content-between mb-4">
+              <h6 className="mb-0">Task Completion Details</h6>
+            </div>
+            <div className="table-responsive">
+              <table className="table text-start align-middle table-bordered table-hover mb-0">
+                <thead>
+                  <tr className="text-dark">
+                    <th scope="col">College</th>
+                    <th scope="col">No. Of Students</th>
+                    <th scope="col">No. Of Tasks</th>
+                    <th scope="col">Completion Percentage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {taskData.map(
+                    (value, index) => {
+                      return <tr>
+                        <td>{value.collegeName}</td>
+                        <td>{value.noofstudents}</td>
+                        <td>{value.nooftasks}</td>
+                        <td>{value.percentageofcompletion}%</td>
+                      </tr>
+                    })}
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         {/* <div className="container-fluid pt-4 px-4">
           <div className="row g-4"> */}
         {/* <div className="col-sm-12 col-md-6 col-xl-4"> */}
