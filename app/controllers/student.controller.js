@@ -153,6 +153,20 @@ exports.studLog = (request, response) => {
 
     const getStudEmail = request.body.studEmail
     const getPassword = request.body.password
+    const validationErrors = {}
+
+
+    if (!Validator.isValidEmail(studEmail).isValid) {
+        validationErrors.email = Validator.isValidEmail(studEmail).message;
+    }
+
+    if (Validator.isEmpty(password).isValid) {
+        validationErrors.password = Validator.isEmpty(password).message;
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
 
     Student.findByEmail(studEmail, (err, stud) => {
         if (err) {
