@@ -170,9 +170,6 @@ exports.studLog = (request, response) => {
 
     Student.findByEmail(studEmail, (err, stud) => {
         if (err) {
-            if (err.status === "Null") {
-                return response.json({ "status": "Email and Password cannot be null" })
-            }
             if (err.kind === "not_found") {
                 return response.json({ "status": "Student does not Exist." })
             } else {

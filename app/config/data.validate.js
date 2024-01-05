@@ -4,7 +4,7 @@ const path = require('path');
 function isEmpty(value) {
     return {
         isValid: (value === null || value === ""),
-        message: "Value cannot be empty."
+        message: "Field cannot be empty."
     };
 }
 

@@ -316,13 +316,6 @@ Student.findByEmail = (Email, result) => {
                                 return
                             }
 
-
-                            if (res.length === 0) {
-                                console.log("Email and Password cannot be null")
-                                result({ status: "Null" }, null)
-                                return
-                            }
-
                             result({ kind: "not_found" }, null)
                         })
                 })
