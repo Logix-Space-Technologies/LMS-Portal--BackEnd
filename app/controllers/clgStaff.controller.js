@@ -306,7 +306,7 @@ exports.collegeStaffLogin = (request, response) => {
   }
 
   if (Object.keys(validationErrors).length > 0) {
-    return response.json({ "status": "Validation failed", "data": validationErrors });
+    return response.json({ "status": validationErrors });
   }
 
   CollegeStaff.findByClgStaffEmail(email, (err, clgstaff) => {
