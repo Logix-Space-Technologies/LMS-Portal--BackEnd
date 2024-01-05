@@ -19,13 +19,30 @@ const StudentLogin = () => {
         axios.post(apiLink, inputField).then(
             (Response) => {
                 if (Response.data.status === "success") {
-                    let token = Response.data.token;
-                    sessionStorage.setItem("ustoken", token);
+                    let studtoken = Response.data.token;
+                    sessionStorage.setItem("studLoginToken", studtoken);
                     alert(Response.data.status);
                     // You may navigate to the student dashboard or another page here
                     // Example: navigate('/student-dashboard');
                 } else {
-                    alert(Response.data.status);
+                    if (Response.data.status === "Validation failed" && Response.data.data.email) {
+                        alert(Response.data.data.email)
+                    } else {
+                        if (Response.data.status === "Validation failed" && Response.data.data.password) {
+                            alert(Response.data.data.password)
+                        } else {
+                            if (Response.data.status === "Email and Password cannot be null") {
+                                alert(Response.data.status)
+                            } else {
+                                if (Response.data.status === "Student does not Exist.") {
+                                    alert(Response.data.status)
+                                } else {
+                                    alert(Response.data.status)
+                                }
+                            }
+                        }
+                        
+                    }
                 }
             }
         );
