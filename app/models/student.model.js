@@ -278,7 +278,7 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
 
 
 Student.findByEmail = (Email, result) => {
-    db.query("SELECT * FROM student WHERE isVerified = 1", [Email],
+    db.query("SELECT * FROM student WHERE studEmail = ? AND isVerified = 1 AND emailVerified = 1", [Email],
         (verifyErr, verifyRes) => {
             if (verifyErr) {
                 console.log("Error: ", verifyErr)
@@ -289,7 +289,7 @@ Student.findByEmail = (Email, result) => {
                 return result("Account is under progress/not verified", null)
             }
 
-            db.query("SELECT * FROM student WHERE validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
+            db.query("SELECT * FROM student WHERE studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
                 (validityErr, validityRes) => {
                     if (validityErr) {
                         console.log("Error: ", validityErr)
@@ -313,13 +313,6 @@ Student.findByEmail = (Email, result) => {
                                 result(null, res[0])
                                 //Log for student login
                                 logStudent(res[0].id, "Student logged In")
-                                return
-                            }
-
-
-                            if (res.length === 0) {
-                                console.log("Email and Password cannot be null")
-                                result({ status: "Null" }, null)
                                 return
                             }
 

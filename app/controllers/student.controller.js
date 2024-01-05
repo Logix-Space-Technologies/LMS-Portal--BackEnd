@@ -153,12 +153,23 @@ exports.studLog = (request, response) => {
 
     const getStudEmail = request.body.studEmail
     const getPassword = request.body.password
+    const validationErrors = {}
+
+
+    if (!Validator.isValidEmail(studEmail).isValid) {
+        validationErrors.email = Validator.isValidEmail(studEmail).message;
+    }
+
+    if (Validator.isEmpty(password).isValid) {
+        validationErrors.password = Validator.isEmpty(password).message;
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
 
     Student.findByEmail(studEmail, (err, stud) => {
         if (err) {
-            if (err.status === "Null") {
-                return response.json({ "status": "Email and Password cannot be null" })
-            }
             if (err.kind === "not_found") {
                 return response.json({ "status": "Student does not Exist." })
             } else {
