@@ -7,7 +7,7 @@ const AdminLogin = () => {
         { userName: "", Password: "" }
     )
     const apiLink = "http://localhost:8080/api/lms/"
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
@@ -16,10 +16,10 @@ const AdminLogin = () => {
     const readValue = () => {
         axios.post(apiLink, inputField).then(
             (Response) => {
-                if (Response.data.status == "success") {
+                if (Response.data.status == "Success") {
                     let token = Response.data.token
                     sessionStorage.setItem("ustoken", token)
-                    alert(Response.data.status)
+                    navigate("/admdashboard")
                 }
                 else {
                     alert(Response.data.status)
@@ -53,9 +53,9 @@ const AdminLogin = () => {
                             <div class="mb-3">
                                 <button type="button" onClick={readValue} class="btn btn-success btn-lg">Login</button>
                             </div>
-                            <div class="mb-3">
+                            {/* <div class="mb-3">
                                 <p class="lead ">Don't have an account? <a href="/register">Register here</a></p>
-                            </div>
+                            </div> */}
                         </div>
 
                         <div class="card-footer text-muted">
