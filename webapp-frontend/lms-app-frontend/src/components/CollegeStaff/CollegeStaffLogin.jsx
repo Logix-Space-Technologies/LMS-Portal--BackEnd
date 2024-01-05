@@ -22,8 +22,8 @@ const CollegeStaffLogin = () => {
         axios.post(apiUrl, inputField).then(
             (response) => {
                 if (response.data.status === "Success") {
-                    let token = response.data.token
-                    sessionStorage.setItem("clgstaffLogintoken", token)
+                    let clgstafftoken = response.data.token
+                    sessionStorage.setItem("clgstaffLogintoken", clgstafftoken)
                     alert(response.data.status)
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.email) {
