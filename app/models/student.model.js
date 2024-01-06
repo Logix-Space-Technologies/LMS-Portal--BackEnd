@@ -278,7 +278,7 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
 
 
 Student.findByEmail = (Email, result) => {
-    db.query("SELECT * FROM student WHERE isVerified = 1", [Email],
+    db.query("SELECT * FROM student WHERE studEmail = ? AND isVerified = 1 AND emailVerified = 1", [Email],
         (verifyErr, verifyRes) => {
             if (verifyErr) {
                 console.log("Error: ", verifyErr)
@@ -289,7 +289,7 @@ Student.findByEmail = (Email, result) => {
                 return result("Account is under progress/not verified", null)
             }
 
-            db.query("SELECT * FROM student WHERE validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
+            db.query("SELECT * FROM student WHERE studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
                 (validityErr, validityRes) => {
                     if (validityErr) {
                         console.log("Error: ", validityErr)
@@ -313,13 +313,6 @@ Student.findByEmail = (Email, result) => {
                                 result(null, res[0])
                                 //Log for student login
                                 logStudent(res[0].id, "Student logged In")
-                                return
-                            }
-
-
-                            if (res.length === 0) {
-                                console.log("Email and Password cannot be null")
-                                result({ status: "Null" }, null)
                                 return
                             }
 
@@ -648,6 +641,64 @@ Student.refundAmountReceivedStatus = (studId, token, result) => {
             result(null, { status: 'Successfully updated refund amount received status' });
         });
     });
+};
+
+
+
+Student.searchStudentsByAdmAndAdmstf = (search, result) => {
+    const searchString = '%' + search + '%';
+    db.query(
+        `
+        SELECT 
+            s.studName, 
+            s.id, 
+            s.studProfilePic, 
+            c.collegeName, 
+            s.collegeId, 
+            s.batchId, 
+            s.admNo, 
+            s.rollNo, 
+            s.studDept, 
+            s.course, 
+            s.studEmail, 
+            s.studPhNo, 
+            s.aadharNo, 
+            s.membership_no 
+        FROM 
+            student s 
+            LEFT JOIN college c ON s.collegeId = c.id 
+        WHERE 
+            s.deleteStatus = 0 
+            AND s.isActive = 1 
+            AND s.emailVerified = 1 
+            AND s.isPaid = 1 
+            AND s.isVerified = 1 
+            AND (
+                s.id LIKE ? 
+                OR s.collegeId LIKE ? 
+                OR s.batchId LIKE ? 
+                OR s.studName LIKE ? 
+                OR s.admNo LIKE ? 
+                OR s.rollNo LIKE ? 
+                OR s.studDept LIKE ? 
+                OR s.course LIKE ? 
+                OR s.studEmail LIKE ? 
+                OR s.studPhNo LIKE ? 
+                OR s.aadharNo LIKE ? 
+                OR s.membership_no LIKE ?
+            )
+        `,
+        [searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString],
+        (err, res) => {
+            if (err) {
+                console.log("Error: ", err);
+                result(err, null);
+            } else {
+                console.log("Student Details: ", res);
+                result(null, res);
+            }
+        }
+    );
 };
 
 

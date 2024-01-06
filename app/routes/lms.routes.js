@@ -166,6 +166,7 @@ router.post("/rejectRefund",RefundController.rejectRefundRequest)
 
 router.post("/viewSuccessfulRefunds",RefundController.getSuccessfulRefunds)
 
+router.post("/searchStudentsByAdmAndAdmstf",StudentController.searchStudentsByAdmAndAdmstf)
 
 
 module.exports = router

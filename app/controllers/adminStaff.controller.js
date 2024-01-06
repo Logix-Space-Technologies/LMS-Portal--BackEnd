@@ -233,6 +233,20 @@ exports.adminStaffLogin = (request, response) => {
 
     const getEmail = request.body.Email
     const getPassword = request.body.Password
+    const validationErrors = {}
+
+    if (!Validator.isValidEmail(Email).isValid) {
+        validationErrors.email = Validator.isValidEmail(Email).message;
+    }
+
+    if (Validator.isEmpty(Password).isValid) {
+        validationErrors.password = Validator.isEmpty(Password).message;
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
+
 
     AdminStaff.findByEmail(Email, (err, admin_staff) => {
         if (err) {

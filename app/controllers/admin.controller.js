@@ -38,6 +38,19 @@ exports.adminLogin = (request, response) => {
 
     const getUserName = request.body.userName
     const getPassword = request.body.Password
+    const validationErrors = {}
+
+    if (Validator.isEmpty(userName).isValid) {
+        validationErrors.username = Validator.isEmpty(userName).message;
+    }
+
+    if (Validator.isEmpty(Password).isValid) {
+        validationErrors.password = Validator.isEmpty(Password).message;
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
 
     Admin.findByUserName(userName, (err, admin) => {
 
@@ -79,7 +92,7 @@ exports.adminChangePwd = (request, response) => {
                     return response.json({ status: err });
                 }
                 if (oldPassword === newPassword) {
-                    return response.json({"status":"Old Password and New Password cannot be same."})
+                    return response.json({ "status": "Old Password and New Password cannot be same." })
                 }
 
                 const validationErrors = {};
