@@ -26,8 +26,8 @@ exports.clgStaffCreate = (request, response) => {
       console.error("Error uploading image:", err);
       return response.json({ "status": "Error uploading image" });
     }
-    const clgStaffToken = request.body.token
-    key = request.body.key;
+    const clgStaffToken = request.headers.token
+    key = request.headers.key;
     console.log(clgStaffToken)
     jwt.verify(clgStaffToken, key, (err, decoded) => {
       if (decoded) {
