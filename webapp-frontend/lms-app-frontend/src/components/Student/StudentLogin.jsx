@@ -84,7 +84,7 @@ const StudentLogin = () => {
                                 <button type="button" onClick={readValue} className="btn btn-success btn-lg">Login</button>
                             </div>
                             <div className="mb-3">
-                                <p className="lead ">Don't have an account? <a href="/register">Register here</a></p>
+                                <p className="lead ">Don't have an account? <a href="/studentregistration">Register here</a></p>
                             </div>
                         </div>
 

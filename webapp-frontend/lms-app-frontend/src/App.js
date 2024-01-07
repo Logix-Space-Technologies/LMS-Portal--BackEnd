@@ -9,6 +9,7 @@ import AdminTableView from './components/Admin/AdminDashboard/AdminTableView';
 import AdminSideBar from './components/Admin/AdminDashboard/AdminSideBar';
 import StudentLogin from './components/Student/StudentLogin';
 import CollegeStaffLogin from './components/CollegeStaff/CollegeStaffLogin';
+import StudentRegistration from './components/Student/StudentRegistration';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path='/adminsidebar' element={<AdminSideBar/>}/>
             <Route path='/studentLogin' element={<StudentLogin/>} />
             <Route path='/clgStafflogin' element={<CollegeStaffLogin/>} />
+            <Route path='/studentregistration' element={<StudentRegistration/>}/>
           </Routes>
       </BrowserRouter>
     </div>
