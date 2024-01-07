@@ -1,16 +1,9 @@
 import React from 'react'
-import AdminCountView from './AdminCountView'
-import AdminTableView from './AdminTableView'
-import AdminSideBar from './AdminSideBar'
 
-const AdminNavbar = () => {
-    return (
-        <div className="container-xxl position-relative bg-white d-flex p-0">
-            {/* Admin Side Bar start */}
-            <AdminSideBar/>
-            {/* Admin SideBar End */}
-            <div className="content">
-                    <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
+const AdminHeader = () => {
+  return (
+    <div>
+        <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
                         <a href="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
                             <h2 className="text-primary mb-0">
                                 <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
@@ -52,26 +45,9 @@ const AdminNavbar = () => {
                             </div>
                         </div>
                     </nav>
-                    {/* /Count view */}
-                    <AdminCountView/>
-                    {/* Table View */}
-                    <AdminTableView/>
-                {/* Footer Start */}
-                <div className="container-fluid pt-4 px-4">
-                    <div className="bg-light rounded-top p-4">
-                        <div className="row">
-                            <div className="col-12 col-sm-6 text-center text-sm-start">
-                                &copy; 2024 Link Ur Codes. All rights reserved.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/* Footer End */}
-            </div>
-            {/* Back to Top */}
-            <a href="#" className="btn btn-lg btn-primary btn-lg-square back-to-top"><i className="bi bi-arrow-up" /></a>
-        </div>
-    )
+
+    </div>
+  )
 }
 
-export default AdminNavbar
+export default AdminHeader
