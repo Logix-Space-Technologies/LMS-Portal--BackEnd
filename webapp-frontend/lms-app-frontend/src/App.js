@@ -13,27 +13,33 @@ import AdminDashboard from './components/Admin/AdminDashboard/AdminDashboard';
 
 import StudentRegistration from './components/Student/StudentRegistration';
 import AddCollegeStaff from './components/Admin/AddCollegeStaff';
+import CollegeStaffHeader from './components/CollegeStaff/CollegeStaffDashboard/CollegeStaffHeader';
+import CollegeStaffDashboard from './components/CollegeStaff/CollegeStaffDashboard/CollegeStaffDashboard';
 
 
 function App() {
   return (
     <div>
       <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<AdminLogin/>}/>
-            <Route path='/admstafflogin' element={<AdminStaffLogin/>} />
-            <Route path='/countview' element={<AdminCountView/>}/>
-            <Route path='/admdashboard' element={<AdminDashboard/>}/>
-            <Route path='/admintableview' element={<AdminTableView/>}/>
-            <Route path='/adminsidebar' element={<AdminSideBar/>}/>
-            <Route path='/studentLogin' element={<StudentLogin/>} />
-            <Route path='/clgStafflogin' element={<CollegeStaffLogin/>} />
+        <Routes>
+          <Route path='/' element={<AdminLogin />} />
+          <Route path='/admstafflogin' element={<AdminStaffLogin />} />
+          <Route path='/countview' element={<AdminCountView />} />
+          <Route path='/admdashboard' element={<AdminDashboard />} />
+          <Route path='/admintableview' element={<AdminTableView />} />
+          <Route path='/adminsidebar' element={<AdminSideBar />} />
+          <Route path='/studentLogin' element={<StudentLogin />} />
+          <Route path='/clgStafflogin' element={<CollegeStaffLogin />} />
 
-            <Route path='/adminheader' element={<AdminHeader/>}/>
-          <Route path='/studentregistration' element={<StudentRegistration/>}/>
-            <Route path='/addcollegestaff' element={<AddCollegeStaff/>}/>
+          <Route path='/adminheader' element={<AdminHeader />} />
+          <Route path='/studentregistration' element={<StudentRegistration />} />
+          <Route path='/addcollegestaff' element={<AddCollegeStaff />} />
+          <Route path='/collegeStaffDashboard' element={<CollegeStaffDashboard />} />
+          <Route path='/collegeStaffHeader' element={<CollegeStaffHeader />} />
+          
 
-          </Routes>
+
+        </Routes>
       </BrowserRouter>
     </div>
   );
