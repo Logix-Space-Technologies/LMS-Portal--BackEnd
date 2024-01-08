@@ -536,3 +536,31 @@ exports.searchStudentsByAdmAndAdmstf = (request, response) => {
         }
     });
 };
+
+
+exports.studRegViewBatch = (request, response) => {
+    const collegeId = request.body.collegeId;
+    Student.viewBatch(collegeId, (err, data) => {
+      if (err) {
+        response.json({ "status": err });
+      }
+      if (data.length === 0) {
+        response.json({ "status": "No Batch found!" });
+      } else {
+        response.json({ "status": "success", "data": data });
+      }
+      });
+ 
+};
+
+exports.studregCollegeAllView = (request, response) => {
+    Student.collegeViewAll((err, data) => {
+        if (err) {
+            response.json({ "status": err })
+        } else {
+            response.json({ "status": "success", "data": data });
+        }
+    })
+
+
+}

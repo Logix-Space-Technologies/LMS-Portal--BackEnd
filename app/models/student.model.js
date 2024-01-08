@@ -701,6 +701,40 @@ Student.searchStudentsByAdmAndAdmstf = (search, result) => {
     );
 };
 
+Student.viewBatch = (collegeId, result) => {
+    db.query(
+        "SELECT DISTINCT b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.id = ?",
+        [collegeId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Batch Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
+
+
+Student.collegeViewAll = async (result) => {
+    let query = "SELECT * FROM college WHERE deleteStatus= 0 AND isActive= 1"
+    db.query(query, (err, response) => {
+        if (err) {
+            console.log("error: ", err)
+            result(err, null)
+            return
+        } else {
+            console.log("College: ", response)
+            result(null, response)
+        }
+    })
+}
+
+
+
 
 module.exports = { Student, Payment, Tasks, SubmitTask };
 

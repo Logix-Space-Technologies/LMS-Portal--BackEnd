@@ -168,5 +168,9 @@ router.post("/viewSuccessfulRefunds",RefundController.getSuccessfulRefunds)
 
 router.post("/searchStudentsByAdmAndAdmstf",StudentController.searchStudentsByAdmAndAdmstf)
 
+router.post("/studregviewbatch", StudentController.studRegViewBatch)
+
+router.post("/studentregviewcollege", StudentController.studregCollegeAllView)
+
 
 module.exports = router
