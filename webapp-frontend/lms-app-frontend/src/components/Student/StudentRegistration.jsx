@@ -1,12 +1,29 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import '../../config/config'
 
 const StudentRegistration = () => {
 
+  const [outputField, setOutputField] = useState({"data":[]})
+  const [batchOptions, setBatchOptions] = useState([]);
+
+  const apiUrl2 = global.config.urls.api.server + "/api/lms/studentregviewcollege"
+  const batchUrl = global.config.urls.api.server + "/api/lms/studregviewbatch";
+
+
+  const getData = () => {
+    axios.post(apiUrl2).then(
+      (response) => {
+        setOutputField(response.data)
+        console.log(response.data)
+      }
+    )
+  }
+
   const [inputField, setInputField] = useState(
     { collegeId: "", batchId: "", studName: "", admNo: "", rollNo: "", studDept: "", course: "", studEmail: "", studPhNo: "", studProfilePic: "", aadharNo: "", password: "" }
   )
+
 
   const [errors, setErrors] = useState({})
 
@@ -16,8 +33,26 @@ const StudentRegistration = () => {
     setInputField({ ...inputField, [event.target.name]: event.target.name === 'studProfilePic' ? event.target.files[0] : event.target.value });
   }
 
-  const loadRazorpayScript = async () => {
+  console.log(inputField.collegeId)
+  let cid = inputField.collegeId
+  console.log(cid)
+  const handleCollegeChange = () => {
+    let data = { "collegeId": 1 }
+    console.log(data)
+    axios.post(batchUrl, data).then((response) => {
+      console.log(response.data);  // Log the response to check its structure
+      setBatchOptions(response.data.data);
+      console.log(response.data.data.batchAmount)
+    });
+  };
 
+  let BatchAmount = "200"
+  var intValue = Number(BatchAmount)
+  console.log(BatchAmount)
+  
+  
+  const loadRazorpayScript = async () => {
+    
     const script = document.createElement('script')
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
 
@@ -27,7 +62,7 @@ const StudentRegistration = () => {
       //initialize razorpay
       const rzp = new window.Razorpay({
         key: 'rzp_test_ZqcybzHd1QkWg8',
-        amount: 3650 * 100,
+        amount: intValue * 100,
         currency: 'INR',
         name: 'Logix Space Technologies Pvt Ltd',
         description: 'Link Ur Codes Payment',
@@ -118,7 +153,7 @@ const StudentRegistration = () => {
     } else if (!/^\+91[6-9]\d{9}$|^\+91\s?[6-9]\d{9}$|^[6-9]\d{9}$/.test(data.studPhNo)) {
       errors.studPhNo = 'Invalid phone number';
     }
-  
+
     if (!data.aadharNo.trim()) {
       errors.aadharNo = 'Aadhar No is required';
     } else if (!/^\d{12}$/.test(data.aadharNo)) {
@@ -143,6 +178,9 @@ const StudentRegistration = () => {
     }
     return errors;
   };
+
+  useEffect(() => { getData() }, [])
+
   return (
     <div class="bg-light py-3 py-md-5">
       <div class="container">
@@ -161,13 +199,25 @@ const StudentRegistration = () => {
               </div>
               <div class="row gy-3 gy-md-4 overflow-hidden">
                 <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="collegeId" class="form-label">College ID <span class="text-danger">*</span></label>
-                  <input onChange={inputHandler} type="text" class="form-control" name="collegeId" value={inputField.collegeId} id="collegeId" />
+                  <label for="" class="form-label">College Name <span class="text-danger">*</span></label>
+                  <select name="collegeId" value={inputField.collegeId} id="collegeId" className="form-control" onChange={(e) => { inputHandler(e); handleCollegeChange(e); }}>
+                    <option value="">Select</option>
+                    {outputField.data.map((value, index) => {
+                      return <option value={value.id}> {value.collegeName} </option>
+                    })}
+                  </select>
                   {errors.collegeId && <span style={{ color: 'red' }} className="error">{errors.collegeId}</span>}
                 </div>
                 <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="batchId" class="form-label">Batch ID <span class="text-danger">*</span></label>
-                  <input onChange={inputHandler} type="text" class="form-control" name="batchId" value={inputField.batchId} id="batchId" />
+                  <label for="batchId" class="form-label">Batch Name <span class="text-danger">*</span></label>
+                  <select name="batchId" id="batchId" className="form-control" onChange={inputHandler} value={inputField.batchId}>
+                    <option value="">Select</option>
+                    {batchOptions.map(
+                      (value, index)=>{
+                      return <option value={value.id}> {value.batchName} </option>
+                      }
+                      )}
+                  </select>
                   {errors.batchId && <span style={{ color: 'red' }} className="error">{errors.batchId}</span>}
                 </div>
                 <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
@@ -222,7 +272,7 @@ const StudentRegistration = () => {
                   <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
                   <div class="input-group">
                     <input onChange={inputHandler} type="password" class="form-control" name="password" value={inputField.password} id="password" />
-                    
+
                   </div>
                   {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
                 </div>
@@ -230,7 +280,7 @@ const StudentRegistration = () => {
                   <label for="password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
                   <div class="input-group">
                     <input onChange={inputHandler} type="password" class="form-control" name="confirmpass" value={inputField.confirmpass} id="confirmpass" />
-                    
+
                   </div>
                   {errors.confirmpass && <span style={{ color: 'red' }} className="error">{errors.confirmpass}</span>}
                 </div>
