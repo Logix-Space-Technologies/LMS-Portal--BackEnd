@@ -13,27 +13,29 @@ import AdminDashboard from './components/Admin/AdminDashboard/AdminDashboard';
 
 import StudentRegistration from './components/Student/StudentRegistration';
 import AddCollegeStaff from './components/Admin/AddCollegeStaff';
+import AddCollege from './components/Admin/AddCollege';
 
 
 function App() {
   return (
     <div>
       <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<AdminLogin/>}/>
-            <Route path='/admstafflogin' element={<AdminStaffLogin/>} />
-            <Route path='/countview' element={<AdminCountView/>}/>
-            <Route path='/admdashboard' element={<AdminDashboard/>}/>
-            <Route path='/admintableview' element={<AdminTableView/>}/>
-            <Route path='/adminsidebar' element={<AdminSideBar/>}/>
-            <Route path='/studentLogin' element={<StudentLogin/>} />
-            <Route path='/clgStafflogin' element={<CollegeStaffLogin/>} />
+        <Routes>
+          <Route path='/' element={<AdminLogin />} />
+          <Route path='/admstafflogin' element={<AdminStaffLogin />} />
+          <Route path='/countview' element={<AdminCountView />} />
+          <Route path='/admdashboard' element={<AdminDashboard />} />
+          <Route path='/admintableview' element={<AdminTableView />} />
+          <Route path='/adminsidebar' element={<AdminSideBar />} />
+          <Route path='/studentLogin' element={<StudentLogin />} />
+          <Route path='/clgStafflogin' element={<CollegeStaffLogin />} />
 
-            <Route path='/adminheader' element={<AdminHeader/>}/>
-          <Route path='/studentregistration' element={<StudentRegistration/>}/>
-            <Route path='/addcollegestaff' element={<AddCollegeStaff/>}/>
+          <Route path='/adminheader' element={<AdminHeader />} />
+          <Route path='/studentregistration' element={<StudentRegistration />} />
+          <Route path='/addcollegestaff' element={<AddCollegeStaff />} />
+          <Route path='/addcollege' element={<AddCollege />} />
 
-          </Routes>
+        </Routes>
       </BrowserRouter>
     </div>
   );
