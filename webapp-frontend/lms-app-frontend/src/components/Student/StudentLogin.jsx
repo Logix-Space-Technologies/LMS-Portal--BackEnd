@@ -10,7 +10,7 @@ const StudentLogin = () => {
     });
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studentLogin"
-    // const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
@@ -19,12 +19,10 @@ const StudentLogin = () => {
     const readValue = () => {
         axios.post(apiUrl, inputField).then(
             (Response) => {
-                if (Response.data.status === "success") {
-                    let studtoken = Response.data.token;
-                    sessionStorage.setItem("studLoginToken", studtoken);
-                    alert(Response.data.status);
-                    // You may navigate to the student dashboard or another page here
-                    // Example: navigate('/student-dashboard');
+                if (Response.data.status === "Success") {
+                    let studtoken = Response.data.token
+                    sessionStorage.setItem("studLoginToken", studtoken)
+                    navigate('/studdashboard')
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)
