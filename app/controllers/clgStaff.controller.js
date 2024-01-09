@@ -87,6 +87,7 @@ exports.clgStaffCreate = (request, response) => {
         }
         //If Validation fails
         if (Object.keys(validationErrors).length > 0) {
+          console.log(validationErrors)
           return response.json({ "status": "Validation failed", "data": validationErrors });
         }
 
@@ -105,6 +106,8 @@ exports.clgStaffCreate = (request, response) => {
           department: request.body.department,
           password: request.body.password,
         });
+
+        console.log(clgstaff)
 
 
 
