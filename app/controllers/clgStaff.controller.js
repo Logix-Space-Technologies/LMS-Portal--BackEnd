@@ -38,6 +38,10 @@ exports.clgStaffCreate = (request, response) => {
         //Checking validations
         const validationErrors = {}
 
+        if (Validator.isEmpty(request.body.collegeId).isValid) {
+          validationErrors.id = Validator.isEmpty(request.body.collegeId).message
+        }
+
         if (Validator.isEmpty(request.body.collegeStaffName).isValid) {
           validationErrors.name = Validator.isEmpty(request.body.collegeStaffName).message
         }
