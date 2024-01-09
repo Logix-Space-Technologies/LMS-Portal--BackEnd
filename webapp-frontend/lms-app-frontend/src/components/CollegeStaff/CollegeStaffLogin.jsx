@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-// import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import '../../config/config'
 
 const CollegeStaffLogin = () => {
@@ -12,7 +12,7 @@ const CollegeStaffLogin = () => {
     )
 
     const apiUrl = global.config.urls.api.server + "/api/lms/clgStaffLogin"
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
@@ -23,8 +23,11 @@ const CollegeStaffLogin = () => {
             (response) => {
                 if (response.data.status === "Success") {
                     let clgstafftoken = response.data.token
+                    let clgStaffId = response.data.data.id
                     sessionStorage.setItem("clgstaffLogintoken", clgstafftoken)
-                    alert(response.data.status)
+                    console.log(clgStaffId)
+                    sessionStorage.setItem("clgStaffId",clgStaffId)
+                    navigate("/collegeStaffDashboard")
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.email) {
                         alert(response.data.data.email)
