@@ -61,11 +61,11 @@ exports.clgStaffCreate = (request, response) => {
           validationErrors.email = Validator.isValidEmail(request.body.email).message;
         }
         if (Validator.isEmpty(request.body.phNo).isValid) {
-          validationErrors.phNo = Validator.isEmpty(request.body.phNo).message;
+          validationErrors.mobile = Validator.isEmpty(request.body.phNo).message;
         }
 
         if (!Validator.isValidMobileNumber(request.body.phNo).isValid) {
-          validationErrors.phone = Validator.isValidMobileNumber(request.body.phNo).message;
+          validationErrors.mobile = Validator.isValidMobileNumber(request.body.phNo).message;
         }
         if (!Validator.isValidImageWith1mbConstratint(request.file).isValid) {
           validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
