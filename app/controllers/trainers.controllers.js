@@ -110,7 +110,11 @@ exports.viewTrainers = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
-                return response.json({ "status": "success", "Trainers": data });
+                if (data.length === 0) {
+                    return response.json({ "status": "No trainers are currently active" });
+                } else {
+                    return response.json({ "status": "success", "Trainers": data });
+                }
             });
         } else {
             return response.json({ "status": "Unauthorized access!!" });
