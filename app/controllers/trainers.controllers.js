@@ -180,8 +180,7 @@ exports.deleteTrainer = (request, response) => {
 
 
 
-
-
+// Code For Updating Trainer Details
 exports.trainerDetailsUpdate = (request, response) =>{
     upload(request, request, function (err) {
         if (err) {
