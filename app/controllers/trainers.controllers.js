@@ -27,7 +27,7 @@ exports.createTrainer = (request, response) => {
         }
 
         const trainerToken = request.headers.token;
-        const key = request.headers.key;
+        const key = request.headers.key; //give key of respective logins of admin and adminstaff.
         
         jwt.verify(trainerToken, key, (err, decoded) => {
             if (decoded) {
@@ -39,19 +39,19 @@ exports.createTrainer = (request, response) => {
 
                 const validationErrors = {};
 
-                if (!Validator.isEmpty(request.body.trainerName)) {
+                if (Validator.isEmpty(request.body.trainerName).isValid) {
                     validationErrors.trainerName = "Please enter your name";
                 }
-                if (!Validator.isEmpty(request.body.about)) {
+                if (Validator.isEmpty(request.body.about).isValid) {
                     validationErrors.about = "Please enter something about you";
                 }
-                if (!Validator.isEmpty(request.body.email)) {
+                if (Validator.isEmpty(request.body.email).isValid) {
                     validationErrors.email = "Please enter your email";
                 }
-                if (!Validator.isEmpty(request.body.password)) {
+                if (Validator.isEmpty(request.body.password).isValid) {
                     validationErrors.password = "Please enter your password";
                 }
-                if (!Validator.isEmpty(request.body.phoneNumber)) {
+                if (Validator.isEmpty(request.body.phoneNumber).isValid) {
                     validationErrors.phoneNumber = "Please enter your phone number";
                 }
                 if (!Validator.isValidName(request.body.trainerName).isValid) {
@@ -151,6 +151,7 @@ exports.searchTrainer = (request, response) => {
 }
 
 
+
 exports.deleteTrainer = (request, response) => {
     const trainerDeleteToken = request.headers.token;
 
@@ -180,3 +181,67 @@ exports.deleteTrainer = (request, response) => {
 
 
 
+exports.trainerDetailsUpdate = (request, response) =>{
+    upload(request, request, function (err) {
+        if (err) {
+            console.log("Error Uploading Image : ", err)
+            response.json({ "status": "Error Uploading Image." })
+        }
+        const trainerUpdateToken = request.headers.token
+        const key = request.headers.key 
+        
+        jwt.verify(trainerUpdateToken, key, (err, decoded) => {
+            if (decoded) {
+                const profilePicture = request.file ? request.file.filename : null
+                if (!request.file) {
+                    return response.json({ "status": "Image cannot be empty!!" })
+                }
+                const validationErrors = {}
+
+                if (Validator.isEmpty(request.body.trainerName).isValid) {
+                    validationErrors.trainerName = "Please enter your name";
+                }
+                if (Validator.isEmpty(request.body.about).isValid) {
+                    validationErrors.about = "Please enter something about you";
+                }
+                if (Validator.isEmpty(request.body.phoneNumber).isValid) {
+                    validationErrors.phoneNumber = "Please enter your phone number";
+                }
+                if (!Validator.isValidName(request.body.trainerName).isValid) {
+                    validationErrors.trainerName = "Please enter a valid name";
+                }
+                if (!Validator.isValidMobileNumber(request.body.phoneNumber).isValid) {
+                    validationErrors.phoneNumber = "Please enter a valid phone number";
+                }
+
+                if (Object.keys(validationErrors).length > 0) {
+                    return response.json({ "status": "Validation failed", "data": validationErrors });
+                }
+
+                const trainerUpdate = new Trainers({
+                    'id' : request.body.id,
+                    trainerName: request.body.trainerName,
+                    about: request.body.about,
+                    email: request.body.email,
+                    password: request.body.password,
+                    phoneNumber: request.body.phoneNumber,
+                    profilePicture: profilePicture,
+                });
+
+                Trainers.updateTrainer(trainerUpdate, (err, data) => {
+                    if (err) {
+                        if (err.kind === "not_found") {
+                            return response.json({ "status": "Trainer Details Not Found!!" })
+                        } else {
+                            response.json({ "status": err })
+                        }
+                    } else {
+                        return response.json({ "status": "Trainer Details Updated", "data": data })
+                    }
+                })
+            } else {
+                response.json({ "status": "Unauthorized Access!!!" })
+            }
+        })
+    })
+}
