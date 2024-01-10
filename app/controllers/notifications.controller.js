@@ -7,6 +7,7 @@ const { log } = require("console");
 
 exports.createNotifications = (request, response) => {
     const notificationToken = request.headers.token;
+    //add the appropriate key
     key=request.headers.key;
     jwt.verify(notificationToken, key, (err, decoded) => {
         if (decoded) {
