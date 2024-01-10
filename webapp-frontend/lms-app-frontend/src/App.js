@@ -15,6 +15,7 @@ import StudentRegistration from './components/Student/StudentRegistration';
 import AddCollegeStaff from './components/Admin/AddCollegeStaff';
 import CollegeStaffHeader from './components/CollegeStaff/CollegeStaffDashboard/CollegeStaffHeader';
 import CollegeStaffDashboard from './components/CollegeStaff/CollegeStaffDashboard/CollegeStaffDashboard';
+import StudentUpdateProfile from './components/Student/StudentUpdateProfile';
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
           <Route path='/addcollegestaff' element={<AddCollegeStaff />} />
           <Route path='/collegeStaffDashboard' element={<CollegeStaffDashboard />} />
           <Route path='/collegeStaffHeader' element={<CollegeStaffHeader />} />
+          <Route path='/studentupdateprofile' element={<StudentUpdateProfile />} />
           
 
 
