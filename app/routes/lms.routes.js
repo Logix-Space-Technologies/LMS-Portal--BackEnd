@@ -184,4 +184,6 @@ router.post("/generatePdf",StudentController.generateListOfBatchWiseStudents)
 
 router.post("/viewAllTrainer", TrainerController.viewTrainers)
 
+router.post("/searchTrainer", TrainerController.searchTrainer)
+
 module.exports = router

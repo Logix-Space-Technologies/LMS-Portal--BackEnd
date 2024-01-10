@@ -52,4 +52,22 @@ Trainers.viewTrainers = (result) => {
 };
 
 
+
+Trainers.searchTrainer = (search, result) => {
+    const searchTerm = '%' + search + '%'
+    db.query("SELECT id, trainerName, profilePicture, phoneNumber, email, about,addedDate,updatedDate FROM trainersinfo WHERE deleteStatus = 0 AND isActive = 1 AND (trainerName LIKE ? OR email LIKE ? OR phoneNumber LIKE ?)",
+    [searchTerm, searchTerm, searchTerm],
+    (err, res) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            result
+        } else {
+            console.log("Trainer Details : ", res)
+            result(null, res)
+        }
+    })
+}
+
+
 module.exports = Trainers;
