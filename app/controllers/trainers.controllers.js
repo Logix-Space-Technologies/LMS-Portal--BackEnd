@@ -27,7 +27,7 @@ exports.createTrainer = (request, response) => {
         }
 
         const trainerToken = request.headers.token;
-        const key = request.headers.key;
+        const key = request.headers.key; //give key of respective logins of admin and adminstaff.
         
         jwt.verify(trainerToken, key, (err, decoded) => {
             if (decoded) {
