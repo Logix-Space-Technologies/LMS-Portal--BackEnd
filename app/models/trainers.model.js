@@ -70,4 +70,34 @@ Trainers.searchTrainer = (search, result) => {
 }
 
 
+
+Trainers.deleteTrainer = (trainerId, result) => {
+    db.query("SELECT * FROM trainersinfo WHERE id = ? AND deleteStatus = 0 AND isActive = 1", trainerId, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+
+        if (res.length === 0) {
+            console.log("Trainer doesn't exist");
+            result("Trainer doesn't exist", null);
+            return;
+        }
+
+        db.query("UPDATE trainersinfo SET isActive = 0, deleteStatus = 1 WHERE id = ?", trainerId, (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+
+            console.log("Trainer deleted successfully");
+            result(null, "Trainer deleted successfully");
+        });
+    });
+};
+
+
+
 module.exports = Trainers;

@@ -186,4 +186,6 @@ router.post("/viewAllTrainer", TrainerController.viewTrainers)
 
 router.post("/searchTrainer", TrainerController.searchTrainer)
 
+router.post("/deleteTrainer", TrainerController.deleteTrainer)
+
 module.exports = router
