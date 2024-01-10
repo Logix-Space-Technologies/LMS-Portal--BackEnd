@@ -185,4 +185,32 @@ Session.viewSessions=(result)=>{
     });
 };
 
+Session.deleteSession = (sessionId, result) => {
+    db.query("SELECT * FROM sessiondetails WHERE id = ? AND deleteStatus = 0 AND isActive = 1", sessionId, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+
+        if (res.length === 0) {
+            console.log("Session doesn't exist");
+            result("Session doesn't exist", null);
+            return;
+        }
+
+        db.query("UPDATE sessiondetails SET isActive = 0, deleteStatus = 1 WHERE id = ?", sessionId, (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+
+            console.log("Session deleted successfully");
+            result(null, "Session deleted successfully");
+        });
+    });
+};
+
+
 module.exports = Session

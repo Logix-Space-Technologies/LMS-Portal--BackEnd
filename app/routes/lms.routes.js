@@ -178,4 +178,6 @@ router.post("/updateSession",SessionsController.sessionUpdate)
 
 router.post("/viewSessions",SessionsController.viewSessions)
 
+router.post("/deleteSessions",SessionsController.deleteSession)
+
 module.exports = router

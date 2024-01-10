@@ -186,3 +186,29 @@ exports.viewSessions = (request, response) => {
         }
     });
 };
+
+exports.deleteSession = (request, response) => {
+    const sessionDeleteToken = request.headers.token;
+    const key = request.headers.key;
+    jwt.verify(sessionDeleteToken, key, (err, decoded) => {
+
+        if (decoded) {
+            const sessionId = request.body.id;
+
+            if (!sessionId) {
+                return response.json({ "status": "Session ID is required" });
+            }
+
+            Session.deleteSession(sessionId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+
+                return response.json({ "status": "success", "data": data });
+            });
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
+
