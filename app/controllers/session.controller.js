@@ -4,16 +4,21 @@ const Validator = require("../config/data.validate")
 
 
 exports.createSession = (request, response) => {
-    const sessionToken = request.body.token;
-
-    jwt.verify(sessionToken, "lmsapp", (err, decoded) => {
+    const sessionToken = request.headers.token;
+    const key = request.headers.key;
+    jwt.verify(sessionToken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
 
             if (Validator.isEmpty(request.body.batchId).isValid) {
                 validationErrors.batchId = Validator.isEmpty(request.body.batchId).message;
             }
-
+            if (Validator.isEmpty(request.body.sessionName).isValid) {
+                validationErrors.sessionName = Validator.isEmpty(request.body.sessionName).message;
+            }
+            if (!Validator.isValidName(request.body.sessionName).isValid) {
+                validationErrors.sessionName = Validator.isValidName(request.body.sessionName).message;
+            }
             if (Validator.isEmpty(request.body.date).isValid) {
                 validationErrors.date = Validator.isEmpty(request.body.date).message;
             }
@@ -54,6 +59,7 @@ exports.createSession = (request, response) => {
 
             const newSession = new Session({
                 batchId: request.body.batchId,
+                sessionName: request.body.sessionName,
                 date: request.body.date.split('/').reverse().join('-'),
                 time: request.body.time,
                 type: request.body.type,
