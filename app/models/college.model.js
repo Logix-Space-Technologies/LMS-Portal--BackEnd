@@ -7,6 +7,7 @@ const { response } = require('express')
 const College = function (college) {
     this.id = college.id
     this.collegeName = college.collegeName;
+    this.collegeCode = college.collegeCode;
     this.collegeAddress = college.collegeAddress;
     this.website = college.website;
     this.email = college.email;

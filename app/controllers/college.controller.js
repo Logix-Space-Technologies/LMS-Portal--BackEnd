@@ -24,15 +24,15 @@ exports.collegeCreate = (request, response) => {
             console.error("Error uploading image:", err);
             return response.json({ "status": err });
         }
-        const collegeToken = request.body.token;
+        const collegeToken = request.headers.token;
 
         console.log(collegeToken)
 
-        const { collegeName, collegeAddress, website, email, collegePhNo, collegeMobileNumber } = request.body;
+        const { collegeName, collegeCode, collegeAddress, website, email, collegePhNo, collegeMobileNumber } = request.body;
         if (!request.file) {
             return response.json({ "status": "Please upload an image" });
         }
-        key=request.body.key
+        key=request.headers.key
         jwt.verify(collegeToken, key, (err, decoded) => {
             if (decoded) {
                 console.log("decoded", decoded);
@@ -43,6 +43,12 @@ exports.collegeCreate = (request, response) => {
                 }
                 if (!Validator.isValidName(collegeName).isValid) {
                     validationErrors.name = Validator.isValidName(collegeName).message;
+                }
+                if (Validator.isEmpty(collegeCode).isValid) {
+                    validationErrors.code = Validator.isEmpty(collegeCode).message;
+                }
+                if (!Validator.acceptOnlyCapitalLetters(collegeCode).isValid) {
+                    validationErrors.code = Validator.acceptOnlyCapitalLetters(collegeCode).message;
                 }
 
                 if (!Validator.isValidAddress(collegeAddress).isValid) {
@@ -87,6 +93,7 @@ exports.collegeCreate = (request, response) => {
 
                 const college = new College({
                     collegeName: collegeName,
+                    collegeCode : collegeCode,
                     collegeAddress: collegeAddress,
                     website: website,
                     email: email,
