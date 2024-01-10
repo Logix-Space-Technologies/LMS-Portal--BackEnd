@@ -172,11 +172,7 @@ exports.studLog = (request, response) => {
 
     Student.findByEmail(studEmail, (err, stud) => {
         if (err) {
-            if (err.kind === "not_found") {
-                return response.json({ "status": "Student does not Exist." })
-            } else {
-                return response.json({ "status": err })
-            }
+            return response.json({ "status": err })
         }
 
         const passwordMatch = bcrypt.compareSync(password, stud.password)
