@@ -121,3 +121,31 @@ exports.viewTrainers = (request, response) => {
         }
     });
 };
+
+exports.searchTrainer = (request, response) => {
+    const TrainerSearchQuery = request.body.TrainerSearchQuery
+    const TrainerSearchToken = request.headers.token
+    const key = request.headers.key;
+
+    jwt.verify(TrainerSearchToken, key, (err, decoded) =>{
+        if (decoded) {
+            if (!TrainerSearchQuery) {
+                console.log("Search Item is required.")
+                return response.json({"status" : "Search Item is required."})
+            }
+            Trainers.searchTrainer(TrainerSearchQuery, (err, data) => {
+                if (err) {
+                    response.json({"status" : err})
+                } else {
+                    if (data.length === 0) {
+                        response.json({"status" : "No Search Items Found."})
+                    } else {
+                        response.json({"status" : "Result Found", "data" : data})
+                    }
+                }
+            })
+        } else {
+            response.json({"status" : "Unauthorized User!!"})
+        }
+    })
+}
