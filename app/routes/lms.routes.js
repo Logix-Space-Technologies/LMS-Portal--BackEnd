@@ -22,6 +22,8 @@ const RefundController = require("../controllers/refund.controller")
 
 const SubmitTaskController = require("../controllers/submit_task.controller")
 
+const TrainerController = require("../controllers/trainers.controllers")
+
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
 
@@ -171,6 +173,8 @@ router.post("/searchStudentsByAdmAndAdmstf",StudentController.searchStudentsByAd
 router.post("/studregviewbatch", StudentController.studRegViewBatch)
 
 router.post("/studentregviewcollege", StudentController.studregCollegeAllView)
+
+router.post("/addTrainers", TrainerController.createTrainer)
 
 
 module.exports = router
