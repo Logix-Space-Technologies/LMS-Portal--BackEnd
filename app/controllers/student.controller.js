@@ -4,6 +4,8 @@ const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Validator = require("../config/data.validate");
+const PDFDocument = require('pdfkit-table');
+const fs = require('fs');
 
 
 const storage = multer.diskStorage({
@@ -563,4 +565,96 @@ exports.studregCollegeAllView = (request, response) => {
     })
 
 
+}
+
+
+exports.generateListOfBatchWiseStudents = (request, response) => {
+    const token = request.headers.token;
+    const key = request.headers.key;
+
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Student.generateAllBatchWiseList((err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    generatePDF(data, (pdfPath) => {
+                        response.json({ "status": "success", "data": data, "pdfPath": pdfPath });
+                    });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+}
+
+function generatePDF(data, callback) {
+    const pdfPath = 'pdfFolder/batch_wise_students_list.pdf';
+    const doc = new PDFDocument();
+    const stream = fs.createWriteStream(pdfPath);
+
+    doc.pipe(stream);
+
+    // Add main heading
+    doc.font('Helvetica-Bold').fontSize(20).text('Batch-Wise List Of Students', {
+        align: 'center',
+        underline: true,
+        margin: { top: 30, bottom: 30 },
+    });
+    doc.text('\n');
+    
+
+    // Group data by batch
+    const groupedData = groupDataByBatch(data);
+
+    // Add content to the PDF using grouped data
+    for (const batchName in groupedData) {
+        if (groupedData.hasOwnProperty(batchName)) {
+            // Batch heading
+            doc.font('Helvetica-Bold').fontSize(16).text(`Batch Name: ${batchName}`, {
+                align: 'center',
+                underline: true,
+            }).font('Helvetica').fontSize(12);
+            doc.text('\n');
+
+            const students = groupedData[batchName];
+
+            // Create table headers
+            const tableHeaders = ['Membership No','Name', 'College', 'Email', 'Dept', 'Course'];
+            const tableData = students.map(student => [student.membership_no,student.studName, student.collegeName, student.studEmail, student.studDept,student.course]);
+
+            // Draw the table
+            doc.table({
+                headers: tableHeaders,
+                rows: tableData,
+                widths: [200, 200, 200, 200],
+                align: ['left', 'left', 'left', 'left'],
+            });
+
+            doc.moveDown(); // Add a newline between batches
+        }
+    }
+
+    doc.end();
+
+    stream.on('finish', () => {
+        callback(pdfPath);
+    });
+}
+
+
+function groupDataByBatch(data) {
+    // Group data by batch name using a JavaScript object
+    const groupedData = {};
+
+    data.forEach(student => {
+        const batchName = student.batchName;
+        if (!groupedData[batchName]) {
+            groupedData[batchName] = [];
+        }
+        groupedData[batchName].push(student);
+    });
+
+    return groupedData;
 }

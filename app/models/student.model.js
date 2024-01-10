@@ -734,7 +734,28 @@ Student.collegeViewAll = async (result) => {
 }
 
 
+Student.generateAllBatchWiseList = async (result) => {
+    let query = `
+        SELECT b.batchName, s.studName, c.collegeName, s.admNo, s.studDept, s.course, 
+               s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity,s.membership_no 
+        FROM batches b 
+        JOIN student s ON b.id = s.batchId 
+        JOIN college c ON s.collegeId = c.id 
+        WHERE s.isActive = 1 AND b.isActive = 1 AND s.emailVerified = 1 
+              AND s.isVerified = 1 AND s.isPaid = 1 AND s.deleteStatus = 0 AND b.deleteStatus = 0 
+        ORDER BY c.collegeName, b.id, s.id;
+    `;
 
+    db.query(query, (err, response) => {
+        if (err) {
+            console.log("Error executing the query:", err);
+            result(err, null);
+        } else {
+            console.log("Query results:", response);
+            result(null, response);
+        }
+    });
+};
 
 module.exports = { Student, Payment, Tasks, SubmitTask };
 
