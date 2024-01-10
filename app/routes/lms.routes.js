@@ -13,6 +13,7 @@ const ClgStaffLogController  = require("../controllers/collegeStaffLog.controlle
 const AdminStaffLogController = require("../controllers/adminStaffLog.controller")
 
 
+
 const StudentController=require('../controllers/student.controller')
 
 const MaterialController=require('../controllers/material.controller')
@@ -24,6 +25,7 @@ const SubmitTaskController = require("../controllers/submit_task.controller")
 
 const TrainerController = require("../controllers/trainers.controllers")
 
+const  NotificationController = require("../controllers/notifications.controller")
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
 
@@ -175,6 +177,8 @@ router.post("/studregviewbatch", StudentController.studRegViewBatch)
 router.post("/studentregviewcollege", StudentController.studregCollegeAllView)
 
 router.post("/addTrainers", TrainerController.createTrainer)
+
+router.post("/sendNotification", NotificationController.createNotifications)
 
 
 module.exports = router
