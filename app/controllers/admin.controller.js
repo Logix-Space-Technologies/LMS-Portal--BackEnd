@@ -38,6 +38,19 @@ exports.adminLogin = (request, response) => {
 
     const getUserName = request.body.userName
     const getPassword = request.body.Password
+    const validationErrors = {}
+
+    if (Validator.isEmpty(userName).isValid) {
+        validationErrors.username = Validator.isEmpty(userName).message;
+    }
+
+    if (Validator.isEmpty(Password).isValid) {
+        validationErrors.password = Validator.isEmpty(Password).message;
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
 
     Admin.findByUserName(userName, (err, admin) => {
 
@@ -78,6 +91,9 @@ exports.adminChangePwd = (request, response) => {
                 if (err) {
                     return response.json({ status: err });
                 }
+                if (oldPassword === newPassword) {
+                    return response.json({ "status": "Old Password and New Password cannot be same." })
+                }
 
                 const validationErrors = {};
 
@@ -93,9 +109,9 @@ exports.adminChangePwd = (request, response) => {
 
                     Admin.changePassword({ userName, oldPassword, newPassword: hashedNewPassword }, (updateErr, updateResult) => {
                         if (updateErr) {
-                            return response.json({ status: updateErr });
+                            return response.json({ "status": updateErr });
                         } else {
-                            return response.json({ status: "Password Successfully Updated!!!" });
+                            return response.json({ "status": "Password Successfully Updated!!!" });
                         }
                     });
                 } else {
@@ -104,10 +120,26 @@ exports.adminChangePwd = (request, response) => {
             });
 
         } else {
-            response.json({ status: "Unauthorized User!!!" });
+            response.json({ "status": "Unauthorized User!!!" });
         }
     });
 };
 
 
+exports.adminDashBoards = (request, response) => {
+    jwt.verify(request.body.token, "lmsapp", (error, decoded) => {
+        if (decoded) {
+            Admin.adminDashBoard((err, result) => {
+                if (err) {
+                    return response.json({ status: err });
+                } else {
+                    return response.json({ "status": "Success", "data": result });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!!" });
+        }
+    });
 
+
+}
