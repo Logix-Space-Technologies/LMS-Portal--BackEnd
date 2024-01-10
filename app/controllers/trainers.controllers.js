@@ -150,6 +150,37 @@ exports.searchTrainer = (request, response) => {
     })
 }
 
+
+
+exports.deleteTrainer = (request, response) => {
+    const trainerDeleteToken = request.headers.token;
+
+    jwt.verify(trainerDeleteToken, "lmsapp", (err, decoded) => {
+
+        if (decoded) {
+            const trainerId = request.body.id;
+
+            if (!trainerId) {
+                return response.json({ "status": "Trainer ID is required" });
+            }
+
+            Trainers.deleteTrainer(trainerId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+
+                return response.json({ "status": "success", "data": data });
+            });
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
+
+
+
+
+
 exports.trainerDetailsUpdate = (request, response) =>{
     upload(request, request, function (err) {
         if (err) {

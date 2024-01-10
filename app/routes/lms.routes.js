@@ -4,7 +4,6 @@ const AdminController = require('../controllers/admin.controller')
 const CollegeController = require('../controllers/college.controller')
 const AdminStaffController = require('../controllers/adminStaff.controller')
 const ClgStaffController=require("../controllers/clgStaff.controller")
-
 const taskController = require("../controllers/task.controller");
 const studentLogController = require("../controllers/studentLog.controller");
 const BatchesController= require("../controllers/batches.controller") 
@@ -171,7 +170,10 @@ router.post("/viewAllTrainer", TrainerController.viewTrainers)
 
 router.post("/searchTrainer", TrainerController.searchTrainer)
 
+router.post("/deleteTrainer", TrainerController.deleteTrainer)
+
 router.post("/updateTrainer",TrainerController.trainerDetailsUpdate)
+
 
 
 module.exports = router
