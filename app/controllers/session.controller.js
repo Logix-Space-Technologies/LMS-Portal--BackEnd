@@ -5,7 +5,7 @@ const Validator = require("../config/data.validate")
 
 exports.createSession = (request, response) => {
     const sessionToken = request.headers.token;
-    const key = request.headers.key;
+    const key = request.headers.key; //give key of respective logins of admin and adminstaff.
     jwt.verify(sessionToken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
