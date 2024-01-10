@@ -122,6 +122,7 @@ exports.viewTrainers = (request, response) => {
     });
 };
 
+// Code For Searching Trainer Details
 exports.searchTrainer = (request, response) => {
     const TrainerSearchQuery = request.body.TrainerSearchQuery
     const TrainerSearchToken = request.headers.token
