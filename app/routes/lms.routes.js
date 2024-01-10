@@ -176,4 +176,6 @@ router.post("/updateTrainer",TrainerController.trainerDetailsUpdate)
 
 router.post("/updateSession",SessionsController.sessionUpdate)
 
+router.post("/viewSessions",SessionsController.viewSessions)
+
 module.exports = router

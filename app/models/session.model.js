@@ -170,4 +170,19 @@ Session.updateSession = (sessionUpdate, result) => {
     })
 }
 
+Session.viewSessions=(result)=>{
+    const query = "SELECT id,batchId,sessionName,date,time,type,remarks,venueORlink,trainerId,attendenceCode,addedDate, updatedDate FROM sessiondetails WHERE isActive = 1 AND deleteStatus = 0 ";
+
+    db.query(query, (err, res)=>{
+        if (err) {
+            console.log("error: ", res);
+            result(err,null)
+            return;
+        }
+
+        console.log("session: ", res);
+        result(null , res);
+    });
+};
+
 module.exports = Session
