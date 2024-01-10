@@ -7,22 +7,16 @@ const ClgStaffController=require("../controllers/clgStaff.controller")
 
 const taskController = require("../controllers/task.controller");
 const studentLogController = require("../controllers/studentLog.controller");
-
 const BatchesController= require("../controllers/batches.controller") 
 const ClgStaffLogController  = require("../controllers/collegeStaffLog.controller")
 const AdminStaffLogController = require("../controllers/adminStaffLog.controller")
-
-
 const StudentController=require('../controllers/student.controller')
-
 const MaterialController=require('../controllers/material.controller')
-
-
 const RefundController = require("../controllers/refund.controller")
-
 const SubmitTaskController = require("../controllers/submit_task.controller")
-
 const SessionsController = require('../controllers/session.controller');
+const TrainerController = require("../controllers/trainers.controllers")
+const  NotificationController = require("../controllers/notifications.controller")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -59,14 +53,11 @@ router.post("/viewAllBatches",BatchesController.batchView)
 
 router.post("/updateAdminStaff",AdminStaffController.adminStaffUpdate)
 
-
 router.post("/searchBatch",BatchesController.searchBatch)
-
 
 router.post("/addtask", taskController.createTask);
 
 router.post("/updatetask", taskController.taskUpdate);
-
 
 router.post("/deleteTask",taskController.taskDelete)
 
@@ -86,7 +77,6 @@ router.post("/viewalladmstafflog",AdminStaffLogController.viewAdminStaffLog)
 
 router.post("/searchTasks",taskController.searchTask)
 
-
 router.post("/clgStaffLogin",ClgStaffController.collegeStaffLogin)
 
 router.post("/studreg",StudentController.createStudent)
@@ -99,14 +89,11 @@ router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
 router.post("/AddMaterials",MaterialController.createMaterial)
 
-
 router.post("/CollegeStaffViewBatch", ClgStaffController.collegeStaffViewBatch)
 
 router.post("/searchStudent",ClgStaffController.searchStudentByCollegeId)
 
-
 router.post("/refundRequest",RefundController.createRefundRequest)
-
 
 router.post("/adminStaffChangePassword",AdminStaffController.adminStaffChangePswd)
 
@@ -140,7 +127,6 @@ router.post("/viewAllStudByAdmin",StudentController.viewAllStudsByAdmin)
 
 router.post("/viewStudentLog",studentLogController.viewStudentLog)
 
-
 router.post('/tasksubmissionByStudent', StudentController.taskSubmissionByStudent);
 
 router.post("/clgStaffSearchBatch",ClgStaffController.clgStaffSearchBatches)
@@ -161,7 +147,6 @@ router.post("/admStaffRefundApproval",RefundController.approveRefundRequest)
 
 router.post("/refundamntrcvdstatus",StudentController.refundAmountReceivedStatus)
 
-
 router.post("/cancelRefundRequest",RefundController.cancelRefundRequest)
 
 router.post("/rejectRefund",RefundController.rejectRefundRequest)
@@ -175,5 +160,16 @@ router.post("/studregviewbatch", StudentController.studRegViewBatch)
 router.post("/studentregviewcollege", StudentController.studregCollegeAllView)
 
 router.post('/createsession', SessionsController.createSession);
+
+router.post("/addTrainers", TrainerController.createTrainer)
+
+router.post("/sendNotification", NotificationController.createNotifications)
+
+router.post("/generatePdf",StudentController.generateListOfBatchWiseStudents)
+
+router.post("/viewAllTrainer", TrainerController.viewTrainers)
+
+router.post("/searchTrainer", TrainerController.searchTrainer)
+
 
 module.exports = router
