@@ -137,4 +137,37 @@ Session.createSession = (newSession, result) => {
 
 };
 
+Session.updateSession = (sessionUpdate, result) => {
+    //Check If Session Exists
+    db.query("SELECT * FROM sessiondetails WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+        [sessionUpdate.id],
+        (sessionErr, sessionRes) => {
+            if (sessionErr) {
+                console.log("Error Checking Session Details : ", sessionErr)
+                result(sessionErr, null)
+                return
+            } else {
+                if (sessionRes.length === 0) {
+                    console.log("Session Details Not Found")
+                    result("Session Details Not Found", null)
+                    return 
+                } else {
+                    db.query("UPDATE sessiondetails SET sessionName = ?, date = ?, time = ?, type = ?, remarks = ?, venueORlink = ?, trainerId = ?, updatedDate = CURRENT_DATE() WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+                    [sessionUpdate.sessionName, sessionUpdate.date, sessionUpdate.time, sessionUpdate.type, sessionUpdate.remarks, sessionUpdate.venueORlink, sessionUpdate.trainerId, sessionUpdate.id],
+                    (err,res)=>{
+                        if (err) {
+                            console.log("Error : ", err)
+                            result(err, null)
+                            return
+                        }
+                        console.log("Updated Session Details : ", { id: sessionUpdate.id, ...sessionUpdate })
+                        result(null, { id: sessionUpdate.id, ...sessionUpdate })
+                    })
+                }
+
+            }
+
+    })
+}
+
 module.exports = Session
