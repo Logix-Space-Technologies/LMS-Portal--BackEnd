@@ -36,4 +36,20 @@ Trainers.create = (newTrainer, result) => {
     });
 };
 
+Trainers.viewTrainers = (result) => {
+    const query = "SELECT id, trainerName, profilePicture, about, phoneNumber, email,addedDate, updatedDate FROM trainersinfo WHERE isActive = 1 AND deleteStatus = 0";
+
+    db.query(query, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+
+        console.log("trainers: ", res);
+        result(null, res);
+    });
+};
+
+
 module.exports = Trainers;

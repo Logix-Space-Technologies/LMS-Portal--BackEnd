@@ -182,4 +182,6 @@ router.post("/sendNotification", NotificationController.createNotifications)
 
 router.post("/generatePdf",StudentController.generateListOfBatchWiseStudents)
 
+router.post("/viewAllTrainer", TrainerController.viewTrainers)
+
 module.exports = router
