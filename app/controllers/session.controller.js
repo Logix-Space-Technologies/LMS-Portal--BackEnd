@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Session = require("../models/session.model");
-const Validator = require("../config/data.validate")
+const Validator = require("../config/data.validate");
+const { request } = require("express");
 
 
 exports.createSession = (request, response) => {
@@ -135,7 +136,7 @@ exports.sessionUpdate = (request, response) => {
 
             if (Object.keys(validationErrors).length > 0) {
                 return response.json({ "status": "Validation failed", "data": validationErrors })
-            } 
+            }
 
             const upSession = new Session({
                 'id': request.body.id,
@@ -148,7 +149,7 @@ exports.sessionUpdate = (request, response) => {
                 trainerId: request.body.trainerId
             })
 
-            Session.updateSession(upSession, (err,data)=>{
+            Session.updateSession(upSession, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
@@ -161,3 +162,27 @@ exports.sessionUpdate = (request, response) => {
 
     })
 }
+
+// code to view sessions
+exports.viewSessions = (request, response) => {
+    const sessionToken = request.headers.token;
+    const key = request.headers.key;
+
+    jwt.verify(sessionToken, key, (err, decoded) => {
+        if (decoded) {
+            Session.viewSessions((err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No sessions are currently active" });
+                } else {
+                    return response.json({ "status": "success", "Sessions": data });
+                }
+            });
+
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
