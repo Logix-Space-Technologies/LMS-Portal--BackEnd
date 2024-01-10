@@ -2,6 +2,7 @@ const db = require('../models/db');
 const { response } = require('express');
 
 const Trainers = function (trainers) {
+    this.id = trainers.id
     this.trainerName = trainers.trainerName;
     this.about = trainers.about;
     this.email = trainers.email;
@@ -69,5 +70,33 @@ Trainers.searchTrainer = (search, result) => {
     })
 }
 
+Trainers.updateTrainer = (trainerUpdate, result) => {
+    //Check if Trainer Exists
+    db.query("SELECT * FROM trainersinfo WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [trainerUpdate.id], (trainerErr, trainerRes) => {
+        if (trainerErr) {
+            console.log("Error Checking Trainer Details : ", trainerErr)
+            result(trainerErr, null)
+            return
+        } else {
+            if (trainerRes.length === 0) {
+                console.log("Trainer Details Not Found")
+                result("Trainer Details Not Found", null)
+                return
+            } else {
+                db.query("UPDATE trainersinfo SET trainerName = ?, profilePicture = ?, about = ?, phoneNumber = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+                    [trainerUpdate.trainerName, trainerUpdate.profilePicture, trainerUpdate.about, trainerUpdate.phoneNumber, trainerUpdate.id],
+                    (err, res) => {
+                        if (err) {
+                            console.log("Error : ", err)
+                            result(err, null)
+                            return
+                        }
+                        console.log("Updated Trainer Details : ", { id: trainerUpdate.id, ...trainerUpdate })
+                        result(null, { id: trainerUpdate.id, ...trainerUpdate })
+                    })
+            }
+        }
+    })
+}
 
 module.exports = Trainers;

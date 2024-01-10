@@ -171,5 +171,7 @@ router.post("/viewAllTrainer", TrainerController.viewTrainers)
 
 router.post("/searchTrainer", TrainerController.searchTrainer)
 
+router.post("/updateTrainer",TrainerController.trainerDetailsUpdate)
+
 
 module.exports = router
