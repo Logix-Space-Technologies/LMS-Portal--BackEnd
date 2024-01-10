@@ -275,5 +275,105 @@ CollegeStaff.viewStudent = (collegeId, result) => {
     );
 };
 
+CollegeStaff.viewTask=(collegeId,result)=>{
+    db.query( "SELECT DISTINCT cs.collegeId, t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, t.addedDate FROM task t JOIN batches b ON t.batchId = b.id JOIN college_staff cs ON b.collegeId = cs.collegeId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.collegeId = 1",[collegeId],(err,res)=>{
+        if(err){
+            console.log("error: ",err)
+            result(err,null)
+            return
+        }else {
+            console.log("Task details",res)
+            result(null,res)
+        }
+    })
+}
+
+
+CollegeStaff.verifyStudent = (collegeStaffId, studentId, result) => {
+    const associationQuery = "SELECT * FROM student s JOIN college_staff c ON s.collegeId = c.collegeId WHERE s.id = ? AND c.id = ? AND s.deleteStatus = 0 AND s.isActive = 1";
+
+    db.query(associationQuery, [studentId, collegeStaffId], (assocErr, assocRes) => {
+        if (assocErr) {
+            console.error("Error checking CollegeStaff and Student association: ", assocErr);
+            result(assocErr, null);
+            return;
+        }
+
+        if (assocRes.length === 0) {
+            result("CollegeStaff and Student are not associated", null);
+            return;
+        }
+
+        const verificationQuery = "SELECT * FROM student WHERE id = ? AND isVerified = 1";
+
+        db.query(verificationQuery, [studentId], (verifErr, verifRes) => {
+            if (verifErr) {
+                console.error("Error checking student verification status: ", verifErr);
+                result(verifErr, null);
+                return;
+            }
+
+            if (verifRes.length > 0) {
+                result("Student is already verified", null);
+                return;
+            }
+
+            const updateQuery = "UPDATE student SET isVerified = 1 WHERE id = ?";
+
+            db.query(updateQuery, [studentId], (updateErr, updateRes) => {
+                if (updateErr) {
+                    console.error("Error updating student verification status: ", updateErr);
+                    result(updateErr, null);
+                    return;
+                }
+
+                result(null, "Student verification successful");
+            });
+        });
+    });
+};
+
+
+//College Staff Search Batches
+CollegeStaff.collegeStaffSearchBatch = (searchTerm, collegeId, result) => {
+    const clgStaffSearchBatchQuery = '%' + searchTerm + '%'
+    db.query("SELECT DISTINCT c.collegeName, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college c ON b.collegeId = c.id JOIN college_staff cs ON c.id = cs.collegeId WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.emailVerified = 1 AND cs.collegeId = ? AND (b.batchName LIKE ? OR b.batchDesc LIKE ?)", 
+    [collegeId, clgStaffSearchBatchQuery, clgStaffSearchBatchQuery, clgStaffSearchBatchQuery], 
+    (err, res) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            return
+        } else {
+            console.log("Batches : ", res)
+            result(null, res)
+        }
+    })
+}
+
+
+CollegeStaff.viewCollegeStaffProfile = (id, result) => {
+    if (!id) {
+        return result("Invalid college staff ID");
+    }
+
+    const query = `
+        SELECT cs.collegeId, cs.collegeStaffName, c.collegeName, cs.profilePic, cs.department, cs.email, cs.phNo, cs.aadharNo, cs.clgStaffAddress 
+        FROM college_staff cs 
+        JOIN college c ON cs.collegeId = c.id 
+        WHERE cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.emailVerified = 1 AND c.emailVerified = 1 AND c.isActive = 1 AND c.deleteStatus = 0 AND cs.id = ?`;
+
+    db.query(query, [id], (err, res) => {
+        if (err) {
+            console.error("Error while fetching profile:", err);
+            return result("Internal Server Error");
+        }
+
+        result(res.length ? null : "College staff profile not found", res[0]);
+    });
+};
+
+
+
 
 module.exports = CollegeStaff

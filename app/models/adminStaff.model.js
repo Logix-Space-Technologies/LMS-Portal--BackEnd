@@ -180,8 +180,8 @@ AdminStaff.adminStaffSearch = (search, result) => {
         });
 };
 
-AdminStaff.findByEmail = (email , result)=>{
-    db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND isActive=1 AND deleteStatus=0 ",email, (err,res)=>{
+AdminStaff.findByEmail = (email, result) => {
+    db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND isActive=1 AND deleteStatus=0 ", email, (err, res) => {
 
         if (err) {
             console.log("Error : ", err)
@@ -214,7 +214,7 @@ AdminStaff.asChangePassword = (adsf, result) => {
 
             // Compare the hashed old password with the provided old password
             if (bcrypt.compareSync(adsf.oldAdSfPassword, hashedOldPassword)) {
-                const updateAstaffPasswordQuery = "UPDATE admin_staff SET Password = ?, updateStatus = 1 WHERE Email = ? AND deleteStatus = 0 AND isActive = 1"
+                const updateAstaffPasswordQuery = "UPDATE admin_staff SET Password = ?, updateStatus = 1, pwdUpdateStatus = 1, updatedDate = CURRENT_DATE() WHERE Email = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1"
                 const hashedNewPassword = bcrypt.hashSync(adsf.newAdSfPassword, 10)
 
                 db.query(updateAstaffPasswordQuery, [hashedNewPassword, adsf.Email], (updateErr) => {
@@ -230,41 +230,10 @@ AdminStaff.asChangePassword = (adsf, result) => {
                 result(null, { "status": "Incorrect Old Password!!!" })
             }
         } else {
-            result(null, { "status": "User Not Found!!!" })
+            result(null, { "status": "Admin Staff Not Found!!!" })
         }
     })
 }
-
-
-
-AdminStaff.collegeStaffDelete = async (collegeStaffId, result) => {
-    db.query("SELECT * FROM college_staff WHERE deleteStatus = 0 AND isActive = 1 AND id=?", [collegeStaffId.id], (collegeStaffErr, collegeStaffRes) => {
-        if (collegeStaffErr) {
-            console.error("Error Checking college staff", collegeStaffErr)
-            return result(collegeStaffErr, null);
-        }
-
-        if (collegeStaffRes.length === 0) {
-            console.log("College staff does not exist or inactive/deleted");
-            return result("College staff does not exist or is inactive/deleted", null);
-        }
-
-        db.query("UPDATE college_staff SET isActive=0, deleteStatus=1 WHERE id=? AND isActive = 1 AND deleteStatus = 0", [collegeStaffId.id], (err, res) => {
-            if (err) {
-                console.error("error: ", err);
-                result(err, null);
-                return;
-            }
-            if (res.affectedRows === 0) {
-                result({ kind: "not_found" }, null);
-                return;
-            }
-
-            console.log("Delete college staff with id: ", { id: collegeStaffId.id });
-            result(null, { id: collegeStaffId.id });
-        });
-    });
-};
 
 
 AdminStaff.searchCollegesByAdminStaff = (search, result) => {
@@ -282,6 +251,46 @@ AdminStaff.searchCollegesByAdminStaff = (search, result) => {
         });
 };
 
+
+AdminStaff.viewAdminStaffProfile = (id, result) => {
+    if (!id) {
+        return result("Invalid college staff ID");
+    }
+
+    const query = `
+        SELECT a.id, a.AdStaffName, a.PhNo, a.Address, a.AadharNo, a.Email
+        FROM admin_staff a
+        WHERE a.deleteStatus = 0 AND a.isActive = 1 AND a.emailVerified = 1 AND a.id = ?`;
+
+    db.query(query, [id], (err, res) => {
+        if (err) {
+            console.error("Error while fetching profile:", err);
+            return result("Internal Server Error");
+        }
+
+        result(res.length ? null : "Admin staff profile not found", res[0]);
+    });
+};
+
+
+// View Submitted Tasks By AdminStaff
+AdminStaff.viewSubmittedTask = (result) => {
+    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, t.taskTitle, t.dueDate, st.gitLink, st.remarks, st.subDate, st.evalDate, st.lateSubDate, st.evaluatorRemarks, st.score FROM submit_task st JOIN task t ON st.taskId = t.id JOIN student s ON st.studId = s.id JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.validity > CURRENT_DATE() AND s.isVerified = 1 AND s.isActive = 1 AND s.emailVerified = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1",
+        (err, res) => {
+            if (err) {
+                console.log("Error Viewing Submitted Tasks : ", err)
+                result(err, null)
+                return
+            }
+
+            if (res.length === 0) {
+                console.log("No Submitted Tasks Found.")
+                result("No Submitted Tasks Found.", null)
+                return
+            }
+            result(null, res)
+        })
+}
 
 
 module.exports = AdminStaff

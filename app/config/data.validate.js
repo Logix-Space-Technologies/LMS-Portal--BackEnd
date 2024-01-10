@@ -4,9 +4,17 @@ const path = require('path');
 function isEmpty(value) {
     return {
         isValid: (value === null || value === ""),
-        message: "Value cannot be empty."
+        message: "Field cannot be empty."
     };
 }
+
+function isValidGitLink(gitLink) {
+    return {
+        isValid: /^https:\/\/github\.com\/[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/i.test(gitLink),
+        message: "Invalid Git Link"
+    };
+}
+
 
 
 function isValidPhoneNumber(phoneNumber) {
@@ -235,5 +243,6 @@ module.exports = {
     isDateGreaterThanToday,
     isValidFile,
     isDate1GreaterThanDate2,
-    isValidAadharNumberUpdate
+    isValidAadharNumberUpdate,
+    isValidGitLink
 };

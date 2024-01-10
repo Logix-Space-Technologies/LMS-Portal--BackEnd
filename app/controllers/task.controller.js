@@ -32,8 +32,9 @@ exports.createTask = (request, response) => {
         console.log(dueDate)
         const taskToken = request.body.token
         console.log(taskToken)
+        key = request.body.key
 
-        jwt.verify(taskToken, "lmsapp", (err, decoded) => {
+        jwt.verify(taskToken, key, (err, decoded) => {
             if (decoded) {
 
                 const validationErrors = {};
@@ -148,12 +149,12 @@ exports.taskUpdate = (request, response) => {
             return response.json({ "status": err });
         }
 
-        const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = request.body;
+        const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate,key } = request.body;
 
         const updateTasktoken = request.body.token;
         console.log(updateTasktoken)
 
-        jwt.verify(updateTasktoken, "lmsapp", (error, decoded) => {
+        jwt.verify(updateTasktoken,key, (error, decoded) => {
             if (decoded) {
 
                 const validationErrors = {};
@@ -234,13 +235,14 @@ exports.taskUpdate = (request, response) => {
 
 exports.taskView = (request, response) => {
     const taskToken = request.body.token
-    jwt.verify(taskToken, "lmsapp", (err, decoded) => {
+    key = request.body.key
+    jwt.verify(taskToken, key, (err, decoded) => {
         if (decoded) {
             Tasks.taskView((err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 }
-                if (data.length === 0) {
+                if (data.length == 0) {
                     response.json({ "status": "No tasks found!" });
                 }
                 else {
@@ -256,7 +258,8 @@ exports.taskView = (request, response) => {
 exports.searchTask = (request, response) => {
     const taskQuery = request.body.taskQuery;
     const taskSearchToken = request.body.token;
-    jwt.verify(taskSearchToken, "lmsapp", (err, decoded) => {
+    key=request.body.key
+    jwt.verify(taskSearchToken, key, (err, decoded) => {
         if(!taskQuery){
             return response.json({"status":"Provide a search query"})
         }
@@ -266,9 +269,35 @@ exports.searchTask = (request, response) => {
                     response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ status: "No Search Items Found" });
+                        response.json({ "status": "No Search Items Found" });
                     } else {
-                        response.json({ status: "success", "data": data });
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
+
+exports.collegeStaffSearchTasks = (request, response) => {
+    const taskQuery = request.body.taskQuery;
+    const AdStafftaskSearchToken = request.body.token;
+    const collegeId = request.body.collegeId;
+    jwt.verify(AdStafftaskSearchToken, "lmsappclgstaff", (err, decoded) => {
+        if(!taskQuery){
+            return response.json({"status":"Provide a search query"})
+        }
+        if (decoded) {
+            Tasks.collegeStaffSearchTasks(taskQuery, collegeId,(err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No Search Items Found" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
                     }
                 }
             });

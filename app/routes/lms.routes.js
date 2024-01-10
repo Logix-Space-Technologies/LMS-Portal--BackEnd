@@ -6,13 +6,22 @@ const AdminStaffController = require('../controllers/adminStaff.controller')
 const ClgStaffController=require("../controllers/clgStaff.controller")
 
 const taskController = require("../controllers/task.controller");
+const studentLogController = require("../controllers/studentLog.controller");
 
 const BatchesController= require("../controllers/batches.controller") 
 const ClgStaffLogController  = require("../controllers/collegeStaffLog.controller")
 const AdminStaffLogController = require("../controllers/adminStaffLog.controller")
 
+
 const StudentController=require('../controllers/student.controller')
+
+const MaterialController=require('../controllers/material.controller')
+
+
 const RefundController = require("../controllers/refund.controller")
+
+const SubmitTaskController = require("../controllers/submit_task.controller")
+
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
 
@@ -86,6 +95,8 @@ router.post("/studentLogin",StudentController.studLog)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
 
+router.post("/AddMaterials",MaterialController.createMaterial)
+
 
 router.post("/CollegeStaffViewBatch", ClgStaffController.collegeStaffViewBatch)
 
@@ -103,9 +114,63 @@ router.post("/studentChangePassword",StudentController.StdChangePassword)
 
 router.post("/collegeStaffChangePassword",ClgStaffController.collegeStaffChangePassword)
 
-router.post('/deleteCollegeStaffByAdminStaff', AdminStaffController.collegeStaffDelete)
-
 router.post("/searchcollegesByAdminStaff", AdminStaffController.searchCollegesByAdminStaff)
+
+router.post("/studentViewProfile",StudentController.studentViewProfile)
+
+router.post("/studentUpdateProfile",StudentController.profileUpdateStudent)
+
+router.post("/searchMaterial",MaterialController.searchMaterial)
+
+router.post("/getAllRefundRequests",RefundController.getRefundRequests)
+
+router.post("/clgstaffviewtask",ClgStaffController.clgStaffViewTask)
+
+router.post("/studentverificationbyCollegeStaff", ClgStaffController.studentVerificationByCollegeStaff)
+
+router.post("/unverifiedStudents", StudentController.viewUnverifiedStudents)
+
+router.post("/collegeStaffSearchTasks",taskController.collegeStaffSearchTasks)
+
+router.post("/adminDashboard", AdminController.adminDashBoards);
+
+router.post("/viewAllStudByAdmin",StudentController.viewAllStudsByAdmin)
+
+router.post("/viewStudentLog",studentLogController.viewStudentLog)
+
+
+router.post('/tasksubmissionByStudent', StudentController.taskSubmissionByStudent);
+
+router.post("/clgStaffSearchBatch",ClgStaffController.clgStaffSearchBatches)
+
+router.post("/evaluateTask",SubmitTaskController.evaluateTask)
+
+router.post("/viewRefundStatus",RefundController.getRefundStatus)
+
+router.post("/studentViewEvaluatedTask",StudentController.viewEvaluatedTasks)
+
+router.post("/profileViewByCollegeStaff",ClgStaffController.viewCollegeStaffProfile);
+
+router.post("/profileViewByAdmStaff",AdminStaffController.viewAdminStaffProfile)
+
+router.post("/adSfViewSubmittedTask",AdminStaffController.adsfViewSubmttedTask)
+
+router.post("/admStaffRefundApproval",RefundController.approveRefundRequest)
+
+router.post("/refundamntrcvdstatus",StudentController.refundAmountReceivedStatus)
+
+
+router.post("/cancelRefundRequest",RefundController.cancelRefundRequest)
+
+router.post("/rejectRefund",RefundController.rejectRefundRequest)
+
+router.post("/viewSuccessfulRefunds",RefundController.getSuccessfulRefunds)
+
+router.post("/searchStudentsByAdmAndAdmstf",StudentController.searchStudentsByAdmAndAdmstf)
+
+router.post("/studregviewbatch", StudentController.studRegViewBatch)
+
+router.post("/studentregviewcollege", StudentController.studregCollegeAllView)
 
 
 module.exports = router
