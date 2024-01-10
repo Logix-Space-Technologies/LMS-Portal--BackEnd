@@ -224,6 +224,14 @@ function isValidAadharNumberUpdate(aadharNumber) {
     };
 }
 
+function acceptOnlyCapitalLetters(value) {
+    return {
+        isValid: /^[A-Z]*$/.test(value),
+        message: "Invalid Code. It must contain only CAPITAL letters."
+    };
+}
+
+
 
 
 module.exports = {
@@ -244,5 +252,6 @@ module.exports = {
     isValidFile,
     isDate1GreaterThanDate2,
     isValidAadharNumberUpdate,
-    isValidGitLink
+    isValidGitLink,
+    acceptOnlyCapitalLetters
 };

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import '../../config/config'
 import React, { useState } from 'react'
 
 const AddCollege = () => {
@@ -6,21 +7,101 @@ const AddCollege = () => {
   const [inputField, setInputField] = useState(
     {
       "collegeName": "",
+      "collegeCode" : "",
       "collegeAddress": "",
       "website": "",
       "email": "",
       "collegePhNo": "",
       "collegeMobileNumber": "",
-      "collegeImage": ""
     }
   )
+
+  const [file, setFile] = useState(null)
+
+  const fileUploadHandler = (event) => {
+    setFile(event.target.files[0])
+  }
 
   const [errors, setErrors] = useState({})
 
   const apiUrl = global.config.urls.api.server + "/api/lms/addCollege"
 
   const inputHandler = (event) => {
-    setInputField({ ...inputField, [event.target.name]: event.target.name === 'collegeImage' ? event.target.files[0] : event.target.value });
+    setInputField({ ...inputField, [event.target.name]: event.target.value });
+  }
+
+  const handleSubmit = (e) => {
+    console.log(inputField)
+    console.log(file)
+    e.preventDefault()
+    const validationErrors = validateForm(inputField)
+    console.log(validationErrors)
+    if (Object.keys(validationErrors).length === 0) {
+      let axiosConfig = {
+        headers: {
+          "content-type": "multipart/form-data",
+          "Access-Control-Allow-Origin": "*",
+          "token": sessionStorage.getItem("admtoken"),
+          "key": "lmsapp"
+        }
+      }
+      let data = {
+        "collegeName": inputField.collegeName,
+        "collegeCode" : inputField.collegeCode,
+        "collegeAddress": inputField.collegeAddress,
+        "website": inputField.website,
+        "email": inputField.email,
+        "collegePhNo": inputField.collegePhNo,
+        "collegeMobileNumber": inputField.collegeMobileNumber,
+        "collegeImage": file
+      }
+      console.log(data)
+      axios.post(apiUrl, data, axiosConfig).then(
+        (response) => {
+          if (response.data.status === "success") {
+            alert(response.data.status)
+            setInputField({ "collegeName": "","collegeCode" : "", "collegeAddress": "", "website": "", "email": "", "collegePhNo": "", "collegeMobileNumber": "" })
+            setFile(null)
+          } else {
+            if (response.data.status === "Validation failed" && response.data.data.image) {
+              alert(response.data.data.image)
+            } else {
+              if (response.data.status === "Validation failed" && response.data.data.name) {
+                alert(response.data.data.name)
+              } else {
+                if (response.data.status === "Validation failed" && response.data.data.address) {
+                  alert(response.data.data.address)
+                } else {
+                  if (response.data.status === "Validation failed" && response.data.data.website) {
+                    alert(response.data.data.website)
+                  } else {
+                    if (response.data.status === "Validation failed" && response.data.data.email) {
+                      alert(response.data.data.email)
+                    } else {
+                      if (response.data.status === "Validation failed" && response.data.data.phone) {
+                        alert(response.data.data.phone)
+                      } else {
+                        if (response.data.status === "Validation failed" && response.data.data.mobile) {
+                          alert(response.data.data.mobile)
+                        } else {
+                          if (response.data.status === "Validation failed" && response.data.data.code) {
+                            alert(response.data.data.code)
+                          } else {
+                            alert(response.data.status)
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      )
+    } else {
+      setErrors(validationErrors);
+    }
   }
 
   const validateForm = (data) => {
@@ -28,6 +109,9 @@ const AddCollege = () => {
 
     if (!data.collegeName.trim()) {
       errors.collegeName = 'College Name is required';
+    }
+    if (!data.collegeCode.trim()) {
+      errors.collegeCode = 'College Code is required';
     }
     if (!data.collegeAddress.trim()) {
       errors.collegeAddress = 'College Address is required';
@@ -47,66 +131,11 @@ const AddCollege = () => {
     } else if (!/^\+91[6-9]\d{9}$|^\+91\s?[6-9]\d{9}$|^[6-9]\d{9}$/.test(data.collegeMobileNumber)) {
       errors.collegeMobileNumber = 'Invalid Mobile Number Format';
     }
-    if (!data.collegeImage) {
-      errors.collegeImage = 'College Image Field is required';
-    }
+    // if (!data.collegeImage) {
+    //   errors.collegeImage = 'College Image Field is required';
+    // }
     return errors;
   };
-
-  const handleSubmit = () => {
-    const validationErrors = validateForm(inputField)
-    console.log(validationErrors)
-    if (Object.keys(validationErrors).length === 0) {
-      axios.post(apiUrl, inputField).then(
-        (response) => {
-          if (response.data.status === "success") {
-            alert(response.data.status)
-            setInputField({
-              "collegeName": "",
-              "collegeAddress": "",
-              "website": "",
-              "email": "",
-              "collegePhNo": "",
-              "collegeMobileNumber": "",
-              "collegeImage": ""
-            })
-          } else {
-            if (response.data.status === "Validation failed" && response.data.data.collegeImage) {
-              alert(response.data.collegeImage)
-            } else {
-              if (response.data.status === "Validation failed" && response.data.data.collegeName) {
-                alert(response.data.collegeName)
-              } else {
-                if (response.data.status === "Validation failed" && response.data.data.collegeAddress) {
-                  alert(response.data.collegeAddress)
-                } else {
-                  if (response.data.status === "Validation failed" && response.data.data.website) {
-                    alert(response.data.website)
-                  } else {
-                    if (response.data.status === "Validation failed" && response.data.data.email) {
-                      alert(response.data.email)
-                    } else {
-                      if (response.data.status === "Validation failed" && response.data.data.collegePhNo) {
-                        alert(response.data.collegePhNo)
-                      } else {
-                        if (response.data.status === "Validation failed" && response.data.data.collegeMobileNumber) {
-                          alert(response.data.collegeMobileNumber)
-                        } else {
-                          alert(response.data.status)
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      )
-    } else {
-      setErrors(validationErrors);
-    }
-  }
 
   return (
     <div class="bg-light py-3 py-md-5">
@@ -125,10 +154,15 @@ const AddCollege = () => {
                 </div>
               </div>
               <div class="row gy-3 gy-md-4 overflow-hidden">
-                <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                   <label for="" class="form-label">College Name <span class="text-danger">*</span></label>
                   <input onChange={inputHandler} type="text" class="form-control" name="collegeName" value={inputField.collegeName} id="collegeName" />
                   {errors.collegeName && <span style={{ color: 'red' }} className="error">{errors.collegeName}</span>}
+                </div>
+                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label for="" class="form-label">College Code <span class="text-danger">*</span></label>
+                  <input onChange={inputHandler} type="text" class="form-control" name="collegeCode" value={inputField.collegeCode} id="collegeCode" />
+                  {errors.collegeCode && <span style={{ color: 'red' }} className="error">{errors.collegeCode}</span>}
                 </div>
                 <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                   <label for="" class="form-label">College Address <span class="text-danger">*</span></label>
@@ -155,11 +189,11 @@ const AddCollege = () => {
                   <input onChange={inputHandler} type="text" class="form-control" name="collegeMobileNumber" value={inputField.collegeMobileNumber} id="collegeMobileNumber" />
                   {errors.collegeMobileNumber && <span style={{ color: 'red' }} className="error">{errors.collegeMobileNumber}</span>}
                 </div>
-                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="" className="form-label">
+                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                  <label htmlFor="collegeImage" className="form-label">
                     College Image <span className="text-danger">*</span>
                   </label>
-                  <input onChange={inputHandler} type="file" className="form-control" name="collegeImage" id="collegeImage" accept="image/*" />
+                  <input type="file" className="form-control" name="collegeImage" id="collegeImage" accept="image/*"  onChange={fileUploadHandler}/>
                   {errors.collegeImage && <span style={{ color: 'red' }} className="error">{errors.collegeImage}</span>}
                 </div>
                 <div class="col-12">
@@ -172,7 +206,7 @@ const AddCollege = () => {
                 <div class="col-12">
                   <hr class="mt-5 mb-4 border-secondary-subtle" />
                   <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center">
-                      &copy; 2024 Link Ur Codes. All rights reserved.
+                    &copy; 2024 Link Ur Codes. All rights reserved.
                   </div>
                 </div>
               </div>
