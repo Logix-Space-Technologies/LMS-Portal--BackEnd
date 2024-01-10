@@ -100,3 +100,20 @@ exports.createTrainer = (request, response) => {
     });
 };
 
+exports.viewTrainers = (request, response) => {
+    const trainerToken = request.headers.token;
+    const key = request.headers.key;
+
+    jwt.verify(trainerToken, key, (err, decoded) => {
+        if (decoded) {
+            Trainers.viewTrainers((err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                return response.json({ "status": "success", "Trainers": data });
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
