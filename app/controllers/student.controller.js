@@ -655,6 +655,34 @@ function groupDataByBatch(data) {
     return groupedData;
 }
 
+
+exports.studentNotificationView = (request, response) => {
+    const studId = request.body.studId;
+    const studTaskToken = request.headers.token;
+
+    jwt.verify(studTaskToken, "lmsappstud", (err, decoded) => {
+        if (err) {
+            response.json({ "status": "Unauthorized User" });
+        } else {
+            Student.studentNotificationView(studId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.status) {
+                        response.json({ "status": data.status });
+                    } else if (data.length === 0) {
+                        response.json({ "status": "No notifications found!" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        }
+    });
+};
+
+
+
 exports.studRegViewSession = (request, response) => {
     const viewSessionToken = request.headers.token;
     const key = request.headers.key;
