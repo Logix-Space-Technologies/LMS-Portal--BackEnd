@@ -138,7 +138,7 @@ exports.createStudent = (req, res) => {
                         if (paymentErr) {
                             return res.json({ "status": paymentErr });
                         } else {
-                            
+
                             return res.json({ "status": "success", "data": data, "paymentData": paymentData });
                         }
                     });
@@ -539,16 +539,16 @@ exports.searchStudentsByAdmAndAdmstf = (request, response) => {
 exports.studRegViewBatch = (request, response) => {
     const collegeId = request.body.collegeId;
     Student.viewBatch(collegeId, (err, data) => {
-      if (err) {
-        response.json({ "status": err });
-      }
-      if (data.length === 0) {
-        response.json({ "status": "No Batch found!" });
-      } else {
-        response.json({ "status": "success", "data": data });
-      }
-      });
- 
+        if (err) {
+            response.json({ "status": err });
+        }
+        if (data.length === 0) {
+            response.json({ "status": "No Batch found!" });
+        } else {
+            response.json({ "status": "success", "data": data });
+        }
+    });
+
 };
 
 exports.studregCollegeAllView = (request, response) => {
@@ -591,7 +591,10 @@ function generatePDF(data, callback) {
     const stream = fs.createWriteStream(pdfPath);
 
     doc.pipe(stream);
-
+    const imageLogo = 'app/assets/logo.png';
+    const logoImage = doc.openImage(imageLogo);
+    const imageScale = 0.3;
+    doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
     // Add main heading
     doc.font('Helvetica-Bold').fontSize(20).text('Batch-Wise List Of Students', {
         align: 'center',
@@ -599,7 +602,7 @@ function generatePDF(data, callback) {
         margin: { top: 30, bottom: 30 },
     });
     doc.text('\n');
-    
+
 
     // Group data by batch
     const groupedData = groupDataByBatch(data);
@@ -609,16 +612,16 @@ function generatePDF(data, callback) {
         if (groupedData.hasOwnProperty(batchName)) {
             // Batch heading
             doc.font('Helvetica-Bold').fontSize(16).text(`Batch Name: ${batchName}`, {
-                align: 'center',
-                underline: true,
-            }).font('Helvetica').fontSize(12);
+                align: 'left',
+                underline: false,
+            }).font('Helvetica').fontSize(10);
             doc.text('\n');
 
             const students = groupedData[batchName];
 
             // Create table headers
-            const tableHeaders = ['Membership No','Name', 'College', 'Email', 'Dept', 'Course'];
-            const tableData = students.map(student => [student.membership_no,student.studName, student.collegeName, student.studEmail, student.studDept,student.course]);
+            const tableHeaders = ['Membership No', 'Name', 'College', 'Email', 'Dept', 'Course'];
+            const tableData = students.map(student => [student.membership_no, student.studName, student.collegeName, student.studEmail, student.studDept, student.course]);
 
             // Draw the table
             doc.table({
@@ -631,8 +634,14 @@ function generatePDF(data, callback) {
             doc.moveDown(); // Add a newline between batches
         }
     }
-
+    // Add the generated date and time
+    const generatedDate = new Date();
+    doc.font('Helvetica').fontSize(9).text('Generated on: '+generatedDate.toLocaleDateString()+' '+generatedDate.toLocaleTimeString(), {
+        align: 'center',
+    });
+    
     doc.end();
+
 
     stream.on('finish', () => {
         callback(pdfPath);

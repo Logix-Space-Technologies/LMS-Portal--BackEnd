@@ -757,6 +757,7 @@ Student.generateAllBatchWiseList = async (result) => {
         JOIN college c ON s.collegeId = c.id 
         WHERE s.isActive = 1 AND b.isActive = 1 AND s.emailVerified = 1 
               AND s.isVerified = 1 AND s.isPaid = 1 AND s.deleteStatus = 0 AND b.deleteStatus = 0 
+              AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= s.addedDate
         ORDER BY c.collegeName, b.id, s.id;
     `;
 
