@@ -184,5 +184,7 @@ router.post("/studentNofificationView",StudentController.studentNotificationView
 
 router.post("/studentViewSession",StudentController.studRegViewSession)
 
+router.post("/searchSession",SessionsController.searchSession)
+
 
 module.exports = router
