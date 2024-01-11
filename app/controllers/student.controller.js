@@ -654,3 +654,26 @@ function groupDataByBatch(data) {
 
     return groupedData;
 }
+
+exports.studRegViewSession = (request, response) => {
+    const viewSessionToken = request.headers.token;
+    const key = request.headers.key;
+    jwt.verify(viewSessionToken, key, (error, decoded) => {
+        if (decoded) {
+            const batchId = request.body.id;
+            Student.viewSession(batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No Session found!" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
+
