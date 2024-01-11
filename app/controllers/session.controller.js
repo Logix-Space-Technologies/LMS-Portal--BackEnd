@@ -213,6 +213,7 @@ exports.deleteSession = (request, response) => {
 };
 
 
+// Code for Searching the Session
 exports.searchSession = (request, response) => {
     const SessionSearchQuery = request.body.SessionSearchQuery
     const SessionSearchToken = request.headers.token
