@@ -212,6 +212,8 @@ Session.deleteSession = (sessionId, result) => {
     });
 };
 
+
+// Code for Searching the Session
 Session.searchSession = (search , result) => {
     const  searchTerm = '%' + search + '%'
     db.query("SELECT s.id, s.batchId, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, s.trainerId, s.attendenceCode, s.addedDate, s.updatedDate FROM sessiondetails s JOIN batches b ON s.batchId = b.id JOIN trainersinfo t ON s.trainerId = t.id JOIN college c ON b.collegeId = c.id WHERE s.isActive = 1 AND s.deleteStatus = 0  AND c.isActive = 1 AND c.deleteStatus = 0 AND  (b.batchName LIKE ? OR c.collegeName LIKE  ? OR t.trainerName LIKE ? )",
