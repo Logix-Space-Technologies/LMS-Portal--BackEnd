@@ -1,7 +1,10 @@
 const jwt = require("jsonwebtoken");
 const Session = require("../models/session.model");
 const Validator = require("../config/data.validate");
-const { request, response } = require("express");
+const { Student } = require("../models/student.model");
+const Attendence = require("../models/attendence.model")
+const mailContents = require('../config/mail.content');
+const mail = require('../../sendEmail');
 
 
 exports.createSession = (request, response) => {
@@ -77,7 +80,43 @@ exports.createSession = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
-                    return response.json({ "status": "success", "data": data });
+                    const sessionId=data.id
+                    console.log(sessionId)
+                    //fetch corresponding students
+                    let data1=Student.searchStudentByBatch(newSession.batchId,(err,res)=>{
+                        if (err) {
+                            return response.json({ "status": err });
+                        } else {
+                            console.log(res)
+                            res.forEach(element => {
+                                let studentid=element.id
+                                // let sessionid=newSession.id
+                                const newAttendence = new Attendence({
+                                    studId:studentid,
+                                    sessionId:sessionId
+                                })
+                                const studentName = element.studName
+                                const studentEmail = element.studEmail
+                       
+                                const studentEmailContent = mailContents.studentEmailContent(studentName, newSession.sessionName, newSession.date, newSession.time, newSession.venueORlink);
+                                mail.sendEmail(studentEmail, 'New Session Created!', studentEmailContent);
+                                Attendence.create(newAttendence,(err,res)=>{
+                                    if (err) {
+                                        console.log({ "status": err });
+                                    } else {
+                                        
+                                        console.log({ "status": "success", "data": res });
+                                    }
+                                })
+                            });
+
+                            return response.json({ "status": "success"});
+                            
+                        }
+                    }
+                    )
+                    // console.log(data)
+                    // return response.json({ "status": "success", "data": data });
                 }
             });
         } else {

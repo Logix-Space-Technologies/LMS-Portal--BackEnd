@@ -2,7 +2,7 @@ const db = require("../models/db");
 const { response, request } = require("express")
 const bcrypt = require("bcrypt")
 
-const { StudentLog, logStudent } = require("../models/studentLog.model")
+const { StudentLog, logStudent } = require("../models/studentLog.model");
 
 
 
@@ -270,6 +270,25 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
             } else {
                 console.log("Student found: ", res);
                 result(null, res);
+                return;
+            }
+        }
+    );
+};
+
+Student.searchStudentByBatch = (searchKey, result) => {
+    db.query(
+        "SELECT `id`, `collegeId`, `batchId`, `membership_no`, `studName`, `admNo`, `rollNo`, `studDept`, `course`, `studEmail`, `studPhNo`, `studProfilePic`, `aadharNo`, `password`, `addedDate`, `updatedDate`, `validity`, `isPaid`, `isVerified`, `isActive`, `emailVerified`, `pwdUpdateStatus`, `updateStatus`, `deleteStatus` FROM `student` WHERE `batchId`= ? ",
+        [searchKey],
+        (err, res) => {
+            if (err) {
+                console.error("Error while searching student: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Students found: ", res);
+                let data=Object.values(JSON.parse(JSON.stringify(res)))
+                result(null, data);
                 return;
             }
         }

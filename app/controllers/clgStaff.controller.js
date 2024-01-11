@@ -31,6 +31,14 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
   },
+  limits: { fileSize: 2 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  },
   filename: function (req, file, cb) {
     // Unique filename: Current timestamp + random number + original extension
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -54,9 +62,9 @@ exports.clgStaffCreate = (request, response) => {
       return response.status(400).json({ message: "No file uploaded" });
     }
  
-    // Read additional form fields
-    const name = request.body.name;
-    const rollNo = request.body.rollNo;
+    // // Read additional form fields
+    // const name = request.body.name;
+    // const rollNo = request.body.rollNo;
  
     // File handling
     const file = request.file;

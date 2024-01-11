@@ -1,3 +1,5 @@
+
+
 // mail.content.js
 const emailHtmlContent = {
     college: `
@@ -234,5 +236,60 @@ const emailHtmlContent = {
     
     // Add more email contents as needed
 };
-
-module.exports = emailHtmlContent;
+function studentEmailContent(studName, sessionName, date, time,venueORlink) {
+    console.log(studName)
+    console.log(sessionName, date, time, venueORlink)
+    content= `
+    <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 0;
+                    color: #333333;
+                }
+                .container {
+                    width: 80%;
+                    margin: 0 auto;
+                    background-color: #f7f7f7;
+                    padding: 20px;
+                    text-align: center;
+                }
+                .header {
+                    background-color: #4CAF50;
+                    color: white;
+                    padding: 10px;
+                }
+                .content {
+                    margin-top: 20px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>New Session Announcement</h1>
+                </div>
+                <div class="content">
+                    <p>Dear ${studName},</p>
+                    <p>We are excited to announce a new upcoming session!</p>
+                    <p><b>Session Name:</b> ${sessionName}</p>
+                    <p><b>Date:</b> ${date}</p>
+                    <p><b>Time:</b> ${time}</p>
+                    <p><b>Venue or Link:</b> ${venueORlink}</p>
+                    <p>Looking forward to your participation.</p>
+                    <p>Best regards,</p>
+                    <p>Link Ur Codes Team</p>
+                </div>
+            </div>
+        </body>
+        </html>`
+        console.log(content)
+    return content; 
+}
+module.exports = {
+    emailHtmlContent,
+    studentEmailContent
+};
