@@ -7,7 +7,6 @@ const Validator = require("../config/data.validate");
 const PDFDocument = require('pdfkit-table');
 const fs = require('fs');
 
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/');
@@ -139,6 +138,7 @@ exports.createStudent = (req, res) => {
                         if (paymentErr) {
                             return res.json({ "status": paymentErr });
                         } else {
+                            
                             return res.json({ "status": "success", "data": data, "paymentData": paymentData });
                         }
                     });
