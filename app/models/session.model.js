@@ -212,5 +212,21 @@ Session.deleteSession = (sessionId, result) => {
     });
 };
 
+Session.searchSession = (search , result) => {
+    const  searchTerm = '%' + search + '%'
+    db.query("SELECT s.id, s.batchId, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, s.trainerId, s.attendenceCode, s.addedDate, s.updatedDate FROM sessiondetails s JOIN batches b ON s.batchId = b.id JOIN trainersinfo t ON s.trainerId = t.id JOIN college c ON b.collegeId = c.id WHERE s.isActive = 1 AND s.deleteStatus = 0  AND c.isActive = 1 AND c.deleteStatus = 0 AND  (b.batchName LIKE ? OR c.collegeName LIKE  ? OR t.trainerName LIKE ? )",
+    [searchTerm , searchTerm , searchTerm],
+    (err, res) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            result
+        } else {
+            console.log("Session  Details : ", res)
+            result(null, res)
+        }
+    })
+}
+
 
 module.exports = Session

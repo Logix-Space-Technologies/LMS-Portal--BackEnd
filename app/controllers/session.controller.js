@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Session = require("../models/session.model");
 const Validator = require("../config/data.validate");
-const { request } = require("express");
+const { request, response } = require("express");
 
 
 exports.createSession = (request, response) => {
@@ -211,4 +211,33 @@ exports.deleteSession = (request, response) => {
         }
     });
 };
+
+
+exports.searchSession = (request, response) => {
+    const SessionSearchQuery = request.body.SessionSearchQuery
+    const SessionSearchToken = request.headers.token
+    const key = request.headers.key;
+
+    jwt.verify(SessionSearchToken, key, (err, decoded) => {
+        if (decoded) {
+            if (!SessionSearchQuery) {
+                console.log("Search Item is required.")
+                return response.json({ "status": "Search Item is required." })
+            }
+            Session.searchSession(SessionSearchQuery, (err, data) => {
+                if (err) {
+                    response.json({ "status": err })
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No Search Items Found." })
+                    } else {
+                        response.json({ "status": "Result Found", "data": data })
+                    }
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" })
+        }
+    })
+}
 
