@@ -127,7 +127,7 @@ exports.adminChangePwd = (request, response) => {
 
 
 exports.adminDashBoards = (request, response) => {
-    jwt.verify(request.body.token, "lmsapp", (error, decoded) => {
+    jwt.verify(request.headers.token, "lmsapp", (error, decoded) => {
         if (decoded) {
             Admin.adminDashBoard((err, result) => {
                 if (err) {
