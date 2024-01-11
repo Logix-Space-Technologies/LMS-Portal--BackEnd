@@ -772,6 +772,8 @@ Student.generateAllBatchWiseList = async (result) => {
 };
 
 
+
+
 Student.studentNotificationView = (studId, result) => {
     db.query("SELECT * FROM student WHERE id = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1 AND isVerified = 1 AND isPaid = 1", [studId], (err, studentRes) => {
         if (err) {
@@ -813,6 +815,27 @@ Student.studentNotificationView = (studId, result) => {
     });
 };
   
+
+
+
+
+Student.viewSession = (batchId, result) => {
+    db.query(
+        "SELECT DISTINCT s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, s.attendenceCode FROM sessiondetails s JOIN student st ON s.batchId = st.batchId WHERE s.deleteStatus = 0 AND s.isActive = 1 AND st.deleteStatus = 0 AND st.isActive = 1 AND s.batchId = ?",
+        [batchId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Session Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
+
 
 module.exports = { Student, Payment, Tasks, SubmitTask };
 

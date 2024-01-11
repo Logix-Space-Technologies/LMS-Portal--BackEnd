@@ -182,4 +182,7 @@ router.post("/deleteSessions",SessionsController.deleteSession)
 
 router.post("/studentNofificationView",StudentController.studentNotificationView)
 
+router.post("/studentViewSession",StudentController.studRegViewSession)
+
+
 module.exports = router

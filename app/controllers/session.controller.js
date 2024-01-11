@@ -89,7 +89,7 @@ exports.createSession = (request, response) => {
 exports.sessionUpdate = (request, response) => {
     const sessionUpdateToken = request.headers.token
     const key = request.headers.key
-
+    //add the appropriate key
     jwt.verify(sessionUpdateToken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
@@ -167,7 +167,7 @@ exports.sessionUpdate = (request, response) => {
 exports.viewSessions = (request, response) => {
     const sessionToken = request.headers.token;
     const key = request.headers.key;
-
+    //add the appropriate key
     jwt.verify(sessionToken, key, (err, decoded) => {
         if (decoded) {
             Session.viewSessions((err, data) => {
