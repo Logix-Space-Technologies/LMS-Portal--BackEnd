@@ -4,7 +4,8 @@ const { request, response } = require("express");
 const multer = require("multer");
 const Validator = require("../config/data.validate");
 const { json } = require("body-parser");
-
+const mailContents = require('../config/mail.content');
+const mail = require('../../sendEmail');
 const storage = multer.diskStorage({
     destination: (request, file, cb) => {
         cb(null, 'uploads/');
@@ -32,7 +33,7 @@ exports.collegeCreate = (request, response) => {
         if (!request.file) {
             return response.json({ "status": "Please upload an image" });
         }
-        key=request.headers.key
+        key = request.headers.key
         jwt.verify(collegeToken, key, (err, decoded) => {
             if (decoded) {
                 console.log("decoded", decoded);
@@ -93,7 +94,7 @@ exports.collegeCreate = (request, response) => {
 
                 const college = new College({
                     collegeName: collegeName,
-                    collegeCode : collegeCode,
+                    collegeCode: collegeCode,
                     collegeAddress: collegeAddress,
                     website: website,
                     email: email,
@@ -106,6 +107,11 @@ exports.collegeCreate = (request, response) => {
                     if (err) {
                         return response.json({ "status": err });
                     } else {
+                        //send mail to the college email
+                        const collegeName = college.collegeName;
+                        const collegeEmail = college.email;
+                        const collegeEmailContent = mailContents.college.replace(/\${collegeName}/g, collegeName);
+                        mail.sendEmail(collegeEmail, 'Registration Successful!', collegeEmailContent);
                         return response.json({ "status": "success", "data": data });
                     }
                 });
@@ -121,7 +127,7 @@ exports.collegeCreate = (request, response) => {
 
 exports.collegeAllView = (request, response) => {
     const clgviewToken = request.body.token
-    key=request.body.key
+    key = request.body.key
     console.log(clgviewToken)
     jwt.verify(clgviewToken, key, (err, decoded) => {
         if (decoded) {
@@ -146,7 +152,7 @@ exports.updateCollege = (request, response) => {
         }
         const collegeUpdateToken = request.body.token
         const collegeImage = request.file ? request.file.filename : null
-        key=request.body.key // key for respective tokens
+        key = request.body.key // key for respective tokens
         if (!request.file) {
             return response.json({ "status": "Image cannot be empty!!" })
         }
@@ -240,10 +246,10 @@ exports.deleteCollege = (request, response) => {
                     } else {
                         return response.json({ "status": err })
                     }
-                } 
+                }
                 return response.json({ "status": "College deleted." })
             })
-        }else {
+        } else {
             response.json({ "status": "Unauthorized User!!" });
         }
     })
@@ -255,25 +261,25 @@ exports.searchCollege = (request, response) => {
     const collegeSearchQuery = request.body.collegeSearchQuery
     const collegeSearchToken = request.body.token
 
-    jwt.verify(collegeSearchToken, "lmsapp", (err, decoded) =>{
+    jwt.verify(collegeSearchToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             if (!collegeSearchQuery) {
                 console.log("Search Item is required.")
-                return response.json({"status" : "Search Item is required."})
+                return response.json({ "status": "Search Item is required." })
             }
             College.searchCollege(collegeSearchQuery, (err, data) => {
                 if (err) {
-                    response.json({"status" : err})
+                    response.json({ "status": err })
                 } else {
                     if (data.length === 0) {
-                        response.json({"status" : "No Search Items Found."})
+                        response.json({ "status": "No Search Items Found." })
                     } else {
-                        response.json({"status" : "Result Found", "data" : data})
+                        response.json({ "status": "Result Found", "data": data })
                     }
                 }
             })
         } else {
-            response.json({"status" : "Unauthorized User!!"})
+            response.json({ "status": "Unauthorized User!!" })
         }
     })
 }

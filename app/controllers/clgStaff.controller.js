@@ -7,6 +7,8 @@ const path = require("path")
 const Validator = require("../config/data.validate")
 const saltRounds = 10;
 const { Student } = require("../models/student.model")
+const mailContents = require('../config/mail.content');
+const mail = require('../../sendEmail');
 
 const storage = multer.diskStorage({
   destination: (request, file, cb) => {
@@ -128,6 +130,11 @@ exports.clgStaffCreate = (request, response) => {
             if (err) {
               return response.json({ "status": err });
             } else {
+              //send email
+              const collegeStaffName = clgstaff.collegeStaffName
+              const collegeStaffEmail = clgstaff.email
+              const collegeStaffEmailContent = mailContents.collegeStaff.replace(/\${collegeStaffName}/g, collegeStaffName);
+              mail.sendEmail(collegeStaffEmail, 'Registration Successful!', collegeStaffEmailContent);
               return response.json({ "status": "success", "data": data });
             }
           });

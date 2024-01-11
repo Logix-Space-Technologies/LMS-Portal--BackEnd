@@ -3,12 +3,14 @@ const jwt = require("jsonwebtoken");
 const AdminStaff = require("../models/adminStaff.model");
 const Validator = require("../config/data.validate");
 const { request, response } = require("express");
+const mailContents = require('../config/mail.content');
+const mail = require('../../sendEmail');
 
 const saltRounds = 10;
 
 exports.create = (request, response) => {
     const { AdStaffName, PhNo, Address, AadharNo, Email, Password } = request.body;
-    const adstaffToken = request.body.token;
+    const adstaffToken = request.headers.token;
 
     // Checking token validation
     jwt.verify(adstaffToken, "lmsapp", (tokenError, decoded) => {
@@ -79,6 +81,11 @@ exports.create = (request, response) => {
                 if (createError) {
                     response.json({ "status": createError });
                 } else {
+                    //send mail
+                    const adminStaffName = newAdminStaff.AdStaffName
+                    const adminStaffEmail = newAdminStaff.Email
+                    const adminStaffEmailContent = mailContents.adminStaff.replace(/\${AdStaffName}/g, AdStaffName);
+                    mail.sendEmail(adminStaffEmail, 'Registration Successful!', adminStaffEmailContent);
                     response.json({ "status": "success", "data": data });
                 }
             });

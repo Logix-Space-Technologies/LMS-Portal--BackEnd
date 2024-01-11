@@ -771,6 +771,54 @@ Student.generateAllBatchWiseList = async (result) => {
     });
 };
 
+
+
+
+Student.studentNotificationView = (studId, result) => {
+    db.query("SELECT * FROM student WHERE id = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1 AND isVerified = 1 AND isPaid = 1", [studId], (err, studentRes) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        } else {
+            if (studentRes.length === 0) {
+                console.log("Student not found or not verified");
+                result(null, { status: "Student not found or not verified" });
+                return;
+            }
+            const batchId = studentRes[0].batchId;
+            db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [batchId], (err, batchRes) => {
+                if (err) {
+                    console.log("error: ", err);
+                    result(err, null);
+                    return;
+                } else {
+                    if (batchRes.length === 0) {
+                        console.log("Batch not found");
+                        result(null, { status: "Batch not found" });
+                        return;
+                    }
+                    db.query("SELECT message, sendBy, title, addedDate,sendDateTime FROM notifications WHERE batchId = ? ORDER BY sendDateTime DESC", [batchId], (err, notificationsRes) => {
+                        if (err) {
+                            console.log("error: ", err);
+                            result(err, null);
+                            return;
+                        } else {
+                            console.log("Notifications: ", notificationsRes);
+                            result(null, notificationsRes);
+                            return;
+                        }
+                    });
+                }
+            });
+        }
+    });
+};
+  
+
+
+
+
 Student.viewSession = (batchId, result) => {
     db.query(
         "SELECT DISTINCT s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, s.attendenceCode FROM sessiondetails s JOIN student st ON s.batchId = st.batchId WHERE s.deleteStatus = 0 AND s.isActive = 1 AND st.deleteStatus = 0 AND st.isActive = 1 AND s.batchId = ?",

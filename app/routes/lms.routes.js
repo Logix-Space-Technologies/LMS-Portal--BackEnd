@@ -180,8 +180,11 @@ router.post("/viewSessions",SessionsController.viewSessions)
 
 router.post("/deleteSessions",SessionsController.deleteSession)
 
+router.post("/studentNofificationView",StudentController.studentNotificationView)
+
 router.post("/studentViewSession",StudentController.studRegViewSession)
 
 router.post("/searchSession",SessionsController.searchSession)
+
 
 module.exports = router
