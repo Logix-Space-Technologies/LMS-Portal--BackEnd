@@ -180,4 +180,6 @@ router.post("/viewSessions",SessionsController.viewSessions)
 
 router.post("/deleteSessions",SessionsController.deleteSession)
 
+router.post("/studentNofificationView",StudentController.studentNotificationView)
+
 module.exports = router
