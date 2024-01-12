@@ -15,7 +15,8 @@ const RefundController = require("../controllers/refund.controller")
 const SubmitTaskController = require("../controllers/submit_task.controller")
 const SessionsController = require('../controllers/session.controller');
 const TrainerController = require("../controllers/trainers.controllers")
-const  NotificationController = require("../controllers/notifications.controller")
+const NotificationController = require("../controllers/notifications.controller")
+const curriculumController = require("../controllers/curriculum.controller")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -185,6 +186,10 @@ router.post("/studentNofificationView",StudentController.studentNotificationView
 router.post("/studentViewSession",StudentController.studRegViewSession)
 
 router.post("/searchSession",SessionsController.searchSession)
+
+router.post('/createCurriculum', curriculumController.createCurriculum);
+
+router.post('/cancelSession', SessionsController.cancelSession);
 
 
 module.exports = router
