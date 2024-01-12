@@ -52,4 +52,32 @@ Curriculum.curriculumCreate = (newCurriculum, result) => {
     });
 };
 
+Curriculum.curriculumView = (batchId, result) => {
+    db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus=0 AND isActive=1",
+        [batchId],
+        (batchErr, batchRes) => {
+            if (batchErr) {
+                console.log("error checking batch: ", batchErr);
+                return result(batchErr, null);
+            }
+
+            if (batchRes.length === 0) {
+                return result("Batch not found", null);
+            }
+
+            db.query("SELECT b.batchName, c.* FROM curriculum c JOIN batches b ON c.batchId = b.id WHERE c.deleteStatus = 0 AND c.isActive = 1",
+                (curriculumErr, curriculumRes) => {
+                    if (curriculumErr) {
+                        console.log("error: ", curriculumErr);
+                        result(curriculumErr, null)
+                        return
+                    } else {
+                        console.log("success:", curriculumRes)
+                        result(null, curriculumRes);
+                    }
+                })
+        })
+}
+
+
 module.exports = Curriculum;
