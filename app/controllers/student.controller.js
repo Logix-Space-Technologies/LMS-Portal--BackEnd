@@ -596,7 +596,7 @@ function generatePDF(data, callback) {
     const imageScale = 0.3;
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
     // Add main heading
-    doc.font('Helvetica-Bold').fontSize(20).text('Batch-Wise List Of Students', {
+    doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise List Of Students', {
         align: 'center',
         underline: true,
         margin: { top: 30, bottom: 30 },
@@ -611,7 +611,7 @@ function generatePDF(data, callback) {
     for (const batchName in groupedData) {
         if (groupedData.hasOwnProperty(batchName)) {
             // Batch heading
-            doc.font('Helvetica-Bold').fontSize(16).text(`Batch Name: ${batchName}`, {
+            doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name: ${batchName}`, {
                 align: 'left',
                 underline: false,
             }).font('Helvetica').fontSize(10);

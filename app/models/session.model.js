@@ -100,9 +100,18 @@ Session.createSession = (newSession, result) => {
                                                                                 console.error("Error inserting data:", insertErr);
                                                                                 return result(insertErr, null);
                                                                             }
+                                                                            db.query("SELECT `id` FROM `sessiondetails` ORDER BY id DESC LIMIT 1", (err, res) => {
+                                                                                if(err){
+                                                                                    console.log("Error while fetching the last inserted id: ", err);
+                                                                                    return result(err, null);
+                                                                                }
+                                                                                const sessionId = res[0].id;
+                                                                                console.log("Session Id"+sessionId)
+                                                                                result(null, { id: sessionId, ...newSession });
 
-                                                                            console.log("Added Session:", { id: insertRes.id, ...newSession });
-                                                                            result(null, { id: insertRes.id, ...newSession });
+                                                                            })
+                                                                            // console.log("Added Session:", { id: insertRes.id, ...newSession });
+                                                                            
                                                                         });
                                                                     })
                                                             } else {
@@ -112,9 +121,16 @@ Session.createSession = (newSession, result) => {
                                                                         console.error("Error inserting data:", insertErr);
                                                                         return result(insertErr, null);
                                                                     }
-
-                                                                    console.log("Added Session:", { id: insertRes.id, ...newSession });
-                                                                    result(null, { id: insertRes.id, ...newSession });
+                                                                    db.query("SELECT `id` FROM `sessiondetails` ORDER BY id DESC LIMIT 1", (err, res) => {
+                                                                        if(err){
+                                                                            console.log("Error while fetching the last inserted id: ", err);
+                                                                            return result(err, null);
+                                                                        }
+                                                                        newSession.id = res[0].id;
+                
+                                                                        result(null, { id: newSession.id, ...newSession });
+                                                                    })
+                                                                    // console.log("Added Session:", { id: insertRes.id, ...newSession });
                                                                 });
                                                             }
                                                         }
@@ -150,38 +166,38 @@ Session.updateSession = (sessionUpdate, result) => {
                 if (sessionRes.length === 0) {
                     console.log("Session Details Not Found")
                     result("Session Details Not Found", null)
-                    return 
+                    return
                 } else {
                     db.query("UPDATE sessiondetails SET sessionName = ?, date = ?, time = ?, type = ?, remarks = ?, venueORlink = ?, trainerId = ?, updatedDate = CURRENT_DATE() WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-                    [sessionUpdate.sessionName, sessionUpdate.date, sessionUpdate.time, sessionUpdate.type, sessionUpdate.remarks, sessionUpdate.venueORlink, sessionUpdate.trainerId, sessionUpdate.id],
-                    (err,res)=>{
-                        if (err) {
-                            console.log("Error : ", err)
-                            result(err, null)
-                            return
-                        }
-                        console.log("Updated Session Details : ", { id: sessionUpdate.id, ...sessionUpdate })
-                        result(null, { id: sessionUpdate.id, ...sessionUpdate })
-                    })
+                        [sessionUpdate.sessionName, sessionUpdate.date, sessionUpdate.time, sessionUpdate.type, sessionUpdate.remarks, sessionUpdate.venueORlink, sessionUpdate.trainerId, sessionUpdate.id],
+                        (err, res) => {
+                            if (err) {
+                                console.log("Error : ", err)
+                                result(err, null)
+                                return
+                            }
+                            console.log("Updated Session Details : ", { id: sessionUpdate.id, ...sessionUpdate })
+                            result(null, { id: sessionUpdate.id, ...sessionUpdate })
+                        })
                 }
 
             }
 
-    })
+        })
 }
 
-Session.viewSessions=(result)=>{
+Session.viewSessions = (result) => {
     const query = "SELECT id,batchId,sessionName,date,time,type,remarks,venueORlink,trainerId,attendenceCode,addedDate, updatedDate FROM sessiondetails WHERE isActive = 1 AND deleteStatus = 0 ";
 
-    db.query(query, (err, res)=>{
+    db.query(query, (err, res) => {
         if (err) {
             console.log("error: ", res);
-            result(err,null)
+            result(err, null)
             return;
         }
 
         console.log("session: ", res);
-        result(null , res);
+        result(null, res);
     });
 };
 
@@ -214,20 +230,20 @@ Session.deleteSession = (sessionId, result) => {
 
 
 // Code for Searching the Session
-Session.searchSession = (search , result) => {
-    const  searchTerm = '%' + search + '%'
+Session.searchSession = (search, result) => {
+    const searchTerm = '%' + search + '%'
     db.query("SELECT s.id, s.batchId, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, s.trainerId, s.attendenceCode, s.addedDate, s.updatedDate FROM sessiondetails s JOIN batches b ON s.batchId = b.id JOIN trainersinfo t ON s.trainerId = t.id JOIN college c ON b.collegeId = c.id WHERE s.isActive = 1 AND s.deleteStatus = 0  AND c.isActive = 1 AND c.deleteStatus = 0 AND  (b.batchName LIKE ? OR c.collegeName LIKE  ? OR t.trainerName LIKE ? )",
-    [searchTerm , searchTerm , searchTerm],
-    (err, res) => {
-        if (err) {
-            console.log("Error : ", err)
-            result(err, null)
-            result
-        } else {
-            console.log("Session  Details : ", res)
-            result(null, res)
-        }
-    })
+        [searchTerm, searchTerm, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                result
+            } else {
+                console.log("Session  Details : ", res)
+                result(null, res)
+            }
+        })
 }
 
 
