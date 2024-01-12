@@ -283,3 +283,30 @@ exports.searchSession = (request, response) => {
     })
 }
 
+exports.cancelSession = (request, response) => {
+    const sessionCancelToken = request.headers.token;
+    const key = request.headers.key;
+    jwt.verify(sessionCancelToken, key, (err, decoded) => {
+
+        if (decoded) {
+            const sessionId = request.body.id;
+
+            if (!sessionId) {
+                return response.json({ "status": "Session ID is required" });
+            }
+
+            Session.cancelSession(sessionId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+
+                return response.json({ "status": "success", "data": data });
+            });
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
+
+
+
