@@ -191,5 +191,7 @@ router.post('/createCurriculum', curriculumController.createCurriculum);
 
 router.post('/cancelSession', SessionsController.cancelSession);
 
+router.post('/curriculumview', curriculumController.currView)
+
 
 module.exports = router
