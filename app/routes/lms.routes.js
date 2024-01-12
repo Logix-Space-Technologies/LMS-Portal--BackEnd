@@ -197,4 +197,5 @@ router.post('/curriculumview', curriculumController.currView)
 
 
 
+
 module.exports = router
