@@ -186,11 +186,6 @@ function isValidFile(file) {
             message: 'Image size exceeds the limit of 1 MB.'
         };
     }
-
-    return {
-        isValid: true,
-        message: 'Image is valid'
-    };
 }
 
 function isDate1GreaterThanDate2(date1, date2) {
