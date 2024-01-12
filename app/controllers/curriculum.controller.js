@@ -137,6 +137,7 @@ exports.createCurriculum = (request, response) => {
 };
 
 
+
 exports.searchCurriculum = (request,response)=>{
     const CurriculumSearchQuery = request.body.CurriculumSearchQuery
     const CurriculumSearchToken = request.headers.token
@@ -164,3 +165,26 @@ exports.searchCurriculum = (request,response)=>{
         }
     })
 }
+
+exports.currView = (request, response) =>{
+    const batchId = request.body.batchId
+    const curriculumToken = request.headers.token
+    key=request.headers.key
+    jwt.verify(curriculumToken, key, (err, decoded)=>{
+        if (decoded) {
+            Curriculum.curriculumView(batchId,(err, data) =>{
+                if (err) {
+                    response.json({ "status": err });
+                }
+                if (data.length == 0) {
+                    response.json({ "status": "No batches found!" });
+                } else {
+                    response.json({ "status": "success", "data": data });
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+
