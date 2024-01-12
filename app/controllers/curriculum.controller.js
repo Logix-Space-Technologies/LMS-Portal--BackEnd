@@ -6,6 +6,8 @@ const Validator = require("../config/data.validate");
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 const fs = require('fs');
+const { request } = require("http");
+const { response } = require("express");
 require('dotenv').config({ path: '../../.env' });
 
 // AWS S3 Client Configuration
@@ -134,6 +136,36 @@ exports.createCurriculum = (request, response) => {
     });
 };
 
+
+
+exports.searchCurriculum = (request,response)=>{
+    const CurriculumSearchQuery = request.body.CurriculumSearchQuery
+    const CurriculumSearchToken = request.headers.token
+    const key = request.headers.key;
+
+    jwt.verify(CurriculumSearchToken, key, (err, decoded) => {
+        if (decoded) {
+            if (!CurriculumSearchQuery) {
+                console.log("Search Item is required.")
+                return response.json({ "status": "Search Item is required." })
+            }
+            Curriculum.searchCurriculum(CurriculumSearchQuery, (err, data) => {
+                if (err) {
+                    response.json({ "status": err })
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No Search Items Found." })
+                    } else {
+                        response.json({ "status": "Result Found", "data": data })
+                    }
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" })
+        }
+    })
+}
+
 exports.currView = (request, response) =>{
     const batchId = request.body.batchId
     const curriculumToken = request.headers.token
@@ -155,3 +187,4 @@ exports.currView = (request, response) =>{
         }
     })
 }
+
