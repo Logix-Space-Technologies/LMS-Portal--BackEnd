@@ -268,7 +268,7 @@ exports.adminStaffLogin = (request, response) => {
             const passwordMatch = bcrypt.compareSync(Password, admin_staff.Password)
 
             if (passwordMatch) {
-                jwt.sign({ Email: getEmail, Password: getPassword }, "lmsappone", { expiresIn: "30m" },
+                jwt.sign({ Email: getEmail, Password: getPassword }, "lmsappadmstaff", { expiresIn: "30m" },
                     (error, token) => {
                         if (error) {
                             response.json({ "status": "Unauthorized user!!" })

@@ -286,7 +286,7 @@ Student.searchStudentByBatch = (searchKey, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Students found: ", res);
+                // console.log("Students found: ", res);
                 let data=Object.values(JSON.parse(JSON.stringify(res)))
                 result(null, data);
                 return;

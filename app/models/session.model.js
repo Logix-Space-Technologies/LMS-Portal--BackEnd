@@ -100,11 +100,18 @@ Session.createSession = (newSession, result) => {
                                                                                 console.error("Error inserting data:", insertErr);
                                                                                 return result(insertErr, null);
                                                                             }
+                                                                            db.query("SELECT `id` FROM `sessiondetails` ORDER BY id DESC LIMIT 1", (err, res) => {
+                                                                                if(err){
+                                                                                    console.log("Error while fetching the last inserted id: ", err);
+                                                                                    return result(err, null);
+                                                                                }
+                                                                                const sessionId = res[0].id;
+                                                                                console.log("Session Id"+sessionId)
+                                                                                result(null, { id: sessionId, ...newSession });
 
-                                                                            console.log("Added Session:", { id: insertRes.id, ...newSession });
-                                                                            result(null, { id: insertRes.id, ...newSession });
-                                                                            const sessionId = insertRes.id;
-                                                                            return sessionId;
+                                                                            })
+                                                                            // console.log("Added Session:", { id: insertRes.id, ...newSession });
+                                                                            
                                                                         });
                                                                     })
                                                             } else {
@@ -114,11 +121,16 @@ Session.createSession = (newSession, result) => {
                                                                         console.error("Error inserting data:", insertErr);
                                                                         return result(insertErr, null);
                                                                     }
-
-                                                                    console.log("Added Session:", { id: insertRes.id, ...newSession });
-                                                                    result(null, { id: insertRes.id, ...newSession });
-                                                                    const sessionId = insertRes.id;
-                                                                    return sessionId;
+                                                                    db.query("SELECT `id` FROM `sessiondetails` ORDER BY id DESC LIMIT 1", (err, res) => {
+                                                                        if(err){
+                                                                            console.log("Error while fetching the last inserted id: ", err);
+                                                                            return result(err, null);
+                                                                        }
+                                                                        newSession.id = res[0].id;
+                
+                                                                        result(null, { id: newSession.id, ...newSession });
+                                                                    })
+                                                                    // console.log("Added Session:", { id: insertRes.id, ...newSession });
                                                                 });
                                                             }
                                                         }

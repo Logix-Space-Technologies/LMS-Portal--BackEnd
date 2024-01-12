@@ -80,10 +80,11 @@ exports.createSession = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
+                    // console.log(data)
                     const sessionId=data.id
-                    console.log(sessionId)
+                    // console.log(sessionId)
                     //fetch corresponding students
-                    let data1=Student.searchStudentByBatch(newSession.batchId,(err,res)=>{
+                    Student.searchStudentByBatch(newSession.batchId,(err,res)=>{
                         if (err) {
                             return response.json({ "status": err });
                         } else {
@@ -98,19 +99,20 @@ exports.createSession = (request, response) => {
                                 const studentName = element.studName
                                 const studentEmail = element.studEmail
                        
-                                const studentEmailContent = mailContents.studentEmailContent(studentName, newSession.sessionName, newSession.date, newSession.time, newSession.venueORlink);
-                                mail.sendEmail(studentEmail, 'New Session Created!', studentEmailContent);
+                                const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, newSession.date, newSession.time, newSession.venueORlink);
+                                const upcomingSessionTextContent = mailContents.upcomingSessionTextContent(studentName, newSession.sessionName, newSession.date, newSession.time, newSession.venueORlink);
+                                mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement',upcomingSessionHtmlContent,upcomingSessionTextContent );
                                 Attendence.create(newAttendence,(err,res)=>{
                                     if (err) {
                                         console.log({ "status": err });
                                     } else {
                                         
-                                        console.log({ "status": "success", "data": res });
+                                        // console.log({ "status": "success", "data": res });
                                     }
                                 })
                             });
 
-                            return response.json({ "status": "success"});
+                            return response.json({ "status": "success", "data": data});
                             
                         }
                     }
