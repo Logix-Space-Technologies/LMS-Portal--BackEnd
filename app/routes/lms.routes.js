@@ -189,5 +189,7 @@ router.post("/searchSession",SessionsController.searchSession)
 
 router.post('/createCurriculum', curriculumController.createCurriculum);
 
+router.post('/searchCurriculum', curriculumController.searchCurriculum);
+
 
 module.exports = router

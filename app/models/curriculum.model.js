@@ -52,4 +52,23 @@ Curriculum.curriculumCreate = (newCurriculum, result) => {
     });
 };
 
+
+Curriculum.searchCurriculum = (search , result)=>{
+    const searchTerm = '%'+ search + '%'
+    db.query("SELECT c.id, c.batchId, c.curriculumTitle, c.curriculumDesc, c.addedBy, c.curriculumFileLink FROM curriculum c JOIN batches b ON c.batchId = b.id JOIN college co ON b.collegeId = co.id WHERE c.isActive = 1 AND c.deleteStatus = 0 AND b.isActive = 1 AND b.deleteStatus = 0 AND co.isActive = 1 AND co.deleteStatus = 0 AND (c.curriculumTitle LIKE ? OR c.curriculumDesc LIKE ? OR b.batchName LIKE ? OR co.collegeName LIKE ?)",
+    [searchTerm, searchTerm, searchTerm,searchTerm],
+    (err, res) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            result
+        } else {
+            console.log("Curriculum   Details : ", res)
+            result(null, res)
+        }
+    })
+}
+
+
+
 module.exports = Curriculum;
