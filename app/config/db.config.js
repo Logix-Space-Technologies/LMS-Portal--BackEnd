@@ -7,8 +7,8 @@ console.log("DB=>"+ process.env.DB)
 
 module.exports = {
     HOST: process.env.HOST,
-    USER: process.env.DBUSER,
-    PASSWORD: process.env.DBUSERPASSWORD,
+    USER: process.env.DATABASEUSER,
+    PASSWORD: process.env.DATABASEPASSWORD,
     DB: process.env.DB
   };
 
