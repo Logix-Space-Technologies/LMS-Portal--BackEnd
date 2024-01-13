@@ -1,186 +1,3 @@
-
-
-// mail.content.js
-const emailHtmlContent = {
-    college: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                .container {
-                    font-family: Arial, sans-serif;
-                    max-width: 600px;
-                    margin: 0 auto;
-                    padding: 20px;
-                    border: 1px solid #ddd;
-                    border-radius: 5px;
-                    background-color: #f9f9f9;
-                }
-                .header {
-                    font-size: 24px;
-                    color: #333;
-                }
-                .content {
-                    font-size: 16px;
-                    color: #555;
-                }
-                .footer {
-                    font-size: 14px;
-                    color: #999;
-                    margin-top: 20px;
-                    text-align: center;
-                }
-                .button {
-                    display: inline-block;
-                    padding: 10px 20px;
-                    margin-top: 20px;
-                    background-color: #007bff;
-                    color: white;
-                    text-decoration: none;
-                    border-radius: 5px;
-                    font-weight: bold;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    Registration Successful!
-                </div>
-                <div class="content">
-                <p>Dear \${collegeName},</p>
-                    <p>Thank you for joining Linkurcodes. We are excited to have you on board! Your training will commence shortly, and we are looking forward to helping you enhance your skills.</p>
-                    <p>For more details about the upcoming sessions, please use our mobile app or contact your college directly. Stay tuned for more updates and prepare to embark on a rewarding learning journey with us.</p>
-                </div>
-                <div class="footer">
-                    Best regards,<br>
-                    The Linkurcodes Team
-                </div>
-            </div>
-        </body>
-        </html>
-    `,
-    student: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                .container {
-                    font-family: Arial, sans-serif;
-                    max-width: 600px;
-                    margin: 0 auto;
-                    padding: 20px;
-                    border: 1px solid #ddd;
-                    border-radius: 5px;
-                    background-color: #f9f9f9;
-                }
-                .header {
-                    font-size: 24px;
-                    color: #333;
-                }
-                .content {
-                    font-size: 16px;
-                    color: #555;
-                }
-                .footer {
-                    font-size: 14px;
-                    color: #999;
-                    margin-top: 20px;
-                    text-align: center;
-                }
-                .button {
-                    display: inline-block;
-                    padding: 10px 20px;
-                    margin-top: 20px;
-                    background-color: #007bff;
-                    color: white;
-                    text-decoration: none;
-                    border-radius: 5px;
-                    font-weight: bold;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    Registration Successful!
-                </div>
-                <div class="content">
-                    <p>Dear \${participantName},</p>
-                    <p>Thank you for joining Linkurcodes. We are excited to have you on board! Your training will commence shortly, and we are looking forward to helping you enhance your skills.</p>
-                    <p>For more details about the upcoming sessions, please use our mobile app or contact your college directly. Stay tuned for more updates and prepare to embark on a rewarding learning journey with us.</p>
-                </div>
-                <div class="footer">
-                    Best regards,<br>
-                    The Linkurcodes Team
-                </div>
-            </div>
-        </body>
-        </html>
-    `,
-    collegeStaff: `
-       
-    `,
-    adminStaff:
-        `<!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                .container {
-                    font-family: Arial, sans-serif;
-                    max-width: 600px;
-                    margin: 0 auto;
-                    padding: 20px;
-                    border: 1px solid #ddd;
-                    border-radius: 5px;
-                    background-color: #f9f9f9;
-                }
-                .header {
-                    font-size: 24px;
-                    color: #333;
-                }
-                .content {
-                    font-size: 16px;
-                    color: #555;
-                }
-                .footer {
-                    font-size: 14px;
-                    color: #999;
-                    margin-top: 20px;
-                    text-align: center;
-                }
-                .button {
-                    display: inline-block;
-                    padding: 10px 20px;
-                    margin-top: 20px;
-                    background-color: #007bff;
-                    color: white;
-                    text-decoration: none;
-                    border-radius: 5px;
-                    font-weight: bold;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    Registration Successful!
-                </div>
-                <div class="content">
-                    <p>Dear \${AdStaffName},</p>
-                    <p>Thank you for joining Linkurcodes. We are excited to have you on board! Your training will commence shortly, and we are looking forward to helping you enhance your skills.</p>
-                    <p>For more details about the upcoming sessions, please use our mobile app or contact your college directly. Stay tuned for more updates and prepare to embark on a rewarding learning journey with us.</p>
-                </div>
-                <div class="footer">
-                    Best regards,<br>
-                    The Linkurcodes Team
-                </div>
-            </div>
-        </body>
-        </html>`
-
-    // Add more email contents as needed
-};
 function upcomingSessionContent(studName, sessionName, date, time, venueORlink) {
     console.log(studName)
     console.log(sessionName, date, time, venueORlink)
@@ -259,8 +76,68 @@ function upcomingSessionContent(studName, sessionName, date, time, venueORlink) 
     return content;
 }
 
+function admStaffAddHTMLContent(AdStaffName) {
+    content = `<!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            .container {
+                font-family: Arial, sans-serif;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f9f9f9;
+            }
+            .header {
+                font-size: 24px;
+                color: #333;
+            }
+            .content {
+                font-size: 16px;
+                color: #555;
+            }
+            .footer {
+                font-size: 14px;
+                color: #999;
+                margin-top: 20px;
+                text-align: center;
+            }
+            .button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin-top: 20px;
+                background-color: #007bff;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                Registration Successful!
+            </div>
+            <div class="content">
+                <p>Dear ${AdStaffName},</p>
+                <p>Thank you for joining Linkurcodes. We are excited to have you on board! Your training will commence shortly, and we are looking forward to helping you enhance your skills.</p>
+                <p>For more details about the upcoming sessions, please use our mobile app or contact your college directly. Stay tuned for more updates and prepare to embark on a rewarding learning journey with us.</p>
+            </div>
+            <div class="footer">
+                Best regards,<br>
+                The Linkurcodes Team
+            </div>
+        </div>
+    </body>
+    </html>`
+    return content
+}
+
 function upcomingSessionTextContent(studName, sessionName, date, time, venueORlink) {
-    textContent =`
+    textContent = `
         Dear ${studName},
         We are excited to announce the schedule for the upcoming session! Please find the details below:
         Session Title: ${sessionName}
@@ -271,11 +148,12 @@ function upcomingSessionTextContent(studName, sessionName, date, time, venueORli
         For the full session schedule and any changes, please check our online student portal or mobile app.
         We look forward to seeing you there!
         If you have any questions or need further information, please do not hesitate to contact us at admin@linkurcodes.com.`
+
 }
 
 
-function collegeStaffTextContent(collegeStaffName,clgName){
-    content=`
+function collegeStaffTextContent(collegeStaffName, clgName) {
+    content = `
     Dear ${collegeStaffName},
  
     We hope this email finds you well. We are pleased to inform you that your registration with the Link Ur Codes portal has been successfully completed. As the class-in-charge for ${clgName}, you are now the official point of contact and can fully access the resources available on our platform.
@@ -294,8 +172,8 @@ function collegeStaffTextContent(collegeStaffName,clgName){
 
 }
 
-function collegeStaffHtmlContent(collegeStaffName,collegeName){
-    content=` 
+function collegeStaffHtmlContent(collegeStaffName, collegeName) {
+    content = ` 
     <!DOCTYPE html>
     <html>
     
@@ -455,7 +333,7 @@ function collegeTextContent(collegeName){
 }
 
 module.exports = {
-    emailHtmlContent,
+    admStaffAddHTMLContent,
     upcomingSessionContent,
     upcomingSessionTextContent,
     collegeStaffTextContent,

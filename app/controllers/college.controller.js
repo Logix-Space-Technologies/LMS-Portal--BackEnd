@@ -48,11 +48,11 @@ exports.collegeCreate = (request, response) => {
     const uploadSingle = upload.single('collegeImage');
     uploadSingle(request, response, async (error) => {
         if (error) {
-            return response.status(500).json({ error: error.message });
+            return response.status(500).json({ "status": error.message });
         }
 
         if (!request.file) {
-            return response.status(400).json({ message: "No file uploaded" });
+            return response.status(400).json({ "status": "No file uploaded" });
         }
         // File handling
         const file = request.file;
@@ -166,14 +166,14 @@ exports.collegeCreate = (request, response) => {
             });
         } catch (err) {
             fs.unlinkSync(file.path);
-            response.status(500).json({ error: err.message });
+            response.status(500).json({ "status": err.message });
         }
     });
 };
 
 
 exports.collegeAllView = (request, response) => {
-    const clgviewToken = request.body.token
+    const clgviewToken = request.headers.token
     key = request.body.key
     console.log(clgviewToken)
     jwt.verify(clgviewToken, key, (err, decoded) => {
@@ -195,11 +195,11 @@ exports.updateCollege = (request, response) => {
     const uploadSingle = upload.single('collegeImage');
     uploadSingle(request, response, async (error) => {
         if (error) {
-            return response.status(500).json({ error: error.message });
+            return response.status(500).json({ "status": error.message });
         }
 
         if (!request.file) {
-            return response.status(400).json({ message: "No file uploaded" });
+            return response.status(400).json({ "status": "No file uploaded" });
         }
         // File handling
         const file = request.file;
@@ -293,14 +293,14 @@ exports.updateCollege = (request, response) => {
             });
             } catch (err) {
                 fs.unlinkSync(file.path);
-                response.status(500).json({ error: err.message });
+                response.status(500).json({ "status": err.message });
             }
         });
 };
 
 
 exports.deleteCollege = (request, response) => {
-    const collegedeleteToken = request.body.token
+    const collegedeleteToken = request.headers.token
     console.log(collegedeleteToken)
     jwt.verify(collegedeleteToken, "lmsapp", (err, decoded) => {
         if (decoded) {
@@ -328,7 +328,7 @@ exports.deleteCollege = (request, response) => {
 
 exports.searchCollege = (request, response) => {
     const collegeSearchQuery = request.body.collegeSearchQuery
-    const collegeSearchToken = request.body.token
+    const collegeSearchToken = request.headers.token
 
     jwt.verify(collegeSearchToken, "lmsapp", (err, decoded) => {
         if (decoded) {

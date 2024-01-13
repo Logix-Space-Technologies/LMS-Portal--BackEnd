@@ -4,7 +4,7 @@ const { request, response } = require("express")
 
 
 exports.viewAdminStaffLog = (request, response) => {
-    const adminStaffLogToken = request.body.token
+    const adminStaffLogToken = request.headers.token
     jwt.verify(adminStaffLogToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             AdminStaffLog.AdminStaffLog.getAll((err, data) => {

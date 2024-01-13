@@ -50,11 +50,11 @@ exports.createStudent = (req, res) => {
     uploadSingle = upload.single('studProfilePic');
     uploadSingle(req, res, async (error) => {
         if (error) {
-            return res.status(500).json({ error: error.message });
+            return res.status(500).json({ "status": error.message });
         }
 
         if (!req.file) {
-            return res.status(400).json({ message: "No file uploaded" });
+            return res.status(400).json({ "status": "No file uploaded" });
         }
 
         const file = req.file;
@@ -167,7 +167,7 @@ exports.createStudent = (req, res) => {
 
         } catch (error) {
             fs.unlinkSync(file.path);
-            response.status(500).json({ error: err.message });
+            response.status(500).json({ "status": err.message });
         }
     });
 };
@@ -220,7 +220,7 @@ exports.studLog = (request, response) => {
 
 exports.studentTaskView = (request, response) => {
     const studId = request.body.id
-    const studTaskToken = request.body.token
+    const studTaskToken = request.headers.token
     jwt.verify(studTaskToken, "lmsappstud", (err, decoded) => {
         if (decoded) {
             Tasks.studentTaskView(studId, (err, data) => {
@@ -242,8 +242,8 @@ exports.studentTaskView = (request, response) => {
 
 
 exports.StdChangePassword = (request, response) => {
-    const { studEmail, oldPassword, newPassword, token } = request.body;
-
+    const { studEmail, oldPassword, newPassword } = request.body;
+    const token = request.headers.token
     // Verify the JWT token
     jwt.verify(token, "lmsappstud", (err, decoded) => {
         if (err || !decoded) {
@@ -292,7 +292,7 @@ exports.StdChangePassword = (request, response) => {
 
 exports.studentViewProfile = (request, response) => {
     const studId = request.body.studId
-    const studProfileToken = request.body.token
+    const studProfileToken = request.headers.token
 
     jwt.verify(studProfileToken, "lmsappstud", (err, decoded) => {
         if (decoded) {
@@ -319,7 +319,7 @@ exports.profileUpdateStudent = (request, response) => {
 
         const { studName, admNo, rollNo, studDept, course, studPhNo, studProfilePic, aadharNo } = request.body
 
-        const updateProfileToken = request.body.token
+        const updateProfileToken = request.headers.token
 
         jwt.verify(updateProfileToken, "lmsappstud", (err, decoded) => {
             if (decoded) {
@@ -409,7 +409,7 @@ exports.profileUpdateStudent = (request, response) => {
 
 
 exports.viewUnverifiedStudents = (request, response) => {
-    const token = request.body.token;
+    const token = request.headers.token;
 
     jwt.verify(token, "lmsappclgstaff", (err, decoded) => {
         if (err) {
@@ -431,8 +431,8 @@ exports.viewUnverifiedStudents = (request, response) => {
 
 // View All Students By Admin
 exports.viewAllStudsByAdmin = (request, response) => {
-    const viewAllStudentByAdminToken = request.body.token
-    key = request.body.key
+    const viewAllStudentByAdminToken = request.headers.token
+    key = request.headers.key
     jwt.verify(viewAllStudentByAdminToken, key, (err, decoded) => {
         if (decoded) {
             Student.viewAllStudentByAdmin((err, data) => {
@@ -451,7 +451,7 @@ exports.viewAllStudsByAdmin = (request, response) => {
 
 exports.taskSubmissionByStudent = (request, response) => {
     const submissionData = request.body;
-    const token = request.body.token;
+    const token = request.headers.token;
     jwt.verify(token, "lmsappstud", (err, decoded) => {
         if (err) {
             response.json({ "status": "Unauthorized Access!!" })
@@ -489,7 +489,7 @@ exports.taskSubmissionByStudent = (request, response) => {
 
 
 exports.viewEvaluatedTasks = (request, response) => {
-    viewEvaluatedToken = request.body.token
+    viewEvaluatedToken = request.headers.token
     jwt.verify(viewEvaluatedToken, "lmsappstud", (error, decoded) => {
         if (decoded) {
             const studId = request.body.studId
@@ -510,21 +510,22 @@ exports.viewEvaluatedTasks = (request, response) => {
 
 
 exports.refundAmountReceivedStatus = (request, response) => {
-    const { studId, token } = request.body;
+    const { studId } = request.body;
+    const token = request.headers.token;
 
     jwt.verify(token, 'lmsappstud', (err, decoded) => {
         if (err) {
-            response.json({ status: 'Unauthorized User!!' });
+            response.json({ "status": 'Unauthorized User!!' });
             return;
         }
 
         Student.refundAmountReceivedStatus(studId, token, (err) => {
             if (err) {
                 console.log(err);
-                response.json({ status: err.status });
+                response.json({ "status": err.status });
             } else {
                 console.log('Refund amount received status successfully updated');
-                response.json({ status: 'success, Refund amount received status successfully updated' });
+                response.json({ "status": 'success, Refund amount received status successfully updated' });
             }
         });
     });
@@ -533,7 +534,9 @@ exports.refundAmountReceivedStatus = (request, response) => {
 
 
 exports.searchStudentsByAdmAndAdmstf = (request, response) => {
-    const { studentSearchQuery, token, key } = request.body;
+    const { studentSearchQuery } = request.body;
+    const token = request.headers.token;
+    const key = request.headers.key;
 
     jwt.verify(token, key, (err, decoded) => {
         if (decoded) {
