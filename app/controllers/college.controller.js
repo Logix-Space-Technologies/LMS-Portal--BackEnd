@@ -293,7 +293,7 @@ exports.updateCollege = (request, response) => {
             });
             } catch (err) {
                 fs.unlinkSync(file.path);
-                response.status(500).json({ error: err.message });
+                response.status(500).json({ "status": err.message });
             }
         });
 };
