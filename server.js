@@ -23,6 +23,6 @@ app.use("/api/lms", adminRoutes);
 
 
 
-app.listen(3030, '0.0.0.0', () => {
+app.listen(3030,  () => {
   console.log("Server is running on port 3030.");
 });

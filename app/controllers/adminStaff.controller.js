@@ -80,11 +80,11 @@ exports.create = (request, response) => {
                 if (createError) {
                     response.json({ "status": createError });
                 } else {
-                    //send mail
+                    // //send mail
                     const adminStaffName = newAdminStaff.AdStaffName
                     const adminStaffEmail = newAdminStaff.Email
-                    const adminStaffEmailContent = mailContents.adminStaff.replace(/\${AdStaffName}/g, adminStaffName);
-                    mail.sendEmail(adminStaffEmail, 'Registration Successful!', adminStaffEmailContent);
+                    const adminStaffHTMLEmailContent = mailContents.admStaffAddHTMLContent(adminStaffName);
+                    mail.sendEmail(adminStaffEmail, 'Registration Successful!', adminStaffHTMLEmailContent);
                     response.json({ "status": "success", "data": data });
                 }
             });
