@@ -57,11 +57,11 @@ exports.clgStaffCreate = (request, response) => {
 
   uploadSingle(request, response, async (error) => {
     if (error) {
-      return response.status(500).json({ error: error.message });
+      return response.status(500).json({ "status": error.message });
     }
 
     if (!request.file) {
-      return response.status(400).json({ message: "No file uploaded" });
+      return response.status(400).json({ "status": "No file uploaded" });
     }
 
     // // Read additional form fields
@@ -222,7 +222,7 @@ exports.clgStaffCreate = (request, response) => {
 
     } catch (err) {
       fs.unlinkSync(file.path);
-      response.status(500).json({ error: err.message });
+      response.status(500).json({ "status": err.message });
     }
   });
 };
@@ -283,10 +283,10 @@ exports.collegeStaffUpdate = (req, res) => {
   const uploadSingle = upload.single('profilePic');
   uploadSingle(req, res, async (error) => {
     if (error) {
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ "status": error.message });
     }
     if (!request.file) {
-      return response.status(400).json({ message: "No file uploaded" });
+      return response.status(400).json({ "status": "No file uploaded" });
     }
     // File handling
     const file = request.file;
@@ -375,7 +375,7 @@ exports.collegeStaffUpdate = (req, res) => {
     }
     catch (err) {
       fs.unlinkSync(file.path);
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ "status": err.message });
     }
   });
 };
@@ -623,12 +623,12 @@ exports.studentVerificationByCollegeStaff = (req, res) => {
 
   jwt.verify(token, "lmsapptwo", (jwtErr, decoded) => {
     if (jwtErr) {
-      return res.json({ "status": "Error", "data": "JWT verification failed" });
+      return res.json({ "status": "JWT verification failed" });
     }
 
     CollegeStaff.verifyStudent(collegeStaffId, studentId, (err, result) => {
       if (err) {
-        return res.json({ "status": "Error", "data": err });
+        return res.json({ "status": err });
       }
 
       return res.json({ "status": "Success", "data": result });
