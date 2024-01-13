@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 const Refund = require("../models/refund.model");
-const { request, response } = require("express");
+
 
 exports.createRefundRequest = (request, response) => {
-    refundtoken = request.body.token;
+    refundtoken = request.headers.token;
     jwt.verify(refundtoken, "lmsappstud", (err, decoded) => {
         if (decoded) {
             const newRefund = new Refund({
@@ -33,8 +33,8 @@ exports.createRefundRequest = (request, response) => {
 };
 
 exports.getRefundRequests = (request, response) => {
-    refundtoken = request.body.token;
-    key = request.body.key;
+    refundtoken = request.headers.token;
+    key = request.headers.key;
     jwt.verify(refundtoken, key, (err, decoded) => {
         if (decoded) {
             Refund.getRefundRequests((err, data) => {
@@ -53,7 +53,7 @@ exports.getRefundRequests = (request, response) => {
 };
 
 exports.getRefundStatus = (request, response) => {
-    refundtoken = request.body.token;
+    refundtoken = request.headers.token;
     jwt.verify(refundtoken, "lmsappstud", (err, decoded) => {
         if (decoded) {
             Refund.viewRefundStatus(request.body.studId, (err, data) => {
@@ -74,7 +74,7 @@ exports.getRefundStatus = (request, response) => {
 
 exports.approveRefundRequest = (request, response) => {
     const {refundAmnt, transactionNo, adminRemarks, admStaffId, refundId} = request.body;
-    refundtoken = request.body.token;
+    const refundtoken = request.headers.token;
     jwt.verify(refundtoken, "lmsappone", (err, decoded) => {
         if (decoded) {
             Refund.approveRefund(refundAmnt, admStaffId, transactionNo, adminRemarks, refundId, (err, data) => {
@@ -95,7 +95,7 @@ exports.approveRefundRequest = (request, response) => {
 //Admin Staff Reject Refund
 exports.rejectRefundRequest = (request, response) => {
     const {admStaffId, adminRemarks, refundId} = request.body
-    const rejectRefundToken = request.body.token
+    const rejectRefundToken = request.headers.token
     jwt.verify(rejectRefundToken, "lmsappone", (err, decoded) => {
         if (decoded) {
             Refund.rejectRefund(admStaffId, adminRemarks, refundId, (err, data) => {
@@ -114,8 +114,8 @@ exports.rejectRefundRequest = (request, response) => {
 }
 
 exports.getSuccessfulRefunds = (request, response) => {
-    refundtoken = request.body.token;
-    key = request.body.key;
+    refundtoken = request.headers.token;
+    key = request.headers.key;
     jwt.verify(refundtoken, key, (err, decoded) => {
         if (decoded) {
             Refund.getSuccessfulRefunds((err, data) => {
@@ -136,7 +136,7 @@ exports.getSuccessfulRefunds = (request, response) => {
 //cancel refund request
 exports.cancelRefundRequest= (request, response) => {
     const {refundId} = request.body;
-    refundtoken = request.body.token;
+    refundtoken = request.headers.token;
     jwt.verify(refundtoken, "lmsappstud", (err, decoded) => {
         if (decoded) {
             Refund.cancelRefundRequest(refundId, (err, data) => {
