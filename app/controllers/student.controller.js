@@ -6,145 +6,169 @@ const jwt = require('jsonwebtoken');
 const Validator = require("../config/data.validate");
 const PDFDocument = require('pdfkit-table');
 const fs = require('fs');
+const mail = require('../../sendEmail');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { Upload } = require('@aws-sdk/lib-storage');
+require('dotenv').config({ path: '../../.env' });
+const path = require("path")
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-        const fileNameWithoutSpaces = Date.now() + file.originalname.replace(/\s/g, '');
-        cb(null, fileNameWithoutSpaces);
-    },
+// AWS S3 Client Configuration
+const s3Client = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    }
 });
 
-const upload = multer({ storage: storage }).single('studProfilePic');
+
+// Multer Configuration for file upload with unique filename
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        // Unique filename: Current timestamp + random number + original extension
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+    }
+});
+
+const upload = multer({
+    storage: storage, limits: { fileSize: 2 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'), false);
+        }
+    }
+});
 
 exports.createStudent = (req, res) => {
-    upload(req, res, function (err) {
-        if (err) {
-            console.error("Error uploading image:", err);
-            return res.json({ "status": err });
+    uploadSingle = upload.single('studProfilePic');
+    uploadSingle(req, res, async (error) => {
+        if (error) {
+            return res.status(500).json({ error: error.message });
         }
 
-        const { collegeId, batchId, studName, admNo, rollNo, studDept, course, studEmail, studPhNo, aadharNo, password, rpPaymentId, rpOrderId, rpAmount } = req.body;
-
-        const saltRounds = 10;
-
-        const studProfilePic = req.file ? req.file.filename : null;
-
-        // Validation
-        const validationErrors = {};
-
-        if (Validator.isEmpty(collegeId).isValid) {
-            validationErrors.collegeId = Validator.isEmpty(collegeId).message;
+        if (!req.file) {
+            return res.status(400).json({ message: "No file uploaded" });
         }
 
-        if (Validator.isEmpty(batchId).isValid) {
-            validationErrors.batchId = Validator.isEmpty(batchId).message;
-        }
+        const file = req.file;
+        const fileStream = fs.createReadStream(file.path);
 
-        if (Validator.isEmpty(studName).isValid) {
-            validationErrors.studName = Validator.isEmpty(studName).message;
-        }
+        const uploadParams = {
+            Bucket: process.env.S3_BUCKET,
+            Key: `uploads/${file.filename}`,
+            Body: fileStream
+        };
 
-        if (!Validator.isValidName(studName).isValid) {
-            validationErrors.studName = Validator.isValidName(studName).message;
-        }
-
-        if (Validator.isEmpty(admNo).isValid) {
-            validationErrors.admNo = Validator.isEmpty(admNo).message;
-        }
-
-        if (Validator.isEmpty(rollNo).isValid) {
-            validationErrors.rollNo = Validator.isEmpty(rollNo).message;
-        }
-
-        if (Validator.isEmpty(studDept).isValid) {
-            validationErrors.studDept = Validator.isEmpty(studDept).message;
-        }
-
-        if (Validator.isEmpty(course).isValid) {
-            validationErrors.course = Validator.isEmpty(course).message;
-        }
-
-        if (Validator.isEmpty(aadharNo).isValid) {
-            validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
-        }
-
-        if (!Validator.isValidAadharNumber(aadharNo).isValid) {
-            validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
-        }
-
-        if (Validator.isEmpty(studEmail).isValid) {
-            validationErrors.studEmail = Validator.isEmpty(studEmail).message;
-        }
-
-        if (!Validator.isValidEmail(studEmail).isValid) {
-            validationErrors.studEmail = Validator.isValidEmail(studEmail).message;
-        }
-
-        if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
-            validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
-        }
-
-        if (!Validator.isValidPassword(password).isValid) {
-            validationErrors.password = Validator.isValidPassword(password).message;
-        }
-
-        if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
-            validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
-        }
-
-
-
-        // If validation fails
-        if (Object.keys(validationErrors).length > 0) {
-            return res.json({ "status": "Validation failed", "data": validationErrors });
-        }
-
-        bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
-            if (err) {
-                return res.json({ "status": err });
+        try {
+            const data = await s3Client.send(new PutObjectCommand(uploadParams));
+            const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+            // Remove the file from local storage
+            fs.unlinkSync(file.path);
+            const { collegeId, batchId, studName, admNo, rollNo, studDept, course, studEmail, studPhNo, aadharNo, password, rpPaymentId, rpOrderId, rpAmount } = req.body;
+            const saltRounds = 10;
+            const studProfilePic = imageUrl;
+            // Validation
+            const validationErrors = {};
+            if (Validator.isEmpty(collegeId).isValid) {
+                validationErrors.collegeId = Validator.isEmpty(collegeId).message;
             }
-
-            const newStudent = new Student({
-                collegeId: collegeId,
-                batchId: batchId,
-                studName: studName,
-                admNo: admNo,
-                rollNo: rollNo,
-                studDept: studDept,
-                course: course,
-                studEmail: studEmail,
-                studPhNo: studPhNo,
-                studProfilePic: studProfilePic,
-                aadharNo: aadharNo,
-                password: hashedPassword
-            });
-
-            Student.create(newStudent, (err, data) => {
+            if (Validator.isEmpty(batchId).isValid) {
+                validationErrors.batchId = Validator.isEmpty(batchId).message;
+            }
+            if (Validator.isEmpty(studName).isValid) {
+                validationErrors.studName = Validator.isEmpty(studName).message;
+            }
+            if (!Validator.isValidName(studName).isValid) {
+                validationErrors.studName = Validator.isValidName(studName).message;
+            }
+            if (Validator.isEmpty(admNo).isValid) {
+                validationErrors.admNo = Validator.isEmpty(admNo).message;
+            }
+            if (Validator.isEmpty(rollNo).isValid) {
+                validationErrors.rollNo = Validator.isEmpty(rollNo).message;
+            }
+            if (Validator.isEmpty(studDept).isValid) {
+                validationErrors.studDept = Validator.isEmpty(studDept).message;
+            }
+            if (Validator.isEmpty(course).isValid) {
+                validationErrors.course = Validator.isEmpty(course).message;
+            }
+            if (Validator.isEmpty(aadharNo).isValid) {
+                validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
+            }
+            if (!Validator.isValidAadharNumber(aadharNo).isValid) {
+                validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
+            }
+            if (Validator.isEmpty(studEmail).isValid) {
+                validationErrors.studEmail = Validator.isEmpty(studEmail).message;
+            }
+            if (!Validator.isValidEmail(studEmail).isValid) {
+                validationErrors.studEmail = Validator.isValidEmail(studEmail).message;
+            }
+            if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+                validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
+            }
+            if (!Validator.isValidPassword(password).isValid) {
+                validationErrors.password = Validator.isValidPassword(password).message;
+            }
+            if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+                validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+            }
+            // If validation fails
+            if (Object.keys(validationErrors).length > 0) {
+                return res.json({ "status": "Validation failed", "data": validationErrors });
+            }
+            bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
                 if (err) {
                     return res.json({ "status": err });
-                } else {
-                    // Payment creation logic can be added here
-                    const newPayment = new Payment({
-                        studId: data.id, // Assuming 'id' is the student's ID
-                        rpPaymentId: rpPaymentId,
-                        rpOrderId: rpOrderId,
-                        rpAmount: rpAmount
-                    });
-
-                    Payment.create(newPayment, (paymentErr, paymentData) => {
-                        if (paymentErr) {
-                            return res.json({ "status": paymentErr });
-                        } else {
-
-                            return res.json({ "status": "success", "data": data, "paymentData": paymentData });
-                        }
-                    });
                 }
+                const newStudent = new Student({
+                    collegeId: collegeId,
+                    batchId: batchId,
+                    studName: studName,
+                    admNo: admNo,
+                    rollNo: rollNo,
+                    studDept: studDept,
+                    course: course,
+                    studEmail: studEmail,
+                    studPhNo: studPhNo,
+                    studProfilePic: imageUrl,
+                    aadharNo: aadharNo,
+                    password: hashedPassword
+                });
+                Student.create(newStudent, (err, data) => {
+                    if (err) {
+                        return res.json({ "status": err });
+                    } else {
+                        // Payment creation logic can be added here
+                        const newPayment = new Payment({
+                            studId: data.id,
+                            rpPaymentId: rpPaymentId,
+                            rpOrderId: rpOrderId,
+                            rpAmount: rpAmount
+                        });
+                        Payment.create(newPayment, (paymentErr, paymentData) => {
+                            if (paymentErr) {
+                                return res.json({ "status": paymentErr });
+                            } else {
+                                return res.json({ "status": "success", "data": data, "paymentData": paymentData });
+                            }
+                        });
+                    }
+                });
             });
-        });
+
+        } catch (error) {
+            fs.unlinkSync(file.path);
+            response.status(500).json({ error: err.message });
+        }
     });
 };
 
@@ -636,10 +660,10 @@ function generatePDF(data, callback) {
     }
     // Add the generated date and time
     const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(9).text('Generated on: '+generatedDate.toLocaleDateString()+' '+generatedDate.toLocaleTimeString(), {
+    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString() + ' ' + generatedDate.toLocaleTimeString(), {
         align: 'center',
     });
-    
+
     doc.end();
 
 

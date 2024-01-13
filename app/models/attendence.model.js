@@ -18,4 +18,15 @@ Attendence.create = (newAttendence, result) => {
     });
 };
 
+Attendence.markAttendence = (attendence, result) => {
+    db.query("UPDATE attendence SET status = 1 WHERE studId = ? AND sessionId = ?", [attendence.status, attendence.studId, attendence.sessionId], (err, res) => {
+        if (err) {
+            console.log("error:", err);
+            result(err, null);
+            return;
+        }
+        console.log("created attendence:", { id: res.insertId, ...attendence });
+        result(null, { id: res.insertId, ...attendence });
+    });
+}
 module.exports = Attendence;

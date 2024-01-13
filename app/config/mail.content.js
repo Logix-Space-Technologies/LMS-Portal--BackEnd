@@ -375,12 +375,92 @@ function collegeStaffHtmlContent(collegeStaffName, collegeName) {
     </html>`
     return content;
 }
+
+
+function collegeHtmlContent(collegeName){
+    content=`<!DOCTYPE html>
+<html>
+<head>
+    <title>New Task Available</title>
+    <style>
+        body {
+            background-color: #faf4f4;
+            color: #140101;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            border-radius: 8px;
+
+            background-color: #ece9e9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        .logo-header img {
+            max-width: 30%;
+            height: auto;
+        }
+        .content {
+            margin-top: 20px;
+            border: 2px solid #a3a0a0; /* Added a border to content */
+            padding: 20px; /
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: smaller;
+            color: grey;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+    </div>
+    <div class="content">
+        <p>Dear ${collegeName},</p>
+        <p>Thank you for joining Link Ur Codes. We are excited to have you on board! Your training will commence shortly, and we are looking forward to helping you enhance your skills.</p>
+        <p>For more details about the upcoming sessions, please use our mobile app or contact your college directly. Stay tuned for more updates and prepare to embark on a rewarding learning journey with us.</p>
+        <p>Stay tuned for an exciting learning experience!</p>
+    </div>
+    <div class="footer">
+        <p>If you have any questions, feel free to reach out to us.</p>
+    </div>
+</div>
+
+</body>
+</html>`
+return content;
+}
+
+function collegeTextContent(collegeName){
+    content=`Dear ${collegeName},
+
+    We are thrilled to have you join us at Link Ur Codes. Your journey to connect and learn starts here!
+    
+    Our sessions will commence shortly, and we will update you with the details of the next session soon.
+    
+    Stay tuned for an exciting learning experience!
+    
+    If you have any questions, feel free to reach out to us.
+    
+    Best Regards,
+    Link Ur Codes Team`
+    return content;
+}
+
 module.exports = {
     emailHtmlContent,
     admStaffAddHTMLContent,
     upcomingSessionContent,
     upcomingSessionTextContent,
     collegeStaffTextContent,
-    collegeStaffHtmlContent
+    collegeStaffHtmlContent,
+    collegeHtmlContent,
+    collegeTextContent
 };
 
