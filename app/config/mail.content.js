@@ -333,7 +333,6 @@ function collegeTextContent(collegeName){
 }
 
 module.exports = {
-    emailHtmlContent,
     admStaffAddHTMLContent,
     upcomingSessionContent,
     upcomingSessionTextContent,
