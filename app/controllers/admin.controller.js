@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const Admin = require("../models/admin.model");
-const { request, response } = require("express");
 const Validator = require('../config/data.validate')
 
 // const saltRounds = 10;
