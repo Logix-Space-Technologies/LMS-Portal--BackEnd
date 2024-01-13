@@ -215,9 +215,9 @@ exports.updateCollege = (request, response) => {
             const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
 
             // Remove the file from local storage
-            const collegeUpdateToken = request.body.token
+            const collegeUpdateToken = request.headers.token
             const collegeImage = request.file ? request.file.filename : null
-            key = request.body.key // key for respective tokens
+            const key = request.headers.key // key for respective tokens
             if (!request.file) {
                 return response.json({ "status": "Image cannot be empty!!" })
             }
