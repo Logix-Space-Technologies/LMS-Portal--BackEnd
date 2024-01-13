@@ -52,6 +52,26 @@ Curriculum.curriculumCreate = (newCurriculum, result) => {
     });
 };
 
+
+
+
+Curriculum.searchCurriculum = (search , result)=>{
+    const searchTerm = '%'+ search + '%'
+    db.query("SELECT c.id, c.batchId, c.curriculumTitle, c.curriculumDesc, c.addedBy, c.curriculumFileLink FROM curriculum c JOIN batches b ON c.batchId = b.id JOIN college co ON b.collegeId = co.id WHERE c.isActive = 1 AND c.deleteStatus = 0 AND b.isActive = 1 AND b.deleteStatus = 0 AND co.isActive = 1 AND co.deleteStatus = 0 AND (c.curriculumTitle LIKE ? OR c.curriculumDesc LIKE ? OR b.batchName LIKE ? OR co.collegeName LIKE ?)",
+    [searchTerm, searchTerm, searchTerm,searchTerm],
+    (err, res) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            result
+        } else {
+            console.log("Curriculum   Details : ", res)
+            result(null, res)
+        }
+    })
+}
+
+
 Curriculum.curriculumView = (batchId, result) => {
     db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus=0 AND isActive=1",
         [batchId],
@@ -78,6 +98,22 @@ Curriculum.curriculumView = (batchId, result) => {
                 })
         })
 }
+
+Curriculum.curriculumView = (result) => {
+    db.query("SELECT b.batchName, c.* FROM curriculum c JOIN batches b ON c.batchId = b.id WHERE c.deleteStatus = 0 AND c.isActive = 1",
+        (curriculumErr, curriculumRes) => {
+            if (curriculumErr) {
+                console.log("error: ", curriculumErr);
+                result(curriculumErr, null)
+                return
+            } else {
+                console.log("success:", curriculumRes)
+                result(null, curriculumRes);
+            }
+        })
+}
+
+
 
 
 module.exports = Curriculum;
