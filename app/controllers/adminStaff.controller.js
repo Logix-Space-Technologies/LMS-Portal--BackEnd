@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const AdminStaff = require("../models/adminStaff.model");
 const Validator = require("../config/data.validate");
-const { request, response } = require("express");
 const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
 
@@ -84,7 +83,7 @@ exports.create = (request, response) => {
                     //send mail
                     const adminStaffName = newAdminStaff.AdStaffName
                     const adminStaffEmail = newAdminStaff.Email
-                    const adminStaffEmailContent = mailContents.adminStaff.replace(/\${AdStaffName}/g, AdStaffName);
+                    const adminStaffEmailContent = mailContents.adminStaff.replace(/\${AdStaffName}/g, adminStaffName);
                     mail.sendEmail(adminStaffEmail, 'Registration Successful!', adminStaffEmailContent);
                     response.json({ "status": "success", "data": data });
                 }
