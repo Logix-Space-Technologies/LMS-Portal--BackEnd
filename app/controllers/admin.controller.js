@@ -82,13 +82,14 @@ exports.adminLogin = (request, response) => {
 
 
 exports.adminChangePwd = (request, response) => {
-    const { userName, oldPassword, newPassword, token } = request.body;
+    const { userName, oldPassword, newPassword } = request.body;
+    const token = request.headers.token
 
     jwt.verify(token, "lmsapp", (error, decoded) => {
         if (decoded) {
             Admin.changePassword({ userName, oldPassword, newPassword }, (err, result) => {
                 if (err) {
-                    return response.json({ status: err });
+                    return response.json({ "status": err });
                 }
                 if (oldPassword === newPassword) {
                     return response.json({ "status": "Old Password and New Password cannot be same." })
@@ -100,7 +101,7 @@ exports.adminChangePwd = (request, response) => {
 
                 if (!passwordValidation.isValid) {
                     validationErrors.password = passwordValidation.message;
-                    return response.json({ status: validationErrors });
+                    return response.json({ "status": validationErrors });
                 }
 
                 if (result.status === "Password Updated Successfully!!!") {
@@ -130,7 +131,7 @@ exports.adminDashBoards = (request, response) => {
         if (decoded) {
             Admin.adminDashBoard((err, result) => {
                 if (err) {
-                    return response.json({ status: err });
+                    return response.json({ "status": err });
                 } else {
                     return response.json({ "status": "Success", "data": result });
                 }
