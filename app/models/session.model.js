@@ -246,5 +246,40 @@ Session.searchSession = (search, result) => {
         })
 }
 
+Session.cancelSession = (sessionId, result) => {
+    db.query("SELECT * FROM sessiondetails WHERE id = ? AND deleteStatus = 0 AND isActive = 1", sessionId, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+
+        if (res.length === 0) {
+            console.log("Session doesn't exist");
+            result("Session doesn't exist", null);
+            return;
+        }
+
+        db.query("DELETE FROM attendence WHERE sessionId = ?", sessionId, (err, res) => {
+            if (err) {
+                console.log("Error deleting attendance records: ", err);
+                result(err, null);
+                return;
+            }
+
+            db.query("UPDATE sessiondetails SET cancelStatus = 1 WHERE id = ?", sessionId, (err, res) => {
+                if (err) {
+                    console.log("Error marking session as canceled: ", err);
+                    result(err, null);
+                    return;
+                }
+
+                console.log("Session cancelled successfully");
+                result(null, "Session cancelled successfully");
+            });
+        });
+    });
+};
+
 
 module.exports = Session

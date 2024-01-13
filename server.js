@@ -1,7 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require('jsonwebtoken');
-const mysql = require("mysql");
+// const mysql = require("mysql");
+const mysql = require('mysql2')
+
 const adminRoutes = require("./app/routes/lms.routes");
 const app = express();
 
@@ -21,6 +23,6 @@ app.use("/api/lms", adminRoutes);
 
 
 
-app.listen(8080, () => {
-  console.log("Server is running on port 8080.");
+app.listen(3030, '0.0.0.0', () => {
+  console.log("Server is running on port 3030.");
 });
