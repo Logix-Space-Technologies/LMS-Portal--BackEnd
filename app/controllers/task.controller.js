@@ -1,10 +1,8 @@
 const Tasks = require("../models/task.model");
 const jwt = require("jsonwebtoken");
 const path = require("path")
-const { request, response } = require("express");
 const multer = require("multer")
 const Validator = require("../config/data.validate");
-const { log } = require("console");
 
 
 
@@ -30,9 +28,9 @@ exports.createTask = (request, response) => {
         const { batchId, taskTitle, taskDesc, taskType, totalScore} = request.body
         const dueDate  = request.body.dueDate
         console.log(dueDate)
-        const taskToken = request.body.token
+        const taskToken = request.headers.token
         console.log(taskToken)
-        key = request.body.key
+        key = request.headers.key
 
         jwt.verify(taskToken, key, (err, decoded) => {
             if (decoded) {
@@ -113,7 +111,7 @@ exports.createTask = (request, response) => {
 
 
 exports.taskDelete = (request, response) => {
-    const deleteToken = request.body.token
+    const deleteToken = request.headers.token
     const task = new Tasks({
         'id': request.body.id
     });
@@ -149,12 +147,13 @@ exports.taskUpdate = (request, response) => {
             return response.json({ "status": err });
         }
 
-        const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate,key } = request.body;
+        const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = request.body;
 
-        const updateTasktoken = request.body.token;
+        const updateTasktoken = request.headers.token;
         console.log(updateTasktoken)
+        const key = request.headers.key
 
-        jwt.verify(updateTasktoken,key, (error, decoded) => {
+        jwt.verify(updateTasktoken, key, (error, decoded) => {
             if (decoded) {
 
                 const validationErrors = {};
@@ -234,8 +233,8 @@ exports.taskUpdate = (request, response) => {
 };
 
 exports.taskView = (request, response) => {
-    const taskToken = request.body.token
-    key = request.body.key
+    const taskToken = request.headers.token
+    key = request.headers.key
     jwt.verify(taskToken, key, (err, decoded) => {
         if (decoded) {
             Tasks.taskView((err, data) => {
@@ -257,8 +256,8 @@ exports.taskView = (request, response) => {
 
 exports.searchTask = (request, response) => {
     const taskQuery = request.body.taskQuery;
-    const taskSearchToken = request.body.token;
-    key=request.body.key
+    const taskSearchToken = request.headers.token;
+    key=request.headers.key
     jwt.verify(taskSearchToken, key, (err, decoded) => {
         if(!taskQuery){
             return response.json({"status":"Provide a search query"})
@@ -283,8 +282,8 @@ exports.searchTask = (request, response) => {
 
 exports.collegeStaffSearchTasks = (request, response) => {
     const taskQuery = request.body.taskQuery;
-    const AdStafftaskSearchToken = request.body.token;
-    const collegeId = request.body.collegeId;
+    const AdStafftaskSearchToken = request.headers.token;
+    const collegeId = request.headers.collegeId;
     jwt.verify(AdStafftaskSearchToken, "lmsappclgstaff", (err, decoded) => {
         if(!taskQuery){
             return response.json({"status":"Provide a search query"})
