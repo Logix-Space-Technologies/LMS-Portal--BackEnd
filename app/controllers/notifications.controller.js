@@ -1,9 +1,8 @@
 const Notifications = require("../models/notifications.model");
 const jwt = require("jsonwebtoken");
 const path = require("path")
-const { request, response } = require("express");
 const Validator = require("../config/data.validate");
-const { log } = require("console");
+
 
 exports.createNotifications = (request, response) => {
     const notificationToken = request.headers.token;

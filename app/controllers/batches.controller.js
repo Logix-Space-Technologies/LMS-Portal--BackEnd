@@ -5,8 +5,8 @@ const Validator = require("../config/data.validate")
 
 exports.batchCreate = (request, response) => {
 
-    const batchToken = request.body.token;
-    key=request.body.key
+    const batchToken = request.headers.token;
+    key=request.headers.key
 
     jwt.verify(batchToken,key, (err, decoded) => {
         if (decoded) {
@@ -80,7 +80,7 @@ exports.batchCreate = (request, response) => {
 
 
 exports.batchDelete = (request, response) => {
-    const deleteToken = request.body.token
+    const deleteToken = request.headers.token
     jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             const batch = new Batches({
@@ -92,7 +92,7 @@ exports.batchDelete = (request, response) => {
                         console.log({ "status": "Batch Not Found." })
                         response.json({ "status": "Batch Not Found." })
                     } else {
-                        response.json({ "message": "Error Deleting Batch." })
+                        response.json({ "status": "Error Deleting Batch." })
                     }
                 } else {
                     response.json({ "status": "Batch Deleted." })
@@ -107,8 +107,8 @@ exports.batchDelete = (request, response) => {
 
 
 exports.batchView = (request, response) => {
-    const batchToken = request.body.token;
-    key=request.body.key // key for respective tokens
+    const batchToken = request.headers.token;
+    key=request.headers.key // key for respective tokens
     jwt.verify(batchToken, key, (err, decoded) => {
         if (decoded) {
             Batches.batchView((err, data) => {
@@ -130,8 +130,8 @@ exports.batchView = (request, response) => {
 
 
 exports.searchBatch = (request, response) => {
-    const batchQuery = request.body.batchQuery;
-    const batchToken = request.body.token;
+    const batchQuery = request.headers.batchQuery;
+    const batchToken = request.headers.token;
     //key for respective token
     key=request.body.key;
     
@@ -168,9 +168,9 @@ exports.batchUpdate = (request, response) => {
         batchAmount,
     } = request.body;
 
-    const batchUpdateToken = request.body.token;
+    const batchUpdateToken = request.headers.token;
     console.log(batchUpdateToken)
-    key = request.body.key
+    key = request.headers.key
     jwt.verify(batchUpdateToken, key , (err, decoded) => {
         if (decoded) {
 

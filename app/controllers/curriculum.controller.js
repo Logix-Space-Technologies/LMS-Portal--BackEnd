@@ -133,3 +133,78 @@ exports.createCurriculum = (request, response) => {
         }
     });
 };
+
+exports.viewAllCurriculum = (request, response) =>{
+    const curriculumToken = request.headers.token
+    key=request.headers.key
+    jwt.verify(curriculumToken, key, (err, decoded)=>{
+        if (decoded) {
+            Curriculum.curriculumView((err, data) =>{
+                if (err) {
+                    response.json({ "status": err });
+                }
+                if (data.length == 0) {
+                    response.json({ "status": "No batches found!" });
+                } else {
+                    response.json({ "status": "success", "data": data });
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+
+
+
+
+exports.searchCurriculum = (request,response)=>{
+    const CurriculumSearchQuery = request.body.CurriculumSearchQuery
+    const CurriculumSearchToken = request.headers.token
+    const key = request.headers.key;
+
+    jwt.verify(CurriculumSearchToken, key, (err, decoded) => {
+        if (decoded) {
+            if (!CurriculumSearchQuery) {
+                console.log("Search Item is required.")
+                return response.json({ "status": "Search Item is required." })
+            }
+            Curriculum.searchCurriculum(CurriculumSearchQuery, (err, data) => {
+                if (err) {
+                    response.json({ "status": err })
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No Search Items Found." })
+                    } else {
+                        response.json({ "status": "Result Found", "data": data })
+                    }
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" })
+        }
+    })
+}
+
+exports.currView = (request, response) =>{
+    const batchId = request.body.batchId
+    const curriculumToken = request.headers.token
+    key=request.headers.key
+    jwt.verify(curriculumToken, key, (err, decoded)=>{
+        if (decoded) {
+            Curriculum.curriculumView(batchId,(err, data) =>{
+                if (err) {
+                    response.json({ "status": err });
+                }
+                if (data.length == 0) {
+                    response.json({ "status": "No batches found!" });
+                } else {
+                    response.json({ "status": "success", "data": data });
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+
