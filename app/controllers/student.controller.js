@@ -423,7 +423,7 @@ exports.profileUpdateStudent = (request, response) => {
                     })
             
 
-        } catch (error) {
+        } catch (err) {
             fs.unlinkSync(file.path);
             response.status(500).json({ "status": err.message });
         }
