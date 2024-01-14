@@ -8,7 +8,7 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 const fs = require('fs');
 require('dotenv').config({ path: '../../.env' });
-
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 const saltRounds = 10;
 
 // AWS S3 Client Configuration
@@ -134,6 +134,9 @@ exports.createTrainer = (request, response) => {
                             if (err) {
                                 return response.json({ "status": err });
                             }
+                            if (key == "lmsapp") {
+                                logAdminStaff(0, "Admin Created Trainer")
+                            }
                             return response.json({ "status": "success", "data": data });
                         });
                     });
@@ -219,7 +222,7 @@ exports.deleteTrainer = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
-
+                logAdminStaff(0, "Admin Deleted Trainer")
                 return response.json({ "status": "success", "data": data });
             });
         } else {
@@ -307,6 +310,9 @@ exports.trainerDetailsUpdate = (request, response) => {
                                 response.json({ "status": err })
                             }
                         } else {
+                            if (key == "lmsapp") {
+                                logAdminStaff(0, "Admin Updated Trainer Details")
+                            }
                             return response.json({ "status": "Trainer Details Updated", "data": data })
                         }
                     })

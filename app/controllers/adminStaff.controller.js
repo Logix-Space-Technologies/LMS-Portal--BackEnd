@@ -290,7 +290,7 @@ exports.adminStaffLogin = (request, response) => {
 exports.adminStaffChangePswd = (request, response) => {
     const { Email, oldAdSfPassword, newAdSfPassword} = request.body
     const token = request.headers.token
-    jwt.verify(token, "lmsappone", (error, decoded) => {
+    jwt.verify(token, "lmsappadmstaff", (error, decoded) => {
         if (decoded) {
             if (oldAdSfPassword === newAdSfPassword) {
                 response.json({ "status": "Old password and new password cannot be same." });
@@ -332,7 +332,7 @@ exports.searchCollegesByAdminStaff = (request, response) => {
     const collegeSearchQuery = request.body.collegeSearchQuery;
     const collegeSearchToken = request.headers.token;
 
-    jwt.verify(collegeSearchToken, "lmsappone", (err, decoded) => {
+    jwt.verify(collegeSearchToken, "lmsappadmstaff", (err, decoded) => {
         if (decoded) {
             if (!collegeSearchQuery) {
                 console.log("Search Item is required.");
@@ -369,7 +369,7 @@ exports.viewAdminStaffProfile = (request, response) => {
         return response.json({ "status": "Token is required." });
     }
 
-    jwt.verify(admStaffProfileToken, "lmsappone", (err, decoded) => {
+    jwt.verify(admStaffProfileToken, "lmsappadmstaff", (err, decoded) => {
         if (err) {
             console.error("Token verification failed:", err);
             return response.json({ "status": err });
@@ -394,7 +394,7 @@ exports.viewAdminStaffProfile = (request, response) => {
 // View Submitted Tasks By AdminStaff
 exports.adsfViewSubmttedTask = (request, response) => {
     viewSubmittedTaskToken = request.headers.token
-    jwt.verify(viewSubmittedTaskToken, "lmsappone", (error, decoded) => {
+    jwt.verify(viewSubmittedTaskToken, "lmsappadmstaff", (error, decoded) => {
         if (decoded) {
             AdminStaff.viewSubmittedTask((error, data) => {
                 if (error) {

@@ -1,14 +1,14 @@
 const jwt = require("jsonwebtoken");
 const Batches = require("../models/batches.model");
 const Validator = require("../config/data.validate")
-
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
 exports.batchCreate = (request, response) => {
 
     const batchToken = request.headers.token;
-    key=request.headers.key
+    key = request.headers.key
 
-    jwt.verify(batchToken,key, (err, decoded) => {
+    jwt.verify(batchToken, key, (err, decoded) => {
         if (decoded) {
             //checking validations
             const validationErrors = {};
@@ -69,6 +69,9 @@ exports.batchCreate = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
+                    if (key == "lmsapp") {
+                        logAdminStaff(0, "Admin Created Batch")
+                    }
                     return response.json({ "status": "success", "data": data });
                 }
             });
@@ -95,6 +98,7 @@ exports.batchDelete = (request, response) => {
                         response.json({ "status": "Error Deleting Batch." })
                     }
                 } else {
+                    logAdminStaff(0, "Admin Deleted Batch")
                     response.json({ "status": "Batch Deleted." })
                 }
             })
@@ -108,7 +112,7 @@ exports.batchDelete = (request, response) => {
 
 exports.batchView = (request, response) => {
     const batchToken = request.headers.token;
-    key=request.headers.key // key for respective tokens
+    key = request.headers.key // key for respective tokens
     jwt.verify(batchToken, key, (err, decoded) => {
         if (decoded) {
             Batches.batchView((err, data) => {
@@ -133,11 +137,11 @@ exports.searchBatch = (request, response) => {
     const batchQuery = request.headers.batchQuery;
     const batchToken = request.headers.token;
     //key for respective token
-    key=request.headers.key;
-    
+    key = request.headers.key;
+
     jwt.verify(batchToken, key, (err, decoded) => {
-        if(!batchQuery){
-            return response.json({"status":"Search query cannot be empty"})
+        if (!batchQuery) {
+            return response.json({ "status": "Search query cannot be empty" })
         }
         if (decoded) {
             Batches.searchBatch(batchQuery, (err, data) => {
@@ -171,7 +175,7 @@ exports.batchUpdate = (request, response) => {
     const batchUpdateToken = request.headers.token;
     console.log(batchUpdateToken)
     key = request.headers.key
-    jwt.verify(batchUpdateToken, key , (err, decoded) => {
+    jwt.verify(batchUpdateToken, key, (err, decoded) => {
         if (decoded) {
 
             const validationErrors = {};
@@ -184,8 +188,8 @@ exports.batchUpdate = (request, response) => {
             if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
                 validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
             }
-            if (!Validator.isDate1GreaterThanDate2(regStartDate,regEndDate).isValid){
-                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(regStartDate,regEndDate).message
+            if (!Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).isValid) {
+                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).message
             }
 
             if (!Validator.isDateGreaterThanToday(regEndDate).isValid) {
@@ -223,6 +227,9 @@ exports.batchUpdate = (request, response) => {
                     }
 
                 } else {
+                    if (key == "lmsapp") {
+                        logAdminStaff(0, "Admin Updated Batch")
+                    }
                     response.json({ "status": "Updated Batch Details", "data": data });
                 }
             });

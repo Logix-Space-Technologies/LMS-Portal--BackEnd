@@ -6,6 +6,7 @@ const Validator = require("../config/data.validate");
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 const fs = require('fs');
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 require('dotenv').config({ path: '../../.env' });
 
 
@@ -140,6 +141,9 @@ exports.createTask = (request, response) => {
                         if (err) {
                             return response.json({ "status": err });
                         } else {
+                            if(key=="lmsapp"){
+                                logAdminStaff(0,"Admin Created Task")
+                            }
                             return response.json({ "status": "success", "data": data });
                         }
                     })
@@ -181,6 +185,7 @@ exports.taskDelete = (request, response) => {
                     return response.json({ "status": err });
                 }
             } else {
+                logAdminStaff(0, "Admin Deleted Task")
                 return response.json({ "status": "Task Deleted." });
             }
         });
@@ -292,6 +297,9 @@ exports.taskUpdate = (request, response) => {
                                 return response.json({ "status": err });
                             }
                         } else {
+                            if(key=="lmsapp"){
+                                logAdminStaff(0,"Admin Updated Task")
+                            }
                             return response.json({ "status": "success", "data": data });
                         }
                     });

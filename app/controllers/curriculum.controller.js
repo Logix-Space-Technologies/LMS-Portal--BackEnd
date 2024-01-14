@@ -7,7 +7,7 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 const fs = require('fs');
 require('dotenv').config({ path: '../../.env' });
-
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 // AWS S3 Client Configuration
 const s3Client = new S3Client({
     region: process.env.AWS_REGION,
@@ -118,6 +118,9 @@ exports.createCurriculum = (request, response) => {
                         if (err) {
                             return response.json({ "status": err });
                         } else {
+                            if(key=="lmsapp"){
+                                logAdminStaff(0,"Admin Created Curriculum")
+                            }
                             return response.json({ "status": "success", "data": data });
                         }
                     });
