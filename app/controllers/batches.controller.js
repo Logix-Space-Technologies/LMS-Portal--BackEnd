@@ -133,7 +133,7 @@ exports.searchBatch = (request, response) => {
     const batchQuery = request.headers.batchQuery;
     const batchToken = request.headers.token;
     //key for respective token
-    key=request.body.key;
+    key=request.headers.key;
     
     jwt.verify(batchToken, key, (err, decoded) => {
         if(!batchQuery){

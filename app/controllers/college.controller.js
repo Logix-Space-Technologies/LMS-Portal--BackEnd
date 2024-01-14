@@ -174,7 +174,7 @@ exports.collegeCreate = (request, response) => {
 
 exports.collegeAllView = (request, response) => {
     const clgviewToken = request.headers.token
-    key = request.body.key
+    key = request.headers.key
     console.log(clgviewToken)
     jwt.verify(clgviewToken, key, (err, decoded) => {
         if (decoded) {
