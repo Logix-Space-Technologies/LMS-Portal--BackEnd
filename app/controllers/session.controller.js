@@ -282,7 +282,7 @@ exports.searchSession = (request, response) => {
         }
     })
 }
-
+//cancel session 
 exports.cancelSession = (request, response) => {
     const sessionCancelToken = request.headers.token;
     const key = request.headers.key;
