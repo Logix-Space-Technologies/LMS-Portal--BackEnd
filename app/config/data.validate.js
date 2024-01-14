@@ -133,7 +133,7 @@ function isValidDate(date) {
 }
 
 function isDateGreaterThanToday(date) {
-    const inputDate = new Date(date);
+    const inputDate = new Date(date.split('/').reverse().join('-'));
     const currentDate = new Date();
     console.log(currentDate)
     console.log(inputDate)

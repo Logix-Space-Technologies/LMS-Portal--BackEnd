@@ -18,10 +18,11 @@ Attendence.create = (newAttendence, result) => {
     });
 };
 
-Attendence.markAttendence = (attendence, result) => {
+
+Attendence.markAttendence = (attendance, result) => {
     const validationQuery = "SELECT s.id AS sessionId, s.date AS sessionDate FROM sessiondetails AS s WHERE s.id = ? AND cancelStatus = 0 AND deleteStatus = 0 AND isActive = 1";
 
-    db.query(validationQuery, (validationErr, validationRes) => {
+    db.query(validationQuery, [attendance.sessionId], (validationErr, validationRes) => {
         if (validationErr) {
             console.log("validation error:", validationErr);
             result(validationErr, null);
@@ -30,35 +31,34 @@ Attendence.markAttendence = (attendence, result) => {
 
         // Check if the Session is valid
         if (validationRes.length === 0) {
-            const invalidCodeError = new Error("Invalid Session");
-            console.log("error:", invalidCodeError);
-            result(invalidCodeError, null);
+            console.log("Invalid Session");
+            result("Invalid Session", null);
             return;
         }
 
         const { sessionId, sessionDate } = validationRes[0];
+        console.log(sessionDate)
+        const currentDate = new Date();
+        // console.log(currentDate)
 
         // Check if the current date is within the session date
-        const currentDate = new Date();
         if (currentDate < new Date(sessionDate)) {
-            const beforeSessionError = new Error("Cannot mark attendance before the session date");
-            console.log("error:", beforeSessionError);
-            result(beforeSessionError, null);
+            console.log("Cannot mark attendance before the session date");
+            result("Cannot mark attendance before the session date", null);
             return;
         }
 
         // Check if the current date is after the session date
         if (currentDate > new Date(sessionDate)) {
-            const afterSessionError = new Error("Cannot mark attendance after the session date");
-            console.log("error:", afterSessionError);
-            result(afterSessionError, null);
+            console.log("Cannot mark attendance after the session date");
+            result("Cannot mark attendance after the session date", null);
             return;
         }
 
         // Check if the student has already marked attendance for the session
         const checkAttendanceQuery = "SELECT id FROM attendence WHERE studId = ? AND sessionId = ? AND status = 1";
 
-        db.query(checkAttendanceQuery, [attendence.studId, sessionId], (checkErr, checkRes) => {
+        db.query(checkAttendanceQuery, [attendance.studId, sessionId], (checkErr, checkRes) => {
             if (checkErr) {
                 console.log("check error:", checkErr);
                 result(checkErr, null);
@@ -66,24 +66,23 @@ Attendence.markAttendence = (attendence, result) => {
             }
 
             if (checkRes.length > 0) {
-                const alreadyMarkedError = new Error("Attendance already marked for this session");
-                console.log("error:", alreadyMarkedError);
-                result(alreadyMarkedError, null);
+                console.log("Attendance already marked for this session");
+                result("Attendance already marked for this session", null);
                 return;
             }
 
             // If the attendance code is valid, within the session date, and not already marked, proceed with the update
-            const updateQuery = "UPDATE attendence AS a JOIN sessiondetails AS s ON a.sessionId = s.id SET a.status = 1 WHERE a.studId = ?";
+            const updateQuery = "UPDATE attendence SET status = 1 WHERE studId = ? AND sessionId = ?";
 
-            db.query(updateQuery, [attendence.studId], (updateErr, updateRes) => {
+            db.query(updateQuery, [attendance.studId, sessionId], (updateErr, updateRes) => {
                 if (updateErr) {
                     console.log("update error:", updateErr);
                     result(updateErr, null);
                     return;
                 }
 
-                console.log("created attendance:", { id: updateRes.insertId, ...attendence });
-                result(null, { id: updateRes.insertId, ...attendence });
+                console.log("marked attendance for student:", attendance.studId);
+                result(null, { id: attendance.studId, ...attendance });
             });
         });
     });
