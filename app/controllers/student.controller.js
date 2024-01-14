@@ -562,7 +562,7 @@ exports.searchStudentsByAdmAndAdmstf = (request, response) => {
     });
 };
 
-
+//for student registration view batch dropdown
 exports.studRegViewBatch = (request, response) => {
     const collegeId = request.body.collegeId;
     Student.viewBatch(collegeId, (err, data) => {
@@ -578,6 +578,7 @@ exports.studRegViewBatch = (request, response) => {
 
 };
 
+//for student registration view college dropdown
 exports.studregCollegeAllView = (request, response) => {
     Student.collegeViewAll((err, data) => {
         if (err) {
