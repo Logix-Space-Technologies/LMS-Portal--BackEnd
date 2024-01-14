@@ -301,7 +301,7 @@ exports.cancelSession = (request, response) => {
                     return response.json({ "status": err });
                 }
 
-                return response.json({ "status": "Session Cancelled Successfully!!!"});
+                return response.json({ "status": "success"});
             });
         } else {
             return response.json({ "status": "Unauthorized User!!" });
