@@ -73,7 +73,7 @@ exports.createTask = (request, response) => {
 
             const { batchId, taskTitle, taskDesc, taskType, totalScore } = request.body
             const dueDate = request.body.dueDate
-            
+
             const taskToken = request.headers.token
             key = request.headers.key
 
@@ -190,95 +190,121 @@ exports.taskDelete = (request, response) => {
 
 
 exports.taskUpdate = (request, response) => {
-    upload(request, response, function (err) {
-        if (err) {
-            console.error("Error uploading file:", err);
-            return response.json({ "status": err });
+    const uploadFile = upload.single('taskFileUpload');
+    uploadFile(request, response, async (error) => {
+        if (error) {
+            return response.status(500).json({ "status": error.message });
         }
 
-        const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = request.body;
+        if (!request.file) {
+            return response.status(400).json({ "status": "No file uploaded" });
+        }
 
-        const updateTasktoken = request.headers.token;
-        console.log(updateTasktoken)
-        const key = request.headers.key
+        // File handling
+        const file = request.file;
+        const fileStream = fs.createReadStream(file.path);
 
-        jwt.verify(updateTasktoken, key, (error, decoded) => {
-            if (decoded) {
+        const uploadParams = {
+            Bucket: process.env.S3_BUCKET,
+            Key: `uploads/${file.filename}`,
+            Body: fileStream
+        };
 
-                const validationErrors = {};
+        try {
+            const data = await s3Client.send(new PutObjectCommand(uploadParams));
+            const fileUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
 
-                if (Validator.isEmpty(batchId).isValid) {
-                    validationErrors.value = Validator.isEmpty(batchId).message;
-                }
-                if (!Validator.isValidAmount(batchId).isValid) {
-                    validationErrors.amount = Validator.isValidAmount(batchId).message; //validation for batch id
-                }
-                if (!Validator.isValidName(taskTitle).isValid) {
-                    validationErrors.name = Validator.isValidName(taskTitle).message;
-                }
+            // Remove the file from local storage
+            fs.unlinkSync(file.path);
 
-                if (!Validator.isValidAddress(taskDesc).isValid) {
-                    validationErrors.address = Validator.isValidAddress(taskDesc).message; //validation for task description.
-                }
+            const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = request.body;
 
-                if (!Validator.isValidName(taskType).isValid) {
-                    validationErrors.name = Validator.isValidName(taskType).message; //validation for task type
-                }
+            const updateTasktoken = request.headers.token;
+            console.log(updateTasktoken)
+            const key = request.headers.key
 
-                if (!Validator.isValidAmount(totalScore).isValid) {
-                    validationErrors.amount = Validator.isValidAmount(totalScore).message; //validation for total score
-                }
+            jwt.verify(updateTasktoken, key, (error, decoded) => {
+                if (decoded) {
 
-                if (!Validator.isValidDate(dueDate).isValid) {
-                    validationErrors.date = Validator.isValidDate(dueDate).message; //validation for date
-                }
+                    const validationErrors = {};
 
-
-                if (!Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).isValid) {
-                    validationErrors.date = Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).message; //validation for date
-                }
-
-
-                if (request.file && !Validator.isValidFile(request.file).isValid) {
-                    validationErrors.image = Validator.isValidFile(request.file).message;
-                }
-
-                // If validation fails
-                if (Object.keys(validationErrors).length > 0) {
-                    return response.json({ "status": "Validation failed", "data": validationErrors });
-                }
-
-
-
-                const taskFileUpload = request.file ? request.file.filename : null;
-
-                const task = new Tasks({
-                    'id': request.body.id,
-                    batchId: batchId,
-                    taskTitle: taskTitle,
-                    taskDesc: taskDesc,
-                    taskType: taskType,
-                    taskFileUpload: taskFileUpload,
-                    totalScore: totalScore,
-                    dueDate: dueDate.split('/').reverse().join('-')
-                });
-
-                Tasks.updateTask(task, (err, data) => {
-                    if (err) {
-                        if (err.kind === "not_found") {
-                            return response.json({ "status": "Task with provided Id is not found." });
-                        } else {
-                            return response.json({ "status": err });
-                        }
-                    } else {
-                        return response.json({ "status": "success", "data": data });
+                    if (Validator.isEmpty(batchId).isValid) {
+                        validationErrors.value = Validator.isEmpty(batchId).message;
                     }
-                });
-            } else {
-                return response.json({ "status": "Unauthorized access!!" });
-            }
-        });
-    });
+                    if (!Validator.isValidAmount(batchId).isValid) {
+                        validationErrors.amount = Validator.isValidAmount(batchId).message; //validation for batch id
+                    }
+                    if (!Validator.isValidName(taskTitle).isValid) {
+                        validationErrors.name = Validator.isValidName(taskTitle).message;
+                    }
+
+                    if (!Validator.isValidAddress(taskDesc).isValid) {
+                        validationErrors.address = Validator.isValidAddress(taskDesc).message; //validation for task description.
+                    }
+
+                    if (!Validator.isValidName(taskType).isValid) {
+                        validationErrors.name = Validator.isValidName(taskType).message; //validation for task type
+                    }
+
+                    if (!Validator.isValidAmount(totalScore).isValid) {
+                        validationErrors.amount = Validator.isValidAmount(totalScore).message; //validation for total score
+                    }
+
+                    if (!Validator.isValidDate(dueDate).isValid) {
+                        validationErrors.date = Validator.isValidDate(dueDate).message; //validation for date
+                    }
+
+
+                    if (!Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).isValid) {
+                        validationErrors.date = Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).message; //validation for date
+                    }
+
+
+                    if (request.file && !Validator.isValidFile(request.file).isValid) {
+                        validationErrors.image = Validator.isValidFile(request.file).message;
+                    }
+
+                    // If validation fails
+                    if (Object.keys(validationErrors).length > 0) {
+                        return response.json({ "status": "Validation failed", "data": validationErrors });
+                    }
+
+
+
+                    const taskFileUpload = request.file ? request.file.filename : null;
+
+                    const task = new Tasks({
+                        'id': request.body.id,
+                        batchId: batchId,
+                        taskTitle: taskTitle,
+                        taskDesc: taskDesc,
+                        taskType: taskType,
+                        taskFileUpload: taskFileUpload,
+                        totalScore: totalScore,
+                        dueDate: dueDate.split('/').reverse().join('-')
+                    });
+
+                    Tasks.updateTask(task, (err, data) => {
+                        if (err) {
+                            if (err.kind === "not_found") {
+                                return response.json({ "status": "Task with provided Id is not found." });
+                            } else {
+                                return response.json({ "status": err });
+                            }
+                        } else {
+                            return response.json({ "status": "success", "data": data });
+                        }
+                    });
+                } else {
+                    return response.json({ "status": "Unauthorized access!!" });
+                }
+            });
+
+        } catch (err) {
+            fs.unlinkSync(file.path);
+            response.status(500).json({ "status": err.message });
+        }
+    })
 };
 
 exports.taskView = (request, response) => {
