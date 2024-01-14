@@ -283,6 +283,7 @@ exports.searchSession = (request, response) => {
     })
 }
 
+//cancel session 
 exports.cancelSession = (request, response) => {
     const sessionCancelToken = request.headers.token;
     const key = request.headers.key;
@@ -300,7 +301,7 @@ exports.cancelSession = (request, response) => {
                     return response.json({ "status": err });
                 }
 
-                return response.json({ "status": "success", "data": data });
+                return response.json({ "status": "Session Cancelled Successfully!!!"});
             });
         } else {
             return response.json({ "status": "Unauthorized User!!" });
