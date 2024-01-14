@@ -311,99 +311,122 @@ exports.studentViewProfile = (request, response) => {
 
 
 exports.profileUpdateStudent = (request, response) => {
-    upload(request, response, function (err) {
-        if (err) {
-            console.error("Error uploading file:", err);
-            return response.json({ "status": err });
+    uploadSingle = upload.single('studProfilePic');
+    uploadSingle(request, response, async (error) => {
+        if (error) {
+            return response.status(500).json({ "status": error.message });
         }
 
-        const { studName, admNo, rollNo, studDept, course, studPhNo, studProfilePic, aadharNo } = request.body
+        if (!request.file) {
+            return response.status(400).json({ "status": "No file uploaded" });
+        }
 
-        const updateProfileToken = request.headers.token
+        const file = request.file;
+        const fileStream = fs.createReadStream(file.path);
 
-        jwt.verify(updateProfileToken, "lmsappstud", (err, decoded) => {
-            if (decoded) {
-                // Validation
-                const validationErrors = {};
+        const uploadParams = {
+            Bucket: process.env.S3_BUCKET,
+            Key: `uploads/${file.filename}`,
+            Body: fileStream
+        };
 
-                if (Validator.isEmpty(studName).isValid) {
-                    validationErrors.studName = Validator.isEmpty(studName).message;
-                }
-
-                if (!Validator.isValidName(studName).isValid) {
-                    validationErrors.studName = Validator.isValidName(studName).message;
-                }
-
-                if (Validator.isEmpty(admNo).isValid) {
-                    validationErrors.admNo = Validator.isEmpty(admNo).message;
-                }
-
-                if (Validator.isEmpty(rollNo).isValid) {
-                    validationErrors.rollNo = Validator.isEmpty(rollNo).message;
-                }
-
-                if (Validator.isEmpty(studDept).isValid) {
-                    validationErrors.studDept = Validator.isEmpty(studDept).message;
-                }
-
-                if (Validator.isEmpty(course).isValid) {
-                    validationErrors.course = Validator.isEmpty(course).message;
-                }
-
-                if (Validator.isEmpty(aadharNo).isValid) {
-                    validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
-                }
-
-                if (!Validator.isValidAadharNumber(aadharNo).isValid) {
-                    validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
-                }
-
-                if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
-                    validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
-                }
-
-
-                if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
-                    validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
-                }
-
-
-                // If validation fails
-                if (Object.keys(validationErrors).length > 0) {
-                    return res.json({ "status": "Validation failed", "data": validationErrors });
-                }
-
-
-                const newStudent = new Student({
-                    'id': request.body.id,
-                    collegeId: request.body.collegeId,
-                    batchId: request.body.batchId,
-                    studName: studName,
-                    admNo: admNo,
-                    rollNo: rollNo,
-                    studDept: studDept,
-                    course: course,
-                    studPhNo: studPhNo,
-                    studProfilePic: studProfilePic,
-                    aadharNo: aadharNo
-                });
-
-                Student.updateStudentProfile(newStudent, (err, data) => {
-                    if (err) {
-                        if (err.kind === "not_found") {
-                            return response.json({ "status": "Student with provided Id and batchId is not found." });
+        try {
+            const data = await s3Client.send(new PutObjectCommand(uploadParams));
+            const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+            // Remove the file from local storage
+            fs.unlinkSync(file.path);
+            const { studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = request.body
+            const updateProfileToken = request.headers.token
+            const studProfilePic = imageUrl;
+            jwt.verify(updateProfileToken, "lmsappstud", (err, decoded) => {
+                        if (decoded) {
+                            // Validation
+                            const validationErrors = {};
+            
+                            if (Validator.isEmpty(studName).isValid) {
+                                validationErrors.studName = Validator.isEmpty(studName).message;
+                            }
+            
+                            if (!Validator.isValidName(studName).isValid) {
+                                validationErrors.studName = Validator.isValidName(studName).message;
+                            }
+            
+                            if (Validator.isEmpty(admNo).isValid) {
+                                validationErrors.admNo = Validator.isEmpty(admNo).message;
+                            }
+            
+                            if (Validator.isEmpty(rollNo).isValid) {
+                                validationErrors.rollNo = Validator.isEmpty(rollNo).message;
+                            }
+            
+                            if (Validator.isEmpty(studDept).isValid) {
+                                validationErrors.studDept = Validator.isEmpty(studDept).message;
+                            }
+            
+                            if (Validator.isEmpty(course).isValid) {
+                                validationErrors.course = Validator.isEmpty(course).message;
+                            }
+            
+                            if (Validator.isEmpty(aadharNo).isValid) {
+                                validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
+                            }
+            
+                            if (!Validator.isValidAadharNumber(aadharNo).isValid) {
+                                validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
+                            }
+            
+                            if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+                                validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
+                            }
+            
+            
+                            if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+                                validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+                            }
+            
+            
+                            // If validation fails
+                            if (Object.keys(validationErrors).length > 0) {
+                                return response.json({ "status": "Validation failed", "data": validationErrors });
+                            }
+            
+            
+                            const newStudent = new Student({
+                                'id': request.body.id,
+                                collegeId: request.body.collegeId,
+                                batchId: request.body.batchId,
+                                studName: studName,
+                                admNo: admNo,
+                                rollNo: rollNo,
+                                studDept: studDept,
+                                course: course,
+                                studPhNo: studPhNo,
+                                studProfilePic: studProfilePic,
+                                aadharNo: aadharNo
+                            });
+            
+                            Student.updateStudentProfile(newStudent, (err, data) => {
+                                if (err) {
+                                    if (err.kind === "not_found") {
+                                        return response.json({ "status": "Student with provided Id and batchId is not found." });
+                                    } else {
+                                        return response.json({ "status": err });
+                                    }
+                                } else {
+                                    response.json({ "status": "success", "data": data });
+                                }
+                            })
+            
                         } else {
-                            return response.json({ "status": err });
+                            response.json({ "status": "Unauthorized User!!" });
                         }
-                    } else {
-                        response.json({ "status": "success", "data": data });
-                    }
-                })
+                    })
+            
 
-            } else {
-                response.json({ "status": "Unauthorized User!!" });
-            }
-        })
+        } catch (error) {
+            fs.unlinkSync(file.path);
+            response.status(500).json({ "status": err.message });
+        }
     })
 }
 
