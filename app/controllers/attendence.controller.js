@@ -4,38 +4,33 @@ const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
 require('dotenv').config({ path: '../../.env' });
 const Attendence = require("../models/attendence.model")
+const Session = require("../models/session.model");
 
 exports.markAttendance = (request, response) => {
     const attendanceToken = request.headers.token;
 
     jwt.verify(attendanceToken, "lmsappstud", (err, decoded) => {
         if (decoded) {
-
-            const validationErrors = {}
-
-            if (Validator.isEmpty(request.body.studId).isValid) {
-                validationErrors.studId = Validator.isEmpty(request.body.studId).message;
-            }
-
-            if (Validator.isEmpty(request.body.sessionId).isValid) {
-                validationErrors.sessionId = Validator.isEmpty(request.body.sessionId).message;
-            }
-
-            if (Object.keys(validationErrors).length > 0) {
-                console.log(validationErrors)
-                return response.json({ "status": "Validation failed", "data": validationErrors });
-            }
-
-            const attendance = new Attendence({
-                studId: request.body.studId,
-                sessionId: request.body.sessionId
-            });
-
-            Attendence.markAttendence(attendance, (err, data) => {
+            const attendenceCode = request.body.attendenceCode;
+            const studId = request.body.studId;
+            Session.fetchAttendenceCode(attendenceCode, (err, data) => {
                 if (err) {
-                    return response.json({ "status": err });
+                    return response.json({ "status": err })
                 } else {
-                    return response.json({ "status": "Attendence Marked Successfully!!!" });
+                    const sessionId = data
+                    console.log(sessionId)
+                    const attendance = new Attendence({
+                        studId : studId,
+                        sessionId : sessionId
+                    })
+
+                    Attendence.markAttendence(attendance, (err, data) => {
+                        if (err) {
+                            return response.json({ "status": err });
+                        } else {
+                            return response.json({ "status": "success" });
+                        }
+                    })
                 }
             })
 
