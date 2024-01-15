@@ -69,8 +69,8 @@ exports.batchCreate = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
-                    if (key == "lmsapp") {
-                        logAdminStaff(0, "Admin Created Batch")
+                    if(key==="lmsapp"){
+                        logAdminStaff(0,"New Batch Created")
                     }
                     return response.json({ "status": "success", "data": data });
                 }
