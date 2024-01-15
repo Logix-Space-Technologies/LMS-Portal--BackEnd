@@ -5,6 +5,7 @@ const { Student } = require("../models/student.model");
 const Attendence = require("../models/attendence.model")
 const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
+const db = require('../models/db')
 
 
 exports.createSession = (request, response) => {
@@ -81,39 +82,39 @@ exports.createSession = (request, response) => {
                     return response.json({ "status": err });
                 } else {
                     // console.log(data)
-                    const sessionId=data.id
+                    const sessionId = data.id
                     // console.log(sessionId)
                     //fetch corresponding students
-                    Student.searchStudentByBatch(newSession.batchId,(err,res)=>{
+                    Student.searchStudentByBatch(newSession.batchId, (err, res) => {
                         if (err) {
                             return response.json({ "status": err });
                         } else {
                             console.log(res)
                             res.forEach(element => {
-                                let studentid=element.id
+                                let studentid = element.id
                                 // let sessionid=newSession.id
                                 const newAttendence = new Attendence({
-                                    studId:studentid,
-                                    sessionId:sessionId
+                                    studId: studentid,
+                                    sessionId: sessionId
                                 })
                                 const studentName = element.studName
                                 const studentEmail = element.studEmail
-                       
+
                                 const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, newSession.date, newSession.time, newSession.venueORlink);
                                 const upcomingSessionTextContent = mailContents.upcomingSessionTextContent(studentName, newSession.sessionName, newSession.date, newSession.time, newSession.venueORlink);
-                                mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement',upcomingSessionHtmlContent,upcomingSessionTextContent );
-                                Attendence.create(newAttendence,(err,res)=>{
+                                mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                Attendence.create(newAttendence, (err, res) => {
                                     if (err) {
                                         console.log({ "status": err });
                                     } else {
-                                        
+
                                         // console.log({ "status": "success", "data": res });
                                     }
                                 })
                             });
 
-                            return response.json({ "status": "success", "data": data});
-                            
+                            return response.json({ "status": "success", "data": data });
+
                         }
                     }
                     )
@@ -286,27 +287,62 @@ exports.searchSession = (request, response) => {
 exports.cancelSession = (request, response) => {
     const sessionCancelToken = request.headers.token;
     const key = request.headers.key;
+
     jwt.verify(sessionCancelToken, key, (err, decoded) => {
+        if (err || !decoded) {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
 
-        if (decoded) {
-            const sessionId = request.body.id;
+        const sessionId = request.body.id;
 
-            if (!sessionId) {
-                return response.json({ "status": "Session ID is required" });
+        if (!sessionId) {
+            return response.json({ "status": "Session ID is required" });
+        }
+
+        Session.cancelSession(sessionId, (err, data) => {
+            if (err) {
+                return response.json({ "status": err });
             }
 
-            Session.cancelSession(sessionId, (err, data) => {
+            const newSession = db.query("SELECT * FROM sessiondetails WHERE id = ?", [sessionId]);
+            console.log(newSession)
+
+            Student.searchStudentByBatch(newSession.batchId, (err, res) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
 
+                res.forEach(element => {
+                    const studentid = element.id;
+                    const newAttendence = new Attendence({
+                        studId: studentid,
+                        sessionId: sessionId
+                    });
+
+                    const studentName = element.studName;
+                    const studentEmail = element.studEmail;
+
+                    const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, newSession.date);
+                    const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, newSession.date);
+
+                    mail.sendEmail(studentEmail, 'Cancel Session Announcement', cancelSessionHtmlContent, cancelSessionTextContent);
+
+                    Attendence.create(newAttendence, (err, res) => {
+                        if (err) {
+                            console.log({ "status": err });
+                        } else {
+                            // console.log({ "status": "success", "data": res });
+                        }
+                    });
+                });
+
                 return response.json({ "status": "success", "data": data });
             });
-        } else {
-            return response.json({ "status": "Unauthorized User!!" });
-        }
+        });
     });
 };
+
+
 
 
 
