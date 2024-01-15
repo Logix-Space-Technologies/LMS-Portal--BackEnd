@@ -200,6 +200,8 @@ router.post('/viewallcurriculum', curriculumController.viewAllCurriculum)
 
 router.post('/deletecurriculum',curriculumController.curriculumDelete)
 
+router.post('/updatecurriculum',curriculumController.updateCurriculum)
+
 router.post('/studmarkattendance',AttendenceController.markAttendance)
 
 router.post('/viewAdminLog',AdminController.viewAdminLog)
