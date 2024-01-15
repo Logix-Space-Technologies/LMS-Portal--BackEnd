@@ -4,98 +4,152 @@ const path = require("path")
 const multer = require("multer")
 const Validator = require("../config/data.validate");
 const bcrypt = require("bcrypt");
-
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { Upload } = require('@aws-sdk/lib-storage');
+const fs = require('fs');
+require('dotenv').config({ path: '../../.env' });
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 const saltRounds = 10;
-const storage = multer.diskStorage({
-    destination: (request, file, cb) => {
-        cb(null, 'uploads/');
-    },
-    filename: (request, file, cb) => {
-        cb(null, Date.now() + file.originalname.replace(/[^\w\-.]/g, ''));
-    },
+
+// AWS S3 Client Configuration
+const s3Client = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    }
 });
 
-const upload = multer({ storage: storage }).single('profilePicture');
+// Multer Configuration for file upload with unique filename
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        // Unique filename: Current timestamp + random number + original extension
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+    }
+});
+
+const upload = multer({
+    storage: storage, limits: { fileSize: 2 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'), false);
+        }
+    }
+});
 
 exports.createTrainer = (request, response) => {
-    upload(request, response, function (err) {
-        if (err) {
-            console.error("Error uploading image:", err);
-            return response.json({ "status": "Error uploading image" });
+    const uploadSingle = upload.single('profilePicture');
+    uploadSingle(request, response, async (error) => {
+        if (error) {
+            return response.status(500).json({ "status": error.message });
         }
 
-        const trainerToken = request.headers.token;
-        const key = request.headers.key; //give key of respective logins of admin and adminstaff.
-        
-        jwt.verify(trainerToken, key, (err, decoded) => {
-            if (decoded) {
-                const profilePicture = request.file ? request.file.filename : null;
-                
-                if (!request.file) {
-                    return response.json({ "status": "Please upload a profile picture" });
-                }
+        if (!request.file) {
+            return response.status(400).json({ "status": "No file uploaded" });
+        }
 
-                const validationErrors = {};
+        const file = request.file;
+        const fileStream = fs.createReadStream(file.path);
 
-                if (Validator.isEmpty(request.body.trainerName).isValid) {
-                    validationErrors.trainerName = "Please enter your name";
-                }
-                if (Validator.isEmpty(request.body.about).isValid) {
-                    validationErrors.about = "Please enter something about you";
-                }
-                if (Validator.isEmpty(request.body.email).isValid) {
-                    validationErrors.email = "Please enter your email";
-                }
-                if (Validator.isEmpty(request.body.password).isValid) {
-                    validationErrors.password = "Please enter your password";
-                }
-                if (Validator.isEmpty(request.body.phoneNumber).isValid) {
-                    validationErrors.phoneNumber = "Please enter your phone number";
-                }
-                if (!Validator.isValidName(request.body.trainerName).isValid) {
-                    validationErrors.trainerName = "Please enter a valid name";
-                }
-                if (!Validator.isValidEmail(request.body.email).isValid) {
-                    validationErrors.email = "Please enter a valid email";
-                }
-                if (!Validator.isValidMobileNumber(request.body.phoneNumber).isValid) {
-                    validationErrors.phoneNumber = "Please enter a valid phone number";
-                }
-                if (!Validator.isValidPassword(request.body.password).isValid) {
-                    validationErrors.password = "Please enter a valid password";
-                }
+        const uploadParams = {
+            Bucket: process.env.S3_BUCKET,
+            Key: `uploads/${file.filename}`,
+            Body: fileStream
+        };
 
-                if (Object.keys(validationErrors).length > 0) {
-                    return response.json({ "status": "Validation failed", "data": validationErrors });
-                }
+        try {
+            const data = await s3Client.send(new PutObjectCommand(uploadParams));
+            const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+            // Remove the file from local storage
+            fs.unlinkSync(file.path);
 
-                const trainer = new Trainers({
-                    trainerName: request.body.trainerName,
-                    about: request.body.about,
-                    email: request.body.email,
-                    password: request.body.password,
-                    phoneNumber: request.body.phoneNumber,
-                    profilePicture: profilePicture,
-                });
+            const trainerToken = request.headers.token;
+            const key = request.headers.key; //give key of respective logins of admin and adminstaff.
 
-                bcrypt.hash(trainer.password, saltRounds, (err, hashedPassword) => {
-                    if (err) {
-                        return response.json({ "status": "Error hashing password" });
+            jwt.verify(trainerToken, key, (err, decoded) => {
+                if (decoded) {
+                    const profilePicture = request.file ? request.file.filename : null;
+
+                    if (!request.file) {
+                        return response.json({ "status": "Please upload a profile picture" });
                     }
-                    trainer.password = hashedPassword;
 
-                    Trainers.create(trainer, (err, data) => {
-                        if (err) {
-                            return response.json({ "status": err });
-                        }
-                        return response.json({ "status": "success", "data": data });
+                    const validationErrors = {};
+
+                    if (Validator.isEmpty(request.body.trainerName).isValid) {
+                        validationErrors.trainerName = "Please enter your name";
+                    }
+                    if (Validator.isEmpty(request.body.about).isValid) {
+                        validationErrors.about = "Please enter something about you";
+                    }
+                    if (Validator.isEmpty(request.body.email).isValid) {
+                        validationErrors.email = "Please enter your email";
+                    }
+                    if (Validator.isEmpty(request.body.password).isValid) {
+                        validationErrors.password = "Please enter your password";
+                    }
+                    if (Validator.isEmpty(request.body.phoneNumber).isValid) {
+                        validationErrors.phoneNumber = "Please enter your phone number";
+                    }
+                    if (!Validator.isValidName(request.body.trainerName).isValid) {
+                        validationErrors.trainerName = "Please enter a valid name";
+                    }
+                    if (!Validator.isValidEmail(request.body.email).isValid) {
+                        validationErrors.email = "Please enter a valid email";
+                    }
+                    if (!Validator.isValidMobileNumber(request.body.phoneNumber).isValid) {
+                        validationErrors.phoneNumber = "Please enter a valid phone number";
+                    }
+                    if (!Validator.isValidPassword(request.body.password).isValid) {
+                        validationErrors.password = "Please enter a valid password";
+                    }
+
+                    if (Object.keys(validationErrors).length > 0) {
+                        return response.json({ "status": "Validation failed", "data": validationErrors });
+                    }
+
+                    const trainer = new Trainers({
+                        trainerName: request.body.trainerName,
+                        about: request.body.about,
+                        email: request.body.email,
+                        password: request.body.password,
+                        phoneNumber: request.body.phoneNumber,
+                        profilePicture: imageUrl,
                     });
-                });
-            } else {
-                return response.json({ "status": "Unauthorized access!!" });
-            }
-        });
-    });
+
+                    bcrypt.hash(trainer.password, saltRounds, (err, hashedPassword) => {
+                        if (err) {
+                            return response.json({ "status": "Error hashing password" });
+                        }
+                        trainer.password = hashedPassword;
+
+                        Trainers.create(trainer, (err, data) => {
+                            if (err) {
+                                return response.json({ "status": err });
+                            }
+                            if (key == "lmsapp") {
+                                logAdminStaff(0, "Admin Created Trainer")
+                            }
+                            return response.json({ "status": "success", "data": data });
+                        });
+                    });
+                } else {
+                    return response.json({ "status": "Unauthorized access!!" });
+                }
+            });
+
+        } catch (err) {
+            fs.unlinkSync(file.path);
+            response.status(500).json({ "status": err.message });
+        }
+    })
 };
 
 //Code To View Trainers
@@ -127,25 +181,25 @@ exports.searchTrainer = (request, response) => {
     const TrainerSearchToken = request.headers.token
     const key = request.headers.key;
 
-    jwt.verify(TrainerSearchToken, key, (err, decoded) =>{
+    jwt.verify(TrainerSearchToken, key, (err, decoded) => {
         if (decoded) {
             if (!TrainerSearchQuery) {
                 console.log("Search Item is required.")
-                return response.json({"status" : "Search Item is required."})
+                return response.json({ "status": "Search Item is required." })
             }
             Trainers.searchTrainer(TrainerSearchQuery, (err, data) => {
                 if (err) {
-                    response.json({"status" : err})
+                    response.json({ "status": err })
                 } else {
                     if (data.length === 0) {
-                        response.json({"status" : "No Search Items Found."})
+                        response.json({ "status": "No Search Items Found." })
                     } else {
-                        response.json({"status" : "Result Found", "data" : data})
+                        response.json({ "status": "Result Found", "data": data })
                     }
                 }
             })
         } else {
-            response.json({"status" : "Unauthorized User!!"})
+            response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -168,7 +222,7 @@ exports.deleteTrainer = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
-
+                logAdminStaff(0, "Admin Deleted Trainer")
                 return response.json({ "status": "success", "data": data });
             });
         } else {
@@ -180,67 +234,99 @@ exports.deleteTrainer = (request, response) => {
 
 
 // Code For Updating Trainer Details
-exports.trainerDetailsUpdate = (request, response) =>{
-    upload(request, request, function (err) {
-        if (err) {
-            console.log("Error Uploading Image : ", err)
-            response.json({ "status": "Error Uploading Image." })
+exports.trainerDetailsUpdate = (request, response) => {
+    const uploadSingle = upload.single('profilePicture');
+    uploadSingle(request, response, async (error) => {
+        if (error) {
+            return response.status(500).json({ "status": error.message });
         }
-        const trainerUpdateToken = request.headers.token
-        const key = request.headers.key 
-        
-        jwt.verify(trainerUpdateToken, key, (err, decoded) => {
-            if (decoded) {
-                const profilePicture = request.file ? request.file.filename : null
-                if (!request.file) {
-                    return response.json({ "status": "Image cannot be empty!!" })
-                }
-                const validationErrors = {}
 
-                if (Validator.isEmpty(request.body.trainerName).isValid) {
-                    validationErrors.trainerName = "Please enter your name";
-                }
-                if (Validator.isEmpty(request.body.about).isValid) {
-                    validationErrors.about = "Please enter something about you";
-                }
-                if (Validator.isEmpty(request.body.phoneNumber).isValid) {
-                    validationErrors.phoneNumber = "Please enter your phone number";
-                }
-                if (!Validator.isValidName(request.body.trainerName).isValid) {
-                    validationErrors.trainerName = "Please enter a valid name";
-                }
-                if (!Validator.isValidMobileNumber(request.body.phoneNumber).isValid) {
-                    validationErrors.phoneNumber = "Please enter a valid phone number";
-                }
+        if (!request.file) {
+            return response.status(400).json({ "status": "No file uploaded" });
+        }
 
-                if (Object.keys(validationErrors).length > 0) {
-                    return response.json({ "status": "Validation failed", "data": validationErrors });
-                }
+        const file = request.file;
+        const fileStream = fs.createReadStream(file.path);
 
-                const trainerUpdate = new Trainers({
-                    'id' : request.body.id,
-                    trainerName: request.body.trainerName,
-                    about: request.body.about,
-                    email: request.body.email,
-                    password: request.body.password,
-                    phoneNumber: request.body.phoneNumber,
-                    profilePicture: profilePicture,
-                });
+        const uploadParams = {
+            Bucket: process.env.S3_BUCKET,
+            Key: `uploads/${file.filename}`,
+            Body: fileStream
+        };
 
-                Trainers.updateTrainer(trainerUpdate, (err, data) => {
-                    if (err) {
-                        if (err.kind === "not_found") {
-                            return response.json({ "status": "Trainer Details Not Found!!" })
-                        } else {
-                            response.json({ "status": err })
-                        }
-                    } else {
-                        return response.json({ "status": "Trainer Details Updated", "data": data })
+        try {
+            const data = await s3Client.send(new PutObjectCommand(uploadParams));
+            const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+            // Remove the file from local storage
+            fs.unlinkSync(file.path);
+
+
+            const trainerUpdateToken = request.headers.token
+            const key = request.headers.key
+
+            jwt.verify(trainerUpdateToken, key, (err, decoded) => {
+                if (decoded) {
+                    const profilePicture = request.file ? request.file.filename : null
+                    if (!request.file) {
+                        return response.json({ "status": "Image cannot be empty!!" })
                     }
-                })
-            } else {
-                response.json({ "status": "Unauthorized Access!!!" })
-            }
-        })
+                    const validationErrors = {}
+
+                    if (Validator.isEmpty(request.body.trainerName).isValid) {
+                        validationErrors.trainerName = "Please enter your name";
+                    }
+                    if (Validator.isEmpty(request.body.about).isValid) {
+                        validationErrors.about = "Please enter something about you";
+                    }
+                    if (Validator.isEmpty(request.body.phoneNumber).isValid) {
+                        validationErrors.phoneNumber = "Please enter your phone number";
+                    }
+                    if (!Validator.isValidName(request.body.trainerName).isValid) {
+                        validationErrors.trainerName = "Please enter a valid name";
+                    }
+                    if (!Validator.isValidMobileNumber(request.body.phoneNumber).isValid) {
+                        validationErrors.phoneNumber = "Please enter a valid phone number";
+                    }
+
+                    if (Object.keys(validationErrors).length > 0) {
+                        return response.json({ "status": "Validation failed", "data": validationErrors });
+                    }
+
+                    const trainerUpdate = new Trainers({
+                        'id': request.body.id,
+                        trainerName: request.body.trainerName,
+                        about: request.body.about,
+                        email: request.body.email,
+                        password: request.body.password,
+                        phoneNumber: request.body.phoneNumber,
+                        profilePicture: imageUrl,
+                    });
+
+                    Trainers.updateTrainer(trainerUpdate, (err, data) => {
+                        if (err) {
+                            if (err.kind === "not_found") {
+                                return response.json({ "status": "Trainer Details Not Found!!" })
+                            } else {
+                                response.json({ "status": err })
+                            }
+                        } else {
+                            if (key == "lmsapp") {
+                                logAdminStaff(0, "Admin Updated Trainer Details")
+                            }
+                            return response.json({ "status": "Trainer Details Updated", "data": data })
+                        }
+                    })
+                } else {
+                    response.json({ "status": "Unauthorized Access!!!" })
+                }
+            })
+
+        } catch (err) {
+            fs.unlinkSync(file.path);
+            response.status(500).json({ "status": err.message });
+        }
     })
+
 }
+
+// Code For Updating Trainer Password

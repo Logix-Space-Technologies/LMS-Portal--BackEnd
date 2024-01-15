@@ -7,7 +7,7 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 const fs = require('fs');
 require('dotenv').config({ path: '../../.env' });
-
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 // AWS S3 Client Configuration
 const s3Client = new S3Client({
     region: process.env.AWS_REGION,
@@ -70,7 +70,7 @@ exports.createCurriculum = (request, response) => {
             // Remove the file from local storage
             fs.unlinkSync(file.path);
 
-            
+
             const curriculumToken = request.headers.token;
             const key = request.headers.key;
 
@@ -118,6 +118,9 @@ exports.createCurriculum = (request, response) => {
                         if (err) {
                             return response.json({ "status": err });
                         } else {
+                            if(key=="lmsapp"){
+                                logAdminStaff(0,"Admin Created Curriculum")
+                            }
                             return response.json({ "status": "success", "data": data });
                         }
                     });
@@ -134,12 +137,12 @@ exports.createCurriculum = (request, response) => {
     });
 };
 
-exports.viewAllCurriculum = (request, response) =>{
+exports.viewAllCurriculum = (request, response) => {
     const curriculumToken = request.headers.token
-    key=request.headers.key
-    jwt.verify(curriculumToken, key, (err, decoded)=>{
+    key = request.headers.key
+    jwt.verify(curriculumToken, key, (err, decoded) => {
         if (decoded) {
-            Curriculum.curriculumView((err, data) =>{
+            Curriculum.curriculumView((err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 }
@@ -158,7 +161,7 @@ exports.viewAllCurriculum = (request, response) =>{
 
 
 
-exports.searchCurriculum = (request,response)=>{
+exports.searchCurriculum = (request, response) => {
     const CurriculumSearchQuery = request.body.CurriculumSearchQuery
     const CurriculumSearchToken = request.headers.token
     const key = request.headers.key;
@@ -186,13 +189,13 @@ exports.searchCurriculum = (request,response)=>{
     })
 }
 
-exports.currView = (request, response) =>{
+exports.currView = (request, response) => {
     const batchId = request.body.batchId
     const curriculumToken = request.headers.token
-    key=request.headers.key
-    jwt.verify(curriculumToken, key, (err, decoded)=>{
+    key = request.headers.key
+    jwt.verify(curriculumToken, key, (err, decoded) => {
         if (decoded) {
-            Curriculum.curriculumView(batchId,(err, data) =>{
+            Curriculum.curriculumView(batchId, (err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 }
@@ -204,6 +207,35 @@ exports.currView = (request, response) =>{
             })
         } else {
             response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+
+
+exports.curriculumDelete = (request, response) => {
+    const curriculumDeleteToken = request.headers.token
+    jwt.verify(curriculumDeleteToken, "lmsapp", (err, decoded) => {
+        if (decoded) {
+            const id = request.body.id
+
+            Curriculum.curriculumDelete(id, (err, data) => {
+                if (err) {
+                    if (err.kind === "not_found") {
+                        console.log("Curriculum not found.")
+                        return response.json({ "status": "Curriculum not found." })
+                    } else {
+                        return response.json({ "status": err })
+                    }
+
+                } else {
+                    return response.json({ "status": "success" })
+                }
+            })
+
+        } else {
+
+            return response.json({ "status": "Unauthorized User!!" })
+
         }
     })
 }

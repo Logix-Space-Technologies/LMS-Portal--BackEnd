@@ -198,6 +198,8 @@ router.post('/curriculumview', curriculumController.currView)
 
 router.post('/viewallcurriculum', curriculumController.viewAllCurriculum)
 
+router.post('/deletecurriculum',curriculumController.curriculumDelete)
+
 router.post('/studmarkattendance',AttendenceController.markAttendance)
 
 

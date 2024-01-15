@@ -2,6 +2,7 @@ const Notifications = require("../models/notifications.model");
 const jwt = require("jsonwebtoken");
 const path = require("path")
 const Validator = require("../config/data.validate");
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
 
 exports.createNotifications = (request, response) => {
@@ -43,7 +44,9 @@ exports.createNotifications = (request, response) => {
                 if (err) {
                     return response.json({ "status": "Error", "message": err.message });
                 }
-
+                if(key=="lmsapp"){
+                    logAdminStaff(0,"Admin Sent Notification")
+                }
                 return response.json({ "status": "Success", "message": "Notification created successfully" });
             });
         } else {

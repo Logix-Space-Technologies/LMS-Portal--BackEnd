@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const Admin = require("../models/admin.model");
 const Validator = require('../config/data.validate')
-
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 // const saltRounds = 10;
 
 // exports.adminRegister = (request,response) =>{
@@ -68,6 +68,7 @@ exports.adminLogin = (request, response) => {
                         if (error) {
                             response.json({ "status": "Unauthorized User!!" })
                         } else {
+                            logAdminStaff(0,"Admin Logged In")
                             response.json({ "status": "Success", "data": admin, "token": token })
                         }
                     })
@@ -111,6 +112,7 @@ exports.adminChangePwd = (request, response) => {
                         if (updateErr) {
                             return response.json({ "status": updateErr });
                         } else {
+                            logAdminStaff(0,"Admin Password Changed")
                             return response.json({ "status": "Password Successfully Updated!!!" });
                         }
                     });
