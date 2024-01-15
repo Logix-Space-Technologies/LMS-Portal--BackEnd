@@ -275,7 +275,7 @@ Session.cancelSession = (sessionId, result) => {
                 }
 
                 console.log("Session cancelled successfully");
-                result(null, "Session cancelled successfully");
+                result("Session cancelled successfully", null);
             });
         });
     });

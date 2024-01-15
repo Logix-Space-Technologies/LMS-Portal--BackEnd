@@ -1,5 +1,7 @@
 const db = require('../models/db')
 const bcrypt=require('bcrypt')
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
+
 const Admin = function(admin){
     this.userName = admin.userName
     this.Password = admin.Password
@@ -34,6 +36,7 @@ Admin.findByUserName = (username,result)=>{
         }
 
         if (res.length) {
+            logAdminStaff(0,"Admin logged in")
             result(null, res[0])
             return
         }
@@ -69,6 +72,7 @@ Admin.changePassword = (ad, result) => {
                         result(updateErr, null);
                         return;
                     } else {
+                        logAdminStaff(0, "Password updated")
                         result(null, { status: "Password Updated Successfully!!!" });
                     }
                 });
