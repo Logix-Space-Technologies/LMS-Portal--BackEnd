@@ -289,8 +289,11 @@ Session.fetchAttendenceCode = (attendenceCode, result) => {
                 result(codeErr, null);
                 return;
             } else {
+                console.log(codeRes)
                 const { sessionId, sessionDate } = codeRes[0];
                 const currentDate = new Date();
+                console.log(currentDate)
+                console.log(sessionDate)
 
                 // Check if the current date is within the session date
                 if (currentDate < new Date(sessionDate)) {
