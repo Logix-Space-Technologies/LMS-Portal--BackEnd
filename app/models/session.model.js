@@ -101,17 +101,17 @@ Session.createSession = (newSession, result) => {
                                                                                 return result(insertErr, null);
                                                                             }
                                                                             db.query("SELECT `id` FROM `sessiondetails` ORDER BY id DESC LIMIT 1", (err, res) => {
-                                                                                if(err){
+                                                                                if (err) {
                                                                                     console.log("Error while fetching the last inserted id: ", err);
                                                                                     return result(err, null);
                                                                                 }
                                                                                 const sessionId = res[0].id;
-                                                                                console.log("Session Id"+sessionId)
+                                                                                console.log("Session Id" + sessionId)
                                                                                 result(null, { id: sessionId, ...newSession });
 
                                                                             })
                                                                             // console.log("Added Session:", { id: insertRes.id, ...newSession });
-                                                                            
+
                                                                         });
                                                                     })
                                                             } else {
@@ -122,12 +122,12 @@ Session.createSession = (newSession, result) => {
                                                                         return result(insertErr, null);
                                                                     }
                                                                     db.query("SELECT `id` FROM `sessiondetails` ORDER BY id DESC LIMIT 1", (err, res) => {
-                                                                        if(err){
+                                                                        if (err) {
                                                                             console.log("Error while fetching the last inserted id: ", err);
                                                                             return result(err, null);
                                                                         }
                                                                         newSession.id = res[0].id;
-                
+
                                                                         result(null, { id: newSession.id, ...newSession });
                                                                     })
                                                                     // console.log("Added Session:", { id: insertRes.id, ...newSession });
@@ -279,6 +279,36 @@ Session.cancelSession = (sessionId, result) => {
         });
     });
 };
+
+
+Session.fetchAttendenceCode = (attendenceCode, result) => {
+    db.query("SELECT s.id AS sessionId, s.date AS sessionDate FROM sessiondetails AS s WHERE s.attendenceCode = ? AND cancelStatus = 0 AND deleteStatus = 0 AND isActive = 1",
+        [attendenceCode], (codeErr, codeRes) => {
+            if (codeErr) {
+                console.log(codeErr);
+                result(codeErr, null);
+                return;
+            } else {
+                const { sessionId, sessionDate } = codeRes[0];
+                const currentDate = new Date();
+
+                // Check if the current date is within the session date
+                if (currentDate < new Date(sessionDate)) {
+                    console.log("Cannot mark attendance before the session date");
+                    result("Cannot mark attendance before the session date", null);
+                    return;
+                }
+
+                // Check if the current date is after the session date
+                if (currentDate > new Date(sessionDate)) {
+                    console.log("Cannot mark attendance after the session date");
+                    result("Cannot mark attendance after the session date", null);
+                    return;
+                }
+                return result (sessionId)
+            }
+        })
+}
 
 
 module.exports = Session
