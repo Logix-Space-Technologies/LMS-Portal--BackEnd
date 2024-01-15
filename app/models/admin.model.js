@@ -232,10 +232,20 @@ Admin.adminDashBoard = (result) => {
     });
 };
 
-;
 
+Admin.getAll = async(result) => {
+    let query = "SELECT * FROM adminstafflog WHERE AdmStaffId=0"
+    db.query(query, (err, response) => {
+        if (err) {
+            console.log("Error : ",err)
+            result(err, null)
+            return           
+        } else {
+            console.log("Admin Staff Log : ", response)
+            result(null, response)
+        }
+    })
 
-
-
+}
 
 module.exports = Admin

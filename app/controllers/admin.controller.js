@@ -3,6 +3,9 @@ const jwt = require("jsonwebtoken")
 const Admin = require("../models/admin.model");
 const Validator = require('../config/data.validate')
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
+
+
+
 // const saltRounds = 10;
 
 // exports.adminRegister = (request,response) =>{
@@ -144,4 +147,24 @@ exports.adminDashBoards = (request, response) => {
     });
 
 
+}
+
+exports.viewAdminLog = (request, response) => {
+    const adminLogToken = request.headers.token
+    const key=request.headers.key
+    jwt.verify(adminLogToken, key, (err, decoded) => {
+        if (decoded) {
+            Admin.getAll((err, data) => {
+                if (err) {
+                    console.log(err)
+                    response.json({ "status": err })
+
+                } else {
+                    response.json(data)
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" })
+        }
+    })
 }
