@@ -197,5 +197,6 @@ router.post('/curriculumview', curriculumController.currView)
 
 router.post('/viewallcurriculum', curriculumController.viewAllCurriculum)
 
+router.post('/deletecurriculum',curriculumController.curriculumDelete)
 
 module.exports = router

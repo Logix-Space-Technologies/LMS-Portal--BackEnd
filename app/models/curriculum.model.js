@@ -115,5 +115,21 @@ Curriculum.curriculumView = (result) => {
 
 
 
+Curriculum.curriculumDelete = (id, result) => {
+    db.query("UPDATE curriculum SET isActive=0, deleteStatus=1 WHERE id=? AND isActive=1 AND deleteStatus=0", [id], (err, res) => {
+        if (err) {
+            console.log("error:", err);
+            result(err, null);
+            return;
+        }
+        if (res.affectedRows === 0) {
+            result({ kind: "not_found" }, null);
+            return;
+        }
+        console.log("delete Curriculum with id:", { id: id });
+        result(null, { id: id });
+    });
+};
+
 
 module.exports = Curriculum;
