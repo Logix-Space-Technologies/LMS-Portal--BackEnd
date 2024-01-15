@@ -30,30 +30,30 @@ Attendence.markAttendence = (attendance, result) => {
             return;
         }
 
-        if (checkRes.length === 0) {
-            console.log("Invalid Student ID");
-            result("Invalid Student ID", null);
-            return;
-        }
+        // if (checkRes.length === 0) {
+        //     console.log("Invalid Student ID");
+        //     result("Invalid Student ID", null);
+        //     return;
+        // }
 
         if (checkRes.length > 0) {
             console.log("Attendance already marked for this session");
             result("Attendance already marked for this session", null);
             return;
+        } else {
+            // If the attendance code is valid, within the session date, and not already marked, proceed with the update
+            const updateQuery = "UPDATE attendence SET status = 1 WHERE studId = ? AND sessionId = ?";
+
+            db.query(updateQuery, [attendance.studId, attendance.sessionId], (updateErr, updateRes) => {
+                if (updateErr) {
+                    console.log("update error:", updateErr);
+                    result(updateErr, null);
+                    return;
+                }
+                console.log("marked attendance for student:", attendance.studId);
+                result(null, { studId: attendance.studId, sessionId: attendance.sessionId });
+            });
         }
-
-        // If the attendance code is valid, within the session date, and not already marked, proceed with the update
-        const updateQuery = "UPDATE attendence SET status = 1 WHERE studId = ? AND sessionId = ?";
-
-        db.query(updateQuery, [attendance.studId, attendance.sessionId], (updateErr, updateRes) => {
-            if (updateErr) {
-                console.log("update error:", updateErr);
-                result(updateErr, null);
-                return;
-            }
-            console.log("marked attendance for student:", attendance.studId);
-            result(null, { studId: attendance.studId, sessionId: attendance.sessionId });
-        });
     });
 
 };
