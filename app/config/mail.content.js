@@ -258,8 +258,8 @@ function collegeStaffHtmlContent(collegeStaffName, collegeName) {
 
 
 
-function collegeHtmlContent(collegeName){
-    content=`<!DOCTYPE html>
+function collegeHtmlContent(collegeName) {
+    content = `<!DOCTYPE html>
 <html>
 <head>
     <title>New Task Available</title>
@@ -315,11 +315,11 @@ function collegeHtmlContent(collegeName){
 
 </body>
 </html>`
-return content;
+    return content;
 }
 
-function collegeTextContent(collegeName){
-    content=`Dear ${collegeName},
+function collegeTextContent(collegeName) {
+    content = `Dear ${collegeName},
 
     We are thrilled to have you join us at Link Ur Codes. Your journey to connect and learn starts here!
     
@@ -335,7 +335,7 @@ function collegeTextContent(collegeName){
 }
 
 
-function cancelSessionContent(participantName, date) {
+function cancelSessionContent(participantName, date, time) {
     content = `<!DOCTYPE html>
     <html>
     <head>
@@ -383,7 +383,7 @@ function cancelSessionContent(participantName, date) {
             <h2>Session Cancellation</h2>
     
             <p>Dear ${participantName},</p>
-            <p>We regret to inform you that the session scheduled for ${date} has been cancelled. We apologize for any inconvenience this may cause.</p>
+            <p>We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for any inconvenience this may cause.</p>
             <p>A new date for the session will be announced soon. We will keep you updated with the new schedule.</p>
             <p>Thank you for your understanding.</p>
         </div>
@@ -398,10 +398,10 @@ function cancelSessionContent(participantName, date) {
 
 }
 
-function cancelSessionTextContent(participantName,date) {
+function cancelSessionTextContent(participantName, date, time) {
     content = `Dear ${participantName},
 
-    We regret to inform you that the session scheduled for ${date} has been cancelled. We apologize for any inconvenience this may cause.
+    We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for any inconvenience this may cause.
     
     A new date for the session will be announced soon. We will keep you updated with the new schedule.
     
@@ -422,7 +422,7 @@ module.exports = {
     collegeStaffTextContent,
     collegeStaffHtmlContent,
     collegeHtmlContent,
-    collegeTextContent
+    collegeTextContent,
     cancelSessionContent,
     cancelSessionTextContent
 };
