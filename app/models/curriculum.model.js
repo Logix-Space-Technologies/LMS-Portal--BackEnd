@@ -100,21 +100,6 @@ Curriculum.curriculumView = (batchId, result) => {
         })
 }
 
-Curriculum.curriculumView = (result) => {
-    db.query("SELECT b.batchName, c.* FROM curriculum c JOIN batches b ON c.batchId = b.id WHERE c.deleteStatus = 0 AND c.isActive = 1",
-        (curriculumErr, curriculumRes) => {
-            if (curriculumErr) {
-                console.log("error: ", curriculumErr);
-                result(curriculumErr, null)
-                return
-            } else {
-                console.log("success:", curriculumRes)
-                result(null, curriculumRes);
-            }
-        })
-}
-
-
 
 Curriculum.curriculumDelete = (id, result) => {
     db.query("UPDATE curriculum SET isActive=0, deleteStatus=1 WHERE id=? AND isActive=1 AND deleteStatus=0", [id], (err, res) => {
