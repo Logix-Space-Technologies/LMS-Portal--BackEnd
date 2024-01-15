@@ -6,6 +6,9 @@ const Attendence = require("../models/attendence.model")
 const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
+const db = require('../models/db')
+
+
 
 exports.createSession = (request, response) => {
     const sessionToken = request.headers.token;
@@ -294,16 +297,27 @@ exports.searchSession = (request, response) => {
 exports.cancelSession = (request, response) => {
     const sessionCancelToken = request.headers.token;
     const key = request.headers.key;
+
     jwt.verify(sessionCancelToken, key, (err, decoded) => {
+        if (err || !decoded) {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
 
-        if (decoded) {
-            const sessionId = request.body.id;
+        const sessionId = request.body.id;
 
-            if (!sessionId) {
-                return response.json({ "status": "Session ID is required" });
+        if (!sessionId) {
+            return response.json({ "status": "Session ID is required" });
+        }
+
+        Session.cancelSession(sessionId, (err, data) => {
+            if (err) {
+                return response.json({ "status": err });
             }
 
-            Session.cancelSession(sessionId, (err, data) => {
+            const newSession = db.query("SELECT * FROM sessiondetails WHERE id = ?", [sessionId]);
+            console.log(newSession)
+
+            Student.searchStudentByBatch(newSession.batchId, (err, res) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
@@ -311,10 +325,33 @@ exports.cancelSession = (request, response) => {
                     logAdminStaff(0, "Admin Cancelled Session")
                 }
                 return response.json({ "status": "success" });
+                res.forEach(element => {
+                    const studentid = element.id;
+                    const newAttendence = new Attendence({
+                        studId: studentid,
+                        sessionId: sessionId
+                    });
+
+                    const studentName = element.studName;
+                    const studentEmail = element.studEmail;
+
+                    const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, newSession.date);
+                    const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, newSession.date);
+
+                    mail.sendEmail(studentEmail, 'Cancel Session Announcement', cancelSessionHtmlContent, cancelSessionTextContent);
+
+                    Attendence.create(newAttendence, (err, res) => {
+                        if (err) {
+                            console.log({ "status": err });
+                        } else {
+                            // console.log({ "status": "success", "data": res });
+                        }
+                    });
+                });
+
+                return response.json({ "status": "success", "data": data });
             });
-        } else {
-            return response.json({ "status": "Unauthorized User!!" });
-        }
+        });
     });
 };
 
