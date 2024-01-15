@@ -23,10 +23,16 @@ Attendence.markAttendence = (attendance, result) => {
     // Check if the student has already marked attendance for the session
     const checkAttendanceQuery = "SELECT id FROM attendence WHERE studId = ? AND sessionId = ? AND status = 1";
 
-    db.query(checkAttendanceQuery, [attendance.studId, sessionId], (checkErr, checkRes) => {
+    db.query(checkAttendanceQuery, [attendance.studId, attendance.sessionId], (checkErr, checkRes) => {
         if (checkErr) {
             console.log("check error:", checkErr);
             result(checkErr, null);
+            return;
+        }
+
+        if (checkRes.length === 0) {
+            console.log("Invalid Student ID");
+            result("Invalid Student ID", null);
             return;
         }
 
@@ -39,14 +45,14 @@ Attendence.markAttendence = (attendance, result) => {
         // If the attendance code is valid, within the session date, and not already marked, proceed with the update
         const updateQuery = "UPDATE attendence SET status = 1 WHERE studId = ? AND sessionId = ?";
 
-        db.query(updateQuery, [attendance.studId, sessionId], (updateErr, updateRes) => {
+        db.query(updateQuery, [attendance.studId, attendance.sessionId], (updateErr, updateRes) => {
             if (updateErr) {
                 console.log("update error:", updateErr);
                 result(updateErr, null);
                 return;
             }
             console.log("marked attendance for student:", attendance.studId);
-            result(null, { id: attendance.studId, ...attendance });
+            result(null, { studId: attendance.studId, sessionId: attendance.sessionId });
         });
     });
 

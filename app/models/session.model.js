@@ -282,33 +282,21 @@ Session.cancelSession = (sessionId, result) => {
 
 
 Session.fetchAttendenceCode = (attendenceCode, result) => {
-    db.query("SELECT s.id AS sessionId, s.date AS sessionDate FROM sessiondetails AS s WHERE s.attendenceCode = ? AND cancelStatus = 0 AND deleteStatus = 0 AND isActive = 1",
+    db.query("SELECT s.id FROM sessiondetails s WHERE s.attendenceCode = ? AND cancelStatus = 0 AND deleteStatus = 0 AND isActive = 1 AND s.date = CURRENT_DATE()",
         [attendenceCode], (codeErr, codeRes) => {
             if (codeErr) {
                 console.log(codeErr);
                 result(codeErr, null);
                 return;
+            }
+            if (codeRes.length === 0) {
+                console.log("Invalid Attendance Code");
+                result("Invalid Attendance Code", null);
+                return;
             } else {
-                console.log(codeRes)
-                const { sessionId, sessionDate } = codeRes[0];
-                const currentDate = new Date();
-                console.log(currentDate)
-                console.log(sessionDate)
-
-                // Check if the current date is within the session date
-                if (currentDate < new Date(sessionDate)) {
-                    console.log("Cannot mark attendance before the session date");
-                    result("Cannot mark attendance before the session date", null);
-                    return;
-                }
-
-                // Check if the current date is after the session date
-                if (currentDate > new Date(sessionDate)) {
-                    console.log("Cannot mark attendance after the session date");
-                    result("Cannot mark attendance after the session date", null);
-                    return;
-                }
-                return result (sessionId)
+                    const sessionId = codeRes[0].id;
+                    console.log(sessionId)
+                    return result (null, sessionId)
             }
         })
 }

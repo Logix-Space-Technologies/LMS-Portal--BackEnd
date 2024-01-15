@@ -37,6 +37,7 @@ exports.markAttendance = (request, response) => {
                         studId : studId,
                         sessionId : sessionId
                     })
+                    console.log(attendance)
 
                     Attendence.markAttendence(attendance, (err, data) => {
                         if (err) {
