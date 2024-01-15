@@ -9,7 +9,6 @@ const fs = require('fs');
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 require('dotenv').config({ path: '../../.env' });
 
-
 // AWS S3 Client Configuration
 const s3Client = new S3Client({
     region: process.env.AWS_REGION,

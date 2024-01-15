@@ -328,3 +328,5 @@ exports.trainerDetailsUpdate = (request, response) => {
     })
 
 }
+
+// Code For Updating Trainer Password
