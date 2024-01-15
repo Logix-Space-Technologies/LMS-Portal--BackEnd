@@ -11,6 +11,7 @@ const { Upload } = require('@aws-sdk/lib-storage');
 const fs = require('fs');
 require('dotenv').config({ path: '../../.env' });
 const path = require('path');
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
 // AWS S3 Client Configuration
 const s3Client = new S3Client({
@@ -156,6 +157,9 @@ exports.collegeCreate = (request, response) => {
                             const collegeEmailContent = mailContents.collegeHtmlContent(collegeName)
                             const collegeTextContent = mailContents.collegeTextContent(collegeName)
                             mail.sendEmail(collegeEmail, 'Registration Successful!', collegeEmailContent, collegeTextContent);
+                            if(key=="lmsapp"){
+                                logAdminStaff(0,"Admin Created College")
+                            }
                             return response.json({ "status": "success", "data": data });
                         }
                     });
@@ -284,6 +288,9 @@ exports.updateCollege = (request, response) => {
                                 response.json({ "status": err })
                             }
                         } else {
+                            if(key=="lmsapp"){
+                                logAdminStaff(0,"Admin Updated College")
+                            }
                             return response.json({ "status": "College Details Updated", "data": data })
                         }
                     })
@@ -316,6 +323,9 @@ exports.deleteCollege = (request, response) => {
                         return response.json({ "status": err })
                     }
                 }
+                
+                logAdminStaff(0,"Admin Deleted College")
+                
                 return response.json({ "status": "College deleted." })
             })
         } else {

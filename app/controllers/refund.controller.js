@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Refund = require("../models/refund.model");
-
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
 exports.createRefundRequest = (request, response) => {
     refundtoken = request.headers.token;
@@ -75,7 +75,7 @@ exports.getRefundStatus = (request, response) => {
 exports.approveRefundRequest = (request, response) => {
     const {refundAmnt, transactionNo, adminRemarks, admStaffId, refundId} = request.body;
     const refundtoken = request.headers.token;
-    jwt.verify(refundtoken, "lmsappone", (err, decoded) => {
+    jwt.verify(refundtoken, "lmsappadmstaff", (err, decoded) => {
         if (decoded) {
             Refund.approveRefund(refundAmnt, admStaffId, transactionNo, adminRemarks, refundId, (err, data) => {
                 if (err) {
@@ -96,7 +96,7 @@ exports.approveRefundRequest = (request, response) => {
 exports.rejectRefundRequest = (request, response) => {
     const {admStaffId, adminRemarks, refundId} = request.body
     const rejectRefundToken = request.headers.token
-    jwt.verify(rejectRefundToken, "lmsappone", (err, decoded) => {
+    jwt.verify(rejectRefundToken, "lmsappadmstaff", (err, decoded) => {
         if (decoded) {
             Refund.rejectRefund(admStaffId, adminRemarks, refundId, (err, data) => {
                 if (err) {

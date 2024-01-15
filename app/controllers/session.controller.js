@@ -5,7 +5,7 @@ const { Student } = require("../models/student.model");
 const Attendence = require("../models/attendence.model")
 const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
-
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
 exports.createSession = (request, response) => {
     const sessionToken = request.headers.token;
@@ -81,39 +81,42 @@ exports.createSession = (request, response) => {
                     return response.json({ "status": err });
                 } else {
                     // console.log(data)
-                    const sessionId=data.id
+                    const sessionId = data.id
                     // console.log(sessionId)
                     //fetch corresponding students
-                    Student.searchStudentByBatch(newSession.batchId,(err,res)=>{
+                    Student.searchStudentByBatch(newSession.batchId, (err, res) => {
                         if (err) {
                             return response.json({ "status": err });
                         } else {
                             console.log(res)
                             res.forEach(element => {
-                                let studentid=element.id
+                                let studentid = element.id
                                 // let sessionid=newSession.id
                                 const newAttendence = new Attendence({
-                                    studId:studentid,
-                                    sessionId:sessionId
+                                    studId: studentid,
+                                    sessionId: sessionId
                                 })
                                 const studentName = element.studName
                                 const studentEmail = element.studEmail
-                       
+
                                 const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, newSession.date, newSession.time, newSession.venueORlink);
                                 const upcomingSessionTextContent = mailContents.upcomingSessionTextContent(studentName, newSession.sessionName, newSession.date, newSession.time, newSession.venueORlink);
-                                mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement',upcomingSessionHtmlContent,upcomingSessionTextContent );
-                                Attendence.create(newAttendence,(err,res)=>{
+                                mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                if (key == "lmsapp") {
+                                    logAdminStaff(0, "Admin Created new Session")
+                                }
+                                Attendence.create(newAttendence, (err, res) => {
                                     if (err) {
                                         console.log({ "status": err });
                                     } else {
-                                        
+
                                         // console.log({ "status": "success", "data": res });
                                     }
                                 })
                             });
 
-                            return response.json({ "status": "success", "data": data});
-                            
+                            return response.json({ "status": "success", "data": data });
+
                         }
                     }
                     )
@@ -194,6 +197,9 @@ exports.sessionUpdate = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
+                    if (key == "lmsapp") {
+                        logAdminStaff(0, "Admin Updated Session Details")
+                    }
                     return response.json({ "status": "success", "data": data });
                 }
             })
@@ -245,6 +251,7 @@ exports.deleteSession = (request, response) => {
                     return response.json({ "status": err });
                 }
 
+                logAdminStaff(0, "Admin Deleted Session")
                 return response.json({ "status": "success", "data": data });
             });
         } else {
@@ -300,8 +307,10 @@ exports.cancelSession = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
-
-                return response.json({ "status": "success"});
+                if (key == "lmsapp") {
+                    logAdminStaff(0, "Admin Cancelled Session")
+                }
+                return response.json({ "status": "success" });
             });
         } else {
             return response.json({ "status": "Unauthorized User!!" });
