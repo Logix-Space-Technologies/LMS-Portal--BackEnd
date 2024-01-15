@@ -259,23 +259,22 @@ Session.cancelSession = (sessionId, result) => {
             result("Session doesn't exist", null);
             return;
         }
+        const sessiondetails = res[0].id;
 
-        db.query("DELETE FROM attendence WHERE sessionId = ?", sessionId, (err, res) => {
+        db.query("DELETE FROM attendence WHERE sessionId = ?", sessionId, (err, deleteRes) => {
             if (err) {
                 console.log("Error deleting attendance records: ", err);
                 result(err, null);
                 return;
             }
 
-            db.query("UPDATE sessiondetails SET cancelStatus = 1 WHERE id = ?", sessionId, (err, res) => {
+            db.query("UPDATE sessiondetails SET cancelStatus = 1 WHERE id = ?", sessionId, (err, UpdateRes) => {
                 if (err) {
                     console.log("Error marking session as canceled: ", err);
                     result(err, null);
                     return;
                 }
-
-                console.log("Session cancelled successfully");
-                result("Session cancelled successfully", null);
+                result(null, sessiondetails);
             });
         });
     });
