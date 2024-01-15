@@ -6,6 +6,11 @@ const Attendence = require("../models/attendence.model")
 const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
+const db = require('../models/db')
+const path = require('path');
+require('dotenv').config({ path: '../../.env' });
+
+
 
 exports.createSession = (request, response) => {
     const sessionToken = request.headers.token;
@@ -65,11 +70,16 @@ exports.createSession = (request, response) => {
                 return response.json({ "status": "Validation failed", "data": validationErrors })
             }
 
+            const inputTime = request.body.time;
+            const [hours, minutes, seconds] = inputTime.split(':');
+            const date = new Date(2000, 0, 1, hours, minutes, seconds);
+            const formattedTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            
             const newSession = new Session({
                 batchId: request.body.batchId,
                 sessionName: request.body.sessionName,
                 date: request.body.date.split('/').reverse().join('-'),
-                time: request.body.time,
+                time: formattedTime,
                 type: request.body.type,
                 remarks: request.body.remarks,
                 venueORlink: request.body.venueORlink,
@@ -294,27 +304,60 @@ exports.searchSession = (request, response) => {
 exports.cancelSession = (request, response) => {
     const sessionCancelToken = request.headers.token;
     const key = request.headers.key;
+    const sessionId = request.body.id;
+
     jwt.verify(sessionCancelToken, key, (err, decoded) => {
-
-        if (decoded) {
-            const sessionId = request.body.id;
-
-            if (!sessionId) {
-                return response.json({ "status": "Session ID is required" });
-            }
-
-            Session.cancelSession(sessionId, (err, data) => {
-                if (err) {
-                    return response.json({ "status": err });
-                }
-                if (key == "lmsapp") {
-                    logAdminStaff(0, "Admin Cancelled Session")
-                }
-                return response.json({ "status": "success" });
-            });
-        } else {
+        if (err || !decoded) {
             return response.json({ "status": "Unauthorized User!!" });
         }
+        if (!sessionId) {
+            return response.json({ "status": "Session ID is required" });
+        }
+        Session.cancelSession(sessionId, (err, data) => {
+            if (err) {
+                return response.json({ "status": err });
+            } else {
+                if (key === "lmsapp") {
+                    logAdminStaff(0, "Admin Cancelled Session")
+                }
+                console.log(data)
+                db.query("SELECT * FROM sessiondetails WHERE id = ?", [data], (err, sessionres) => {
+                    if (err) {
+                        return response.json({ "status": err });
+                    }
+                    console.log(sessionres)
+                    const batchId = sessionres[0].batchId;
+                    const sessionDate = sessionres[0].date.toLocaleDateString();
+
+                    // Assuming time is a string in the format '10:22:23'
+                    const inputTime = sessionres[0].time;
+
+                    // Split the time string into hours, minutes, and seconds
+                    const [hours, minutes, seconds] = inputTime.split(':');
+
+                    // Create a new Date object with arbitrary date (we only care about time)
+                    const date = new Date(2000, 0, 1, hours, minutes, seconds);
+
+                    // Format the time in 12-hour clock with AM/PM
+                    const formattedTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                    const sessiontime = formattedTime;
+                    Student.searchStudentByBatch(batchId, (err, res) => {
+                        if (err) {
+                            return response.json({ "status": err });
+                        }
+
+                        res.forEach(element => {
+                            const studentName = element.studName;
+                            const studentEmail = element.studEmail;
+                            const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime);
+                            const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime);
+                            mail.sendEmail(studentEmail, 'Cancel Session Announcement', cancelSessionHtmlContent, cancelSessionTextContent);
+                        });
+                        return response.json({ "status": "success" });
+                    });
+                });
+            }
+        });
     });
 };
 

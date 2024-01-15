@@ -1,3 +1,4 @@
+
 function upcomingSessionContent(studName, sessionName, date, time, venueORlink) {
     console.log(studName)
     console.log(sessionName, date, time, venueORlink)
@@ -256,8 +257,9 @@ function collegeStaffHtmlContent(collegeStaffName, collegeName) {
 }
 
 
-function collegeHtmlContent(collegeName){
-    content=`<!DOCTYPE html>
+
+function collegeHtmlContent(collegeName) {
+    content = `<!DOCTYPE html>
 <html>
 <head>
     <title>New Task Available</title>
@@ -313,11 +315,11 @@ function collegeHtmlContent(collegeName){
 
 </body>
 </html>`
-return content;
+    return content;
 }
 
-function collegeTextContent(collegeName){
-    content=`Dear ${collegeName},
+function collegeTextContent(collegeName) {
+    content = `Dear ${collegeName},
 
     We are thrilled to have you join us at Link Ur Codes. Your journey to connect and learn starts here!
     
@@ -332,6 +334,87 @@ function collegeTextContent(collegeName){
     return content;
 }
 
+
+function cancelSessionContent(participantName, date, time) {
+    content = `<!DOCTYPE html>
+    <html>
+    <head>
+        <title>New Task Available</title>
+        <style>
+            body {
+                background-color: #faf4f4;
+                color: #140101;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+            }
+            .container {
+                border-radius: 8px;
+    
+                background-color: #ece9e9;
+                border-radius: 8px;
+                padding: 20px;
+                margin: 20px auto;
+                max-width: 600px;
+            }
+            .logo-header img {
+                max-width: 30%;
+                height: auto;
+            }
+            .content {
+                margin-top: 20px;
+                border: 2px solid #a3a0a0; /* Added a border to content */
+                padding: 20px; /
+            }
+            .footer {
+                margin-top: 30px;
+                font-size: smaller;
+                color: grey;
+            }
+        </style>
+    </head>
+    <body>
+    
+    <div class="container">
+        <div class="logo-header">
+            <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+        </div>
+        <div class="content">
+            <h2>Session Cancellation</h2>
+    
+            <p>Dear ${participantName},</p>
+            <p>We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for any inconvenience this may cause.</p>
+            <p>A new date for the session will be announced soon. We will keep you updated with the new schedule.</p>
+            <p>Thank you for your understanding.</p>
+        </div>
+        <div class="footer">
+            <p>If you have any questions, feel free to reach out to us !! </p>
+        </div>
+    </div>
+    
+    </body>
+    </html>`
+    return content;
+
+}
+
+function cancelSessionTextContent(participantName, date, time) {
+    content = `Dear ${participantName},
+
+    We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for any inconvenience this may cause.
+    
+    A new date for the session will be announced soon. We will keep you updated with the new schedule.
+    
+    Thank you for your understanding.
+    
+    Best Regards,
+    Your Team
+    `
+    return content;
+}
+
+
+
 module.exports = {
     admStaffAddHTMLContent,
     upcomingSessionContent,
@@ -339,6 +422,8 @@ module.exports = {
     collegeStaffTextContent,
     collegeStaffHtmlContent,
     collegeHtmlContent,
-    collegeTextContent
+    collegeTextContent,
+    cancelSessionContent,
+    cancelSessionTextContent
 };
 
