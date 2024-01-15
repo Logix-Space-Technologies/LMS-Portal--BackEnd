@@ -57,11 +57,11 @@ exports.clgStaffCreate = (request, response) => {
 
   uploadSingle(request, response, async (error) => {
     if (error) {
-      return response.status(500).json({ error: error.message });
+      return response.status(500).json({ "status": error.message });
     }
 
     if (!request.file) {
-      return response.status(400).json({ message: "No file uploaded" });
+      return response.status(400).json({ "status": "No file uploaded" });
     }
 
     // // Read additional form fields
@@ -222,14 +222,14 @@ exports.clgStaffCreate = (request, response) => {
 
     } catch (err) {
       fs.unlinkSync(file.path);
-      response.status(500).json({ error: err.message });
+      response.status(500).json({ "status": err.message });
     }
   });
 };
 
 
 exports.clgStaffDelete = (request, response) => {
-  const deleteToken = request.body.token;
+  const deleteToken = request.headers.token;
 
   jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
     if (decoded) {
@@ -260,8 +260,8 @@ exports.clgStaffDelete = (request, response) => {
 
 
 exports.viewAllCollegeStaff = (request, response) => {
-  const collegeToken = request.body.token
-  key = request.body.key
+  const collegeToken = request.headers.token
+  key = request.headers.key
   jwt.verify(collegeToken, key, (err, decoded) => {
     if (decoded) {
       CollegeStaff.getAll((err, data) => {
@@ -283,10 +283,10 @@ exports.collegeStaffUpdate = (req, res) => {
   const uploadSingle = upload.single('profilePic');
   uploadSingle(req, res, async (error) => {
     if (error) {
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ "status": error.message });
     }
     if (!request.file) {
-      return response.status(400).json({ message: "No file uploaded" });
+      return response.status(400).json({ "status": "No file uploaded" });
     }
     // File handling
     const file = request.file;
@@ -303,13 +303,13 @@ exports.collegeStaffUpdate = (req, res) => {
 
       // Remove the file from local storage
       fs.unlinkSync(file.path);
-      const Updatetoken = req.body.token;
+      const Updatetoken = req.headers.token;
       console.log(Updatetoken)
       const validationErrors = {};
       if (!req.file) {
         return res.json({ "status": "Image is required." });
       }
-      key = request.body.key
+      key = req.headers.key
       jwt.verify(Updatetoken, key, (error, decoded) => {
         if (decoded) {
           if (!req.body.collegeStaffName) {
@@ -375,7 +375,7 @@ exports.collegeStaffUpdate = (req, res) => {
     }
     catch (err) {
       fs.unlinkSync(file.path);
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ "status": err.message });
     }
   });
 };
@@ -383,9 +383,9 @@ exports.collegeStaffUpdate = (req, res) => {
 
 exports.searchCollegeStaff = (request, response) => {
   const searchQuery = request.body.searchQuery;
-  const collegeStaffToken = request.body.token;
-
-  jwt.verify(collegeStaffToken, "lmsapp", (err, decoded) => {
+  const collegeStaffToken = request.headers.token;
+  const key = request.headers.key;
+  jwt.verify(collegeStaffToken, key, (err, decoded) => {
     if (decoded) {
       if (searchQuery === null || searchQuery === undefined || searchQuery.trim() === "") {
         return response.json({ "status": "Search query is required." });
@@ -460,7 +460,7 @@ exports.collegeStaffLogin = (request, response) => {
 }
 
 exports.collegeStaffViewBatch = (request, response) => {
-  const collegeStaffViewBatchToken = request.body.token;
+  const collegeStaffViewBatchToken = request.headers.token;
   jwt.verify(collegeStaffViewBatchToken, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
       // Assuming you have batchId in the request parameters or body
@@ -484,7 +484,7 @@ exports.collegeStaffViewBatch = (request, response) => {
 exports.searchStudentByCollegeId = (req, res) => {
   const searchQuery = req.body.searchQuery;
   const collegeId = req.body.collegeId;
-  const searchstudToken = req.body.token;
+  const searchstudToken = req.headers.token;
   jwt.verify(searchstudToken, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
       if (!searchQuery) {
@@ -510,8 +510,8 @@ exports.searchStudentByCollegeId = (req, res) => {
 
 
 exports.collegeStaffChangePassword = (request, response) => {
-  const { email, oldPassword, newPassword, token } = request.body;
-
+  const { email, oldPassword, newPassword} = request.body;
+  const token = request.headers.token
   // Check if email is provided
   if (!email) {
     return response.json({ "status": "Email is required for password update." });
@@ -566,7 +566,7 @@ exports.collegeStaffChangePassword = (request, response) => {
 //To view student
 
 exports.collegeStaffViewStudent = (request, response) => {
-  const collegeStaffViewStudent = request.body.token;
+  const collegeStaffViewStudent = request.headers.token;
   jwt.verify(collegeStaffViewStudent, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
       const collegeId = request.body.collegeId;
@@ -588,7 +588,7 @@ exports.collegeStaffViewStudent = (request, response) => {
 
 
 exports.clgStaffViewTask = (request, response) => {
-  const clgStaffViewTaskToken = request.body.token
+  const clgStaffViewTaskToken = request.headers.token
   jwt.verify(clgStaffViewTaskToken, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
 
@@ -614,7 +614,8 @@ exports.clgStaffViewTask = (request, response) => {
 
 
 exports.studentVerificationByCollegeStaff = (req, res) => {
-  const { collegeStaffId, studentId, token } = req.body;
+  const { collegeStaffId, studentId} = req.body;
+  const token = req.headers.token
 
   if (!collegeStaffId || !studentId || !token) {
     return res.json({ "status": "Validation failed", "data": "CollegeStaff ID, Student ID, and Token are required" });
@@ -622,12 +623,12 @@ exports.studentVerificationByCollegeStaff = (req, res) => {
 
   jwt.verify(token, "lmsapptwo", (jwtErr, decoded) => {
     if (jwtErr) {
-      return res.json({ "status": "Error", "data": "JWT verification failed" });
+      return res.json({ "status": "JWT verification failed" });
     }
 
     CollegeStaff.verifyStudent(collegeStaffId, studentId, (err, result) => {
       if (err) {
-        return res.json({ "status": "Error", "data": err });
+        return res.json({ "status": err });
       }
 
       return res.json({ "status": "Success", "data": result });
@@ -639,7 +640,7 @@ exports.studentVerificationByCollegeStaff = (req, res) => {
 //College Staff Search Batches
 exports.clgStaffSearchBatches = (request, response) => {
   const clgStaffBatchSearchQuery = request.body.clgStaffBatchSearchQuery
-  const ClgStaffSearchToken = request.body.token
+  const ClgStaffSearchToken = request.headers.token
   const collegeId = request.body.collegeId
   jwt.verify(ClgStaffSearchToken, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
@@ -668,7 +669,8 @@ exports.clgStaffSearchBatches = (request, response) => {
 
 
 exports.viewCollegeStaffProfile = (request, response) => {
-  const { id, token: clgStaffProfileToken } = request.body;
+  const { id } = request.body;
+  const clgStaffProfileToken = request.headers.token
 
   if (!id) {
     return response.json({ "status": "Invalid college staff ID" });

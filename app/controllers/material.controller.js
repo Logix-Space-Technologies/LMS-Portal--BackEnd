@@ -27,7 +27,7 @@ const storage = multer.diskStorage({
         if (file.mimetype.startsWith('*/*')) {
             cb(null, true);
         } else {
-            cb(new Error('Only image files are allowed!'), false);
+            cb(new Error('File Should Be Uploaded'), false);
         }
     },
     filename: function (req, file, cb) {
@@ -45,11 +45,11 @@ exports.createMaterial = (request, response) => {
     uploadFile(request, response, async (error) => {
 
         if (error) {
-            return response.status(500).json({ error: error.message });
+            return response.status(500).json({ "status": error.message });
         }
 
         if (!request.file) {
-            return response.status(400).json({ message: "No file uploaded" });
+            return response.status(400).json({ "status": "No file uploaded" });
         }
 
         // File handling
@@ -117,7 +117,7 @@ exports.createMaterial = (request, response) => {
             })
         } catch (err) {
             fs.unlinkSync(file.path);
-            response.status(500).json({ error: err.message });
+            response.status(500).json({ "status": err.message });
         }
     })
 
