@@ -1,9 +1,8 @@
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const Admin = require("../models/admin.model");
-const { request, response } = require("express");
 const Validator = require('../config/data.validate')
-
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 // const saltRounds = 10;
 
 // exports.adminRegister = (request,response) =>{
@@ -69,6 +68,7 @@ exports.adminLogin = (request, response) => {
                         if (error) {
                             response.json({ "status": "Unauthorized User!!" })
                         } else {
+                            logAdminStaff(0,"Admin Logged In")
                             response.json({ "status": "Success", "data": admin, "token": token })
                         }
                     })
@@ -83,13 +83,14 @@ exports.adminLogin = (request, response) => {
 
 
 exports.adminChangePwd = (request, response) => {
-    const { userName, oldPassword, newPassword, token } = request.body;
+    const { userName, oldPassword, newPassword } = request.body;
+    const token = request.headers.token
 
     jwt.verify(token, "lmsapp", (error, decoded) => {
         if (decoded) {
             Admin.changePassword({ userName, oldPassword, newPassword }, (err, result) => {
                 if (err) {
-                    return response.json({ status: err });
+                    return response.json({ "status": err });
                 }
                 if (oldPassword === newPassword) {
                     return response.json({ "status": "Old Password and New Password cannot be same." })
@@ -101,7 +102,7 @@ exports.adminChangePwd = (request, response) => {
 
                 if (!passwordValidation.isValid) {
                     validationErrors.password = passwordValidation.message;
-                    return response.json({ status: validationErrors });
+                    return response.json({ "status": validationErrors });
                 }
 
                 if (result.status === "Password Updated Successfully!!!") {
@@ -111,6 +112,7 @@ exports.adminChangePwd = (request, response) => {
                         if (updateErr) {
                             return response.json({ "status": updateErr });
                         } else {
+                            logAdminStaff(0,"Admin Password Changed")
                             return response.json({ "status": "Password Successfully Updated!!!" });
                         }
                     });
@@ -127,11 +129,11 @@ exports.adminChangePwd = (request, response) => {
 
 
 exports.adminDashBoards = (request, response) => {
-    jwt.verify(request.body.token, "lmsapp", (error, decoded) => {
+    jwt.verify(request.headers.token, "lmsapp", (error, decoded) => {
         if (decoded) {
             Admin.adminDashBoard((err, result) => {
                 if (err) {
-                    return response.json({ status: err });
+                    return response.json({ "status": err });
                 } else {
                     return response.json({ "status": "Success", "data": result });
                 }

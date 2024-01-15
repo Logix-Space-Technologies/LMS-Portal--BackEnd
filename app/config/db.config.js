@@ -1,6 +1,10 @@
+require('dotenv').config();
+
+
 module.exports = {
-    HOST: "localhost",
-    USER: "root",
-    PASSWORD: "",
-    DB: "lmsdb"
+    HOST: process.env.HOST,
+    USER: process.env.DATABASEUSER,
+    PASSWORD: process.env.DATABASEPASSWORD,
+    DB: process.env.DB
   };
+
