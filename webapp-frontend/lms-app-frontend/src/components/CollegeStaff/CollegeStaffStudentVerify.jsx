@@ -9,18 +9,19 @@ const CollegeStaffStudentVerify = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/unverifiedStudents"
 
     const getData = () => {
+        let data = { "collegeId": sessionStorage.getItem("clgStaffCollegeId") }
         let axiosConfig = {
             headers: {
-                "content-type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem('clgstafftoken'),
-                "key": "lmsappclgstaff"
+              "content-type": "application/json;charset=UTF-8",
+              "Access-Control-Allow-Origin": "*",
+              "token": sessionStorage.getItem("clgstaffLogintoken"),
+              "key": sessionStorage.getItem("clgstaffkey")
             }
-        }
-        axios.post(apiUrl, axiosConfig).then(
+          }
+        axios.post(apiUrl, axiosConfig, data).then(
             (Response) => {
                 console.log(axiosConfig)
-                setStudentData(Response.data)
+                setStudentData(Response.data.data)
                 console.log(Response.data)
             }
         )
