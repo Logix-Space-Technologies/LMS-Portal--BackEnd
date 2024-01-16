@@ -208,5 +208,9 @@ router.post('/colgstaffviewattendance',AttendenceController.collegeStaffViewAtte
 
 router.post('/viewAdminLog',AdminController.viewAdminLog)
 
+router.post('/updateMaterial',MaterialController.updateMaterial)
+
+
+
 
 module.exports = router
