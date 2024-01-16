@@ -10,7 +10,7 @@ const AddCollegeStaff = () => {
     "department": "",
     "clgStaffAddress": "",
     "email": "",
-    "phNo": "",
+     "phNo": "",
     "aadharNo": "",
     "password": "",
     "confirmpassword": "",
@@ -31,18 +31,10 @@ const AddCollegeStaff = () => {
 
 
   const getData = () => {
-    let axiosConfig1 = {
-      headers: {
-        'content-type': 'multipart/form-data',
-        "token": sessionStorage.getItem("admtoken"),
-        "key": sessionStorage.getItem("admkey")
-      }
-    };
-    axios.post(apiUrl2, axiosConfig1).then(
+    let data = { "token": sessionStorage.getItem("admtoken"), "key": "lmsapp" }
+    axios.post(apiUrl2, data).then(
       (response) => {
-        console.log(axiosConfig1)
         setOutputField(response.data.data)
-        console.log(response.data)
       }
     )
   }
@@ -93,50 +85,16 @@ const AddCollegeStaff = () => {
               "department": "",
               "clgStaffAddress": "",
               "email": "",
-              "phNo": "",
+               "phNo": "",
               "aadharNo": "",
               "password": "",
               "confirmpassword": ""
             })
           } else {
-            if (response.data.status === "Validation failed" && response.data.data.collegeName) {
-              alert(response.data.data.name)
+            if (response.data.status === "Validation failed" ) {
+              alert(response.data.data)
             } else {
-              if (response.data.status === "Validation failed" && response.data.data.staffName) {
-                alert(response.data.data.name)
-              } else {
-                if (response.data.status === "Validation failed" && response.data.data.department) {
-                  alert(response.data.data.department)
-                } else {
-                  if (response.data.status === "Validation failed" && response.data.data.address) {
-                    alert(response.data.data.address)
-                  } else {
-                    if (response.data.status === "Validation failed" && response.data.data.email) {
-                      alert(response.data.data.email)
-                    } else {
-                      if (response.data.status === "Validation failed" && response.data.data.phone) {
-                        alert(response.data.data.phone)
-                      } else {
-                        if (response.data.status === "Validation failed" && response.data.data.image) {
-                          alert(response.data.data.image)
-                        } else {
-                          if (response.data.status === "Validation failed" && response.data.data.aadhar) {
-                            alert(response.data.data.image)
-                          } else {
-                            if (response.data.status === "Validation failed" && response.data.data.password) {
-                              alert(response.data.data.password)
-                            } else {
-                              alert(response.data.status)
-                            }
-                          }
-
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-
+              alert(response.data.status)
             }
 
           }
@@ -223,17 +181,16 @@ const AddCollegeStaff = () => {
                   </div>
                 </div>
                 <div class="row gy-3 gy-md-4 overflow-hidden">
-                  <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label htmlFor="collegeId" className="form-label">College Name <span className="text-danger">*</span></label>
+                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                    <label for="" class="form-label">College Name <span class="text-danger">*</span></label>
                     <select name="collegeId" value={inputField.collegeId} id="collegeId" className="form-control" onChange={inputHandler}>
                       <option value="">Select</option>
-                      {outputField && outputField.map((value, index) => {
-                        return <option value={value.id}>{value.collegeName}</option>;
+                      {outputField.map((value) => {
+                        return <option value={value.id}> {value.collegeName} </option>
                       })}
                     </select>
                     {errors.collegeId && <span style={{ color: 'red' }} className="error">{errors.collegeId}</span>}
                   </div>
-
                   <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                     <label for="collegeStaffName" class="form-label">College Staff Name <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" name="collegeStaffName" onChange={inputHandler} value={inputField.collegeStaffName} id="collegeStaffName" />
