@@ -617,8 +617,16 @@ exports.studentVerificationByCollegeStaff = (req, res) => {
   const { collegeStaffId, studentId} = req.body;
   const token = req.headers.token
 
-  if (!collegeStaffId || !studentId || !token) {
-    return res.json({ "status": "Validation failed", "data": "CollegeStaff ID, Student ID, and Token are required" });
+  if (!collegeStaffId) {
+    return res.json({ "status": "CollegeStaff ID is required" });
+  }
+
+  if (!studentId) {
+    return res.json({ "status": "Student ID is required" });
+  }
+
+  if (!token) {
+    return res.json({ "status": "Token is required" });
   }
 
   jwt.verify(token, "lmsapptwo", (jwtErr, decoded) => {
