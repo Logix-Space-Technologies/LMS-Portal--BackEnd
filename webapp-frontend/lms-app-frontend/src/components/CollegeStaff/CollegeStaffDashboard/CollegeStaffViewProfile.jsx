@@ -6,9 +6,17 @@ const CollegeStaffViewProfile = () => {
     const [colgStaffData, setColgStaffData] = useState({});
     const apiURL = global.config.urls.api.server + "/api/lms/profileViewByCollegeStaff";
     const getData = () => {
-        let data = { "id": sessionStorage.getItem("clgStaffId"), "token": sessionStorage.getItem("clgstaffLogintoken") };
-        console.log(data);
-        axios.post(apiURL, data).then(
+        let data = { "id": sessionStorage.getItem("clgStaffId") };
+        console.log(data)
+        let axiosConfig = {
+            headers: {
+              "content-type": "application/json;charset=UTF-8",
+              "Access-Control-Allow-Origin": "*",
+              "token": sessionStorage.getItem("clgstaffLogintoken"),
+              "key": sessionStorage.getItem("clgstaffkey")
+            }
+          }
+        axios.post(apiURL, data, axiosConfig).then(
             (response) => {
                 setColgStaffData(response.data.data);
                 console.log(response.data.data);
@@ -24,7 +32,7 @@ const CollegeStaffViewProfile = () => {
                         <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
                             <div className="row align-items-center">
                                 <div className="col-lg-6 mb-4 mb-lg-0">
-                                    <img src={colgStaffData.profilePic} alt="" />
+                                    <img height= "300px" src={colgStaffData.profilePic} alt="" />
                                 </div>
                                 <div className="col-lg-6 px-xl-10">
                                     <div className=" d-lg-inline-block py-1-9 px-1-9 px-sm-6 mb-1-9 rounded">
