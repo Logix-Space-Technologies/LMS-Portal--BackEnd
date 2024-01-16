@@ -13,6 +13,20 @@ exports.markAttendance = (request, response) => {
         if (decoded) {
             const attendenceCode = request.body.attendenceCode;
             const studId = request.body.studId;
+
+            const validationErrors = {};
+
+            if (Validator.isEmpty(attendenceCode).isValid) {
+                validationErrors.attendanceCode = Validator.isEmpty(attendenceCode).message;
+            }
+            if (Validator.isEmpty(studId).isValid) {
+                validationErrors.studId = Validator.isEmpty(studId).message;
+            }
+
+            if (Object.keys(validationErrors).length > 0) {
+                return response.json({ "status": "Validation failed", "data": validationErrors })
+            }
+
             Session.fetchAttendenceCode(attendenceCode, (err, data) => {
                 if (err) {
                     return response.json({ "status": err })
@@ -23,6 +37,7 @@ exports.markAttendance = (request, response) => {
                         studId : studId,
                         sessionId : sessionId
                     })
+                    console.log(attendance)
 
                     Attendence.markAttendence(attendance, (err, data) => {
                         if (err) {
