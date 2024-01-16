@@ -15,6 +15,7 @@ import AddCollegeStaff from './components/Admin/AddCollegeStaff';
 import CollegeStaffHeader from './components/CollegeStaff/CollegeStaffDashboard/CollegeStaffHeader';
 import CollegeStaffDashboard from './components/CollegeStaff/CollegeStaffDashboard/CollegeStaffDashboard';
 import AddCollege from './components/Admin/AddCollege';
+import CollegeStaffStudentVerify from './components/CollegeStaff/CollegeStaffStudentVerify';
 
 
 
@@ -37,6 +38,7 @@ function App() {
           <Route path='/collegeStaffDashboard' element={<CollegeStaffDashboard />} />
           <Route path='/collegeStaffHeader' element={<CollegeStaffHeader />} />
           <Route path='/addcollege' element={<AddCollege />} />
+          <Route path='/studentverification' element={<CollegeStaffStudentVerify/>}/>
         </Routes>
       </BrowserRouter>
     </div>

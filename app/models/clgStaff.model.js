@@ -289,10 +289,10 @@ CollegeStaff.viewTask=(collegeId,result)=>{
 }
 
 
-CollegeStaff.verifyStudent = (collegeStaffId, studentId, result) => {
-    const associationQuery = "SELECT * FROM student s JOIN college_staff c ON s.collegeId = c.collegeId WHERE s.id = ? AND c.id = ? AND s.deleteStatus = 0 AND s.isActive = 1";
+CollegeStaff.verifyStudent = (collegeId, studentId, result) => {
+    const associationQuery = "SELECT * FROM student s JOIN college_staff c ON s.collegeId = c.collegeId WHERE s.id = ? AND c.collegeId = ? AND s.deleteStatus = 0 AND s.isActive = 1 LIMIT 1";
 
-    db.query(associationQuery, [studentId, collegeStaffId], (assocErr, assocRes) => {
+    db.query(associationQuery, [studentId, collegeId], (assocErr, assocRes) => {
         if (assocErr) {
             console.error("Error checking CollegeStaff and Student association: ", assocErr);
             result(assocErr, null);

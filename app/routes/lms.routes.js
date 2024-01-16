@@ -17,6 +17,7 @@ const SessionsController = require('../controllers/session.controller');
 const TrainerController = require("../controllers/trainers.controllers")
 const NotificationController = require("../controllers/notifications.controller")
 const curriculumController = require("../controllers/curriculum.controller")
+const AttendenceController = require("../controllers/attendence.controller")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -196,6 +197,20 @@ router.post('/cancelSession', SessionsController.cancelSession);
 router.post('/curriculumview', curriculumController.currView)
 
 router.post('/viewallcurriculum', curriculumController.viewAllCurriculum)
+
+router.post('/deletecurriculum',curriculumController.curriculumDelete)
+
+router.post('/updatecurriculum',curriculumController.updateCurriculum)
+
+router.post('/studmarkattendance',AttendenceController.markAttendance)
+
+router.post('/colgstaffviewattendance',AttendenceController.collegeStaffViewAttendance)
+
+router.post('/viewAdminLog',AdminController.viewAdminLog)
+
+router.post('/updateMaterial',MaterialController.updateMaterial)
+
+
 
 
 module.exports = router

@@ -6,6 +6,7 @@ const Curriculum = function (curriculum) {
     this.batchId = curriculum.batchId;
     this.curriculumTitle = curriculum.curriculumTitle;
     this.curriculumDesc = curriculum.curriculumDesc;
+    this.updatedBy = curriculum.updatedBy
     this.addedBy = curriculum.addedBy;
     this.curriculumFileLink = curriculum.curriculumFileLink;
 };
@@ -99,20 +100,63 @@ Curriculum.curriculumView = (batchId, result) => {
         })
 }
 
-Curriculum.curriculumView = (result) => {
-    db.query("SELECT b.batchName, c.* FROM curriculum c JOIN batches b ON c.batchId = b.id WHERE c.deleteStatus = 0 AND c.isActive = 1",
-        (curriculumErr, curriculumRes) => {
-            if (curriculumErr) {
-                console.log("error: ", curriculumErr);
-                result(curriculumErr, null)
-                return
-            } else {
-                console.log("success:", curriculumRes)
-                result(null, curriculumRes);
-            }
-        })
-}
 
+Curriculum.curriculumDelete = (id, result) => {
+    db.query("UPDATE curriculum SET isActive=0, deleteStatus=1 WHERE id=? AND isActive=1 AND deleteStatus=0", [id], (err, res) => {
+        if (err) {
+            console.log("error:", err);
+            result(err, null);
+            return;
+        }
+        if (res.affectedRows === 0) {
+            result({ kind: "not_found" }, null);
+            return;
+        }
+        console.log("delete Curriculum with id:", { id: id });
+        result(null, { id: id });
+    });
+};
+
+
+Curriculum.curriculumUpdate = (updCurriculum, result) => {
+    db.query("SELECT * FROM curriculum WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [updCurriculum.id], (err, curRes) => {
+        if (err) {
+            console.error("Error checking existing curriculum: ", err);
+            result("Error checking existing curriculum", null);
+            return;
+        }
+
+        if (curRes.length === 0) {
+            console.log("No such curriculum exists.");
+            result("No such curriculum exists.", null);
+            return;
+        }
+        db.query("SELECT * FROM curriculum WHERE curriculumTitle=? AND batchId=? AND deleteStatus = 0 AND isActive = 1", [updCurriculum.curriculumTitle, updCurriculum.id], (err, res) => {
+            if (err) {
+                console.error("Error checking existing curriculum: ", err);
+                result("Error checking existing curriculum", null);
+                return;
+            }
+
+            if (res.length > 0) {
+                console.log("Curriculum Title already exists.");
+                result("Curriculum Title already exists.", null);
+                return;
+            }
+            db.query("UPDATE `curriculum` SET `curriculumTitle`= ?, `curriculumDesc`= ?, `updatedDate`= CURRENT_DATE, `updatedBy`= ?, `curriculumFileLink`= ?, `updateStatus`= 1 WHERE id = ?",
+                [updCurriculum.curriculumTitle, updCurriculum.curriculumDesc, updCurriculum.updatedBy, updCurriculum.curriculumFileLink, updCurriculum.id], (err, res) => {
+                    if (err) {
+                        console.error("Error updating curriculum: ", err);
+                        result("Error updating curriculum", null);
+                        return;
+                    }
+
+                    console.log("Updated Curriculum Details : ", { id: updCurriculum.id, ...updCurriculum });
+                    result(null, { id: updCurriculum.id, ...updCurriculum });
+                });
+        });
+    });
+};
 
 
 
