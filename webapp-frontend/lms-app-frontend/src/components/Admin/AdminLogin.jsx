@@ -19,6 +19,8 @@ const AdminLogin = () => {
             (Response) => {
                 if (Response.data.status === "Success") {
                     let admtoken = Response.data.token
+                    let admkey = "lmsapp"
+                    sessionStorage.setItem("admkey", admkey)
                     sessionStorage.setItem("admtoken", admtoken)
                     navigate("/addcollege")
                 }
