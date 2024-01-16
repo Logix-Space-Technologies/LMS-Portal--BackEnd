@@ -1,28 +1,37 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import '../../config/config'
 
 const AdminLogin = () => {
     const [inputField, setInputField] = useState(
         { userName: "", Password: "" }
     )
-    const apiLink = "http://localhost:8080/api/lms/"
-    // const navigate = useNavigate()
+    const apiUrl = global.config.urls.api.server + "/api/lms/"
+    const navigate = useNavigate()
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
     }
 
     const readValue = () => {
-        axios.post(apiLink, inputField).then(
+        axios.post(apiUrl, inputField).then(
             (Response) => {
-                if (Response.data.status == "success") {
-                    let token = Response.data.token
-                    sessionStorage.setItem("ustoken", token)
-                    alert(Response.data.status)
+                if (Response.data.status === "Success") {
+                    let admtoken = Response.data.token
+                    sessionStorage.setItem("admtoken", admtoken)
+                    navigate("/addcollege")
                 }
                 else {
-                    alert(Response.data.status)
+                    if (Response.data.status === "Validation failed" && Response.data.data.username) {
+                        alert(Response.data.data.username)
+                    } else {
+                        if (Response.data.status === "Validation failed" && Response.data.data.password) {
+                            alert(Response.data.data.password)
+                        } else {
+                            alert(Response.data.status)
+                        }
+                    }
                 }
             }
         )
@@ -53,9 +62,9 @@ const AdminLogin = () => {
                             <div class="mb-3">
                                 <button type="button" onClick={readValue} class="btn btn-success btn-lg">Login</button>
                             </div>
-                            <div class="mb-3">
+                            {/* <div class="mb-3">
                                 <p class="lead ">Don't have an account? <a href="/register">Register here</a></p>
-                            </div>
+                            </div> */}
                         </div>
 
                         <div class="card-footer text-muted">
