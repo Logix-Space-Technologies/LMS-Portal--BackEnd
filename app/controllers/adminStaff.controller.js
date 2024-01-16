@@ -2,13 +2,14 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const AdminStaff = require("../models/adminStaff.model");
 const Validator = require("../config/data.validate");
-const { request, response } = require("express");
+const mailContents = require('../config/mail.content');
+const mail = require('../../sendEmail');
 
 const saltRounds = 10;
 
 exports.create = (request, response) => {
     const { AdStaffName, PhNo, Address, AadharNo, Email, Password } = request.body;
-    const adstaffToken = request.body.token;
+    const adstaffToken = request.headers.token;
 
     // Checking token validation
     jwt.verify(adstaffToken, "lmsapp", (tokenError, decoded) => {
@@ -79,6 +80,11 @@ exports.create = (request, response) => {
                 if (createError) {
                     response.json({ "status": createError });
                 } else {
+                    // //send mail
+                    const adminStaffName = newAdminStaff.AdStaffName
+                    const adminStaffEmail = newAdminStaff.Email
+                    const adminStaffHTMLEmailContent = mailContents.admStaffAddHTMLContent(adminStaffName);
+                    mail.sendEmail(adminStaffEmail, 'Registration Successful!', adminStaffHTMLEmailContent);
                     response.json({ "status": "success", "data": data });
                 }
             });
@@ -88,7 +94,7 @@ exports.create = (request, response) => {
 
 
 exports.viewalladmstaff = (request, response) => {
-    const admstaffToken = request.body.token
+    const admstaffToken = request.headers.token
     jwt.verify(admstaffToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             AdminStaff.getAlladmstaff((err, data) => {
@@ -109,7 +115,7 @@ exports.viewalladmstaff = (request, response) => {
 
 exports.adminStaffUpdate = (request, res) => {
     const { AdStaffName, PhNo, Address, AadharNo } = request.body;
-    const token = request.body.token;
+    const token = request.headers.token;
 
     // Token verification
     jwt.verify(token, "lmsapp", (tokenError, decoded) => {
@@ -171,7 +177,7 @@ exports.adminStaffUpdate = (request, res) => {
 
 
 exports.admStaffDelete = (request, response) => {
-    const deleteToken = request.body.token
+    const deleteToken = request.headers.token
     console.log(deleteToken)
     jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
         if (decoded) {
@@ -201,7 +207,7 @@ exports.admStaffDelete = (request, response) => {
 
 exports.adminStaffSearch = (request, response) => {
     const adminStaffSearchQuery = request.body.adminStaffSearchQuery
-    const adminStaffSearcToken = request.body.token
+    const adminStaffSearcToken = request.headers.token
 
     jwt.verify(adminStaffSearcToken, "lmsapp", (err, decoded) => {
         if (decoded) {
@@ -233,6 +239,20 @@ exports.adminStaffLogin = (request, response) => {
 
     const getEmail = request.body.Email
     const getPassword = request.body.Password
+    const validationErrors = {}
+
+    if (!Validator.isValidEmail(Email).isValid) {
+        validationErrors.email = Validator.isValidEmail(Email).message;
+    }
+
+    if (Validator.isEmpty(Password).isValid) {
+        validationErrors.password = Validator.isEmpty(Password).message;
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
+
 
     AdminStaff.findByEmail(Email, (err, admin_staff) => {
         if (err) {
@@ -247,7 +267,7 @@ exports.adminStaffLogin = (request, response) => {
             const passwordMatch = bcrypt.compareSync(Password, admin_staff.Password)
 
             if (passwordMatch) {
-                jwt.sign({ Email: getEmail, Password: getPassword }, "lmsappone", { expiresIn: "30m" },
+                jwt.sign({ Email: getEmail, Password: getPassword }, "lmsappadmstaff", { expiresIn: "30m" },
                     (error, token) => {
                         if (error) {
                             response.json({ "status": "Unauthorized user!!" })
@@ -268,9 +288,9 @@ exports.adminStaffLogin = (request, response) => {
 
 // Admin-Staff Change Password
 exports.adminStaffChangePswd = (request, response) => {
-    const { Email, oldAdSfPassword, newAdSfPassword, token } = request.body
-
-    jwt.verify(token, "lmsappone", (error, decoded) => {
+    const { Email, oldAdSfPassword, newAdSfPassword} = request.body
+    const token = request.headers.token
+    jwt.verify(token, "lmsappadmstaff", (error, decoded) => {
         if (decoded) {
             if (oldAdSfPassword === newAdSfPassword) {
                 response.json({ "status": "Old password and new password cannot be same." });
@@ -310,9 +330,9 @@ exports.adminStaffChangePswd = (request, response) => {
 
 exports.searchCollegesByAdminStaff = (request, response) => {
     const collegeSearchQuery = request.body.collegeSearchQuery;
-    const collegeSearchToken = request.body.token;
+    const collegeSearchToken = request.headers.token;
 
-    jwt.verify(collegeSearchToken, "lmsappone", (err, decoded) => {
+    jwt.verify(collegeSearchToken, "lmsappadmstaff", (err, decoded) => {
         if (decoded) {
             if (!collegeSearchQuery) {
                 console.log("Search Item is required.");
@@ -338,7 +358,8 @@ exports.searchCollegesByAdminStaff = (request, response) => {
 
 
 exports.viewAdminStaffProfile = (request, response) => {
-    const { id, token: admStaffProfileToken } = request.body;
+    const { id } = request.body;
+    const admStaffProfileToken = request.headers.token
 
     if (!id) {
         return response.json({ "status": "Invalid Admin staff ID" });
@@ -348,7 +369,7 @@ exports.viewAdminStaffProfile = (request, response) => {
         return response.json({ "status": "Token is required." });
     }
 
-    jwt.verify(admStaffProfileToken, "lmsappone", (err, decoded) => {
+    jwt.verify(admStaffProfileToken, "lmsappadmstaff", (err, decoded) => {
         if (err) {
             console.error("Token verification failed:", err);
             return response.json({ "status": err });
@@ -372,8 +393,8 @@ exports.viewAdminStaffProfile = (request, response) => {
 
 // View Submitted Tasks By AdminStaff
 exports.adsfViewSubmttedTask = (request, response) => {
-    viewSubmittedTaskToken = request.body.token
-    jwt.verify(viewSubmittedTaskToken, "lmsappone", (error, decoded) => {
+    viewSubmittedTaskToken = request.headers.token
+    jwt.verify(viewSubmittedTaskToken, "lmsappadmstaff", (error, decoded) => {
         if (decoded) {
             AdminStaff.viewSubmittedTask((error, data) => {
                 if (error) {
