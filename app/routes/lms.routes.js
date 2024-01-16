@@ -202,5 +202,9 @@ router.post('/deletecurriculum',curriculumController.curriculumDelete)
 
 router.post('/studmarkattendance',AttendenceController.markAttendance)
 
+router.post('/updateMaterial',MaterialController.updateMaterial)
+
+
+
 
 module.exports = router
