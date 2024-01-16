@@ -4,8 +4,8 @@ const { request, response } = require("express")
 
 
 exports.viewStudentLog = (request, response) => {
-    const studentLogToken = request.body.token
-    key = request.body.key;
+    const studentLogToken = request.headers.token
+    key = request.headers.key;
     jwt.verify(studentLogToken, key , (err, decoded) => {
         if (decoded) {
             StudentLog.StudentLog.getAll((err, data) => {

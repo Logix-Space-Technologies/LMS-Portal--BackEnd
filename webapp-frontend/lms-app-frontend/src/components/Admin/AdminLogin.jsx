@@ -17,13 +17,21 @@ const AdminLogin = () => {
     const readValue = () => {
         axios.post(apiUrl, inputField).then(
             (Response) => {
-                if (Response.data.status == "Success") {
-                    let token = Response.data.token
-                    sessionStorage.setItem("ustoken", token)
-                    navigate("/admdashboard")
+                if (Response.data.status === "Success") {
+                    let admtoken = Response.data.token
+                    sessionStorage.setItem("admtoken", admtoken)
+                    navigate("/addcollege")
                 }
                 else {
-                    alert(Response.data.status)
+                    if (Response.data.status === "Validation failed" && Response.data.data.username) {
+                        alert(Response.data.data.username)
+                    } else {
+                        if (Response.data.status === "Validation failed" && Response.data.data.password) {
+                            alert(Response.data.data.password)
+                        } else {
+                            alert(Response.data.status)
+                        }
+                    }
                 }
             }
         )
