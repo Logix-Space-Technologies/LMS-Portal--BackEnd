@@ -25,14 +25,6 @@ const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/');
     },
-    limits: { fileSize: 2 * 1024 * 1024 },
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('*/*')) {
-            cb(null, true);
-        } else {
-            cb(new Error('File Should Be Uploaded'), false);
-        }
-    },
     filename: function (req, file, cb) {
         // Unique filename: Current timestamp + random number + original extension
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -40,7 +32,16 @@ const storage = multer.diskStorage({
         cb(null, file.fieldname + '-' + uniqueSuffix + ext);
     }
 });
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage, limits: { fileSize: 2 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('*/*')) {
+            cb(null, true);
+        } else {
+            cb(new Error('File Should Be Uploaded'), false);
+        }
+    },
+});
 exports.createMaterial = (request, response) => {
 
     const uploadFile = upload.single('uploadFile')
