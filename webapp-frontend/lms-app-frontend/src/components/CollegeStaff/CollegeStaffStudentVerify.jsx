@@ -6,9 +6,6 @@ const CollegeStaffStudentVerify = () => {
 
     const [studentData, setStudentData] = useState([])
 
-    const [isVerified, setIsVerified] = useState([])
-
-    const [studId, setStudId] = useState({})
 
     const apiUrl = global.config.urls.api.server + "/api/lms/unverifiedStudents"
     const apiUrl2 = global.config.urls.api.server + "/api/lms/studentverificationbyCollegeStaff"
@@ -28,14 +25,12 @@ const CollegeStaffStudentVerify = () => {
                 console.log(axiosConfig)
                 setStudentData(Response.data.data)
                 console.log(Response.data.data)
-                setStudId(Response.data.data[0].id)
-                console.log(studId)
             }
         )
     }
 
-    const handleClick = () => {
-        let data = { "collegeId": sessionStorage.getItem("clgStaffCollegeId"), "studentId": studId }
+    const handleClick = (studentId) => {
+        let data = { "collegeId": sessionStorage.getItem("clgStaffCollegeId"), "studentId": studentId }
         console.log(data)
         let axiosConfig = {
             headers: {
@@ -153,7 +148,7 @@ const CollegeStaffStudentVerify = () => {
                                                     </td>
 
                                                     <td className="p-4 whitespace-nowrap">
-                                                        <button onClick={handleClick} className="bg-blue-500 text-white px-4 py-2 rounded-md">Verify</button>
+                                                        <button onClick={()=> handleClick(value.id)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Verify</button>
                                                     </td>
                                                 </tr>
                                             )
