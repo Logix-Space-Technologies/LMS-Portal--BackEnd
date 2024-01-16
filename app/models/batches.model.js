@@ -1,6 +1,7 @@
 const db = require('../models/db')
 const { response } = require('express')
 
+
 const Batches = function (batches) {
     this.id = batches.id;
     this.collegeId = batches.collegeId;
