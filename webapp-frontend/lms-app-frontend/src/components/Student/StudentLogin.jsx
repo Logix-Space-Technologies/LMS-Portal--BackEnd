@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../../config/config'
 
 const StudentLogin = () => {
     const [inputField, setInputField] = useState({
@@ -8,7 +9,7 @@ const StudentLogin = () => {
         password: ""
     });
 
-    const apiLink = "http://localhost:8080/api/lms/studentLogin";
+    const apiUrl = global.config.urls.api.server + "/api/lms/studentLogin"
     // const navigate = useNavigate();
 
     const inputHandler = (event) => {
@@ -16,16 +17,29 @@ const StudentLogin = () => {
     };
 
     const readValue = () => {
-        axios.post(apiLink, inputField).then(
+        axios.post(apiUrl, inputField).then(
             (Response) => {
                 if (Response.data.status === "success") {
-                    let token = Response.data.token;
-                    sessionStorage.setItem("ustoken", token);
+                    let studtoken = Response.data.token;
+                    sessionStorage.setItem("studLoginToken", studtoken);
                     alert(Response.data.status);
                     // You may navigate to the student dashboard or another page here
                     // Example: navigate('/student-dashboard');
                 } else {
-                    alert(Response.data.status);
+                    if (Response.data.status === "Validation failed" && Response.data.data.email) {
+                        alert(Response.data.data.email)
+                    } else {
+                        if (Response.data.status === "Validation failed" && Response.data.data.password) {
+                            alert(Response.data.data.password)
+                        } else {
+                            if (Response.data.status === "Student does not Exist.") {
+                                alert(Response.data.status)
+                            } else {
+                                alert(Response.data.status)
+                            }
+                        }
+                        
+                    }
                 }
             }
         );
@@ -70,7 +84,7 @@ const StudentLogin = () => {
                                 <button type="button" onClick={readValue} className="btn btn-success btn-lg">Login</button>
                             </div>
                             <div className="mb-3">
-                                <p className="lead ">Don't have an account? <a href="/register">Register here</a></p>
+                                <p className="lead ">Don't have an account? <a href="/studentregistration">Register here</a></p>
                             </div>
                         </div>
 

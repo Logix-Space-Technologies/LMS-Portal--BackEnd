@@ -1,12 +1,13 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import '../../config/config'
 
 const AdminLogin = () => {
     const [inputField, setInputField] = useState(
         { userName: "", Password: "" }
     )
-    const apiLink = "http://localhost:8080/api/lms/"
+    const apiUrl = global.config.urls.api.server + "/api/lms/"
     const navigate = useNavigate()
 
     const inputHandler = (event) => {
@@ -14,15 +15,23 @@ const AdminLogin = () => {
     }
 
     const readValue = () => {
-        axios.post(apiLink, inputField).then(
+        axios.post(apiUrl, inputField).then(
             (Response) => {
-                if (Response.data.status == "Success") {
-                    let token = Response.data.token
-                    sessionStorage.setItem("ustoken", token)
-                    navigate("/admdashboard")
+                if (Response.data.status === "Success") {
+                    let admtoken = Response.data.token
+                    sessionStorage.setItem("admtoken", admtoken)
+                    navigate("/addcollege")
                 }
                 else {
-                    alert(Response.data.status)
+                    if (Response.data.status === "Validation failed" && Response.data.data.username) {
+                        alert(Response.data.data.username)
+                    } else {
+                        if (Response.data.status === "Validation failed" && Response.data.data.password) {
+                            alert(Response.data.data.password)
+                        } else {
+                            alert(Response.data.status)
+                        }
+                    }
                 }
             }
         )

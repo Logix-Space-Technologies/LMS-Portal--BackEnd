@@ -1,13 +1,14 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import '../../config/config'
 
 const AdminStaffLogin = () => {
     const [inputField, setInputField] = useState(
         { Email: "", Password: "" }
     )
 
-    const apiLink = "http://localhost:8080/api/lms/AdminStaffLogin"
+    const apiUrl = global.config.urls.api.server + "/api/lms/AdminStaffLogin"
     // const navigate=useNavigate()
 
     const inputHandler = (event) => {
@@ -15,14 +16,22 @@ const AdminStaffLogin = () => {
     }
 
     const readValue = () => {
-        axios.post(apiLink,inputField).then(
+        axios.post(apiUrl,inputField).then(
             (Response)=>{
-                if (Response.data.status == "success") {
-                    let token = Response.data.token
-                    sessionStorage.setItem("ustoken", token)
+                if (Response.data.status === "Success") {
+                    let admstafftoken = Response.data.token
+                    sessionStorage.setItem("admstaffLogintoken", admstafftoken)
                     alert(Response.data.status)  
                 } else {
-                    alert(Response.data.status)
+                    if (Response.data.status === "Validation failed" && Response.data.data.email) {
+                        alert(Response.data.data.email)
+                    } else {
+                        if (Response.data.status === "Validation failed" && Response.data.data.password) {
+                            alert(Response.data.data.password)
+                        } else {
+                            alert(Response.data.status)
+                        }
+                    }
                 }
             }
         )
