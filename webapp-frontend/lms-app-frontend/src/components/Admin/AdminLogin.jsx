@@ -22,7 +22,7 @@ const AdminLogin = () => {
                     let admkey = "lmsapp"
                     sessionStorage.setItem("admkey", admkey)
                     sessionStorage.setItem("admtoken", admtoken)
-                    navigate("/addcollegestaff")
+                    navigate("/addAdminStaff")
                 }
                 else {
                     if (Response.data.status === "Validation failed" && Response.data.data.username) {
