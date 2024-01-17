@@ -114,9 +114,7 @@ exports.createTask = (request, response) => {
                     }
 
 
-                    if (request.file && !Validator.isValidFile(request.file).isValid) {
-                        validationErrors.image = Validator.isValidFile(request.file).message;
-                    }
+                   
 
                     // If validation fails
                     if (Object.keys(validationErrors).length > 0) {
@@ -310,6 +308,7 @@ exports.taskUpdate = (request, response) => {
         } catch (err) {
             fs.unlinkSync(file.path);
             response.status(500).json({ "status": err.message });
+            console.log(err.message)
         }
     })
 };
