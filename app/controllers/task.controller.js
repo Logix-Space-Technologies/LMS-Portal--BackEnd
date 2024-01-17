@@ -262,10 +262,6 @@ exports.taskUpdate = (request, response) => {
                     }
 
 
-                    if (request.file && !Validator.isValidFile(request.file).isValid) {
-                        validationErrors.image = Validator.isValidFile(request.file).message;
-                    }
-
                     // If validation fails
                     if (Object.keys(validationErrors).length > 0) {
                         return response.json({ "status": "Validation failed", "data": validationErrors });
