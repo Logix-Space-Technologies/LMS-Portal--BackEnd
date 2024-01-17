@@ -176,6 +176,7 @@ exports.updateMaterial = (request, response) => {
             const fileUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
 
             // Remove the file from local storage
+            fs.unlinkSync(file.path);
             const materialUpdateToken = request.headers.token
             const { batchId, fileName, materialDesc, remarks } = request.body
 
