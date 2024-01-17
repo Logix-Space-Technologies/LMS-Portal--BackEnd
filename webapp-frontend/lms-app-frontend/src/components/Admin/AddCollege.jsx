@@ -42,7 +42,7 @@ const AddCollege = () => {
           "content-type": "multipart/form-data",
           "Access-Control-Allow-Origin": "*",
           "token": sessionStorage.getItem("admtoken"),
-          "key": "lmsapp"
+          "key": sessionStorage.getItem("admkey")
         }
       }
       let data = {
@@ -149,7 +149,7 @@ const AddCollege = () => {
                     <a href="#!">
                       <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
                     </a><br /><br />
-                    <h3>Add College</h3>
+                    <h3>Add College Details</h3>
                   </div>
                 </div>
               </div>
