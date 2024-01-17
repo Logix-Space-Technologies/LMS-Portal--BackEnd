@@ -614,19 +614,27 @@ exports.clgStaffViewTask = (request, response) => {
 
 
 exports.studentVerificationByCollegeStaff = (req, res) => {
-  const { collegeStaffId, studentId} = req.body;
+  const { collegeId, studentId} = req.body;
   const token = req.headers.token
 
-  if (!collegeStaffId || !studentId || !token) {
-    return res.json({ "status": "Validation failed", "data": "CollegeStaff ID, Student ID, and Token are required" });
+  if (!collegeId) {
+    return res.json({ "status": "College ID is required" });
   }
 
-  jwt.verify(token, "lmsapptwo", (jwtErr, decoded) => {
+  if (!studentId) {
+    return res.json({ "status": "Student ID is required" });
+  }
+
+  if (!token) {
+    return res.json({ "status": "Token is required" });
+  }
+
+  jwt.verify(token, "lmsappclgstaff", (jwtErr, decoded) => {
     if (jwtErr) {
       return res.json({ "status": "JWT verification failed" });
     }
 
-    CollegeStaff.verifyStudent(collegeStaffId, studentId, (err, result) => {
+    CollegeStaff.verifyStudent(collegeId, studentId, (err, result) => {
       if (err) {
         return res.json({ "status": err });
       }
