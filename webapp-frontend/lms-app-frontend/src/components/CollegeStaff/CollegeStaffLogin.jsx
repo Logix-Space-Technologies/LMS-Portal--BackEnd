@@ -23,11 +23,14 @@ const CollegeStaffLogin = () => {
             (response) => {
                 if (response.data.status === "Success") {
                     let clgstafftoken = response.data.token
-                    let clgStaffId = response.data.data.id
+                    let clgStaffId = response.data.data.id 
+                    let clgStaffCollegeId = response.data.data.collegeId
+                    let clgstaffkey = "lmsappclgstaff"
                     sessionStorage.setItem("clgstaffLogintoken", clgstafftoken)
-                    console.log(clgStaffId)
                     sessionStorage.setItem("clgStaffId",clgStaffId)
-                    navigate("/collegeStaffDashboard")
+                    sessionStorage.setItem("clgstaffkey",clgstaffkey)
+                    sessionStorage.setItem("clgStaffCollegeId",clgStaffCollegeId)
+                    navigate("/studentverification")
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.email) {
                         alert(response.data.data.email)

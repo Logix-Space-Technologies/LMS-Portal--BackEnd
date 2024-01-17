@@ -2,7 +2,7 @@ const db = require("../models/db");
 const { response, request } = require("express")
 const bcrypt = require("bcrypt")
 
-const { StudentLog, logStudent } = require("../models/studentLog.model")
+const { StudentLog, logStudent } = require("../models/studentLog.model");
 
 
 
@@ -276,49 +276,82 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
     );
 };
 
+Student.searchStudentByBatch = (searchKey, result) => {
+    db.query(
+        "SELECT `id`, `collegeId`, `batchId`, `membership_no`, `studName`, `admNo`, `rollNo`, `studDept`, `course`, `studEmail`, `studPhNo`, `studProfilePic`, `aadharNo`, `password`, `addedDate`, `updatedDate`, `validity`, `isPaid`, `isVerified`, `isActive`, `emailVerified`, `pwdUpdateStatus`, `updateStatus`, `deleteStatus` FROM `student` WHERE `batchId`= ? ",
+        [searchKey],
+        (err, res) => {
+            if (err) {
+                console.error("Error while searching student: ", err);
+                result(err, null);
+                return;
+            } else {
+                // console.log("Students found: ", res);
+                let data=Object.values(JSON.parse(JSON.stringify(res)))
+                result(null, data);
+                return;
+            }
+        }
+    );
+};
+
 
 Student.findByEmail = (Email, result) => {
-    db.query("SELECT * FROM student WHERE studEmail = ? AND isVerified = 1 AND emailVerified = 1", [Email],
+    db.query("SELECT * FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1", [Email],
         (verifyErr, verifyRes) => {
             if (verifyErr) {
                 console.log("Error: ", verifyErr)
                 return result(verifyErr, null)
             }
             if (verifyRes.length === 0) {
-                console.log("Account is under progress/not verified")
-                return result("Account is under progress/not verified", null)
+                console.log("Student Does Not Exist")
+                return result("Student Does Not Exist", null)
+            } else {
+                db.query("SELECT * FROM student WHERE studEmail = ? AND isVerified = 1 AND emailVerified = 1", [Email],
+                    (err, res) => {
+                        if (err) {
+                            console.log("Error: ", err)
+                            return result(err, null)
+                        } else {
+                            if (res.length === 0) {
+                                console.log("Account Under Verification Progress/Not Verified")
+                                return result("Account Under Verification Progress/Not Verified", null)
+                            } else {
+                                db.query("SELECT * FROM student WHERE studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
+                                    (validityErr, validityRes) => {
+                                        if (validityErr) {
+                                            console.log("Error: ", validityErr)
+                                            return result(validityErr, null)
+                                        }
+                                        if (validityRes.length === 0) {
+                                            console.log("Account expired. Please Renew Your Plan.")
+                                            return result("Account expired. Please Renew Your Plan", null)
+                                        }
+
+
+                                        db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1", [Email],
+                                            (err, res) => {
+                                                if (err) {
+                                                    console.log("Error : ", err)
+                                                    return result(err, null)
+
+                                                }
+
+                                                if (res.length > 0) {
+                                                    result(null, res[0])
+                                                    //Log for student login
+                                                    logStudent(res[0].id, "Student logged In")
+                                                    return
+                                                }
+                                            })
+                                    })
+
+                            }
+                        }
+                    })
+
             }
 
-            db.query("SELECT * FROM student WHERE studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
-                (validityErr, validityRes) => {
-                    if (validityErr) {
-                        console.log("Error: ", validityErr)
-                        return result(validityErr, null)
-                    }
-                    if (validityRes.length === 0) {
-                        console.log("Account expired. Please Renew Your Plan.")
-                        return result("Account expired. Please Renew Your Plan", null)
-                    }
-
-
-                    db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1", [Email],
-                        (err, res) => {
-                            if (err) {
-                                console.log("Error : ", err)
-                                return result(err, null)
-
-                            }
-
-                            if (res.length > 0) {
-                                result(null, res[0])
-                                //Log for student login
-                                logStudent(res[0].id, "Student logged In")
-                                return
-                            }
-
-                            result({ kind: "not_found" }, null)
-                        })
-                })
         })
 }
 
@@ -414,7 +447,7 @@ Student.updateStudentProfile = (student, result) => {
                         return result("Batch does not exist or is inactive/deleted.", null);
                     }
 
-                    db.query("UPDATE student SET studName = ?, admNo = ?, rollNo = ?, studDept = ?, course = ?, studPhNo = ?, studProfilePic = ?, aadharNo = ?, updatedDate = CURRENT_DATE() WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+                    db.query("UPDATE student SET studName = ?, admNo = ?, rollNo = ?, studDept = ?, course = ?, studPhNo = ?, studProfilePic = ?, aadharNo = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
                         [
                             student.studName,
                             student.admNo,
@@ -714,8 +747,8 @@ Student.viewBatch = (collegeId, result) => {
                 console.log("Batch Details: ", res);
                 result(null, res);
             }
-        }
-    );
+        }
+    );
 };
 
 
@@ -734,6 +767,94 @@ Student.collegeViewAll = async (result) => {
 }
 
 
+Student.generateAllBatchWiseList = async (result) => {
+    let query = `
+        SELECT b.batchName, s.studName, c.collegeName, s.admNo, s.studDept, s.course, 
+               s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity,s.membership_no 
+        FROM batches b 
+        JOIN student s ON b.id = s.batchId 
+        JOIN college c ON s.collegeId = c.id 
+        WHERE s.isActive = 1 AND b.isActive = 1 AND s.emailVerified = 1 
+              AND s.isVerified = 1 AND s.isPaid = 1 AND s.deleteStatus = 0 AND b.deleteStatus = 0 
+              AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= s.addedDate
+        ORDER BY c.collegeName, b.id, s.id;
+    `;
+
+    db.query(query, (err, response) => {
+        if (err) {
+            console.log("Error executing the query:", err);
+            result(err, null);
+        } else {
+            console.log("Query results:", response);
+            result(null, response);
+        }
+    });
+};
+
+
+
+
+Student.studentNotificationView = (studId, result) => {
+    db.query("SELECT * FROM student WHERE id = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1 AND isVerified = 1 AND isPaid = 1", [studId], (err, studentRes) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        } else {
+            if (studentRes.length === 0) {
+                console.log("Student not found or not verified");
+                result(null, { status: "Student not found or not verified" });
+                return;
+            }
+            const batchId = studentRes[0].batchId;
+            db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [batchId], (err, batchRes) => {
+                if (err) {
+                    console.log("error: ", err);
+                    result(err, null);
+                    return;
+                } else {
+                    if (batchRes.length === 0) {
+                        console.log("Batch not found");
+                        result(null, { status: "Batch not found" });
+                        return;
+                    }
+                    db.query("SELECT message, sendBy, title, addedDate,sendDateTime FROM notifications WHERE batchId = ? ORDER BY sendDateTime DESC", [batchId], (err, notificationsRes) => {
+                        if (err) {
+                            console.log("error: ", err);
+                            result(err, null);
+                            return;
+                        } else {
+                            console.log("Notifications: ", notificationsRes);
+                            result(null, notificationsRes);
+                            return;
+                        }
+                    });
+                }
+            });
+        }
+    });
+};
+  
+
+
+
+
+Student.viewSession = (batchId, result) => {
+    db.query(
+        "SELECT DISTINCT s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, s.attendenceCode FROM sessiondetails s JOIN student st ON s.batchId = st.batchId WHERE s.deleteStatus = 0 AND s.isActive = 1 AND st.deleteStatus = 0 AND st.isActive = 1 AND s.batchId = ?",
+        [batchId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Session Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
 
 
 module.exports = { Student, Payment, Tasks, SubmitTask };

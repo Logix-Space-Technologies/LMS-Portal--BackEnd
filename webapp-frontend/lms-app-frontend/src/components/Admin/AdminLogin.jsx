@@ -20,7 +20,7 @@ const AdminLogin = () => {
                 if (Response.data.status === "Success") {
                     let admtoken = Response.data.token
                     sessionStorage.setItem("admtoken", admtoken)
-                    navigate("/admdashboard")
+                    navigate("/addcollege")
                 }
                 else {
                     if (Response.data.status === "Validation failed" && Response.data.data.username) {
