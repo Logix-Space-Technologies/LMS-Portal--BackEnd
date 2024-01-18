@@ -73,7 +73,7 @@ const StudentRegistration = () => {
       //initialize razorpay
       const rzp = new window.Razorpay({
         key: 'rzp_test_ZqcybzHd1QkWg8',
-        amount: 100,
+        amount: 2000 * 100,
         name: 'Logix Space Technologies Pvt Ltd',
         description: 'Link Ur Codes Payment',
         // image: <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" class="img-fluid" />,
@@ -88,50 +88,47 @@ const StudentRegistration = () => {
 
 
           // Call Registration API and pass the details to the server
-          // axios.post(apiUrl).then()
-          const readValue = () => {
-            axios.post(apiUrl, inputField).then(
-              (response) => {
-                if (response.data.status === "success") {
-                  alert("User Registered Successfully !!!")
-                  setInputField({ collegeId: "", batchId: "", studName: "", admNo: "", rollNo: "", studDept: "", course: "", studEmail: "", studPhNo: "", studProfilePic: "", aadharNo: "", password: "", confirmpass: "" })
+          
+          axios.post(apiUrl, inputField).then(
+            (response) => {
+              if (response.data.status === "success") {
+                alert("User Registered Successfully !!!")
+                setInputField({ collegeId: "", batchId: "", studName: "", admNo: "", rollNo: "", studDept: "", course: "", studEmail: "", studPhNo: "", studProfilePic: "", aadharNo: "", password: "", confirmpass: "" })
+              } else {
+                if (response.data.status === "Validation failed" && response.data.data.college) {
+                  alert(response.data.data.college)
                 } else {
-                  if (response.data.status === "Validation failed" && response.data.data.college) {
-                    alert(response.data.data.college)
+                  if (response.data.status === "Validation failed" && response.data.data.batch) {
+                    alert(response.data.data.batch)
                   } else {
-                    if (response.data.status === "Validation failed" && response.data.data.batch) {
-                      alert(response.data.data.batch)
+                    if (response.data.status === "Validation failed" && response.data.data.name) {
+                      alert(response.data.data.name)
                     } else {
-                      if (response.data.status === "Validation failed" && response.data.data.name) {
-                        alert(response.data.data.name)
+                      if (response.data.status === "Validation failed" && response.data.data.admNo) {
+                        alert(response.data.data.admNo)
                       } else {
-                        if (response.data.status === "Validation failed" && response.data.data.admNo) {
-                          alert(response.data.data.admNo)
+                        if (response.data.status === "Validation failed" && response.data.data.rollNo) {
+                          alert(response.data.data.rollNo)
                         } else {
-                          if (response.data.status === "Validation failed" && response.data.data.rollNo) {
-                            alert(response.data.data.rollNo)
+                          if (response.data.status === "Validation failed" && response.data.data.department) {
+                            alert(response.data.data.department)
                           } else {
-                            if (response.data.status === "Validation failed" && response.data.data.department) {
-                              alert(response.data.data.department)
+                            if (response.data.status === "Validation failed" && response.data.data.course) {
+                              alert(response.data.data.course)
                             } else {
-                              if (response.data.status === "Validation failed" && response.data.data.course) {
-                                alert(response.data.data.course)
+                              if (response.data.status === "Validation failed" && response.data.data.email) {
+                                alert(response.data.data.email)
                               } else {
-                                if (response.data.status === "Validation failed" && response.data.data.email) {
-                                  alert(response.data.data.email)
+                                if (response.data.status === "Validation failed" && response.data.data.phone) {
+                                  alert(response.data.data.phone)
                                 } else {
-                                  if (response.data.status === "Validation failed" && response.data.data.phone) {
-                                    alert(response.data.data.phone)
+                                  if (response.data.status === "Validation failed" && response.data.data.aadharNo) {
+                                    alert(response.data.data.aadharNo)
                                   } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.aadharNo) {
-                                      alert(response.data.data.aadharNo)
+                                    if (response.data.status === "Validation failed" && response.data.data.password) {
+                                      alert(response.data.data.password)
                                     } else {
-                                      if (response.data.status === "Validation failed" && response.data.data.password) {
-                                        alert(response.data.data.password)
-                                      } else {
-                                        alert(response.data.status)
-                                      }
-
+                                      alert(response.data.status)
                                     }
                                   }
                                 }
@@ -144,10 +141,8 @@ const StudentRegistration = () => {
                   }
                 }
               }
-            )
-          }
-          readValue()
-          //razorpay
+            }
+          )
         }
       })
       function GFG_Fun() {
@@ -210,7 +205,7 @@ const StudentRegistration = () => {
     if (!data.studPhNo.trim()) {
       errors.studPhNo = 'Phone No is required';
     } else if (!/^\+91[6-9]\d{9}$|^\+91\s?[6-9]\d{9}$|^[6-9]\d{9}$/.test(data.studPhNo)) {
-      errors.phNo = 'Invalid phone number';
+      errors.studPhNo = 'Invalid phone number';
     }
 
     if (!data.aadharNo.trim()) {
