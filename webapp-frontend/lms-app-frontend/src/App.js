@@ -19,7 +19,7 @@ import CollegeStaffStudentVerify from './components/CollegeStaff/CollegeStaffStu
 import StudentUpdateProfile from './components/Student/StudentUpdateProfile';
 import AddAdminStaff from './components/Admin/AddAdminStaff';
 import StudentViewTasks from './components/Student/StudentViewTasks';
-
+import StudDashboard from './components/Student/StudentDashboard/StudDashboard';
 
 
 function App() {
@@ -46,7 +46,8 @@ function App() {
           <Route path='/addAdminStaff' element={<AddAdminStaff/>}/>
           <Route path='/studentupdateprofile' element={<StudentUpdateProfile />} />
           <Route path='/studentViewTask' element={<StudentViewTasks />} />
-            
+          <Route path='/studdashboard' element={<StudDashboard/>} />
+
         </Routes>
       </BrowserRouter>
     </div>
