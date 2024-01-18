@@ -27,6 +27,7 @@ const StudentLogin = () => {
                     sessionStorage.setItem("studentkey", key);
                     sessionStorage.setItem("studentId", studId);
                     sessionStorage.setItem("studLoginToken", studtoken);
+                    navigate("/refundrequest")
                     navigate("/studdashboard")
 
                 } else {
