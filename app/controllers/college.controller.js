@@ -362,3 +362,25 @@ exports.searchCollege = (request, response) => {
         }
     })
 }
+
+exports.studentViewCollege = (request, response) => {
+    const studentViewCollegeToken = request.headers.token
+    const studentId = request.body.studId
+    jwt.verify(studentViewCollegeToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            College.studentViewCollege(studentId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err })
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No College Found." })
+                    } else {
+                        response.json({ "status": "College Found", "data": data })
+                    }
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" })
+        }
+    })
+}

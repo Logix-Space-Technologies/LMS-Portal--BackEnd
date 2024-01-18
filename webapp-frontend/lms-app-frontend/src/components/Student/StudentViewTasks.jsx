@@ -54,7 +54,6 @@ const StudentViewTasks = () => {
                                         <td>
                                             <div className="flex justify-start" >
                                                 <a target = "_blank" href={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
-                                                {/* <button onClick={task.taskFileUpload} className="bg-blue-500 text-white px-4 py-2 rounded-md">View Material</button> */}
                                             </div>
                                         </td>
                                         <td>
