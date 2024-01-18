@@ -14,9 +14,9 @@ exports.createRefundRequest = (request, response) => {
             Refund.createRefundRequest(newRefund, (err, data) => {
                 if (err) {
                     console.log(err);
-                    if (err.message === "A refund request already exists for the student.") {
+                    if (err === "A refund request already exists for the student.") {
                         response.json({ "status":"A refund request already exists for the student." });
-                    } else if (err.message === "No payment history found for the student.") {
+                    } else if (err === "No payment history found for the student.") {
                         response.json({ "status": "No payment history found for the student." });
                     } else {
                         response.json({ "status": "Failed to create refund request." });
