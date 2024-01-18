@@ -1,66 +1,71 @@
-import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import '../../config/config'
+import React, { useEffect, useState } from 'react'
 
 const StudentRegistration = () => {
 
-  const [outputField, setOutputField] = useState({"data":[]})
-  const [batchOptions, setBatchOptions] = useState([]);
+  const [inputField, setInputField] = useState({
+    collegeId: "",
+    batchId: "",
+    studName: "",
+    admNo: "",
+    rollNo: "",
+    studDept: "",
+    course: "",
+    studEmail: "",
+    studPhNo: "",
+    aadharNo: "",
+    password: "",
+    confirmpassword: ""
+  })
 
+  const [outputField, setOutputField] = useState([])
+
+  const [errors, setErrors] = useState({})
+
+  const [batches, setBatches] = useState([])
+
+  const [file, setFile] = useState(null)
+
+  const fileUploadHandler = (event) => {
+    setFile(event.target.files[0])
+  }
+
+  const apiUrl = global.config.urls.api.server + "/api/lms/studreg"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/studentregviewcollege"
   const batchUrl = global.config.urls.api.server + "/api/lms/studregviewbatch";
-
 
   const getData = () => {
     axios.post(apiUrl2).then(
       (response) => {
-        setOutputField(response.data)
-        console.log(response.data)
+        setOutputField(response.data.data)
+        console.log(response.data.data)
       }
     )
   }
 
-  const [inputField, setInputField] = useState(
-    { collegeId: "", batchId: "", studName: "", admNo: "", rollNo: "", studDept: "", course: "", aadharNo: "", password: "" }
-  )
-
-  const [file, setFile] = useState("")
-
-  const fileUploadHandler = (event) =>{
-    setFile(event.target.files[0])
-  }
-
-
-  const [errors, setErrors] = useState({})
-
-  const apiUrl = global.config.urls.api.server + "/api/lms/studentLogin/studreg"
-
-  const inputHandler = (event) => {
-    setInputField({ ...inputField, [event.target.name]: event.target.value });
-  }
-
-  console.log(inputField.collegeId)
-  let cid = inputField.collegeId
-  console.log(cid)
-  const handleCollegeChange = () => {
-    let data = { "collegeId": 1 }
-    console.log(data)
-    axios.post(batchUrl, data).then((response) => {
-      console.log(response.data);  // Log the response to check its structure
-      setBatchOptions(response.data.data);
-      console.log(response.data.data.batchAmount)
+  // Add a new function to fetch batches based on the selected college
+  const getBatches = (collegeId) => {
+    console.log(collegeId)
+    axios.post(batchUrl, { collegeId }).then((response) => {
+      setBatches(response.data);
+      console.log(response.data);
     });
   };
 
-  let BatchAmount = "200"
-  var intValue = Number(BatchAmount)
-  console.log(BatchAmount)
-  
-  
+  // Call getBatches whenever the college selection changes
+  const handleCollegeChange = (event) => {
+    const selectedCollegeId = event.target.value;
+    setInputField(prevState => ({ ...prevState, collegeId: selectedCollegeId }));
+    getBatches(selectedCollegeId);
+  };
+
+  const inputHandler = (event) => {
+    setInputField({ ...inputField, [event.target.name]: event.target.value })
+  }
+
   const loadRazorpayScript = async () => {
-    
     const script = document.createElement('script')
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.src = "https://checkout.razorpay.com/v1/checkout.js"
 
     document.body.appendChild(script)
 
@@ -68,12 +73,12 @@ const StudentRegistration = () => {
       //initialize razorpay
       const rzp = new window.Razorpay({
         key: 'rzp_test_ZqcybzHd1QkWg8',
-        amount: intValue * 100,
-        currency: 'INR',
+        amount: 2000 * 100,
         name: 'Logix Space Technologies Pvt Ltd',
         description: 'Link Ur Codes Payment',
         // image: <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" class="img-fluid" />,
         image: 'https://www.linkurcodes.com/images/logo.png',
+
 
         handler: function (response) {
           console.log('Payment success:', response)
@@ -81,21 +86,63 @@ const StudentRegistration = () => {
           const PaymentId = response.razorpay_payment_id
           alert("Amount Paid " + PaymentId)
 
+
           // Call Registration API and pass the details to the server
-          // axios.post(apiUrl).then()
-          const readValue = () => {
-            axios.post(apiUrl, inputField).then(
-              (response) => {
-                if (response.data.status === "success") {
-                  alert("User Registered Successfully !!!")
-                  setInputField({ collegeId: "", batchId: "", studName: "", admNo: "", rollNo: "", studDept: "", course: "", studEmail: "", studPhNo: "", aadharNo: "", password: "", confirmpass: "" })
+          
+          axios.post(apiUrl, inputField).then(
+            (response) => {
+              if (response.data.status === "success") {
+                alert("User Registered Successfully !!!")
+                setInputField({ collegeId: "", batchId: "", studName: "", admNo: "", rollNo: "", studDept: "", course: "", studEmail: "", studPhNo: "", studProfilePic: "", aadharNo: "", password: "", confirmpass: "" })
+              } else {
+                if (response.data.status === "Validation failed" && response.data.data.college) {
+                  alert(response.data.data.college)
                 } else {
-                  alert("Something Went Wrong !!!")
+                  if (response.data.status === "Validation failed" && response.data.data.batch) {
+                    alert(response.data.data.batch)
+                  } else {
+                    if (response.data.status === "Validation failed" && response.data.data.name) {
+                      alert(response.data.data.name)
+                    } else {
+                      if (response.data.status === "Validation failed" && response.data.data.admNo) {
+                        alert(response.data.data.admNo)
+                      } else {
+                        if (response.data.status === "Validation failed" && response.data.data.rollNo) {
+                          alert(response.data.data.rollNo)
+                        } else {
+                          if (response.data.status === "Validation failed" && response.data.data.department) {
+                            alert(response.data.data.department)
+                          } else {
+                            if (response.data.status === "Validation failed" && response.data.data.course) {
+                              alert(response.data.data.course)
+                            } else {
+                              if (response.data.status === "Validation failed" && response.data.data.email) {
+                                alert(response.data.data.email)
+                              } else {
+                                if (response.data.status === "Validation failed" && response.data.data.phone) {
+                                  alert(response.data.data.phone)
+                                } else {
+                                  if (response.data.status === "Validation failed" && response.data.data.aadharNo) {
+                                    alert(response.data.data.aadharNo)
+                                  } else {
+                                    if (response.data.status === "Validation failed" && response.data.data.password) {
+                                      alert(response.data.data.password)
+                                    } else {
+                                      alert(response.data.status)
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
-            )
-          }
-          readValue()
+            }
+          )
         }
       })
       function GFG_Fun() {
@@ -103,11 +150,11 @@ const StudentRegistration = () => {
       }
       const orderId = GFG_Fun()
       rzp.open({
-        order_id: orderId,
+        order_id: orderId
       })
     }
-
   }
+
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -123,35 +170,36 @@ const StudentRegistration = () => {
     }
   }
 
+
   const validateForm = (data) => {
     let errors = {};
 
+    if (!data.collegeId.trim()) {
+      errors.collegeId = 'College is required';
+    }
+
+    if (!data.batchId.trim()) {
+      errors.batchId = 'Batch is required';
+    }
     if (!data.studName.trim()) {
       errors.studName = 'Name is required';
     }
-
-    if (!data.collegeId.trim()) {
-      errors.collegeId = 'College Id is required';
-    }
-    if (!data.batchId.trim()) {
-      errors.batchId = 'Batch Id is required';
+    if (!data.admNo.trim()) {
+      errors.admNo = 'Admission number is required';
     }
     if (!data.rollNo.trim()) {
-      errors.rollNo = 'Roll No is required';
-    }
-    if (!data.admNo.trim()) {
-      errors.admNo = 'Admission No is required';
-    }
-    if (!data.studDept.trim()) {
-      errors.studDept = 'Department is required';
+      errors.rollNo = 'Roll number is required';
     }
     if (!data.course.trim()) {
       errors.course = 'Course is required';
     }
-    if (!data.confirmpass) {
-      errors.confirmpass = 'Confirm password is required';
+    if (!data.studDept.trim()) {
+      errors.studDept = 'Department is required';
     }
-    if (!data.studProfilePic) {
+    if (!data.confirmpassword) {
+      errors.confirmpassword = 'Confirm password is required';
+    }
+    if (!file) {
       errors.studProfilePic = 'Profile Image is required';
     }
     if (!data.studPhNo.trim()) {
@@ -179,8 +227,10 @@ const StudentRegistration = () => {
       errors.password = 'Password must be at least 6 characters';
     }
 
-    if (data.confirmpass !== data.password) {
-      errors.confirmPassword = 'Passwords do not match';
+    if (data.confirmpassword !== data.password) {
+      console.log(data.password)
+      console.log(data.confirmpassword)
+      errors.confirmpassword = 'Passwords do not match';
     }
     return errors;
   };
@@ -188,120 +238,227 @@ const StudentRegistration = () => {
   useEffect(() => { getData() }, [])
 
   return (
-    <div class="bg-light py-3 py-md-5">
-      <div class="container">
-        <div class="row justify-content-md-center">
-          <div class="col-12 col-md-11 col-lg-8 col-xl-7 col-xxl-6">
-            <div class="bg-white p-4 p-md-5 rounded shadow-sm">
-              <div class="row">
-                <div class="col-12">
-                  <div class="text-center mb-5">
+    <div className="bg-light py-3 py-md-5">
+      <div className="container">
+        <div className="row justify-content-md-center">
+          <div className="col-12 col-md-11 col-lg-8 col-xl-7 col-xxl-6">
+            <div className="bg-white p-4 p-md-5 rounded shadow-sm">
+              <div className="row">
+                <div className="col-12">
+                  <div className="text-center mb-5">
                     <a href="#!">
-                      <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
-                    </a><br /><br />
+                      <img
+                        src="https://www.linkurcodes.com/images/logo.png"
+                        alt=""
+                        width="175"
+                        height="57" />
+                    </a>
+                    <br />
+                    <br />
                     <h3>Student Registration</h3>
                   </div>
                 </div>
               </div>
-              <div class="row gy-3 gy-md-4 overflow-hidden">
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="" class="form-label">College Name <span class="text-danger">*</span></label>
-                  <select name="collegeId" value={inputField.collegeId} id="collegeId" className="form-control" onChange={(e) => { inputHandler(e); handleCollegeChange(e); }}>
+              <div className="row gy-3 gy-md-4 overflow-hidden">
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label htmlFor="" className="form-label">
+                    College Name <span className="text-danger">*</span>
+                  </label>
+                  <select
+                    name="collegeId"
+                    value={inputField.collegeId}
+                    onChange={handleCollegeChange}
+                    id="collegeId"
+                    className="form-control">
                     <option value="">Select</option>
-                    {outputField.data.map((value, index) => {
+                    {outputField.map((value) => {
                       return <option value={value.id}> {value.collegeName} </option>
                     })}
                   </select>
                   {errors.collegeId && <span style={{ color: 'red' }} className="error">{errors.collegeId}</span>}
                 </div>
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="batchId" class="form-label">Batch Name <span class="text-danger">*</span></label>
-                  <select name="batchId" id="batchId" className="form-control" onChange={inputHandler} value={inputField.batchId}>
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label htmlFor="batchId" className="form-label">
+                    Batch Name <span className="text-danger">*</span>
+                  </label>
+                  <select
+                    name="batchId"
+                    id="batchId"
+                    className="form-control"
+                    value={inputField.batchId}
+                    onChange={inputHandler}>
                     <option value="">Select</option>
-                    {batchOptions.map(
-                      (value, index)=>{
-                      return <option value={value.id}> {value.batchName} </option>
-                      }
-                      )}
+                    {batches.data && batches.data.map((value) => {
+                      return <option key={value.batchName} value={value.id}> {value.batchName} </option>;
+                    })}
                   </select>
+                  {/* <select
+                    name="batchId"
+                    id="batchId"
+                    className="form-control"
+                    value={inputField.batchId}
+                    onChange={inputHandler}
+                  >
+                    {batches.length === 0 ? (
+                      <option value="" disabled>
+                        No Batches Found
+                      </option>
+                    ) : (
+                      <>
+                        <option value="">Select</option>
+                        {batches.data.map((value) => (
+                          <option key={value.batchName} value={value.id}>
+                            {value.batchName}
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </select> */}
                   {errors.batchId && <span style={{ color: 'red' }} className="error">{errors.batchId}</span>}
                 </div>
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="studName" class="form-label">Student Name <span class="text-danger">*</span></label>
-                  <input onChange={inputHandler} type="text" class="form-control" name="studName" value={inputField.studName} id="studName" />
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label htmlFor="studName" className="form-label">
+                    Student Name <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="studName"
+                    value={inputField.studName} onChange={inputHandler}
+                    id="studName" />
                   {errors.studName && <span style={{ color: 'red' }} className="error">{errors.studName}</span>}
                 </div>
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="admNo" class="form-label">Admission No <span class="text-danger">*</span></label>
-                  <input onChange={inputHandler} type="text" class="form-control" name="admNo" value={inputField.admNo} id="admNo" />
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label htmlFor="admNo" className="form-label">
+                    Admission No <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="admNo"
+                    value={inputField.admNo} onChange={inputHandler}
+                    id="admNo" />
                   {errors.admNo && <span style={{ color: 'red' }} className="error">{errors.admNo}</span>}
                 </div>
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="rollNo" class="form-label">Roll No <span class="text-danger">*</span></label>
-                  <input onChange={inputHandler} type="text" class="form-control" name="rollNo" value={inputField.rollNo} id="rollNo" />
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label htmlFor="rollNo" className="form-label">
+                    Roll No <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="rollNo"
+                    value={inputField.rollNo} onChange={inputHandler}
+                    id="rollNo" />
                   {errors.rollNo && <span style={{ color: 'red' }} className="error">{errors.rollNo}</span>}
                 </div>
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="studDept" class="form-label">Department <span class="text-danger">*</span></label>
-                  <input onChange={inputHandler} type="text" class="form-control" name="studDept" value={inputField.studDept} id="studDept" />
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label htmlFor="studDept" className="form-label">
+                    Department <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="studDept"
+                    value={inputField.studDept} onChange={inputHandler}
+                    id="studDept" />
                   {errors.studDept && <span style={{ color: 'red' }} className="error">{errors.studDept}</span>}
                 </div>
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="course" class="form-label">Course <span class="text-danger">*</span></label>
-                  <input onChange={inputHandler} type="text" class="form-control" name="course" value={inputField.course} id="course" />
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label htmlFor="course" className="form-label">
+                    Course <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="course"
+                    value={inputField.course} onChange={inputHandler}
+                    id="course" />
                   {errors.course && <span style={{ color: 'red' }} className="error">{errors.course}</span>}
                 </div>
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="studEmail" class="form-label">Email <span class="text-danger">*</span></label>
-                  <input onChange={inputHandler} type="text" class="form-control" name="studEmail" value={inputField.studEmail} id="studEmail" />
+
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label htmlFor="studEmail" className="form-label">
+                    Email <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="studEmail"
+                    value={inputField.studEmail} onChange={inputHandler}
+                    id="studEmail" />
                   {errors.studEmail && <span style={{ color: 'red' }} className="error">{errors.studEmail}</span>}
                 </div>
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="studPhNo" class="form-label">Phone No <span class="text-danger">*</span></label>
-                  <input onChange={inputHandler} type="text" class="form-control" required="" name="studPhNo" id="studPhNo" value={inputField.studPhNo} />
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label htmlFor="studPhNo" className="form-label">
+                    Phone No <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    required=""
+                    name="studPhNo"
+                    id="studPhNo"
+                    value={inputField.studPhNo} onChange={inputHandler} />
                   {errors.studPhNo && <span style={{ color: 'red' }} className="error">{errors.studPhNo}</span>}
                 </div>
                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="studProfilePic" className="form-label">
+                  <label htmlFor="studProfilePic" className="form-label">
                     Profile Image <span className="text-danger">*</span>
                   </label>
-                  <input onChange={fileUploadHandler} type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" />
+                  <input
+                    type="file"
+                    className="form-control"
+                    name="studProfilePic"
+                    id="studProfilePic"
+                    accept="image/*"
+                    onChange={fileUploadHandler} />
                   {errors.studProfilePic && <span style={{ color: 'red' }} className="error">{errors.studProfilePic}</span>}
                 </div>
-
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="aadharNo" class="form-label">AadharNo <span class="text-danger">*</span></label>
-                  <input onChange={inputHandler} type="text" class="form-control" name="aadharNo" value={inputField.aadharNo} id="aadharNo" />
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label htmlFor="aadharNo" className="form-label">
+                    AadharNo <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="aadharNo"
+                    value={inputField.aadharNo} onChange={inputHandler}
+                    id="aadharNo" />
                   {errors.aadharNo && <span style={{ color: 'red' }} className="error">{errors.aadharNo}</span>}
                 </div>
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                  <div class="input-group">
-                    <input onChange={inputHandler} type="password" class="form-control" name="password" value={inputField.password} id="password" />
-
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label htmlFor="password" className="form-label">
+                    Password <span className="text-danger">*</span>
+                  </label>
+                  <div className="input-group">
+                    <input
+                      type="password"
+                      className="form-control"
+                      name="password"
+                      value={inputField.password} onChange={inputHandler}
+                      id="password" /><br />
+                    <span className="input-group-text">
+                      <i className="bi bi-eye-slash" id="togglePassword"></i>
+                    </span><br />
                   </div>
                   {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
                 </div>
                 <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                   <label for="password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
                   <div class="input-group">
-                    <input onChange={inputHandler} type="password" class="form-control" name="confirmpass" value={inputField.confirmpass} id="confirmpass" />
+                    <input type="password" class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
 
                   </div>
-                  {errors.confirmpass && <span style={{ color: 'red' }} className="error">{errors.confirmpass}</span>}
+                  {errors.confirmpassword && <span style={{ color: 'red' }} className="error">{errors.confirmpassword}</span>}
                 </div>
-                <div class="col-12">
-                  <div class="d-grid">
-                    <button onClick={handleSubmit} class="btn btn-primary btn-lg" type="submit">Register</button>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-12">
-                  <hr class="mt-5 mb-4 border-secondary-subtle" />
-                  <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center">
-                    <a href="/studentLogin" class="link-secondary text-decoration-none">Already have an account? Log In</a>
-                  </div>
+                <div className="col-12">
+                  <button
+                    type="submit"
+                    className="btn btn-primary w-100 py-3"
+                    onClick={handleSubmit}>
+                    Register
+                  </button>
                 </div>
               </div>
             </div>
@@ -309,8 +466,8 @@ const StudentRegistration = () => {
         </div>
       </div>
     </div>
+
   )
 }
 
 export default StudentRegistration
-
