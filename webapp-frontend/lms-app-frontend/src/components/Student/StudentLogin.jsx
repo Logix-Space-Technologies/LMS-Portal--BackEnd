@@ -1,7 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import '../../config/config'
+import { useNavigate } from 'react-router-dom';
 
 const StudentLogin = () => {
     const [inputField, setInputField] = useState({
@@ -10,7 +11,7 @@ const StudentLogin = () => {
     });
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studentLogin"
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
@@ -21,8 +22,13 @@ const StudentLogin = () => {
             (Response) => {
                 if (Response.data.status === "Success") {
                     let studtoken = Response.data.token;
+                    let studId = Response.data.data.id;
+                    let key = "lmsappstud"
+                    sessionStorage.setItem("studentkey", key);
+                    sessionStorage.setItem("studentId", studId);
                     sessionStorage.setItem("studLoginToken", studtoken);
-                    navigate('/studentupdateprofile');
+                    navigate("/studdashboard")
+
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)

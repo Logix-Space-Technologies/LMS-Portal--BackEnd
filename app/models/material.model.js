@@ -102,7 +102,7 @@ Material.updateMaterial = (materialUpdate, result) => {
                         return;
                     } else {
                         // Update material details
-                        db.query("UPDATE materials SET fileName = ?, materialDesc = ?, uploadFile = ?, remarks = ?, batchId = ?, updatedDate = CURRENT_DATE(), updatedStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+                        db.query("UPDATE materials SET fileName = ?, materialDesc = ?, uploadFile = ?, remarks = ?, batchId = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
                             [materialUpdate.fileName, materialUpdate.materialDesc, materialUpdate.uploadFile, materialUpdate.remarks, materialUpdate.batchId, materialUpdate.id],
                             (err, res) => {
                                 if (err) {

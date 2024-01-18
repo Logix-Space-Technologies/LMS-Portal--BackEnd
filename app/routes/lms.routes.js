@@ -210,6 +210,8 @@ router.post('/viewAdminLog',AdminController.viewAdminLog)
 
 router.post('/updateMaterial',MaterialController.updateMaterial)
 
+router.post('/studentViewAttendance',AttendenceController.studentViewAttendance)
+
 
 
 

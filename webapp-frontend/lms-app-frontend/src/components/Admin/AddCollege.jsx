@@ -42,7 +42,7 @@ const AddCollege = () => {
           "content-type": "multipart/form-data",
           "Access-Control-Allow-Origin": "*",
           "token": sessionStorage.getItem("admtoken"),
-          "key": "lmsapp"
+          "key": sessionStorage.getItem("admkey")
         }
       }
       let data = {

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import '../../config/config';
+import React from 'react'
 
 const StudentUpdateProfile = () => {
+
     const [updateFields, setUpdateFields] = useState({
         collegeId: "",
         batchId: "",
