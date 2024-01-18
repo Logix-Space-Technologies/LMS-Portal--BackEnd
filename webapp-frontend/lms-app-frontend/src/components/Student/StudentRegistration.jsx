@@ -21,8 +21,14 @@ const StudentRegistration = () => {
   }
 
   const [inputField, setInputField] = useState(
-    { collegeId: "", batchId: "", studName: "", admNo: "", rollNo: "", studDept: "", course: "", studEmail: "", studPhNo: "", studProfilePic: "", aadharNo: "", password: "" }
+    { collegeId: "", batchId: "", studName: "", admNo: "", rollNo: "", studDept: "", course: "", aadharNo: "", password: "" }
   )
+
+  const [file, setFile] = useState("")
+
+  const fileUploadHandler = (event) =>{
+    setFile(event.target.files[0])
+  }
 
 
   const [errors, setErrors] = useState({})
@@ -30,7 +36,7 @@ const StudentRegistration = () => {
   const apiUrl = global.config.urls.api.server + "/api/lms/studentLogin/studreg"
 
   const inputHandler = (event) => {
-    setInputField({ ...inputField, [event.target.name]: event.target.name === 'studProfilePic' ? event.target.files[0] : event.target.value });
+    setInputField({ ...inputField, [event.target.name]: event.target.value });
   }
 
   console.log(inputField.collegeId)
@@ -82,7 +88,7 @@ const StudentRegistration = () => {
               (response) => {
                 if (response.data.status === "success") {
                   alert("User Registered Successfully !!!")
-                  setInputField({ collegeId: "", batchId: "", studName: "", admNo: "", rollNo: "", studDept: "", course: "", studEmail: "", studPhNo: "", studProfilePic: "", aadharNo: "", password: "", confirmpass: "" })
+                  setInputField({ collegeId: "", batchId: "", studName: "", admNo: "", rollNo: "", studDept: "", course: "", studEmail: "", studPhNo: "", aadharNo: "", password: "", confirmpass: "" })
                 } else {
                   alert("Something Went Wrong !!!")
                 }
@@ -259,7 +265,7 @@ const StudentRegistration = () => {
                   <label for="studProfilePic" className="form-label">
                     Profile Image <span className="text-danger">*</span>
                   </label>
-                  <input onChange={inputHandler} type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" />
+                  <input onChange={fileUploadHandler} type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" />
                   {errors.studProfilePic && <span style={{ color: 'red' }} className="error">{errors.studProfilePic}</span>}
                 </div>
 
