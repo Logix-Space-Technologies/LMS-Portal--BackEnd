@@ -20,6 +20,10 @@ import StudentUpdateProfile from './components/Student/StudentUpdateProfile';
 import AddAdminStaff from './components/Admin/AddAdminStaff';
 import StudentViewTasks from './components/Student/StudentViewTasks';
 import StudDashboard from './components/Student/StudentDashboard/StudDashboard';
+import StudHeader from './components/Student/StudentDashboard/StudHeader';
+import StudViewProfile from './components/Student/StudentDashboard/StudViewProfile';
+import StudSideBar from './components/Student/StudentDashboard/StudSideBar';
+import StudentFooter from './components/Student/StudentDashboard/StudentFooter';
 
 
 function App() {
@@ -44,10 +48,12 @@ function App() {
           <Route path='/studentverification' element={<CollegeStaffStudentVerify/>}/>
           <Route path='/studentupdateprofile' element={<StudentUpdateProfile />} />         
           <Route path='/addAdminStaff' element={<AddAdminStaff/>}/>
-          <Route path='/studentupdateprofile' element={<StudentUpdateProfile />} />
           <Route path='/studentViewTask' element={<StudentViewTasks />} />
           <Route path='/studdashboard' element={<StudDashboard/>} />
-
+          <Route path='/studheader' element={<StudHeader/>}/>
+          <Route path='/studprofile' element={<StudViewProfile/>} />
+          <Route path='/studsidebar' element={<StudSideBar/>} />
+          <Route path='/studfooter' element={<StudentFooter/>} />
         </Routes>
       </BrowserRouter>
     </div>
