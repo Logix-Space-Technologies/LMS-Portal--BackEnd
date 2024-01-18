@@ -1,7 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import '../../config/config'
+import { useNavigate } from 'react-router-dom';
 
 const StudentLogin = () => {
     const [inputField, setInputField] = useState({
@@ -20,9 +21,13 @@ const StudentLogin = () => {
         axios.post(apiUrl, inputField).then(
             (Response) => {
                 if (Response.data.status === "Success") {
-                    let studtoken = Response.data.token
-                    sessionStorage.setItem("studLoginToken", studtoken)
-                    navigate('/studdashboard')
+                    let studtoken = Response.data.token;
+                    let studId = Response.data.data.id;
+                    let key = "lmsappstud"
+                    sessionStorage.setItem("studentkey", key);
+                    sessionStorage.setItem("studentId", studId);
+                    sessionStorage.setItem("studLoginToken", studtoken);
+                    navigate("/studentViewTask")
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)
