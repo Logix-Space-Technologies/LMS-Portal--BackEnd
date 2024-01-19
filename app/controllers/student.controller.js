@@ -765,3 +765,20 @@ exports.studRegViewSession = (request, response) => {
     });
 };
 
+
+exports.studRegViewBatchAmount = (request, response) => {
+    const collegeId = request.body.collegeId;
+    const batchId = request.body.batchId;
+    Student.viewBatchAmount(collegeId, batchId, (err, data) => {
+        if (err) {
+            response.json({ "status": err });
+        }
+        if (data.length === 0) {
+            response.json({ "status": "No Batch found!" });
+        } else {
+            response.json({ "status": "success", "data": data });
+        }
+    });
+
+};
+

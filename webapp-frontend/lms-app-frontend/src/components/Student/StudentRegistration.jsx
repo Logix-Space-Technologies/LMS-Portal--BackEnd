@@ -44,6 +44,7 @@ const StudentRegistration = () => {
       }
     )
   }
+ 
 
   // Add a new function to fetch batches based on the selected college
   const getBatches = (collegeId) => {
@@ -51,7 +52,6 @@ const StudentRegistration = () => {
     axios.post(batchUrl, { collegeId }).then((response) => {
       setBatches(response.data);
       console.log(response.data);
-
     });
   };
 
@@ -106,8 +106,8 @@ const StudentRegistration = () => {
             "aadharNo": inputField.aadharNo,
             "password": inputField.password,
             "studProfilePic": file,  // Updated this line
-            "rpPaymentId":PaymentId,
-            "rpOrderId":orderId,	
+            "rpPaymentId": PaymentId,
+            "rpOrderId": orderId,
             "rpAmount": 2000
           };
           let axiosConfig = {
@@ -194,7 +194,7 @@ const StudentRegistration = () => {
       setErrors(validationErrors);
     }
   };
-  
+
 
 
   const validateForm = (data) => {
@@ -251,7 +251,7 @@ const StudentRegistration = () => {
       errors.password = 'Password is required';
     } else if (data.password.length < 8) {
       errors.password = 'Password must be at least 8 characters';
-    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(data.password)){
+    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(data.password)) {
       errors.password = 'Password must be at least 8 characters and should not exceed 12 characters and should include one uppercase letter, one lowercase letter, numbers and special characters';
     }
 
@@ -314,7 +314,9 @@ const StudentRegistration = () => {
                     id="batchId"
                     className="form-control"
                     value={inputField.batchId}
-                    onChange={inputHandler}>
+                    onChange={(e) => {
+                      inputHandler(e);
+                      handleBatchChange(e)}}>
                     <option value="">Select</option>
                     {batches.data && batches.data.map((value) => {
                       return <option key={value.id} value={value.id}> {value.batchName} </option>;
@@ -431,12 +433,12 @@ const StudentRegistration = () => {
                   {errors.studPhNo && <span style={{ color: 'red' }} className="error">{errors.studPhNo}</span>}
                 </div>
                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label htmlFor="studProfilePic" className="form-label">
-                      Profile Image <span className="text-danger">*</span>
-                    </label>
-                    <input type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" onChange={fileUploadHandler} />
-                    {errors.studProfilePic && <span style={{ color: 'red' }} className="error">{errors.studProfilePic}</span>}
-                  </div>
+                  <label htmlFor="studProfilePic" className="form-label">
+                    Profile Image <span className="text-danger">*</span>
+                  </label>
+                  <input type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" onChange={fileUploadHandler} />
+                  {errors.studProfilePic && <span style={{ color: 'red' }} className="error">{errors.studProfilePic}</span>}
+                </div>
                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                   <label htmlFor="aadharNo" className="form-label">
                     AadharNo <span className="text-danger">*</span>
