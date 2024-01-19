@@ -214,5 +214,9 @@ router.post('/studentViewAttendance',AttendenceController.studentViewAttendance)
 
 router.post('/viewCollegeStudent',CollegeController.studentViewCollege)
 
+router.post('/viewUpcomingSessions',SessionsController.viewUpcomingSessions)
+
+router.post('/viewBatchMaterials',MaterialController.viewBatchMaterials)
+
 
 module.exports = router
