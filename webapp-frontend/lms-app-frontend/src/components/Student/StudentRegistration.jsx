@@ -49,8 +49,10 @@ const StudentRegistration = () => {
     axios.post(batchUrl, { collegeId }).then((response) => {
       setBatches(response.data);
       console.log(response.data);
+
     });
   };
+
 
   // Call getBatches whenever the college selection changes
   const handleCollegeChange = (event) => {
@@ -62,7 +64,6 @@ const StudentRegistration = () => {
   const inputHandler = (event) => {
     setInputField({ ...inputField, [event.target.name]: event.target.value })
   }
-
   const loadRazorpayScript = async () => {
     const script = document.createElement('script')
     script.src = "https://checkout.razorpay.com/v1/checkout.js"
@@ -88,11 +89,33 @@ const StudentRegistration = () => {
 
 
           // Call Registration API and pass the details to the server
-          
-          axios.post(apiUrl, inputField).then(
+          let data = {
+            collegeId: inputField.collegeId,
+            batchId: inputField.batchId,
+            studName: inputField.studName,
+            admNo: inputField.admNo,
+            rollNo: inputField.rollNo,
+            studDept: inputField.studDept,
+            course: inputField.course,
+            studEmail: inputField.studEmail,
+            studPhNo: inputField.studPhNo,
+            studProfilePic: inputField.studProfilePic,
+            aadharNo: inputField.aadharNo,
+            password: inputField.password
+          }
+
+          const razorpayDetails = {
+            rpPaymentId: response.razorpay_payment_id,
+            rpOrderId: response.razorpay_order_id,
+            rpAmount: response.razorpay_amount,
+          };
+
+          axios.post(apiUrl, data, razorpayDetails).then(
             (response) => {
+
               if (response.data.status === "success") {
                 alert("User Registered Successfully !!!")
+
                 setInputField({ collegeId: "", batchId: "", studName: "", admNo: "", rollNo: "", studDept: "", course: "", studEmail: "", studPhNo: "", studProfilePic: "", aadharNo: "", password: "", confirmpass: "" })
               } else {
                 if (response.data.status === "Validation failed" && response.data.data.college) {
