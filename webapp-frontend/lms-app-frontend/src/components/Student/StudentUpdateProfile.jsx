@@ -3,6 +3,7 @@ import '../../config/config'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
 const StudentUpdateProfile = () => {
     const [studData, setStudData] = useState([])
     const [file, setFile] = useState("")

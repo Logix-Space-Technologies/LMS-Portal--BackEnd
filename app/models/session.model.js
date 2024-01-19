@@ -201,6 +201,19 @@ Session.viewSessions = (result) => {
     });
 };
 
+Session.viewUpcomingSessions = (batchId, result) => {
+    const query = "SELECT id, batchId, sessionName, date, time, type, remarks, venueORlink, trainerId, attendenceCode, addedDate, updatedDate FROM sessiondetails WHERE isActive = 1 AND deleteStatus = 0 AND date >= CURRENT_DATE() AND batchId=?";
+    db.query(query, [batchId], (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+        console.log("session: ", res);
+        result(null, res);
+    });
+};
+
 Session.deleteSession = (sessionId, result) => {
     db.query("SELECT * FROM sessiondetails WHERE id = ? AND deleteStatus = 0 AND isActive = 1", sessionId, (err, res) => {
         if (err) {

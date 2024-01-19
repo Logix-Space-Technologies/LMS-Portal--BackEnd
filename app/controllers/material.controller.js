@@ -245,3 +245,26 @@ exports.updateMaterial = (request, response) => {
         }
     })
 }
+
+exports.viewBatchMaterials = (request, response) => {
+    const batchId = request.body.batchId;
+    const batchMaterialToken = request.headers.token;
+
+    jwt.verify(batchMaterialToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Material.viewBatchMaterials(batchId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No Materials Found" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
