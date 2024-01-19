@@ -35,6 +35,9 @@ const StudentRegistration = () => {
   const apiUrl = global.config.urls.api.server + "/api/lms/studreg"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/studentregviewcollege"
   const batchUrl = global.config.urls.api.server + "/api/lms/studregviewbatch";
+  // const batchAmountUrl = global.config.urls.api.server + "/api/lms/studregviewbatchamount"
+
+  var batchAmount = {}
 
   const getData = () => {
     axios.post(apiUrl2).then(
@@ -51,9 +54,15 @@ const StudentRegistration = () => {
     console.log(collegeId)
     axios.post(batchUrl, { collegeId }).then((response) => {
       setBatches(response.data);
-      console.log(response.data);
     });
   };
+
+  {batches.data && batches.data.map(
+    (value, index) =>{
+      return batchAmount = value.batchAmount
+    }
+  )}
+  console.log(batchAmount)
 
 
   // Call getBatches whenever the college selection changes
@@ -78,7 +87,7 @@ const StudentRegistration = () => {
       //initialize razorpay
       const rzp = new window.Razorpay({
         key: 'rzp_test_ZqcybzHd1QkWg8',
-        amount: 2000 * 100,
+        amount: batchAmount * 100,
         name: 'Logix Space Technologies Pvt Ltd',
         description: 'Link Ur Codes Payment',
         // image: <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" class="img-fluid" />,
@@ -314,9 +323,7 @@ const StudentRegistration = () => {
                     id="batchId"
                     className="form-control"
                     value={inputField.batchId}
-                    onChange={(e) => {
-                      inputHandler(e);
-                      handleBatchChange(e)}}>
+                    onChange={inputHandler}>
                     <option value="">Select</option>
                     {batches.data && batches.data.map((value) => {
                       return <option key={value.id} value={value.id}> {value.batchName} </option>;
