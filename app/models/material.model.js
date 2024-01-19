@@ -119,5 +119,24 @@ Material.updateMaterial = (materialUpdate, result) => {
     });
 };
 
+Material.viewBatchMaterials = (batchId, result) => {
+    db.query("SELECT * FROM materials WHERE batchId = ? AND deleteStatus = 0 AND isActive = 1", [batchId], (err, res) => {
+        if (err) {
+            console.error("Error viewing batch materials: ", err);
+            result(err, null);
+            return;
+        }
+        if (res.length === 0) {
+            console.log("No materials found.");
+            result("No materials found.", null);
+            return;
+        } else {
+            console.log("Batch Materials: ", res);
+            result(null, res);
+            return;
+        }
+    });
+};
+
 
 module.exports = Material
