@@ -736,7 +736,7 @@ Student.searchStudentsByAdmAndAdmstf = (search, result) => {
 
 Student.viewBatch = (collegeId, result) => {
     db.query(
-        "SELECT DISTINCT b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.id = ?",
+        "SELECT DISTINCT b.id, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.id = ?",
         [collegeId],
         (err, res) => {
             if (err) {
