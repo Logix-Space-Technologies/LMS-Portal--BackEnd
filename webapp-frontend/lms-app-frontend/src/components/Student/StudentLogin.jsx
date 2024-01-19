@@ -27,7 +27,7 @@ const StudentLogin = () => {
                     sessionStorage.setItem("studentkey", key);
                     sessionStorage.setItem("studentId", studId);
                     sessionStorage.setItem("studLoginToken", studtoken);
-                    navigate("/studdashboard")
+                    navigate("/studentupdateprofile")
 
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {

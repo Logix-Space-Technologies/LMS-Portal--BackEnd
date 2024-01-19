@@ -1,170 +1,189 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import '../../config/config'
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const StudentUpdateProfile = () => {
+    const [studData, setStudData] = useState([])
+    const [file, setFile] = useState("")
+    const [updateField, setUpdateField] = useState(
+        {
+            "id": sessionStorage.getItem("studentId"),
+            "studName": "",
+            "admNo": "",
+            "rollNo": "",
+            "studDept": "",
+            "course": "",
+            "studPhNo": "",
+            "aadharNo": "",
+            "studProfilePic": file
+        }
+    )
+    const apiURL = global.config.urls.api.server + "/api/lms/studentViewProfile";
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/studentUpdateProfile";
+    const navigate = useNavigate()
 
-    const [updateFields, setUpdateFields] = useState({
-        collegeId: "",
-        batchId: "",
-        studName: "",
-        admNo: "",
-        rollNo: "",
-        studDept: "",
-        course: "",
-        studPhNo: "",
-        aadharNo: ""
-    });
+    const updateHandler = (event) => {
+        setUpdateField({ ...updateField, [event.target.name]: event.target.value })
+    }
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/studentUpdateProfile";
+    const fileUploadHandler = (event) => {
+        setFile(event.target.files[0]);
+        setUpdateField({ ...updateField, studProfilePic: event.target.files[0] });
+    }
 
-    const getData = () => {
-    };
-
-    const inputHandler = (event) => {
-        setUpdateFields({ ...updateFields, [event.target.name]: event.target.value });
-    };
-
-    const updateProfile = () => {
+    const readNewValue = () => {
+        console.log(updateField)
         let axiosConfig = {
             headers: {
-                "content-type": "application/json;charset=UTF-8",
+                'content-type': 'multipart/form-data',
                 "Access-Control-Allow-Origin": "*",
                 "token": sessionStorage.getItem("studLoginToken"),
-                "key": sessionStorage.getItem("studKey")
+                "key": sessionStorage.getItem("studentkey")
             }
-        };
-
-        axios.post(apiUrl, updateFields, axiosConfig).then(
-            (response) => {
-                if (response.data.status === "success") {
-                    alert("Profile updated successfully");
-                    getData();
+        }
+        let data = {
+            "id": sessionStorage.getItem("studentId"),
+            "studName": updateField.studName,
+            "admNo": updateField.admNo,
+            "rollNo": updateField.rollNo,
+            "studDept": updateField.studDept,
+            "course": updateField.course,
+            "studPhNo": updateField.studPhNo,
+            "aadharNo": updateField.aadharNo,
+            "studProfilePic": file
+        }
+        axios.post(apiUrl2, data, axiosConfig).then(
+            (Response) => {
+                if (Response.data.status === "success") {
+                    setUpdateField({
+                        "id": sessionStorage.getItem("studentId"),
+                        "studName": "",
+                        "admNo": "",
+                        "rollNo": "",
+                        "studDept": "",
+                        "course": "",
+                        "studPhNo": "",
+                        "aadharNo": "",
+                        "studProfilePic": ""
+                    })
+                    alert("Profile Updated Successfully")
+                    navigate("/studprofile")
                 } else {
-                    alert(response.data.status);
+                    alert(Response.data.status)
                 }
-            }
-        ).catch((error) => {
-            console.error("Error updating profile:", error);
-        });
-    };
 
-    useEffect(() => {
-        getData();
-    }, []);
+            }
+        )
+    }
+
+    const getData = () => {
+        let data = { "studId": sessionStorage.getItem("studentId") }
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("studLoginToken"),
+                "key": sessionStorage.getItem("studentkey")
+            }
+        }
+        axios.post(apiURL, data, axiosConfig).then(
+            (response) => {
+                setStudData(response.data.data[0])
+                setUpdateField(response.data.data[0])
+            }
+        )
+    }
+
+    useEffect(() => { getData() }, [])
 
     return (
         <div className="container">
-            <div class="row">
-                <div class="col-12">
-                  <div class="text-center mb-5">
-                    <a href="/">
-                      <center><img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" /></center>
-                    </a><br /><br />
-                    <h5>Student Update Profile</h5>
-                  </div>
-                </div>
-              </div>
-            <div className="row justify-content-center align-items-center min-vh-100">
-                <div className="col col-12 col-sm-8 col-md-12 col-lg-8">
-                    <form>
-                        <div className="mb-3 text-start">
-                            <label htmlFor="collegeId" className="form-label">College ID</label>
-                            <input
-                                type="text"
-                                name="collegeId"
-                                value={updateFields.collegeId}
-                                onChange={inputHandler}
-                                className="form-control"
-                            />
+            <div className="row">
+                <div className="col-lg-12 mb-4 mb-sm-5">
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <div className="card card-style1 --bs-primary-border-subtle border-5">
+                        <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
+                            <div className="row align-items-center">
+                                <div className="col-lg-6 mb-4 mb-lg-0">
+                                    <img height="300px" src={studData.studProfilePic} alt="" />
+                                </div>
+                                <div className="col-lg-6 px-xl-10">
+                                    <div className=" d-lg-inline-block py-1-9 px-1-9 px-sm-6 mb-1-9 rounded">
+                                        <h3 className="h2 text-black mb-0">{studData.studName}</h3>
+                                        <br></br>
+                                    </div>
+                                    <ul className="list-unstyled mb-1-9">
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">College Name :   </label>
+                                            <input type="text" className="form-control" name="collegeName" value={studData.collegeName} disabled />
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">Batch ID : </label>
+                                            <input type="text" className="form-control" name="batchId" value={studData.batchId} disabled />
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">Student Name :</label>
+                                            <input onChange={updateHandler} type="text" className="form-control" name="studName" value={updateField.studName} />
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">Admission No :  </label>
+                                            <input onChange={updateHandler} type="text" className="form-control" name="admNo" value={updateField.admNo} />
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">Roll No : </label>
+                                            <input onChange={updateHandler} type="text" className="form-control" name="rollNo" value={updateField.rollNo} />
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">Department : </label>
+                                            <input onChange={updateHandler} type="text" className="form-control" name="studDept" value={updateField.studDept} />
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">Course : </label>
+                                            <input onChange={updateHandler} type="text" className="form-control" name="course" value={updateField.course} />
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">Phone No : </label>
+                                            <input onChange={updateHandler} type="text" className="form-control" name="studPhNo" value={updateField.studPhNo} />
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">Aadhar No : </label>
+                                            <input onChange={updateHandler} type="text" className="form-control" name="aadharNo" value={updateField.aadharNo} />
+                                        </div>
+                                        <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                            <label for="studProfilePic" className="form-label">
+                                                Profile Picture <span className="text-danger">*</span>
+                                            </label>
+                                            <input onChange={fileUploadHandler} type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" />
+                                        </div>
+                                        <br></br>
+                                        <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
+                                            <button onClick={readNewValue} className="btn btn-warning">Update</button>
+                                        </div>
+                                        <br></br>
+                                        <div class="mb-3">
+                                            <a class="btn btn-danger" href="/studprofile">Back</a>
+                                        </div>
+                                    </ul>
+
+                                    <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
+                                        <li><a href="#!"><i className="ti-twitter-alt" /></a></li>
+                                        <li><a href="#!"><i className="ti-facebook" /></a></li>
+                                        <li><a href="#!"><i className="ti-pinterest" /></a></li>
+                                        <li><a href="#!"><i className="ti-instagram" /></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
                         </div>
-                        <div className="mb-3 text-start">
-                            <label htmlFor="batchId" className="form-label">Batch ID</label>
-                            <input
-                                type="text"
-                                name="batchId"
-                                value={updateFields.batchId}
-                                onChange={inputHandler}
-                                className="form-control"
-                            />
-                        </div>
-                        <div className="mb-3 text-start">
-                            <label htmlFor="studName" className="form-label">Student Name</label>
-                            <input
-                                type="text"
-                                name="studName"
-                                value={updateFields.studName}
-                                onChange={inputHandler}
-                                className="form-control"
-                            />
-                        </div>
-                        <div className="mb-3 text-start">
-                            <label htmlFor="admNo" className="form-label">Admission No:</label>
-                            <input
-                                type="text"
-                                name="admNo"
-                                value={updateFields.admNo}
-                                onChange={inputHandler}
-                                className="form-control"
-                            />
-                        </div>
-                        <div className="mb-3 text-start">
-                            <label htmlFor="rollNo" className="form-label">Roll No:</label>
-                            <input
-                                type="text"
-                                name="rollNo"
-                                value={updateFields.rollNo}
-                                onChange={inputHandler}
-                                className="form-control"
-                            />
-                        </div>
-                        <div className="mb-3 text-start">
-                            <label htmlFor="studDept" className="form-label">Department</label>
-                            <input
-                                type="text"
-                                name="studDept"
-                                value={updateFields.studDept}
-                                onChange={inputHandler}
-                                className="form-control"
-                            />
-                        </div>
-                        <div className="mb-3 text-start">
-                            <label htmlFor="course" className="form-label">Course</label>
-                            <input
-                                type="text"
-                                name="course"
-                                value={updateFields.course}
-                                onChange={inputHandler}
-                                className="form-control"
-                            />
-                        </div>
-                        <div className="mb-3 text-start">
-                            <label htmlFor="studPhNo" className="form-label">Phone No:</label>
-                            <input
-                                type="text"
-                                name="studPhNo"
-                                value={updateFields.studPhNo}
-                                onChange={inputHandler}
-                                className="form-control"
-                            />
-                        </div>
-                        <div className="mb-3 text-start">
-                            <label htmlFor="aadharNo" className="form-label">Aadhar No:</label>
-                            <input
-                                type="text"
-                                name="aadharNo"
-                                value={updateFields.aadharNo}
-                                onChange={inputHandler}
-                                className="form-control"
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <button type="button" onClick={updateProfile} className="btn btn-primary btn-lg">Update Profile</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
-
 
 export default StudentUpdateProfile;
