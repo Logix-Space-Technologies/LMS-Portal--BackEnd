@@ -117,7 +117,7 @@ const StudentRegistration = () => {
             "studProfilePic": file,  // Updated this line
             "rpPaymentId": PaymentId,
             "rpOrderId": orderId,
-            "rpAmount": 2000
+            "rpAmount": batchAmount
           };
           let axiosConfig = {
             headers: {
