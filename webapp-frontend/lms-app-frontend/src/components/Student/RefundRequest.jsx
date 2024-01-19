@@ -23,6 +23,8 @@ const RefundRequestForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setErrors({});
+        
         const validationErrors = validateForm(inputField);
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig = {
@@ -32,7 +34,7 @@ const RefundRequestForm = () => {
                     "token": sessionStorage.getItem("studLoginToken"),
                     "key": sessionStorage.getItem("studentkey")
                 }
-            }
+            };
             let data = {
                 studId: inputField.studId,
                 reason: inputField.reason,
@@ -45,7 +47,6 @@ const RefundRequestForm = () => {
                             ...prevInputField,
                             reason: "",
                         }));
-                        setErrors({});
                     } else {
                         alert(response.data.status);
 
