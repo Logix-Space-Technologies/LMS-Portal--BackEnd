@@ -244,6 +244,29 @@ exports.viewSessions = (request, response) => {
     });
 };
 
+exports.viewUpcomingSessions = (request, response) => {
+    const sessionToken = request.headers.token;
+    const batchId = request.body.batchId;
+    //add the appropriate key
+    jwt.verify(sessionToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Session.viewUpcomingSessions(batchId,(err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No sessions are currently active" });
+                } else {
+                    return response.json({ "status": "success", "Sessions": data });
+                }
+            });
+
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
+
 exports.deleteSession = (request, response) => {
     const sessionDeleteToken = request.headers.token;
     const key = request.headers.key;
