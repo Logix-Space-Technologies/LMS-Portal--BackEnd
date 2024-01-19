@@ -742,7 +742,7 @@ exports.studentNotificationView = (request, response) => {
 };
 
 
-//student view session details
+//Student view session details
 exports.studRegViewSession = (request, response) => {
     const viewSessionToken = request.headers.token;
     const key = request.headers.key;

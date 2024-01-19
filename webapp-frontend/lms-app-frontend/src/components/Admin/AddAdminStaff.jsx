@@ -18,7 +18,9 @@ const AddAdminStaff = () => {
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
+
     };
+
 
     const handleSubmit = (e) => {
         console.log(inputField);
@@ -28,12 +30,12 @@ const AddAdminStaff = () => {
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig = {
                 headers: {
-                    'content-type': 'multipart/form-data',
-                    'Access-Control-Allow-Origin': '*',
-                    token: sessionStorage.getItem('admtoken'),
-                    key: 'lmsapp',
-                },
-            };
+                    "content-type": "application/json;charset=UTF-8",
+                    "Access-Control-Allow-Origin": "*",
+                    "token": sessionStorage.getItem("admtoken"),
+                    "key": sessionStorage.getItem("admkey")
+                }
+            }
             let data = {
                 AdStaffName: inputField.AdStaffName,
                 PhNo: inputField.PhNo,
@@ -43,39 +45,42 @@ const AddAdminStaff = () => {
                 Password: inputField.Password,
             };
             console.log(data);
-            axios.post(apiUrl, data, axiosConfig).then((response) => {
-                if (response.data.status === 'success') {
-                    alert(response.data.status);
-                    setInputField({
-                        AdStaffName: '',
-                        PhNo: '',
-                        Address: '',
-                        AadharNo: '',
-                        Email: '',
-                        Password: '',
-                    });
-                } else {
-                    if (response.data.status === 'Validation failed' && response.data.data.AdStaffName) {
-                        alert(response.data.data.AdStaffName);
-                    } else if (response.data.status === 'Validation failed' && response.data.data.PhNo) {
-                        alert(response.data.data.PhNo);
-                    } else if (response.data.status === 'Validation failed' && response.data.data.Address) {
-                        alert(response.data.data.Address);
-                    } else if (response.data.status === 'Validation failed' && response.data.data.AadharNo) {
-                        alert(response.data.data.AadharNo);
-                    } else if (response.data.status === 'Validation failed' && response.data.data.Email) {
-                        alert(response.data.data.Email);
-                    } else if (response.data.status === 'Validation failed' && response.data.data.Password) {
-                        alert(response.data.data.Password);
-                    } else {
+            axios.post(apiUrl, data, axiosConfig).then(
+                (response) => {
+                    if (response.data.status === 'success') {
                         alert(response.data.status);
+                        setInputField({
+                            AdStaffName: "",
+                            PhNo: "",
+                            Address: "",
+                            AadharNo: "",
+                            Email: "",
+                            Password: "",
+                        });
+                        setErrors({});
+                    } else {
+                        if (response.data.status === 'Validation failed' && response.data.data.name) {
+                            alert(response.data.data.name);
+                        } else if (response.data.status === 'Validation failed' && response.data.data.mobile) {
+                            alert(response.data.data.mobile);
+                        } else if (response.data.status === 'Validation failed' && response.data.data.address) {
+                            alert(response.data.data.address);
+                        } else if (response.data.status === 'Validation failed' && response.data.data.aadharno) {
+                            alert(response.data.data.aadharno);
+                        } else if (response.data.status === 'Validation failed' && response.data.data.email) {
+                            alert(response.data.data.email);
+                        } else if (response.data.status === 'Validation failed' && response.data.data.password) {
+                            alert(response.data.data.password);
+                        } else {
+                            alert(response.data.status);
+                        }
                     }
-                }
-            });
+                });
         } else {
             setErrors(validationErrors);
         }
     };
+
 
     const validateForm = (data) => {
         let errors = {};
@@ -85,7 +90,10 @@ const AddAdminStaff = () => {
         }
         if (!data.PhNo.trim()) {
             errors.PhNo = 'Mobile number is required';
+        } else if (!/^\+91[6-9]\d{9}$|^\+91\s?[6-9]\d{9}$|^[6-9]\d{9}$/.test(data.PhNo)) {
+            errors.PhNo = 'Invalid Mobile Number Format';
         }
+
         if (!data.Address.trim()) {
             errors.Address = 'Address is required';
         }
@@ -106,7 +114,6 @@ const AddAdminStaff = () => {
         }
         return errors;
     };
-
     return (
         <div class="bg-light py-3 py-md-5">
             <div class="container">
