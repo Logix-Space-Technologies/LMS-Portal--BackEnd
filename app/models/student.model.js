@@ -423,8 +423,8 @@ Student.viewStudentProfile = (studId, result) => {
 
 Student.updateStudentProfile = (student, result) => {
 
-    db.query("SELECT * FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-        [student.collegeId],
+    db.query("SELECT * FROM college c JOIN student s ON s.collegeId = c.id WHERE s.id = ? AND c.deleteStatus = 0 AND c.isActive = 1",
+        [student.id],
         (collegeErr, collegeRes) => {
             if (collegeErr) {
                 console.error("Error checking college: ", collegeErr);
@@ -435,8 +435,8 @@ Student.updateStudentProfile = (student, result) => {
                 return result("college does not exist or is inactive/deleted.", null);
             }
 
-            db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-                [student.batchId],
+            db.query("SELECT * FROM batches b JOIN student s ON s.batchId = b.id WHERE s.id = ?  AND b.deleteStatus = 0 AND b.isActive = 1",
+                [student.id],
                 (batchErr, batchRes) => {
                     if (batchErr) {
                         console.error("Error checking batch: ", batchErr);
