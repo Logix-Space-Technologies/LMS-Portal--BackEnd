@@ -249,8 +249,10 @@ const StudentRegistration = () => {
 
     if (!data.password.trim()) {
       errors.password = 'Password is required';
-    } else if (data.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+    } else if (data.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
+    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(data.password)){
+      errors.password = 'Password must be at least 8 characters and should not exceed 12 characters and should include one uppercase letter, one lowercase letter, numbers and special characters';
     }
 
     if (data.confirmpassword !== data.password) {
