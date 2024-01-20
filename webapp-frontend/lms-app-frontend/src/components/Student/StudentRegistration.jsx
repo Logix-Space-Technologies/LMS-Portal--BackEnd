@@ -54,11 +54,11 @@ const StudentRegistration = () => {
   const getBatches = (collegeId) => {
     console.log(collegeId)
     axios.post(batchUrl, { collegeId }).then((response) => {
-      setBatches(response.data);
+      setBatches(response.data.data);
     });
   };
 
-  {batches.data && batches.data.map(
+  {batches && batches.map(
     (value, index) =>{
       return batchAmount = value.batchAmount
     }
@@ -326,7 +326,7 @@ const StudentRegistration = () => {
                     value={inputField.batchId}
                     onChange={inputHandler}>
                     <option value="">Select</option>
-                    {batches.data && batches.data.map((value) => {
+                    {batches && batches.map((value) => {
                       return <option key={value.id} value={value.id}> {value.batchName} </option>;
                     })}
                   </select>
