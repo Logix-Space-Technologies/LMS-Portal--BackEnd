@@ -25,6 +25,7 @@ const StudentRegistration = () => {
     setFile(event.target.files[0])
   }
 
+  var [batchAmount,setBatchAmount]=useState(null)
 
   const [outputField, setOutputField] = useState([])
 
@@ -37,7 +38,7 @@ const StudentRegistration = () => {
   const batchUrl = global.config.urls.api.server + "/api/lms/studregviewbatch";
   // const batchAmountUrl = global.config.urls.api.server + "/api/lms/studregviewbatchamount"
 
-  var batchAmount = {}
+  
 
   const getData = () => {
     axios.post(apiUrl2).then(
@@ -53,11 +54,11 @@ const StudentRegistration = () => {
   const getBatches = (collegeId) => {
     console.log(collegeId)
     axios.post(batchUrl, { collegeId }).then((response) => {
-      setBatches(response.data);
+      setBatches(response.data.data);
     });
   };
 
-  {batches.data && batches.data.map(
+  {batches && batches.map(
     (value, index) =>{
       return batchAmount = value.batchAmount
     }
@@ -117,7 +118,7 @@ const StudentRegistration = () => {
             "studProfilePic": file,  // Updated this line
             "rpPaymentId": PaymentId,
             "rpOrderId": orderId,
-            "rpAmount": 2000
+            "rpAmount": batchAmount
           };
           let axiosConfig = {
             headers: {
@@ -325,7 +326,7 @@ const StudentRegistration = () => {
                     value={inputField.batchId}
                     onChange={inputHandler}>
                     <option value="">Select</option>
-                    {batches.data && batches.data.map((value) => {
+                    {batches && batches.map((value) => {
                       return <option key={value.id} value={value.id}> {value.batchName} </option>;
                     })}
                   </select>

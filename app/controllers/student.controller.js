@@ -393,8 +393,6 @@ exports.profileUpdateStudent = (request, response) => {
             
                             const newStudent = new Student({
                                 'id': request.body.id,
-                                collegeId: request.body.collegeId,
-                                batchId: request.body.batchId,
                                 studName: studName,
                                 admNo: admNo,
                                 rollNo: rollNo,

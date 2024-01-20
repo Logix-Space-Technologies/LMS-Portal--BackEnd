@@ -220,5 +220,7 @@ router.post('/viewUpcomingSessions',SessionsController.viewUpcomingSessions)
 
 router.post('/viewBatchMaterials',MaterialController.viewBatchMaterials)
 
+router.post('/viewCollegeStaffofStudent',ClgStaffController.viewCollegeStaffOfStudent)
+
 
 module.exports = router

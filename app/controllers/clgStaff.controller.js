@@ -708,3 +708,36 @@ exports.viewCollegeStaffProfile = (request, response) => {
     });
   });
 };
+
+exports.viewCollegeStaffOfStudent = (request, response) => {
+  const { studId } = request.body;
+  const clgStaffOfStudentToken = request.headers.token
+
+  if (!studId) {
+    return response.json({ "status": "Invalid student ID" });
+  }
+
+  if (!clgStaffOfStudentToken) {
+    return response.json({ "status": "Token is required." });
+  }
+
+  jwt.verify(clgStaffOfStudentToken, "lmsappstud", (err, decoded) => {
+    if (err) {
+      console.error("Token verification failed:", err);
+      return response.json({ "status": "Invalid or expired token." });
+    }
+
+    if (!decoded) {
+      return response.json({ "status": "Unauthorized Access !!!" });
+    }
+
+    CollegeStaff.viewCollegeStaffOfStudent(studId, (err, data) => {
+      if (err) {
+        console.error("Error while fetching profile:", err);
+        return response.json({ "status": err });
+      }
+
+      response.json({ "status": "success", "data": data });
+    });
+  });
+}
