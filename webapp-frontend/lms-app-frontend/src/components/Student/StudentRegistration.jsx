@@ -25,6 +25,7 @@ const StudentRegistration = () => {
     setFile(event.target.files[0])
   }
 
+  const [batchAmount,setBatchAmount]=useState(null)
 
   const [outputField, setOutputField] = useState([])
 
@@ -37,7 +38,7 @@ const StudentRegistration = () => {
   const batchUrl = global.config.urls.api.server + "/api/lms/studregviewbatch";
   // const batchAmountUrl = global.config.urls.api.server + "/api/lms/studregviewbatchamount"
 
-  var batchAmount = {}
+  
 
   const getData = () => {
     axios.post(apiUrl2).then(
