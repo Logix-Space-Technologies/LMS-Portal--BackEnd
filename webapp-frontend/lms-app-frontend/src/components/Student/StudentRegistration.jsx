@@ -25,7 +25,7 @@ const StudentRegistration = () => {
     setFile(event.target.files[0])
   }
 
-  const [batchAmount,setBatchAmount]=useState(null)
+  var [batchAmount,setBatchAmount]=useState(null)
 
   const [outputField, setOutputField] = useState([])
 
