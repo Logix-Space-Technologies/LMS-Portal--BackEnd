@@ -25,7 +25,7 @@ const StudentRegistration = () => {
     setFile(event.target.files[0])
   }
 
-  let [batchAmount,setbatchAmount]=useState()
+  // let [batchAmount,setbatchAmount]=useState()
 
   const [outputField, setOutputField] = useState([])
 
@@ -57,13 +57,6 @@ const StudentRegistration = () => {
     });
   };
 
-  {batches.data && batches.data.map(
-    (value, index) =>{
-      return batchAmount = value.batchAmount
-    }
-  )}
-  console.log(batchAmount)
-
 
   // Call getBatches whenever the college selection changes
   const handleCollegeChange = (event) => {
@@ -87,7 +80,7 @@ const StudentRegistration = () => {
       //initialize razorpay
       const rzp = new window.Razorpay({
         key: 'rzp_test_ZqcybzHd1QkWg8',
-        amount: batchAmount * 100,
+        amount: 2000 * 100,
         name: 'Logix Space Technologies Pvt Ltd',
         description: 'Link Ur Codes Payment',
         // image: <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" class="img-fluid" />,
@@ -114,10 +107,10 @@ const StudentRegistration = () => {
             "studPhNo": inputField.studPhNo,
             "aadharNo": inputField.aadharNo,
             "password": inputField.password,
-            "studProfilePic": file,  // Updated this line
+            "studProfilePic": file,  
             "rpPaymentId": PaymentId,
             "rpOrderId": orderId,
-            "rpAmount": batchAmount
+            "rpAmount": 2000
           };
           let axiosConfig = {
             headers: {
