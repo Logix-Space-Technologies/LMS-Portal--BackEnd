@@ -373,6 +373,30 @@ CollegeStaff.viewCollegeStaffProfile = (id, result) => {
     });
 };
 
+CollegeStaff.viewCollegeStaffOfStudent = (studentId, result) => {
+    if (!studentId) {
+        return result("Invalid student ID");
+    }
+
+    const query = `
+        SELECT cs.collegeStaffName, cs.email, cs.phNo, cs.aadharNo, cs.clgStaffAddress, cs.profilePic, cs.department,
+               c.collegeName
+        FROM student s
+        INNER JOIN college_staff cs ON s.collegeId = cs.collegeId
+        INNER JOIN college c ON s.collegeId = c.id
+        WHERE s.id = ?;
+    `;
+
+    db.query(query, [studentId], (err, res) => {
+        if (err) {
+            console.error("Error while fetching profile:", err);
+            return result("Internal Server Error");
+        }
+
+        result(res.length ? null : "College staff profile not found", res[0]);
+    });
+}
+
 
 
 

@@ -119,5 +119,25 @@ Material.updateMaterial = (materialUpdate, result) => {
     });
 };
 
+Material.viewBatchMaterials = (batchId, result) => {
+    db.query("SELECT b.batchName,m.* FROM materials m JOIN batches b ON m.batchId = b.id WHERE m.batchId = ? AND m.deleteStatus = 0 AND m.isActive = 1", [batchId], (err, res) => {
+        if (err) {
+            console.error("Error viewing batch materials: ", err);
+            result(err, null);
+            return;
+        }
+        if (res.length === 0) {
+            console.log("No materials found for batchId: ", batchId);
+            result("No materials found for batchId: ", batchId);
+            return;
+        } else {
+            console.log("Batch Materials: ", res);
+            result(null, res);
+            return;
+        }
+    });
+};
+
+
 
 module.exports = Material

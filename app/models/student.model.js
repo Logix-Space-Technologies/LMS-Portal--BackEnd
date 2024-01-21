@@ -423,8 +423,8 @@ Student.viewStudentProfile = (studId, result) => {
 
 Student.updateStudentProfile = (student, result) => {
 
-    db.query("SELECT * FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-        [student.collegeId],
+    db.query("SELECT * FROM college c JOIN student s ON s.collegeId = c.id WHERE s.id = ? AND c.deleteStatus = 0 AND c.isActive = 1",
+        [student.id],
         (collegeErr, collegeRes) => {
             if (collegeErr) {
                 console.error("Error checking college: ", collegeErr);
@@ -435,8 +435,8 @@ Student.updateStudentProfile = (student, result) => {
                 return result("college does not exist or is inactive/deleted.", null);
             }
 
-            db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-                [student.batchId],
+            db.query("SELECT * FROM batches b JOIN student s ON s.batchId = b.id WHERE s.id = ?  AND b.deleteStatus = 0 AND b.isActive = 1",
+                [student.id],
                 (batchErr, batchRes) => {
                     if (batchErr) {
                         console.error("Error checking batch: ", batchErr);
@@ -736,7 +736,7 @@ Student.searchStudentsByAdmAndAdmstf = (search, result) => {
 
 Student.viewBatch = (collegeId, result) => {
     db.query(
-        "SELECT DISTINCT b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.id = ?",
+        "SELECT DISTINCT  b.batchName, b.regStartDate, b.id, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.id = ?",
         [collegeId],
         (err, res) => {
             if (err) {
@@ -856,6 +856,23 @@ Student.viewSession = (batchId, result) => {
     );
 };
 
+
+Student.viewBatchAmount = (collegeId, batchId, result) => {
+    db.query(
+        "SELECT b.batchAmount FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.id = ? AND b.id = ?",
+        [collegeId, batchId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Batch Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
 
 module.exports = { Student, Payment, Tasks, SubmitTask };
 
