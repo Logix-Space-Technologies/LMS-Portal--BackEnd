@@ -1,5 +1,3 @@
-// MaterialView.jsx
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -8,12 +6,10 @@ const MaterialView = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch materials when the component mounts
     fetchMaterials();
   }, []);
 
   const fetchMaterials = () => {
-    // Assuming you have an API endpoint for fetching batch materials
     const apiUrl = global.config.urls.api.server + "/api/lms/viewBatchMaterials";
     const batchId = sessionStorage.getItem("batchId");
     const token = sessionStorage.getItem("studLoginToken");
