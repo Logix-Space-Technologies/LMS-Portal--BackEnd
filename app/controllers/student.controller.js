@@ -743,7 +743,6 @@ exports.studentNotificationView = (request, response) => {
 //Student view session details
 exports.studRegViewSession = (request, response) => {
     const viewSessionToken = request.headers.token;
-    const key = request.headers.key;
     jwt.verify(viewSessionToken, key, (error, decoded) => {
         if (decoded) {
             const batchId = request.body.id;
