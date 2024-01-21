@@ -26,8 +26,8 @@ import StudViewProfile from './components/Student/StudentDashboard/StudViewProfi
 import StudSideBar from './components/Student/StudentDashboard/StudSideBar';
 import StudentFooter from './components/Student/StudentDashboard/StudentFooter';
 import StudentViewCollege from './components/Student/StudentViewCollege';
-import StudentViewSession from './components/Student/ViewSessionDetails';
-import StudentViewNotifications from './components/Student/ViewNotifications';
+import NotificationView from './components/Student/ViewNotifications';
+import SessionView from './components/Student/ViewSessionDetails'
 
 
 
@@ -61,8 +61,8 @@ function App() {
           <Route path='/studsidebar' element={<StudSideBar/>} />
           <Route path='/studfooter' element={<StudentFooter/>} />
           <Route path='/studviewcollege' element={<StudentViewCollege/>}/>
-          <Route path='/studviewSession' element={<StudentViewSession/>}/>
-          <Route path='/studviewNotifications' element={<StudentViewNotifications/>}/>
+          <Route path='/studviewNotifications' element={<NotificationView/>}/>
+          <Route path='/studSessionView' element={<SessionView/>}/>
 
         </Routes>
       </BrowserRouter>
