@@ -25,7 +25,7 @@ const StudentRegistration = () => {
     setFile(event.target.files[0])
   }
 
-  var [batchAmount,setBatchAmount]=useState(null)
+  // let [batchAmount,setbatchAmount]=useState()
 
   const [outputField, setOutputField] = useState([])
 
@@ -38,7 +38,6 @@ const StudentRegistration = () => {
   const batchUrl = global.config.urls.api.server + "/api/lms/studregviewbatch";
   // const batchAmountUrl = global.config.urls.api.server + "/api/lms/studregviewbatchamount"
 
-  
 
   const getData = () => {
     axios.post(apiUrl2).then(
@@ -54,16 +53,9 @@ const StudentRegistration = () => {
   const getBatches = (collegeId) => {
     console.log(collegeId)
     axios.post(batchUrl, { collegeId }).then((response) => {
-      setBatches(response.data.data);
+      setBatches(response.data);
     });
   };
-
-  {batches && batches.map(
-    (value, index) =>{
-      return batchAmount = value.batchAmount
-    }
-  )}
-  console.log(batchAmount)
 
 
   // Call getBatches whenever the college selection changes
@@ -88,7 +80,7 @@ const StudentRegistration = () => {
       //initialize razorpay
       const rzp = new window.Razorpay({
         key: 'rzp_test_ZqcybzHd1QkWg8',
-        amount: batchAmount * 100,
+        amount: 2000 * 100,
         name: 'Logix Space Technologies Pvt Ltd',
         description: 'Link Ur Codes Payment',
         // image: <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" class="img-fluid" />,
@@ -115,10 +107,10 @@ const StudentRegistration = () => {
             "studPhNo": inputField.studPhNo,
             "aadharNo": inputField.aadharNo,
             "password": inputField.password,
-            "studProfilePic": file,  // Updated this line
+            "studProfilePic": file,  
             "rpPaymentId": PaymentId,
             "rpOrderId": orderId,
-            "rpAmount": batchAmount
+            "rpAmount": 2000
           };
           let axiosConfig = {
             headers: {
@@ -326,7 +318,7 @@ const StudentRegistration = () => {
                     value={inputField.batchId}
                     onChange={inputHandler}>
                     <option value="">Select</option>
-                    {batches && batches.map((value) => {
+                    {batches.data && batches.data.map((value) => {
                       return <option key={value.id} value={value.id}> {value.batchName} </option>;
                     })}
                   </select>
