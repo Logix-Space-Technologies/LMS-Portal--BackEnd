@@ -8,12 +8,10 @@ const SessionView = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch sessions when the component mounts
     fetchSessions();
   }, []);
 
   const fetchSessions = () => {
-    // Assuming you have an API endpoint for fetching sessions
     const apiUrl = global.config.urls.api.server + "/api/lms/studRegViewSession";
     const batchId = sessionStorage.getItem("batchId");
     const token = sessionStorage.getItem("studLoginToken");

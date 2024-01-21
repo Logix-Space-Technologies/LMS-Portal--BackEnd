@@ -6,12 +6,10 @@ const NotificationView = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch notifications when the component mounts
     fetchNotifications();
   }, []);
 
   const fetchNotifications = () => {
-    // Assuming you have an API endpoint for fetching notifications
     const apiUrl = global.config.urls.api.server + "/api/lms/studentNofificationView";
     const studentId = sessionStorage.getItem("studentId");
     const token = sessionStorage.getItem("studLoginToken");
