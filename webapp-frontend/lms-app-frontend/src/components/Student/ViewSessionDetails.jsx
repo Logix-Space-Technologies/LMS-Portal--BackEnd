@@ -14,10 +14,10 @@ const StudentViewSession = () => {
         let data = { "id": sessionStorage.getItem("batchId") };
         let axiosConfig = {
             headers: {
-                'content-type': 'application/json;charset=UTF-8',
-                'Access-Control-Allow-Origin': '*',
-                'token': sessionStorage.getItem('studLoginToken'),
-                'key': sessionStorage.getItem('studentkey')
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("studLoginToken"),
+                "key": sessionStorage.getItem("studentkey")
             }
         };
 
