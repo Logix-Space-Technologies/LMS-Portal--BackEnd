@@ -1,21 +1,19 @@
-// SessionView.jsx
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const SessionView = () => {
-  const [sessions, setSessions] = useState([]);
+const NotificationView = () => {
+  const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch sessions when the component mounts
-    fetchSessions();
+    // Fetch notifications when the component mounts
+    fetchNotifications();
   }, []);
 
-  const fetchSessions = () => {
-    // Assuming you have an API endpoint for fetching sessions
-    const apiUrl = global.config.urls.api.server + "/api/lms/studRegViewSession";
-    const batchId = sessionStorage.getItem("batchId");
+  const fetchNotifications = () => {
+    // Assuming you have an API endpoint for fetching notifications
+    const apiUrl = global.config.urls.api.server + "/api/lms/studentNofificationView";
+    const studentId = sessionStorage.getItem("studentId");
     const token = sessionStorage.getItem("studLoginToken");
 
     let axiosConfig = {
@@ -27,16 +25,16 @@ const SessionView = () => {
       }
     };
 
-    axios.post(apiUrl, { id: batchId }, axiosConfig)
+    axios.post(apiUrl, { studId: studentId }, axiosConfig)
       .then(response => {
         if (response.data.status === 'success') {
-          setSessions(response.data.data);
+          setNotifications(response.data.data);
         } else {
           console.log(response.data.status);
         }
       })
       .catch(error => {
-        console.error('Error fetching sessions:', error);
+        console.error('Error fetching notifications:', error);
       })
       .finally(() => {
         setLoading(false);
@@ -51,25 +49,22 @@ const SessionView = () => {
             <div className="bg-white p-4 p-md-5 rounded shadow-sm">
               <div className="row gy-3 gy-md-4 overflow-hidden">
                 <div className="col-12">
-                  <h3>Session Details</h3>
+                  <h3>Notifications</h3>
                 </div>
                 {loading ? (
                   <div className="col-12 text-center">Loading...</div>
                 ) : (
-                  sessions.length === 0 ? (
-                    <div className="col-12 text-center">No sessions found!</div>
+                  notifications.length === 0 ? (
+                    <div className="col-12 text-center">No notifications found!</div>
                   ) : (
-                    sessions.map((session, index) => (
+                    notifications.map((notification, index) => (
                       <div key={index} className="col-12">
                         <div className="card">
                           <div className="card-body">
-                            <h5 className="card-title">{session.sessionName}</h5>
-                            <p className="card-text">Date: {session.date}</p>
-                            <p className="card-text">Time: {session.time}</p>
-                            <p className="card-text">Type: {session.type}</p>
-                            <p className="card-text">Remarks: {session.remarks}</p>
-                            <p className="card-text">Venue/Link: {session.venueORlink}</p>
-                            <p className="card-text">Attendance Code: {session.attendenceCode}</p>
+                            <h5 className="card-title">{notification.title}</h5>
+                            <p className="card-text">{notification.message}</p>
+                            <p className="card-text">Sent by: {notification.sendBy}</p>
+                            <p className="card-text">Sent on: {notification.addedDate}</p>
                           </div>
                         </div>
                       </div>
@@ -85,4 +80,4 @@ const SessionView = () => {
   );
 };
 
-export default SessionView;
+export default NotificationView;
