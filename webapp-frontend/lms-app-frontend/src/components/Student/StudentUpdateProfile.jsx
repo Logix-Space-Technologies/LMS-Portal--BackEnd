@@ -166,7 +166,7 @@ const StudentUpdateProfile = () => {
                                         </div>
                                         <br></br>
                                         <div class="mb-3">
-                                            <a class="btn btn-danger" href="/studprofile">Back</a>
+                                            <a class="btn btn-danger" href="/studdashboard">Back</a>
                                         </div>
                                     </ul>
 
