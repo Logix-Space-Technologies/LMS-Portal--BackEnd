@@ -33,6 +33,7 @@ import SessionView from './components/Student/ViewSessionDetails';
 import MaterialView from './components/Student/ViewBatchMaterials';
 import StudentViewRefundRequest from './components/Student/StudentViewRefundRequest';
 import CollegeStaffViewBatch from './components/CollegeStaff/CollegeStaffViewAllBatches';
+import CollegeStaffViewAllStudents from './components/CollegeStaff/CollegeStaffViewAllStudents'
 
 
 
@@ -74,6 +75,8 @@ function App() {
           <Route path='/studMaterialView' element={<MaterialView/>}/>
           <Route path='/studViewRefundReq' element={<StudentViewRefundRequest/>} />
           <Route path='/collegeStaffViewBatch' element={<CollegeStaffViewBatch/>} />
+          <Route path='/collegeStaffViewAllStudents' element={<CollegeStaffViewAllStudents/>} />
+
 
 
         </Routes>
