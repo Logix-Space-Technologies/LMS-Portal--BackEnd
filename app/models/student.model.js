@@ -592,10 +592,10 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
                                 return;
                             }
 
-                            result("Submission saved successfully.", null);
+                            result(null, null);
                         });
                     } else {
-                        result("Submission saved successfully.", null);
+                        result(null, null);
                     }
                 });
             });
