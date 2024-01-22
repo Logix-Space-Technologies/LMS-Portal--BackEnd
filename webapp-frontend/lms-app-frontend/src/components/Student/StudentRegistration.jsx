@@ -25,6 +25,7 @@ const StudentRegistration = () => {
     setFile(event.target.files[0])
   }
 
+  // let [batchAmount,setbatchAmount]=useState()
 
   const [outputField, setOutputField] = useState([])
 
@@ -35,6 +36,8 @@ const StudentRegistration = () => {
   const apiUrl = global.config.urls.api.server + "/api/lms/studreg"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/studentregviewcollege"
   const batchUrl = global.config.urls.api.server + "/api/lms/studregviewbatch";
+  // const batchAmountUrl = global.config.urls.api.server + "/api/lms/studregviewbatchamount"
+
 
   const getData = () => {
     axios.post(apiUrl2).then(
@@ -44,14 +47,13 @@ const StudentRegistration = () => {
       }
     )
   }
+ 
 
   // Add a new function to fetch batches based on the selected college
   const getBatches = (collegeId) => {
     console.log(collegeId)
     axios.post(batchUrl, { collegeId }).then((response) => {
       setBatches(response.data);
-      console.log(response.data);
-
     });
   };
 
@@ -105,9 +107,9 @@ const StudentRegistration = () => {
             "studPhNo": inputField.studPhNo,
             "aadharNo": inputField.aadharNo,
             "password": inputField.password,
-            "studProfilePic": file,  // Updated this line
-            "rpPaymentId":PaymentId,
-            "rpOrderId":orderId,	
+            "studProfilePic": file,  
+            "rpPaymentId": PaymentId,
+            "rpOrderId": orderId,
             "rpAmount": 2000
           };
           let axiosConfig = {
@@ -194,7 +196,7 @@ const StudentRegistration = () => {
       setErrors(validationErrors);
     }
   };
-  
+
 
 
   const validateForm = (data) => {
@@ -249,8 +251,10 @@ const StudentRegistration = () => {
 
     if (!data.password.trim()) {
       errors.password = 'Password is required';
-    } else if (data.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+    } else if (data.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
+    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(data.password)) {
+      errors.password = 'Password must be at least 8 characters and should not exceed 12 characters and should include one uppercase letter, one lowercase letter, numbers and special characters';
     }
 
     if (data.confirmpassword !== data.password) {
@@ -429,12 +433,12 @@ const StudentRegistration = () => {
                   {errors.studPhNo && <span style={{ color: 'red' }} className="error">{errors.studPhNo}</span>}
                 </div>
                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label htmlFor="studProfilePic" className="form-label">
-                      Profile Image <span className="text-danger">*</span>
-                    </label>
-                    <input type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" onChange={fileUploadHandler} />
-                    {errors.studProfilePic && <span style={{ color: 'red' }} className="error">{errors.studProfilePic}</span>}
-                  </div>
+                  <label htmlFor="studProfilePic" className="form-label">
+                    Profile Image <span className="text-danger">*</span>
+                  </label>
+                  <input type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" onChange={fileUploadHandler} />
+                  {errors.studProfilePic && <span style={{ color: 'red' }} className="error">{errors.studProfilePic}</span>}
+                </div>
                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                   <label htmlFor="aadharNo" className="form-label">
                     AadharNo <span className="text-danger">*</span>
