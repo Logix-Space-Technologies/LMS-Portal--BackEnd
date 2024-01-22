@@ -779,3 +779,27 @@ exports.studRegViewBatchAmount = (request, response) => {
 
 };
 
+exports.studentViewPaymentTransactions = (request, response) => {
+    const studId = request.body.studId;
+    const studToken = request.headers.token;
+
+    jwt.verify(studToken, "lmsappstud", (err, decoded) => {
+        if (err) {
+            response.json({ "status": "Unauthorized User" });
+        } else {
+            Payment.viewStudentTransactions(studId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.status) {
+                        response.json({ "status": data.status });
+                    } else if (data.length === 0) {
+                        response.json({ "status": "No payment transactions found!" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        }
+    });
+}

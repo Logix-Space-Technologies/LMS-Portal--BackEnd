@@ -874,5 +874,26 @@ Student.viewBatchAmount = (collegeId, batchId, result) => {
     );
 };
 
+Payment.viewStudentTransactions = (studId, result) => {
+    db.query(
+        "SELECT s.studName, p.* " +
+        "FROM payment p " +
+        "JOIN student s ON p.studId = s.id " +
+        "WHERE p.studId = ? AND s.deleteStatus = 0 AND s.isActive = 1",
+        [studId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Payment Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
+
+
 module.exports = { Student, Payment, Tasks, SubmitTask };
 
