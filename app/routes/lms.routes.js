@@ -158,6 +158,8 @@ router.post("/searchStudentsByAdmAndAdmstf",StudentController.searchStudentsByAd
 
 router.post("/studregviewbatch", StudentController.studRegViewBatch)
 
+router.post("/studregviewbatchamount", StudentController.studRegViewBatchAmount)
+
 router.post("/studentregviewcollege", StudentController.studregCollegeAllView)
 
 router.post('/createsession', SessionsController.createSession);
@@ -184,7 +186,7 @@ router.post("/deleteSessions",SessionsController.deleteSession)
 
 router.post("/studentNofificationView",StudentController.studentNotificationView)
 
-router.post("/studentViewSession",StudentController.studRegViewSession)
+router.post("/studentViewSession",StudentController.studViewSession)
 
 router.post("/searchSession",SessionsController.searchSession)
 
@@ -219,6 +221,8 @@ router.post('/viewUpcomingSessions',SessionsController.viewUpcomingSessions)
 router.post('/viewBatchMaterials',MaterialController.viewBatchMaterials)
 
 router.post('/viewCollegeStaffofStudent',ClgStaffController.viewCollegeStaffOfStudent)
+
+router.post('/studentViewTransaction',StudentController.studentViewPaymentTransactions)
 
 
 module.exports = router

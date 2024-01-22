@@ -731,12 +731,11 @@ exports.studentNotificationView = (request, response) => {
 
 
 //Student view session details
-exports.studRegViewSession = (request, response) => {
+exports.studViewSession = (request, response) => {
     const viewSessionToken = request.headers.token;
-    const key = request.headers.key;
-    jwt.verify(viewSessionToken, key, (error, decoded) => {
+    jwt.verify(viewSessionToken, "lmsappstud", (error, decoded) => {
         if (decoded) {
-            const batchId = request.body.id;
+            const batchId = request.body.batchId;
             Student.viewSession(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
@@ -753,3 +752,44 @@ exports.studRegViewSession = (request, response) => {
     });
 };
 
+
+exports.studRegViewBatchAmount = (request, response) => {
+    const collegeId = request.body.collegeId;
+    const batchId = request.body.batchId;
+    Student.viewBatchAmount(collegeId, batchId, (err, data) => {
+        if (err) {
+            response.json({ "status": err });
+        }
+        if (data.length === 0) {
+            response.json({ "status": "No Batch found!" });
+        } else {
+            response.json({ "status": "success", "data": data });
+        }
+    });
+
+};
+
+exports.studentViewPaymentTransactions = (request, response) => {
+    const studId = request.body.studId;
+    const studToken = request.headers.token;
+
+    jwt.verify(studToken, "lmsappstud", (err, decoded) => {
+        if (err) {
+            response.json({ "status": "Unauthorized User" });
+        } else {
+            Payment.viewStudentTransactions(studId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.status) {
+                        response.json({ "status": data.status });
+                    } else if (data.length === 0) {
+                        response.json({ "status": "No payment transactions found!" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        }
+    });
+}
