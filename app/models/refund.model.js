@@ -139,7 +139,7 @@ Refund.viewRefundStatus = (studId, result) => {
 
         if (studentRes.length === 0) {
             console.log("Student with ID not found.");
-            result(null, { "status": "Student with the specified ID not found." });
+            result("Student with the specified ID not found.", null);
             return;
         }
 
@@ -156,13 +156,13 @@ Refund.viewRefundStatus = (studId, result) => {
 
                 if (res.length === 0) {
                     console.log("No refund requests found");
-                    result(null, { "status": "No refund requests found." });
+                    result("No refund requests found.", null);
                     return;
                 }
 
                 // Check refund approval status
                 if (res[0].refundApprovalStatus === 0) {
-                    result(null, { "status": "Your application is under processing." });
+                    result("Your application is under process.", null);
                 } else {
                     // Return refund details with student name and college name
                     result(null, res);

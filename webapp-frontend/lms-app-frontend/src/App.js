@@ -29,6 +29,7 @@ import StudentViewCollege from './components/Student/StudentViewCollege';
 import NotificationView from './components/Student/ViewNotifications';
 import SessionView from './components/Student/ViewSessionDetails';
 import MaterialView from './components/Student/ViewBatchMaterials';
+import StudentViewRefundRequest from './components/Student/StudentViewRefundRequest';
 
 
 
@@ -65,7 +66,7 @@ function App() {
           <Route path='/studviewNotifications' element={<NotificationView/>}/>
           <Route path='/studSessionView' element={<SessionView/>}/>
           <Route path='/studMaterialView' element={<MaterialView/>}/>
-
+          <Route path='/studViewRefundReq' element={<StudentViewRefundRequest/>} />
         </Routes>
       </BrowserRouter>
     </div>
