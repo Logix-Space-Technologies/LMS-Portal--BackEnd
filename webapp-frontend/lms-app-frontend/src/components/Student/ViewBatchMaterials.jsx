@@ -24,11 +24,11 @@ const MaterialView = () => {
       }
     };
 
-    axios.post(apiUrl, { batchId: batchId }, axiosConfig)
+    axios.post(apiUrl, { "batchId": batchId }, axiosConfig)
       .then(response => {
-        if (response.data.status === 'success') {
+        if (response.data.status === "success") {
           setMaterials(response.data.data);
-          console.log(response.data.data)
+          console.log(response.data)
           setLoading(false);
         } else {
           console.log(response.data.status);

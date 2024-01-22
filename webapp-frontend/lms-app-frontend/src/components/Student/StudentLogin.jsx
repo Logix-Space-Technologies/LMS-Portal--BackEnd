@@ -24,12 +24,14 @@ const StudentLogin = () => {
                     let studtoken = Response.data.token;
                     let studId = Response.data.data.id;
                     let studemail = Response.data.data.studEmail;
+                    let batchId = Response.data.data.batchId;
                     let key = "lmsappstud"
                     sessionStorage.setItem("studentkey", key);
                     sessionStorage.setItem("studentId", studId);
                     sessionStorage.setItem("studemail", studemail);
+                    sessionStorage.setItem("studBatchId", batchId);
                     sessionStorage.setItem("studLoginToken", studtoken);
-                    navigate("/studdashboard")
+                    navigate("/studMaterialView")
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)

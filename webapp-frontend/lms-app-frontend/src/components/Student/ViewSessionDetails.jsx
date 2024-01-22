@@ -26,7 +26,7 @@ const SessionView = () => {
 
     axios.post(apiUrl, { "batchId": batchId }, axiosConfig)
       .then(response => {
-        if (response.data.status === 'success') {
+        if (response.data.status === "success") {
           setSessions(response.data.data);
           console.log(response.data.data)
         } else {
