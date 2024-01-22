@@ -741,11 +741,11 @@ exports.studentNotificationView = (request, response) => {
 
 
 //Student view session details
-exports.studRegViewSession = (request, response) => {
+exports.studViewSession = (request, response) => {
     const viewSessionToken = request.headers.token;
-    jwt.verify(viewSessionToken, key, (error, decoded) => {
+    jwt.verify(viewSessionToken, "lmsappstud", (error, decoded) => {
         if (decoded) {
-            const batchId = request.body.id;
+            const batchId = request.body.batchId;
             Student.viewSession(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });

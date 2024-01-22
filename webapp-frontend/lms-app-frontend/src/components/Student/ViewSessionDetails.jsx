@@ -1,7 +1,6 @@
-// SessionView.jsx
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../../config/config'
 
 const SessionView = () => {
   const [sessions, setSessions] = useState([]);
@@ -12,8 +11,8 @@ const SessionView = () => {
   }, []);
 
   const fetchSessions = () => {
-    const apiUrl = global.config.urls.api.server + "/api/lms/studRegViewSession";
-    const batchId = sessionStorage.getItem("batchId");
+    const apiUrl = global.config.urls.api.server + "/api/lms/studentViewSession";
+    const batchId = sessionStorage.getItem("studBatchId");
     const token = sessionStorage.getItem("studLoginToken");
 
     let axiosConfig = {
@@ -25,10 +24,11 @@ const SessionView = () => {
       }
     };
 
-    axios.post(apiUrl, { id: batchId }, axiosConfig)
+    axios.post(apiUrl, { "batchId": batchId }, axiosConfig)
       .then(response => {
         if (response.data.status === 'success') {
           setSessions(response.data.data);
+          console.log(response.data.data)
         } else {
           console.log(response.data.status);
         }

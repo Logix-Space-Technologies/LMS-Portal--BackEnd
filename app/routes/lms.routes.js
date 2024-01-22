@@ -186,7 +186,7 @@ router.post("/deleteSessions",SessionsController.deleteSession)
 
 router.post("/studentNofificationView",StudentController.studentNotificationView)
 
-router.post("/studentViewSession",StudentController.studRegViewSession)
+router.post("/studentViewSession",StudentController.studViewSession)
 
 router.post("/searchSession",SessionsController.searchSession)
 

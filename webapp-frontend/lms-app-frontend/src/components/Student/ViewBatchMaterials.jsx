@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../../config/config'
 
 const MaterialView = () => {
   const [materials, setMaterials] = useState([]);
@@ -11,7 +12,7 @@ const MaterialView = () => {
 
   const fetchMaterials = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/viewBatchMaterials";
-    const batchId = sessionStorage.getItem("batchId");
+    const batchId = sessionStorage.getItem("studBatchId");
     const token = sessionStorage.getItem("studLoginToken");
 
     let axiosConfig = {
@@ -27,6 +28,8 @@ const MaterialView = () => {
       .then(response => {
         if (response.data.status === 'success') {
           setMaterials(response.data.data);
+          console.log(response.data.data)
+          setLoading(false);
         } else {
           console.log(response.data.status);
         }
