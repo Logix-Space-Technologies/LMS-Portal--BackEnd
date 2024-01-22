@@ -490,9 +490,9 @@ exports.taskSubmissionByStudent = (request, response) => {
         Student.taskSubmissionByStudent(submissionData, (err, data) => {
             if (err) {
                 return response.json({ "status": err });
+            } else {
+                return response.json({ "status": "success"});
             }
-
-            return response.json({ "status": "success", "data": data });
         });
     });
 
