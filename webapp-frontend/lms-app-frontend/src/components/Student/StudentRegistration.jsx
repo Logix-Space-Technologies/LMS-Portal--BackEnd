@@ -4,25 +4,20 @@ import React, { useEffect, useState } from 'react'
 const StudentRegistration = () => {
 
   const [inputField, setInputField] = useState({
-    collegeId: "",
-    batchId: "",
-    studName: "",
-    admNo: "",
-    rollNo: "",
-    studDept: "",
-    course: "",
-    studEmail: "",
-    studPhNo: "",
-    aadharNo: "",
-    password: "",
-    confirmpassword: ""
+    "collegeId": "",
+    "batchId": "",
+    "studName": "",
+    "admNo": "",
+    "rollNo": "",
+    "studDept": "",
+    "course": "",
+    "studEmail": "",
+    "studPhNo": "",
+    "aadharNo": "",
+    "password": "",
+    "confirmpassword": ""
   })
 
-  const [outputField, setOutputField] = useState([])
-
-  const [errors, setErrors] = useState({})
-
-  const [batches, setBatches] = useState([])
 
   const [file, setFile] = useState(null)
 
@@ -30,9 +25,19 @@ const StudentRegistration = () => {
     setFile(event.target.files[0])
   }
 
+  // let [batchAmount,setbatchAmount]=useState()
+
+  const [outputField, setOutputField] = useState([])
+
+  const [errors, setErrors] = useState({})
+
+  const [batches, setBatches] = useState([])
+
   const apiUrl = global.config.urls.api.server + "/api/lms/studreg"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/studentregviewcollege"
   const batchUrl = global.config.urls.api.server + "/api/lms/studregviewbatch";
+  // const batchAmountUrl = global.config.urls.api.server + "/api/lms/studregviewbatchamount"
+
 
   const getData = () => {
     axios.post(apiUrl2).then(
@@ -42,14 +47,13 @@ const StudentRegistration = () => {
       }
     )
   }
+ 
 
   // Add a new function to fetch batches based on the selected college
   const getBatches = (collegeId) => {
     console.log(collegeId)
     axios.post(batchUrl, { collegeId }).then((response) => {
       setBatches(response.data);
-      console.log(response.data);
-
     });
   };
 
@@ -61,9 +65,11 @@ const StudentRegistration = () => {
     getBatches(selectedCollegeId);
   };
 
+
   const inputHandler = (event) => {
-    setInputField({ ...inputField, [event.target.name]: event.target.value })
-  }
+    setInputField({ ...inputField, [event.target.name]: event.target.value });
+  };
+
   const loadRazorpayScript = async () => {
     const script = document.createElement('script')
     script.src = "https://checkout.razorpay.com/v1/checkout.js"
@@ -90,33 +96,35 @@ const StudentRegistration = () => {
 
           // Call Registration API and pass the details to the server
           let data = {
-            collegeId: inputField.collegeId,
-            batchId: inputField.batchId,
-            studName: inputField.studName,
-            admNo: inputField.admNo,
-            rollNo: inputField.rollNo,
-            studDept: inputField.studDept,
-            course: inputField.course,
-            studEmail: inputField.studEmail,
-            studPhNo: inputField.studPhNo,
-            studProfilePic: inputField.studProfilePic,
-            aadharNo: inputField.aadharNo,
-            password: inputField.password
-          }
-
-          const razorpayDetails = {
-            rpPaymentId: response.razorpay_payment_id,
-            rpOrderId: response.razorpay_order_id,
-            rpAmount: response.razorpay_amount,
+            "collegeId": inputField.collegeId,
+            "batchId": inputField.batchId,
+            "studName": inputField.studName,
+            "admNo": inputField.admNo,
+            "rollNo": inputField.rollNo,
+            "studDept": inputField.studDept,
+            "course": inputField.course,
+            "studEmail": inputField.studEmail,
+            "studPhNo": inputField.studPhNo,
+            "aadharNo": inputField.aadharNo,
+            "password": inputField.password,
+            "studProfilePic": file,  
+            "rpPaymentId": PaymentId,
+            "rpOrderId": orderId,
+            "rpAmount": 2000
           };
-
-          axios.post(apiUrl, data, razorpayDetails).then(
+          let axiosConfig = {
+            headers: {
+              'content-type': 'multipart/form-data',
+              "Access-Control-Allow-Origin": "*"
+            }
+          };
+          console.log(data)
+          axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-
               if (response.data.status === "success") {
                 alert("User Registered Successfully !!!")
 
-                setInputField({ collegeId: "", batchId: "", studName: "", admNo: "", rollNo: "", studDept: "", course: "", studEmail: "", studPhNo: "", studProfilePic: "", aadharNo: "", password: "", confirmpass: "" })
+                setInputField({ "collegeId": "", "batchId": "", "studName": "", "admNo": "", "rollNo": "", "studDept": "", "course": "", "studEmail": "", "studPhNo": "", "studProfilePic": "", "aadharNo": "", "password": "", "confirmpassword": "" })
               } else {
                 if (response.data.status === "Validation failed" && response.data.data.college) {
                   alert(response.data.data.college)
@@ -180,18 +188,15 @@ const StudentRegistration = () => {
 
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('Handle submit function called');
-    const validationErrors = validateForm(inputField)
-    console.log(validationErrors)
+    e.preventDefault();
+    const validationErrors = validateForm(inputField);
     if (Object.keys(validationErrors).length === 0) {
-      console.log(validationErrors.length)
-      loadRazorpayScript(); // Call the loadRazorpayScript function
-
+      loadRazorpayScript();
     } else {
       setErrors(validationErrors);
     }
-  }
+  };
+
 
 
   const validateForm = (data) => {
@@ -246,8 +251,10 @@ const StudentRegistration = () => {
 
     if (!data.password.trim()) {
       errors.password = 'Password is required';
-    } else if (data.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+    } else if (data.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
+    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(data.password)) {
+      errors.password = 'Password must be at least 8 characters and should not exceed 12 characters and should include one uppercase letter, one lowercase letter, numbers and special characters';
     }
 
     if (data.confirmpassword !== data.password) {
@@ -312,7 +319,7 @@ const StudentRegistration = () => {
                     onChange={inputHandler}>
                     <option value="">Select</option>
                     {batches.data && batches.data.map((value) => {
-                      return <option key={value.batchName} value={value.id}> {value.batchName} </option>;
+                      return <option key={value.id} value={value.id}> {value.batchName} </option>;
                     })}
                   </select>
                   {/* <select
@@ -429,13 +436,7 @@ const StudentRegistration = () => {
                   <label htmlFor="studProfilePic" className="form-label">
                     Profile Image <span className="text-danger">*</span>
                   </label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    name="studProfilePic"
-                    id="studProfilePic"
-                    accept="image/*"
-                    onChange={fileUploadHandler} />
+                  <input type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" onChange={fileUploadHandler} />
                   {errors.studProfilePic && <span style={{ color: 'red' }} className="error">{errors.studProfilePic}</span>}
                 </div>
                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">

@@ -25,7 +25,15 @@ import StudHeader from './components/Student/StudentDashboard/StudHeader';
 import StudViewProfile from './components/Student/StudentDashboard/StudViewProfile';
 import StudSideBar from './components/Student/StudentDashboard/StudSideBar';
 import StudentFooter from './components/Student/StudentDashboard/StudentFooter';
+
 import StudentViewAttendance from './components/Student/StudentViewAttendance';
+
+import StudentViewCollege from './components/Student/StudentViewCollege';
+import NotificationView from './components/Student/ViewNotifications';
+import SessionView from './components/Student/ViewSessionDetails';
+import MaterialView from './components/Student/ViewBatchMaterials';
+import StudentViewRefundRequest from './components/Student/StudentViewRefundRequest';
+
 
 
 
@@ -58,7 +66,15 @@ function App() {
           <Route path='/studprofile' element={<StudViewProfile/>} />
           <Route path='/studsidebar' element={<StudSideBar/>} />
           <Route path='/studfooter' element={<StudentFooter/>} />
+
           <Route path='/studentviewattendance' element={<StudentViewAttendance/>}/>
+
+          <Route path='/studviewcollege' element={<StudentViewCollege/>}/>
+          <Route path='/studviewNotifications' element={<NotificationView/>}/>
+          <Route path='/studSessionView' element={<SessionView/>}/>
+          <Route path='/studMaterialView' element={<MaterialView/>}/>
+          <Route path='/studViewRefundReq' element={<StudentViewRefundRequest/>} />
+
         </Routes>
       </BrowserRouter>
     </div>

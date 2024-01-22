@@ -59,7 +59,7 @@ exports.getRefundStatus = (request, response) => {
             Refund.viewRefundStatus(request.body.studId, (err, data) => {
                 if (err) {
                     console.log(err);
-                    response.json({ "status": "Failed to retrieve refund status." });
+                    response.json({ "status": err });
                 } else {
                     console.log("Refund status successfully retrieved");
                     response.json({ "status": "success", "data": data });

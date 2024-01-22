@@ -257,7 +257,7 @@ exports.viewUpcomingSessions = (request, response) => {
                 if (data.length === 0) {
                     return response.json({ "status": "No sessions are currently active" });
                 } else {
-                    return response.json({ "status": "success", "Sessions": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
 
