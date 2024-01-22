@@ -222,5 +222,7 @@ router.post('/viewBatchMaterials',MaterialController.viewBatchMaterials)
 
 router.post('/viewCollegeStaffofStudent',ClgStaffController.viewCollegeStaffOfStudent)
 
+router.post('/studentViewTransaction',StudentController.studentViewPaymentTransactions)
+
 
 module.exports = router
