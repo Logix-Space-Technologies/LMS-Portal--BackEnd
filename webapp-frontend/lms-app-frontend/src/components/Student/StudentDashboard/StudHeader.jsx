@@ -69,7 +69,7 @@ const StudHeader = () => {
                             </a>
                         })}
                         <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="#" className="dropdown-item">Change Password</a>
+                            <a href="/studChangePassword" className="dropdown-item">Change Password</a>
                             <a onClick={logOut} href="/studentLogin" className="dropdown-item">Log Out</a>
                         </div>
                     </div>

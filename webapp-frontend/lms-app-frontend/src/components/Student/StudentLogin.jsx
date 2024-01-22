@@ -23,11 +23,13 @@ const StudentLogin = () => {
                 if (Response.data.status === "Success") {
                     let studtoken = Response.data.token;
                     let studId = Response.data.data.id;
+                    let studemail = Response.data.data.studEmail;
                     let key = "lmsappstud"
                     sessionStorage.setItem("studentkey", key);
                     sessionStorage.setItem("studentId", studId);
+                    sessionStorage.setItem("studemail", studemail);
                     sessionStorage.setItem("studLoginToken", studtoken);
-                    navigate("/studMaterialView")
+                    navigate("/studdashboard")
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)
