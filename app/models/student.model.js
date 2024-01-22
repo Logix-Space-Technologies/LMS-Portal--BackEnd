@@ -392,14 +392,14 @@ Student.StdChangePassword = (student, result) => {
                     } else {
                         // Assuming logStudent function takes student ID as the first parameter
                         logStudent(id, "password changed");
-                        result(null, { "status": "Password Updated Successfully." });
+                        result(null, null);
                     }
                 });
             } else {
-                result(null, { status: "Incorrect Old Password!!" });
+                result("Incorrect Old Password!!", null);
             }
         } else {
-            result(null, { status: "No Student Found" });
+            result("No Student Found", null);
         }
     });
 };

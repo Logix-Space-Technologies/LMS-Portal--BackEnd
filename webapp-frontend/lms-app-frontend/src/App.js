@@ -25,6 +25,9 @@ import StudHeader from './components/Student/StudentDashboard/StudHeader';
 import StudViewProfile from './components/Student/StudentDashboard/StudViewProfile';
 import StudSideBar from './components/Student/StudentDashboard/StudSideBar';
 import StudentFooter from './components/Student/StudentDashboard/StudentFooter';
+import StudentChangePassword from './components/Student/StudentChangePassword';
+
+
 
 
 
@@ -57,6 +60,8 @@ function App() {
           <Route path='/studprofile' element={<StudViewProfile/>} />
           <Route path='/studsidebar' element={<StudSideBar/>} />
           <Route path='/studfooter' element={<StudentFooter/>} />
+          <Route path='/studChangePassword' element={<StudentChangePassword/>} />
+
         </Routes>
       </BrowserRouter>
     </div>
