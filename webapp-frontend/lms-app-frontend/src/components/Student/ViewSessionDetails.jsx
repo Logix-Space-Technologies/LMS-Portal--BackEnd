@@ -67,7 +67,6 @@ const SessionView = () => {
                             <p className="card-text">Type: {session.type}</p>
                             <p className="card-text">Remarks: {session.remarks}</p>
                             <p className="card-text">Venue/Link: {session.venueORlink}</p>
-                            <p className="card-text">Attendance Code: {session.attendenceCode}</p>
                           </div>
                         </div>
                       </div>
