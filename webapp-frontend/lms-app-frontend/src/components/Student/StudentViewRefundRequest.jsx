@@ -68,18 +68,36 @@ const StudentViewRefundRequest = () => {
                                                             <h2 className="card-title">{value.studName}</h2>
                                                             <p className="card-text">Requested Date : {new Date(value.requestedDate).toLocaleDateString()}</p>
                                                             <p className="card-text">Reason : {value.reason}</p>
-                                                            <p className="card-text">Approved Amount : {value.approvedAmnt}</p>
-                                                            <p className="card-text">Refund Initiated Date : {new Date(value.refundInitiatedDate).toLocaleDateString()}</p>
-                                                            <p className="card-text">Approval Status : {value.approvalStatus}</p>
-                                                            <p className="card-text">Refund Status : {value.refundStatus}</p>
-                                                            <p className="card-text">Transaction No. : {value.transactionNo}</p>
-                                                            <p className="card-text">Admin Remarks : {value.adminRemarks}</p>
-                                                            <p className="card-text">Did you receive the amount? : {value.AmountReceivedStatus}</p>
+                                                            {value.approvalStatus === "Not Approved" && value.refundStatus === "Pending" && (
+                                                                <>
+                                                                    <p className="card-text">Refund Approval : {value.refundStatus}</p>
+                                                                    <p className="card-text">Approval Status : {value.approvalStatus}</p>
+                                                                    <p className="card-text">Your Refund Request has being sent...Please wait for the Approval.</p>
+                                                                    <p className="card-text-centre">If you want to cancel your refund request... kindly click on <b>Cancel Request</b></p>
+                                                                    <p className="card-text"><b>Thank You!!</b></p>
+                                                                </>
+                                                            )}
+                                                            {value.approvalStatus === "Approved" && value.refundStatus === "Processed"  && (
+                                                                <>
+                                                                    <p className="card-text">Refund Approval : {value.refundStatus}</p>
+                                                                    <p className="card-text">Approved Amount : {value.approvedAmnt}</p>
+                                                                    <p className="card-text">Refund Initiated Date : {new Date(value.refundInitiatedDate).toLocaleDateString()}</p>
+                                                                    <p className="card-text">Transaction No. : {value.transactionNo}</p>
+                                                                    <p className="card-text">Approval Status : {value.approvalStatus}</p>
+                                                                    <p className="card-text">Admin Remarks : {value.adminRemarks}</p>
+                                                                    <p className="card-text">Did you receive the amount? : {value.AmountReceivedStatus}</p>
+                                                                    <p className="card-text">Your Request has being successfully Processed!</p>
+                                                                    <p className="card-text"><b>Thank You!!</b></p>
+                                                                    <br></br>
+                                                                    <div className="flex justify-between">
+                                                                        <a href="#" className="btn bg-green-500 text-white px-6 py-3 rounded-md">
+                                                                            Payment Received
+                                                                        </a>
+                                                                    </div>
+                                                                </>
+                                                            )}
                                                             <br></br>
                                                             <div className="flex justify-between">
-                                                                <a  href="#" className="btn bg-green-500 text-white px-6 py-3 rounded-md">
-                                                                    Payment Received
-                                                                </a>
                                                                 <button className="btn bg-red-500 text-white px-6 py-3 rounded-md">Cancel Request</button>
                                                             </div>
                                                         </div>
@@ -94,7 +112,7 @@ const StudentViewRefundRequest = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 
