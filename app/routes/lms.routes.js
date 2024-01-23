@@ -186,7 +186,7 @@ router.post("/deleteSessions",SessionsController.deleteSession)
 
 router.post("/studentNofificationView",StudentController.studentNotificationView)
 
-router.post("/studentViewSession",StudentController.studRegViewSession)
+router.post("/studentViewSession",StudentController.studViewSession)
 
 router.post("/searchSession",SessionsController.searchSession)
 
@@ -221,6 +221,8 @@ router.post('/viewUpcomingSessions',SessionsController.viewUpcomingSessions)
 router.post('/viewBatchMaterials',MaterialController.viewBatchMaterials)
 
 router.post('/viewCollegeStaffofStudent',ClgStaffController.viewCollegeStaffOfStudent)
+
+router.post('/studentViewTransaction',StudentController.studentViewPaymentTransactions)
 
 
 module.exports = router

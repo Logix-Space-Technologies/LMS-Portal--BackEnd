@@ -392,14 +392,14 @@ Student.StdChangePassword = (student, result) => {
                     } else {
                         // Assuming logStudent function takes student ID as the first parameter
                         logStudent(id, "password changed");
-                        result(null, { "status": "Password Updated Successfully." });
+                        result(null, null);
                     }
                 });
             } else {
-                result(null, { status: "Incorrect Old Password!!" });
+                result("Incorrect Old Password!!", null);
             }
         } else {
-            result(null, { status: "No Student Found" });
+            result("No Student Found", null);
         }
     });
 };
@@ -592,10 +592,10 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
                                 return;
                             }
 
-                            result("Submission saved successfully.", null);
+                            result(null, null);
                         });
                     } else {
-                        result("Submission saved successfully.", null);
+                        result(null, null);
                     }
                 });
             });
@@ -873,6 +873,27 @@ Student.viewBatchAmount = (collegeId, batchId, result) => {
         }
     );
 };
+
+Payment.viewStudentTransactions = (studId, result) => {
+    db.query(
+        "SELECT s.studName, p.* " +
+        "FROM payment p " +
+        "JOIN student s ON p.studId = s.id " +
+        "WHERE p.studId = ? AND s.deleteStatus = 0 AND s.isActive = 1",
+        [studId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Payment Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
+
 
 module.exports = { Student, Payment, Tasks, SubmitTask };
 

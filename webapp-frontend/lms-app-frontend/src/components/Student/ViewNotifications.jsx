@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../../config/config'
 
 const NotificationView = () => {
   const [notifications, setNotifications] = useState([]);

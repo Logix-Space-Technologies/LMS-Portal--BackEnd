@@ -272,18 +272,8 @@ exports.StdChangePassword = (request, response) => {
             if (err) {
                 response.json({ "status": err });
                 return;
-            }
-            if (oldPassword === newPassword) {
-                response.json({ "status": "Old password and new password cannot be same." });
-                return;
-            }
-
-            if (data.status === "Incorrect Old Password!!") {
-                response.json({ "status": "Incorrect Old Password!!" });
-            } else if (data.status === "No Student Found") {
-                response.json({ "status": "User Not Found!!!" });
             } else {
-                response.json({ "status": "Password Updated Successfully." });
+                return response.json({ "status": "success" });
             }
         });
     });
@@ -339,87 +329,87 @@ exports.profileUpdateStudent = (request, response) => {
             const updateProfileToken = request.headers.token
             const studProfilePic = imageUrl;
             jwt.verify(updateProfileToken, "lmsappstud", (err, decoded) => {
-                        if (decoded) {
-                            // Validation
-                            const validationErrors = {};
-            
-                            if (Validator.isEmpty(studName).isValid) {
-                                validationErrors.studName = Validator.isEmpty(studName).message;
+                if (decoded) {
+                    // Validation
+                    const validationErrors = {};
+
+                    if (Validator.isEmpty(studName).isValid) {
+                        validationErrors.studName = Validator.isEmpty(studName).message;
+                    }
+
+                    if (!Validator.isValidName(studName).isValid) {
+                        validationErrors.studName = Validator.isValidName(studName).message;
+                    }
+
+                    if (Validator.isEmpty(admNo).isValid) {
+                        validationErrors.admNo = Validator.isEmpty(admNo).message;
+                    }
+
+                    if (Validator.isEmpty(rollNo).isValid) {
+                        validationErrors.rollNo = Validator.isEmpty(rollNo).message;
+                    }
+
+                    if (Validator.isEmpty(studDept).isValid) {
+                        validationErrors.studDept = Validator.isEmpty(studDept).message;
+                    }
+
+                    if (Validator.isEmpty(course).isValid) {
+                        validationErrors.course = Validator.isEmpty(course).message;
+                    }
+
+                    if (Validator.isEmpty(aadharNo).isValid) {
+                        validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
+                    }
+
+                    if (!Validator.isValidAadharNumber(aadharNo).isValid) {
+                        validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
+                    }
+
+                    if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+                        validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
+                    }
+
+
+                    if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+                        validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+                    }
+
+
+                    // If validation fails
+                    if (Object.keys(validationErrors).length > 0) {
+                        return response.json({ "status": "Validation failed", "data": validationErrors });
+                    }
+
+
+                    const newStudent = new Student({
+                        'id': request.body.id,
+                        studName: studName,
+                        admNo: admNo,
+                        rollNo: rollNo,
+                        studDept: studDept,
+                        course: course,
+                        studPhNo: studPhNo,
+                        studProfilePic: studProfilePic,
+                        aadharNo: aadharNo
+                    });
+
+                    Student.updateStudentProfile(newStudent, (err, data) => {
+                        if (err) {
+                            if (err.kind === "not_found") {
+                                return response.json({ "status": "Student with provided Id and batchId is not found." });
+                            } else {
+                                return response.json({ "status": err });
                             }
-            
-                            if (!Validator.isValidName(studName).isValid) {
-                                validationErrors.studName = Validator.isValidName(studName).message;
-                            }
-            
-                            if (Validator.isEmpty(admNo).isValid) {
-                                validationErrors.admNo = Validator.isEmpty(admNo).message;
-                            }
-            
-                            if (Validator.isEmpty(rollNo).isValid) {
-                                validationErrors.rollNo = Validator.isEmpty(rollNo).message;
-                            }
-            
-                            if (Validator.isEmpty(studDept).isValid) {
-                                validationErrors.studDept = Validator.isEmpty(studDept).message;
-                            }
-            
-                            if (Validator.isEmpty(course).isValid) {
-                                validationErrors.course = Validator.isEmpty(course).message;
-                            }
-            
-                            if (Validator.isEmpty(aadharNo).isValid) {
-                                validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
-                            }
-            
-                            if (!Validator.isValidAadharNumber(aadharNo).isValid) {
-                                validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
-                            }
-            
-                            if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
-                                validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
-                            }
-            
-            
-                            if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
-                                validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
-                            }
-            
-            
-                            // If validation fails
-                            if (Object.keys(validationErrors).length > 0) {
-                                return response.json({ "status": "Validation failed", "data": validationErrors });
-                            }
-            
-            
-                            const newStudent = new Student({
-                                'id': request.body.id,
-                                studName: studName,
-                                admNo: admNo,
-                                rollNo: rollNo,
-                                studDept: studDept,
-                                course: course,
-                                studPhNo: studPhNo,
-                                studProfilePic: studProfilePic,
-                                aadharNo: aadharNo
-                            });
-            
-                            Student.updateStudentProfile(newStudent, (err, data) => {
-                                if (err) {
-                                    if (err.kind === "not_found") {
-                                        return response.json({ "status": "Student with provided Id and batchId is not found." });
-                                    } else {
-                                        return response.json({ "status": err });
-                                    }
-                                } else {
-                                    response.json({ "status": "success", "data": data });
-                                }
-                            })
-            
                         } else {
-                            response.json({ "status": "Unauthorized User!!" });
+                            response.json({ "status": "success", "data": data });
                         }
                     })
-            
+
+                } else {
+                    response.json({ "status": "Unauthorized User!!" });
+                }
+            })
+
 
         } catch (err) {
             fs.unlinkSync(file.path);
@@ -500,9 +490,9 @@ exports.taskSubmissionByStudent = (request, response) => {
         Student.taskSubmissionByStudent(submissionData, (err, data) => {
             if (err) {
                 return response.json({ "status": err });
+            } else {
+                return response.json({ "status": "success"});
             }
-
-            return response.json({ "status": "success", "data": data });
         });
     });
 
@@ -741,11 +731,11 @@ exports.studentNotificationView = (request, response) => {
 
 
 //Student view session details
-exports.studRegViewSession = (request, response) => {
+exports.studViewSession = (request, response) => {
     const viewSessionToken = request.headers.token;
-    jwt.verify(viewSessionToken, key, (error, decoded) => {
+    jwt.verify(viewSessionToken, "lmsappstud", (error, decoded) => {
         if (decoded) {
-            const batchId = request.body.id;
+            const batchId = request.body.batchId;
             Student.viewSession(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
@@ -779,3 +769,27 @@ exports.studRegViewBatchAmount = (request, response) => {
 
 };
 
+exports.studentViewPaymentTransactions = (request, response) => {
+    const studId = request.body.studId;
+    const studToken = request.headers.token;
+
+    jwt.verify(studToken, "lmsappstud", (err, decoded) => {
+        if (err) {
+            response.json({ "status": "Unauthorized User" });
+        } else {
+            Payment.viewStudentTransactions(studId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.status) {
+                        response.json({ "status": data.status });
+                    } else if (data.length === 0) {
+                        response.json({ "status": "No payment transactions found!" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        }
+    });
+}

@@ -25,11 +25,16 @@ import StudHeader from './components/Student/StudentDashboard/StudHeader';
 import StudViewProfile from './components/Student/StudentDashboard/StudViewProfile';
 import StudSideBar from './components/Student/StudentDashboard/StudSideBar';
 import StudentFooter from './components/Student/StudentDashboard/StudentFooter';
+import StudentChangePassword from './components/Student/StudentChangePassword';
+import StudentViewAttendance from './components/Student/StudentViewAttendance';
 import StudentViewCollege from './components/Student/StudentViewCollege';
 import NotificationView from './components/Student/ViewNotifications';
 import SessionView from './components/Student/ViewSessionDetails';
 import MaterialView from './components/Student/ViewBatchMaterials';
 import StudentViewRefundRequest from './components/Student/StudentViewRefundRequest';
+import CollegeStaffViewBatch from './components/CollegeStaff/CollegeStaffViewAllBatches';
+import CollegeStaffViewAllStudents from './components/CollegeStaff/CollegeStaffViewAllStudents'
+
 
 
 
@@ -62,11 +67,18 @@ function App() {
           <Route path='/studprofile' element={<StudViewProfile/>} />
           <Route path='/studsidebar' element={<StudSideBar/>} />
           <Route path='/studfooter' element={<StudentFooter/>} />
+          <Route path='/studChangePassword' element={<StudentChangePassword/>} />
+          <Route path='/studentviewattendance' element={<StudentViewAttendance/>}/>
           <Route path='/studviewcollege' element={<StudentViewCollege/>}/>
           <Route path='/studviewNotifications' element={<NotificationView/>}/>
           <Route path='/studSessionView' element={<SessionView/>}/>
           <Route path='/studMaterialView' element={<MaterialView/>}/>
           <Route path='/studViewRefundReq' element={<StudentViewRefundRequest/>} />
+          <Route path='/collegeStaffViewBatch' element={<CollegeStaffViewBatch/>} />
+          <Route path='/collegeStaffViewAllStudents' element={<CollegeStaffViewAllStudents/>} />
+
+
+
         </Routes>
       </BrowserRouter>
     </div>

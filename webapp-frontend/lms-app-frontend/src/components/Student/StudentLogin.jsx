@@ -23,9 +23,13 @@ const StudentLogin = () => {
                 if (Response.data.status === "Success") {
                     let studtoken = Response.data.token;
                     let studId = Response.data.data.id;
+                    let studemail = Response.data.data.studEmail;
+                    let batchId = Response.data.data.batchId;
                     let key = "lmsappstud"
                     sessionStorage.setItem("studentkey", key);
                     sessionStorage.setItem("studentId", studId);
+                    sessionStorage.setItem("studemail", studemail);
+                    sessionStorage.setItem("studBatchId", batchId);
                     sessionStorage.setItem("studLoginToken", studtoken);
                     navigate("/studViewRefundReq")
                 } else {
