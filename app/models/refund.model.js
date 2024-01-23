@@ -6,7 +6,7 @@ const Refund = function (refund) {
     this.reason = refund.reason;
     this.refundAmnt = refund.refundAmnt;
     this.approvedAmnt = refund.approvedAmnt;
-    this.admStaffId = refund.admStaffId;
+    this.admStaffId = refund.admStaffId; //added
 };
 
 Refund.createRefundRequest = (newRefund, result) => {
