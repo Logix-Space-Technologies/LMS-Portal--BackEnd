@@ -53,7 +53,21 @@ const SubmitTask = function (submitTask) {
 
 };
 
+const Session = function (session) {
+    this.id = session.id;
+    this.batchId = session.batchId;
+    this.sessionName = session.sessionName;
+    this.date = session.date;
+    this.time = session.time;
+    this.type = session.type;
+    this.remarks = session.remarks;
+    this.venueORlink = session.venueORlink;
+    this.trainerId = session.trainerId;
+    this.attendenceCode = session.attendenceCode;
+};
+
 let payStudId;
+
 
 
 Student.create = (newStudent, result) => {
@@ -894,6 +908,21 @@ Payment.viewStudentTransactions = (studId, result) => {
     );
 };
 
+Session.studViewNextSessionDate = (batchId, result) =>{
+    db.query("SELECT date, time, sessionName FROM sessiondetails WHERE  batchId = ? AND date >= CURRENT_DATE ORDER BY date, time DESC LIMIT 1", [batchId],
+    (err, res) => {
+        if (err) {
+            console.log("error", err)
+            return result(err, null)
+        } else {
+            console.log("Next Session", res)
+            return result(null, res)
+        }
+    })
+}
 
-module.exports = { Student, Payment, Tasks, SubmitTask };
+
+
+
+module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 
