@@ -35,8 +35,8 @@ Material.materialCreate = (newMaterial, result) => {
                     return;
                 } 
                 if (res.length > 0) {
-                    console.log("Task already exists.");
-                    result("Task Title already exists.", null);
+                    console.log("Material already exists.");
+                    result("Material Title already exists.", null);
                     return;
                 } else {
                     //Insert new material
@@ -73,6 +73,71 @@ Material.searchMaterial = (searchString, result) => {
             }
         });
 }
+
+Material.updateMaterial = (materialUpdate, result) => {
+    // Check if the material exists
+    db.query("SELECT * FROM materials WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [materialUpdate.id], (err, materialRes) => {
+        if (err) {
+            console.error("Error checking existing material: ", err);
+            result(err, null);
+            return;
+        }
+        if (materialRes.length === 0) {
+            console.log("Material not found.");
+            result("Material not found.", null);
+            return;
+        } else {
+            // Check if the updated material details already exist
+            db.query("SELECT * FROM materials WHERE fileName = ? AND batchId = ? AND id != ? AND deleteStatus = 0 AND isActive = 1",
+                [materialUpdate.fileName, materialUpdate.batchId, materialUpdate.id],
+                (err, duplicateCheck) => {
+                    if (err) {
+                        console.error("Error checking duplicate material: ", err);
+                        result(err, null);
+                        return;
+                    }
+                    if (duplicateCheck.length > 0) {
+                        console.log("Updated material details already exist.");
+                        result("Updated material details already exist.", null);
+                        return;
+                    } else {
+                        // Update material details
+                        db.query("UPDATE materials SET fileName = ?, materialDesc = ?, uploadFile = ?, remarks = ?, batchId = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+                            [materialUpdate.fileName, materialUpdate.materialDesc, materialUpdate.uploadFile, materialUpdate.remarks, materialUpdate.batchId, materialUpdate.id],
+                            (err, res) => {
+                                if (err) {
+                                    console.error("Error updating material: ", err);
+                                    result(err, null);
+                                    return;
+                                }
+                                console.log("Updated Material Details: ", { id: materialUpdate.id, ...materialUpdate });
+                                result(null, { id: materialUpdate.id, ...materialUpdate });
+                            });
+                    }
+                });
+        }
+    });
+};
+
+Material.viewBatchMaterials = (batchId, result) => {
+    db.query("SELECT b.batchName,m.* FROM materials m JOIN batches b ON m.batchId = b.id WHERE m.batchId = ? AND m.deleteStatus = 0 AND m.isActive = 1", [batchId], (err, res) => {
+        if (err) {
+            console.error("Error viewing batch materials: ", err);
+            result(err, null);
+            return;
+        }
+        if (res.length === 0) {
+            console.log("No materials found for batchId: ", batchId);
+            result("No materials found for batchId: ", batchId);
+            return;
+        } else {
+            console.log("Batch Materials: ", res);
+            result(null, res);
+            return;
+        }
+    });
+};
+
 
 
 module.exports = Material

@@ -242,14 +242,14 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
                         console.log("Error : ", updateErr);
                         result(updateErr, null);
                     } else {
-                        result(null, { "status": "Password Updated Successfully." });
+                        result(null, null);
                     }
                 });
             } else {
-                result(null, { status: "Incorrect Old Password!!" });
+                result("Incorrect Old Password!!", null);
             }
         } else {
-            result(null, { status: "College staff not found" });
+            result("College staff not found", null);
         }
     });
 };
@@ -289,10 +289,10 @@ CollegeStaff.viewTask=(collegeId,result)=>{
 }
 
 
-CollegeStaff.verifyStudent = (collegeStaffId, studentId, result) => {
-    const associationQuery = "SELECT * FROM student s JOIN college_staff c ON s.collegeId = c.collegeId WHERE s.id = ? AND c.id = ? AND s.deleteStatus = 0 AND s.isActive = 1";
+CollegeStaff.verifyStudent = (collegeId, studentId, result) => {
+    const associationQuery = "SELECT * FROM student s JOIN college_staff c ON s.collegeId = c.collegeId WHERE s.id = ? AND c.collegeId = ? AND s.deleteStatus = 0 AND s.isActive = 1 LIMIT 1";
 
-    db.query(associationQuery, [studentId, collegeStaffId], (assocErr, assocRes) => {
+    db.query(associationQuery, [studentId, collegeId], (assocErr, assocRes) => {
         if (assocErr) {
             console.error("Error checking CollegeStaff and Student association: ", assocErr);
             result(assocErr, null);
@@ -372,6 +372,30 @@ CollegeStaff.viewCollegeStaffProfile = (id, result) => {
         result(res.length ? null : "College staff profile not found", res[0]);
     });
 };
+
+CollegeStaff.viewCollegeStaffOfStudent = (studentId, result) => {
+    if (!studentId) {
+        return result("Invalid student ID");
+    }
+
+    const query = `
+        SELECT cs.collegeStaffName, cs.email, cs.phNo, cs.aadharNo, cs.clgStaffAddress, cs.profilePic, cs.department,
+               c.collegeName
+        FROM student s
+        INNER JOIN college_staff cs ON s.collegeId = cs.collegeId
+        INNER JOIN college c ON s.collegeId = c.id
+        WHERE s.id = ?;
+    `;
+
+    db.query(query, [studentId], (err, res) => {
+        if (err) {
+            console.error("Error while fetching profile:", err);
+            return result("Internal Server Error");
+        }
+
+        result(res.length ? null : "College staff profile not found", res[0]);
+    });
+}
 
 
 

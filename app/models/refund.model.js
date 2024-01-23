@@ -23,7 +23,7 @@ Refund.createRefundRequest = (newRefund, result) => {
             if (existingRefundRes.length > 0) {
                 // Handle the case where a refund request already exists for the student
                 console.log("Refund request already exists for student ID:", newRefund.studId);
-                result(null, { "status": "A refund request already exists for the student." });
+                result("A refund request already exists for the student.", null);
                 return;
             }
 
@@ -41,7 +41,7 @@ Refund.createRefundRequest = (newRefund, result) => {
                     if (paymentRes.length === 0) {
                         // Handle the case where there is no payment history for the student
                         console.log("No payment history found for student ID:", newRefund.studId);
-                        result(null, { message: "No payment history found for the student." });
+                        result("No payment history found for the student.", null);
                         return;
                     }
 
@@ -61,7 +61,7 @@ Refund.createRefundRequest = (newRefund, result) => {
                     );
                     if (daysSincePaymentStart < 0) {
                         console.error("Error calculating days since payment start:", daysSincePaymentStart);
-                        result(null, { status: "error", message: "Error calculating days since payment start." });
+                        result("Error calculating days since payment start.", null);
                         return;
                     } else {
                         console.log("Days since payment start:", daysSincePaymentStart);
@@ -74,7 +74,7 @@ Refund.createRefundRequest = (newRefund, result) => {
                         // Check if the payment date is greater than one year
                         if (remainingPaymentPeriod <= 0) {
                             console.log("Refund request expired for student ID:", newRefund.studId);
-                            result(null, { status: "error", message: "Refund request expired. Payment date is greater than one year." });
+                            result("Refund request expired. Payment date is greater than one year.", null);
                             return;
                         }
 
@@ -139,13 +139,13 @@ Refund.viewRefundStatus = (studId, result) => {
 
         if (studentRes.length === 0) {
             console.log("Student with ID not found.");
-            result(null, { "status": "Student with the specified ID not found." });
+            result("Student with the specified ID not found.", null);
             return;
         }
 
         // Continue to fetch refund status if student ID exists
         db.query(
-           "SELECT s.studName, r.requestedDate, r.reason, r.approvedAmnt, r.refundInitiatedDate, r.refundApprovalStatus, r.refundStatus, r.transactionNo, r.AmountReceivedStatus, r.adminRemarks FROM refund r JOIN student s ON r.studId = s.id WHERE r.studId = ? AND r.cancelStatus = 0;",
+            "SELECT s.studName, r.requestedDate, r.reason, r.approvedAmnt, r.refundInitiatedDate, r.refundApprovalStatus, r.refundStatus, r.transactionNo, r.AmountReceivedStatus, r.adminRemarks FROM refund r JOIN student s ON r.studId = s.id WHERE r.studId = ? AND r.cancelStatus = 0;",
             [studId],
             (err, res) => {
                 if (err) {
@@ -156,13 +156,13 @@ Refund.viewRefundStatus = (studId, result) => {
 
                 if (res.length === 0) {
                     console.log("No refund requests found");
-                    result(null, { "status": "No refund requests found." });
+                    result("No refund requests found.", null);
                     return;
                 }
 
                 // Check refund approval status
                 if (res[0].refundApprovalStatus === 0) {
-                    result(null, { "status": "Your application is under processing." });
+                    result("Your application is under process.", null);
                 } else {
                     // Return refund details with student name and college name
                     result(null, res);
@@ -184,7 +184,7 @@ Refund.approveRefund = (refundAmnt, admStaffId, transactionNo, adminRemarks, ref
 
         if (refundRes.length === 0) {
             console.log("Refund with ID not found.");
-            result("Refund with the specified ID not found.", null );
+            result("Refund with the specified ID not found.", null);
             return;
         }
 
@@ -212,23 +212,62 @@ Refund.approveRefund = (refundAmnt, admStaffId, transactionNo, adminRemarks, ref
 };
 
 
+
+Refund.cancelRefundRequest = (refundId, result) => {
+    // Check if the refund ID exists in the refund table
+    db.query("SELECT * FROM refund WHERE id = ? AND cancelStatus = 0", [refundId], (refundErr, refundRes) => {
+        if (refundErr) {
+            console.error("Error checking refund existence:", refundErr);
+            result(refundErr, null);
+            return;
+        }
+
+        if (refundRes.length === 0) {
+            console.log("Refund with ID not found.");
+            result("Refund with the specified ID not found.", null);
+            return;
+        }
+
+        // Continue to cancel refund if refund ID exists
+        db.query(
+            "UPDATE refund SET cancelStatus = 1 WHERE id = ?",
+            [refundId],
+            (err, res) => {
+                if (err) {
+                    console.error("Error cancelling refund:", err);
+                    result(err, null);
+                    return;
+                }
+
+                if (res.affectedRows === 0) {
+                    // Refund with the specified ID not found
+                    result("Refund with the specified ID not found.", null);
+                    return;
+                }
+
+                result("Refund cancelled successfully.", null);
+            }
+        );
+    });
+};
+
 //Admin Staff Reject Refund
 Refund.rejectRefund = (admStaffId, adminRemarks, refundId, result) => {
     db.query("UPDATE refund SET cancelStatus = 1, adminRemarks = ?, AdmStaffId = ? WHERE id = ? AND cancelStatus = 0",
-    [adminRemarks, admStaffId, refundId],
-    (err, res) => {
-        if (err) {
-            console.log("Error Rejecting Refund : ", err)
-            result(err, null)
-            return
-        }
+        [adminRemarks, admStaffId, refundId],
+        (err, res) => {
+            if (err) {
+                console.log("Error Rejecting Refund : ", err)
+                result(err, null)
+                return
+            }
 
-        if (res.affectedRows === 0) {
-            result("Refund Request Not Found.", null)
-            return
-        }
-        result("Refund Rejected.", null)
-    })
+            if (res.affectedRows === 0) {
+                result("Refund Request Not Found.", null)
+                return
+            }
+            result("Refund Rejected.", null)
+        })
 }
 
 Refund.getSuccessfulRefunds = (result) => {
@@ -242,7 +281,7 @@ Refund.getSuccessfulRefunds = (result) => {
             }
             if (res.length === 0) {
                 console.log("No successful refunds found");
-                result("No successful refunds found.", null );
+                result("No successful refunds found.", null);
                 return;
             }
 

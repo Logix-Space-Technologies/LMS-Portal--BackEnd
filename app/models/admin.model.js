@@ -1,5 +1,7 @@
 const db = require('../models/db')
 const bcrypt=require('bcrypt')
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
+
 const Admin = function(admin){
     this.userName = admin.userName
     this.Password = admin.Password
@@ -34,6 +36,7 @@ Admin.findByUserName = (username,result)=>{
         }
 
         if (res.length) {
+            logAdminStaff(0,"Admin logged in")
             result(null, res[0])
             return
         }
@@ -69,6 +72,7 @@ Admin.changePassword = (ad, result) => {
                         result(updateErr, null);
                         return;
                     } else {
+                        logAdminStaff(0, "Password updated")
                         result(null, { status: "Password Updated Successfully!!!" });
                     }
                 });
@@ -84,19 +88,19 @@ Admin.changePassword = (ad, result) => {
 
 Admin.adminDashBoard = (result) => {
     const query1 = "SELECT COUNT(*) AS totalColleges FROM college WHERE deleteStatus=0 AND isActive=1";
-    const query2 = "SELECT COUNT(*) AS totalCollegeStaff FROM college_staff WHERE deleteStatus=0 AND isActive=1 AND emailVerified=1";
-    const query3 = "SELECT COUNT(*) AS totalAdminStaff FROM admin_staff WHERE deleteStatus=0 AND isActive=1 AND emailVerified=1";
-    const query4 = "SELECT COUNT(*) AS totalBatches FROM batches WHERE deleteStatus=0 AND isActive=1";
-    const query5 = "SELECT COUNT(*) AS totalTasks FROM task WHERE deleteStatus=0 AND isActive=1";
-    const query6 = "SELECT COUNT(*) AS totalStudents FROM student WHERE deleteStatus=0 AND isActive=1 AND emailVerified=1 AND isVerified=1 AND isPaid=1";
-    const query7 = "SELECT COUNT(*) AS totalMaterials FROM materials WHERE deleteStatus=0 AND isActive=1";
-    const query8 = "SELECT COUNT(*) AS totalRefunds FROM refund WHERE approvedAmnt IS NOT NULL AND cancelStatus=0";
-    const query9 = "SELECT SUM(rpAmount) AS totalAmountPaid FROM payment";
-    const query10 = "SELECT SUM(approvedAmnt) AS totalAmountRefunded FROM refund WHERE approvedAmnt IS NOT NULL AND cancelStatus=0";
+    const query2 = "SELECT COUNT(*) AS totalCollegeStaff FROM college_staff WHERE deleteStatus=0 AND isActive=1 AND emailVerified=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
+    const query3 = "SELECT COUNT(*) AS totalAdminStaff FROM admin_staff WHERE deleteStatus=0 AND isActive=1 AND emailVerified=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
+    const query4 = "SELECT COUNT(*) AS totalBatches FROM batches WHERE deleteStatus=0 AND isActive=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
+    const query5 = "SELECT COUNT(*) AS totalTasks FROM task WHERE deleteStatus=0 AND isActive=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
+    const query6 = "SELECT COUNT(*) AS totalStudents FROM student WHERE deleteStatus=0 AND isActive=1 AND emailVerified=1 AND isVerified=1 AND isPaid=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
+    const query7 = "SELECT COUNT(*) AS totalMaterials FROM materials WHERE deleteStatus=0 AND isActive=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
+    const query8 = "SELECT COUNT(*) AS totalRefunds FROM refund WHERE approvedAmnt IS NOT NULL AND cancelStatus=0 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=requestedDate";
+    const query9 = "SELECT SUM(rpAmount) AS totalAmountPaid FROM payment WHERE DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=paymentDate";
+    const query10 = "SELECT SUM(approvedAmnt) AS totalAmountRefunded FROM refund WHERE approvedAmnt IS NOT NULL AND cancelStatus=0 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=refundInitiatedDate";
     const query11 = "SELECT c.id, c.collegeName, COUNT(b.id) AS numberOfBatches FROM college c LEFT JOIN batches b ON c.id = b.collegeId WHERE c.deleteStatus = 0 AND c.isActive = 1 GROUP BY c.id, c.collegeName";
     const query12 = "SELECT c.id, c.collegeName, COUNT(s.id) AS numberOfStudents FROM college c LEFT JOIN student s ON c.id = s.collegeId WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 GROUP BY c.id, c.collegeName";
     const query13 = "SELECT c.collegeName, COUNT(DISTINCT s.id) AS noofstudents, COUNT(DISTINCT t.id) AS nooftasks, COUNT(DISTINCT st.id) * 100.0 / COUNT(DISTINCT t.id) AS percentageofcompletion FROM college c JOIN student s ON c.id = s.collegeId LEFT JOIN batches b ON s.batchId = b.id LEFT JOIN submit_task st ON s.id = st.studId LEFT JOIN task t ON b.id = t.batchId GROUP BY c.collegeName";
-    const query14 = "SELECT c.collegeName, COUNT(DISTINCT s.id) AS noofstudents FROM college c LEFT JOIN student s ON c.id = s.collegeId GROUP BY c.collegeName";
+    const query14 = "SELECT c.collegeName, COUNT(DISTINCT s.id) AS noofstudents FROM college c LEFT JOIN student s ON c.id = s.collegeId WHERE DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=s.addedDate GROUP BY c.collegeName";
 
     db.query(query1, (err1, res1) => {
         if (err1) {
@@ -228,10 +232,20 @@ Admin.adminDashBoard = (result) => {
     });
 };
 
-;
 
+Admin.getAll = async(result) => {
+    let query = "SELECT * FROM adminstafflog WHERE AdmStaffId=0"
+    db.query(query, (err, response) => {
+        if (err) {
+            console.log("Error : ",err)
+            result(err, null)
+            return           
+        } else {
+            console.log("Admin Staff Log : ", response)
+            result(null, response)
+        }
+    })
 
-
-
+}
 
 module.exports = Admin

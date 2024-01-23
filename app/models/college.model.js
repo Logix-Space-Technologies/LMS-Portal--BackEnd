@@ -7,6 +7,7 @@ const { response } = require('express')
 const College = function (college) {
     this.id = college.id
     this.collegeName = college.collegeName;
+    this.collegeCode = college.collegeCode;
     this.collegeAddress = college.collegeAddress;
     this.website = college.website;
     this.email = college.email;
@@ -184,6 +185,19 @@ College.searchCollege = (search, result) => {
             console.log("Error : ", err)
             result(err, null)
             result
+        } else {
+            console.log("College Details : ", res)
+            result(null, res)
+        }
+    })
+}
+
+College.studentViewCollege = (studentId, result) => {
+    db.query("SELECT c.id, c.collegeName,c.collegeCode, c.collegeAddress, c.website, c.email, c.collegePhNo, c.collegeMobileNumber, c.collegeImage, c.addedDate, c.updatedDate, c.emailVerified, c.updatedStatus FROM college c JOIN student s ON c.id = s.collegeId WHERE s.id = ? AND c.deleteStatus = 0 AND c.isActive = 1", [studentId], (err, res) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            return
         } else {
             console.log("College Details : ", res)
             result(null, res)
