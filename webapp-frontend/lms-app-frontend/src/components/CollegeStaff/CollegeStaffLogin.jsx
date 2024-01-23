@@ -20,6 +20,7 @@ const CollegeStaffLogin = () => {
         axios.post(apiUrl, inputField).then(
             (response) => {
                 if (response.data.status === "Success") {
+
                     let clgstafftoken = response.data.token;
                     let clgStaffId = response.data.data.id;
                     let clgStaffCollegeId = response.data.data.collegeId;
@@ -29,9 +30,9 @@ const CollegeStaffLogin = () => {
                     sessionStorage.setItem("clgStaffEmail", clgStaffEmail);
                     sessionStorage.setItem("clgStaffId", clgStaffId);
                     sessionStorage.setItem("clgstaffkey", clgstaffkey);
-                    sessionStorage.setItem("clgStaffCollegeId", clgStaffCollegeId);
+                    sessionStorage.setItem("clgStaffCollegeId", clgStaffCollegeId)
+                    navigate("/colgstaffsearchstudent")
 
-                    navigate("/collegeStaffDashboard");
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.email) {
                         alert(response.data.data.email);
