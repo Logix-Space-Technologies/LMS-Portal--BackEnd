@@ -545,19 +545,8 @@ exports.collegeStaffChangePassword = (request, response) => {
       if (err) {
         response.json({ "status": err });
         return;
-      }
-
-      if (oldPassword === newPassword) {
-        response.json({ "status": "Old password and new password cannot be the same." });
-        return;
-      }
-
-      if (data.status === "Incorrect Old Password!!") {
-        response.json({ "status": "Incorrect Old Password!!" });
-      } else if (data.status === "No college staff Found") {
-        response.json({ "status": "User Not Found!!!" });
       } else {
-        response.json({ "status": "Password Updated Successfully." });
+        response.json({ "status": "success" });
       }
     });
   });

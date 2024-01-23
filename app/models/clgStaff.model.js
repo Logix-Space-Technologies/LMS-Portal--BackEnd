@@ -242,14 +242,14 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
                         console.log("Error : ", updateErr);
                         result(updateErr, null);
                     } else {
-                        result(null, { "status": "Password Updated Successfully." });
+                        result(null, null);
                     }
                 });
             } else {
-                result(null, { status: "Incorrect Old Password!!" });
+                result("Incorrect Old Password!!", null);
             }
         } else {
-            result(null, { status: "College staff not found" });
+            result("College staff not found", null);
         }
     });
 };
