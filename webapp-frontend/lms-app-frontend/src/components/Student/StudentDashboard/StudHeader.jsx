@@ -4,7 +4,13 @@ import '../../../config/config'
 
 const StudHeader = () => {
     const [studData, setStudData] = useState([])
+
+    const [sessionData, setSessionData] = useState([])
+
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/studentViewNextSessionDate"
+
     const apiURL = global.config.urls.api.server + "/api/lms/studentViewProfile"
+
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
         console.log(data)
@@ -23,19 +29,51 @@ const StudHeader = () => {
         )
     }
 
+
+    const getData2 = () =>{
+        let data2 = { "studId": sessionStorage.getItem("studentId"), "batchId": sessionStorage.getItem("studBatchId")}
+
+        let axiosConfig2 = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("studLoginToken")
+            }
+        }
+        axios.post(apiUrl2, data2, axiosConfig2).then(
+            (response)=>{
+                setSessionData(response.data.data)
+            }
+        )
+    }
+
     const logOut =()=>{
-      sessionStorage.removeItem("studentId")
-      sessionStorage.removeItem("studLoginToken")
+        sessionStorage.removeItem("studentkey", key);
+        sessionStorage.removeItem("studentId", studId);
+        sessionStorage.removeItem("studemail", studemail);
+        sessionStorage.removeItem("studBatchId", batchId);
+        sessionStorage.removeItem("studLoginToken", studtoken);
     }
 
     useEffect(() => { getData() }, [])
+    useEffect(() => {getData2() }, [])
     return (
         <div>
+
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
                 <a href="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
                     <h2 className="text-primary mb-0">
                         <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
                 </a>
+                {sessionData.map(
+                    (value,index)=>{
+                        return <div className="session-name">
+                        <p>Next Session: {new Date(value.date).toLocaleDateString()},{value.time}</p>
+                        
+                    </div>
+                    }
+                )}
+                
                 <div className="navbar-nav align-items-center ms-auto">
                     {/* <div className="nav-item dropdown">
                                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
@@ -72,6 +110,7 @@ const StudHeader = () => {
                             <a href="/studChangePassword" className="dropdown-item">Change Password</a>
                             <a onClick={logOut} href="/studentLogin" className="dropdown-item">Log Out</a>
                         </div>
+
                     </div>
                 </div>
             </nav>
