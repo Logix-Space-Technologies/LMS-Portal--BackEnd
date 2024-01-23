@@ -29,6 +29,7 @@ const StudHeader = () => {
         )
     }
 
+
     const getData2 = () =>{
         let data2 = { "studId": sessionStorage.getItem("studentId"), "batchId": sessionStorage.getItem("studBatchId")}
 
@@ -46,9 +47,12 @@ const StudHeader = () => {
         )
     }
 
-    const logOut = () => {
-        sessionStorage.removeItem("studentId")
-        sessionStorage.removeItem("studLoginToken")
+    const logOut =()=>{
+        sessionStorage.removeItem("studentkey", key);
+        sessionStorage.removeItem("studentId", studId);
+        sessionStorage.removeItem("studemail", studemail);
+        sessionStorage.removeItem("studBatchId", batchId);
+        sessionStorage.removeItem("studLoginToken", studtoken);
     }
 
     useEffect(() => { getData() }, [])
