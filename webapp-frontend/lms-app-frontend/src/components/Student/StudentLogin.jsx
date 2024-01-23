@@ -31,9 +31,7 @@ const StudentLogin = () => {
                     sessionStorage.setItem("studemail", studemail);
                     sessionStorage.setItem("studBatchId", batchId);
                     sessionStorage.setItem("studLoginToken", studtoken);
-
-                    navigate("/studentViewTask")
-
+                    navigate("/studViewRefundReq")
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)
