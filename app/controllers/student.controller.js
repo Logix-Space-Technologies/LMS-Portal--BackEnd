@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const { Student, Payment, Tasks, SubmitTask } = require("../models/student.model");
+const { Student, Payment, Tasks, SubmitTask, Session } = require("../models/student.model");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -10,7 +10,8 @@ const mail = require('../../sendEmail');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 require('dotenv').config({ path: '../../.env' });
-const path = require("path")
+const path = require("path");
+// const { Session } = require("inspector");
 
 // AWS S3 Client Configuration
 const s3Client = new S3Client({
@@ -491,7 +492,7 @@ exports.taskSubmissionByStudent = (request, response) => {
             if (err) {
                 return response.json({ "status": err });
             } else {
-                return response.json({ "status": "success"});
+                return response.json({ "status": "success" });
             }
         });
     });
@@ -793,3 +794,26 @@ exports.studentViewPaymentTransactions = (request, response) => {
         }
     });
 }
+
+
+exports.studentViewNextSession = (request, response) => {
+    const studToken = request.headers.token;
+
+    jwt.verify(studToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            const batchId = request.body.batchId;
+            Session.studViewNextSessionDate(batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No Session found!" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};

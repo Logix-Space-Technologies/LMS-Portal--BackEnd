@@ -224,5 +224,7 @@ router.post('/viewCollegeStaffofStudent',ClgStaffController.viewCollegeStaffOfSt
 
 router.post('/studentViewTransaction',StudentController.studentViewPaymentTransactions)
 
+router.post('/studentViewNextSessionDate',StudentController.studentViewNextSession)
+
 
 module.exports = router

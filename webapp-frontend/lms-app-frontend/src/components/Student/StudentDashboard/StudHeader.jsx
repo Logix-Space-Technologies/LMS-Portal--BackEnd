@@ -23,19 +23,23 @@ const StudHeader = () => {
         )
     }
 
-    const logOut =()=>{
-      sessionStorage.removeItem("studentId")
-      sessionStorage.removeItem("studLoginToken")
+    const logOut = () => {
+        sessionStorage.removeItem("studentId")
+        sessionStorage.removeItem("studLoginToken")
     }
 
     useEffect(() => { getData() }, [])
     return (
         <div>
+
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
                 <a href="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
                     <h2 className="text-primary mb-0">
                         <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
                 </a>
+                <div className="session-name">
+                    <p>next session</p>
+                </div>
                 <div className="navbar-nav align-items-center ms-auto">
                     {/* <div className="nav-item dropdown">
                                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
@@ -72,6 +76,7 @@ const StudHeader = () => {
                             <a href="/studChangePassword" className="dropdown-item">Change Password</a>
                             <a onClick={logOut} href="/studentLogin" className="dropdown-item">Log Out</a>
                         </div>
+
                     </div>
                 </div>
             </nav>
