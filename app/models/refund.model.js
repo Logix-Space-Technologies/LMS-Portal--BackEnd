@@ -6,6 +6,7 @@ const Refund = function (refund) {
     this.reason = refund.reason;
     this.refundAmnt = refund.refundAmnt;
     this.approvedAmnt = refund.approvedAmnt;
+    this.admStaffId = refund.admStaffId;
 };
 
 Refund.createRefundRequest = (newRefund, result) => {
@@ -253,6 +254,7 @@ Refund.cancelRefundRequest = (refundId, result) => {
 
 //Admin Staff Reject Refund
 Refund.rejectRefund = (admStaffId, adminRemarks, refundId, result) => {
+    console.log(admStaffId)
     db.query("UPDATE refund SET cancelStatus = 1, adminRemarks = ?, AdmStaffId = ? WHERE id = ? AND cancelStatus = 0",
         [adminRemarks, admStaffId, refundId],
         (err, res) => {
