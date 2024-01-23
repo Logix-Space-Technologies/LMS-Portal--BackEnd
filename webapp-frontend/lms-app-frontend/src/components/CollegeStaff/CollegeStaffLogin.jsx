@@ -31,7 +31,7 @@ const CollegeStaffLogin = () => {
                     sessionStorage.setItem("clgstaffkey", clgstaffkey);
                     sessionStorage.setItem("clgStaffCollegeId", clgStaffCollegeId);
 
-                    navigate("/clgstaffchangepassword");
+                    navigate("/collegeStaffDashboard");
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.email) {
                         alert(response.data.data.email);

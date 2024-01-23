@@ -90,7 +90,7 @@ const CollegeStaffChangePassword = () => {
                                         </div>
                                         <br></br>
                                         <div class="mb-3">
-                                            <a class="btn btn-danger" href="/studdashboard">Back</a>
+                                            <a class="btn btn-danger" href="/collegeStaffDashboard">Back</a>
                                         </div>
                                     </ul>
                                 </div>

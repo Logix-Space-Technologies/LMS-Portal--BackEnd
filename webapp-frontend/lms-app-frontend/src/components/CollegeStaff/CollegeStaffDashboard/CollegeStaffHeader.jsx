@@ -23,16 +23,25 @@ const CollegeStaffHeader = () => {
             }
         )
     }
+
+    const logOut = () => {
+        sessionStorage.removeItem("clgstaffkey");
+        sessionStorage.removeItem("clgStaffId");
+        sessionStorage.removeItem("clgStaffEmail");
+        sessionStorage.removeItem("clgstaffLogintoken");
+        sessionStorage.removeItem("clgStaffCollegeId");
+    }
+
     useEffect(() => { getData() }, [])
-  return (
-    <div>
-        <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-                        <a href="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
-                            <h2 className="text-primary mb-0">
-                                <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
-                        </a>
-                        <div className="navbar-nav align-items-center ms-auto">
-                            {/* <div className="nav-item dropdown">
+    return (
+        <div>
+            <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
+                <a href="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
+                    <h2 className="text-primary mb-0">
+                        <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
+                </a>
+                <div className="navbar-nav align-items-center ms-auto">
+                    {/* <div className="nav-item dropdown">
                                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                     <i className="fa fa-bell me-lg-2" />
                                     <span className="d-none d-lg-inline-flex">Notification</span>
@@ -56,21 +65,21 @@ const CollegeStaffHeader = () => {
                                     <a href="#" className="dropdown-item text-center">See all notifications</a>
                                 </div>
                             </div> */}
-                            <div className="nav-item dropdown">
-                                <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                                    <img className="rounded-circle me-lg-2" src={colgStaffData.profilePic} alt style={{ width: 40, height: 40 }} />
-                                    <span className="d-none d-lg-inline-flex">{colgStaffData.collegeStaffName}</span>
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                                    <a href="#" className="dropdown-item">Change Password</a>
-                                    <a href="/clgStafflogin" className="dropdown-item">Log Out</a>
-                                </div>
-                            </div>
+                    <div className="nav-item dropdown">
+                        <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <img className="rounded-circle me-lg-2" src={colgStaffData.profilePic} alt style={{ width: 40, height: 40 }} />
+                            <span className="d-none d-lg-inline-flex">{colgStaffData.collegeStaffName}</span>
+                        </a>
+                        <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                            <a href="/clgstaffchangepassword" className="dropdown-item">Change Password</a>
+                            <a href="/clgStafflogin" onClick={logOut} className="dropdown-item">Log Out</a>
                         </div>
-                    </nav>
+                    </div>
+                </div>
+            </nav>
 
-    </div>
-  )
+        </div>
+    )
 }
 
 export default CollegeStaffHeader
