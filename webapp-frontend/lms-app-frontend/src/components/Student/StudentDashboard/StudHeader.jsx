@@ -4,7 +4,13 @@ import '../../../config/config'
 
 const StudHeader = () => {
     const [studData, setStudData] = useState([])
+
+    const [sessionData, setSessionData] = useState([])
+
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/studentViewNextSessionDate"
+
     const apiURL = global.config.urls.api.server + "/api/lms/studentViewProfile"
+
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
         console.log(data)
@@ -23,12 +29,30 @@ const StudHeader = () => {
         )
     }
 
+    const getData2 = () =>{
+        let data2 = { "studId": sessionStorage.getItem("studentId"), "batchId": sessionStorage.getItem("studBatchId")}
+
+        let axiosConfig2 = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("studLoginToken")
+            }
+        }
+        axios.post(apiUrl2, data2, axiosConfig2).then(
+            (response)=>{
+                setSessionData(response.data.data)
+            }
+        )
+    }
+
     const logOut = () => {
         sessionStorage.removeItem("studentId")
         sessionStorage.removeItem("studLoginToken")
     }
 
     useEffect(() => { getData() }, [])
+    useEffect(() => {getData2() }, [])
     return (
         <div>
 
@@ -37,9 +61,15 @@ const StudHeader = () => {
                     <h2 className="text-primary mb-0">
                         <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
                 </a>
-                <div className="session-name">
-                    <p>next session</p>
-                </div>
+                {sessionData.map(
+                    (value,index)=>{
+                        return <div className="session-name">
+                        <p>Next Session: {new Date(value.date).toLocaleDateString()},{value.time}</p>
+                        
+                    </div>
+                    }
+                )}
+                
                 <div className="navbar-nav align-items-center ms-auto">
                     {/* <div className="nav-item dropdown">
                                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
