@@ -32,7 +32,7 @@ const StudentLogin = () => {
                     sessionStorage.setItem("studBatchId", batchId);
                     sessionStorage.setItem("studLoginToken", studtoken);
 
-                    navigate("/studentViewTask")
+                    navigate("/studentviewbatchincharge")
 
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {

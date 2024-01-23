@@ -34,6 +34,7 @@ import MaterialView from './components/Student/ViewBatchMaterials';
 import StudentViewRefundRequest from './components/Student/StudentViewRefundRequest';
 import CollegeStaffViewBatch from './components/CollegeStaff/CollegeStaffViewAllBatches';
 import CollegeStaffViewAllStudents from './components/CollegeStaff/CollegeStaffViewAllStudents'
+import StudentBatchInCharge from './components/Student/StudentBatchInCharge';
 
 
 
@@ -76,6 +77,7 @@ function App() {
           <Route path='/studViewRefundReq' element={<StudentViewRefundRequest/>} />
           <Route path='/collegeStaffViewBatch' element={<CollegeStaffViewBatch/>} />
           <Route path='/collegeStaffViewAllStudents' element={<CollegeStaffViewAllStudents/>} />
+          <Route path="/studentviewbatchincharge" element={<StudentBatchInCharge/>}/> 
 
 
 
