@@ -67,6 +67,7 @@ const MaterialView = () => {
                             <p className="card-text">Material Name: {material.materialName}</p>
                             <p className="card-text">Material Type: {material.materialType}</p>
                             <p className="card-text">Material Description: {material.materialDescription}</p>
+                            <a target="_blank" href={material.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
                           </div>
                         </div>
                       </div>
