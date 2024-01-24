@@ -7,6 +7,8 @@ const StudentViewRefundRequest = () => {
     const [loading, setLoading] = useState(true)
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewRefundStatus"
+    const apiUrl1 = global.config.urls.api.server + "/api/lms/cancelRefundRequest"
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/"
 
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
