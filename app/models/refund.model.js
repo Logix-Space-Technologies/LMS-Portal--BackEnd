@@ -145,7 +145,7 @@ Refund.viewRefundStatus = (studId, result) => {
 
         // Continue to fetch refund status if student ID exists
         db.query(
-            "SELECT s.studName, r.requestedDate, r.reason, r.approvedAmnt, r.refundInitiatedDate, r.refundApprovalStatus, r.refundStatus, r.transactionNo, r.AmountReceivedStatus, r.adminRemarks FROM refund r JOIN student s ON r.studId = s.id WHERE r.studId = ? AND r.cancelStatus = 0;",
+            "SELECT r.id AS refundId, s.id AS studId, s.studName, r.requestedDate, r.reason, r.approvedAmnt, r.refundInitiatedDate, CASE WHEN r.refundApprovalStatus = 0 THEN 'Not Approved' WHEN r.refundApprovalStatus = 1 THEN 'Approved' ELSE 'Unknown' END AS approvalStatus, CASE WHEN r.refundStatus = 0 THEN 'Pending' WHEN r.refundStatus = 1 THEN 'Processed' ELSE 'Unknown' END AS refundStatus, r.transactionNo, CASE WHEN r.AmountReceivedStatus = 1 THEN 'Received' WHEN r.AmountReceivedStatus = 0 THEN 'Not Received' ELSE 'Unknown' END AS AmountReceivedStatus, COALESCE(r.adminRemarks, 'Nil') AS adminRemarks FROM refund r JOIN student s ON r.studId = s.id WHERE r.cancelStatus = 0 AND r.studId = ?",
             [studId],
             (err, res) => {
                 if (err) {
