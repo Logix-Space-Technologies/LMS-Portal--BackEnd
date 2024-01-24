@@ -663,23 +663,31 @@ function generatePDF(data, callback) {
         if (groupedData.hasOwnProperty(batchName)) {
             // Batch heading
             doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name: ${batchName}`, {
-                align: 'left',
+                align: 'center',
                 underline: false,
-            }).font('Helvetica').fontSize(10);
+            }).font('Helvetica').fontSize(9);
             doc.text('\n');
 
             const students = groupedData[batchName];
 
             // Create table headers
-            const tableHeaders = ['Membership No', 'Name', 'College', 'Email', 'Dept', 'Course'];
-            const tableData = students.map(student => [student.membership_no, student.studName, student.collegeName, student.studEmail, student.studDept, student.course]);
+            const tableHeaders = [
+                { label: 'Membership No', padding: 5 },
+                { label: 'Name', padding: 0 },
+                { label: 'College', padding: 0 },
+                { label: 'Department', padding: 0 },
+                { label: 'Course', padding: 5 },
+                { label: 'Email', padding: 0 },
+            ];
+            const tableData = students.map(student => [student.membership_no, student.studName, student.collegeName, student.studDept, student.course, student.studEmail]);
 
+            const tableWidth = 1000;
             // Draw the table
             doc.table({
                 headers: tableHeaders,
                 rows: tableData,
-                widths: [200, 200, 200, 200],
-                align: ['left', 'left', 'left', 'left'],
+                widths: new Array(tableHeaders.length).fill(tableWidth),
+                align: ['left', 'left', 'left', 'left', 'left', 'left'],
             });
 
             doc.moveDown(); // Add a newline between batches
