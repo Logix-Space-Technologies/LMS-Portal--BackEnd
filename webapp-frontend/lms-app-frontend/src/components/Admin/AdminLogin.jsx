@@ -23,7 +23,7 @@ const AdminLogin = () => {
                     sessionStorage.setItem("admkey", admkey)
                     sessionStorage.setItem("admtoken", admtoken)
 
-                    navigate("/adminsearchadminstaff")
+                    navigate("/adminviewadstafflog")
 
                 }
                 else {
