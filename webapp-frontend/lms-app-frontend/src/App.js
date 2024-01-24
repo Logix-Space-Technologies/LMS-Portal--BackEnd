@@ -41,7 +41,9 @@ import CollegeStaffSearchStudent from './components/CollegeStaff/CollegeStaffSea
 import AdminSearchCurriculum from './components/Admin/AdminSearchCurriculum';
 import CollegeStaffSearchBatch from './components/CollegeStaff/CollegeStaffSearchBatch';
 import AdminSearchTasks from './components/Admin/AdminSearchTasks';
+import StudentViewTransaction from './components/Student/StudentViewTransaction';
 import AdminSearchAdminStaff from './components/Admin/AdminSearchAdminStaff';
+
 
 
 
@@ -92,6 +94,7 @@ function App() {
           <Route path='/adminsearchcurriculum' element={<AdminSearchCurriculum/>}/>
           <Route path='/colgstaffsearchbatch' element={<CollegeStaffSearchBatch/>} />
           <Route path='/adminsearchtask' element={<AdminSearchTasks/>}/>
+          <Route path='/studentviewtransaction' element={<StudentViewTransaction/>} />
           <Route path='/adminsearchadminstaff' element={<AdminSearchAdminStaff/>}/>
 
 
