@@ -301,7 +301,7 @@ Student.searchStudentByBatch = (searchKey, result) => {
                 return;
             } else {
                 // console.log("Students found: ", res);
-                let data=Object.values(JSON.parse(JSON.stringify(res)))
+                let data = Object.values(JSON.parse(JSON.stringify(res)))
                 result(null, data);
                 return;
             }
@@ -659,18 +659,18 @@ SubmitTask.viewEvaluatedTasks = (studId, result) => {
 
 
 
-Student.refundAmountReceivedStatus = (studId, token, result) => {
+Student.refundAmountReceivedStatus = (studId, result) => {
     const checkRefundQuery = 'SELECT * FROM refund WHERE studId = ? AND refundApprovalStatus = 1 AND cancelStatus = 0';
 
     db.query(checkRefundQuery, [studId], (err, res) => {
         if (err) {
-            console.error('Error checking refund status:', err);
+            console.error("Error checking refund status:", err);
             result(err, null);
             return;
         }
 
         if (res.length === 0) {
-            result({ status: 'No eligible refund request found.' }, null);
+            result("No eligible refund request found.", null);
             return;
         }
 
@@ -680,12 +680,12 @@ Student.refundAmountReceivedStatus = (studId, token, result) => {
 
         db.query(updateQuery, [refundId], (updateErr, updateRes) => {
             if (updateErr) {
-                console.error('Error updating refund status:', updateErr);
+                console.error("Error updating refund status:", updateErr);
                 result(updateErr, null);
                 return;
             }
 
-            result(null, { status: 'Successfully updated refund amount received status' });
+            result(null, null);
         });
     });
 };
@@ -848,7 +848,7 @@ Student.studentNotificationView = (studId, result) => {
         }
     });
 };
-  
+
 
 
 
