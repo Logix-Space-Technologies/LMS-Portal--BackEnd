@@ -33,6 +33,9 @@ const CollegeStaffLogin = () => {
                     sessionStorage.setItem("clgStaffCollegeId", clgStaffCollegeId)
                     navigate("/colgstaffsearchstudent")
 
+
+                    navigate("/clgstaffviewattendance");
+
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.email) {
                         alert(response.data.data.email);
