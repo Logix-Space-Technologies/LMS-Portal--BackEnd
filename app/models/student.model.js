@@ -53,7 +53,21 @@ const SubmitTask = function (submitTask) {
 
 };
 
+const Session = function (session) {
+    this.id = session.id;
+    this.batchId = session.batchId;
+    this.sessionName = session.sessionName;
+    this.date = session.date;
+    this.time = session.time;
+    this.type = session.type;
+    this.remarks = session.remarks;
+    this.venueORlink = session.venueORlink;
+    this.trainerId = session.trainerId;
+    this.attendenceCode = session.attendenceCode;
+};
+
 let payStudId;
+
 
 
 Student.create = (newStudent, result) => {
@@ -287,7 +301,7 @@ Student.searchStudentByBatch = (searchKey, result) => {
                 return;
             } else {
                 // console.log("Students found: ", res);
-                let data=Object.values(JSON.parse(JSON.stringify(res)))
+                let data = Object.values(JSON.parse(JSON.stringify(res)))
                 result(null, data);
                 return;
             }
@@ -392,21 +406,21 @@ Student.StdChangePassword = (student, result) => {
                     } else {
                         // Assuming logStudent function takes student ID as the first parameter
                         logStudent(id, "password changed");
-                        result(null, { "status": "Password Updated Successfully." });
+                        result(null, null);
                     }
                 });
             } else {
-                result(null, { status: "Incorrect Old Password!!" });
+                result("Incorrect Old Password!!", null);
             }
         } else {
-            result(null, { status: "No Student Found" });
+            result("No Student Found", null);
         }
     });
 };
 
 
 Student.viewStudentProfile = (studId, result) => {
-    db.query("SELECT collegeId,batchId,membership_no,studName,admNo,studDept,course,studEmail,studPhNo,studProfilePic,aadharNo,addedDate,validity FROM student WHERE deleteStatus=0 AND isActive=1 AND id=?", [studId],
+    db.query("SELECT c.collegeName, s.batchId, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.validity FROM student s LEFT JOIN college c ON s.collegeId = c.id WHERE s.deleteStatus=0 AND s.isActive=1 AND s.isVerified = 1 AND s.id = ?", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -423,8 +437,8 @@ Student.viewStudentProfile = (studId, result) => {
 
 Student.updateStudentProfile = (student, result) => {
 
-    db.query("SELECT * FROM college WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-        [student.collegeId],
+    db.query("SELECT * FROM college c JOIN student s ON s.collegeId = c.id WHERE s.id = ? AND c.deleteStatus = 0 AND c.isActive = 1",
+        [student.id],
         (collegeErr, collegeRes) => {
             if (collegeErr) {
                 console.error("Error checking college: ", collegeErr);
@@ -435,8 +449,8 @@ Student.updateStudentProfile = (student, result) => {
                 return result("college does not exist or is inactive/deleted.", null);
             }
 
-            db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-                [student.batchId],
+            db.query("SELECT * FROM batches b JOIN student s ON s.batchId = b.id WHERE s.id = ?  AND b.deleteStatus = 0 AND b.isActive = 1",
+                [student.id],
                 (batchErr, batchRes) => {
                     if (batchErr) {
                         console.error("Error checking batch: ", batchErr);
@@ -592,10 +606,10 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
                                 return;
                             }
 
-                            result("Submission saved successfully.", null);
+                            result(null, null);
                         });
                     } else {
-                        result("Submission saved successfully.", null);
+                        result(null, null);
                     }
                 });
             });
@@ -645,18 +659,18 @@ SubmitTask.viewEvaluatedTasks = (studId, result) => {
 
 
 
-Student.refundAmountReceivedStatus = (studId, token, result) => {
+Student.refundAmountReceivedStatus = (studId, result) => {
     const checkRefundQuery = 'SELECT * FROM refund WHERE studId = ? AND refundApprovalStatus = 1 AND cancelStatus = 0';
 
     db.query(checkRefundQuery, [studId], (err, res) => {
         if (err) {
-            console.error('Error checking refund status:', err);
+            console.error("Error checking refund status:", err);
             result(err, null);
             return;
         }
 
         if (res.length === 0) {
-            result({ status: 'No eligible refund request found.' }, null);
+            result("No eligible refund request found.", null);
             return;
         }
 
@@ -666,12 +680,12 @@ Student.refundAmountReceivedStatus = (studId, token, result) => {
 
         db.query(updateQuery, [refundId], (updateErr, updateRes) => {
             if (updateErr) {
-                console.error('Error updating refund status:', updateErr);
+                console.error("Error updating refund status:", updateErr);
                 result(updateErr, null);
                 return;
             }
 
-            result(null, { status: 'Successfully updated refund amount received status' });
+            result(null, null);
         });
     });
 };
@@ -736,7 +750,7 @@ Student.searchStudentsByAdmAndAdmstf = (search, result) => {
 
 Student.viewBatch = (collegeId, result) => {
     db.query(
-        "SELECT DISTINCT b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.id = ?",
+        "SELECT DISTINCT  b.batchName, b.regStartDate, b.id, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.id = ?",
         [collegeId],
         (err, res) => {
             if (err) {
@@ -834,7 +848,7 @@ Student.studentNotificationView = (studId, result) => {
         }
     });
 };
-  
+
 
 
 
@@ -857,5 +871,58 @@ Student.viewSession = (batchId, result) => {
 };
 
 
-module.exports = { Student, Payment, Tasks, SubmitTask };
+Student.viewBatchAmount = (collegeId, batchId, result) => {
+    db.query(
+        "SELECT b.batchAmount FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.id = ? AND b.id = ?",
+        [collegeId, batchId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Batch Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
+
+Payment.viewStudentTransactions = (studId, result) => {
+    db.query(
+        "SELECT s.studName, p.* " +
+        "FROM payment p " +
+        "JOIN student s ON p.studId = s.id " +
+        "WHERE p.studId = ? AND s.deleteStatus = 0 AND s.isActive = 1",
+        [studId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Payment Details: ", res);
+                result(null, res);
+            }
+        }
+    );
+};
+
+Session.studViewNextSessionDate = (batchId, result) =>{
+    db.query("SELECT date, time, sessionName FROM sessiondetails WHERE  batchId = ? AND date >= CURRENT_DATE ORDER BY date, time DESC LIMIT 1", [batchId],
+    (err, res) => {
+        if (err) {
+            console.log("error", err)
+            return result(err, null)
+        } else {
+            console.log("Next Session", res)
+            return result(null, res)
+        }
+    })
+}
+
+
+
+
+module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 

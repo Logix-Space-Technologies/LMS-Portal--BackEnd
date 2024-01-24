@@ -1,7 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import '../../config/config'
+import { useNavigate } from 'react-router-dom';
 
 const StudentLogin = () => {
     const [inputField, setInputField] = useState({
@@ -10,7 +11,7 @@ const StudentLogin = () => {
     });
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studentLogin"
-    // const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
@@ -19,12 +20,22 @@ const StudentLogin = () => {
     const readValue = () => {
         axios.post(apiUrl, inputField).then(
             (Response) => {
-                if (Response.data.status === "success") {
+                if (Response.data.status === "Success") {
                     let studtoken = Response.data.token;
+                    let studId = Response.data.data.id;
+                    let studemail = Response.data.data.studEmail;
+                    let batchId = Response.data.data.batchId;
+                    let key = "lmsappstud"
+                    sessionStorage.setItem("studentkey", key);
+                    sessionStorage.setItem("studentId", studId);
+                    sessionStorage.setItem("studemail", studemail);
+                    sessionStorage.setItem("studBatchId", batchId);
                     sessionStorage.setItem("studLoginToken", studtoken);
-                    alert(Response.data.status);
-                    // You may navigate to the student dashboard or another page here
-                    // Example: navigate('/student-dashboard');
+
+
+                    navigate("/studMaterialView")
+
+
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)

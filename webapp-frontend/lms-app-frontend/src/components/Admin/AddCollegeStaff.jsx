@@ -10,13 +10,13 @@ const AddCollegeStaff = () => {
     "department": "",
     "clgStaffAddress": "",
     "email": "",
-     "phNo": "",
+    "phNo": "",
     "aadharNo": "",
     "password": "",
     "confirmpassword": "",
   })
 
-  const [file, setFile] = useState("")
+  const [file, setFile] = useState(null)
 
   const fileUploadHandler = (event) => {
     setFile(event.target.files[0])
@@ -31,10 +31,19 @@ const AddCollegeStaff = () => {
 
 
   const getData = () => {
-    let data = { "token": sessionStorage.getItem("admtoken"), "key": "lmsapp" }
-    axios.post(apiUrl2, data).then(
+    let axiosConfig = {
+      headers: {
+        'content-type': 'multipart/form-data',
+        "Access-Control-Allow-Origin": "*",
+        "token": sessionStorage.getItem("admtoken"),
+        "key": sessionStorage.getItem("admkey")
+      }
+    };
+    axios.post(apiUrl2, {}, axiosConfig).then(
       (response) => {
+        // console.log(axiosConfig)
         setOutputField(response.data.data)
+        // console.log(response.data.data)
       }
     )
   }
@@ -47,6 +56,7 @@ const AddCollegeStaff = () => {
 
 
   const readValue = (e) => {
+    console.log(inputField)
     e.preventDefault();
     console.log('Handle submit function called');
     const validationErrors = validateForm(inputField);
@@ -57,7 +67,7 @@ const AddCollegeStaff = () => {
           'content-type': 'multipart/form-data',
           "Access-Control-Allow-Origin": "*",
           "token": sessionStorage.getItem("admtoken"),
-          "key": "lmsapp"
+          "key": sessionStorage.getItem("admkey")
         }
       };
       let data = {
@@ -73,6 +83,10 @@ const AddCollegeStaff = () => {
         "profilePic": file
       }
       console.log(data)
+
+      if (file) {
+        data.profilePic = file;
+      }
       axios.post(apiUrl, data, axiosConfig).then(
         (response) => {
           console.log(inputField)
@@ -85,18 +99,46 @@ const AddCollegeStaff = () => {
               "department": "",
               "clgStaffAddress": "",
               "email": "",
-               "phNo": "",
+              "phNo": "",
               "aadharNo": "",
               "password": "",
               "confirmpassword": ""
             })
+            setFile(null)
           } else {
-            if (response.data.status === "Validation failed" ) {
-              alert(response.data.data)
+            if (response.data.status === "Validation failed" && response.data.data.profile) {
+              alert(response.data.data.profile)
             } else {
-              alert(response.data.status)
+              if (response.data.status === "Validation failed" && response.data.data.name) {
+                alert(response.data.data.name)
+              } else {
+                if (response.data.status === "Validation failed" && response.data.data.address) {
+                  alert(response.data.data.address)
+                } else {
+                  if (response.data.status === "Validation failed" && response.data.data.department) {
+                    alert(response.data.data.department)
+                  } else {
+                    if (response.data.status === "Validation failed" && response.data.data.email) {
+                      alert(response.data.data.email)
+                    } else {
+                      if (response.data.status === "Validation failed" && response.data.data.phone) {
+                        alert(response.data.data.phone)
+                      } else {
+                        if (response.data.status === "Validation failed" && response.data.data.aadharNo) {
+                          alert(response.data.data.aadharNo)
+                        } else {
+                          if (response.data.status === "Validation failed" && response.data.data.password) {
+                            alert(response.data.data.password)
+                          } else {
+                            alert(response.data.status)
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
-
           }
         }
       )
@@ -125,8 +167,9 @@ const AddCollegeStaff = () => {
     }
     if (!data.confirmpassword) {
       errors.confirmpassword = 'Confirm password is required';
+
     }
-    if (!data.profilePic) {
+    if (!file) {
       errors.profilePic = 'Profile Image is required';
     }
     if (!data.phNo.trim()) {
@@ -155,7 +198,9 @@ const AddCollegeStaff = () => {
     }
 
     if (data.confirmpassword !== data.password) {
-      errors.confirmPassword = 'Passwords do not match';
+      console.log(data.password)
+      console.log(data.confirmpassword)
+      errors.confirmpassword = 'Passwords do not match';
     }
     return errors;
   };
@@ -268,3 +313,6 @@ const AddCollegeStaff = () => {
 }
 
 export default AddCollegeStaff
+
+
+

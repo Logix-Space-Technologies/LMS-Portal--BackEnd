@@ -102,7 +102,7 @@ Material.updateMaterial = (materialUpdate, result) => {
                         return;
                     } else {
                         // Update material details
-                        db.query("UPDATE materials SET fileName = ?, materialDesc = ?, uploadFile = ?, remarks = ?, batchId = ?, updatedDate = CURRENT_DATE(), updatedStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+                        db.query("UPDATE materials SET fileName = ?, materialDesc = ?, uploadFile = ?, remarks = ?, batchId = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
                             [materialUpdate.fileName, materialUpdate.materialDesc, materialUpdate.uploadFile, materialUpdate.remarks, materialUpdate.batchId, materialUpdate.id],
                             (err, res) => {
                                 if (err) {
@@ -118,6 +118,26 @@ Material.updateMaterial = (materialUpdate, result) => {
         }
     });
 };
+
+Material.viewBatchMaterials = (batchId, result) => {
+    db.query("SELECT b.batchName,m.* FROM materials m JOIN batches b ON m.batchId = b.id WHERE m.batchId = ? AND m.deleteStatus = 0 AND m.isActive = 1", [batchId], (err, res) => {
+        if (err) {
+            console.error("Error viewing batch materials: ", err);
+            result(err, null);
+            return;
+        }
+        if (res.length === 0) {
+            console.log("No materials found for batchId: ", batchId);
+            result("No materials found for batchId: ", batchId);
+            return;
+        } else {
+            console.log("Batch Materials: ", res);
+            result(null, res);
+            return;
+        }
+    });
+};
+
 
 
 module.exports = Material

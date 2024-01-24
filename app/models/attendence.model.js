@@ -70,5 +70,17 @@ Attendence.collegeStaffViewAttendance = (collegeId, result) => {
     });
 };
 
+Attendence.studentViewAttendance = (studentId, result) => {
+    db.query("SELECT sd.sessionName, sd.date, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendence_status FROM attendence a JOIN sessiondetails sd ON a.sessionId = sd.id JOIN student s ON s.id = a.studId WHERE sd.cancelStatus = 0 AND s.id = ? AND sd.date<=CURRENT_DATE()", [studentId], (err, res) => {
+        if (err) {
+            console.log("error:", err);
+            result(err, null);
+            return;
+        }
+        console.log("attendance:", res);
+        result(null, res);
+    });
+};
+
 
 module.exports = Attendence;

@@ -1,45 +1,79 @@
-import axios from 'axios';
+import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../../config/config'
 
-const CollegeStaffHeader = () => {
-    const [colgStaffData, setColgStaffData] = useState({});
-    const apiURL = global.config.urls.api.server + "/api/lms/profileViewByCollegeStaff";
+const StudHeader = () => {
+    const [studData, setStudData] = useState([])
+
+    const [sessionData, setSessionData] = useState([])
+
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/studentViewNextSessionDate"
+
+    const apiURL = global.config.urls.api.server + "/api/lms/studentViewProfile"
+
     const getData = () => {
-        let data = { "id": sessionStorage.getItem("clgStaffId") };
+        let data = { "studId": sessionStorage.getItem("studentId") }
         console.log(data)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("clgstaffLogintoken"),
-                "key": sessionStorage.getItem("clgstaffkey")
+                "token": sessionStorage.getItem("studLoginToken")
             }
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setColgStaffData(response.data.data);
-                console.log(response.data.data);
+                setStudData(response.data.data)
+                console.log(response.data.data)
             }
         )
     }
 
-    const logOut = () => {
-        sessionStorage.removeItem("clgstaffkey");
-        sessionStorage.removeItem("clgStaffId");
-        sessionStorage.removeItem("clgStaffEmail");
-        sessionStorage.removeItem("clgstaffLogintoken");
-        sessionStorage.removeItem("clgStaffCollegeId");
+
+    const getData2 = () =>{
+        let data2 = { "studId": sessionStorage.getItem("studentId"), "batchId": sessionStorage.getItem("studBatchId")}
+
+        let axiosConfig2 = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("studLoginToken")
+            }
+        }
+        axios.post(apiUrl2, data2, axiosConfig2).then(
+            (response)=>{
+                setSessionData(response.data.data)
+            }
+        )
+    }
+
+    const logOut =()=>{
+        sessionStorage.removeItem("studentkey");
+        sessionStorage.removeItem("studentId");
+        sessionStorage.removeItem("studemail");
+        sessionStorage.removeItem("studBatchId");
+        sessionStorage.removeItem("studLoginToken");
     }
 
     useEffect(() => { getData() }, [])
+    useEffect(() => {getData2() }, [])
     return (
         <div>
+
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
                 <a href="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
                     <h2 className="text-primary mb-0">
                         <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
                 </a>
+                {sessionData.map(
+                    (value,index)=>{
+                        return <div className="session-name">
+                        <p>Next Session: {new Date(value.date).toLocaleDateString()},{value.time}</p>
+                        
+                    </div>
+                    }
+                )}
+                
                 <div className="navbar-nav align-items-center ms-auto">
                     {/* <div className="nav-item dropdown">
                                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
@@ -66,20 +100,22 @@ const CollegeStaffHeader = () => {
                                 </div>
                             </div> */}
                     <div className="nav-item dropdown">
-                        <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img className="rounded-circle me-lg-2" src={colgStaffData.profilePic} alt style={{ width: 40, height: 40 }} />
-                            <span className="d-none d-lg-inline-flex">{colgStaffData.collegeStaffName}</span>
-                        </a>
+                        {studData.map((value, index) => {
+                            return <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                <img className="rounded-circle me-lg-2" src={value.studProfilePic} alt style={{ width: 40, height: 40 }} />
+                                <span className="d-none d-lg-inline-flex">{value.studName}</span>
+                            </a>
+                        })}
                         <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="/clgstaffchangepassword" className="dropdown-item">Change Password</a>
-                            <a href="/clgStafflogin" onClick={logOut} className="dropdown-item">Log Out</a>
+                            <a href="/studChangePassword" className="dropdown-item">Change Password</a>
+                            <a onClick={logOut} href="/studentLogin" className="dropdown-item">Log Out</a>
                         </div>
+
                     </div>
                 </div>
             </nav>
-
         </div>
     )
 }
 
-export default CollegeStaffHeader
+export default StudHeader

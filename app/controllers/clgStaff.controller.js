@@ -545,19 +545,8 @@ exports.collegeStaffChangePassword = (request, response) => {
       if (err) {
         response.json({ "status": err });
         return;
-      }
-
-      if (oldPassword === newPassword) {
-        response.json({ "status": "Old password and new password cannot be the same." });
-        return;
-      }
-
-      if (data.status === "Incorrect Old Password!!") {
-        response.json({ "status": "Incorrect Old Password!!" });
-      } else if (data.status === "No college staff Found") {
-        response.json({ "status": "User Not Found!!!" });
       } else {
-        response.json({ "status": "Password Updated Successfully." });
+        response.json({ "status": "success" });
       }
     });
   });
@@ -591,9 +580,6 @@ exports.clgStaffViewTask = (request, response) => {
   const clgStaffViewTaskToken = request.headers.token
   jwt.verify(clgStaffViewTaskToken, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
-
-
-      //Assuming that we have task id in the request params body
       const collegeId = request.body.collegeId
       CollegeStaff.viewTask(collegeId, (err, data) => {
         if (err) {
@@ -708,3 +694,36 @@ exports.viewCollegeStaffProfile = (request, response) => {
     });
   });
 };
+
+exports.viewCollegeStaffOfStudent = (request, response) => {
+  const { studId } = request.body;
+  const clgStaffOfStudentToken = request.headers.token
+
+  if (!studId) {
+    return response.json({ "status": "Invalid student ID" });
+  }
+
+  if (!clgStaffOfStudentToken) {
+    return response.json({ "status": "Token is required." });
+  }
+
+  jwt.verify(clgStaffOfStudentToken, "lmsappstud", (err, decoded) => {
+    if (err) {
+      console.error("Token verification failed:", err);
+      return response.json({ "status": "Invalid or expired token." });
+    }
+
+    if (!decoded) {
+      return response.json({ "status": "Unauthorized Access !!!" });
+    }
+
+    CollegeStaff.viewCollegeStaffOfStudent(studId, (err, data) => {
+      if (err) {
+        console.error("Error while fetching profile:", err);
+        return response.json({ "status": err });
+      }
+
+      response.json({ "status": "success", "data": data });
+    });
+  });
+}

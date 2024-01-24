@@ -6,9 +6,6 @@ const Validator = require("../config/data.validate");
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 const fs = require('fs');
-const { request } = require("http");
-const { response } = require("express");
-const { error } = require("console");
 require('dotenv').config({ path: '../../.env' });
 
 // AWS S3 Client Configuration
@@ -35,12 +32,13 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage: storage, limits: { fileSize: 2 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('*/*')) {
+        // Allow only PDF and DOCX files
+        if (file.mimetype === 'application/pdf' || file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
             cb(null, true);
         } else {
-            cb(new Error('File Should Be Uploaded'), false);
+            cb(new Error('Only PDF and DOCX files are allowed!'), false);
         }
-    },
+    }
 });
 exports.createMaterial = (request, response) => {
 
@@ -178,6 +176,7 @@ exports.updateMaterial = (request, response) => {
             const fileUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
 
             // Remove the file from local storage
+            fs.unlinkSync(file.path);
             const materialUpdateToken = request.headers.token
             const { batchId, fileName, materialDesc, remarks } = request.body
 
@@ -246,3 +245,26 @@ exports.updateMaterial = (request, response) => {
         }
     })
 }
+
+exports.viewBatchMaterials = (request, response) => {
+    const batchId = request.body.batchId;
+    const batchMaterialToken = request.headers.token;
+
+    jwt.verify(batchMaterialToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Material.viewBatchMaterials(batchId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No Materials Found" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};

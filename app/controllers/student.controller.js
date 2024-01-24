@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const { Student, Payment, Tasks, SubmitTask } = require("../models/student.model");
+const { Student, Payment, Tasks, SubmitTask, Session } = require("../models/student.model");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -10,7 +10,8 @@ const mail = require('../../sendEmail');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 require('dotenv').config({ path: '../../.env' });
-const path = require("path")
+const path = require("path");
+// const { Session } = require("inspector");
 
 // AWS S3 Client Configuration
 const s3Client = new S3Client({
@@ -272,18 +273,8 @@ exports.StdChangePassword = (request, response) => {
             if (err) {
                 response.json({ "status": err });
                 return;
-            }
-            if (oldPassword === newPassword) {
-                response.json({ "status": "Old password and new password cannot be same." });
-                return;
-            }
-
-            if (data.status === "Incorrect Old Password!!") {
-                response.json({ "status": "Incorrect Old Password!!" });
-            } else if (data.status === "No Student Found") {
-                response.json({ "status": "User Not Found!!!" });
             } else {
-                response.json({ "status": "Password Updated Successfully." });
+                return response.json({ "status": "success" });
             }
         });
     });
@@ -339,89 +330,87 @@ exports.profileUpdateStudent = (request, response) => {
             const updateProfileToken = request.headers.token
             const studProfilePic = imageUrl;
             jwt.verify(updateProfileToken, "lmsappstud", (err, decoded) => {
-                        if (decoded) {
-                            // Validation
-                            const validationErrors = {};
-            
-                            if (Validator.isEmpty(studName).isValid) {
-                                validationErrors.studName = Validator.isEmpty(studName).message;
+                if (decoded) {
+                    // Validation
+                    const validationErrors = {};
+
+                    if (Validator.isEmpty(studName).isValid) {
+                        validationErrors.studName = Validator.isEmpty(studName).message;
+                    }
+
+                    if (!Validator.isValidName(studName).isValid) {
+                        validationErrors.studName = Validator.isValidName(studName).message;
+                    }
+
+                    if (Validator.isEmpty(admNo).isValid) {
+                        validationErrors.admNo = Validator.isEmpty(admNo).message;
+                    }
+
+                    if (Validator.isEmpty(rollNo).isValid) {
+                        validationErrors.rollNo = Validator.isEmpty(rollNo).message;
+                    }
+
+                    if (Validator.isEmpty(studDept).isValid) {
+                        validationErrors.studDept = Validator.isEmpty(studDept).message;
+                    }
+
+                    if (Validator.isEmpty(course).isValid) {
+                        validationErrors.course = Validator.isEmpty(course).message;
+                    }
+
+                    if (Validator.isEmpty(aadharNo).isValid) {
+                        validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
+                    }
+
+                    if (!Validator.isValidAadharNumber(aadharNo).isValid) {
+                        validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
+                    }
+
+                    if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+                        validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
+                    }
+
+
+                    if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+                        validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+                    }
+
+
+                    // If validation fails
+                    if (Object.keys(validationErrors).length > 0) {
+                        return response.json({ "status": "Validation failed", "data": validationErrors });
+                    }
+
+
+                    const newStudent = new Student({
+                        'id': request.body.id,
+                        studName: studName,
+                        admNo: admNo,
+                        rollNo: rollNo,
+                        studDept: studDept,
+                        course: course,
+                        studPhNo: studPhNo,
+                        studProfilePic: studProfilePic,
+                        aadharNo: aadharNo
+                    });
+
+                    Student.updateStudentProfile(newStudent, (err, data) => {
+                        if (err) {
+                            if (err.kind === "not_found") {
+                                return response.json({ "status": "Student with provided Id and batchId is not found." });
+                            } else {
+                                return response.json({ "status": err });
                             }
-            
-                            if (!Validator.isValidName(studName).isValid) {
-                                validationErrors.studName = Validator.isValidName(studName).message;
-                            }
-            
-                            if (Validator.isEmpty(admNo).isValid) {
-                                validationErrors.admNo = Validator.isEmpty(admNo).message;
-                            }
-            
-                            if (Validator.isEmpty(rollNo).isValid) {
-                                validationErrors.rollNo = Validator.isEmpty(rollNo).message;
-                            }
-            
-                            if (Validator.isEmpty(studDept).isValid) {
-                                validationErrors.studDept = Validator.isEmpty(studDept).message;
-                            }
-            
-                            if (Validator.isEmpty(course).isValid) {
-                                validationErrors.course = Validator.isEmpty(course).message;
-                            }
-            
-                            if (Validator.isEmpty(aadharNo).isValid) {
-                                validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
-                            }
-            
-                            if (!Validator.isValidAadharNumber(aadharNo).isValid) {
-                                validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
-                            }
-            
-                            if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
-                                validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
-                            }
-            
-            
-                            if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
-                                validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
-                            }
-            
-            
-                            // If validation fails
-                            if (Object.keys(validationErrors).length > 0) {
-                                return response.json({ "status": "Validation failed", "data": validationErrors });
-                            }
-            
-            
-                            const newStudent = new Student({
-                                'id': request.body.id,
-                                collegeId: request.body.collegeId,
-                                batchId: request.body.batchId,
-                                studName: studName,
-                                admNo: admNo,
-                                rollNo: rollNo,
-                                studDept: studDept,
-                                course: course,
-                                studPhNo: studPhNo,
-                                studProfilePic: studProfilePic,
-                                aadharNo: aadharNo
-                            });
-            
-                            Student.updateStudentProfile(newStudent, (err, data) => {
-                                if (err) {
-                                    if (err.kind === "not_found") {
-                                        return response.json({ "status": "Student with provided Id and batchId is not found." });
-                                    } else {
-                                        return response.json({ "status": err });
-                                    }
-                                } else {
-                                    response.json({ "status": "success", "data": data });
-                                }
-                            })
-            
                         } else {
-                            response.json({ "status": "Unauthorized User!!" });
+                            response.json({ "status": "success", "data": data });
                         }
                     })
-            
+
+                } else {
+                    response.json({ "status": "Unauthorized User!!" });
+                }
+            })
+
 
         } catch (err) {
             fs.unlinkSync(file.path);
@@ -502,9 +491,9 @@ exports.taskSubmissionByStudent = (request, response) => {
         Student.taskSubmissionByStudent(submissionData, (err, data) => {
             if (err) {
                 return response.json({ "status": err });
+            } else {
+                return response.json({ "status": "success" });
             }
-
-            return response.json({ "status": "success", "data": data });
         });
     });
 
@@ -542,13 +531,15 @@ exports.refundAmountReceivedStatus = (request, response) => {
             return;
         }
 
-        Student.refundAmountReceivedStatus(studId, token, (err) => {
+        Student.refundAmountReceivedStatus(studId, (err, data) => {
             if (err) {
                 console.log(err);
-                response.json({ "status": err.status });
+                response.json({ "status": err });
+                return;
             } else {
                 console.log('Refund amount received status successfully updated');
-                response.json({ "status": 'success, Refund amount received status successfully updated' });
+                response.json({ "status": "success" });
+                return
             }
         });
     });
@@ -623,15 +614,24 @@ exports.generateListOfBatchWiseStudents = (request, response) => {
         if (decoded) {
             Student.generateAllBatchWiseList((err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     generatePDF(data, (pdfPath) => {
-                        response.json({ "status": "success", "data": data, "pdfPath": pdfPath });
+                        response.setHeader('Content-Type', 'application/pdf');
+                        response.setHeader('Content-Disposition', 'attachment; filename=batch_wise_students_list.pdf');
+                        fs.createReadStream(pdfPath).pipe(response);
+
+                        // Delete the generated PDF after sending it
+                        fs.unlink(pdfPath, (unlinkError) => {
+                            if (unlinkError) {
+                                console.error("Error deleting PDF:", unlinkError);
+                            }
+                        });
                     });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 }
@@ -663,23 +663,31 @@ function generatePDF(data, callback) {
         if (groupedData.hasOwnProperty(batchName)) {
             // Batch heading
             doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name: ${batchName}`, {
-                align: 'left',
+                align: 'center',
                 underline: false,
-            }).font('Helvetica').fontSize(10);
+            }).font('Helvetica').fontSize(9);
             doc.text('\n');
 
             const students = groupedData[batchName];
 
             // Create table headers
-            const tableHeaders = ['Membership No', 'Name', 'College', 'Email', 'Dept', 'Course'];
-            const tableData = students.map(student => [student.membership_no, student.studName, student.collegeName, student.studEmail, student.studDept, student.course]);
+            const tableHeaders = [
+                { label: 'Membership No', padding: 5 },
+                { label: 'Name', padding: 0 },
+                { label: 'College', padding: 0 },
+                { label: 'Department', padding: 0 },
+                { label: 'Course', padding: 5 },
+                { label: 'Email', padding: 0 },
+            ];
+            const tableData = students.map(student => [student.membership_no, student.studName, student.collegeName, student.studDept, student.course, student.studEmail]);
 
+            const tableWidth = 1000;
             // Draw the table
             doc.table({
                 headers: tableHeaders,
                 rows: tableData,
-                widths: [200, 200, 200, 200],
-                align: ['left', 'left', 'left', 'left'],
+                widths: new Array(tableHeaders.length).fill(tableWidth),
+                align: ['left', 'left', 'left', 'left', 'left', 'left'],
             });
 
             doc.moveDown(); // Add a newline between batches
@@ -742,13 +750,12 @@ exports.studentNotificationView = (request, response) => {
 };
 
 
-//student view session details
-exports.studRegViewSession = (request, response) => {
+//Student view session details
+exports.studViewSession = (request, response) => {
     const viewSessionToken = request.headers.token;
-    const key = request.headers.key;
-    jwt.verify(viewSessionToken, key, (error, decoded) => {
+    jwt.verify(viewSessionToken, "lmsappstud", (error, decoded) => {
         if (decoded) {
-            const batchId = request.body.id;
+            const batchId = request.body.batchId;
             Student.viewSession(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
@@ -765,3 +772,67 @@ exports.studRegViewSession = (request, response) => {
     });
 };
 
+
+exports.studRegViewBatchAmount = (request, response) => {
+    const collegeId = request.body.collegeId;
+    const batchId = request.body.batchId;
+    Student.viewBatchAmount(collegeId, batchId, (err, data) => {
+        if (err) {
+            response.json({ "status": err });
+        }
+        if (data.length === 0) {
+            response.json({ "status": "No Batch found!" });
+        } else {
+            response.json({ "status": "success", "data": data });
+        }
+    });
+
+};
+
+exports.studentViewPaymentTransactions = (request, response) => {
+    const studId = request.body.studId;
+    const studToken = request.headers.token;
+
+    jwt.verify(studToken, "lmsappstud", (err, decoded) => {
+        if (err) {
+            response.json({ "status": "Unauthorized User" });
+        } else {
+            Payment.viewStudentTransactions(studId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.status) {
+                        response.json({ "status": data.status });
+                    } else if (data.length === 0) {
+                        response.json({ "status": "No payment transactions found!" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        }
+    });
+}
+
+
+exports.studentViewNextSession = (request, response) => {
+    const studToken = request.headers.token;
+
+    jwt.verify(studToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            const batchId = request.body.batchId;
+            Session.studViewNextSessionDate(batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No Session found!" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};

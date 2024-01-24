@@ -242,14 +242,14 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
                         console.log("Error : ", updateErr);
                         result(updateErr, null);
                     } else {
-                        result(null, { "status": "Password Updated Successfully." });
+                        result(null, null);
                     }
                 });
             } else {
-                result(null, { status: "Incorrect Old Password!!" });
+                result("Incorrect Old Password!!", null);
             }
         } else {
-            result(null, { status: "College staff not found" });
+            result("College staff not found", null);
         }
     });
 };
@@ -276,7 +276,7 @@ CollegeStaff.viewStudent = (collegeId, result) => {
 };
 
 CollegeStaff.viewTask=(collegeId,result)=>{
-    db.query( "SELECT DISTINCT cs.collegeId, t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, t.addedDate FROM task t JOIN batches b ON t.batchId = b.id JOIN college_staff cs ON b.collegeId = cs.collegeId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.collegeId = 1",[collegeId],(err,res)=>{
+    db.query("SELECT DISTINCT cs.collegeId, t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, CASE WHEN t.dueDate < CURRENT_DATE() THEN 'Past Due Date' ELSE t.dueDate END AS dueDate, t.addedDate FROM task t JOIN batches b ON t.batchId = b.id JOIN college_staff cs ON b.collegeId = cs.collegeId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.collegeId = ?;",[collegeId],(err,res)=>{
         if(err){
             console.log("error: ",err)
             result(err,null)
@@ -372,6 +372,30 @@ CollegeStaff.viewCollegeStaffProfile = (id, result) => {
         result(res.length ? null : "College staff profile not found", res[0]);
     });
 };
+
+CollegeStaff.viewCollegeStaffOfStudent = (studentId, result) => {
+    if (!studentId) {
+        return result("Invalid student ID");
+    }
+
+    const query = `
+        SELECT cs.collegeStaffName, cs.email, cs.phNo, cs.aadharNo, cs.clgStaffAddress, cs.profilePic, cs.department,
+               c.collegeName
+        FROM student s
+        INNER JOIN college_staff cs ON s.collegeId = cs.collegeId
+        INNER JOIN college c ON s.collegeId = c.id
+        WHERE s.id = ?;
+    `;
+
+    db.query(query, [studentId], (err, res) => {
+        if (err) {
+            console.error("Error while fetching profile:", err);
+            return result("Internal Server Error");
+        }
+
+        result(res.length ? null : "College staff profile not found", res[0]);
+    });
+}
 
 
 
