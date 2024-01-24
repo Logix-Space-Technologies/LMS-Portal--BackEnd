@@ -40,6 +40,7 @@ import CollegeStaffChangePassword from './components/CollegeStaff/CollegeStaffCh
 import CollegeStaffViewAttendance from './components/CollegeStaff/CollegeStaffViewAttendance';
 
 import CollegeStaffSearchStudent from './components/CollegeStaff/CollegeStaffSearchStudent';
+import AdminSearchCurriculum from './components/Admin/AdminSearchCurriculum';
 
 
 
@@ -85,10 +86,9 @@ function App() {
           <Route path='/collegeStaffViewAllStudents' element={<CollegeStaffViewAllStudents/>} />
           <Route path="/studentviewbatchincharge" element={<StudentBatchInCharge/>}/> 
           <Route path='/clgstaffchangepassword' element={<CollegeStaffChangePassword/>}/>
-
           <Route path='/clgstaffviewattendance' element={<CollegeStaffViewAttendance/>}/>
-
           <Route path='/colgstaffsearchstudent' element={<CollegeStaffSearchStudent/>} />
+          <Route path='/adminsearchcurriculum' element={<AdminSearchCurriculum/>}/>
 
 
 
