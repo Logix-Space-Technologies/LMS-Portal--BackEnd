@@ -40,6 +40,7 @@ import CollegeStaffChangePassword from './components/CollegeStaff/CollegeStaffCh
 import CollegeStaffViewAttendance from './components/CollegeStaff/CollegeStaffViewAttendance';
 
 import CollegeStaffSearchStudent from './components/CollegeStaff/CollegeStaffSearchStudent';
+import CollegeStaffSearchBatch from './components/CollegeStaff/CollegeStaffSearchBatch';
 
 
 
@@ -89,6 +90,7 @@ function App() {
           <Route path='/clgstaffviewattendance' element={<CollegeStaffViewAttendance/>}/>
 
           <Route path='/colgstaffsearchstudent' element={<CollegeStaffSearchStudent/>} />
+          <Route path='/colgstaffsearchbatch' element={<CollegeStaffSearchBatch/>} />
 
 
 
