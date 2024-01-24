@@ -64,9 +64,9 @@ const MaterialView = () => {
                           <div className="card-body">
                             <h5 className="card-title">{material.batchName}</h5>
                             <p className="card-text">Material ID: {material.id}</p>
-                            <p className="card-text">Material Name: {material.materialName}</p>
+                            <p className="card-text">Material Name: {material.fileName}</p>
                             <p className="card-text">Material Type: {material.materialType}</p>
-                            <p className="card-text">Material Description: {material.materialDescription}</p>
+                            <p className="card-text">Material Description: {material.materialDesc}</p>
                             <a target="_blank" href={material.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
                           </div>
                         </div>
