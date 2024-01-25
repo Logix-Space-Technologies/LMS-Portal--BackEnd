@@ -69,6 +69,9 @@ const AdminStaffLogin = () => {
                             <div>
                                 <Link to='/'>Admin Login</Link>
                             </div>
+                            <div>
+                                <Link to='/studentLogin'>Student Login</Link>
+                            </div>
                         </div>
 
                         <div class="card-footer text-muted">

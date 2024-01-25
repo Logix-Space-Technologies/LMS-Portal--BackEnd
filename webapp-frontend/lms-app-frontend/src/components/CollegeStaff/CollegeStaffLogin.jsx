@@ -80,6 +80,9 @@ const CollegeStaffLogin = () => {
                             <div>
                                 <Link to='/admstafflogin'>Admin Staff Login</Link>
                             </div>
+                            <div>
+                                <Link to='/'>Admin Login</Link>
+                            </div>
                         </div>
                         <div className="card-footer text-muted">
                             &copy; 2024 Link Ur Codes. All rights reserved.
