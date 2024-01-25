@@ -128,7 +128,7 @@ const StudentViewTasks = () => {
                                         <div className="flex justify-start" >
                                             <a target="_blank" href={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
                                         </div>
-                                        
+
                                     </td>
                                     <td>
                                         <div className="flex justify-end">
@@ -163,7 +163,7 @@ const StudentViewTasks = () => {
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" onClick={submitTask} className="btn btn-primary">Submit</button>
+                                    <button type="button" onClick={() => submitTask()} className="btn btn-primary">Submit</button>
                                 </div>
                             </div>
                         </div>
