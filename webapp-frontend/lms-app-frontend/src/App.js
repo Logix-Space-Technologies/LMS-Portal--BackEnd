@@ -46,6 +46,7 @@ import AdminSearchAdminStaff from './components/Admin/AdminSearchAdminStaff';
 import CollegeStaffViewTask from './components/CollegeStaff/CollegeStaffViewTask';
 import AdminViewAdStaffLog from './components/Admin/AdminViewAdStaffLog';
 import StudentViewUpcomingSession from './components/Student/StudentViewUpcomingSession';
+import CollegeStaffSearchTask from './components/CollegeStaff/CollegeStaffSearchTask';
 
 
 
@@ -97,6 +98,7 @@ function App() {
           <Route path='/colgstaffsearchstudent' element={<CollegeStaffSearchStudent />} />
           <Route path='/colgstaffsearchbatch' element={<CollegeStaffSearchBatch />} />
           <Route path='/clgstaffviewtask' element={<CollegeStaffViewTask/>}/>
+          <Route path='/clgStaffSearchTask' element={<CollegeStaffSearchTask/>}/>
 
 
 
