@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../../config/config';
 
 const CollegeStaffLogin = () => {
@@ -31,7 +31,7 @@ const CollegeStaffLogin = () => {
                     sessionStorage.setItem("clgStaffId", clgStaffId);
                     sessionStorage.setItem("clgstaffkey", clgstaffkey);
                     sessionStorage.setItem("clgStaffCollegeId", clgStaffCollegeId)
-                    navigate("/clgstaffviewtask")
+                    navigate("/studentverification")
 
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.email) {
@@ -73,6 +73,12 @@ const CollegeStaffLogin = () => {
                             </form>
                             <div className="mb-3">
                                 <button type="button" onClick={readValue} className="btn btn-success btn-lg">Login</button>
+                            </div>
+                            <div>
+                                <Link to='/studentLogin'>Student Login</Link>
+                            </div>
+                            <div>
+                                <Link to='/admstafflogin'>Admin Staff Login</Link>
                             </div>
                         </div>
                         <div className="card-footer text-muted">
