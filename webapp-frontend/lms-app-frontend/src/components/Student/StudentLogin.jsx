@@ -33,7 +33,7 @@ const StudentLogin = () => {
                     sessionStorage.setItem("studLoginToken", studtoken);
 
 
-                    navigate("/studviewNotifications")
+                    navigate("/studViewUpcomingSession")
 
 
                 } else {
