@@ -100,6 +100,12 @@ const StudentLogin = () => {
                             <div className="mb-3">
                                 <Link to='/'>Admin Login</Link>
                             </div>
+                            <div className="mb-3">
+                                <Link to='/admstafflogin'>Admin Staff Login</Link>
+                            </div>
+                            <div className="mb-3">
+                                <Link to='/clgStafflogin'>College Staff Login</Link>
+                            </div>
                         </div>
 
                         <div className="card-footer text-muted">
