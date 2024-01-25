@@ -17,6 +17,7 @@ const AdminSearchCurriculum = () => {
     const [isLoading, setIsLoading] = useState(true)
 
     const apiLink = global.config.urls.api.server + "/api/lms/searchCurriculum"
+    const apiLink2 = global.config.urls.api.server + "/api/lms/deletecurriculum"
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
@@ -48,6 +49,33 @@ const AdminSearchCurriculum = () => {
         )
 
     }
+
+    const handleClick = (id) => {
+        let data = { "id": id }
+        let axiosConfig2 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        }
+
+        axios.post(apiLink2, data, axiosConfig2).then(
+            (response) => {
+                console.log(data)
+                console.log(axiosConfig2)
+                if (response.data.status === "success") {
+                    alert("Curriculum deleted!!")
+                    // Reload the page after clicking OK in the alert
+                    window.location.reload();
+                } else {
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
+
 
 
     return (
@@ -128,6 +156,9 @@ const AdminSearchCurriculum = () => {
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
                                                             <div className="text-left">{value.curriculumFileLink}</div>
+                                                        </td>
+                                                        <td className="p-4 whitespace-nowrap">
+                                                           <button onClick={()=> handleClick(value.id)} className="btn btn-danger">Delete</button>
                                                         </td>
                                                     </tr>
                                                 )
