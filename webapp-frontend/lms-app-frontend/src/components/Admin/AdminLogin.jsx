@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
 
 const AdminLogin = () => {
@@ -65,6 +65,9 @@ const AdminLogin = () => {
                             </form>
                             <div class="mb-3">
                                 <button type="button" onClick={readValue} class="btn btn-success btn-lg">Login</button>
+                            </div>
+                            <div>
+                                <Link to='/admstafflogin'>Admin Staff Login</Link>
                             </div>
                             {/* <div class="mb-3">
                                 <p class="lead ">Don't have an account? <a href="/register">Register here</a></p>
