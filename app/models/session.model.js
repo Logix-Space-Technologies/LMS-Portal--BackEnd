@@ -202,7 +202,7 @@ Session.viewSessions = (result) => {
 };
 
 Session.viewUpcomingSessions = (batchId, result) => {
-    const query = "SELECT id, batchId, sessionName, date, time, type, remarks, venueORlink, trainerId, attendenceCode, addedDate, updatedDate FROM sessiondetails WHERE isActive = 1 AND deleteStatus = 0 AND date >= CURRENT_DATE() AND batchId=?";
+    const query = "SELECT sd.id, sd.batchId, sd.sessionName, sd.date, sd.time, sd.type, sd.remarks, sd.venueORlink, t.trainerName, sd.addedDate, sd.updatedDate FROM sessiondetails sd JOIN trainersinfo t ON sd.trainerId = t.id WHERE sd.isActive = 1 AND sd.deleteStatus = 0 AND sd.cancelStatus = 0 AND sd.date >= CURRENT_DATE() AND sd.batchId = ?";
     db.query(query, [batchId], (err, res) => {
         if (err) {
             console.log("error: ", err);
