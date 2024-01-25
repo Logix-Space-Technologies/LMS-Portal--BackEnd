@@ -43,9 +43,9 @@ import CollegeStaffSearchBatch from './components/CollegeStaff/CollegeStaffSearc
 import AdminSearchTasks from './components/Admin/AdminSearchTasks';
 import StudentViewTransaction from './components/Student/StudentViewTransaction';
 import AdminSearchAdminStaff from './components/Admin/AdminSearchAdminStaff';
+import CollegeStaffViewTask from './components/CollegeStaff/CollegeStaffViewTask';
+import AdminViewAdStaffLog from './components/Admin/AdminViewAdStaffLog';
 import StudentViewUpcomingSession from './components/Student/StudentViewUpcomingSession';
-
-
 
 
 
@@ -70,7 +70,7 @@ function App() {
           <Route path='/adminsearchcurriculum' element={<AdminSearchCurriculum />} />
           <Route path='/adminsearchtask' element={<AdminSearchTasks />} />
           <Route path='/adminsearchadminstaff' element={<AdminSearchAdminStaff />} />
-
+          <Route path='/adminviewadstafflog' element={<AdminViewAdStaffLog/>}/>
 
 
 
@@ -96,7 +96,7 @@ function App() {
           <Route path='/clgstaffviewattendance' element={<CollegeStaffViewAttendance />} />
           <Route path='/colgstaffsearchstudent' element={<CollegeStaffSearchStudent />} />
           <Route path='/colgstaffsearchbatch' element={<CollegeStaffSearchBatch />} />
-
+          <Route path='/clgstaffviewtask' element={<CollegeStaffViewTask/>}/>
 
 
 
