@@ -20,10 +20,11 @@ const AdminLogin = () => {
                 if (Response.data.status === "Success") {
                     let admtoken = Response.data.token
                     let admkey = "lmsapp"
+                    let userName = Response.data.data.userName;
                     sessionStorage.setItem("admkey", admkey)
                     sessionStorage.setItem("admtoken", admtoken)
-
-                    navigate("/adminsearchcurriculum")
+                    sessionStorage.setItem("userName", userName)
+                    navigate("/adminchangepassword")
 
                 }
                 else {
