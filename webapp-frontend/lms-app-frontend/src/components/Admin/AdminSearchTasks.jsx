@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import Navbar from './Navbar'
 
 const AdminSearchTasks = () => {
 
@@ -73,6 +74,8 @@ const AdminSearchTasks = () => {
 
 
     return (
+        <div>
+            <Navbar/>
         <div>
             <div className="container">
                 <div className="row">
@@ -198,6 +201,7 @@ const AdminSearchTasks = () => {
                         <div className="col-12 text-center">No Tasks Found!!</div>
                     ))}
             </div>
+        </div>
         </div>
 
     )
