@@ -37,6 +37,9 @@ const Navbar = () => {
                         <li class="nav-item">
                             <a class="nav-link" href="/admdashboard">Admin Dashboard</a>
                         </li>
+                        <li class="nav-item">
+                            <a href="/" className="dropdown-item">Log Out</a>
+                        </li>
                     </ul>
                 </div>
             </div>
