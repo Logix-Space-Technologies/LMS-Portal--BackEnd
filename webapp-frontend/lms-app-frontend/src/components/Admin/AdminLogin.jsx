@@ -24,7 +24,7 @@ const AdminLogin = () => {
                     sessionStorage.setItem("admkey", admkey)
                     sessionStorage.setItem("admtoken", admtoken)
                     sessionStorage.setItem("userName", userName)
-                    navigate("/adminchangepassword")
+                    navigate("/admdashboard")
 
                 }
                 else {
