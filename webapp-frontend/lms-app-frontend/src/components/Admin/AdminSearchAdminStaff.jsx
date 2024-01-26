@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
+import Navbar from './Navbar'
 
 const AdminSearchAdminStaff = () => {
     const [inputField, setInputField] = useState(
@@ -47,6 +48,8 @@ const AdminSearchAdminStaff = () => {
 
     }
   return (
+    <div>
+        <Navbar/>
     <div>
             <div className="container">
                 <div className="row">
@@ -143,6 +146,7 @@ const AdminSearchAdminStaff = () => {
                     <div className="col-12 text-center">No Admin Staffs Found!!</div>
                 ))}
             </div>
+        </div>
         </div>
   )
 }

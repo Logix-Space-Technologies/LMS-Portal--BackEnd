@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import '../../config/config'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from './Navbar';
 
 const AdminChangePassword = () => {
     const [updateField, setUpdateField] = useState({
@@ -58,6 +59,8 @@ const AdminChangePassword = () => {
         )
     }
   return (
+    <div>
+        <Navbar/>
     <div className="container">
             <div className="row">
                 <div className="col-lg-12 mb-4 mb-sm-5">
@@ -102,6 +105,7 @@ const AdminChangePassword = () => {
                 </div>
             </div>
         </div >
+        </div>
   )
 }
 
