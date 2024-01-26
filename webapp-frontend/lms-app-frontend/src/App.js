@@ -49,6 +49,7 @@ import StudentViewUpcomingSession from './components/Student/StudentViewUpcoming
 import CollegeStaffSearchTask from './components/CollegeStaff/CollegeStaffSearchTask';
 import AdminChangePassword from './components/Admin/AdminChangePassword';
 import Navbar from './components/Admin/Navbar';
+import AdminViewAllClgStaff from './components/Admin/AdminViewAllClgStaff';
 
 
 
@@ -76,6 +77,7 @@ function App() {
           <Route path='/adminviewadstafflog' element={<AdminViewAdStaffLog/>}/>
           <Route path='/adminchangepassword' element={<AdminChangePassword/>}/>
           <Route path='/adminnavbar' element={<Navbar/>}/>
+          <Route path='/adminviewallclgstaff' element={<AdminViewAllClgStaff/>}/>
 
 
 
