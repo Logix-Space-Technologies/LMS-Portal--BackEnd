@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import '../../config/config'
+import axios from 'axios'
 
 const AdminViewAllClgStaff = () => {
   const [clgStaffData, setClgStaffData] = useState([])
@@ -16,7 +17,12 @@ const AdminViewAllClgStaff = () => {
         "key": sessionStorage.getItem("admkey")
       }
     }
-    
+    axios.post(apiUrl, {}, axiosConfig).then(
+      (response) => {
+        setClgStaffData(response.data)
+        console.log(response.data)
+      }
+    )
 
   }
 
