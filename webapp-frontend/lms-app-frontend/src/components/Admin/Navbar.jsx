@@ -17,7 +17,7 @@ const Navbar = () => {
                             <a class="nav-link" href="/addcollege">Add College</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/addcollegestaff">Add ClgStaff</a>
+                            <a class="nav-link" href="/addcollegestaff">Add College Staff</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/adminchangepassword">Change Password</a>
@@ -33,6 +33,9 @@ const Navbar = () => {
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/adminviewadstafflog">View AdStaffLog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/adminviewallclgstaff">View College Staff</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/admdashboard">Admin Dashboard</a>
