@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const StudentViewTasks = () => {
     const [studViewTaskData, setStudViewTaskData] = useState([]);
@@ -9,8 +8,6 @@ const StudentViewTasks = () => {
         "gitLink": "",
         "remarks": ""
     });
-
-    const navigate = useNavigate()
 
     let [taskId, setTaskId] = useState({})
 
@@ -73,8 +70,7 @@ const StudentViewTasks = () => {
             (response) => {
                 if (response.data.status === "success") {
                     alert("Task Submitted Successfully !!");
-                    navigate("/studentViewTask");
-                    console.log("Navigating to /studentViewTask");
+                    window.location.reload();
                     setInputField({
                         "gitLink": "",
                         "remarks": ""
@@ -103,11 +99,13 @@ const StudentViewTasks = () => {
 
     return (
         <div>
+            <br />
+            <h1>Student View Tasks</h1><br />
             <section className="flex flex-col justify-center antialiased bg-gray-100 text-gray-600 min-h-screen p-4">
-                <div className="h-full">
+                <div className="h-full">  
                     {/* Cards */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {studViewTaskData.map(
+                        {studViewTaskData ? (studViewTaskData.map(
                             (task, index) => {
                                 return <div className="bg-white shadow-lg rounded-md p-4" key={index}>
                                     <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
@@ -136,7 +134,7 @@ const StudentViewTasks = () => {
                                         </div>
                                     </td>
                                 </div>
-                            })}
+                            })) : <p>No Tasks Found !!!</p>}
                     </div>
                 </div>
                 <div className="flex justify-end">
