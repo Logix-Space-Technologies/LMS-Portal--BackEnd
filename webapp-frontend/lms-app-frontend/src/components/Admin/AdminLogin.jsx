@@ -66,10 +66,17 @@ const AdminLogin = () => {
                             </form>
                             <div class="mb-3">
                                 <button type="button" onClick={readValue} class="btn btn-success btn-lg">Login</button>
-                            </div>
+                            </div><br />
                             <div>
                                 <Link to='/admstafflogin'>Admin Staff Login</Link>
                             </div>
+                            <div>
+                                <Link to='/clgStafflogin'>College Staff Login</Link>
+                            </div>
+                            <div>
+                                <Link to='/studentLogin'>Student Login</Link>
+                            </div>
+
                             {/* <div class="mb-3">
                                 <p class="lead ">Don't have an account? <a href="/register">Register here</a></p>
                             </div> */}

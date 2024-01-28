@@ -7,6 +7,7 @@ const AdminViewAllClgStaff = () => {
   const [clgStaffData, setClgStaffData] = useState([])
 
   const apiUrl = global.config.urls.api.server + "/api/lms/viewallcollegestaff"
+  const apiUrl2 = global.config.urls.api.server + "/api/lms/deletecolgstaff"
 
   const getData = () => {
     let axiosConfig = {
@@ -24,6 +25,29 @@ const AdminViewAllClgStaff = () => {
       }
     )
 
+  }
+
+  const handleClick = (id) => {
+    let data = { "id": id }
+    let axiosConfigtwo = {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*",
+        "token": sessionStorage.getItem("admtoken"),
+        "key": sessionStorage.getItem("admkey")
+      }
+    }
+    axios.post(apiUrl2, data, axiosConfigtwo).then(
+      (response) => {
+        if (response.data.status === "Deleted successfully") {
+          alert("College Staff Deleted!!")
+          // Reload the page after clicking OK in the alert
+          window.location.reload();
+        } else {
+          alert(response.data.status)
+        }
+      }
+    )
   }
 
   useEffect(() => { getData() }, [])
@@ -117,7 +141,7 @@ const AdminViewAllClgStaff = () => {
                             <div className="text-left">{value.emailVerificationStatus}</div>
                           </td>
                           <td className="p-4 whitespace-nowrap">
-                            {/* <button onClick={() => handleClick(value.id)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Verify</button> */}
+                            <button onClick={() => handleClick(value.id)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Delete</button>
                           </td>
                         </tr>
                       )
