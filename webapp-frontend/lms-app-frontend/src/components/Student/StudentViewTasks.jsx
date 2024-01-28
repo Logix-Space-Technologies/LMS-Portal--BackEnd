@@ -108,7 +108,7 @@ const StudentViewTasks = () => {
                         {studViewTaskData ? (studViewTaskData.map(
                             (task, index) => {
                                 return <div className="bg-white shadow-lg rounded-md p-4" key={index}>
-                                    {task.taskStatus === "Task Submitted" && (
+                                    {task.taskStatus === "Task Submitted" && task.evaluateStatus === "Evaluated" && (
                                         <>
                                             <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
                                             <p className="text-gray-500 mb-4">{task.taskDesc}</p>
@@ -124,22 +124,23 @@ const StudentViewTasks = () => {
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
                                             </p>
+                                            <p className="text-gray-700 mb-2">
+                                                <p><strong>Submission Status: </strong>Submitted</p>
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
+                                                <p><strong>Evaluation Status: </strong>Evaluated</p><br />
+                                            </p>
                                             <td>
                                                 <div className="flex justify-start" >
                                                     <a target="_blank" href={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
                                                 </div>
 
                                             </td>
-                                            <td>
-                                                <div className="flex justify-end">
-                                                    <button onClick={() => readValue(task.id)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
-                                                </div>
-                                            </td>
                                         </>
                                     )}
-                                    {task.taskStatus === "Task Not Submitted" && (
+                                    {task.taskStatus === "Task Submitted" && task.evaluateStatus === "Not Evaluated" && (
                                         <>
-                                        <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
+                                            <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
                                             <p className="text-gray-500 mb-4">{task.taskDesc}</p>
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Task Type:</strong> {task.taskType}
@@ -154,13 +155,54 @@ const StudentViewTasks = () => {
                                                 <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Submission Status: Submitted</strong> 
+                                                <p><strong>Submission Status: </strong>Submitted</p>
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
+                                                <p><strong>Evaluation Status: </strong>Not Evaluated</p><br />
                                             </p>
                                             <td>
                                                 <div className="flex justify-start" >
                                                     <a target="_blank" href={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
                                                 </div>
 
+                                            </td>
+                                            <td>
+                                                <button className="btn btn-primary">Update</button>
+                                            </td>
+                                        </>
+                                    )}
+                                    {task.taskStatus === "Task Not Submitted" && (
+                                        <>
+                                            <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
+                                            <p className="text-gray-500 mb-4">{task.taskDesc}</p>
+                                            <p className="text-gray-700 mb-2">
+                                                <strong>Task Type:</strong> {task.taskType}
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
+                                                <strong>Total Score:</strong> {task.totalScore}
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
+                                                <strong>Added Date:</strong> {new Date(task.addedDate).toLocaleDateString()}
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
+                                                <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
+                                                <strong>Submission Status: </strong>Not Submitted
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
+                                               
+                                            </p><br /><br />
+                                            <td>
+                                                <div className="flex justify-start" >
+                                                    <a target="_blank" href={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
+                                                </div>
+
+                                            </td>
+                                            <td>
+                                                <div className="flex justify-end">
+                                                    <button onClick={() => readValue(task.id)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
+                                                </div>
                                             </td>
                                         </>
                                     )}
