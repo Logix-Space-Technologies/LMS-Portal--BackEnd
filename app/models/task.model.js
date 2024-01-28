@@ -193,8 +193,8 @@ Tasks.searchTasks = (searchString, result) => {
 }
 
 Tasks.collegeStaffSearchTasks = (searchKey, collegeId, result) => {
-    const searchString = '%'+searchKey+ '%' 
-    db.query("SELECT DISTINCT c.collegeName, b.batchName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, t.addedDate FROM task t JOIN batches b ON t.batchId= b.id JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.collegeId = ? AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ? OR t.taskType LIKE ?)",
+    const searchString = '%'+ searchKey + '%' 
+    db.query("SELECT DISTINCT c.collegeName, b.batchName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, t.addedDate FROM task t JOIN batches b ON t.batchId= b.id JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.collegeId = ? AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ? OR t.taskType LIKE ? OR b.batchName LIKE ?)",
         [collegeId, searchString, searchString, searchString, searchString],
         (err, res) => {
             if (err) {

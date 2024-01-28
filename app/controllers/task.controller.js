@@ -360,7 +360,7 @@ exports.searchTask = (request, response) => {
 exports.collegeStaffSearchTasks = (request, response) => {
     const taskQuery = request.body.taskQuery;
     const AdStafftaskSearchToken = request.headers.token;
-    const collegeId = request.headers.collegeId;
+    const collegeId = request.body.collegeId;
     jwt.verify(AdStafftaskSearchToken, "lmsappclgstaff", (err, decoded) => {
         if (!taskQuery) {
             return response.json({ "status": "Provide a search query" })

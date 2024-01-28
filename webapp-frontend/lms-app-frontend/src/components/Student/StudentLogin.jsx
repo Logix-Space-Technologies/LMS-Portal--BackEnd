@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 
 import '../../config/config'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const StudentLogin = () => {
     const [inputField, setInputField] = useState({
@@ -33,7 +33,7 @@ const StudentLogin = () => {
                     sessionStorage.setItem("studLoginToken", studtoken);
 
 
-                    navigate("/studMaterialView")
+                    navigate("/studentViewTask")
 
 
                 } else {
@@ -49,7 +49,7 @@ const StudentLogin = () => {
                                 alert(Response.data.status)
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -96,6 +96,15 @@ const StudentLogin = () => {
                             </div>
                             <div className="mb-3">
                                 <p className="lead ">Don't have an account? <a href="/studentregistration">Register here</a></p>
+                            </div>
+                            <div className="mb-3">
+                                <Link to='/'>Admin Login</Link>
+                            </div>
+                            <div className="mb-3">
+                                <Link to='/admstafflogin'>Admin Staff Login</Link>
+                            </div>
+                            <div className="mb-3">
+                                <Link to='/clgStafflogin'>College Staff Login</Link>
                             </div>
                         </div>
 

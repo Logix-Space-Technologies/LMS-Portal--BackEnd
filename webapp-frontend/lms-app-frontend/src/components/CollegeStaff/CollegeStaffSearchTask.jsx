@@ -1,22 +1,20 @@
-import React, { useState } from 'react'
-import '../../config/config'
 import axios from 'axios'
-import Navbar from './Navbar'
+import React, { useState } from 'react'
 
-const AdminSearchAdminStaff = () => {
+const CollegeStaffSearchTask = () => {
+
     const [inputField, setInputField] = useState(
         {
-            "adminStaffSearchQuery": ""
+            "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+            "taskQuery": ""
         }
     )
 
-    const [updateField, setUpdateField] = useState(
-        []
-    )
+    const [updateField, setUpdateField] = useState([])
 
     const [isLoading, setIsLoading] = useState(true)
 
-    const apiLink = global.config.urls.api.server + "/api/lms/searchAdminStaff"
+    const apiLink = global.config.urls.api.server + "/api/lms/collegeStaffSearchTasks"
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
@@ -26,41 +24,37 @@ const AdminSearchAdminStaff = () => {
         console.log(inputField)
         let axiosConfig = {
             headers: {
-                'content-type': 'application/json;charset=UTF-8',
+                "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": sessionStorage.getItem("clgstaffLogintoken"),
+                "key": sessionStorage.getItem("clgstaffkey")
             }
         };
-
-
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
                 setUpdateField(response.data.data)
                 setIsLoading(false)
                 console.log(response.data.data)
                 setInputField({
-                    "adminStaffSearchQuery": ""
+                    "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+                    "taskQuery": ""
                 })
             }
-
         )
-
     }
-  return (
-    <div>
-        <Navbar/>
-    <div>
+
+    return (
+        <div>
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                         <div className="row g-3">
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <h1>Search Admin Staff</h1>
+                                <h1>Search Task</h1>
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <label htmlFor="" className="form-label">Admin Staff Name/Phone No/Address/Aadhar No/Email</label>
-                                <input onChange={inputHandler} type="text" className="form-control" name="adminStaffSearchQuery" value={inputField.adminStaffSearchQuery} />
+                                <label htmlFor="" className="form-label">Task Name/Task Description/Task Type/Batch Name</label>
+                                <input onChange={inputHandler} type="text" className="form-control" name="taskQuery" value={inputField.taskQuery} />
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                 <button onClick={readValue} className="btn btn-warning">Search</button>
@@ -68,13 +62,15 @@ const AdminSearchAdminStaff = () => {
                         </div>
                     </div>
                 </div>
-                {isLoading ? (<div className="col-12 text-center">
-                    <p></p>
-                </div>) : (updateField ? (
+                {isLoading ? (
+                    <div className="col-12 text-center">
+                        <p></p>
+                    </div>
+                ) : (updateField ? (
                     <div className="row g-3">
                         <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-sm border border-gray-200">
                             <header className="px-5 py-4 border-b border-gray-100">
-                                <h2 className="font-semibold text-2xl text-gray-800">List of Admin Staff</h2>
+                                <h2 className="font-semibold text-2xl text-gray-800">List of Tasks</h2>
                             </header>
                             <div className="p-3">
                                 <div className="overflow-x-auto">
@@ -82,19 +78,25 @@ const AdminSearchAdminStaff = () => {
                                         <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
                                             <tr>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Admin Staff Name</div>
+                                                    <div className="font-semibold text-left">Batch Name</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Phone No</div>
+                                                    <div className="font-semibold text-left">Task Title</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Address</div>
+                                                    <div className="font-semibold text-left">Task Description</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Aadhar No</div>
+                                                    <div className="font-semibold text-left">Task Type</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Email</div>
+                                                    <div className="font-semibold text-center">Task Material</div>
+                                                </th>
+                                                <th className="p-4 whitespace-nowrap">
+                                                    <div className="font-semibold text-center">Total Score</div>
+                                                </th>
+                                                <th className="p-4 whitespace-nowrap">
+                                                    <div className="font-semibold text-center">Due Date</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
                                                     <div className="font-semibold text-center"></div>
@@ -106,31 +108,25 @@ const AdminSearchAdminStaff = () => {
                                                 (value, index) => (
                                                     <tr key={index}>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="flex items-center">
-                                                                {/* <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
-                                                                    <img
-                                                                        className="w-18 h-14 flex-shrink-0 mr-2 sm:mr-3"
-                                                                        src={value.studProfilePic}
-                                                                        width="60px"
-                                                                        height="64px"
-                                                                        alt=""
-                                                                    />
-                                                                </div> */}
-                                                                <div className="font-medium text-gray-800">{value.AdStaffName}</div>
-                                                            </div>
-                                                        </td>
-                                                        
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.PhNo}</div>
+                                                            <div className="text-left">{value.batchName}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.Address}</div>
+                                                            <div className="text-left">{value.taskTitle}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.AadharNo}</div>
+                                                            <div className="text-left">{value.taskDesc}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.Email}</div>
+                                                            <div className="text-left">{value.taskType}</div>
+                                                        </td>
+                                                        <td className="p-4 whitespace-nowrap">
+                                                            <a target="_blank" href={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 shadow rounded-md hover:bg-blue-500">View Material</a>
+                                                        </td>
+                                                        <td className="p-4 whitespace-nowrap">
+                                                            <div className="text-left">{value.totalScore}</div>
+                                                        </td>
+                                                        <td className="p-4 whitespace-nowrap">
+                                                            <div className="text-left">{new Date(value.dueDate).toLocaleDateString()}</div>
                                                         </td>
                                                     </tr>
                                                 )
@@ -143,13 +139,11 @@ const AdminSearchAdminStaff = () => {
                     </div>
 
                 ) : (
-                    <div className="col-12 text-center">No Admin Staffs Found!!</div>
+                    <div className="col-12 text-center">No Tasks Found!!</div>
                 ))}
             </div>
-        </div>
-        </div>
-  )
+        </div >
+    )
 }
 
-export default AdminSearchAdminStaff
-
+export default CollegeStaffSearchTask

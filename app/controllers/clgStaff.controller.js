@@ -580,9 +580,6 @@ exports.clgStaffViewTask = (request, response) => {
   const clgStaffViewTaskToken = request.headers.token
   jwt.verify(clgStaffViewTaskToken, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
-
-
-      //Assuming that we have task id in the request params body
       const collegeId = request.body.collegeId
       CollegeStaff.viewTask(collegeId, (err, data) => {
         if (err) {

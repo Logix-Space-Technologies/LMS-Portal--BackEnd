@@ -1,8 +1,8 @@
 const db = require('../models/db')
-const bcrypt=require('bcrypt')
+const bcrypt = require('bcrypt')
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
-const Admin = function(admin){
+const Admin = function (admin) {
     this.userName = admin.userName
     this.Password = admin.Password
 }
@@ -19,15 +19,15 @@ const Admin = function(admin){
 //         } else {
 //             console.log("Admin : ",{id:res.id, ...newAdmin})
 //             result(null, {id:res.id, ...newAdmin})
-            
+
 //         }
 //     })
 // }
 
 
 
-Admin.findByUserName = (username,result)=>{
-    db.query("SELECT * FROM admin WHERE BINARY userName = ?", username, (err,res)=>{
+Admin.findByUserName = (username, result) => {
+    db.query("SELECT * FROM admin WHERE BINARY userName = ?", username, (err, res) => {
 
         if (err) {
             console.log("Error : ", err)
@@ -36,12 +36,12 @@ Admin.findByUserName = (username,result)=>{
         }
 
         if (res.length) {
-            logAdminStaff(0,"Admin logged in")
+            logAdminStaff(0, "Admin logged in")
             result(null, res[0])
             return
         }
 
-        result({kind : "not_found"}, null)
+        result({ kind: "not_found" }, null)
 
     })
 }
@@ -73,14 +73,14 @@ Admin.changePassword = (ad, result) => {
                         return;
                     } else {
                         logAdminStaff(0, "Password updated")
-                        result(null, { status: "Password Updated Successfully!!!" });
+                        result("Password Updated Successfully!!!", null);
                     }
                 });
             } else {
-                result(null, { status: "Incorrect Old Password!!!" });
+                result("Incorrect Old Password!!!", null);
             }
         } else {
-            result(null, { status: "User not found!!!" });
+            result("User not found!!!", null);
         }
     });
 };
@@ -233,13 +233,13 @@ Admin.adminDashBoard = (result) => {
 };
 
 
-Admin.getAll = async(result) => {
+Admin.getAll = async (result) => {
     let query = "SELECT * FROM adminstafflog WHERE AdmStaffId=0"
     db.query(query, (err, response) => {
         if (err) {
-            console.log("Error : ",err)
+            console.log("Error : ", err)
             result(err, null)
-            return           
+            return
         } else {
             console.log("Admin Staff Log : ", response)
             result(null, response)

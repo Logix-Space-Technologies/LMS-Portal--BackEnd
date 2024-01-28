@@ -12,7 +12,7 @@ const AdminSideBar = () => {
                         <div className="nav-item dropdown">
                             <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i className="fa fa-laptop me-2" />Features</a>
                             <div className="dropdown-menu bg-transparent border-0">
-                                <a href="#" className="dropdown-item">Add Admin Staff</a>
+                                <a href="/addAdminStaff" className="dropdown-item">Add Admin Staff</a>
                                 <a href="#" className="dropdown-item">View All Admin Staff</a>
                                 <a href="#" className="dropdown-item">Search Admin Staff</a>
                                 <a href="#" className="dropdown-item">Update Admin Staff</a>

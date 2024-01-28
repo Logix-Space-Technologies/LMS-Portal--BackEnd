@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
 
 const AdminLogin = () => {
@@ -20,10 +20,11 @@ const AdminLogin = () => {
                 if (Response.data.status === "Success") {
                     let admtoken = Response.data.token
                     let admkey = "lmsapp"
+                    let userName = Response.data.data.userName;
                     sessionStorage.setItem("admkey", admkey)
                     sessionStorage.setItem("admtoken", admtoken)
-
-                    navigate("/adminsearchadminstaff")
+                    sessionStorage.setItem("userName", userName)
+                    navigate("/admdashboard")
 
                 }
                 else {
@@ -65,7 +66,17 @@ const AdminLogin = () => {
                             </form>
                             <div class="mb-3">
                                 <button type="button" onClick={readValue} class="btn btn-success btn-lg">Login</button>
+                            </div><br />
+                            <div>
+                                <Link to='/admstafflogin'>Admin Staff Login</Link>
                             </div>
+                            <div>
+                                <Link to='/clgStafflogin'>College Staff Login</Link>
+                            </div>
+                            <div>
+                                <Link to='/studentLogin'>Student Login</Link>
+                            </div>
+
                             {/* <div class="mb-3">
                                 <p class="lead ">Don't have an account? <a href="/register">Register here</a></p>
                             </div> */}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
+import Navbar from './Navbar'
 
 const AddCollegeStaff = () => {
 
@@ -209,95 +210,98 @@ const AddCollegeStaff = () => {
 
 
   return (
-    <div className="container">
-      <div class="bg-light py-3 py-md-5">
-        <div class="container">
-          <div class="row justify-content-md-center">
-            <div class="col-12 col-md-11 col-lg-8 col-xl-7 col-xxl-6">
-              <div class="bg-white p-4 p-md-5 rounded shadow-sm">
-                <div class="row">
-                  <div class="col-12">
-                    <div class="text-center mb-5">
-                      <a href="#!">
-                        <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
-                      </a><br /><br />
-                      <h3>Add College Staff</h3>
+    <div>
+      <Navbar />
+      <div className="container">
+        <div class="bg-light py-3 py-md-5">
+          <div class="container">
+            <div class="row justify-content-md-center">
+              <div class="col-12 col-md-11 col-lg-8 col-xl-7 col-xxl-6">
+                <div class="bg-white p-4 p-md-5 rounded shadow-sm">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="text-center mb-5">
+                        <a href="#!">
+                          <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
+                        </a><br /><br />
+                        <h3>Add College Staff</h3>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="row gy-3 gy-md-4 overflow-hidden">
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="" class="form-label">College Name <span class="text-danger">*</span></label>
-                    <select name="collegeId" value={inputField.collegeId} id="collegeId" className="form-control" onChange={inputHandler}>
-                      <option value="">Select</option>
-                      {outputField.map((value) => {
-                        return <option value={value.id}> {value.collegeName} </option>
-                      })}
-                    </select>
-                    {errors.collegeId && <span style={{ color: 'red' }} className="error">{errors.collegeId}</span>}
-                  </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="collegeStaffName" class="form-label">College Staff Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="collegeStaffName" onChange={inputHandler} value={inputField.collegeStaffName} id="collegeStaffName" />
-                    {errors.collegeStaffName && <span style={{ color: 'red' }} className="error">{errors.collegeStaffName}</span>}
-                  </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="department" id="department" onChange={inputHandler} value={inputField.department} />
-                    {errors.department && <span style={{ color: 'red' }} className="error">{errors.department}</span>}
-                  </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="clgStaffAddress" class="form-label">Address <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="clgStaffAddress" id="clgStaffAddress" onChange={inputHandler} value={inputField.clgStaffAddress} />
-                    {errors.clgStaffAddress && <span style={{ color: 'red' }} className="error">{errors.clgStaffAddress}</span>}
-                  </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="email" id="email" onChange={inputHandler} value={inputField.email} />
-                    {errors.email && <span style={{ color: 'red' }} className="error">{errors.email}</span>}
-                  </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="PhNo" class="form-label">Phone No <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" required="" name="phNo" id="phNo" onChange={inputHandler} value={inputField.phNo} />
-                    {errors.phNo && <span style={{ color: 'red' }} className="error">{errors.phNo}</span>}
-                  </div>
-                  <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label htmlFor="profilePic" className="form-label">
-                      Profile Image <span className="text-danger">*</span>
-                    </label>
-                    <input type="file" className="form-control" name="profilePic" id="profilePic" accept="image/*" onChange={fileUploadHandler} />
-                    {errors.profilePic && <span style={{ color: 'red' }} className="error">{errors.profilePic}</span>}
-                  </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="aadharNo" class="form-label">AadharNo <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="aadharNo" id="aadharNo" onChange={inputHandler} value={inputField.aadharNo} />
-                    {errors.aadharNo && <span style={{ color: 'red' }} className="error">{errors.aadharNo}</span>}
-                  </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                      <input type="password" class="form-control" name="password" id="password" onChange={inputHandler} value={inputField.password} />
+                  <div class="row gy-3 gy-md-4 overflow-hidden">
+                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                      <label for="" class="form-label">College Name <span class="text-danger">*</span></label>
+                      <select name="collegeId" value={inputField.collegeId} id="collegeId" className="form-control" onChange={inputHandler}>
+                        <option value="">Select</option>
+                        {outputField.map((value) => {
+                          return <option value={value.id}> {value.collegeName} </option>
+                        })}
+                      </select>
+                      {errors.collegeId && <span style={{ color: 'red' }} className="error">{errors.collegeId}</span>}
+                    </div>
+                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                      <label for="collegeStaffName" class="form-label">College Staff Name <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="collegeStaffName" onChange={inputHandler} value={inputField.collegeStaffName} id="collegeStaffName" />
+                      {errors.collegeStaffName && <span style={{ color: 'red' }} className="error">{errors.collegeStaffName}</span>}
+                    </div>
+                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                      <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="department" id="department" onChange={inputHandler} value={inputField.department} />
+                      {errors.department && <span style={{ color: 'red' }} className="error">{errors.department}</span>}
+                    </div>
+                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                      <label for="clgStaffAddress" class="form-label">Address <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="clgStaffAddress" id="clgStaffAddress" onChange={inputHandler} value={inputField.clgStaffAddress} />
+                      {errors.clgStaffAddress && <span style={{ color: 'red' }} className="error">{errors.clgStaffAddress}</span>}
+                    </div>
+                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                      <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="email" id="email" onChange={inputHandler} value={inputField.email} />
+                      {errors.email && <span style={{ color: 'red' }} className="error">{errors.email}</span>}
+                    </div>
+                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                      <label for="PhNo" class="form-label">Phone No <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" required="" name="phNo" id="phNo" onChange={inputHandler} value={inputField.phNo} />
+                      {errors.phNo && <span style={{ color: 'red' }} className="error">{errors.phNo}</span>}
+                    </div>
+                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                      <label htmlFor="profilePic" className="form-label">
+                        Profile Image <span className="text-danger">*</span>
+                      </label>
+                      <input type="file" className="form-control" name="profilePic" id="profilePic" accept="image/*" onChange={fileUploadHandler} />
+                      {errors.profilePic && <span style={{ color: 'red' }} className="error">{errors.profilePic}</span>}
+                    </div>
+                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                      <label for="aadharNo" class="form-label">AadharNo <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="aadharNo" id="aadharNo" onChange={inputHandler} value={inputField.aadharNo} />
+                      {errors.aadharNo && <span style={{ color: 'red' }} className="error">{errors.aadharNo}</span>}
+                    </div>
+                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                      <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <input type="password" class="form-control" name="password" id="password" onChange={inputHandler} value={inputField.password} />
 
+                      </div>
+                      {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
                     </div>
-                    {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
-                  </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                      <input type="password" class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
+                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                      <label for="password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <input type="password" class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
 
+                      </div>
+                      {errors.confirmpassword && <span style={{ color: 'red' }} className="error">{errors.confirmpassword}</span>}
                     </div>
-                    {errors.confirmpassword && <span style={{ color: 'red' }} className="error">{errors.confirmpassword}</span>}
-                  </div>
-                  <div class="col-12">
-                    <div class="d-grid">
-                      <button class="btn btn-primary btn-lg" onClick={readValue} type="submit">Register</button>
+                    <div class="col-12">
+                      <div class="d-grid">
+                        <button class="btn btn-primary btn-lg" onClick={readValue} type="submit">Register</button>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="row">
-                  <div class="col-12">
-                    <hr class="mt-5 mb-4 border-secondary-subtle" />
+                  <div class="row">
+                    <div class="col-12">
+                      <hr class="mt-5 mb-4 border-secondary-subtle" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -306,7 +310,6 @@ const AddCollegeStaff = () => {
         </div>
       </div>
     </div>
-
 
 
   )
