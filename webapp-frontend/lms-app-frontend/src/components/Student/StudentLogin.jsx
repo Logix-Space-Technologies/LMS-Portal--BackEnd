@@ -10,14 +10,28 @@ const StudentLogin = () => {
         password: ""
     });
 
+    const [errors, setErrors] = useState({});
+
     const apiUrl = global.config.urls.api.server + "/api/lms/studentLogin"
     const navigate = useNavigate()
 
     const inputHandler = (event) => {
+        setErrors({}); // Clear previous errors
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
 
     const readValue = () => {
+        let newErrors = {};
+        if (!inputField.studEmail.trim()) {
+            newErrors.studEmail = "Email is required!";
+        }
+        if (!inputField.password.trim()) {
+            newErrors.password = "Password is required!";
+        } 
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
         axios.post(apiUrl, inputField).then(
             (Response) => {
                 if (Response.data.status === "Success") {
@@ -79,6 +93,7 @@ const StudentLogin = () => {
                                         onChange={inputHandler}
                                         className="form-control"
                                     />
+                                    {errors.studEmail && <span style={{ color: 'red' }} className="error">{errors.studEmail}</span>}
                                 </div>
                                 <div className="mb-3 text-start">
                                     <label htmlFor="password" className="form-label">Password</label>
@@ -89,6 +104,7 @@ const StudentLogin = () => {
                                         onChange={inputHandler}
                                         className="form-control"
                                     />
+                                    {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
                                 </div>
                             </form>
                             <div className="mb-3">
