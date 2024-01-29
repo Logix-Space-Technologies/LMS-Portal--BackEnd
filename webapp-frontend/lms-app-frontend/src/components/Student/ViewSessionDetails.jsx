@@ -42,10 +42,15 @@ const SessionView = () => {
       });
   };
 
+  function formatTime(timeString) {
+    const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
+  }
+
   return (
 
     <div>
-      <StudNavBar/>
+      <StudNavBar />
       <div className="bg-light py-3 py-md-5">
         <div className="container">
           <div className="row justify-content-md-center">
@@ -66,8 +71,8 @@ const SessionView = () => {
                           <div className="card">
                             <div className="card-body">
                               <h5 className="card-title">{session.sessionName}</h5>
-                              <p className="card-text">Date: {session.date}</p>
-                              <p className="card-text">Time: {session.time}</p>
+                              <p className="card-text">Date: {new Date(session.date).toLocaleDateString()}</p>
+                              <p className="card-text">Time: {formatTime(session.time)}</p>
                               <p className="card-text">Type: {session.type}</p>
                               <p className="card-text">Remarks: {session.remarks}</p>
                               <p className="card-text">Venue/Link: {session.venueORlink}</p>
