@@ -228,4 +228,6 @@ router.post('/studentViewNextSessionDate',StudentController.studentViewNextSessi
 
 router.post('/studupdatesubmittedtask',StudentController.studentupdatesubmittedtask)
 
+router.post('/studentviewsubmittedtask',StudentController.studentviewsubmittedtask)
+
 module.exports = router

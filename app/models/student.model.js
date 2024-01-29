@@ -957,6 +957,21 @@ SubmitTask.studentUpdateSubmittedTask = (updateSubTask, result) => {
     );
 };
 
+SubmitTask.studentviewsubmittedtask = (id, result) => {
+    db.query("SELECT * FROM `submit_task` WHERE id = ?", [id],
+        (err, res) => {
+            if (err) {
+                console.error("Error: ", err);
+                return result(err, null);
+            } else if (res.length === 0) {
+                console.log("Submitted Task With Given ID Not found !!!")
+                return result("Submitted Task With Given ID Not found !!!", null)
+            } else {
+                console.log("Submitted Task Details: ", res);
+                result(null, res);
+            }
+        })
+}
 
 
 
