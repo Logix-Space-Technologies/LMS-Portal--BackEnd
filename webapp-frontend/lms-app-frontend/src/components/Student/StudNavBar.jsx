@@ -12,7 +12,7 @@ const StudNavBar = () => {
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
                         <li className="nav-item">
-                            <a className="nav-link active" aria-current="page" href="/studentViewTask">View Task</a>
+                            <a className="nav-link active" aria-current="page" href="/studentViewTask">View Tasks</a>
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" href="/studentviewattendance">View Attendance</a>
@@ -44,8 +44,8 @@ const StudNavBar = () => {
                             </a>
                             <ul className="dropdown-menu">
                                 <li><a className="dropdown-item" href="/studViewRefundReq">View Refund Request</a></li>
-                                <li><a className="dropdown-item" href="/adminviewalltrainers">View All Trainers</a></li>
-                                <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                <li><a className="dropdown-item" href="/studentviewtransaction">View Transaction Details</a></li>
+                                <li><a className="dropdown-item" href="/studMaterialView">View Materials</a></li>
                             </ul>
                         </li>
                         <li className="nav-item">
