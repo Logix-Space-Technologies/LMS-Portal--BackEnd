@@ -30,8 +30,8 @@ const StudHeader = () => {
     }
 
 
-    const getData2 = () =>{
-        let data2 = { "studId": sessionStorage.getItem("studentId"), "batchId": sessionStorage.getItem("studBatchId")}
+    const getData2 = () => {
+        let data2 = { "studId": sessionStorage.getItem("studentId"), "batchId": sessionStorage.getItem("studBatchId") }
 
         let axiosConfig2 = {
             headers: {
@@ -41,19 +41,24 @@ const StudHeader = () => {
             }
         }
         axios.post(apiUrl2, data2, axiosConfig2).then(
-            (response)=>{
+            (response) => {
                 setSessionData(response.data.data)
                 console.log(response.data.data)
             }
         )
     }
 
-    const logOut =()=>{
+    const logOut = () => {
         sessionStorage.removeItem("studentkey");
         sessionStorage.removeItem("studentId");
         sessionStorage.removeItem("studemail");
         sessionStorage.removeItem("studBatchId");
         sessionStorage.removeItem("studLoginToken");
+    }
+
+    function formatTime(timeString) {
+        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+        return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
     }
 
     useEffect(() => { getData() }, [])
@@ -68,14 +73,14 @@ const StudHeader = () => {
                     </h2>
                 </a>
                 {sessionData ? (sessionData.map(
-                    (value,index)=>{
+                    (value, index) => {
                         return <div className="session-name">
-                        <p>Next Session: {new Date(value.date).toLocaleDateString()},{value.time}</p>
-                        
-                    </div>
+                            <p>Next Session: {new Date(value.date).toLocaleDateString()}, {formatTime(value.time)}</p>
+
+                        </div>
                     }
                 )) : <p>Next Session: No Upcoming Session</p>}
-                
+
                 <div className="navbar-nav align-items-center ms-auto">
                     {/* <div className="nav-item dropdown">
                                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
