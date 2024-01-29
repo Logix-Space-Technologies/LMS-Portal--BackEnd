@@ -36,6 +36,11 @@ const StudentViewUpcomingSession = () => {
             })
     }
 
+    function formatTime(timeString) {
+        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+        return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
+    }
+
     useEffect(() => { getData() }, [])
 
     return (
@@ -68,8 +73,8 @@ const StudentViewUpcomingSession = () => {
                                                         <div className="card shadow"> {/* Add "shadow" class here */}
                                                             <div className="card-body rounded shadow-sm">
                                                                 <h5 className="card-title">Session Name: {value.sessionName}</h5>
-                                                                <p className="card-text">Date: {new Date(value.date).toDateString()}</p>
-                                                                <p className="card-text">Time: {value.time}</p>
+                                                                <p className="card-text">Date: {new Date(value.date).toLocaleDateString()}</p>
+                                                                <p className="card-text">Time: {formatTime(value.time)}</p>
                                                                 <p className="card-text">Type: {value.type}</p>
                                                                 <p className="card-text">Remarks: {value.remarks}</p>
                                                                 <p className="card-text">Venue/Link: {value.venueORlink}</p>
