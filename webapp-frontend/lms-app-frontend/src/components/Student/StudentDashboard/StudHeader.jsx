@@ -109,7 +109,7 @@ const StudHeader = () => {
                     <div className="nav-item dropdown">
                         {studData.map((value, index) => {
                             return <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                                <img className="rounded-circle me-lg-2" src={value.studProfilePic} alt style={{ width: 40, height: 40 }} />
+                                <img className="rounded-circle me-lg-2" src={value.studProfilePic} alt="" style={{ width: 40, height: 40 }} />
                                 <span className="d-none d-lg-inline-flex">{value.studName}</span>
                             </a>
                         })}
