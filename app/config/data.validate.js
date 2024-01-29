@@ -144,8 +144,8 @@ function isDateGreaterThanToday(date) {
 
 function isValidTime(time) {
     return {
-        isValid: /^\d{2}:\d{2}:\d{2}$/.test(time),
-        message: "Time must be in the format HH:MM:SS"
+        isValid: /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/.test(time),
+        message: "Time must be in the 24-hour format HH:MM"
     };
 }
 
