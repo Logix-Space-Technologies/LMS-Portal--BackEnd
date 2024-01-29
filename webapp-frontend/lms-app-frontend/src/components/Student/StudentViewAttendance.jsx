@@ -10,6 +10,7 @@ const StudentViewAttendance = () => {
 
     const getData = () => {
         const data = { "studId": sessionStorage.getItem('studentId') };
+        console.log(data)
         const axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
