@@ -45,6 +45,7 @@ const Payment = function (payment) {
 
 
 const SubmitTask = function (submitTask) {
+    this.id = submitTask.id;
     this.studId = submitTask.studId;
     this.taskId = submitTask.taskId;
     this.gitLink = submitTask.gitLink;
@@ -371,7 +372,7 @@ Student.findByEmail = (Email, result) => {
 
 
 Tasks.studentTaskView = (studId, result) => {
-    db.query("SELECT st.taskId AS submitTaskId, s.batchId, t.*, st.subDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1", [studId],
+    db.query("SELECT st.id AS submitTaskId, s.batchId, t.*, st.subDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -908,18 +909,53 @@ Payment.viewStudentTransactions = (studId, result) => {
     );
 };
 
-Session.studViewNextSessionDate = (batchId, result) =>{
+Session.studViewNextSessionDate = (batchId, result) => {
     db.query("SELECT date, time, sessionName FROM sessiondetails WHERE  batchId = ? AND date >= CURRENT_DATE ORDER BY date, time DESC LIMIT 1", [batchId],
-    (err, res) => {
-        if (err) {
-            console.log("error", err)
-            return result(err, null)
-        } else {
-            console.log("Next Session", res)
-            return result(null, res)
-        }
-    })
+        (err, res) => {
+            if (err) {
+                console.log("error", err)
+                return result(err, null)
+            } else {
+                console.log("Next Session", res)
+                return result(null, res)
+            }
+        })
 }
+
+SubmitTask.studentUpdateSubmittedTask = (updateSubTask, result) => {
+    // Check if the task is submitted
+    db.query("SELECT * FROM `submit_task` WHERE id = ?", [updateSubTask.id],
+        (subTaskErr, subTaskRes) => {
+            if (subTaskErr) {
+                console.error("Error checking submitted task: ", subTaskErr);
+                return result(subTaskErr, null);
+            }
+
+            if (subTaskRes.length === 0) {
+                console.log("Submitted Task With Given ID Not Found!!");
+                return result("Submitted Task With Given ID Not Found!!", null);
+            }
+
+            // Update the submitted task
+            db.query("UPDATE `submit_task` SET `gitLink` = ?, `remarks` = ? WHERE `id` = ?",
+                [updateSubTask.gitLink, updateSubTask.remarks, updateSubTask.id],
+                (err, res) => {
+                    if (err) {
+                        console.error("Error updating submitted task: ", err);
+                        return result(err, null);
+                    }
+
+                    if (res.affectedRows === 0) {
+                        return result({ kind: "not_found" }, null);
+                    }
+
+                    console.log("Updated Submitted Task Details: ", { id: updateSubTask.id, ...updateSubTask });
+                    result(null, { id: updateSubTask.id, ...updateSubTask });
+                }
+            );
+        }
+    );
+};
 
 
 
