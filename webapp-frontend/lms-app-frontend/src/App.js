@@ -50,6 +50,7 @@ import CollegeStaffSearchTask from './components/CollegeStaff/CollegeStaffSearch
 import AdminChangePassword from './components/Admin/AdminChangePassword';
 import Navbar from './components/Admin/Navbar';
 import AdminViewAllClgStaff from './components/Admin/AdminViewAllClgStaff';
+import AdminViewAllStud from './components/Admin/AdminViewAllStud';
 
 
 
@@ -78,6 +79,7 @@ function App() {
           <Route path='/adminchangepassword' element={<AdminChangePassword/>}/>
           <Route path='/adminnavbar' element={<Navbar/>}/>
           <Route path='/adminviewallclgstaff' element={<AdminViewAllClgStaff/>}/>
+          <Route path='/adminviewallstudents' element={<AdminViewAllStud/>}/>
 
 
 
