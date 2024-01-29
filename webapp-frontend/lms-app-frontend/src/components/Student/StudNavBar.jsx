@@ -30,10 +30,10 @@ const StudNavBar = () => {
                             <a className="nav-link" href="/studViewUpcomingSession">View Upcoming Session Details</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/adminviewadstafflog">View AdStaffLog</a>
+                            <a className="nav-link" href="/studSessionView">View All Session Details</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/adminviewallclgstaff">View College Staff</a>
+                            <a className="nav-link" href="/adminviewallclgstaff">View Batch In-Charge</a>
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" href="/admdashboard">Admin Dashboard</a>
