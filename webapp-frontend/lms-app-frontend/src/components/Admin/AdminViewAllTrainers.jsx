@@ -8,6 +8,8 @@ const AdminViewAllTrainers = () => {
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewAllTrainer"
 
+    const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteTrainer"
+
     const getData = () => {
         let axiosConfig = {
             headers: {
@@ -23,6 +25,29 @@ const AdminViewAllTrainers = () => {
                 console.log(response.data.Trainers)
             }
         )
+    }
+
+    const handleClick = (id) => {
+        let data = { "id": id }
+        let axiosConfigTwo = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        }
+        axios.post(apiUrlTwo, data, axiosConfigTwo).then(
+            (response) => {
+                if (response.data.status === "success") {
+                    // Reload the page after deleting trainer
+                    window.location.reload();
+                } else {
+                    alert(response.data.status)
+                }
+            }
+        )
+
     }
 
     useEffect(() => { getData() }, [])
@@ -67,7 +92,7 @@ const AdminViewAllTrainers = () => {
                                         {value.phoneNumber}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete Trainer</a>
+                                        <a onClick={() => { handleClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete Trainer</a>
                                     </td>
                                 </tr>
                             }

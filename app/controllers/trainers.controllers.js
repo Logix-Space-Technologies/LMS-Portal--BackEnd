@@ -223,7 +223,7 @@ exports.deleteTrainer = (request, response) => {
                     return response.json({ "status": err });
                 }
                 logAdminStaff(0, "Admin Deleted Trainer")
-                return response.json({ "status": "success", "data": data });
+                return response.json({ "status": "success"});
             });
         } else {
             return response.json({ "status": "Unauthorized User!!" });
