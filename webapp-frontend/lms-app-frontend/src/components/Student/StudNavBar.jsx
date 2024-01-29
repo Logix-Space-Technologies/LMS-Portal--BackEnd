@@ -33,17 +33,17 @@ const StudNavBar = () => {
                             <a className="nav-link" href="/studSessionView">View All Session Details</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/adminviewallclgstaff">View Batch In-Charge</a>
+                            <a className="nav-link" href="/studentviewbatchincharge">View Batch In-Charge</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/admdashboard">Admin Dashboard</a>
+                            <a className="nav-link" href="/studdashboard">Student Dashboard</a>
                         </li>
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Functionalities
                             </a>
                             <ul className="dropdown-menu">
-                                <li><a className="dropdown-item" href="/adminviewallstudents">View All Students</a></li>
+                                <li><a className="dropdown-item" href="/studViewRefundReq">View Refund Request</a></li>
                                 <li><a className="dropdown-item" href="/adminviewalltrainers">View All Trainers</a></li>
                                 <li><a className="dropdown-item" href="#">Something else here</a></li>
                             </ul>
