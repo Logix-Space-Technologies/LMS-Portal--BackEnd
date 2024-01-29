@@ -52,6 +52,7 @@ import Navbar from './components/Admin/Navbar';
 import AdminViewAllClgStaff from './components/Admin/AdminViewAllClgStaff';
 import AdminViewAllStud from './components/Admin/AdminViewAllStud';
 import AdminViewAllTrainers from './components/Admin/AdminViewAllTrainers';
+import StudNavBar from './components/Student/StudNavBar';
 
 
 
@@ -135,6 +136,7 @@ function App() {
           <Route path="/studentviewbatchincharge" element={<StudentBatchInCharge />} />
           <Route path='/studentviewtransaction' element={<StudentViewTransaction />} />
           <Route path='/studViewUpcomingSession' element={<StudentViewUpcomingSession />} />
+          <Route path='/studnavbar' element={<StudNavBar/>}/>
 
 
 

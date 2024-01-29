@@ -27,7 +27,7 @@ const StudNavBar = () => {
                             <a className="nav-link" href="/studviewNotifications">View Notifications</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/studViewUpcomingSession">View Upcoming Session Details</a>
+                            <a className="nav-link" href="/studSessionView">View Upcoming Session Details</a>
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" href="/adminviewadstafflog">View AdStaffLog</a>
