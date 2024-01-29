@@ -69,17 +69,12 @@ exports.createSession = (request, response) => {
             if (Object.keys(validationErrors).length > 0) {
                 return response.json({ "status": "Validation failed", "data": validationErrors })
             }
-
-            const inputTime = request.body.time;
-            const [hours, minutes, seconds] = inputTime.split(':');
-            const date = new Date(2000, 0, 1, hours, minutes, seconds);
-            const formattedTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
             
             const newSession = new Session({
                 batchId: request.body.batchId,
                 sessionName: request.body.sessionName,
                 date: request.body.date.split('/').reverse().join('-'),
-                time: formattedTime,
+                time: request.body.time,
                 type: request.body.type,
                 remarks: request.body.remarks,
                 venueORlink: request.body.venueORlink,
