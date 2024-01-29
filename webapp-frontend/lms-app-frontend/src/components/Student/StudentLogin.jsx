@@ -47,7 +47,7 @@ const StudentLogin = () => {
                     sessionStorage.setItem("studLoginToken", studtoken);
 
 
-                    navigate("/studentViewTask")
+                    navigate("/studdashboard")
 
 
                 } else {

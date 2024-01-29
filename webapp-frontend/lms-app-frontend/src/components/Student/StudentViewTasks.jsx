@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import StudNavBar from './StudNavBar';
 
 const StudentViewTasks = () => {
     const [studViewTaskData, setStudViewTaskData] = useState([]);
@@ -99,6 +100,7 @@ const StudentViewTasks = () => {
 
     return (
         <div>
+            <StudNavBar/>
             <br />
             <h1>Student View Tasks</h1><br />
             <section className="flex flex-col justify-center antialiased bg-gray-100 text-gray-600 min-h-screen p-4">

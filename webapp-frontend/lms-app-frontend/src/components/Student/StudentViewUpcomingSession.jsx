@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import StudNavBar from './StudNavBar'
 
 const StudentViewUpcomingSession = () => {
 
@@ -38,47 +39,50 @@ const StudentViewUpcomingSession = () => {
     useEffect(() => { getData() }, [])
 
     return (
-        <div className="bg-light py-3 py-md-5">
-            <div className="container">
-                <div className="row justify-content-md-center">
-                    <div className="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
-                        <div className="bg-white p-4 p-md-5 rounded shadow-sm">
-                            <div className="row gy-3 gy-md-4 overflow-hidden">
-                                <div className="col-12 text-center">
-                                    <h1>Upcoming Sessions</h1>
-                                </div>
-                                {loading ? (
+        <div>
+            <StudNavBar/>
+            <div className="bg-light py-3 py-md-5">
+                <div className="container">
+                    <div className="row justify-content-md-center">
+                        <div className="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
+                            <div className="bg-white p-4 p-md-5 rounded shadow-sm">
+                                <div className="row gy-3 gy-md-4 overflow-hidden">
                                     <div className="col-12 text-center">
-                                        <div class="text-center">
-                                            <div class="spinner-border" role="status">
-                                                <span class="visually-hidden">Loading...</span>
+                                        <h1>Upcoming Sessions</h1>
+                                    </div>
+                                    {loading ? (
+                                        <div className="col-12 text-center">
+                                            <div class="text-center">
+                                                <div class="spinner-border" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ) : (
-                                    studentViewUpcomingSessionData.length === 0 ? (
-                                        <div className="col-12 text-center">No Sessions Found!</div>
                                     ) : (
-                                        studentViewUpcomingSessionData.map((value, index) => {
-                                            return (
-                                                <div key={index} className="col-12">
-                                                    <div className="card shadow"> {/* Add "shadow" class here */}
-                                                        <div className="card-body rounded shadow-sm">
-                                                            <h5 className="card-title">Session Name: {value.sessionName}</h5>
-                                                            <p className="card-text">Date: {new Date(value.date).toDateString()}</p>
-                                                            <p className="card-text">Time: {value.time}</p>
-                                                            <p className="card-text">Type: {value.type}</p>
-                                                            <p className="card-text">Remarks: {value.remarks}</p>
-                                                            <p className="card-text">Venue/Link: {value.venueORlink}</p>
-                                                            <p className="card-text">Trainer Name: {value.trainerName}</p>
+                                        studentViewUpcomingSessionData.length === 0 ? (
+                                            <div className="col-12 text-center">No Sessions Found!</div>
+                                        ) : (
+                                            studentViewUpcomingSessionData.map((value, index) => {
+                                                return (
+                                                    <div key={index} className="col-12">
+                                                        <div className="card shadow"> {/* Add "shadow" class here */}
+                                                            <div className="card-body rounded shadow-sm">
+                                                                <h5 className="card-title">Session Name: {value.sessionName}</h5>
+                                                                <p className="card-text">Date: {new Date(value.date).toDateString()}</p>
+                                                                <p className="card-text">Time: {value.time}</p>
+                                                                <p className="card-text">Type: {value.type}</p>
+                                                                <p className="card-text">Remarks: {value.remarks}</p>
+                                                                <p className="card-text">Venue/Link: {value.venueORlink}</p>
+                                                                <p className="card-text">Trainer Name: {value.trainerName}</p>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            );
-                                        })
+                                                );
+                                            })
 
-                                    )
-                                )}
+                                        )
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

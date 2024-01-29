@@ -12,12 +12,7 @@ const StudSideBar = () => {
                     <div className="nav-item dropdown">
                         <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i className="fa fa-laptop me-2" />Features</a>
                         <div className="dropdown-menu bg-transparent border-0">
-                            <a href="#" className="dropdown-item">View Assigned Tasks</a>
-                            <a href="#" className="dropdown-item">View Evaluated Tasks</a>
-                            <a href="#" className="dropdown-item">Submit Refund Request</a>
-                            <a href="#" className="dropdown-item">View Refund Status</a>
-                            <a href="#" className="dropdown-item">View Session Details</a>
-                            <a href="#" className="dropdown-item">View Notifications</a>
+                            <a href="/studentViewTask" className="dropdown-item">View Assigned Tasks</a>
                         </div>
                     </div>
                 </div>
