@@ -43,6 +43,7 @@ const StudHeader = () => {
         axios.post(apiUrl2, data2, axiosConfig2).then(
             (response)=>{
                 setSessionData(response.data.data)
+                console.log(response.data.data)
             }
         )
     }
@@ -56,23 +57,24 @@ const StudHeader = () => {
     }
 
     useEffect(() => { getData() }, [])
-    useEffect(() => {getData2() }, [])
+    useEffect(() => { getData2() }, [])
     return (
         <div>
 
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
                 <a href="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
                     <h2 className="text-primary mb-0">
-                        <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
+                        <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
+                    </h2>
                 </a>
-                {sessionData.map(
+                {sessionData ? (sessionData.map(
                     (value,index)=>{
                         return <div className="session-name">
                         <p>Next Session: {new Date(value.date).toLocaleDateString()},{value.time}</p>
                         
                     </div>
                     }
-                )}
+                )) : <p>Next Session: No Upcoming Session</p>}
                 
                 <div className="navbar-nav align-items-center ms-auto">
                     {/* <div className="nav-item dropdown">
