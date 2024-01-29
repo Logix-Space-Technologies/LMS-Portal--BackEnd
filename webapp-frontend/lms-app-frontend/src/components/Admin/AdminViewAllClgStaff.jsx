@@ -99,7 +99,7 @@ const AdminViewAllClgStaff = () => {
                     </tr>
                   </thead>
                   <tbody className="text-sm divide-y divide-gray-100">
-                    {clgStaffData.map(
+                    {clgStaffData ? (clgStaffData.map(
                       (value, index) => (
                         <tr key={index}>
                           <td className="p-4 whitespace-nowrap">
@@ -145,7 +145,38 @@ const AdminViewAllClgStaff = () => {
                           </td>
                         </tr>
                       )
-                    )}
+                    )): <tr>
+                      <td className="p-4 whitespace-nowrap">
+
+                      </td>
+                      <td className="p-4 whitespace-nowrap">
+
+                      </td>
+                      <td className="p-4 whitespace-nowrap">
+
+                      </td>
+                      <td className="p-4 whitespace-nowrap">
+
+                      </td>
+                      <td className="p-4 whitespace-nowrap">
+                         No College Staffs Found !!!
+                      </td>
+                      <td className="p-4 whitespace-nowrap">
+
+                      </td>
+                      <td className="p-4 whitespace-nowrap">
+
+                      </td>
+                      <td className="p-4 whitespace-nowrap">
+
+                      </td>
+                      <td className="p-4 whitespace-nowrap">
+
+                      </td>
+                      <td className="p-4 whitespace-nowrap">
+
+                      </td>
+                      </tr>}
                   </tbody>
                 </table>
               </div>

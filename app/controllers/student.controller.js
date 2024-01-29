@@ -441,7 +441,7 @@ exports.viewUnverifiedStudents = (request, response) => {
     });
 };
 
-// View All Students By Admin
+// View All Students By Admin And Admin Staff
 exports.viewAllStudsByAdmin = (request, response) => {
     const viewAllStudentByAdminToken = request.headers.token
     key = request.headers.key

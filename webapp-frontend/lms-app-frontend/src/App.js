@@ -51,6 +51,7 @@ import AdminChangePassword from './components/Admin/AdminChangePassword';
 import Navbar from './components/Admin/Navbar';
 import AdminViewAllClgStaff from './components/Admin/AdminViewAllClgStaff';
 import AdminViewAllStud from './components/Admin/AdminViewAllStud';
+import AdminViewAllTrainers from './components/Admin/AdminViewAllTrainers';
 
 
 
@@ -80,6 +81,7 @@ function App() {
           <Route path='/adminnavbar' element={<Navbar/>}/>
           <Route path='/adminviewallclgstaff' element={<AdminViewAllClgStaff/>}/>
           <Route path='/adminviewallstudents' element={<AdminViewAllStud/>}/>
+          <Route path='/adminviewalltrainers' element={<AdminViewAllTrainers/>}/>
 
 
 
