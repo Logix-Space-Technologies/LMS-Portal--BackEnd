@@ -8,6 +8,9 @@ const { Upload } = require('@aws-sdk/lib-storage');
 const fs = require('fs');
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 require('dotenv').config({ path: '../../.env' });
+const { Student } = require("../models/student.model");
+const mailContents = require('../config/mail.content');
+const mail = require('../../sendEmail');
 
 // AWS S3 Client Configuration
 const s3Client = new S3Client({
@@ -141,6 +144,22 @@ exports.createTask = (request, response) => {
                             if(key=="lmsapp"){
                                 logAdminStaff(0,"Admin Created Task")
                             }
+                            Student.searchStudentByBatch(addtask.batchId, (err, res) => {
+                                if (err) {
+                                    return response.json({ "status": err });
+                                } else {
+                                    console.log(res)
+                                    res.forEach(element => {
+                                        const studName=element.studName
+                                        const studEmail=element.studEmail
+                                        const dueDate=request.body.dueDate
+                                        const newTaskHtmlContent=mailContents.newTaskHtmlContent(studName,dueDate);
+                                        const newTaskTextContent=mailContents.newTaskTextContent(studName,dueDate);
+                                        mail.sendEmail(studEmail,"New Task Assigned",newTaskHtmlContent,newTaskTextContent);
+                                    })
+                                }
+                            })
+                            
                             return response.json({ "status": "success", "data": data });
                         }
                     })
