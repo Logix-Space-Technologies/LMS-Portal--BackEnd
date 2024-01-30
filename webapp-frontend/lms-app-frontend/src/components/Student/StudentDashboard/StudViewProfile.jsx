@@ -1,9 +1,21 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const StudViewProfile = () => {
     const [studData, setStudData] = useState([])
     const apiURL = global.config.urls.api.server + "/api/lms/studentViewProfile"
+
+    const navigate = useNavigate()
+
+    const logOut = () => {
+        sessionStorage.removeItem("studentkey");
+        sessionStorage.removeItem("studentId");
+        sessionStorage.removeItem("studemail");
+        sessionStorage.removeItem("studBatchId");
+        sessionStorage.removeItem("studLoginToken");
+    }
+
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
         console.log(data)
@@ -17,8 +29,13 @@ const StudViewProfile = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setStudData(response.data.data)
-                console.log(response.data.data)
+                if (response.data.data) {
+                    setStudData(response.data.data)
+                    console.log(response.data.data)
+                } else {
+                    logOut()
+                    navigate("/studentLogin")
+                }
             }
         )
     }
