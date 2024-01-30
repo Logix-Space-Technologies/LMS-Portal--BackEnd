@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../../config/config'
+import { useNavigate } from 'react-router-dom'
 
 const StudHeader = () => {
     const [studData, setStudData] = useState([])
@@ -10,6 +11,16 @@ const StudHeader = () => {
     const apiUrl2 = global.config.urls.api.server + "/api/lms/studentViewNextSessionDate"
 
     const apiURL = global.config.urls.api.server + "/api/lms/studentViewProfile"
+
+    const navigate = useNavigate()
+
+    const logOut = () => {
+        sessionStorage.removeItem("studentkey");
+        sessionStorage.removeItem("studentId");
+        sessionStorage.removeItem("studemail");
+        sessionStorage.removeItem("studBatchId");
+        sessionStorage.removeItem("studLoginToken");
+    }
 
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
@@ -23,8 +34,13 @@ const StudHeader = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setStudData(response.data.data)
-                console.log(response.data.data)
+                if (response.data.data) {
+                    setStudData(response.data.data)
+                    console.log(response.data.data)
+                } else {
+                    logOut()
+                    navigate("/studentLogin")
+                }
             }
         )
     }
@@ -42,19 +58,17 @@ const StudHeader = () => {
         }
         axios.post(apiUrl2, data2, axiosConfig2).then(
             (response) => {
-                setSessionData(response.data.data)
-                console.log(response.data.data)
+                if (response.data.data) {
+                    setSessionData(response.data.data)
+                    console.log(response.data.data)
+                } else {
+                    logOut()
+                    navigate("/studentLogin")
+                }
             }
         )
     }
 
-    const logOut = () => {
-        sessionStorage.removeItem("studentkey");
-        sessionStorage.removeItem("studentId");
-        sessionStorage.removeItem("studemail");
-        sessionStorage.removeItem("studBatchId");
-        sessionStorage.removeItem("studLoginToken");
-    }
 
     function formatTime(timeString) {
         const options = { hour: '2-digit', minute: '2-digit', hour12: true };
