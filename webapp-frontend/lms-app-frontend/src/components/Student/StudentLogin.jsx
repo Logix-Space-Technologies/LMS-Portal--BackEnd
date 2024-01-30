@@ -8,7 +8,7 @@ const StudentLogin = () => {
     const [inputField, setInputField] = useState({
         studEmail: "",
         password: "",
-        type: "web"
+        type: 'web'
     });
 
     const [errors, setErrors] = useState({});
