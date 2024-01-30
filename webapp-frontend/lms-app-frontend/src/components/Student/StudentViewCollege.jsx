@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
+import StudNavBar from './StudNavBar'
 
 const StudentViewCollege = () => {
     const [collegeData, setCollegeData] = useState([])
@@ -30,6 +31,7 @@ const StudentViewCollege = () => {
     useEffect(() => { getData() }, [])
     return (
         <div>
+            <StudNavBar/>
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import axios from 'axios';
+import StudNavBar from './StudNavBar';
 
 const StudentViewAttendance = () => {
     const [studentViewAttendance, setStudentViewAttendance] = useState([]);
@@ -9,6 +10,7 @@ const StudentViewAttendance = () => {
 
     const getData = () => {
         const data = { "studId": sessionStorage.getItem('studentId') };
+        console.log(data)
         const axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -29,6 +31,7 @@ const StudentViewAttendance = () => {
 
     return (
         <div>
+            <StudNavBar/>
             <div className="flex min-h-screen items-center justify-center bg-white">
                 <div className="p-6 overflow-scroll px-0">
                     <table className="w-full min-w-max table-auto text-left">

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import '../../config/config';
 import React, { useState } from 'react';
+import Navbar from './Navbar';
 
 const AddAdminStaff = () => {
     const [inputField, setInputField] = useState({
@@ -115,63 +116,66 @@ const AddAdminStaff = () => {
         return errors;
     };
     return (
-        <div class="bg-light py-3 py-md-5">
-            <div class="container">
-                <div class="row justify-content-md-center">
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
-                        <div class="bg-white p-4 p-md-5 rounded shadow-sm">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="text-center mb-5">
-                                        <a href="#!">
-                                            <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
-                                        </a><br /><br />
-                                        <h3>Add Admin Staff Details</h3>
+        <div>
+            <Navbar />
+            <div class="bg-light py-3 py-md-5">
+                <div class="container">
+                    <div class="row justify-content-md-center">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
+                            <div class="bg-white p-4 p-md-5 rounded shadow-sm">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="text-center mb-5">
+                                            <a href="#!">
+                                                <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
+                                            </a><br /><br />
+                                            <h3>Add Admin Staff Details</h3>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row gy-3 gy-md-4 overflow-hidden">
-                                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                    <label for="" class="form-label">Admin Staff Name <span class="text-danger">*</span></label>
-                                    <input onChange={inputHandler} type="text" class="form-control" name="AdStaffName" value={inputField.AdStaffName} id="AdStaffName" />
-                                    {errors.AdStaffName && <span style={{ color: 'red' }} className="error">{errors.AdStaffName}</span>}
-                                </div>
-                                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                    <label for="" class="form-label">Mobile Number <span class="text-danger">*</span></label>
-                                    <input onChange={inputHandler} type="text" class="form-control" name="PhNo" value={inputField.PhNo} id="PhNo" />
-                                    {errors.PhNo && <span style={{ color: 'red' }} className="error">{errors.PhNo}</span>}
-                                </div>
-                                <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                    <label for="" class="form-label">Address <span class="text-danger">*</span></label>
-                                    <textarea onChange={inputHandler} name="Address" id="Address" cols="30" rows="5" className="input form-control" value={inputField.Address} ></textarea>
-                                    {errors.Address && <span style={{ color: 'red' }} className="error">{errors.Address}</span>}
-                                </div>
-                                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                    <label for="" class="form-label">Aadhar Number <span class="text-danger">*</span></label>
-                                    <input onChange={inputHandler} type="text" class="form-control" name="AadharNo" value={inputField.AadharNo} id="AadharNo" />
-                                    {errors.AadharNo && <span style={{ color: 'red' }} className="error">{errors.AadharNo}</span>}
-                                </div>
-                                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                    <label for="" class="form-label">Email <span class="text-danger">*</span></label>
-                                    <input onChange={inputHandler} type="text" class="form-control" name="Email" value={inputField.Email} id="Email" />
-                                    {errors.Email && <span style={{ color: 'red' }} className="error">{errors.Email}</span>}
-                                </div>
-                                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                    <label for="" class="form-label">Password</label>
-                                    <input onChange={inputHandler} type="text" class="form-control" name="Password" value={inputField.Password} id="Password" />
-                                    {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
-                                </div>
-                                <div class="col-12">
-                                    <div class="d-grid">
-                                        <button onClick={handleSubmit} class="btn btn-primary btn-lg" type="submit">Register</button>
+                                <div class="row gy-3 gy-md-4 overflow-hidden">
+                                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                        <label for="" class="form-label">Admin Staff Name <span class="text-danger">*</span></label>
+                                        <input onChange={inputHandler} type="text" class="form-control" name="AdStaffName" value={inputField.AdStaffName} id="AdStaffName" />
+                                        {errors.AdStaffName && <span style={{ color: 'red' }} className="error">{errors.AdStaffName}</span>}
+                                    </div>
+                                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                        <label for="" class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                                        <input onChange={inputHandler} type="text" class="form-control" name="PhNo" value={inputField.PhNo} id="PhNo" />
+                                        {errors.PhNo && <span style={{ color: 'red' }} className="error">{errors.PhNo}</span>}
+                                    </div>
+                                    <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                        <label for="" class="form-label">Address <span class="text-danger">*</span></label>
+                                        <textarea onChange={inputHandler} name="Address" id="Address" cols="30" rows="5" className="input form-control" value={inputField.Address} ></textarea>
+                                        {errors.Address && <span style={{ color: 'red' }} className="error">{errors.Address}</span>}
+                                    </div>
+                                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                        <label for="" class="form-label">Aadhar Number <span class="text-danger">*</span></label>
+                                        <input onChange={inputHandler} type="text" class="form-control" name="AadharNo" value={inputField.AadharNo} id="AadharNo" />
+                                        {errors.AadharNo && <span style={{ color: 'red' }} className="error">{errors.AadharNo}</span>}
+                                    </div>
+                                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                        <label for="" class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input onChange={inputHandler} type="text" class="form-control" name="Email" value={inputField.Email} id="Email" />
+                                        {errors.Email && <span style={{ color: 'red' }} className="error">{errors.Email}</span>}
+                                    </div>
+                                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                        <label for="" class="form-label">Password</label>
+                                        <input onChange={inputHandler} type="text" class="form-control" name="Password" value={inputField.Password} id="Password" />
+                                        {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="d-grid">
+                                            <button onClick={handleSubmit} class="btn btn-primary btn-lg" type="submit">Register</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <hr class="mt-5 mb-4 border-secondary-subtle" />
-                                    <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center">
-                                        &copy; 2024 Link Ur Codes. All rights reserved.
+                                <div class="row">
+                                    <div class="col-12">
+                                        <hr class="mt-5 mb-4 border-secondary-subtle" />
+                                        <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center">
+                                            &copy; 2024 Link Ur Codes. All rights reserved.
+                                        </div>
                                     </div>
                                 </div>
                             </div>

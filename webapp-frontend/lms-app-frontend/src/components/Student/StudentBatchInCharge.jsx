@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import axios from 'axios';
+import StudNavBar from './StudNavBar';
 
 const StudentBatchInCharge = () => {
     const [staffData, setStaffData] = useState({});
@@ -48,16 +49,19 @@ const StudentBatchInCharge = () => {
         //       </div>
         //     </div>
         //   </div>
-        <div className="d-flex justify-content-center align-items-center vh-100">
-            <div className="card" style={{ width: '18rem' }}>
-                <img src={staffData.profilePic} className="card-img-top" alt="..." />
-                <div className="card-body">
-                    <h6 className="card-title"><b>College Staff Details</b></h6>
-                    <p className="card-text"><b>Name: </b>{staffData.collegeStaffName}</p>
-                    <p className="card-text"><b>Department:</b> {staffData.department}</p>
-                    <p className="card-text"><b>Phone: </b>{staffData.phNo}</p>
-                    <p className="card-text"><b>Email: </b>{staffData.email}</p>
+        <div>
+            <StudNavBar />
+            <div className="d-flex justify-content-center align-items-center vh-100">
+                <div className="card" style={{ width: '18rem' }}>
+                    <img src={staffData.profilePic} className="card-img-top" alt="..." />
+                    <div className="card-body">
+                        <h6 className="card-title"><b>College Staff Details</b></h6>
+                        <p className="card-text"><b>Name: </b>{staffData.collegeStaffName}</p>
+                        <p className="card-text"><b>Department:</b> {staffData.department}</p>
+                        <p className="card-text"><b>Phone: </b>{staffData.phNo}</p>
+                        <p className="card-text"><b>Email: </b>{staffData.email}</p>
 
+                    </div>
                 </div>
             </div>
         </div>

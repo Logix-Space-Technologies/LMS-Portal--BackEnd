@@ -152,7 +152,7 @@ CollegeStaff.clgStaffDelete = (collegeStaffId, result) => {
 
 
 CollegeStaff.getAll = async (result) => {
-    let query = "SELECT c.collegeName, cs.* FROM college_staff cs JOIN college c ON cs.collegeId = c.id WHERE cs.deleteStatus = 0 AND cs.isActive = 1";
+    let query = "SELECT c.collegeName, cs.*, CASE WHEN cs.emailVerified = 1 THEN 'Verified' ELSE 'Not Verified' END AS emailVerificationStatus FROM college_staff cs JOIN college c ON cs.collegeId = c.id WHERE cs.deleteStatus = 0 AND cs.isActive = 1 ORDER BY cs.id, c.collegeName";
     db.query(query, (err, response) => {
         if (err) {
             console.log("error: ", err)

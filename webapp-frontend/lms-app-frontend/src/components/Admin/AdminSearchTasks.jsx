@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import Navbar from './Navbar'
 
 const AdminSearchTasks = () => {
+
 
     const [inputField, setInputField] = useState({
         "taskQuery": ""
@@ -12,7 +15,10 @@ const AdminSearchTasks = () => {
 
     const [isLoading, setIsLoading] = useState(true)
 
+    const navigate = useNavigate()
+
     const apiUrl = global.config.urls.api.server + "/api/lms/searchTasks"
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/deleteTask"
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
@@ -40,8 +46,36 @@ const AdminSearchTasks = () => {
         )
     }
 
+    const handleClick = (id) => {
+        let data = { "id": id }
+        let axiosConfig2 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        }
+
+        axios.post(apiUrl2, data, axiosConfig2).then(
+            (response) => {
+                console.log(data)
+                console.log(axiosConfig2)
+                if (response.data.status === "Task Deleted.") {
+                    alert("Task deleted!!")
+                    // Reload the page after clicking OK in the alert
+                    window.location.reload();
+                } else {
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
+
 
     return (
+        <div>
+            <Navbar/>
         <div>
             <div className="container">
                 <div className="row">
@@ -151,6 +185,9 @@ const AdminSearchTasks = () => {
                                                             <td className="p-4 whitespace-nowrap">
                                                                 <div className="text-left">{new Date(value.updatedDate).toLocaleDateString()}</div>
                                                             </td>
+                                                            <td className="p-4 whitespace-nowrap">
+                                                                <button onClick={() => handleClick(value.id)} className="btn btn-danger">Delete</button>
+                                                            </td>
                                                         </tr>
                                                     }
                                                 )}
@@ -164,6 +201,7 @@ const AdminSearchTasks = () => {
                         <div className="col-12 text-center">No Tasks Found!!</div>
                     ))}
             </div>
+        </div>
         </div>
 
     )

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
+import StudNavBar from './StudNavBar'
 
 const StudentViewTransaction = () => {
     const [transactionData, setTransactionData] = useState([])
@@ -28,6 +29,7 @@ const StudentViewTransaction = () => {
     useEffect(() => { getData() }, [])
     return (
         <div>
+            <StudNavBar/>
             {/* ====== Table Section Start */}
             <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import StudNavBar from './StudNavBar'
 
 const StudentViewRefundRequest = () => {
 
@@ -88,6 +89,7 @@ const StudentViewRefundRequest = () => {
 
     return (
         <div>
+            <StudNavBar/>
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">

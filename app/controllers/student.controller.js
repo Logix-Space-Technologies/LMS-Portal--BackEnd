@@ -441,7 +441,7 @@ exports.viewUnverifiedStudents = (request, response) => {
     });
 };
 
-// View All Students By Admin
+// View All Students By Admin And Admin Staff
 exports.viewAllStudsByAdmin = (request, response) => {
     const viewAllStudentByAdminToken = request.headers.token
     key = request.headers.key
@@ -836,3 +836,67 @@ exports.studentViewNextSession = (request, response) => {
         }
     });
 };
+
+exports.studentupdatesubmittedtask = (request, response) => {
+    const updateSubmissionData = request.body
+    const studUpdateSubTaskToken = request.headers.token
+    jwt.verify(studUpdateSubTaskToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+
+            const validationErrors = {};
+
+            if (Validator.isEmpty(updateSubmissionData.gitLink).isValid) {
+                validationErrors.gitLink = Validator.isEmpty(updateSubmissionData.gitLink).message;
+            }
+
+            if (!Validator.isValidGitLink(updateSubmissionData.gitLink).isValid) {
+                validationErrors.gitLink = Validator.isValidGitLink(updateSubmissionData.gitLink).message;
+            }
+
+            if (Validator.isEmpty(updateSubmissionData.remarks).isValid) {
+                validationErrors.Remarks = Validator.isEmpty(updateSubmissionData.remarks).message;
+            }
+
+            // If validation fails
+            if (Object.keys(validationErrors).length > 0) {
+                return response.json({ "status": "Validation failed", "data": validationErrors });
+            }
+
+            SubmitTask.studentUpdateSubmittedTask(updateSubmissionData, (err, data) => {
+                if (err) {
+                    if (err.kind === "not_found") {
+                        return response.json({ "status": "Submitted Task with provided Id is not found." });
+                    } else {
+                        return response.json({ "status": err });
+                    }
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            })
+
+
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    })
+
+}
+
+exports.studentviewsubmittedtask = (request, response) => {
+    const studViewSubTaskToken = request.headers.token
+    jwt.verify(studViewSubTaskToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            const id = request.body.id;
+            SubmitTask.studentviewsubmittedtask(id, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err })
+                } else {
+                    return response.json(data)
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+
+    })
+}

@@ -122,7 +122,7 @@ Trainers.deleteTrainer = (trainerId, result) => {
             }
 
             console.log("Trainer deleted successfully");
-            result(null, "Trainer deleted successfully");
+            result(null, null);
         });
     });
 };

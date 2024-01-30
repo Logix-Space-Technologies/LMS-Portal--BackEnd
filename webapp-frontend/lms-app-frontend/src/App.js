@@ -46,6 +46,13 @@ import AdminSearchAdminStaff from './components/Admin/AdminSearchAdminStaff';
 import CollegeStaffViewTask from './components/CollegeStaff/CollegeStaffViewTask';
 import AdminViewAdStaffLog from './components/Admin/AdminViewAdStaffLog';
 import StudentViewUpcomingSession from './components/Student/StudentViewUpcomingSession';
+import CollegeStaffSearchTask from './components/CollegeStaff/CollegeStaffSearchTask';
+import AdminChangePassword from './components/Admin/AdminChangePassword';
+import Navbar from './components/Admin/Navbar';
+import AdminViewAllClgStaff from './components/Admin/AdminViewAllClgStaff';
+import AdminViewAllStud from './components/Admin/AdminViewAllStud';
+import AdminViewAllTrainers from './components/Admin/AdminViewAllTrainers';
+import StudNavBar from './components/Student/StudNavBar';
 
 
 
@@ -71,6 +78,11 @@ function App() {
           <Route path='/adminsearchtask' element={<AdminSearchTasks />} />
           <Route path='/adminsearchadminstaff' element={<AdminSearchAdminStaff />} />
           <Route path='/adminviewadstafflog' element={<AdminViewAdStaffLog/>}/>
+          <Route path='/adminchangepassword' element={<AdminChangePassword/>}/>
+          <Route path='/adminnavbar' element={<Navbar/>}/>
+          <Route path='/adminviewallclgstaff' element={<AdminViewAllClgStaff/>}/>
+          <Route path='/adminviewallstudents' element={<AdminViewAllStud/>}/>
+          <Route path='/adminviewalltrainers' element={<AdminViewAllTrainers/>}/>
 
 
 
@@ -97,6 +109,7 @@ function App() {
           <Route path='/colgstaffsearchstudent' element={<CollegeStaffSearchStudent />} />
           <Route path='/colgstaffsearchbatch' element={<CollegeStaffSearchBatch />} />
           <Route path='/clgstaffviewtask' element={<CollegeStaffViewTask/>}/>
+          <Route path='/clgStaffSearchTask' element={<CollegeStaffSearchTask/>}/>
 
 
 
@@ -123,6 +136,7 @@ function App() {
           <Route path="/studentviewbatchincharge" element={<StudentBatchInCharge />} />
           <Route path='/studentviewtransaction' element={<StudentViewTransaction />} />
           <Route path='/studViewUpcomingSession' element={<StudentViewUpcomingSession />} />
+          <Route path='/studnavbar' element={<StudNavBar/>}/>
 
 
 

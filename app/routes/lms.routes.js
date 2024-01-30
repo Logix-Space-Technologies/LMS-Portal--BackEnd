@@ -226,5 +226,8 @@ router.post('/studentViewTransaction',StudentController.studentViewPaymentTransa
 
 router.post('/studentViewNextSessionDate',StudentController.studentViewNextSession)
 
+router.post('/studupdatesubmittedtask',StudentController.studentupdatesubmittedtask)
+
+router.post('/studentviewsubmittedtask',StudentController.studentviewsubmittedtask)
 
 module.exports = router

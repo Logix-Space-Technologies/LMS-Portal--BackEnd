@@ -7,23 +7,39 @@ const AdminLogin = () => {
     const [inputField, setInputField] = useState(
         { userName: "", Password: "" }
     )
+
+    const [errors, setErrors] = useState({});
+
     const apiUrl = global.config.urls.api.server + "/api/lms/"
     const navigate = useNavigate()
 
     const inputHandler = (event) => {
+        setErrors({}); // Clear previous errors
         setInputField({ ...inputField, [event.target.name]: event.target.value })
     }
 
     const readValue = () => {
+        let newErrors = {};
+        if (!inputField.userName.trim()) {
+            newErrors.userName = "Username is required!";
+        }
+        if (!inputField.Password.trim()) {
+            newErrors.Password = "Password is required!";
+        } 
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
         axios.post(apiUrl, inputField).then(
             (Response) => {
                 if (Response.data.status === "Success") {
                     let admtoken = Response.data.token
                     let admkey = "lmsapp"
+                    let userName = Response.data.data.userName;
                     sessionStorage.setItem("admkey", admkey)
                     sessionStorage.setItem("admtoken", admtoken)
-
-                    navigate("/adminviewadstafflog")
+                    sessionStorage.setItem("userName", userName)
+                    navigate("/admdashboard")
 
                 }
                 else {
@@ -57,18 +73,27 @@ const AdminLogin = () => {
                                 <div class="mb-3 text-start">
                                     <label for="" class="form-label">Username</label>
                                     <input type="text" name="userName" value={inputField.userName} onChange={inputHandler} class="form-control" />
+                                    {errors.userName && <span style={{ color: 'red' }} className="error">{errors.userName}</span>}
                                 </div>
                                 <div class="mb-3 text-start">
                                     <label for="" class="form-label">Password</label>
                                     <input type="password" name="Password" value={inputField.Password} onChange={inputHandler} class="form-control" />
+                                    {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
                                 </div>
                             </form>
                             <div class="mb-3">
                                 <button type="button" onClick={readValue} class="btn btn-success btn-lg">Login</button>
-                            </div>
+                            </div><br />
                             <div>
                                 <Link to='/admstafflogin'>Admin Staff Login</Link>
                             </div>
+                            <div>
+                                <Link to='/clgStafflogin'>College Staff Login</Link>
+                            </div>
+                            <div>
+                                <Link to='/studentLogin'>Student Login</Link>
+                            </div>
+
                             {/* <div class="mb-3">
                                 <p class="lead ">Don't have an account? <a href="/register">Register here</a></p>
                             </div> */}
