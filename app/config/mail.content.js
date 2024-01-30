@@ -2,7 +2,7 @@ function upcomingSessionContent(studName, sessionName, date, time, venueORlink) 
     content = `<!DOCTYPE html>
     <html>
     <head>
-        <title>New Task Available</title>
+        <title>Session Created</title>
         <style>
             body {
                 background-color: #faf4f4;
