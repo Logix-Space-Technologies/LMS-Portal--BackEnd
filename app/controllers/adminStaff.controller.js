@@ -283,6 +283,7 @@ exports.adminStaffLogin = (request, response) => {
                                     }
                                 })
                             } else {
+                                //display the data
                                 response.json({ "status": "Success", "data": admin_staff, "token": token })
                             }
                         }
