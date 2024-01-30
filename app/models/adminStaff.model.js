@@ -2,6 +2,8 @@ const { response } = require("express")
 const db = require("../models/db")
 const bcrypt = require("bcrypt")
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
+const mailContents = require('../config/mail.content');
+const mail = require('../../sendEmail');
 
 const AdminStaff = function (adminStaff) {
     this.id = adminStaff.id
@@ -197,6 +199,18 @@ AdminStaff.findByEmail = (email, result) => {
         result({ kind: "not_found" }, null)
     })
 }
+
+AdminStaff.sendOtp = (email, result) => {
+    const otp = Math.floor(100000 + Math.random() * 900000)
+    const otpExpiry = new Date(Date.now() + 600000)
+    const otpMailHtmlContent = mailContents.otpHtmlContent(otp)
+    const otpMailTextContent = mailContents.otpTextContent(otp)
+    mail.sendEmail(email, "OTP for Password Reset", otpMailHtmlContent, otpMailTextContent)
+    result(null, { "otp": otp, "otpExpiry": otpExpiry })
+    
+}
+
+
 
 
 // Admin-Staff Change Password

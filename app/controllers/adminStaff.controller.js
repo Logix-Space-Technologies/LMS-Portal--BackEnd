@@ -4,6 +4,7 @@ const AdminStaff = require("../models/adminStaff.model");
 const Validator = require("../config/data.validate");
 const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
+const { generate } = require("otp-generator");
 
 const saltRounds = 10;
 
@@ -272,7 +273,18 @@ exports.adminStaffLogin = (request, response) => {
                         if (error) {
                             response.json({ "status": "Unauthorized user!!" })
                         } else {
-                            response.json({ "status": "Success", "data": admin_staff, "token": token })
+                            if (admin_staff.emailVerified === 0) {
+                                response.json({ "status": "Email not verified!!"})
+                                AdminStaff.sendOtp(Email, (err, data) => {
+                                    if (err) {
+                                        console.log(err)
+                                    } else {
+                                        console.log(data)
+                                    }
+                                })
+                            } else {
+                                response.json({ "status": "Success", "data": admin_staff, "token": token })
+                            }
                         }
                     }
 
@@ -288,7 +300,7 @@ exports.adminStaffLogin = (request, response) => {
 
 // Admin-Staff Change Password
 exports.adminStaffChangePswd = (request, response) => {
-    const { Email, oldAdSfPassword, newAdSfPassword} = request.body
+    const { Email, oldAdSfPassword, newAdSfPassword } = request.body
     const token = request.headers.token
     jwt.verify(token, "lmsappadmstaff", (error, decoded) => {
         if (decoded) {
