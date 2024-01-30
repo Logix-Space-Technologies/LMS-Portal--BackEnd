@@ -176,7 +176,7 @@ exports.createStudent = (req, res) => {
 
 
 exports.studLog = (request, response) => {
-    const { studEmail, password } = request.body
+    const { studEmail, password, type } = request.body;
 
     const getStudEmail = request.body.studEmail
     const getPassword = request.body.password
@@ -202,11 +202,22 @@ exports.studLog = (request, response) => {
 
         const passwordMatch = bcrypt.compareSync(password, stud.password)
         if (passwordMatch) {
-            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsappstud", { expiresIn: "30m" },
+            jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsappstud", {
+                expiresIn: (type === 'web') ? '30m' : ((type === 'mobile') ? '30d' : undefined)
+            },
                 (error, token) => {
                     if (error) {
                         return response.json({ "status": "Unauthorized User!!" })
                     } else {
+                        if (type === 'web') {
+                            // Code for web app
+                            console.log('Accessed from web app');
+                        } else if (type === 'mobile') {
+                            // Code for mobile app
+                            console.log('Accessed from mobile app');
+                        } else {
+                            console.log('Unknown type');
+                        }
                         return response.json({ "status": "Success", "data": stud, "token": token })
                     }
                 })
