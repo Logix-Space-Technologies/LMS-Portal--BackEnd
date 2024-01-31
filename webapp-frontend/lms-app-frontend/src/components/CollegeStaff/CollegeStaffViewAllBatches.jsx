@@ -65,7 +65,7 @@ const CollegeStaffViewBatch = () => {
     }
   };
 
-  useEffect(() => {fetchBatches()}, []);
+  useEffect(() => { fetchBatches() }, []);
 
   return (
     <div className="bg-light py-3 py-md-5">
@@ -100,6 +100,9 @@ const CollegeStaffViewBatch = () => {
                             <p className="card-text">Description: {batch.batchDesc}</p>
                             <p className="card-text">Amount: {batch.batchAmount}</p>
                             <p className="card-text">Added Date: {batch.addedDate}</p>
+                            <button>
+                              Download PDF
+                            </button>
                           </div>
                         </div>
                       </div>
