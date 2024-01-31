@@ -54,6 +54,7 @@ import AdminViewAllStud from './components/Admin/AdminViewAllStud';
 import AdminViewAllTrainers from './components/Admin/AdminViewAllTrainers';
 import StudNavBar from './components/Student/StudNavBar';
 import AdminViewAllBatch from './components/Admin/AdminViewAllBatch';
+import AdminSearchStudent from './components/Admin/AdminSearchStudent';
 
 
 
@@ -85,6 +86,7 @@ function App() {
           <Route path='/adminviewallstudents' element={<AdminViewAllStud/>}/>
           <Route path='/adminviewalltrainers' element={<AdminViewAllTrainers/>}/>
           <Route path='/adminviewallbatches' element={<AdminViewAllBatch/>}/>
+          <Route path='/adminsearchstudent' element={<AdminSearchStudent/>}/>
 
 
 
