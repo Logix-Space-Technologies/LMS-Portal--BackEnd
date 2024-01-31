@@ -40,25 +40,28 @@ const CollegeStaffViewBatch = () => {
   };
 
   const pdfGenerate = async () => {
-    let axiosConfig2 = {
-      headers: {
-        "Content-Type": "application/pdf",
-        "Access-Control-Allow-Origin": "*",
-        "token": token,
-        "key": sessionStorage.getItem("clgstaffkey")
-      }
-    };
     try {
+      const axiosConfig2 = {
+        headers: {
+          "Content-Type": "application/json",
+          "token": token,
+          "key": sessionStorage.getItem("clgstaffkey")
+        },
+        responseType: 'blob', // Set responseType to 'blob' for PDF
+      };
+
       const response = await axios.post(apiUrl2, {}, axiosConfig2);
 
-      if (response.data.status === "success") {
-        // Use window.open directly with response.data.data
-        window.open(URL.createObjectURL(new Blob([response.data.data], { type: 'application/pdf' })), '_blank');
+      if (response.data) {
+        // Use window.open directly with response.data
+        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+        window.open(URL.createObjectURL(pdfBlob), '_blank');
       } else {
         alert(response.data.status);
       }
     } catch (error) {
-      alert('Error generating PDF:', error);
+      console.error('Error generating PDF:', error);
+      alert('Error generating PDF.');
     }
   };
 
