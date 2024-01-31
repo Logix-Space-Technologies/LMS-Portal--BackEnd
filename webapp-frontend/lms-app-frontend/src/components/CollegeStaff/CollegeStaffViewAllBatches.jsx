@@ -7,16 +7,10 @@ const CollegeStaffViewBatch = () => {
   const [loading, setLoading] = useState(true);
 
   const apiUrl = global.config.urls.api.server + "/api/lms/collegeStaffViewBatch";
+  const apiUrl2 = global.config.urls.api.server + "/api/lms/generatePdf";
   const token = sessionStorage.getItem("clgstaffLogintoken");
   const collegeId = sessionStorage.getItem("clgStaffCollegeId");
 
-  useEffect(() => {
-    if (!token || !collegeId) {
-      console.error("Token or College ID is missing.");
-    } else {
-      fetchBatches();
-    }
-  }, [token, collegeId]);
 
   const fetchBatches = () => {
     let axiosConfig = {
@@ -30,10 +24,9 @@ const CollegeStaffViewBatch = () => {
 
     axios.post(apiUrl, { "collegeId": collegeId }, axiosConfig)
       .then(response => {
-        console.log("Response from Backend:", response.data);
-
         if (response.data.status === "success") {
           setBatches(response.data.data);
+          console.log(response.data)
         } else {
           console.log(response.data.status);
         }
@@ -46,6 +39,31 @@ const CollegeStaffViewBatch = () => {
       });
   };
 
+  const pdfGenerate = async () => {
+    let axiosConfig2 = {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Access-Control-Allow-Origin": "*",
+        "token": token,
+        "key": sessionStorage.getItem("clgstaffkey")
+      }
+    };
+    try {
+      const response = await axios.post(apiUrl2, {}, axiosConfig2);
+
+      if (response.data.status === "success") {
+        // Use window.open directly with response.data.data
+        window.open(URL.createObjectURL(new Blob([response.data.data], { type: 'application/pdf' })), '_blank');
+      } else {
+        alert(response.data.status);
+      }
+    } catch (error) {
+      alert('Error generating PDF:', error);
+    }
+  };
+
+  useEffect(() => {fetchBatches()}, []);
+
   return (
     <div className="bg-light py-3 py-md-5">
       <div className="container">
@@ -53,8 +71,15 @@ const CollegeStaffViewBatch = () => {
           <div className="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
             <div className="bg-white p-4 p-md-5 rounded shadow-sm">
               <div className="row gy-3 gy-md-4 overflow-hidden">
-                <div className="col-12">
-                  <h3>Batch Details</h3>
+                <div className="row">
+                  <div className="col-6">
+                    <h1 style={{ fontWeight: 'bold', fontSize: '40px' }}>Batch Details</h1>
+                  </div>
+                  <div className="col-6 text-end">
+                    <button onClick={pdfGenerate}>
+                      Download PDF
+                    </button>
+                  </div>
                 </div>
                 {loading ? (
                   <div className="col-12 text-center">Loading...</div>
