@@ -627,7 +627,10 @@ exports.generateListOfBatchWiseStudents = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
-                    generatePDF(data, (pdfPath) => {
+                    generatePDF(data, (pdfPath, pdfError) => {
+                        if (pdfError) {
+                            return response.json({ "status": pdfError });
+                        }
                         response.setHeader('Content-Type', 'application/pdf');
                         response.setHeader('Content-Disposition', 'attachment; filename=batch_wise_students_list.pdf');
                         fs.createReadStream(pdfPath).pipe(response);
