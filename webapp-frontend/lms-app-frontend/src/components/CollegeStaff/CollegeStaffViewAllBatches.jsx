@@ -56,6 +56,7 @@ const CollegeStaffViewBatch = () => {
         // Use window.open directly with response.data
         const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
         window.open(URL.createObjectURL(pdfBlob), '_blank');
+        window.location.reload();
       } else {
         alert(response.data.status);
       }
@@ -79,7 +80,7 @@ const CollegeStaffViewBatch = () => {
                     <h1 style={{ fontWeight: 'bold', fontSize: '40px' }}>Batch Details</h1>
                   </div>
                   <div className="col-6 text-end">
-                    <button onClick={pdfGenerate}>
+                    <button className='btn btn-primary' onClick={pdfGenerate}>
                       Download PDF
                     </button>
                   </div>
@@ -99,9 +100,9 @@ const CollegeStaffViewBatch = () => {
                             <p className="card-text">Registration End Date: {batch.regEndDate}</p>
                             <p className="card-text">Description: {batch.batchDesc}</p>
                             <p className="card-text">Amount: {batch.batchAmount}</p>
-                            <p className="card-text">Added Date: {batch.addedDate}</p>
-                            <button>
-                              Download PDF
+                            <p className="card-text">Added Date: {batch.addedDate}</p><br />
+                            <button className='btn btn-primary'>
+                              Download Attendance List PDF
                             </button>
                           </div>
                         </div>
