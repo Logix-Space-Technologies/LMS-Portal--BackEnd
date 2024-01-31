@@ -631,13 +631,6 @@ exports.generateListOfBatchWiseStudents = (request, response) => {
                         response.setHeader('Content-Type', 'application/pdf');
                         response.setHeader('Content-Disposition', 'attachment; filename=batch_wise_students_list.pdf');
                         fs.createReadStream(pdfPath).pipe(response);
-
-                        // Delete the generated PDF after sending it
-                        fs.unlink(pdfPath, (unlinkError) => {
-                            if (unlinkError) {
-                                console.error("Error deleting PDF:", unlinkError);
-                            }
-                        });
                     });
                 }
             });
