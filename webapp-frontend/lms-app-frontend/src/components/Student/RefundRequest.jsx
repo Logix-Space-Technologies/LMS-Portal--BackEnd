@@ -51,7 +51,6 @@ const RefundRequestForm = () => {
                             reason: "",
                         }));
                     } else {
-                        alert(response.data.status);
 
                         if (response.data.status === "A refund request already exists for the student.") {
                             alert("A refund request already exists for the student.");
@@ -60,6 +59,10 @@ const RefundRequestForm = () => {
                         } else if (response.data.status === "Failed to create refund request.") {
                             alert("Failed to create refund request.");
                         }
+                        setInputField((prevInputField) => ({
+                            ...prevInputField,
+                            reason: "",
+                        }));
                     }
                 }).catch((error) => {
                     alert('An error occurred while processing your request.');
