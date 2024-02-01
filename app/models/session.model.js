@@ -195,7 +195,7 @@ Session.viewSessions = (result) => {
             return;
         }
         // Format the date for each session
-        const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: session.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: session.updatedDate ? session.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null})); // Formats the date as 'YYYY-MM-DD'
+        const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: session.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: session.updatedDate ? session.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
 
         console.log("sessions: ", formattedSessions);
         result(null, formattedSessions);
@@ -210,8 +210,10 @@ Session.viewUpcomingSessions = (batchId, result) => {
             result(err, null);
             return;
         }
-        console.log("session: ", res);
-        result(null, res);
+        // Format the date for each session
+        const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: session.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: session.updatedDate ? session.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
+        console.log("session: ", formattedSessions);
+        result(null, formattedSessions);
     });
 };
 
