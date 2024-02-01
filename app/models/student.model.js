@@ -905,8 +905,9 @@ Payment.viewStudentTransactions = (studId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Payment Details: ", res);
-                result(null, res);
+                const formattedPayment = res.map(payment => ({ ...payment, paymentDate: payment.paymentDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })})); // Formats the date as 'YYYY-MM-DD'
+                console.log("Payment Details: ", formattedPayment);
+                result(null, formattedPayment);
             }
         }
     );
