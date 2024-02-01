@@ -428,7 +428,7 @@ Student.viewStudentProfile = (studId, result) => {
                 result(err, null)
                 return
             } else {
-                const formattedProfile = res.map(profile =>({...profile, addedDate: profile.addedDate.toISOString().split('T')[0], updatedDate: profile.updatedDate ? profile.updatedDate.toISOString().split('T')[0] : null, validity: profile.validity.toISOString().split('T')[0] }))
+                const formattedProfile = res.map(profile =>({...profile, addedDate: profile.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: profile.updatedDate ? profile.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, validity: profile.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
                 console.log("Profile: ", formattedProfile);
                 result(null, formattedProfile)
                 return
@@ -918,7 +918,7 @@ Session.studViewNextSessionDate = (batchId, result) => {
                 return result(err, null)
             } else {
 
-                const formattedNextSession = res.map(nextsession => ({...nextsession, date: nextsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }).split('T')[0]}))
+                const formattedNextSession = res.map(nextsession => ({...nextsession, date: nextsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}))
 
                 console.log("Next Session", formattedNextSession)
                 return result(null, formattedNextSession)
