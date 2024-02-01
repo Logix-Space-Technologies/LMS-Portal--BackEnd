@@ -74,8 +74,8 @@ const StudViewProfile = () => {
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Phone Number : {value.studPhNo}</span></li>
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Email : {value.studEmail}</span></li>
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Profile Validity : {value.validity.split('-').reverse().join('/')}</span></li>
-                                                <div class="mb-3">
-                                                    <a class="btn btn-success btn-lg" href="/studentupdateprofile">Update Details</a>
+                                                <div className="mb-3">
+                                                    <a className="btn btn-success btn-lg" href="/studentupdateprofile">Update Details</a>
                                                 </div>
                                             </ul>
                                             <ul className="social-icon-style1 list-unstyled mb-0 ps-0">

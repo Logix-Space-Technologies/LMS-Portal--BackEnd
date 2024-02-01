@@ -230,4 +230,6 @@ router.post('/studupdatesubmittedtask',StudentController.studentupdatesubmittedt
 
 router.post('/studentviewsubmittedtask',StudentController.studentviewsubmittedtask)
 
+router.post('/adminvieonetrainer',TrainerController.viewOneTrainer)
+
 module.exports = router

@@ -58,6 +58,8 @@ import AdminViewAllBatch from './components/Admin/AdminViewAllBatch';
 import AdminSearchStudent from './components/Admin/AdminSearchStudent';
 import AdminViewCollegeStaffLog from './components/Admin/AdminViewCollegeStaffLog';
 import AdminSearchCollege from './components/Admin/AdminSearchCollege';
+import AdminUpdateTrainer from './components/Admin/AdminUpdateTrainer';
+import AdminViewAllCollege from './components/Admin/AdminViewAllCollege';
 
 
 
@@ -94,6 +96,8 @@ function App() {
           <Route path='/adminsearchstudent' element={<AdminSearchStudent/>}/>
           <Route path='/adminviewCollegeStaffLog' element={<AdminViewCollegeStaffLog/>}/>
           <Route path='/adminSearchClg' element={<AdminSearchCollege/>}/>
+          <Route path='/AdminUpdateTrainer' element={<AdminUpdateTrainer/>}/>
+          <Route path='/adminviewallcollege' element={<AdminViewAllCollege/>}/>
 
 
 
