@@ -187,19 +187,20 @@ Session.updateSession = (sessionUpdate, result) => {
 }
 
 Session.viewSessions = (result) => {
-    const query = "SELECT id,batchId,sessionName,date,time,type,remarks,venueORlink,trainerId,attendenceCode,addedDate, updatedDate FROM sessiondetails WHERE isActive = 1 AND deleteStatus = 0 ";
-
+    const query = "SELECT id, batchId, sessionName, date, time, type, remarks, venueORlink, trainerId, attendenceCode, addedDate, updatedDate FROM sessiondetails WHERE isActive = 1 AND deleteStatus = 0";
     db.query(query, (err, res) => {
         if (err) {
-            console.log("error: ", res);
-            result(err, null)
+            console.log("error: ", err);
+            result(err, null);
             return;
         }
+        // Format the date for each session
+        const formattedSessions = res.map(session => ({ ...session, date: session.date.toISOString().split('T')[0], addedDate: session.addedDate.toISOString().split('T')[0], updatedDate: session.updatedDate ? session.updatedDate.toISOString().split('T')[0] : null})); // Formats the date as 'YYYY-MM-DD'
 
-        console.log("session: ", res);
-        result(null, res);
+        console.log("sessions: ", formattedSessions);
+        result(null, formattedSessions);
     });
-};
+}
 
 Session.viewUpcomingSessions = (batchId, result) => {
     const query = "SELECT sd.id, sd.batchId, sd.sessionName, sd.date, sd.time, sd.type, sd.remarks, sd.venueORlink, t.trainerName, sd.addedDate, sd.updatedDate FROM sessiondetails sd JOIN trainersinfo t ON sd.trainerId = t.id WHERE sd.isActive = 1 AND sd.deleteStatus = 0 AND sd.cancelStatus = 0 AND (sd.date > CURRENT_DATE OR (sd.date = CURRENT_DATE AND sd.time >= CURRENT_TIME)) AND sd.batchId = ?;";
@@ -307,9 +308,9 @@ Session.fetchAttendenceCode = (attendenceCode, result) => {
                 result("Invalid Attendance Code", null);
                 return;
             } else {
-                    const sessionId = codeRes[0].id;
-                    console.log(sessionId)
-                    return result (null, sessionId)
+                const sessionId = codeRes[0].id;
+                console.log(sessionId)
+                return result(null, sessionId)
             }
         })
 }

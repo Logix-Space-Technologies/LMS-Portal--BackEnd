@@ -54,6 +54,10 @@ import AdminViewAllStud from './components/Admin/AdminViewAllStud';
 import AdminViewAllTrainers from './components/Admin/AdminViewAllTrainers';
 import StudNavBar from './components/Student/StudNavBar';
 import AdminAddBatch from './components/Admin/AdminAddBatch';
+import AdminViewAllBatch from './components/Admin/AdminViewAllBatch';
+import AdminSearchStudent from './components/Admin/AdminSearchStudent';
+import AdminViewCollegeStaffLog from './components/Admin/AdminViewCollegeStaffLog';
+
 
 
 
@@ -85,6 +89,10 @@ function App() {
           <Route path='/adminviewallstudents' element={<AdminViewAllStud/>}/>
           <Route path='/adminviewalltrainers' element={<AdminViewAllTrainers/>}/>
           <Route path='/adminaddbatch' element={<AdminAddBatch/>}/>
+          <Route path='/adminviewallbatches' element={<AdminViewAllBatch/>}/>
+          <Route path='/adminsearchstudent' element={<AdminSearchStudent/>}/>
+          <Route path='/adminviewCollegeStaffLog' element={<AdminViewCollegeStaffLog/>}/>
+
 
 
 
