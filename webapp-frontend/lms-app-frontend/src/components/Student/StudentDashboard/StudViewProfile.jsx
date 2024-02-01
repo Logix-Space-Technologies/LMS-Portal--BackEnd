@@ -53,8 +53,6 @@ const StudViewProfile = () => {
                         <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
                             {studData.map(
                                 (value, index) => {
-                                    const validityDate = new Date(value.validity);
-                                    const formattedValidityDate = formatDate(validityDate);
                                     return <div className="row align-items-center">
                                         <div className="col-lg-6 mb-4 mb-lg-0">
                                             <img height="300px" src={value.studProfilePic} alt="" />
@@ -75,7 +73,7 @@ const StudViewProfile = () => {
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Course : {value.course}</span></li>
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Phone Number : {value.studPhNo}</span></li>
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Email : {value.studEmail}</span></li>
-                                                <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Profile Validity : {formattedValidityDate}</span></li>
+                                                <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Profile Validity : {value.validity}</span></li>
                                                 <div class="mb-3">
                                                     <a class="btn btn-success btn-lg" href="/studentupdateprofile">Update Details</a>
                                                 </div>
@@ -97,11 +95,4 @@ const StudViewProfile = () => {
     )
 }
 
-function formatDate(date) {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-based
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-}
 export default StudViewProfile

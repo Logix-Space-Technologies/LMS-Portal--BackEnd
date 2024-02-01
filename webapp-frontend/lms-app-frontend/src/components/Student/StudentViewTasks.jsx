@@ -127,13 +127,13 @@ const StudentViewTasks = () => {
                                                 <strong>Score Obtained:</strong> {task.score}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Due Date:</strong> {new Date(task.dueDate)}
+                                                <strong>Due Date:</strong> {task.dueDate}
                                             </p>
                                             {task.subDate < task.dueDate && task.updatedDate === null &&(
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {new Date(task.subDate)}
+                                                        <strong>Submission Date :</strong> {task.subDate}
                                                     </p>
 
                                                 </>
@@ -142,7 +142,7 @@ const StudentViewTasks = () => {
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {new Date(task.subDate)}
+                                                        <strong>Submission Date :</strong> {task.subDate}
                                                     </p>
 
                                                 </>
@@ -151,7 +151,7 @@ const StudentViewTasks = () => {
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {new Date(task.lateSubDate)}
+                                                        <strong>Submission Date :</strong> {task.lateSubDate}
                                                     </p>
 
                                                 </>
@@ -160,7 +160,7 @@ const StudentViewTasks = () => {
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {new Date(task.updatedDate)}
+                                                        <strong>Submission Date :</strong> {task.updatedDate}
                                                     </p>
 
                                                 </>
@@ -199,13 +199,13 @@ const StudentViewTasks = () => {
                                                 <strong>Submitted Git Link:</strong> {task.gitLink}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Due Date:</strong> {new Date(task.dueDate)}
+                                                <strong>Due Date:</strong> {task.dueDate}
                                             </p>
                                             {task.subDate < task.dueDate && task.updatedDate === null &&(
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {new Date(task.subDate)}
+                                                        <strong>Submission Date :</strong> {task.subDate}
                                                     </p>
 
                                                 </>
@@ -214,7 +214,7 @@ const StudentViewTasks = () => {
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {new Date(task.subDate)}
+                                                        <strong>Submission Date :</strong> {task.subDate}
                                                     </p>
 
                                                 </>
@@ -223,7 +223,7 @@ const StudentViewTasks = () => {
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {new Date(task.lateSubDate)}
+                                                        <strong>Submission Date :</strong> {task.lateSubDate}
                                                     </p>
 
                                                 </>
@@ -232,7 +232,7 @@ const StudentViewTasks = () => {
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {new Date(task.updatedDate)}
+                                                        <strong>Submission Date :</strong> {task.updatedDate}
                                                     </p>
 
                                                 </>
@@ -265,7 +265,7 @@ const StudentViewTasks = () => {
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Due Date:</strong> {new Date(task.dueDate)}
+                                                <strong>Due Date:</strong> {task.dueDate}
                                             </p>
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Submission Status: </strong>Not Submitted
