@@ -127,13 +127,13 @@ function isValidName(name) {
 
 function isValidDate(date) {
     return {
-        isValid: /^([0-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/\d{4}$/.test(date),
-        message: "Date must be in the format DD/MM/YYYY"
+        isValid: /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/.test(date),
+        message: "Date must be in the format YYYY-MM-DD"
     };
 }
 
 function isDateGreaterThanToday(date) {
-    const inputDate = new Date(date.split('/').reverse().join('-'));
+    const inputDate = new Date(date);
     const currentDate = new Date();
 
     return {
@@ -224,6 +224,12 @@ function acceptOnlyCapitalLetters(value) {
     };
 }
 
+function isLaterDate(selectedDate, previousDate) {
+    return {
+        isValid: selectedDate > previousDate,
+        message: "Select a date greater than the previous date."
+    };
+}
 
 
 
@@ -246,5 +252,6 @@ module.exports = {
     isDate1GreaterThanDate2,
     isValidAadharNumberUpdate,
     isValidGitLink,
-    acceptOnlyCapitalLetters
+    acceptOnlyCapitalLetters,
+    isLaterDate
 };

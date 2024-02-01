@@ -32,6 +32,9 @@ const Navbar = () => {
                             <a className="nav-link" href="/adminsearchtask">Search Tasks</a>
                         </li>
                         <li className="nav-item">
+                            <a className="nav-link" href="/adminaddbatch">Add Batch</a>
+                        </li>
+                        <li className="nav-item">
                             <a className="nav-link" href="/adminviewadstafflog">View AdStaffLog</a>
                         </li>
                         <li className="nav-item">
