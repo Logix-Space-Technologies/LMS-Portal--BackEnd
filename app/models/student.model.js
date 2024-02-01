@@ -379,8 +379,9 @@ Tasks.studentTaskView = (studId, result) => {
                 result(err, null)
                 return
             } else {
-                console.log("Tasks: ", res);
-                result(null, res)
+                const formattedTasks = res.map(tasks => ({ ...tasks, dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), subDate: tasks.subDate ? tasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, lateSubDate: tasks.lateSubDate ? tasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null})); // Formats the date as 'YYYY-MM-DD'
+                console.log("Tasks: ", formattedTasks);
+                result(null, formattedTasks)
                 return
             }
         })
