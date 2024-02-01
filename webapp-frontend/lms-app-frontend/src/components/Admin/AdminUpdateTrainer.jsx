@@ -15,7 +15,7 @@ const AdminUpdateTrainer = () => {
             "profilePicture": file
         }
     )
-    const apiURL = global.config.urls.api.server + "/api/lms/adminvieonetrainer";
+    const apiURL = global.config.urls.api.server + "/api/lms/adminviewonetrainer";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/updateTrainer";
     const navigate = useNavigate()
 
