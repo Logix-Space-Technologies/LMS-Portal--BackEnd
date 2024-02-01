@@ -841,8 +841,9 @@ Student.studentNotificationView = (studId, result) => {
                             result(err, null);
                             return;
                         } else {
-                            console.log("Notifications: ", notificationsRes);
-                            result(null, notificationsRes);
+                            const formattedNotification = notificationsRes.map(notification => ({...notification, sendDateTime: notification.sendDateTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: notification.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}))
+                            console.log("Notifications: ", formattedNotification);
+                            result(null, formattedNotification);
                             return;
                         }
                     });
