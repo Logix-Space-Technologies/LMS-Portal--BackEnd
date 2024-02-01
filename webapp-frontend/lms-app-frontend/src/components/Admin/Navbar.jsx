@@ -43,6 +43,9 @@ const Navbar = () => {
                         <li className="nav-item">
                             <a className="nav-link" href="/admdashboard">Admin Dashboard</a>
                         </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="/adminSearchClg">Search College</a>
+                        </li>
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Functionalities
