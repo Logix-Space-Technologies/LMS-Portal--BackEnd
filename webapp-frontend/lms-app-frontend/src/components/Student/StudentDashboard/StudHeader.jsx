@@ -89,7 +89,7 @@ const StudHeader = () => {
                 {sessionData ? (sessionData.map(
                     (value, index) => {
                         return <div className="session-name">
-                            <p>Next Session: {value.date.split('-').reverse().join('/')}, {formatTime(value.time)}</p>
+                            <p>Next Session: {value.date}, {formatTime(value.time)}</p>
 
                         </div>
                     }

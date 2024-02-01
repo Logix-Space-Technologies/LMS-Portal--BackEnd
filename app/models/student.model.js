@@ -918,7 +918,7 @@ Session.studViewNextSessionDate = (batchId, result) => {
                 return result(err, null)
             } else {
 
-                const formattedNextSession = res.map(nextsession => ({...nextsession, date: nextsession.date.toISOString().split('T')[0]}))
+                const formattedNextSession = res.map(nextsession => ({...nextsession, date: nextsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }).split('T')[0]}))
 
                 console.log("Next Session", formattedNextSession)
                 return result(null, formattedNextSession)
