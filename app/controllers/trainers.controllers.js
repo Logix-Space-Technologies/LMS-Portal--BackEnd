@@ -223,7 +223,7 @@ exports.deleteTrainer = (request, response) => {
                     return response.json({ "status": err });
                 }
                 logAdminStaff(0, "Admin Deleted Trainer")
-                return response.json({ "status": "success"});
+                return response.json({ "status": "success" });
             });
         } else {
             return response.json({ "status": "Unauthorized User!!" });
@@ -330,3 +330,28 @@ exports.trainerDetailsUpdate = (request, response) => {
 }
 
 // Code For Updating Trainer Password
+
+exports.viewOneTrainer = (request, response) => {
+    const trainerToken = request.headers.token;
+    const key = request.headers.key; //give respective keys of admin and adminstaff
+    const trainerId = request.body.id; 
+
+    jwt.verify(trainerToken, key, (err, decoded) => {
+        if (decoded) {
+            Trainers.viewOneTrainer(trainerId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No trainers are currently active" });
+                } else {
+                    return response.json({ "status": "success", "Trainers": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
+
+// Code to view only one trainer
