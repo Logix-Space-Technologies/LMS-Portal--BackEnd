@@ -57,7 +57,7 @@ const StudentViewTransaction = () => {
                                             (value, index) => {
                                                 return <tr>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {new Date(value.paymentDate).toLocaleDateString()}
+                                                        {new Date(value.paymentDate)}
                                                     </td>
                                                     <td className="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.rpAmount}
