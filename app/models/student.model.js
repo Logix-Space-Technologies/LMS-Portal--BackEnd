@@ -421,15 +421,16 @@ Student.StdChangePassword = (student, result) => {
 
 
 Student.viewStudentProfile = (studId, result) => {
-    db.query("SELECT c.collegeName, s.batchId, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.validity FROM student s LEFT JOIN college c ON s.collegeId = c.id WHERE s.deleteStatus=0 AND s.isActive=1 AND s.isVerified = 1 AND s.id = ?", [studId],
+    db.query("SELECT c.collegeName, s.batchId, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.updatedDate, s.validity FROM student s LEFT JOIN college c ON s.collegeId = c.id WHERE s.deleteStatus=0 AND s.isActive=1 AND s.isVerified = 1 AND s.id = ?", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
                 result(err, null)
                 return
             } else {
-                console.log("Profile: ", res);
-                result(null, res)
+                const formattedProfile = res.map(profile =>({...profile, addedDate: profile.addedDate.toISOString().split('T')[0], updatedDate: profile.updatedDate ? profile.updatedDate.toISOString().split('T')[0] : null, validity: profile.validity.toISOString().split('T')[0] }))
+                console.log("Profile: ", formattedProfile);
+                result(null, formattedProfile)
                 return
             }
         })
