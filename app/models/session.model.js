@@ -59,14 +59,16 @@ Session.createSession = (newSession, result) => {
                                         console.log("Trainer does not exist or is inactive/deleted.");
                                         return result("Trainer does not exist or is inactive/deleted.", null);
                                     } else {
-                                        db.query("SELECT DISTINCT c.collegeCode FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND b.collegeId = ?",
+                                        db.query("SELECT DISTINCT c.collegeCode FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND b.id = ?",
                                             [newSession.batchId],
                                             (err, codeRes) => {
+                                                console.log(newSession.batchId)
                                                 if (err) {
                                                     console.error("Error while fetching College Code: ", err);
                                                     result(err, null);
                                                     return;
                                                 }
+                                                console.log(codeRes)
                                                 const currentCollegeCode = codeRes[0].collegeCode;
                                                 const finalAttendanceCode = `${attendanceCodePrefix}${currentCollegeCode}${randomNumber}`;
 

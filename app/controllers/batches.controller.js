@@ -242,3 +242,27 @@ exports.batchUpdate = (request, response) => {
     });
 };
 
+
+exports.batchViewAdmin = (request, response) => {
+    const admToken = request.headers.token;
+    key = request.headers.key // key for respective tokens
+    const collegeId = request.body.collegeId;
+    jwt.verify(admToken, key, (err, decoded) => {
+        if (decoded) {
+            Batches.adminBatchView(collegeId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                }
+                if (!data) {
+                    response.json({ "status": "No batches found!" });
+                }
+                else {
+                    response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+}
+
