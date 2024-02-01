@@ -116,7 +116,7 @@ const StudentViewRefundRequest = () => {
                                                     <div className="card">
                                                         <div className="card-body">
                                                             <h2 className="card-title">{value.studName}</h2>
-                                                            <p className="card-text">Requested Date : {new Date(value.requestedDate).toLocaleDateString()}</p>
+                                                            <p className="card-text">Requested Date : {value.requestedDate}</p>
                                                             <p className="card-text">Reason : {value.reason}</p>
                                                             {value.approvalStatus === "Not Approved" && value.refundStatus === "Pending" && value.AmountReceivedStatus === "Not Received" && (
                                                                 <>
@@ -135,7 +135,7 @@ const StudentViewRefundRequest = () => {
                                                                 <>
                                                                     <p className="card-text">Refund Approval : {value.refundStatus}</p>
                                                                     <p className="card-text">Approved Amount : {value.approvedAmnt}</p>
-                                                                    <p className="card-text">Refund Initiated Date : {new Date(value.refundInitiatedDate).toLocaleDateString()}</p>
+                                                                    <p className="card-text">Refund Initiated Date : {value.refundInitiatedDate}</p>
                                                                     <p className="card-text">Transaction No. : {value.transactionNo}</p>
                                                                     <p className="card-text">Approval Status : {value.approvalStatus}</p>
                                                                     <p className="card-text">Admin Remarks : {value.adminRemarks}</p>
@@ -154,7 +154,7 @@ const StudentViewRefundRequest = () => {
                                                                 <>
                                                                     <p className="card-text">Refund Approval : {value.refundStatus}</p>
                                                                     <p className="card-text">Approved Amount : {value.approvedAmnt}</p>
-                                                                    <p className="card-text">Refund Initiated Date : {new Date(value.refundInitiatedDate).toLocaleDateString()}</p>
+                                                                    <p className="card-text">Refund Initiated Date : {value.refundInitiatedDate}</p>
                                                                     <p className="card-text">Transaction No. : {value.transactionNo}</p>
                                                                     <p className="card-text">Approval Status : {value.approvalStatus}</p>
                                                                     <p className="card-text">Admin Remarks : {value.adminRemarks}</p>

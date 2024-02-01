@@ -62,7 +62,7 @@ const StudentViewAttendance = () => {
                     <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">{value.sessionName}</p>
                 </td>
                 <td className="p-4 border-b border-blue-gray-50">
-                    <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">{new Date(value.date).toLocaleDateString()}</p>
+                    <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">{value.date}</p>
                 </td>
                 <td className={`p-4 border-b border-blue-gray-50`}>
                     <div className="w-max">

@@ -11,6 +11,10 @@ const path = require('path');
 require('dotenv').config({ path: '../../.env' });
 
 
+function formatTime(timeString) {
+    const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
+}
 
 exports.createSession = (request, response) => {
     const sessionToken = request.headers.token;
@@ -103,9 +107,9 @@ exports.createSession = (request, response) => {
                                 })
                                 const studentName = element.studName
                                 const studentEmail = element.studEmail
-
-                                const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, newSession.date, newSession.time, newSession.venueORlink);
-                                const upcomingSessionTextContent = mailContents.upcomingSessionTextContent(studentName, newSession.sessionName, newSession.date, newSession.time, newSession.venueORlink);
+                                const sessionTime=formatTime(newSession.time)
+                                const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, request.body.date,sessionTime, newSession.venueORlink);
+                                const upcomingSessionTextContent = mailContents.upcomingSessionTextContent(studentName, newSession.sessionName, request.body.date, newSession.time, newSession.venueORlink);
                                 mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 if (key == "lmsapp") {
                                     logAdminStaff(0, "Admin Created new Session")
@@ -347,18 +351,8 @@ exports.cancelSession = (request, response) => {
                     const batchId = sessionres[0].batchId;
                     const sessionDate = sessionres[0].date.toLocaleDateString();
 
-                    // Assuming time is a string in the format '10:22:23'
-                    const inputTime = sessionres[0].time;
-
-                    // Split the time string into hours, minutes, and seconds
-                    const [hours, minutes, seconds] = inputTime.split(':');
-
-                    // Create a new Date object with arbitrary date (we only care about time)
-                    const date = new Date(2000, 0, 1, hours, minutes, seconds);
-
-                    // Format the time in 12-hour clock with AM/PM
-                    const formattedTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-                    const sessiontime = formattedTime;
+                    const sessiontime = formatTime(sessionres[0].time);
+                    
                     Student.searchStudentByBatch(batchId, (err, res) => {
                         if (err) {
                             return response.json({ "status": err });

@@ -109,7 +109,7 @@ Refund.createRefundRequest = (newRefund, result) => {
 
 Refund.getRefundRequests = (result) => {
     db.query(
-        "SELECT student.studName, college.collegeName, refund.studId, refund.requestedDate, refund.reason, refund.refundAmnt, refund.approvedAmnt FROM refund JOIN student ON refund.studId = student.id JOIN college ON student.collegeId = college.id WHERE refund.cancelStatus = 0 AND student.deleteStatus = 0 AND student.isActive = 1 AND student.isVerified = 1 ORDER BY refund.requestedDate DESC",
+        "SELECT student.studName, college.collegeName, refund.studId, refund.requestedDate, refund.reason, refund.refundAmnt FROM refund JOIN student ON refund.studId = student.id JOIN college ON student.collegeId = college.id WHERE refund.cancelStatus = 0 AND student.deleteStatus = 0 AND student.isActive = 1 AND student.isVerified = 1 ORDER BY refund.requestedDate DESC",
         (err, res) => {
             if (err) {
                 console.error("Error retrieving refund requests:", err);
@@ -118,7 +118,7 @@ Refund.getRefundRequests = (result) => {
             }
             if (res.length === 0) {
                 console.log("No refund requests found");
-                result(null, { "status": "No refund requests found." });
+                result("No refund requests found.",null );
                 return;
             }
 
@@ -165,8 +165,10 @@ Refund.viewRefundStatus = (studId, result) => {
                 if (res[0].refundApprovalStatus === 0) {
                     result("Your application is under process.", null);
                 } else {
+                    // Format the date for each refund request
+                    const formattedRefund = res.map(refund => ({ ...refund, requestedDate: refund.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), refundInitiatedDate: refund.refundInitiatedDate ? refund.refundInitiatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
                     // Return refund details with student name and college name
-                    result(null, res);
+                    result(null, formattedRefund);
                 }
             }
         );

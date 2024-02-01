@@ -7,7 +7,8 @@ import { Link, useNavigate } from 'react-router-dom';
 const StudentLogin = () => {
     const [inputField, setInputField] = useState({
         studEmail: "",
-        password: ""
+        password: "",
+        type: 'web'
     });
 
     const [errors, setErrors] = useState({});

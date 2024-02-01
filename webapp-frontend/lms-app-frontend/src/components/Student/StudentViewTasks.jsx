@@ -100,7 +100,7 @@ const StudentViewTasks = () => {
 
     return (
         <div>
-            <StudNavBar/>
+            <StudNavBar />
             <br />
             <h1>Student View Tasks</h1><br />
             <section className="flex flex-col justify-center antialiased bg-gray-100 text-gray-600 min-h-screen p-4">
@@ -121,10 +121,55 @@ const StudentViewTasks = () => {
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Added Date:</strong> {new Date(task.addedDate).toLocaleDateString()}
+                                                <strong>Submitted Git Link:</strong> {task.gitLink}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
+                                                <strong>Score Obtained:</strong> {task.score}
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
+                                                <strong>Due Date:</strong> {task.dueDate}
+                                            </p>
+                                            {task.subDate < task.dueDate && task.updatedDate === null &&(
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.subDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            {task.subDate < task.dueDate && task.updatedDate != null &&(
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.subDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            {task.subDate > task.dueDate && task.updatedDate === null &&(
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.lateSubDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            {task.subDate > task.dueDate && task.updatedDate != null &&(
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.updatedDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            <p className="text-gray-700 mb-2">
+                                                <strong>Evaluator Remarks:</strong> {task.evaluatorRemarks}
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
+                                                <strong>Evaluated By:</strong> {task.evaluatorName}
                                             </p>
                                             <p className="text-gray-700 mb-2">
                                                 <p><strong>Submission Status: </strong>Submitted</p>
@@ -151,11 +196,47 @@ const StudentViewTasks = () => {
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Added Date:</strong> {new Date(task.addedDate).toLocaleDateString()}
+                                                <strong>Submitted Git Link:</strong> {task.gitLink}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
+                                                <strong>Due Date:</strong> {task.dueDate}
                                             </p>
+                                            {task.subDate < task.dueDate && task.updatedDate === null &&(
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.subDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            {task.subDate < task.dueDate && task.updatedDate != null &&(
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.subDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            {task.subDate > task.dueDate && task.updatedDate === null &&(
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.lateSubDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            {task.subDate > task.dueDate && task.updatedDate != null &&(
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.updatedDate}
+                                                    </p>
+
+                                                </>
+                                            )}
                                             <p className="text-gray-700 mb-2">
                                                 <p><strong>Submission Status: </strong>Submitted</p>
                                             </p>
@@ -184,16 +265,13 @@ const StudentViewTasks = () => {
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Added Date:</strong> {new Date(task.addedDate).toLocaleDateString()}
-                                            </p>
-                                            <p className="text-gray-700 mb-2">
-                                                <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
+                                                <strong>Due Date:</strong> {task.dueDate}
                                             </p>
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Submission Status: </strong>Not Submitted
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                               
+
                                             </p><br /><br />
                                             <td>
                                                 <div className="flex justify-start" >
