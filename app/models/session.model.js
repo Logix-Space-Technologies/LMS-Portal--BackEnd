@@ -59,14 +59,16 @@ Session.createSession = (newSession, result) => {
                                         console.log("Trainer does not exist or is inactive/deleted.");
                                         return result("Trainer does not exist or is inactive/deleted.", null);
                                     } else {
-                                        db.query("SELECT DISTINCT c.collegeCode FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND b.collegeId = ?",
+                                        db.query("SELECT DISTINCT c.collegeCode FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND b.id = ?",
                                             [newSession.batchId],
                                             (err, codeRes) => {
+                                                console.log(newSession.batchId)
                                                 if (err) {
                                                     console.error("Error while fetching College Code: ", err);
                                                     result(err, null);
                                                     return;
                                                 }
+                                                console.log(codeRes)
                                                 const currentCollegeCode = codeRes[0].collegeCode;
                                                 const finalAttendanceCode = `${attendanceCodePrefix}${currentCollegeCode}${randomNumber}`;
 
@@ -195,7 +197,7 @@ Session.viewSessions = (result) => {
             return;
         }
         // Format the date for each session
-        const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: session.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: session.updatedDate ? session.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null})); // Formats the date as 'YYYY-MM-DD'
+        const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: session.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: session.updatedDate ? session.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
 
         console.log("sessions: ", formattedSessions);
         result(null, formattedSessions);
@@ -210,8 +212,10 @@ Session.viewUpcomingSessions = (batchId, result) => {
             result(err, null);
             return;
         }
-        console.log("session: ", res);
-        result(null, res);
+        // Format the date for each session
+        const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: session.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: session.updatedDate ? session.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
+        console.log("session: ", formattedSessions);
+        result(null, formattedSessions);
     });
 };
 

@@ -57,10 +57,13 @@ import AdminAddBatch from './components/Admin/AdminAddBatch';
 import AdminViewAllBatch from './components/Admin/AdminViewAllBatch';
 import AdminSearchStudent from './components/Admin/AdminSearchStudent';
 import AdminViewCollegeStaffLog from './components/Admin/AdminViewCollegeStaffLog';
+import AdminAddSession from './components/Admin/AdminAddSession';
 import AdminSearchCollege from './components/Admin/AdminSearchCollege';
 import AdminUpdateTrainer from './components/Admin/AdminUpdateTrainer';
 import AdminViewAllCollege from './components/Admin/AdminViewAllCollege';
 import AdminViewAllCurriculum from './components/Admin/AdminViewAllCurriculum';
+import AdminViewRefundRequests from './components/Admin/AdminViewRefundRequests';
+
 
 
 
@@ -96,10 +99,13 @@ function App() {
           <Route path='/adminviewallbatches' element={<AdminViewAllBatch/>}/>
           <Route path='/adminsearchstudent' element={<AdminSearchStudent/>}/>
           <Route path='/adminviewCollegeStaffLog' element={<AdminViewCollegeStaffLog/>}/>
+          <Route path='/adminaddsession' element={<AdminAddSession/>}/>
           <Route path='/adminSearchClg' element={<AdminSearchCollege/>}/>
           <Route path='/AdminUpdateTrainer' element={<AdminUpdateTrainer/>}/>
           <Route path='/adminviewallcollege' element={<AdminViewAllCollege/>}/>
           <Route path='/adminviewallcurriculum' element={<AdminViewAllCurriculum/>}/>
+          <Route path='/AdminViewRefundRequests' element={<AdminViewRefundRequests/>}/>
+
 
 
 

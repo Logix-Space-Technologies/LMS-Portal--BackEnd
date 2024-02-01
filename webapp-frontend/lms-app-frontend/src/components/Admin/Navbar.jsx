@@ -38,6 +38,9 @@ const Navbar = () => {
                             <a className="nav-link" href="/adminviewadstafflog">View AdStaffLog</a>
                         </li>
                         <li className="nav-item">
+                            <a className="nav-link" href="/adminaddsession">Add Session</a>
+                        </li>
+                        <li className="nav-item">
                             <a className="nav-link" href="/adminviewallclgstaff">View College Staff</a>
                         </li>
                         <li className="nav-item">
@@ -57,7 +60,7 @@ const Navbar = () => {
                                 <li><a className="dropdown-item" href="/adminviewallbatches">View All Batches</a></li>
                                 <li><a className="dropdown-item" href="/adminsearchstudent">Search Student</a></li>
                                 <li><a className="dropdown-item" href="/adminviewCollegeStaffLog">View College Staff Log</a></li>
-                                <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                <li><a className="dropdown-item" href="/AdminViewRefundRequests">View Refund Requests</a></li>
                             </ul>
                         </li>
                         <li className="nav-item">

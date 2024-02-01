@@ -46,6 +46,8 @@ router.post("/addBatches",BatchesController.batchCreate)
 
 router.post("/deletebatch", BatchesController.batchDelete)
 
+router.post("/adminviewbatch", BatchesController.batchViewAdmin)
+
 router.post("/deleteadmstaff",AdminStaffController.admStaffDelete)
 
 router.post("/admchangepwd",AdminController.adminChangePwd)
@@ -231,5 +233,7 @@ router.post('/studupdatesubmittedtask',StudentController.studentupdatesubmittedt
 router.post('/studentviewsubmittedtask',StudentController.studentviewsubmittedtask)
 
 router.post('/adminviewonetrainer',TrainerController.viewOneTrainer)
+
+router.post('/generateAttendancePdf',StudentController.generateBatchWiseAttendanceList)
 
 module.exports = router
