@@ -93,8 +93,9 @@ Curriculum.curriculumView = (batchId, result) => {
                         result(curriculumErr, null)
                         return
                     } else {
-                        console.log("success:", curriculumRes)
-                        result(null, curriculumRes);
+                        const formattedCurriculums = curriculumRes.map(curriculum => ({ ...curriculum, addedDate: curriculum.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: curriculum.updatedDate ? curriculum.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null})); // Formats the date as 'YYYY-MM-DD'
+                        console.log("success:", formattedCurriculums)
+                        result(null, formattedCurriculums);
                     }
                 })
         })

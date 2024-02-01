@@ -199,7 +199,7 @@ exports.currView = (request, response) => {
                 if (err) {
                     response.json({ "status": err });
                 }
-                if (data.length == 0) {
+                if (!data) {
                     response.json({ "status": "No batches found!" });
                 } else {
                     response.json({ "status": "success", "data": data });
