@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import '../../config/config'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 const AdminViewAllTrainers = () => {
     const [trainerData, setTrainerData] = useState([])
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewAllTrainer"
+    const navigate = useNavigate();
 
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteTrainer"
 
@@ -50,6 +52,13 @@ const AdminViewAllTrainers = () => {
 
     }
 
+    const UpdateClick = (id) => {
+        let data = id
+        sessionStorage.setItem("trainerId", data)
+        navigate("/AdminUpdateTrainer")
+
+    }
+
     useEffect(() => { getData() }, [])
     return (
         <div>
@@ -68,6 +77,9 @@ const AdminViewAllTrainers = () => {
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Phone Number
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+
                             </th>
                             <th scope="col" className="px-6 py-3">
 
@@ -93,6 +105,9 @@ const AdminViewAllTrainers = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         <a onClick={() => { handleClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete Trainer</a>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <a onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Trainer</a>
                                     </td>
                                 </tr>
                             }
