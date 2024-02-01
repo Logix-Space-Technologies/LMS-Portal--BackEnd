@@ -234,4 +234,6 @@ router.post('/studentviewsubmittedtask',StudentController.studentviewsubmittedta
 
 router.post('/adminviewonetrainer',TrainerController.viewOneTrainer)
 
+router.post('/generateAttendancePdf',StudentController.generateBatchWiseAttendanceList)
+
 module.exports = router
