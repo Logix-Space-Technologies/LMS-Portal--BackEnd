@@ -33,6 +33,7 @@ const StudViewProfile = () => {
                     setStudData(response.data.data)
                     console.log(response.data.data)
                 } else {
+                    alert("Session Expired!! \n Login Again!!!")
                     logOut()
                     navigate("/studentLogin")
                 }
