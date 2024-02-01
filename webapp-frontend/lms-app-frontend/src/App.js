@@ -61,6 +61,7 @@ import AdminAddSession from './components/Admin/AdminAddSession';
 import AdminSearchCollege from './components/Admin/AdminSearchCollege';
 import AdminUpdateTrainer from './components/Admin/AdminUpdateTrainer';
 import AdminViewAllCollege from './components/Admin/AdminViewAllCollege';
+import AdminViewRefundRequests from './components/Admin/AdminViewRefundRequests';
 
 
 
@@ -100,6 +101,7 @@ function App() {
           <Route path='/adminSearchClg' element={<AdminSearchCollege/>}/>
           <Route path='/AdminUpdateTrainer' element={<AdminUpdateTrainer/>}/>
           <Route path='/adminviewallcollege' element={<AdminViewAllCollege/>}/>
+          <Route path='/AdminViewRefundRequests' element={<AdminViewRefundRequests/>}/>
 
 
 
