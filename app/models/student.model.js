@@ -379,8 +379,9 @@ Tasks.studentTaskView = (studId, result) => {
                 result(err, null)
                 return
             } else {
-                console.log("Tasks: ", res);
-                result(null, res)
+                const formattedTasks = res.map(tasks => ({ ...tasks, dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), subDate: tasks.subDate ? tasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, lateSubDate: tasks.lateSubDate ? tasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null})); // Formats the date as 'YYYY-MM-DD'
+                console.log("Tasks: ", formattedTasks);
+                result(null, formattedTasks)
                 return
             }
         })
@@ -840,8 +841,9 @@ Student.studentNotificationView = (studId, result) => {
                             result(err, null);
                             return;
                         } else {
-                            console.log("Notifications: ", notificationsRes);
-                            result(null, notificationsRes);
+                            const formattedNotification = notificationsRes.map(notification => ({...notification, sendDateTime: notification.sendDateTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: notification.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}))
+                            console.log("Notifications: ", formattedNotification);
+                            result(null, formattedNotification);
                             return;
                         }
                     });
@@ -865,8 +867,9 @@ Student.viewSession = (batchId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Session Details: ", res);
-                result(null, res);
+                const formattedViewSession = res.map(viewsession => ({...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}))
+                console.log("Session Details: ", formattedViewSession);
+                result(null, formattedViewSession);
             }
         }
     );
@@ -903,8 +906,9 @@ Payment.viewStudentTransactions = (studId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Payment Details: ", res);
-                result(null, res);
+                const formattedPayment = res.map(payment => ({ ...payment, paymentDate: payment.paymentDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })})); // Formats the date as 'YYYY-MM-DD'
+                console.log("Payment Details: ", formattedPayment);
+                result(null, formattedPayment);
             }
         }
     );
