@@ -865,8 +865,9 @@ Student.viewSession = (batchId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Session Details: ", res);
-                result(null, res);
+                const formattedViewSession = res.map(viewsession => ({...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}))
+                console.log("Session Details: ", formattedViewSession);
+                result(null, formattedViewSession);
             }
         }
     );
