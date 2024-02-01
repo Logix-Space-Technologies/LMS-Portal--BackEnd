@@ -46,6 +46,8 @@ router.post("/addBatches",BatchesController.batchCreate)
 
 router.post("/deletebatch", BatchesController.batchDelete)
 
+router.post("/adminviewbatch", BatchesController.batchViewAdmin)
+
 router.post("/deleteadmstaff",AdminStaffController.admStaffDelete)
 
 router.post("/admchangepwd",AdminController.adminChangePwd)
