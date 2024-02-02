@@ -1,17 +1,12 @@
+import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
-import axios from 'axios'
 import Navbar from './Navbar'
-import { useNavigate } from 'react-router-dom'
 
+const AdminViewAllSession = () => {
+    const [sessionData, setSessionData] = useState([])
 
-const AdminViewAllBatch = () => {
-    const [batchData, setbatchData] = useState([])
-    const navigate = useNavigate()
-
-    const apiUrl = global.config.urls.api.server + "/api/lms/viewAllBatches"
-
-    const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch"
+    const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions"
 
     const getData = () => {
         let axiosConfig = {
@@ -24,122 +19,108 @@ const AdminViewAllBatch = () => {
         }
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
-                setbatchData(response.data.data)
-                console.log(response.data.data)
+                setSessionData(response.data.Sessions)
+                console.log(response.data.Sessions)
             }
         )
-    }
-
-    const deleteClick = (id) => {
-        let deletedata = { "id" : id }
-        let axiosConfig2 = {
-            headers: {
-                'content-type': 'application/json;charset=UTF-8',
-                "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
-            }
-        }
-        axios.post(apiUrl2, deletedata, axiosConfig2).then(
-            (response) => {
-                console.log(deletedata)
-                if (response.data.status === "Batch Deleted.") {
-                    alert("Batch Deleted Successfully!!")
-                    window.location.reload();
-                } else {
-                    alert(response.data.status)
-                }
-            }
-        )
-    }
-
-    const UpdateClick = (id) => {
-        let data = id
-        sessionStorage.setItem("batchId", data)
-        navigate("/adminviewallcurriculum")
-
     }
 
     useEffect(() => { getData() }, [])
     return (
         <div>
-            <Navbar />
-            <br />
-            <strong>Admin View All Batches</strong><br /><br />
+            <Navbar /><br />
+            <strong>Admin View All Session</strong>
+            <br /><br />
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">
-                                Batch Id
+                                Name
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                College Name
+                                Id
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Batch Name
+                                BatchId
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Reg Start Date
+                                Date
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Reg End Date
+                                Time
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Batch Description
+                                Type
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Batch Amount
+                                Remarks
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Venue OR Link
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Trainer Id
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Attendence Code
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Added Date
                             </th>
                             <th scope="col" className="px-6 py-3">
+
                             </th>
                             <th scope="col" className="px-6 py-3">
-                            </th>
-                            <th scope="col" className="px-6 py-3">
+
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {batchData ? (batchData.map(
+                        {sessionData ? (sessionData.map(
                             (value, index) => {
                                 return <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                                        <div className="ps-3">
+                                            <div className="text-base font-semibold">{value.sessionName}</div>
+
+                                        </div>
+                                    </th>
                                     <td className="px-6 py-4">
                                         {value.id}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {value.collegeName}
+                                        {value.batchId}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {value.batchName}
+                                        {value.date}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {new Date(value.regStartDate).toLocaleDateString()}
+                                        {value.time}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {new Date(value.regEndDate).toLocaleDateString()}
+                                        {value.type}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {value.batchDesc}
+                                        {value.remarks}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {value.batchAmount}
+                                        {value.venueORlink}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {new Date(value.addedDate).toLocaleDateString()}
+                                        {value.trainerId}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                                            View Curriculum
-                                        </button>
+                                        {value.attendenceCode}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button onClick="#" className="btn btn-success p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
+                                        {value.addedDate}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
+                                        <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete Session</a>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Update</a>
                                     </td>
                                 </tr>
                             }
@@ -148,7 +129,7 @@ const AdminViewAllBatch = () => {
 
                             </td>
                             <td className="px-6 py-4">
-
+                                No Session Found !!
                             </td>
                             <td className="px-6 py-4">
 
@@ -156,28 +137,14 @@ const AdminViewAllBatch = () => {
                             <td className="px-6 py-4">
 
                             </td>
-                            <td className="px-6 py-4">
-
-                            </td>
-                            <td className="px-6 py-4">
-                                No Batches Found !!
-                            </td>
-                            <td className="px-6 py-4">
-
-                            </td>
-                            <td className="px-6 py-4">
-
-                            </td>
-                            <td className="px-6 py-4">
-
-                            </td>
-
                         </tr>}
                     </tbody>
                 </table>
             </div>
+
+
         </div>
     )
 }
 
-export default AdminViewAllBatch
+export default AdminViewAllSession

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
+import ClgStaffNavbar from './ClgStaffNavbar'
 
 const CollegeStaffStudentVerify = () => {
 
@@ -24,7 +25,7 @@ const CollegeStaffStudentVerify = () => {
             (Response) => {
                 console.log(axiosConfig)
                 setStudentData(Response.data.data)
-                console.log(Response.data.data)
+                console.log(Response.data)
             }
         )
     }
@@ -54,6 +55,7 @@ const CollegeStaffStudentVerify = () => {
 
     return (
         <div>
+            <ClgStaffNavbar/>
             <section className="flex flex-col justify-center antialiased bg-gray-100 text-gray-600 min-h-screen p-4">
                 <div className="h-full">
                     {/* Table */}
@@ -102,7 +104,7 @@ const CollegeStaffStudentVerify = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="text-sm divide-y divide-gray-100">
-                                        {studentData.map(
+                                        {studentData ? (studentData.map(
                                             (value, index) => (
                                                 <tr key={index}>
                                                     <td className="p-4 whitespace-nowrap">
@@ -152,7 +154,43 @@ const CollegeStaffStudentVerify = () => {
                                                     </td>
                                                 </tr>
                                             )
-                                        )}
+                                        )): <tr>
+                                            <td>
+                                                <div className="text-left"></div>
+                                            </td>
+                                            <td>
+                                            <div className="text-left"></div>
+                                            </td>
+                                            <td>
+                                            <div className="text-left"></div>
+                                            </td>
+                                            <td>
+                                            <div className="text-left">
+                                            <p>No Unverified Students Found !!!</p>
+                                            </div>
+                                            </td>
+                                            <td>
+                                            <div className="text-left"></div>
+                                            </td>
+                                            <td>
+                                            <div className="text-left"></div> 
+                                            </td>
+                                            <td>
+                                            <div className="text-left"></div>
+                                            </td>
+                                            <td>
+                                            <div className="text-left"></div>
+                                            </td>
+                                            <td>
+                                            <div className="text-left"></div>
+                                            </td>
+                                            <td>
+                                            <div className="text-left"></div>
+                                            </td>
+                                            <td>
+                                            <div className="text-left"></div>
+                                            </td>
+                                            </tr>}
                                     </tbody>
                                 </table>
                             </div>

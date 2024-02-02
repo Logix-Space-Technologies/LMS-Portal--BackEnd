@@ -65,6 +65,15 @@ import AdminViewAllCurriculum from './components/Admin/AdminViewAllCurriculum';
 import AdminViewRefundRequests from './components/Admin/AdminViewRefundRequests';
 import AdminUpdateCollegeStaff from './components/Admin/AdminUpdateCollegeStaff';
 
+import AdminUpdateCurriculum from './components/Admin/AdminUpdateCurriculum';
+import AdminSearchBatch from './components/Admin/AdminSearchBatch';
+import AdminViewStudentLog from './components/Admin/AdminViewStudentLog';
+import ClgStaffNavbar from './components/CollegeStaff/ClgStaffNavbar';
+import AdminAddTask from './components/Admin/AdminAddTask';
+import AdminSearchSessionDetails from './components/Admin/AdminSearchSessionDetails';
+import AdminViewAllSession from './components/Admin/AdminViewAllSession';
+import AdminSearchCollegeStaff from './components/Admin/AdminSearchCollegeStaff';
+import AdmStaffNavBar from './components/AdminStaff/AdmStaffNavBar';
 
 
 
@@ -106,7 +115,19 @@ function App() {
           <Route path='/adminviewallcollege' element={<AdminViewAllCollege/>}/>
           <Route path='/adminviewallcurriculum' element={<AdminViewAllCurriculum/>}/>
           <Route path='/AdminViewRefundRequests' element={<AdminViewRefundRequests/>}/>
+
           <Route path='/adminupdatecollegestaff' element={<AdminUpdateCollegeStaff/>}/>
+
+          <Route path='/AdminUpdateCurriculum' element={<AdminUpdateCurriculum/>}/>
+          <Route path='/adminSearchBatch' element={<AdminSearchBatch/>}/>
+          <Route path='/AdminViewStudentLog' element={<AdminViewStudentLog/>}/>
+          <Route path='/adminAddtask' element={<AdminAddTask/>}/>
+          <Route path='/AdminSearchSessionDetails' element={<AdminSearchSessionDetails/>}/>
+          <Route path='/AdminViewAllSession' element={<AdminViewAllSession/>}/>
+          <Route path='/AdminSearchCollegeStaff' element={<AdminSearchCollegeStaff/>}/>
+
+
+
 
 
 
@@ -116,6 +137,7 @@ function App() {
           {/* ADMINSTAFF */}
           {/* ================================================================================================================= */}
           <Route path='/admstafflogin' element={<AdminStaffLogin />} />
+          <Route path='/admstaffnavbar' element={<AdmStaffNavBar/>}/>
 
 
 
@@ -136,6 +158,7 @@ function App() {
           <Route path='/colgstaffsearchbatch' element={<CollegeStaffSearchBatch />} />
           <Route path='/clgstaffviewtask' element={<CollegeStaffViewTask/>}/>
           <Route path='/clgStaffSearchTask' element={<CollegeStaffSearchTask/>}/>
+          <Route path='/clgstaffnavbar' element={<ClgStaffNavbar/>}/>
 
 
 

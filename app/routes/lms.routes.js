@@ -238,4 +238,10 @@ router.post('/adminviewonetrainer',TrainerController.viewOneTrainer)
 
 router.post('/generateAttendancePdf',StudentController.generateBatchWiseAttendanceList)
 
+router.post('/viewOneCurriculum',curriculumController.viewOneCurriculum)
+
+
+
+
+
 module.exports = router
