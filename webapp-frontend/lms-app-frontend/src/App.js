@@ -73,6 +73,7 @@ import AdminAddTask from './components/Admin/AdminAddTask';
 import AdminSearchSessionDetails from './components/Admin/AdminSearchSessionDetails';
 import AdminViewAllSession from './components/Admin/AdminViewAllSession';
 import AdminSearchCollegeStaff from './components/Admin/AdminSearchCollegeStaff';
+import AdminViewAllAdminStaff from './components/Admin/AdminViewAllAdmStaff';
 import AdmStaffNavBar from './components/AdminStaff/AdmStaffNavBar';
 
 
@@ -125,6 +126,7 @@ function App() {
           <Route path='/AdminSearchSessionDetails' element={<AdminSearchSessionDetails/>}/>
           <Route path='/AdminViewAllSession' element={<AdminViewAllSession/>}/>
           <Route path='/AdminSearchCollegeStaff' element={<AdminSearchCollegeStaff/>}/>
+          <Route path='/AdminViewAllAdminStaff' element={<AdminViewAllAdminStaff/>}/>
 
 
 
