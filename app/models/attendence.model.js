@@ -59,7 +59,7 @@ Attendence.markAttendence = (attendance, result) => {
 };
 
 Attendence.collegeStaffViewAttendance = (collegeId, result) => {
-    db.query("SELECT sd.sessionName, sd.date, s.membership_no, s.studName, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendence_status FROM attendence a JOIN sessiondetails sd ON a.sessionId = sd.id JOIN student s ON s.id = a.studId JOIN college c ON c.id = s.collegeId WHERE sd.cancelStatus = 0 AND c.id = ?", [collegeId], (err, res) => {
+    db.query("SELECT b.batchName, sd.sessionName, sd.date, s.membership_no, s.studName, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendence_status FROM attendence a JOIN sessiondetails sd ON a.sessionId = sd.id JOIN student s ON s.id = a.studId JOIN college c ON c.id = s.collegeId LEFT JOIN batches b ON b.id = sd.batchId WHERE sd.cancelStatus = 0 AND c.id = ? ORDER BY b.batchName, sd.sessionName", [collegeId], (err, res) => {
         if (err) {
             console.log("error:", err);
             result(err, null);
