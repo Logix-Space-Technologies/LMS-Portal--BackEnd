@@ -76,6 +76,7 @@ import AdminSearchCollegeStaff from './components/Admin/AdminSearchCollegeStaff'
 import AdminViewAllAdminStaff from './components/Admin/AdminViewAllAdmStaff';
 import AdmStaffNavBar from './components/AdminStaff/AdmStaffNavBar';
 import AdminSendNotification from './components/Admin/AdminSendNotifications';
+import AdminViewAllTasks from './components/Admin/AdminViewAllTasks';
 
 
 
@@ -128,6 +129,7 @@ function App() {
           <Route path='/AdminSearchCollegeStaff' element={<AdminSearchCollegeStaff/>}/>
           <Route path='/AdminViewAllAdminStaff' element={<AdminViewAllAdminStaff/>}/>
           <Route path='/AdminSendNotification' element={<AdminSendNotification/>}/>
+          <Route path='/AdminViewAllTasks' element={<AdminViewAllTasks/>}/>
 
 
 
