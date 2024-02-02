@@ -72,6 +72,7 @@ const Navbar = () => {
                                 <li><a className="dropdown-item" href="/AdminSearchSessionDetails">Search session details</a></li>
                                 <li><a className="dropdown-item" href="/AdminSearchCollegeStaff">Search college staffs</a></li>
                                 <li><a className="dropdown-item" href="/AdminViewAllAdminStaff">View admin staffs</a></li>
+                                <li><a className="dropdown-item" href="/AdminSendNotification">Send notifications</a></li>
                             </ul>
                         </li>
                         <li className="nav-item">
