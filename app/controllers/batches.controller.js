@@ -137,7 +137,7 @@ exports.batchView = (request, response) => {
 
 
 exports.searchBatch = (request, response) => {
-    const batchQuery = request.headers.batchQuery;
+    const batchQuery = request.body.batchQuery;//changed
     const batchToken = request.headers.token;
     //key for respective token
     key = request.headers.key;

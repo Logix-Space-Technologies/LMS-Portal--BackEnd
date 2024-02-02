@@ -1,12 +1,12 @@
-import axios from 'axios'
 import React, { useState } from 'react'
 import Navbar from './Navbar'
+import axios from 'axios'
 
-const AdminSearchCollege = () => {
+const AdminSearchBatch = () => {
 
     const [inputField, setInputField] = useState(
         {
-            "collegeSearchQuery": ""
+            "batchQuery" : ""
         }
     )
 
@@ -14,7 +14,7 @@ const AdminSearchCollege = () => {
 
     const [isLoading, setIsLoading] = useState(true)
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/searchCollege"
+    const apiUrl = global.config.urls.api.server + "/api/lms/searchBatch"
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
@@ -37,26 +37,26 @@ const AdminSearchCollege = () => {
                 console.log(response.data.data)
                 setInputField(
                     {
-                        "collegeSearchQuery": ""
+                        "batchQuery": ""
                     }
                 )
             }
         )
     }
 
-    return (
-        <div>
+  return (
+    <div>
             <Navbar /><br />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                         <div className="row g-3">
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <h1>Search College</h1>
+                                <h1>Search Batches</h1>
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <label htmlFor="" className="form-label">College Name/College Address/Website/Email/College Contact Number</label>
-                                <input onChange={inputHandler} type="text" className="form-control" name="collegeSearchQuery" value={inputField.collegeSearchQuery} />
+                                <label htmlFor="" className="form-label">Batch Name/College Name/Batch Description</label>
+                                <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} />
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                 <button onClick={readValue} className="btn btn-warning">Search</button>
@@ -72,7 +72,7 @@ const AdminSearchCollege = () => {
                     <div className="row g-3">
                         <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-sm border border-gray-200">
                             <header className="px-5 py-4 border-b border-gray-100">
-                                <h2 className="font-semibold text-2xl text-gray-800">List of Colleges</h2>
+                                <h2 className="font-semibold text-2xl text-gray-800">List of Batches</h2>
                             </header>
                             <div className="p-3">
                                 <div className="overflow-x-auto">
@@ -80,25 +80,22 @@ const AdminSearchCollege = () => {
                                         <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
                                             <tr>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center"></div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
                                                     <div className="font-semibold text-center">College Name</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">College Address</div>
+                                                    <div className="font-semibold text-center">Batch Name</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Website</div>
+                                                    <div className="font-semibold text-center">Batch Description</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Email</div>
+                                                    <div className="font-semibold text-center">Registration Start</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">College Phone No.</div>
+                                                    <div className="font-semibold text-center">Registration End</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">College Mobile No.</div>
+                                                    <div className="font-semibold text-center">Batch Amount</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
                                                     <div className="font-semibold text-center"></div>
@@ -113,35 +110,22 @@ const AdminSearchCollege = () => {
                                                 (value, index) => (
                                                     <tr key={index}>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="flex items-center">
-                                                                <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
-                                                                    <img
-                                                                        className="rounded mx-auto d-block"
-                                                                        src={value.collegeImage}
-                                                                        width="150px"
-                                                                        height="140px"
-                                                                        alt=""
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
                                                             <div className="text-center">{value.collegeName}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-center">{value.collegeAddress}</div>
+                                                            <div className="text-center">{value.batchName}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-center">{value.website}</div>
+                                                            <div className="text-center">{value.batchDesc}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-center">{value.email}</div>
+                                                            <div className="text-center">{value.regStartDate}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-center">{value.collegePhNo}</div>
+                                                            <div className="text-center">{value.regEndDate}</div>
                                                         </td>
                                                         <td className="">
-                                                            <div className="text-center">{value.collegeMobileNumber}</div>
+                                                            <div className="text-center">{value.batchAmount}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
                                                             <button onClick="#" className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
@@ -149,8 +133,6 @@ const AdminSearchCollege = () => {
                                                         <td className="p-4 whitespace-nowrap">
                                                             <button onClick="#" className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
                                                         </td>
-
-
                                                     </tr>
                                                 )
                                             )}
@@ -162,11 +144,11 @@ const AdminSearchCollege = () => {
                     </div>
 
                 ) : (
-                    <div className="col-12 text-center">No Colleges Found!!</div>
+                    <div className="col-12 text-center">No Batches Found!!</div>
                 ))}
             </div>
         </div >
-    )
+  )
 }
 
-export default AdminSearchCollege
+export default AdminSearchBatch
