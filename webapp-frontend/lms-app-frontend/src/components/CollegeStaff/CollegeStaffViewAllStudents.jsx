@@ -70,7 +70,7 @@ const CollegeStaffViewAllStudents = () => {
                           <div className="card">
                             <div className="card-body">
                               <h5 className="card-title">{student.studName}</h5>
-                              <p className="card-text">Batch ID: {student.batchId}</p>
+                              <p className="card-text">Batch Name: {student.batchName}</p>
                               <p className="card-text">Admission Number: {student.admNo}</p>
                               <p className="card-text">Roll Number: {student.rollNo}</p>
                               <p className="card-text">Department: {student.studDept}</p>
