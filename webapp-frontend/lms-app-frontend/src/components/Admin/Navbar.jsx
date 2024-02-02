@@ -63,7 +63,7 @@ const Navbar = () => {
                                 <li><a className="dropdown-item" href="/adminviewallbatches">View All Batches</a></li>
                                 <li><a className="dropdown-item" href="/adminsearchstudent">Search Student</a></li>
                                 <li><a className="dropdown-item" href="/adminviewCollegeStaffLog">View College Staff Log</a></li>
-                                <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                <li><a className="dropdown-item" href="/AdminViewRefundRequests">View Refund Requests</a></li>
                             </ul>
                         </li>
                         <li className="nav-item">

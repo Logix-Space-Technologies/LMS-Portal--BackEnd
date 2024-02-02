@@ -8,6 +8,7 @@ const CollegeStaffViewBatch = () => {
 
   const apiUrl = global.config.urls.api.server + "/api/lms/collegeStaffViewBatch";
   const apiUrl2 = global.config.urls.api.server + "/api/lms/generatePdf";
+  const apiUrl3 = global.config.urls.api.server + "/api/lms/generateAttendancePdf"
   const token = sessionStorage.getItem("clgstaffLogintoken");
   const collegeId = sessionStorage.getItem("clgStaffCollegeId");
 
@@ -66,6 +67,34 @@ const CollegeStaffViewBatch = () => {
     }
   };
 
+  const attendancePdfGenerate = async (id) => {
+    try {
+      const data = { "batchId": id }
+      const axiosConfig3 = {
+        headers: {
+          "Content-Type": "application/json",
+          "token": token,
+          "key": sessionStorage.getItem("clgstaffkey")
+        },
+        responseType: 'blob', // Set responseType to 'blob' for PDF
+      };
+
+      const response = await axios.post(apiUrl3, data, axiosConfig3);
+
+      if (response.data) {
+        // Use window.open directly with response.data
+        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+        window.open(URL.createObjectURL(pdfBlob), '_blank');
+        window.location.reload();
+      } else {
+        alert(response.data.status);
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Error generating PDF.');
+    }
+  }
+
   useEffect(() => { fetchBatches() }, []);
 
   return (
@@ -101,7 +130,7 @@ const CollegeStaffViewBatch = () => {
                             <p className="card-text">Description: {batch.batchDesc}</p>
                             <p className="card-text">Amount: {batch.batchAmount}</p>
                             <p className="card-text">Added Date: {batch.addedDate}</p><br />
-                            <button className='btn btn-primary'>
+                            <button className='btn btn-primary' onClick={() => { attendancePdfGenerate(batch.id) }}>
                               Download Attendance List PDF
                             </button>
                           </div>

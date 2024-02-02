@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
 import Navbar from './Navbar'
+import { useNavigate } from 'react-router-dom'
 
 const AdminViewAllBatch = () => {
     const [batchData, setbatchData] = useState([])
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewAllBatches"
 
@@ -23,6 +25,13 @@ const AdminViewAllBatch = () => {
                 console.log(response.data.data)
             }
         )
+    }
+
+    const UpdateClick = (id) => {
+        let data = id
+        sessionStorage.setItem("batchId", data)
+        navigate("/adminviewallcurriculum")
+
     }
 
     useEffect(() => { getData() }, [])
@@ -59,8 +68,8 @@ const AdminViewAllBatch = () => {
                             <th scope="col" className="px-6 py-3">
                                 Added Date
                             </th>
-                            <th scope="col" className="px-6 py-3">
-                            </th>
+                            <th scope="col" className="px-6 py-3">          
+                            </th>                           
                             <th scope="col" className="px-6 py-3">
                             </th>
                         </tr>
@@ -93,6 +102,12 @@ const AdminViewAllBatch = () => {
                                     <td className="px-6 py-4">
                                         {new Date(value.addedDate).toLocaleDateString()}
                                     </td>
+                                    <td className="px-6 py-4">
+                                        <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                                            View Curriculum
+                                        </button>
+                                    </td>
+
                                 </tr>
                             }
                         )) : <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
@@ -123,13 +138,7 @@ const AdminViewAllBatch = () => {
                             <td className="px-6 py-4">
 
                             </td>
-                            <td className="px-6 py-4">
-
-                            </td>
-                            <td className="px-6 py-4">
-
-                            </td>
-
+                            
                         </tr>}
                     </tbody>
                 </table>
