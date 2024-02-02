@@ -1,6 +1,20 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const AdminHeader = () => {
+    const navigate = useNavigate()
+    const logout = () => {
+        navigate("/")
+        sessionStorage.removeItem("adminId")
+        sessionStorage.removeItem("admkey")
+        sessionStorage.removeItem("admtoken")
+        sessionStorage.removeItem("userName")
+        sessionStorage.removeItem("trainerId")
+        sessionStorage.removeItem("curriculumId")
+        sessionStorage.removeItem("clgStaffId")
+        sessionStorage.removeItem("batchId")
+
+    }
   return (
     <div>
         <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
@@ -40,7 +54,7 @@ const AdminHeader = () => {
                                 </a>
                                 <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                                     <a href="#" className="dropdown-item">Change Password</a>
-                                    <a href="/" className="dropdown-item">Log Out</a>
+                                    <a onClick={logout} className="dropdown-item">Log Out</a>
                                 </div>
                             </div>
                         </div>

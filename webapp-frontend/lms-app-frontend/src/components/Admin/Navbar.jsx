@@ -1,6 +1,20 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
+    const navigate = useNavigate()
+    const logout = () => {
+        navigate("/")
+        sessionStorage.removeItem("adminId")
+        sessionStorage.removeItem("admkey")
+        sessionStorage.removeItem("admtoken")
+        sessionStorage.removeItem("userName")
+        sessionStorage.removeItem("trainerId")
+        sessionStorage.removeItem("curriculumId")
+        sessionStorage.removeItem("clgStaffId")
+        sessionStorage.removeItem("batchId")
+
+    }
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
@@ -76,7 +90,7 @@ const Navbar = () => {
                             </ul>
                         </li>
                         <li className="nav-item">
-                            <a href="/" className="dropdown-item">Log Out</a>
+                            <a onClick={logout} className="dropdown-item">Log Out</a>
                         </li>
                     </ul>
                 </div>
