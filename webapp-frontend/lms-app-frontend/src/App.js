@@ -63,6 +63,7 @@ import AdminUpdateTrainer from './components/Admin/AdminUpdateTrainer';
 import AdminViewAllCollege from './components/Admin/AdminViewAllCollege';
 import AdminViewAllCurriculum from './components/Admin/AdminViewAllCurriculum';
 import AdminViewRefundRequests from './components/Admin/AdminViewRefundRequests';
+import AdminUpdateCollegeStaff from './components/Admin/AdminUpdateCollegeStaff';
 
 
 
@@ -105,6 +106,7 @@ function App() {
           <Route path='/adminviewallcollege' element={<AdminViewAllCollege/>}/>
           <Route path='/adminviewallcurriculum' element={<AdminViewAllCurriculum/>}/>
           <Route path='/AdminViewRefundRequests' element={<AdminViewRefundRequests/>}/>
+          <Route path='/adminupdatecollegestaff' element={<AdminUpdateCollegeStaff/>}/>
 
 
 
