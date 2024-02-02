@@ -68,6 +68,7 @@ import AdminSearchBatch from './components/Admin/AdminSearchBatch';
 import AdminViewStudentLog from './components/Admin/AdminViewStudentLog';
 import ClgStaffNavbar from './components/CollegeStaff/ClgStaffNavbar';
 import AdminSearchSessionDetails from './components/Admin/AdminSearchSessionDetails';
+import AdminViewAllSession from './components/Admin/AdminViewAllSession';
 
 
 
@@ -113,6 +114,7 @@ function App() {
           <Route path='/adminSearchBatch' element={<AdminSearchBatch/>}/>
           <Route path='/AdminViewStudentLog' element={<AdminViewStudentLog/>}/>
           <Route path='/AdminSearchSessionDetails' element={<AdminSearchSessionDetails/>}/>
+          <Route path='/AdminViewAllSession' element={<AdminViewAllSession/>}/>
 
 
 
