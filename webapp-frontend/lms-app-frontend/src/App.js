@@ -68,6 +68,7 @@ import AdminSearchBatch from './components/Admin/AdminSearchBatch';
 import AdminViewStudentLog from './components/Admin/AdminViewStudentLog';
 import ClgStaffNavbar from './components/CollegeStaff/ClgStaffNavbar';
 import AdminSearchSessionDetails from './components/Admin/AdminSearchSessionDetails';
+import AdmStaffNavBar from './components/AdminStaff/AdmStaffNavBar';
 
 
 
@@ -123,6 +124,7 @@ function App() {
           {/* ADMINSTAFF */}
           {/* ================================================================================================================= */}
           <Route path='/admstafflogin' element={<AdminStaffLogin />} />
+          <Route path='/admstaffnavbar' element={<AdmStaffNavBar/>}/>
 
 
 
