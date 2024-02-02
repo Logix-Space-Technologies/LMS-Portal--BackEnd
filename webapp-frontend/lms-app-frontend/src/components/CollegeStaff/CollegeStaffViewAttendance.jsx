@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import axios from 'axios';
+import ClgStaffNavbar from './ClgStaffNavbar';
 
 const CollegeStaffViewAttendance = () => {
     const [clgStaffViewAttendance, setClgStaffViewAttendance] = useState([]);
@@ -31,6 +32,7 @@ const CollegeStaffViewAttendance = () => {
     useEffect(() => { getData() }, []);
     return (
         <div>
+            <ClgStaffNavbar/>
             <div className="flex min-h-screen items-center justify-center bg-white">
                 <div className="p-6 overflow-scroll px-0">
                     <table className="w-full min-w-max table-auto text-left">

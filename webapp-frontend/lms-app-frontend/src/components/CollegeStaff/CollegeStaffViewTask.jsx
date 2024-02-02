@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config';
 import axios from 'axios';
+import ClgStaffNavbar from './ClgStaffNavbar';
 
 const CollegeStaffViewTask = () => {
     const [taskData, setTaskData] = useState([])
@@ -28,6 +29,7 @@ const CollegeStaffViewTask = () => {
     useEffect(() => { getData() }, [])
     return (
         <div>
+            <ClgStaffNavbar/>
             {/* ====== Table Section Start */}
             <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
