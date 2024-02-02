@@ -36,6 +36,8 @@ const AdminLogin = () => {
                     let admtoken = Response.data.token
                     let admkey = "lmsapp"
                     let userName = Response.data.data.userName;
+                    let adminId = 0
+                    sessionStorage.setItem("adminId", adminId)
                     sessionStorage.setItem("admkey", admkey)
                     sessionStorage.setItem("admtoken", admtoken)
                     sessionStorage.setItem("userName", userName)

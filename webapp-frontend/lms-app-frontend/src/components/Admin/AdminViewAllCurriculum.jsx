@@ -58,8 +58,8 @@ const AdminViewAllCurriculum = () => {
 
     const UpdateClick = (id) => {
         let data = id
-        sessionStorage.setItem("batchId", data)
-        navigate("/AdminUpdateTrainer")
+        sessionStorage.setItem("curriculumId", data)
+        navigate("/AdminUpdateCurriculum")
 
     }
 

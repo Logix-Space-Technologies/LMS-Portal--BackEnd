@@ -160,5 +160,19 @@ Curriculum.curriculumUpdate = (updCurriculum, result) => {
 };
 
 
+Curriculum.viewOneCurriculum  = (id, result) => {
+    db.query("SELECT id,curriculumTitle,batchId,curriculumDesc,curriculumFileLink FROM curriculum WHERE deleteStatus = 0 AND isActive = 1 AND id = ?", id,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("curriculum: ", res);
+            result(null, res);
+        })
+}
+
+
 
 module.exports = Curriculum;
