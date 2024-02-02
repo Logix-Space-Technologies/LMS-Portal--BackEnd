@@ -281,7 +281,7 @@ const StudentViewTasks = () => {
                                             </td>
                                             <td>
                                                 <div className="flex justify-end">
-                                                    <button onClick={() => readValue(task.id)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
+                                                    <button onClick={() => readValue(task.taskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
                                                 </div>
                                             </td>
                                         </>
