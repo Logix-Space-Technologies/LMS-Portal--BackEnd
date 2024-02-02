@@ -285,11 +285,11 @@ exports.collegeStaffUpdate = (req, res) => {
     if (error) {
       return res.status(500).json({ "status": error.message });
     }
-    if (!request.file) {
-      return response.status(400).json({ "status": "No file uploaded" });
+    if (!req.file) {
+      return res.status(400).json({ "status": "No file uploaded" });
     }
     // File handling
-    const file = request.file;
+    const file = req.file;
     const fileStream = fs.createReadStream(file.path);
 
     const uploadParams = {
@@ -328,7 +328,7 @@ exports.collegeStaffUpdate = (req, res) => {
             validationErrors.phNo = "Mobile number is required.";
           }
           if (!Validator.isValidMobileNumber(req.body.phNo).isValid) {
-            validationErrors.phone = Validator.isValidMobileNumber(req.body.phNo).message;
+            validationErrors.phNo = Validator.isValidMobileNumber(req.body.phNo).message;
           }
           if (!req.file || !Validator.isValidImageWith1mbConstratint(req.file).isValid) {
             validationErrors.image = Validator.isValidImageWith1mbConstratint(req.file).message;
@@ -356,7 +356,7 @@ exports.collegeStaffUpdate = (req, res) => {
             collegeStaffName: req.body.collegeStaffName,
             phNo: req.body.phNo,
             clgStaffAddress: req.body.clgStaffAddress,
-            profilePic: profilePic,
+            profilePic: imageUrl,
             department: req.body.department,
             aadharNo: req.body.aadharNo
           });
@@ -727,3 +727,27 @@ exports.viewCollegeStaffOfStudent = (request, response) => {
     });
   });
 }
+
+exports.viewOneClgStaff = (request, response) => {
+  const clgStaffToken = request.headers.token;
+  const key = request.headers.key; //give respective keys of admin and adminstaff
+  const clgStaffId = request.body.id; 
+  console.log(clgStaffId)
+
+  jwt.verify(clgStaffToken, key, (err, decoded) => {
+      if (decoded) {
+        CollegeStaff.viewOneClgStaff(clgStaffId, (err, data) => {
+              if (err) {
+                  return response.json({ "status": err });
+              }
+              if (!data) {
+                  return response.json({ "status": "No College Staffs are currently active" });
+              } else {
+                  return response.json({ "status": "success", "ClgStaffs": data });
+              }
+          });
+      } else {
+          return response.json({ "status": "Unauthorized access!!" });
+      }
+  });
+};

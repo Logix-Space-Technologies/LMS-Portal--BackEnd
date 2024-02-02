@@ -11,7 +11,7 @@ const AdminStaffLogin = () => {
     const [errors, setErrors] = useState({});
 
     const apiUrl = global.config.urls.api.server + "/api/lms/AdminStaffLogin"
-    // const navigate=useNavigate()
+    const navigate=useNavigate()
 
     const inputHandler = (event) => {
         setErrors({}); // Clear previous errors
@@ -37,7 +37,7 @@ const AdminStaffLogin = () => {
                     let admstaffkey = "lmsappadmstaff"
                     sessionStorage.setItem("admstaffLogintoken", admstafftoken)
                     sessionStorage.setItem("admstaffkey", admstaffkey)
-                    alert(Response.data.status)
+                    navigate("/addcollege")
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)

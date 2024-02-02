@@ -52,6 +52,9 @@ const Navbar = () => {
                         <li className="nav-item">
                             <a className="nav-link" href="/adminSearchBatch">Search Batches</a>
                         </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="/adminAddtask">Add Task</a>
+                        </li>
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Functionalities
@@ -61,6 +64,7 @@ const Navbar = () => {
                                 <li><a className="dropdown-item" href="/adminviewallstudents">View All Students</a></li>
                                 <li><a className="dropdown-item" href="/adminviewalltrainers">View All Trainers</a></li>
                                 <li><a className="dropdown-item" href="/adminviewallbatches">View All Batches</a></li>
+                                <li><a className="dropdown-item" href="/AdminViewAllSession">View All Session</a></li>
                                 <li><a className="dropdown-item" href="/adminsearchstudent">Search Student</a></li>
                                 <li><a className="dropdown-item" href="/adminviewCollegeStaffLog">View College Staff Log</a></li>
                                 <li><a className="dropdown-item" href="/AdminViewRefundRequests">View Refund Requests</a></li>
