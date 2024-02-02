@@ -8,6 +8,7 @@ const AdminUpdateCurriculum = () => {
 
     const [curriculumData, setCurriculumData] = useState([])
     const [file, setFile] = useState("")
+    const [fileValidationMessage, setFileValidationMessage] = useState('');
     const [updateField, setUpdateField] = useState(
         {
             "id": sessionStorage.getItem("curriculumId"),
@@ -26,10 +27,37 @@ const AdminUpdateCurriculum = () => {
     }
 
     const fileUploadHandler = (event) => {
-        setFile(event.target.files[0]);
-    }
+        setFileValidationMessage({})
+        const file = event.target.files[0];
+        if (file) {
+            const isSizeValid = file.size <= 2097152; // 2MB in bytes
+            const isTypeValid = file.type === "application/pdf";
+    
+            if (isSizeValid && isTypeValid) {
+                setFile(file);
+                setFileValidationMessage('');
+            } else {
+                if (!isSizeValid) {
+                    setFileValidationMessage('File size should be less than 2MB.');
+                }
+                if (!isTypeValid) {
+                    setFileValidationMessage('Invalid file type. Only PDFs are allowed.');
+                }
+            }
+        } else {
+            setFileValidationMessage("Please upload a file.");
+        }
+    };
+    
 
     const readNewValue = () => {
+        if (!file) {
+            setFileValidationMessage("Please upload a file.");
+            return;
+        }
+        if (fileValidationMessage) {
+            return;
+        }
         console.log(updateField)
         let axiosConfig2 = {
             headers: {
@@ -137,6 +165,7 @@ const AdminUpdateCurriculum = () => {
                                                     Curriculum File <span className="text-danger">*</span>
                                                 </label>
                                                 <input onChange={fileUploadHandler} type="file" className="form-control" name="curriculumFileLink" id="curriculumFileLink" accept="*" />
+                                                {fileValidationMessage && <div className="text-danger">{fileValidationMessage}</div>}
                                             </div>
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
