@@ -16,6 +16,8 @@ const AdminSearchBatch = () => {
 
     const apiUrl = global.config.urls.api.server + "/api/lms/searchBatch"
 
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch"
+
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
     }
@@ -40,6 +42,29 @@ const AdminSearchBatch = () => {
                         "batchQuery": ""
                     }
                 )
+            }
+        )
+    }
+
+    const deleteClick = (id) => {
+        let deletedata = { "id" : id }
+        let axiosConfig2 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        }
+        axios.post(apiUrl2, deletedata, axiosConfig2).then(
+            (response) => {
+                console.log(deletedata)
+                if (response.data.status === "Batch Deleted.") {
+                    alert("Batch Deleted Successfully!!")
+                    window.location.reload();
+                } else {
+                    alert(response.data.status)
+                }
             }
         )
     }
@@ -131,7 +156,7 @@ const AdminSearchBatch = () => {
                                                             <button onClick="#" className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <button onClick="#" className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
+                                                            <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
                                                         </td>
                                                     </tr>
                                                 )

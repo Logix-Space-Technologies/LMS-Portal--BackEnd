@@ -4,11 +4,14 @@ import axios from 'axios'
 import Navbar from './Navbar'
 import { useNavigate } from 'react-router-dom'
 
+
 const AdminViewAllBatch = () => {
     const [batchData, setbatchData] = useState([])
     const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewAllBatches"
+
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch"
 
     const getData = () => {
         let axiosConfig = {
@@ -23,6 +26,29 @@ const AdminViewAllBatch = () => {
             (response) => {
                 setbatchData(response.data.data)
                 console.log(response.data.data)
+            }
+        )
+    }
+
+    const deleteClick = (id) => {
+        let deletedata = { "id" : id }
+        let axiosConfig2 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        }
+        axios.post(apiUrl2, deletedata, axiosConfig2).then(
+            (response) => {
+                console.log(deletedata)
+                if (response.data.status === "Batch Deleted.") {
+                    alert("Batch Deleted Successfully!!")
+                    window.location.reload();
+                } else {
+                    alert(response.data.status)
+                }
             }
         )
     }
@@ -113,7 +139,7 @@ const AdminViewAllBatch = () => {
                                         <button onClick="#" className="btn btn-success p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button onClick="#" className="btn btn-danger p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
+                                        <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
                                     </td>
                                 </tr>
                             }
