@@ -11,7 +11,7 @@ const ClgStaffNavbar = () => {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
-                        <li className="nav-item">
+                        <li className="nav-item"> 
                             <a className="nav-link active" aria-current="page" href="/studentverification">Student Verification</a>
                         </li>
                         <li className="nav-item">
@@ -36,13 +36,14 @@ const ClgStaffNavbar = () => {
                             <a className="nav-link" href="/clgstaffviewattendance">View Attendance List</a>
                         </li>
                         <li className="nav-item">
-                            <a href="/clgStafflogin" className="dropdown-item">Log Out</a>
+                            <a href="/clgStafflogin" className="dropdown-item">Log Out</a> 
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </div>
+    // navbar
   )
 }
 
