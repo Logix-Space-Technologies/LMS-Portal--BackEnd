@@ -42,6 +42,7 @@ const StudentChangePassword = () => {
                         sessionStorage.removeItem("studentkey");
                         sessionStorage.removeItem("studentId");
                         sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
                         sessionStorage.removeItem("studLoginToken");
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.oldPassword) {
