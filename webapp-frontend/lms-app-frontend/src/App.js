@@ -63,6 +63,7 @@ import AdminUpdateTrainer from './components/Admin/AdminUpdateTrainer';
 import AdminViewAllCollege from './components/Admin/AdminViewAllCollege';
 import AdminViewAllCurriculum from './components/Admin/AdminViewAllCurriculum';
 import AdminViewRefundRequests from './components/Admin/AdminViewRefundRequests';
+import ClgStaffNavbar from './components/CollegeStaff/ClgStaffNavbar';
 
 
 
@@ -134,6 +135,7 @@ function App() {
           <Route path='/colgstaffsearchbatch' element={<CollegeStaffSearchBatch />} />
           <Route path='/clgstaffviewtask' element={<CollegeStaffViewTask/>}/>
           <Route path='/clgStaffSearchTask' element={<CollegeStaffSearchTask/>}/>
+          <Route path='/clgstaffnavbar' element={<ClgStaffNavbar/>}/>
 
 
 
