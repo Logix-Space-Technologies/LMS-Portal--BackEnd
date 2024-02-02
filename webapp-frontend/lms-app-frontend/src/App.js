@@ -64,6 +64,7 @@ import AdminViewAllCollege from './components/Admin/AdminViewAllCollege';
 import AdminViewAllCurriculum from './components/Admin/AdminViewAllCurriculum';
 import AdminViewRefundRequests from './components/Admin/AdminViewRefundRequests';
 import AdminSearchBatch from './components/Admin/AdminSearchBatch';
+import AdminViewStudentLog from './components/Admin/AdminViewStudentLog';
 
 
 
@@ -106,6 +107,7 @@ function App() {
           <Route path='/adminviewallcurriculum' element={<AdminViewAllCurriculum/>}/>
           <Route path='/AdminViewRefundRequests' element={<AdminViewRefundRequests/>}/>
           <Route path='/adminSearchBatch' element={<AdminSearchBatch/>}/>
+          <Route path='/AdminViewStudentLog' element={<AdminViewStudentLog/>}/>
 
 
 
