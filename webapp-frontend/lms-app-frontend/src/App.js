@@ -75,7 +75,7 @@ import AdminViewAllSession from './components/Admin/AdminViewAllSession';
 import AdminSearchCollegeStaff from './components/Admin/AdminSearchCollegeStaff';
 import AdminViewAllAdminStaff from './components/Admin/AdminViewAllAdmStaff';
 import AdmStaffNavBar from './components/AdminStaff/AdmStaffNavBar';
-
+import AdminSendNotification from './components/Admin/AdminSendNotifications';
 
 
 
@@ -127,6 +127,7 @@ function App() {
           <Route path='/AdminViewAllSession' element={<AdminViewAllSession/>}/>
           <Route path='/AdminSearchCollegeStaff' element={<AdminSearchCollegeStaff/>}/>
           <Route path='/AdminViewAllAdminStaff' element={<AdminViewAllAdminStaff/>}/>
+          <Route path='/AdminSendNotification' element={<AdminSendNotification/>}/>
 
 
 
