@@ -69,7 +69,7 @@ import AdminViewStudentLog from './components/Admin/AdminViewStudentLog';
 import ClgStaffNavbar from './components/CollegeStaff/ClgStaffNavbar';
 import AdminSearchSessionDetails from './components/Admin/AdminSearchSessionDetails';
 import AdminSearchCollegeStaff from './components/Admin/AdminSearchCollegeStaff';
-
+import AdminViewAllAdminStaff from './components/Admin/AdminViewAllAdmStaff';
 
 
 
@@ -115,6 +115,7 @@ function App() {
           <Route path='/AdminViewStudentLog' element={<AdminViewStudentLog/>}/>
           <Route path='/AdminSearchSessionDetails' element={<AdminSearchSessionDetails/>}/>
           <Route path='/AdminSearchCollegeStaff' element={<AdminSearchCollegeStaff/>}/>
+          <Route path='/AdminViewAllAdminStaff' element={<AdminViewAllAdminStaff/>}/>
 
 
 
