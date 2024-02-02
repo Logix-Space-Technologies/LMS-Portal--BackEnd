@@ -39,7 +39,7 @@ const CollegeStaffSearchBatch = () => {
             (response) => {
                 setUpdateField(response.data.data)
                 setIsLoading(false)
-                console.log(response.data.data)
+                console.log(response.data)
                 setInputField({
                     "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
                     "clgStaffBatchSearchQuery": ""
