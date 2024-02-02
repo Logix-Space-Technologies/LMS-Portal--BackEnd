@@ -12,18 +12,7 @@ const CollegeStaffSideBar = () => {
                         <div className="nav-item dropdown">
                             <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i className="fa fa-laptop me-2" />Features</a>
                             <div className="dropdown-menu bg-transparent border-0"> 
-                                <a href="#" className="dropdown-item">Add Batch</a>
-                                <a href="#" className="dropdown-item">View Batch</a>
-                                <a href="#" className="dropdown-item">Search Batch</a>
-                                <a href="#" className="dropdown-item">Update Batch</a>
-                                <a href="#" className="dropdown-item">Delete Batch</a>
-                                <a href="#" className="dropdown-item">Add Task</a>
-                                <a href="#" className="dropdown-item">View Task</a>
-                                <a href="#" className="dropdown-item">Search Task</a>
-                                <a href="#" className="dropdown-item">Update Task</a>
-                                <a href="#" className="dropdown-item">Delete Task</a>
-                                <a href="#" className="dropdown-item">View All Student</a>
-                                <a href="#" className="dropdown-item">Search Student</a>
+                                <a href="/studentverification" className="dropdown-item">Student Verification</a>
                             </div>
                         </div>
                     </div>
