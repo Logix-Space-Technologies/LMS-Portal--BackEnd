@@ -39,6 +39,9 @@ const CollegeStaffViewAttendance = () => {
                         <thead>
                             <tr>
                                 <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
+                                    <p className="block antialiased font-sans text-sm text-black font-bold leading-none opacity-70">Batch Name</p>
+                                </th>
+                                <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
                                     <p className="block antialiased font-sans text-sm text-black font-bold leading-none opacity-70">Session Name</p>
                                 </th>
                                 <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
@@ -63,6 +66,9 @@ const CollegeStaffViewAttendance = () => {
                                 console.log('attendence_status:', value.attendence_status);
                                 return (
                                     <tr key={index}>
+                                        <td className="p-4 border-b border-blue-gray-50">
+                                            <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">{value.batchName}</p>
+                                        </td>
                                         <td className="p-4 border-b border-blue-gray-50">
                                             <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">{value.sessionName}</p>
                                         </td>
