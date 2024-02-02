@@ -34,6 +34,8 @@ router.post("/viewalladmstaff",AdminStaffController.viewalladmstaff)
 
 router.post("/updateClgStaff", ClgStaffController.collegeStaffUpdate);
 
+router.post("/viewonecollgestaff", ClgStaffController.viewOneClgStaff);
+
 router.post("/deletecolgstaff", ClgStaffController.clgStaffDelete);
 
 router.post("/updateCollege", CollegeController.updateCollege)

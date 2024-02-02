@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import '../../config/config'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+
 
 const AdminViewAllClgStaff = () => {
+  const navigate = useNavigate()
   const [clgStaffData, setClgStaffData] = useState([])
 
   const apiUrl = global.config.urls.api.server + "/api/lms/viewallcollegestaff"
@@ -49,6 +52,13 @@ const AdminViewAllClgStaff = () => {
       }
     )
   }
+
+  const UpdateClick = (id) => {
+    let data = id
+    sessionStorage.setItem("clgStaffId", data)
+    navigate("/adminupdatecollegestaff")
+
+}
 
   useEffect(() => { getData() }, [])
   return (
@@ -143,9 +153,12 @@ const AdminViewAllClgStaff = () => {
                           <td className="p-4 whitespace-nowrap">
                             <button onClick={() => handleClick(value.id)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Delete</button>
                           </td>
+                          <td className="p-4 whitespace-nowrap">
+                            <button onClick={() => { UpdateClick(value.id) }} className="bg-blue-500 text-white px-4 py-2 rounded-md">Update</button>
+                          </td>
                         </tr>
                       )
-                    )): <tr>
+                    )) : <tr>
                       <td className="p-4 whitespace-nowrap">
 
                       </td>
@@ -159,7 +172,7 @@ const AdminViewAllClgStaff = () => {
 
                       </td>
                       <td className="p-4 whitespace-nowrap">
-                         No College Staffs Found !!!
+                        No College Staffs Found !!!
                       </td>
                       <td className="p-4 whitespace-nowrap">
 
@@ -176,7 +189,7 @@ const AdminViewAllClgStaff = () => {
                       <td className="p-4 whitespace-nowrap">
 
                       </td>
-                      </tr>}
+                    </tr>}
                   </tbody>
                 </table>
               </div>
