@@ -71,7 +71,7 @@ import AdminAddTask from './components/Admin/AdminAddTask';
 import AdminSearchSessionDetails from './components/Admin/AdminSearchSessionDetails';
 import AdminViewAllSession from './components/Admin/AdminViewAllSession';
 import AdminSearchCollegeStaff from './components/Admin/AdminSearchCollegeStaff';
-
+import AdmStaffNavBar from './components/AdminStaff/AdmStaffNavBar';
 
 
 
@@ -131,6 +131,7 @@ function App() {
           {/* ADMINSTAFF */}
           {/* ================================================================================================================= */}
           <Route path='/admstafflogin' element={<AdminStaffLogin />} />
+          <Route path='/admstaffnavbar' element={<AdmStaffNavBar/>}/>
 
 
 

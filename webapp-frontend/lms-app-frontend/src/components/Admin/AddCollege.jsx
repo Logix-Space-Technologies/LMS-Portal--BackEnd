@@ -1,7 +1,8 @@
 import axios from 'axios'
 import '../../config/config'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AddCollege = () => {
 
@@ -18,6 +19,8 @@ const AddCollege = () => {
   )
 
   const [file, setFile] = useState(null)
+  const [key, setKey] = useState('');
+
 
   const fileUploadHandler = (event) => {
     setFile(event.target.files[0])
@@ -32,6 +35,15 @@ const AddCollege = () => {
   }
 
   const handleSubmit = (e) => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey  = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
+    console.log("key: ",key)
+    console.log("token: ",token)
     console.log(inputField)
     console.log(file)
     e.preventDefault()
@@ -42,8 +54,8 @@ const AddCollege = () => {
         headers: {
           "content-type": "multipart/form-data",
           "Access-Control-Allow-Origin": "*",
-          "token": sessionStorage.getItem("admtoken"),
-          "key": sessionStorage.getItem("admkey")
+          "token": token,
+          "key": currentKey
         }
       }
       let data = {
@@ -138,9 +150,13 @@ const AddCollege = () => {
     return errors;
   };
 
+  // Update key state when component mounts
+  useEffect(() => {
+    setKey(sessionStorage.getItem("admkey") || '');
+  }, []);
   return (
     <div>
-      <Navbar />
+      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
       <div class="bg-light py-3 py-md-5">
         <div class="container">
           <div class="row justify-content-md-center">
