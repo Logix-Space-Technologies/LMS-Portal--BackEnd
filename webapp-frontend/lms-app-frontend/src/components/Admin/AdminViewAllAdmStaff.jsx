@@ -74,39 +74,43 @@ const AdminViewAllAdminStaff = () => {
           {error && <p className="text-red-500">{error}</p>}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {clgStaffData.map((value, index) => (
-              <div key={index} className="bg-white shadow-lg rounded-md border border-gray-200">
-                <header className="px-4 py-3 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-800">Admin Staff ID: {value.id}</h2>
-                </header>
-                <div className="p-4">
-                  <div className="mb-2">
-                    <strong>Admin Staff Name:</strong> {value.AdStaffName}
-                  </div>
-                  <div className="mb-2">
-                    <strong>Phone No.:</strong> {value.PhNo}
-                  </div>
-                  <div className="mb-2">
-                    <strong>Address:</strong> {value.Address}
-                  </div>
-                  <div className="mb-2">
-                    <strong>Aadhar No:</strong> {value.AadharNo}
-                  </div>
-                  <div className="mb-2">
-                    <strong>Email:</strong> {value.Email}
-                  </div>
-                  <div className="mb-2">
-                    <strong>Added Date:</strong> {value.addedDate}
-                  </div>
-                  <div>
-                    <strong>Updated Date:</strong> {value.updatedDate}
+              <div key={index} className="bg-white shadow-lg rounded-md border border-gray-200 flex flex-col justify-between"> {/* Modified for consistent button alignment */}
+                <div>
+                  <header className="px-4 py-3 border-b border-gray-200">
+                    <h2 className="text-lg font-semibold text-gray-800">Admin Staff ID: {value.id}</h2>
+                  </header>
+                  <div className="p-4">
+                    <div className="mb-2">
+                      <strong>Admin Staff Name:</strong> {value.AdStaffName}
+                    </div>
+                    <div className="mb-2">
+                      <strong>Phone No.:</strong> {value.PhNo}
+                    </div>
+                    <div className="mb-2">
+                      <strong>Address:</strong> {value.Address}
+                    </div>
+                    <div className="mb-2">
+                      <strong>Aadhar No:</strong> {value.AadharNo}
+                    </div>
+                    <div className="mb-2">
+                      <strong>Email:</strong> {value.Email}
+                    </div>
+                    <div>
+                      <strong>Added Date:</strong> {value.addedDate}
+                    </div>
+                    <div>
+                      <strong>Updated Date:</strong> {value.updatedDate}
+                    </div>
                   </div>
                 </div>
-                <button
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full mt-2 mx-4"
-                  onClick={() => handleDeleteClick(value.id)}
-                >
-                  Delete
-                </button>
+                <div className="px-4 py-3 flex justify-center">
+                  <button
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+                    onClick={() => handleDeleteClick(value.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>
