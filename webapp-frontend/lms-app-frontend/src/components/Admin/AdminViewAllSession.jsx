@@ -7,6 +7,7 @@ const AdminViewAllSession = () => {
     const [sessionData, setSessionData] = useState([])
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions"
+    const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession"
 
     const getData = () => {
         let axiosConfig = {
@@ -23,6 +24,29 @@ const AdminViewAllSession = () => {
                 console.log(response.data.Sessions)
             }
         )
+    }
+
+    const handleClick = (id) => {
+        let data = { "id": id }
+        let axiosConfigTwo = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        }
+        axios.post(apiUrlTwo, data, axiosConfigTwo).then(
+            (response) => {
+                if (response.data.status === "success") {
+                    // Reload the page after deleting trainer
+                    window.location.reload();
+                } else {
+                    alert(response.data.status)
+                }
+            }
+        )
+
     }
 
     useEffect(() => { getData() }, [])
@@ -67,6 +91,9 @@ const AdminViewAllSession = () => {
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Added Date
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Cancel Status
                             </th>
                             <th scope="col" className="px-6 py-3">
 
@@ -117,8 +144,14 @@ const AdminViewAllSession = () => {
                                         {value.addedDate}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete Session</a>
+                                        {value.cancelStatus}
                                     </td>
+                                    <td className="px-6 py-4">
+                                        <button onClick={() => handleClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                            Cancel Session
+                                        </button>
+                                    </td>
+
                                     <td className="px-6 py-4">
                                         <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Update</a>
                                     </td>
