@@ -80,7 +80,7 @@ const AdminSearchCollege = () => {
                                         <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
                                             <tr>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">College Image</div>
+                                                    <div className="font-semibold text-center"></div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
                                                     <div className="font-semibold text-center">College Name</div>
@@ -113,8 +113,17 @@ const AdminSearchCollege = () => {
                                                 (value, index) => (
                                                     <tr key={index}>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <img className="rounded mx-auto d-block" src={value.collegeImage} alt="" />
-                                                            {/* <a target="_blank" href={value.collegeImage} className="btn bg-blue-500 text-white px-4 py-2 shadow rounded-md hover:bg-blue-500">View Image</a> */}
+                                                            <div className="flex items-center">
+                                                                <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
+                                                                    <img
+                                                                        className="rounded mx-auto d-block"
+                                                                        src={value.collegeImage}
+                                                                        width="150px"
+                                                                        height="140px"
+                                                                        alt=""
+                                                                    />
+                                                                </div>
+                                                            </div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
                                                             <div className="text-center">{value.collegeName}</div>

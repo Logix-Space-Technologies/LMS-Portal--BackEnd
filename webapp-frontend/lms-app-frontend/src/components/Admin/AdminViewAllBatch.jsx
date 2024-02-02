@@ -59,6 +59,10 @@ const AdminViewAllBatch = () => {
                             <th scope="col" className="px-6 py-3">
                                 Added Date
                             </th>
+                            <th scope="col" className="px-6 py-3">
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,7 +91,13 @@ const AdminViewAllBatch = () => {
                                         {value.batchAmount}
                                     </td>
                                     <td className="px-6 py-4">
-                                    {new Date(value.addedDate).toLocaleDateString()}
+                                        {new Date(value.addedDate).toLocaleDateString()}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <button onClick="#" className="btn btn-success p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <button onClick="#" className="btn btn-danger p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
                                     </td>
                                 </tr>
                             }
