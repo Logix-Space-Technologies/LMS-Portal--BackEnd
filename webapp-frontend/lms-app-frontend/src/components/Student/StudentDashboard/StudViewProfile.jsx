@@ -33,8 +33,12 @@ const StudViewProfile = () => {
                     setStudData(response.data.data)
                     console.log(response.data.data)
                 } else {
-                    logOut()
-                    navigate("/studentLogin")
+                    if (response.data.status === "Unauthorized User!!") {
+                        logOut()
+                        navigate("/studentLogin")
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )

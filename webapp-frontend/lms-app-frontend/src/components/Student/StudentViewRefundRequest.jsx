@@ -26,11 +26,24 @@ const StudentViewRefundRequest = () => {
         console.log(data)
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-                if (response.data.status === "success") {
+                if (response.data.data) {
                     setStudentViewRefundReqData(response.data.data)
                     console.log(response.data)
                 } else {
-                    console.log(response.data.status)
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                    } else {
+                        if (response.data.status === "No refund requests found.") {
+                            console.log(response.data.status)
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
                 }
             })
             .catch(error => {
@@ -54,10 +67,19 @@ const StudentViewRefundRequest = () => {
         axios.post(apiUrl1, data1, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    navigate("/studViewRefundReq")
                     alert("Your Refund Request Has Being Successfully Cancelled!!")
+                    window.location.reload();
                 } else {
-                    alert(response.data.status)                   
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -76,10 +98,19 @@ const StudentViewRefundRequest = () => {
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    navigate("/studViewRefundReq")
                     alert("Amount Received Status Updated Successfully.")
+                    window.location.reload();
                 } else {
-                    alert(response.data.status)
+                    if (response.data.status === 'Unauthorized User!!') {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -89,7 +120,7 @@ const StudentViewRefundRequest = () => {
 
     return (
         <div>
-            <StudNavBar/>
+            <StudNavBar />
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">

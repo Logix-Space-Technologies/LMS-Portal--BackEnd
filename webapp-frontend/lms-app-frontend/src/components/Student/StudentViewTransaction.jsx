@@ -2,9 +2,11 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import StudNavBar from './StudNavBar'
+import { useNavigate } from 'react-router-dom'
 
 const StudentViewTransaction = () => {
     const [transactionData, setTransactionData] = useState([])
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studentViewTransaction"
 
@@ -20,8 +22,21 @@ const StudentViewTransaction = () => {
         }
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-                setTransactionData(response.data.data)
-                console.log(response.data.data)
+                if (response.data.data) {
+                    setTransactionData(response.data.data)
+                    console.log(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized User") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }
@@ -29,7 +44,7 @@ const StudentViewTransaction = () => {
     useEffect(() => { getData() }, [])
     return (
         <div>
-            <StudNavBar/>
+            <StudNavBar />
             {/* ====== Table Section Starts */}
             <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
