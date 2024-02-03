@@ -46,6 +46,7 @@ const AdminSearchTrainer = () => {
         )
     }
 
+    //Delete Function
     const deleteClick = (id) => {
         let deletedata = { "id": id }
         let axiosConfig2 = {
