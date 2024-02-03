@@ -30,7 +30,7 @@ const StudentViewTransaction = () => {
     return (
         <div>
             <StudNavBar/>
-            {/* ====== Table Section Start */}
+            {/* ====== Table Section Starts */}
             <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
                     <div className="flex flex-wrap -mx-4">
