@@ -76,6 +76,8 @@ import AdminSearchCollegeStaff from './components/Admin/AdminSearchCollegeStaff'
 import AdminViewAllAdminStaff from './components/Admin/AdminViewAllAdmStaff';
 import AdmStaffNavBar from './components/AdminStaff/AdmStaffNavBar';
 import AdminSendNotification from './components/Admin/AdminSendNotifications';
+import AdminStaffFooter from './components/AdminStaff/AdminStaffDashboard/AdminStaffFooter';
+import AdminStaffSideBar from './components/AdminStaff/AdminStaffDashboard/AdminStaffSideBar';
 
 
 
@@ -116,9 +118,7 @@ function App() {
           <Route path='/adminviewallcollege' element={<AdminViewAllCollege/>}/>
           <Route path='/adminviewallcurriculum' element={<AdminViewAllCurriculum/>}/>
           <Route path='/AdminViewRefundRequests' element={<AdminViewRefundRequests/>}/>
-
           <Route path='/adminupdatecollegestaff' element={<AdminUpdateCollegeStaff/>}/>
-
           <Route path='/AdminUpdateCurriculum' element={<AdminUpdateCurriculum/>}/>
           <Route path='/adminSearchBatch' element={<AdminSearchBatch/>}/>
           <Route path='/AdminViewStudentLog' element={<AdminViewStudentLog/>}/>
@@ -141,6 +141,8 @@ function App() {
           {/* ================================================================================================================= */}
           <Route path='/admstafflogin' element={<AdminStaffLogin />} />
           <Route path='/admstaffnavbar' element={<AdmStaffNavBar/>}/>
+          <Route path='/admstafffooter' element={<AdminStaffFooter/>}/>
+          <Route path='/admstaffsidebar' element={<AdminStaffSideBar/>}/>
 
 
 
