@@ -35,7 +35,7 @@ const StudentUpdateProfile = () => {
         if (file) {
             const isSizeValid = file.size <= 2097152; // 2MB in bytes
             const isTypeValid = /image\/(jpg|jpeg|png|webp|heif)$/.test(file.type);
-    
+
             if (isSizeValid && isTypeValid) {
                 setFile(file);
                 setFileValidationMessage('');
@@ -51,7 +51,7 @@ const StudentUpdateProfile = () => {
             setFileValidationMessage("Please upload a file.");
         }
     };
-    
+
 
     const readNewValue = () => {
         if (!file) {
@@ -98,7 +98,16 @@ const StudentUpdateProfile = () => {
                     alert("Profile Updated Successfully")
                     navigate("/studdashboard")
                 } else {
-                    alert(Response.data.status)
+                    if (Response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                    } else {
+                        alert(Response.data.status)
+                    }
                 }
 
             }
