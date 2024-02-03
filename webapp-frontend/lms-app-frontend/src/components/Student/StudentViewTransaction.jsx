@@ -26,12 +26,16 @@ const StudentViewTransaction = () => {
                     setTransactionData(response.data.data)
                     console.log(response.data.data)
                 } else {
-                    navigate("/studentLogin")
-                    sessionStorage.removeItem("studentkey");
-                    sessionStorage.removeItem("studentId");
-                    sessionStorage.removeItem("studemail");
-                    sessionStorage.removeItem("studBatchId");
-                    sessionStorage.removeItem("studLoginToken");
+                    if (response.data.status === "Unauthorized User") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
