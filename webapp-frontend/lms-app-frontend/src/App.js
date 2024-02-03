@@ -63,7 +63,6 @@ import AdminViewAllCollege from './components/Admin/AdminViewAllCollege';
 import AdminViewAllCurriculum from './components/Admin/AdminViewAllCurriculum';
 import AdminViewRefundRequests from './components/Admin/AdminViewRefundRequests';
 import AdminUpdateCollegeStaff from './components/Admin/AdminUpdateCollegeStaff';
-
 import AdminUpdateCurriculum from './components/Admin/AdminUpdateCurriculum';
 import AdminSearchBatch from './components/Admin/AdminSearchBatch';
 import AdminViewStudentLog from './components/Admin/AdminViewStudentLog';
@@ -80,6 +79,8 @@ import AdminStaffSideBar from './components/AdminStaff/AdminStaffDashboard/Admin
 import AdminStaffHeader from './components/AdminStaff/AdminStaffDashboard/AdminStaffHeader';
 import AdmStaffDashBoard from './components/AdminStaff/AdminStaffDashboard/AdmStaffDashBoard';
 import AdmStaffViewProfile from './components/AdminStaff/AdminStaffDashboard/AdmStaffViewProfile';
+import AdminViewAllTasks from './components/Admin/AdminViewAllTasks';
+
 
 
 
@@ -130,6 +131,7 @@ function App() {
           <Route path='/AdminSearchCollegeStaff' element={<AdminSearchCollegeStaff/>}/>
           <Route path='/AdminViewAllAdminStaff' element={<AdminViewAllAdminStaff/>}/>
           <Route path='/AdminSendNotification' element={<AdminSendNotification/>}/>
+          <Route path='/AdminViewAllTasks' element={<AdminViewAllTasks/>}/>
 
 
 
