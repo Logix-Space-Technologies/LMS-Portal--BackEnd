@@ -138,7 +138,7 @@ const AdminViewAllSession = () => {
                                         {value.trainerId}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {value.attendenceCode}
+                                        <button value={value.attendenceCode} className="btn btn-primary">View Attendance Code</button>
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.addedDate}
