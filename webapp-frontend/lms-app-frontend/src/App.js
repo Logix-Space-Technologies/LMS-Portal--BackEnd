@@ -80,6 +80,7 @@ import AdminStaffHeader from './components/AdminStaff/AdminStaffDashboard/AdminS
 import AdmStaffDashBoard from './components/AdminStaff/AdminStaffDashboard/AdmStaffDashBoard';
 import AdmStaffViewProfile from './components/AdminStaff/AdminStaffDashboard/AdmStaffViewProfile';
 import AdminViewAllTasks from './components/Admin/AdminViewAllTasks';
+import AdminSearchTrainer from './components/Admin/AdminSearchTrainer';
 
 
 
@@ -132,6 +133,7 @@ function App() {
           <Route path='/AdminViewAllAdminStaff' element={<AdminViewAllAdminStaff/>}/>
           <Route path='/AdminSendNotification' element={<AdminSendNotification/>}/>
           <Route path='/AdminViewAllTasks' element={<AdminViewAllTasks/>}/>
+          <Route path='/adminSearchTrainers' element={<AdminSearchTrainer/>}/>
 
 
 
