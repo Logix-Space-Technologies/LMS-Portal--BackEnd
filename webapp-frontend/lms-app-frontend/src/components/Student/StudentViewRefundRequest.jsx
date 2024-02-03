@@ -30,7 +30,16 @@ const StudentViewRefundRequest = () => {
                     setStudentViewRefundReqData(response.data.data)
                     console.log(response.data)
                 } else {
-                    console.log(response.data.status)
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             })
             .catch(error => {

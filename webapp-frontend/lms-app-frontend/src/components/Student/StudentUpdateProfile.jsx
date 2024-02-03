@@ -126,8 +126,21 @@ const StudentUpdateProfile = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setStudData(response.data.data[0])
-                setUpdateField(response.data.data[0])
+                if (response.data.data) {
+                    setStudData(response.data.data[0])
+                    setUpdateField(response.data.data[0])
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }

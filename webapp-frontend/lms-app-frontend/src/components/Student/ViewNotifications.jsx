@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../config/config'
 import StudNavBar from './StudNavBar';
+import { useNavigate } from 'react-router-dom';
 
 const NotificationView = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchNotifications();
@@ -30,7 +32,16 @@ const NotificationView = () => {
         if (response.data.status === 'success') {
           setNotifications(response.data.data);
         } else {
-          console.log(response.data.status);
+          if (response.data.status === "Unauthorized User") {
+            navigate("/studentLogin")
+            sessionStorage.removeItem("studentkey");
+            sessionStorage.removeItem("studentId");
+            sessionStorage.removeItem("studemail");
+            sessionStorage.removeItem("studBatchId");
+            sessionStorage.removeItem("studLoginToken");
+          } else {
+            alert(response.data.status);
+          }
         }
       })
       .catch(error => {
@@ -43,7 +54,7 @@ const NotificationView = () => {
 
   return (
     <div>
-      <StudNavBar/>
+      <StudNavBar />
       <div className="bg-light py-3 py-md-5">
         <div className="container">
           <div className="row justify-content-md-center">
