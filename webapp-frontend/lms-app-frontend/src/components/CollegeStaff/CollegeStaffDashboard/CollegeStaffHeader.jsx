@@ -8,7 +8,7 @@ const CollegeStaffHeader = () => {
 
     const apiURL = global.config.urls.api.server + "/api/lms/profileViewByCollegeStaff";
 
-    const navigate =useNavigate()
+    const navigate = useNavigate()
 
     const getData = () => {
         let data = { "id": sessionStorage.getItem("clgStaffId") };
