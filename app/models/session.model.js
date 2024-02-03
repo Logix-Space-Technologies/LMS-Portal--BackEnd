@@ -189,7 +189,7 @@ Session.updateSession = (sessionUpdate, result) => {
 }
 
 Session.viewSessions = (result) => {
-    const query = "SELECT id, batchId, sessionName, date, time, type, remarks, venueORlink, trainerId, attendenceCode, addedDate, updatedDate FROM sessiondetails WHERE isActive = 1 AND deleteStatus = 0";
+    const query = "SELECT id, batchId, sessionName, date, time, type, remarks, venueORlink, trainerId, attendenceCode, addedDate, updatedDate,CASE WHEN cancelStatus = 0 THEN 'ACTIVE' WHEN cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails WHERE isActive = 1 AND deleteStatus = 0";
     db.query(query, (err, res) => {
         if (err) {
             console.log("error: ", err);

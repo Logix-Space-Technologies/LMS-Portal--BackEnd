@@ -1,6 +1,20 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
+    const navigate = useNavigate()
+    const logout = () => {
+        navigate("/")
+        sessionStorage.removeItem("adminId")
+        sessionStorage.removeItem("admkey")
+        sessionStorage.removeItem("admtoken")
+        sessionStorage.removeItem("userName")
+        sessionStorage.removeItem("trainerId")
+        sessionStorage.removeItem("curriculumId")
+        sessionStorage.removeItem("clgStaffId")
+        sessionStorage.removeItem("batchId")
+
+    }
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
@@ -65,16 +79,19 @@ const Navbar = () => {
                                 <li><a className="dropdown-item" href="/adminviewalltrainers">View All Trainers</a></li>
                                 <li><a className="dropdown-item" href="/adminviewallbatches">View All Batches</a></li>
                                 <li><a className="dropdown-item" href="/AdminViewAllSession">View All Session</a></li>
+                                <li><a className="dropdown-item" href="/AdminViewAllTasks">View All Tasks</a></li>
                                 <li><a className="dropdown-item" href="/adminsearchstudent">Search Student</a></li>
                                 <li><a className="dropdown-item" href="/adminviewCollegeStaffLog">View College Staff Log</a></li>
                                 <li><a className="dropdown-item" href="/AdminViewRefundRequests">View Refund Requests</a></li>
                                 <li><a className="dropdown-item" href="/AdminViewStudentLog">View student log</a></li>
                                 <li><a className="dropdown-item" href="/AdminSearchSessionDetails">Search session details</a></li>
                                 <li><a className="dropdown-item" href="/AdminSearchCollegeStaff">Search college staffs</a></li>
+                                <li><a className="dropdown-item" href="/AdminViewAllAdminStaff">View admin staffs</a></li>
+                                <li><a className="dropdown-item" href="/AdminSendNotification">Send notifications</a></li>
                             </ul>
                         </li>
                         <li className="nav-item">
-                            <a href="/" className="dropdown-item">Log Out</a>
+                            <a onClick={logout} className="dropdown-item">Log Out</a>
                         </li>
                     </ul>
                 </div>

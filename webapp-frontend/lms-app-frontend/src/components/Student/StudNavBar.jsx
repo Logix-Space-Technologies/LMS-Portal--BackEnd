@@ -1,6 +1,16 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const StudNavBar = () => {
+    const navigate = useNavigate()
+    const logOut = () => {
+        navigate("/studentLogin")
+        sessionStorage.removeItem("studentkey");
+        sessionStorage.removeItem("studentId");
+        sessionStorage.removeItem("studemail");
+        sessionStorage.removeItem("studBatchId");
+        sessionStorage.removeItem("studLoginToken");
+    }
   return (
     <div>
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -49,7 +59,7 @@ const StudNavBar = () => {
                             </ul>
                         </li>
                         <li className="nav-item">
-                            <a href="/studentLogin" className="dropdown-item">Log Out</a>
+                            <a onClick={logOut} className="dropdown-item">Log Out</a>
                         </li>
                     </ul>
                 </div>
