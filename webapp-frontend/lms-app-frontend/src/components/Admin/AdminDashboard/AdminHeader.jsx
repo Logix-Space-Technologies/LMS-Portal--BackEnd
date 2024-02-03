@@ -23,7 +23,7 @@ const AdminHeader = () => {
                                 <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
                         </a>
                         <div className="navbar-nav align-items-center ms-auto">
-                            <div className="nav-item dropdown">
+                            {/* <div className="nav-item dropdown">
                                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                     <i className="fa fa-bell me-lg-2" />
                                     <span className="d-none d-lg-inline-flex">Notification</span>
@@ -46,7 +46,7 @@ const AdminHeader = () => {
                                     <hr className="dropdown-divider" />
                                     <a href="#" className="dropdown-item text-center">See all notifications</a>
                                 </div>
-                            </div>
+                            </div> */}
                             <div className="nav-item dropdown">
                                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                     <img className="rounded-circle me-lg-2" src="https://www.pngmart.com/files/22/User-Avatar-Profile-PNG-Isolated-Transparent-HD-Photo.png" alt style={{ width: 40, height: 40 }} />
