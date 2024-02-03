@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AdminLogin from './components/Admin/AdminLogin';
@@ -78,6 +77,9 @@ import AdmStaffNavBar from './components/AdminStaff/AdmStaffNavBar';
 import AdminSendNotification from './components/Admin/AdminSendNotifications';
 import AdminStaffFooter from './components/AdminStaff/AdminStaffDashboard/AdminStaffFooter';
 import AdminStaffSideBar from './components/AdminStaff/AdminStaffDashboard/AdminStaffSideBar';
+import AdminStaffHeader from './components/AdminStaff/AdminStaffDashboard/AdminStaffHeader';
+import AdmStaffDashBoard from './components/AdminStaff/AdminStaffDashboard/AdmStaffDashBoard';
+import AdmStaffViewProfile from './components/AdminStaff/AdminStaffDashboard/AdmStaffViewProfile';
 
 
 
@@ -143,6 +145,9 @@ function App() {
           <Route path='/admstaffnavbar' element={<AdmStaffNavBar/>}/>
           <Route path='/admstafffooter' element={<AdminStaffFooter/>}/>
           <Route path='/admstaffsidebar' element={<AdminStaffSideBar/>}/>
+          <Route path='/admstaffheader' element={<AdminStaffHeader/>}/>
+          <Route path='/admstaffdashboard' element={<AdmStaffDashBoard/>}/>
+          <Route path='/admstaffviewprofile' element={<AdmStaffViewProfile/>}/>
 
 
 
