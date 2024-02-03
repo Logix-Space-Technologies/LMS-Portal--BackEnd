@@ -248,7 +248,7 @@ Refund.cancelRefundRequest = (refundId, result) => {
                     return;
                 }
 
-                result("Refund cancelled successfully.", null);
+                result(null, null);
             }
         );
     });
