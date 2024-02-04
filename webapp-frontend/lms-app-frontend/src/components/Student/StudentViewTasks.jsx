@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import StudNavBar from './StudNavBar';
+import '../../config/config'
 import { useNavigate } from 'react-router-dom';
 
 const StudentViewTasks = () => {
@@ -47,6 +48,12 @@ const StudentViewTasks = () => {
             }
         );
     };
+
+    const updateSubTask = (id) => {
+        let data = id
+        sessionStorage.setItem("subtaskId", data)
+        navigate("/studupdatesubtask")
+    }
 
     const inputHandler = (event) => {
         setErrors({}); // Clear previous errors
@@ -274,7 +281,7 @@ const StudentViewTasks = () => {
 
                                             </td>
                                             <td>
-                                                <button className="btn btn-primary">Update</button>
+                                                <button onClick={() => { updateSubTask(task.submitTaskId) }} className="btn btn-primary">Update</button>
                                             </td>
                                         </>
                                     )}

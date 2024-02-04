@@ -81,6 +81,7 @@ import AdmStaffDashBoard from './components/AdminStaff/AdminStaffDashboard/AdmSt
 import AdmStaffViewProfile from './components/AdminStaff/AdminStaffDashboard/AdmStaffViewProfile';
 import AdminViewAllTasks from './components/Admin/AdminViewAllTasks';
 import AdminSearchTrainer from './components/Admin/AdminSearchTrainer';
+import StudentUpdateSubmittedTask from './components/Student/StudentUpdateSubmittedTask';
 
 
 
@@ -200,6 +201,7 @@ function App() {
           <Route path='/studentviewtransaction' element={<StudentViewTransaction />} />
           <Route path='/studViewUpcomingSession' element={<StudentViewUpcomingSession />} />
           <Route path='/studnavbar' element={<StudNavBar/>}/>
+          <Route path='/studupdatesubtask' element={<StudentUpdateSubmittedTask/>}/>
 
 
 
