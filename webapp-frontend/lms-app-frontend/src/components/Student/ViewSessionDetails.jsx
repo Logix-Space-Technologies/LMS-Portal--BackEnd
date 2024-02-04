@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../config/config'
 import StudNavBar from './StudNavBar';
+import { useNavigate } from 'react-router-dom';
 
 const SessionView = () => {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchSessions();
@@ -31,7 +33,16 @@ const SessionView = () => {
           setSessions(response.data.data);
           console.log(response.data.data)
         } else {
-          console.log(response.data.status);
+          if (response.data.status === "Unauthorized access!!") {
+            navigate("/studentLogin")
+            sessionStorage.removeItem("studentkey");
+            sessionStorage.removeItem("studentId");
+            sessionStorage.removeItem("studemail");
+            sessionStorage.removeItem("studBatchId");
+            sessionStorage.removeItem("studLoginToken");
+          } else {
+            alert(response.data.status);
+          }
         }
       })
       .catch(error => {
@@ -71,7 +82,7 @@ const SessionView = () => {
                           <div className="card">
                             <div className="card-body">
                               <h5 className="card-title">{session.sessionName}</h5>
-                              <p className="card-text">Date: {new Date(session.date).toLocaleDateString()}</p>
+                              <p className="card-text">Date: {session.date}</p>
                               <p className="card-text">Time: {formatTime(session.time)}</p>
                               <p className="card-text">Type: {session.type}</p>
                               <p className="card-text">Remarks: {session.remarks}</p>

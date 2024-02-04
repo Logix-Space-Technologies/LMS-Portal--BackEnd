@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import StudNavBar from './StudNavBar';
+import { useNavigate } from 'react-router-dom';
 
 const StudentViewTasks = () => {
     const [studViewTaskData, setStudViewTaskData] = useState([]);
@@ -11,6 +12,7 @@ const StudentViewTasks = () => {
     });
 
     let [taskId, setTaskId] = useState({})
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studViewTask";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
@@ -27,8 +29,21 @@ const StudentViewTasks = () => {
         };
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-                setStudViewTaskData(response.data.data);
-                console.log(response.data);
+                if (response.data.data) {
+                    setStudViewTaskData(response.data.data);
+                    console.log(response.data);
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         );
     };
@@ -83,7 +98,16 @@ const StudentViewTasks = () => {
                         if (response.data.status === "Validation failed" && response.data.data.remarks) {
                             alert(response.data.data.remarks);
                         } else {
-                            alert(response.data.status);
+                            if (response.data.status === "Unauthorized Access!!") {
+                                window.location.reload();
+                                sessionStorage.removeItem("studentkey");
+                                sessionStorage.removeItem("studentId");
+                                sessionStorage.removeItem("studemail");
+                                sessionStorage.removeItem("studBatchId");
+                                sessionStorage.removeItem("studLoginToken");
+                            } else {
+                                alert(response.data.status);
+                            }
                         }
                     }
                 }
@@ -100,7 +124,7 @@ const StudentViewTasks = () => {
 
     return (
         <div>
-            <StudNavBar/>
+            <StudNavBar />
             <br />
             <h1>Student View Tasks</h1><br />
             <section className="flex flex-col justify-center antialiased bg-gray-100 text-gray-600 min-h-screen p-4">
@@ -121,10 +145,55 @@ const StudentViewTasks = () => {
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Added Date:</strong> {new Date(task.addedDate).toLocaleDateString()}
+                                                <strong>Submitted Git Link:</strong> {task.gitLink}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
+                                                <strong>Score Obtained:</strong> {task.score}
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
+                                                <strong>Due Date:</strong> {task.dueDate}
+                                            </p>
+                                            {task.subDate < task.dueDate && task.updatedDate === null && (
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.subDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            {task.subDate < task.dueDate && task.updatedDate != null && (
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.subDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            {task.subDate > task.dueDate && task.updatedDate === null && (
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.lateSubDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            {task.subDate > task.dueDate && task.updatedDate != null && (
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.updatedDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            <p className="text-gray-700 mb-2">
+                                                <strong>Evaluator Remarks:</strong> {task.evaluatorRemarks}
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
+                                                <strong>Evaluated By:</strong> {task.evaluatorName}
                                             </p>
                                             <p className="text-gray-700 mb-2">
                                                 <p><strong>Submission Status: </strong>Submitted</p>
@@ -151,11 +220,47 @@ const StudentViewTasks = () => {
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Added Date:</strong> {new Date(task.addedDate).toLocaleDateString()}
+                                                <strong>Submitted Git Link:</strong> {task.gitLink}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
+                                                <strong>Due Date:</strong> {task.dueDate}
                                             </p>
+                                            {task.subDate < task.dueDate && task.updatedDate === null && (
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.subDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            {task.subDate < task.dueDate && task.updatedDate != null && (
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.subDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            {task.subDate > task.dueDate && task.updatedDate === null && (
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.lateSubDate}
+                                                    </p>
+
+                                                </>
+                                            )}
+                                            {task.subDate > task.dueDate && task.updatedDate != null && (
+                                                <>
+
+                                                    <p className="text-gray-700 mb-2">
+                                                        <strong>Submission Date :</strong> {task.updatedDate}
+                                                    </p>
+
+                                                </>
+                                            )}
                                             <p className="text-gray-700 mb-2">
                                                 <p><strong>Submission Status: </strong>Submitted</p>
                                             </p>
@@ -184,16 +289,13 @@ const StudentViewTasks = () => {
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Added Date:</strong> {new Date(task.addedDate).toLocaleDateString()}
-                                            </p>
-                                            <p className="text-gray-700 mb-2">
-                                                <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
+                                                <strong>Due Date:</strong> {task.dueDate}
                                             </p>
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Submission Status: </strong>Not Submitted
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                               
+
                                             </p><br /><br />
                                             <td>
                                                 <div className="flex justify-start" >
@@ -203,13 +305,13 @@ const StudentViewTasks = () => {
                                             </td>
                                             <td>
                                                 <div className="flex justify-end">
-                                                    <button onClick={() => readValue(task.id)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
+                                                    <button onClick={() => readValue(task.taskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
                                                 </div>
                                             </td>
                                         </>
                                     )}
                                 </div>
-                            })) : <p>No Tasks Found !!!</p>}
+                            })) : <p>No Tasks Found !!!!</p>}
                     </div>
                 </div>
                 <div className="flex justify-end">

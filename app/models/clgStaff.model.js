@@ -208,7 +208,7 @@ CollegeStaff.findByClgStaffEmail = (email, result) => {
 //To view batch
 CollegeStaff.viewBatch = (collegeId, result) => {
     db.query(
-        "SELECT DISTINCT b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND cs.collegeId = ?",
+        "SELECT DISTINCT b.id, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND cs.collegeId = ?",
         [collegeId],
         (err, res) => {
             if (err) {
@@ -260,7 +260,7 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
 
 CollegeStaff.viewStudent = (collegeId, result) => {
     db.query(
-        "SELECT DISTINCT c.collegeName, s.batchId, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilepic, s.aadharNo, s.membership_no FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND cs.collegeId = ?",
+        "SELECT DISTINCT c.collegeName, b.batchName, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilepic, s.aadharNo, s.membership_no FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON b.id =s.batchId WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND cs.collegeId = ? ORDER BY b.batchName",
         [collegeId],
         (err, res) => {
             if (err) {
@@ -275,15 +275,15 @@ CollegeStaff.viewStudent = (collegeId, result) => {
     );
 };
 
-CollegeStaff.viewTask=(collegeId,result)=>{
-    db.query("SELECT DISTINCT cs.collegeId, t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, CASE WHEN t.dueDate < CURRENT_DATE() THEN 'Past Due Date' ELSE t.dueDate END AS dueDate, t.addedDate FROM task t JOIN batches b ON t.batchId = b.id JOIN college_staff cs ON b.collegeId = cs.collegeId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.collegeId = ?;",[collegeId],(err,res)=>{
-        if(err){
-            console.log("error: ",err)
-            result(err,null)
+CollegeStaff.viewTask = (collegeId, result) => {
+    db.query("SELECT DISTINCT cs.collegeId, t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, CASE WHEN t.dueDate < CURRENT_DATE() THEN 'Past Due Date' ELSE t.dueDate END AS dueDate, t.addedDate FROM task t JOIN batches b ON t.batchId = b.id JOIN college_staff cs ON b.collegeId = cs.collegeId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.collegeId = ?;", [collegeId], (err, res) => {
+        if (err) {
+            console.log("error: ", err)
+            result(err, null)
             return
-        }else {
-            console.log("Task details",res)
-            result(null,res)
+        } else {
+            console.log("Task details", res)
+            result(null, res)
         }
     })
 }
@@ -337,18 +337,18 @@ CollegeStaff.verifyStudent = (collegeId, studentId, result) => {
 //College Staff Search Batches
 CollegeStaff.collegeStaffSearchBatch = (searchTerm, collegeId, result) => {
     const clgStaffSearchBatchQuery = '%' + searchTerm + '%'
-    db.query("SELECT DISTINCT c.collegeName, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college c ON b.collegeId = c.id JOIN college_staff cs ON c.id = cs.collegeId WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.emailVerified = 1 AND cs.collegeId = ? AND (b.batchName LIKE ? OR b.batchDesc LIKE ?)", 
-    [collegeId, clgStaffSearchBatchQuery, clgStaffSearchBatchQuery, clgStaffSearchBatchQuery], 
-    (err, res) => {
-        if (err) {
-            console.log("Error : ", err)
-            result(err, null)
-            return
-        } else {
-            console.log("Batches : ", res)
-            result(null, res)
-        }
-    })
+    db.query("SELECT DISTINCT c.collegeName, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college c ON b.collegeId = c.id JOIN college_staff cs ON c.id = cs.collegeId WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.emailVerified = 1 AND cs.collegeId = ? AND (b.batchName LIKE ? OR b.batchDesc LIKE ?)",
+        [collegeId, clgStaffSearchBatchQuery, clgStaffSearchBatchQuery, clgStaffSearchBatchQuery],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                return
+            } else {
+                console.log("Batches : ", res)
+                result(null, res)
+            }
+        })
 }
 
 
@@ -398,6 +398,18 @@ CollegeStaff.viewCollegeStaffOfStudent = (studentId, result) => {
 }
 
 
+CollegeStaff.viewOneClgStaff = (id, result) => {
+    db.query("SELECT * FROM college_staff WHERE isActive = 1 AND deleteStatus = 0 AND id = ? ", id,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("ClgStaffs: ", res);
+            result(null, res);
+        })
+}
 
 
 module.exports = CollegeStaff

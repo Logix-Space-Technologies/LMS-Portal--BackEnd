@@ -93,8 +93,9 @@ Curriculum.curriculumView = (batchId, result) => {
                         result(curriculumErr, null)
                         return
                     } else {
-                        console.log("success:", curriculumRes)
-                        result(null, curriculumRes);
+                        const formattedCurriculums = curriculumRes.map(curriculum => ({ ...curriculum, addedDate: curriculum.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: curriculum.updatedDate ? curriculum.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null})); // Formats the date as 'YYYY-MM-DD'
+                        console.log("success:", formattedCurriculums)
+                        result(null, formattedCurriculums);
                     }
                 })
         })
@@ -157,6 +158,20 @@ Curriculum.curriculumUpdate = (updCurriculum, result) => {
         });
     });
 };
+
+
+Curriculum.viewOneCurriculum  = (id, result) => {
+    db.query("SELECT id,curriculumTitle,batchId,curriculumDesc,curriculumFileLink FROM curriculum WHERE deleteStatus = 0 AND isActive = 1 AND id = ?", id,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("curriculum: ", res);
+            result(null, res);
+        })
+}
 
 
 

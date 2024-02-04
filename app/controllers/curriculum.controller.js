@@ -118,8 +118,8 @@ exports.createCurriculum = (request, response) => {
                         if (err) {
                             return response.json({ "status": err });
                         } else {
-                            if(key=="lmsapp"){
-                                logAdminStaff(0,"Admin Created Curriculum")
+                            if (key == "lmsapp") {
+                                logAdminStaff(0, "Admin Created Curriculum")
                             }
                             return response.json({ "status": "success", "data": data });
                         }
@@ -199,7 +199,7 @@ exports.currView = (request, response) => {
                 if (err) {
                     response.json({ "status": err });
                 }
-                if (data.length == 0) {
+                if (!data) {
                     response.json({ "status": "No batches found!" });
                 } else {
                     response.json({ "status": "success", "data": data });
@@ -272,7 +272,7 @@ exports.updateCurriculum = (request, response) => {
 
             const curriculumToken = request.headers.token;
             const key = request.headers.key;
-
+            const curriculumFileLink = fileUrl
             jwt.verify(curriculumToken, key, (err, decoded) => {
                 if (decoded) {
                     const validationErrors = {};
@@ -307,7 +307,7 @@ exports.updateCurriculum = (request, response) => {
                         'curriculumTitle': request.body.curriculumTitle,
                         'curriculumDesc': request.body.curriculumDesc,
                         'updatedBy': request.body.updatedBy,
-                        'curriculumFileLink': fileUrl
+                        'curriculumFileLink': curriculumFileLink
                     });
 
                     // Call the curriculumUpdate method
@@ -327,6 +327,29 @@ exports.updateCurriculum = (request, response) => {
         } catch (err) {
             fs.unlinkSync(file.path);
             response.status(500).json({ "status": err.message });
+        }
+    });
+};
+
+exports.viewOneCurriculum = (request, response) => {
+    const curriculumToken = request.headers.token;
+    const key = request.headers.key; //give respective keys of admin and adminstaff
+    const curriculumId = request.body.id;
+
+    jwt.verify(curriculumToken, key, (err, decoded) => {
+        if (decoded) {
+            Curriculum.viewOneCurriculum(curriculumId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No curriculum are currently active" });
+                } else {
+                    return response.json({ "status": "success", "curriculum": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
         }
     });
 };

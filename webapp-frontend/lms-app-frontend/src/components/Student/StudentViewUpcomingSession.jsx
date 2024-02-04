@@ -1,12 +1,13 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import StudNavBar from './StudNavBar'
+import { useNavigate } from 'react-router-dom'
 
 const StudentViewUpcomingSession = () => {
 
     const [studentViewUpcomingSessionData, setStudentViewUpcomingSessionData] = useState([])
     const [loading, setLoading] = useState(true)
-
+    const navigate = useNavigate()
     const apiUrl = global.config.urls.api.server + "/api/lms/viewUpcomingSessions"
 
     const getData = () => {
@@ -25,7 +26,16 @@ const StudentViewUpcomingSession = () => {
                     setStudentViewUpcomingSessionData(response.data.data)
                     console.log(response.data)
                 } else {
-                    console.log(response.data.status)
+                    if (response.data.status === "Unauthorized access!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             })
             .catch(error => {
@@ -73,7 +83,7 @@ const StudentViewUpcomingSession = () => {
                                                         <div className="card shadow"> {/* Add "shadow" class here */}
                                                             <div className="card-body rounded shadow-sm">
                                                                 <h5 className="card-title">Session Name: {value.sessionName}</h5>
-                                                                <p className="card-text">Date: {new Date(value.date).toLocaleDateString()}</p>
+                                                                <p className="card-text">Date: {value.date}</p>
                                                                 <p className="card-text">Time: {formatTime(value.time)}</p>
                                                                 <p className="card-text">Type: {value.type}</p>
                                                                 <p className="card-text">Remarks: {value.remarks}</p>

@@ -38,8 +38,12 @@ const StudHeader = () => {
                     setStudData(response.data.data)
                     console.log(response.data.data)
                 } else {
-                    logOut()
-                    navigate("/studentLogin")
+                    if (response.data.status === "Unauthorized User!!") {
+                        logOut()
+                        navigate("/studentLogin")
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -62,8 +66,12 @@ const StudHeader = () => {
                     setSessionData(response.data.data)
                     console.log(response.data.data)
                 } else {
-                    logOut()
-                    navigate("/studentLogin")
+                    if (response.data.status === "Unauthorized access!!") {
+                        logOut()
+                        navigate("/studentLogin")
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -89,7 +97,7 @@ const StudHeader = () => {
                 {sessionData ? (sessionData.map(
                     (value, index) => {
                         return <div className="session-name">
-                            <p>Next Session: {new Date(value.date).toLocaleDateString()}, {formatTime(value.time)}</p>
+                            <p>Next Session: {value.date}, {formatTime(value.time)}</p>
 
                         </div>
                     }
