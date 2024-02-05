@@ -288,7 +288,7 @@ exports.adminStaffLogin = (request, response) => {
 
 // Admin-Staff Change Password
 exports.adminStaffChangePswd = (request, response) => {
-    const { Email, oldAdSfPassword, newAdSfPassword} = request.body
+    const { Email, oldAdSfPassword, newAdSfPassword } = request.body
     const token = request.headers.token
     jwt.verify(token, "lmsappadmstaff", (error, decoded) => {
         if (decoded) {
@@ -300,27 +300,35 @@ exports.adminStaffChangePswd = (request, response) => {
                 if (err) {
                     return response.json({ "status": err })
                 }
-                const validationErrors = {}
+                // Checking validations
+                const validationErrors = {};
 
-                const passwordValidation = Validator.isValidPassword(newAdSfPassword)
-                if (!passwordValidation.isValid) {
-                    validationErrors.password = passwordValidation.message
-                    return response.json({ "status": validationErrors })
+                // Validation for AdStaffName
+                if (Validator.isEmpty(newAdSfPassword).isValid) {
+                    validationErrors.newAdSfPassword = Validator.isEmpty(newAdSfPassword).message;
                 }
-
-                if (result.status === "Password Updated Successfully.") {
-                    const hashedNewPassword = bcrypt.hashSync(newAdSfPassword, 10)
-
-                    AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword: hashedNewPassword }, (updateErr, UpdateResult) => {
-                        if (updateErr) {
-                            return response.json({ "status": updateErr })
-                        } else {
-                            return response.json({ "status": "Password Updated Successfully." })
-                        }
-                    })
-                } else {
-                    return response.json(result)
+                if (Validator.isEmpty(oldAdSfPassword).isValid) {
+                    validationErrors.oldAdSfPassword = Validator.isEmpty(oldAdSfPassword).message;
                 }
+                if (!Validator.isValidPassword(oldAdSfPassword).isValid) {
+                    validationErrors.oldAdSfPassword = Validator.isValidPassword(oldAdSfPassword).message;
+                }
+                if (Validator.isValidPassword(newAdSfPassword).isValid) {
+                    validationErrors.newAdSfPassword = Validator.isValidPassword(newAdSfPassword).message;
+                }
+                // If validation fails
+                if (Object.keys(validationErrors).length > 0) {
+                    return response.json({ "status": "Validation failed", "data": validationErrors });
+                }
+                const hashedNewPassword = bcrypt.hashSync(newAdSfPassword, 10)
+
+                AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword: hashedNewPassword }, (updateErr, UpdateResult) => {
+                    if (updateErr) {
+                        return response.json({ "status": updateErr })
+                    } else {
+                        return response.json({ "status": "Password Updated Successfully." })
+                    }
+                })
             })
         } else {
             return response.json({ "status": "Unauthorized User!!" })

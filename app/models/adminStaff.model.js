@@ -223,14 +223,14 @@ AdminStaff.asChangePassword = (adsf, result) => {
                         result(updateErr, null)
                         return;
                     } else {
-                        result(null, { "status": "Password Updated Successfully." })
+                        result(null, null)
                     }
                 })
             } else {
-                result(null, { "status": "Incorrect Old Password!!!" })
+                result("Incorrect Old Password!!!", null)
             }
         } else {
-            result(null, { "status": "Admin Staff Not Found!!!" })
+            result("Admin Staff Not Found!!!", null)
         }
     })
 }
