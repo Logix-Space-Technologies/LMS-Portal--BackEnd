@@ -22,12 +22,13 @@ const AdminUpdateAdminStaff = () => {
     const updateHandler = (event) => {
         setUpdateField({ ...updateField, [event.target.name]: event.target.value })
     }
-
-    const readNewValue = () => {
+    
+    const readNewValue = (e) => {
+        e.preventDefault()
         console.log(updateField)
         let axiosConfig = {
             headers: {
-                'content-type': 'multipart/form-data',
+                'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
                 "token": sessionStorage.getItem("admtoken"),
                 "key": sessionStorage.getItem("admkey")
@@ -50,19 +51,20 @@ const AdminUpdateAdminStaff = () => {
                         "Address": "",
                         "AadharNo": ""
                     })
+                    console.log(data)
                     alert("Profile Updated Successfully")
                     navigate("/AdminViewAllAdminStaff")
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.name) {
                         alert(response.data.data.name)
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.mobile) {
-                            alert(response.data.data.mobile)
+                        if (response.data.status === "Validation failed" && response.data.data.PhNo) {
+                            alert(response.data.data.PhNo)
                         } else {
                             if (response.data.status === "Validation failed" && response.data.data.address) {
                                 alert(response.data.data.address)
                             } else {
-                                if (response.data.status === "Validation failed" && response.data.data.aadharNo) {
+                                if (response.data.status === "Validation failed" && response.data.data.aadharno) {
                                     alert(response.data.data.aadharno)
                                 } else {
                                     alert(response.data.status)

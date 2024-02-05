@@ -135,7 +135,7 @@ exports.adminStaffUpdate = (request, res) => {
         }
         // Validation for mobile number
         if (!Validator.isValidMobileNumber(request.body.PhNo).isValid) {
-            validationErrors.mobile = Validator.isValidMobileNumber(request.body.PhNo).message;
+            validationErrors.PhNo = Validator.isValidMobileNumber(request.body.PhNo).message;
         }
         // Validation for Address
         if (!Validator.isValidAddress(request.body.Address).isValid) {
