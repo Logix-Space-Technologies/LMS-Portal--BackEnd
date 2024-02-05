@@ -8,20 +8,40 @@ const AdminStaffLogin = () => {
         { Email: "", Password: "" }
     )
 
+    const [errors, setErrors] = useState({});
+
     const apiUrl = global.config.urls.api.server + "/api/lms/AdminStaffLogin"
-    // const navigate=useNavigate()
+    const navigate=useNavigate()
 
     const inputHandler = (event) => {
+        setErrors({}); // Clear previous errors
         setInputField({ ...inputField, [event.target.name]: event.target.value })
     }
 
     const readValue = () => {
-        axios.post(apiUrl,inputField).then(
-            (Response)=>{
+        let newErrors = {};
+        if (!inputField.Email.trim()) {
+            newErrors.Email = "Email is required!";
+        }
+        if (!inputField.Password.trim()) {
+            newErrors.Password = "Password is required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        axios.post(apiUrl, inputField).then(
+            (Response) => {
                 if (Response.data.status === "Success") {
                     let admstafftoken = Response.data.token
+                    let admstaffkey = "lmsappadmstaff"
+                    let Email = Response.data.data.Email;
+                    let admstaffId = Response.data.data.id
+                    sessionStorage.setItem("admstaffId",admstaffId)
                     sessionStorage.setItem("admstaffLogintoken", admstafftoken)
-                    alert(Response.data.status)  
+                    sessionStorage.setItem("Email", Email)
+                    sessionStorage.setItem("admstaffkey", admstaffkey)
+                    navigate("/admstaffdashboard")
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)
@@ -54,10 +74,12 @@ const AdminStaffLogin = () => {
                                 <div class="mb-3 text-start">
                                     <label for="" class="form-label">Email</label>
                                     <input type="text" name="Email" value={inputField.Email} onChange={inputHandler} class="form-control" />
+                                    {errors.Email && <span style={{ color: 'red' }} className="error">{errors.Email}</span>}
                                 </div>
                                 <div class="mb-3 text-start">
                                     <label for="" class="form-label">Password</label>
                                     <input type="password" name="Password" value={inputField.Password} onChange={inputHandler} class="form-control" />
+                                    {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
                                 </div>
                             </form>
                             <div class="mb-3">

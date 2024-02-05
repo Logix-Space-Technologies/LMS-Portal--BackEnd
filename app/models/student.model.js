@@ -45,6 +45,7 @@ const Payment = function (payment) {
 
 
 const SubmitTask = function (submitTask) {
+    this.id = submitTask.id;
     this.studId = submitTask.studId;
     this.taskId = submitTask.taskId;
     this.gitLink = submitTask.gitLink;
@@ -371,15 +372,16 @@ Student.findByEmail = (Email, result) => {
 
 
 Tasks.studentTaskView = (studId, result) => {
-    db.query("SELECT s.batchId, t.* FROM task t JOIN student s ON s.batchId = t.batchId  WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1", [studId],
+    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, asf.AdStaffName AS 'evaluatorName', st.score, st.lateSubDate,st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
                 result(err, null)
                 return
             } else {
-                console.log("Tasks: ", res);
-                result(null, res)
+                const formattedTasks = res.map(tasks => ({ ...tasks, dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), subDate: tasks.subDate ? tasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, lateSubDate: tasks.lateSubDate ? tasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
+                console.log("Tasks: ", formattedTasks);
+                result(null, formattedTasks)
                 return
             }
         })
@@ -420,15 +422,16 @@ Student.StdChangePassword = (student, result) => {
 
 
 Student.viewStudentProfile = (studId, result) => {
-    db.query("SELECT c.collegeName, s.batchId, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.validity FROM student s LEFT JOIN college c ON s.collegeId = c.id WHERE s.deleteStatus=0 AND s.isActive=1 AND s.isVerified = 1 AND s.id = ?", [studId],
+    db.query("SELECT c.collegeName, s.batchId, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.updatedDate, s.validity FROM student s LEFT JOIN college c ON s.collegeId = c.id WHERE s.deleteStatus=0 AND s.isActive=1 AND s.isVerified = 1 AND s.id = ?", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
                 result(err, null)
                 return
             } else {
-                console.log("Profile: ", res);
-                result(null, res)
+                const formattedProfile = res.map(profile => ({ ...profile, addedDate: profile.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: profile.updatedDate ? profile.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, validity: profile.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                console.log("Profile: ", formattedProfile);
+                result(null, formattedProfile)
                 return
             }
         })
@@ -514,7 +517,7 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
 
 // View All Students By Admin
 Student.viewAllStudentByAdmin = (result) => {
-    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1",
+    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity",
         (err, response) => {
             if (err) {
                 console.log("Error : ", err)
@@ -805,6 +808,21 @@ Student.generateAllBatchWiseList = async (result) => {
     });
 };
 
+Student.generateBatchWiseAttendanceList = (batchId, result) => {
+    let query = "SELECT b.batchName, st.sessionName, s.studName, c.collegeName, s.admNo, s.studDept, s.course, s.membership_no, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendanceStatus, st.date AS attendanceDate, s.addedDate FROM batches b JOIN student s ON b.id = s.batchId JOIN college c ON s.collegeId = c.id LEFT JOIN attendence a ON s.id = a.studId LEFT JOIN sessiondetails st ON st.id = a.sessionId WHERE s.isActive = 1 AND b.isActive = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 AND s.deleteStatus = 0 AND b.deleteStatus = 0 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= s.addedDate AND b.id = ? ORDER BY c.collegeName, b.id, s.id, a.sessionId;"
+
+    db.query(query, [batchId], (err, response) => {
+        if (err) {
+            console.log("Error executing the query:", err);
+            result(err, null);
+        } else {
+            const formattedAttendanceList = response.map(attendance => ({ ...attendance, attendanceDate: attendance.attendanceDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: attendance.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+            console.log("Query results:", formattedAttendanceList);
+            result(null, formattedAttendanceList);
+        }
+    })
+}
+
 
 
 
@@ -838,8 +856,9 @@ Student.studentNotificationView = (studId, result) => {
                             result(err, null);
                             return;
                         } else {
-                            console.log("Notifications: ", notificationsRes);
-                            result(null, notificationsRes);
+                            const formattedNotification = notificationsRes.map(notification => ({ ...notification, sendDateTime: notification.sendDateTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: notification.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                            console.log("Notifications: ", formattedNotification);
+                            result(null, formattedNotification);
                             return;
                         }
                     });
@@ -863,8 +882,9 @@ Student.viewSession = (batchId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Session Details: ", res);
-                result(null, res);
+                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                console.log("Session Details: ", formattedViewSession);
+                result(null, formattedViewSession);
             }
         }
     );
@@ -901,26 +921,80 @@ Payment.viewStudentTransactions = (studId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Payment Details: ", res);
-                result(null, res);
+                const formattedPayment = res.map(payment => ({ ...payment, paymentDate: payment.paymentDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); // Formats the date as 'YYYY-MM-DD'
+                console.log("Payment Details: ", formattedPayment);
+                result(null, formattedPayment);
             }
         }
     );
 };
 
-Session.studViewNextSessionDate = (batchId, result) =>{
-    db.query("SELECT date, time, sessionName FROM sessiondetails WHERE  batchId = ? AND date >= CURRENT_DATE ORDER BY date, time DESC LIMIT 1", [batchId],
-    (err, res) => {
-        if (err) {
-            console.log("error", err)
-            return result(err, null)
-        } else {
-            console.log("Next Session", res)
-            return result(null, res)
-        }
-    })
+Session.studViewNextSessionDate = (batchId, result) => {
+    db.query("SELECT date, time, sessionName FROM sessiondetails WHERE batchId = ? AND (date > CURRENT_DATE OR (date = CURRENT_DATE AND time >= CURRENT_TIME)) ORDER BY date, time DESC LIMIT 1;", [batchId],
+        (err, res) => {
+            if (err) {
+                console.log("error", err)
+                return result(err, null)
+            } else {
+
+                const formattedNextSession = res.map(nextsession => ({ ...nextsession, date: nextsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+
+                console.log("Next Session", formattedNextSession)
+                return result(null, formattedNextSession)
+            }
+        })
 }
 
+SubmitTask.studentUpdateSubmittedTask = (updateSubTask, result) => {
+    // Check if the task is submitted
+    db.query("SELECT * FROM `submit_task` WHERE id = ?", [updateSubTask.id],
+        (subTaskErr, subTaskRes) => {
+            if (subTaskErr) {
+                console.error("Error checking submitted task: ", subTaskErr);
+                return result(subTaskErr, null);
+            }
+
+            if (subTaskRes.length === 0) {
+                console.log("Submitted Task With Given ID Not Found!!");
+                return result("Submitted Task With Given ID Not Found!!", null);
+            }
+
+            // Update the submitted task
+            db.query("UPDATE `submit_task` SET `gitLink` = ?, `remarks` = ? WHERE `id` = ?",
+                [updateSubTask.gitLink, updateSubTask.remarks, updateSubTask.id],
+                (err, res) => {
+                    if (err) {
+                        console.error("Error updating submitted task: ", err);
+                        return result(err, null);
+                    }
+
+                    if (res.affectedRows === 0) {
+                        return result({ kind: "not_found" }, null);
+                    }
+
+                    console.log("Updated Submitted Task Details: ", { id: updateSubTask.id, ...updateSubTask });
+                    result(null, { id: updateSubTask.id, ...updateSubTask });
+                }
+            );
+        }
+    );
+};
+
+SubmitTask.studentviewsubmittedtask = (id, result) => {
+    db.query("SELECT `gitLink`, `remarks` FROM `submit_task` WHERE `id` = ?", [id],
+        (err, res) => {
+            if (err) {
+                console.error("Error: ", err);
+                return result(err, null);
+            } else if (res.length === 0) {
+                console.log("Submitted Task With Given ID Not found !!!")
+                return result("Submitted Task With Given ID Not found !!!", null)
+            } else {
+                console.log("Submitted Task Details: ", res);
+                result(null, res);
+            }
+        })
+}
 
 
 

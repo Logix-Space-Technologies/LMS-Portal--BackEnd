@@ -57,17 +57,17 @@ Trainers.viewTrainers = (result) => {
 Trainers.searchTrainer = (search, result) => {
     const searchTerm = '%' + search + '%'
     db.query("SELECT id, trainerName, profilePicture, phoneNumber, email, about,addedDate,updatedDate FROM trainersinfo WHERE deleteStatus = 0 AND isActive = 1 AND (trainerName LIKE ? OR email LIKE ? OR phoneNumber LIKE ?)",
-    [searchTerm, searchTerm, searchTerm],
-    (err, res) => {
-        if (err) {
-            console.log("Error : ", err)
-            result(err, null)
-            result
-        } else {
-            console.log("Trainer Details : ", res)
-            result(null, res)
-        }
-    })
+        [searchTerm, searchTerm, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                result
+            } else {
+                console.log("Trainer Details : ", res)
+                result(null, res)
+            }
+        })
 }
 
 Trainers.updateTrainer = (trainerUpdate, result) => {
@@ -122,10 +122,24 @@ Trainers.deleteTrainer = (trainerId, result) => {
             }
 
             console.log("Trainer deleted successfully");
-            result(null, "Trainer deleted successfully");
+            result(null, null);
         });
     });
 };
+
+
+Trainers.viewOneTrainer = (trainerId, result) => {
+    db.query("SELECT id, trainerName, profilePicture, about, phoneNumber, email,addedDate, updatedDate FROM trainersinfo WHERE id = ? AND  isActive = 1 AND deleteStatus = 0 ", trainerId,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("Trainer: ", res);
+            result(null, res);
+        })
+}
 
 
 

@@ -1,9 +1,12 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
+import StudNavBar from './StudNavBar'
+import { useNavigate } from 'react-router-dom'
 
 const StudentViewTransaction = () => {
     const [transactionData, setTransactionData] = useState([])
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studentViewTransaction"
 
@@ -19,8 +22,22 @@ const StudentViewTransaction = () => {
         }
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-                setTransactionData(response.data.data)
-                console.log(response.data.data)
+                if (response.data.data) {
+                    setTransactionData(response.data.data)
+                    console.log(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized User") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                        sessionStorage.removeItem("subtaskId");
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }
@@ -28,7 +45,8 @@ const StudentViewTransaction = () => {
     useEffect(() => { getData() }, [])
     return (
         <div>
-            {/* ====== Table Section Start */}
+            <StudNavBar />
+            {/* ====== Table Section Starts */}
             <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
                     <div className="flex flex-wrap -mx-4">
@@ -55,7 +73,7 @@ const StudentViewTransaction = () => {
                                             (value, index) => {
                                                 return <tr>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {new Date(value.paymentDate).toLocaleDateString()}
+                                                        {value.paymentDate}
                                                     </td>
                                                     <td className="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.rpAmount}

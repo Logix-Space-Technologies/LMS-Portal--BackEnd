@@ -14,13 +14,16 @@ exports.batchCreate = (request, response) => {
             const validationErrors = {};
 
             if (Validator.isEmpty(request.body.collegeId).isValid) {
-                validationErrors.value = Validator.isEmpty(request.body.collegeId).message;
+                validationErrors.collegeid = Validator.isEmpty(request.body.collegeId).message;
             }
             if (!Validator.isValidAmount(request.body.collegeId).isValid) {
                 validationErrors.collegeid = Validator.isValidAmount(request.body.collegeId).message; //validation for college id
             }
             if (!Validator.isValidName(request.body.batchName).isValid) {
                 validationErrors.name = Validator.isValidName(request.body.batchName).message
+            }
+            if (Validator.isEmpty(request.body.batchName).isValid) {
+                validationErrors.name = Validator.isEmpty(request.body.batchName).message
             }
 
             if (Validator.isEmpty(request.body.regStartDate).isValid) {
@@ -33,8 +36,8 @@ exports.batchCreate = (request, response) => {
             if (Validator.isEmpty(request.body.regEndDate).isValid) {
                 validationErrors.regenddate = Validator.isEmpty(request.body.regEndDate).message
             }
-            if (!Validator.isDate1GreaterThanDate2(request.body.regStartDate, request.body.regEndDate).isValid) {
-                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(request.body.regStartDate, request.body.regEndDate).message
+            if (!Validator.isLaterDate(request.body.regEndDate, request.body.regStartDate).isValid) {
+                validationErrors.regenddate = Validator.isLaterDate(request.body.regEndDate, request.body.regStartDate).message
             }
             if (!Validator.isValidDate(request.body.regEndDate).isValid) {
                 validationErrors.regenddate = Validator.isValidDate(request.body.regEndDate).message
@@ -58,8 +61,8 @@ exports.batchCreate = (request, response) => {
             const batches = new Batches({
                 collegeId: request.body.collegeId,
                 batchName: request.body.batchName,
-                regStartDate: request.body.regStartDate.split('/').reverse().join('-'),
-                regEndDate: request.body.regEndDate.split('/').reverse().join('-'),
+                regStartDate: request.body.regStartDate,
+                regEndDate: request.body.regEndDate,
                 batchDesc: request.body.batchDesc,
                 batchAmount: request.body.batchAmount
             });
@@ -134,7 +137,7 @@ exports.batchView = (request, response) => {
 
 
 exports.searchBatch = (request, response) => {
-    const batchQuery = request.headers.batchQuery;
+    const batchQuery = request.body.batchQuery;//changed
     const batchToken = request.headers.token;
     //key for respective token
     key = request.headers.key;
@@ -235,6 +238,54 @@ exports.batchUpdate = (request, response) => {
             });
         } else {
             response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
+
+
+exports.batchViewAdmin = (request, response) => {
+    const admToken = request.headers.token;
+    key = request.headers.key // key for respective tokens
+    const collegeId = request.body.collegeId;
+    jwt.verify(admToken, key, (err, decoded) => {
+        if (decoded) {
+            Batches.adminBatchView(collegeId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                }
+                if (!data) {
+                    response.json({ "status": "No batches found!" });
+                }
+                else {
+                    response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+}
+
+
+exports.viewOneBatch = (request, response) => {
+    const batchToken = request.headers.token;
+    const key = request.headers.key; //give respective keys of admin and adminstaff
+    const batchId = request.body.id; 
+
+    jwt.verify(batchToken, key, (err, decoded) => {
+        if (decoded) {
+            Batches.viewOneBatch(batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No batches are currently active" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
         }
     });
 };

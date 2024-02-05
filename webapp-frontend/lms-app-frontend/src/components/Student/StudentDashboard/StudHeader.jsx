@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../../config/config'
+import { useNavigate } from 'react-router-dom'
 
 const StudHeader = () => {
     const [studData, setStudData] = useState([])
@@ -10,6 +11,17 @@ const StudHeader = () => {
     const apiUrl2 = global.config.urls.api.server + "/api/lms/studentViewNextSessionDate"
 
     const apiURL = global.config.urls.api.server + "/api/lms/studentViewProfile"
+
+    const navigate = useNavigate()
+
+    const logOut = () => {
+        sessionStorage.removeItem("studentkey");
+        sessionStorage.removeItem("studentId");
+        sessionStorage.removeItem("studemail");
+        sessionStorage.removeItem("studBatchId");
+        sessionStorage.removeItem("studLoginToken");
+        sessionStorage.removeItem("subtaskId");
+    }
 
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
@@ -23,15 +35,24 @@ const StudHeader = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setStudData(response.data.data)
-                console.log(response.data.data)
+                if (response.data.data) {
+                    setStudData(response.data.data)
+                    console.log(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        logOut()
+                        navigate("/studentLogin")
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }
 
 
-    const getData2 = () =>{
-        let data2 = { "studId": sessionStorage.getItem("studentId"), "batchId": sessionStorage.getItem("studBatchId")}
+    const getData2 = () => {
+        let data2 = { "studId": sessionStorage.getItem("studentId"), "batchId": sessionStorage.getItem("studBatchId") }
 
         let axiosConfig2 = {
             headers: {
@@ -41,39 +62,48 @@ const StudHeader = () => {
             }
         }
         axios.post(apiUrl2, data2, axiosConfig2).then(
-            (response)=>{
-                setSessionData(response.data.data)
+            (response) => {
+                if (response.data.data) {
+                    setSessionData(response.data.data)
+                    console.log(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        logOut()
+                        navigate("/studentLogin")
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }
 
-    const logOut =()=>{
-        sessionStorage.removeItem("studentkey");
-        sessionStorage.removeItem("studentId");
-        sessionStorage.removeItem("studemail");
-        sessionStorage.removeItem("studBatchId");
-        sessionStorage.removeItem("studLoginToken");
+
+    function formatTime(timeString) {
+        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+        return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
     }
 
     useEffect(() => { getData() }, [])
-    useEffect(() => {getData2() }, [])
+    useEffect(() => { getData2() }, [])
     return (
         <div>
 
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
                 <a href="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
                     <h2 className="text-primary mb-0">
-                        <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
+                        <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
+                    </h2>
                 </a>
-                {sessionData.map(
-                    (value,index)=>{
+                {sessionData ? (sessionData.map(
+                    (value, index) => {
                         return <div className="session-name">
-                        <p>Next Session: {new Date(value.date).toLocaleDateString()},{value.time}</p>
-                        
-                    </div>
+                            <p>Next Session: {value.date}, {formatTime(value.time)}</p>
+
+                        </div>
                     }
-                )}
-                
+                )) : <p>Next Session: No Upcoming Session</p>}
+
                 <div className="navbar-nav align-items-center ms-auto">
                     {/* <div className="nav-item dropdown">
                                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
@@ -102,7 +132,7 @@ const StudHeader = () => {
                     <div className="nav-item dropdown">
                         {studData.map((value, index) => {
                             return <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                                <img className="rounded-circle me-lg-2" src={value.studProfilePic} alt style={{ width: 40, height: 40 }} />
+                                <img className="rounded-circle me-lg-2" src={value.studProfilePic} alt="" style={{ width: 40, height: 40 }} />
                                 <span className="d-none d-lg-inline-flex">{value.studName}</span>
                             </a>
                         })}

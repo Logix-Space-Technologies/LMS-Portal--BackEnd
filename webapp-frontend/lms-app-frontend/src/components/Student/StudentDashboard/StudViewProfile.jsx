@@ -1,9 +1,23 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import '../../../config/config'
 
 const StudViewProfile = () => {
     const [studData, setStudData] = useState([])
     const apiURL = global.config.urls.api.server + "/api/lms/studentViewProfile"
+
+    const navigate = useNavigate()
+
+    const logOut = () => {
+        sessionStorage.removeItem("studentkey");
+        sessionStorage.removeItem("studentId");
+        sessionStorage.removeItem("studemail");
+        sessionStorage.removeItem("studBatchId");
+        sessionStorage.removeItem("studLoginToken");
+        sessionStorage.removeItem("subtaskId");
+    }
+
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
         console.log(data)
@@ -17,8 +31,17 @@ const StudViewProfile = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setStudData(response.data.data)
-                console.log(response.data.data)
+                if (response.data.data) {
+                    setStudData(response.data.data)
+                    console.log(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        logOut()
+                        navigate("/studentLogin")
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }
@@ -36,8 +59,6 @@ const StudViewProfile = () => {
                         <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
                             {studData.map(
                                 (value, index) => {
-                                    const validityDate = new Date(value.validity);
-                                    const formattedValidityDate = formatDate(validityDate);
                                     return <div className="row align-items-center">
                                         <div className="col-lg-6 mb-4 mb-lg-0">
                                             <img height="300px" src={value.studProfilePic} alt="" />
@@ -58,9 +79,9 @@ const StudViewProfile = () => {
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Course : {value.course}</span></li>
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Phone Number : {value.studPhNo}</span></li>
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Email : {value.studEmail}</span></li>
-                                                <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Profile Validity : {formattedValidityDate}</span></li>
-                                                <div class="mb-3">
-                                                    <a class="btn btn-success btn-lg" href="/studentupdateprofile">Update Details</a>
+                                                <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Profile Validity : {value.validity.split('-').reverse().join('/')}</span></li>
+                                                <div className="mb-3">
+                                                    <a className="btn btn-success btn-lg" href="/studentupdateprofile">Update Details</a>
                                                 </div>
                                             </ul>
                                             <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
@@ -80,11 +101,4 @@ const StudViewProfile = () => {
     )
 }
 
-function formatDate(date) {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-based
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-}
 export default StudViewProfile

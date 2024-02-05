@@ -9,14 +9,28 @@ const CollegeStaffLogin = () => {
         password: ""
     });
 
+    const [errors, setErrors] = useState({});
+
     const apiUrl = global.config.urls.api.server + "/api/lms/clgStaffLogin";
     const navigate = useNavigate();
 
     const inputHandler = (event) => {
+        setErrors({}); // Clear previous errors
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
 
     const readValue = () => {
+        let newErrors = {};
+        if (!inputField.email.trim()) {
+            newErrors.email = "Email is required!";
+        }
+        if (!inputField.password.trim()) {
+            newErrors.password = "Password is required!";
+        } 
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
         axios.post(apiUrl, inputField).then(
             (response) => {
                 if (response.data.status === "Success") {
@@ -31,7 +45,7 @@ const CollegeStaffLogin = () => {
                     sessionStorage.setItem("clgStaffId", clgStaffId);
                     sessionStorage.setItem("clgstaffkey", clgstaffkey);
                     sessionStorage.setItem("clgStaffCollegeId", clgStaffCollegeId)
-                    navigate("/clgStaffSearchTask")
+                    navigate("/collegeStaffDashboard")
 
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.email) {
@@ -65,10 +79,12 @@ const CollegeStaffLogin = () => {
                                 <div className="mb-3 text-start">
                                     <label htmlFor="" className="form-label">Email</label>
                                     <input type="text" name="email" value={inputField.email} onChange={inputHandler} className="form-control" />
+                                    {errors.email && <span style={{ color: 'red' }} className="error">{errors.email}</span>}
                                 </div>
                                 <div className="mb-3 text-start">
                                     <label htmlFor="" className="form-label">Password</label>
                                     <input type="password" name="password" value={inputField.password} onChange={inputHandler} className="form-control" />
+                                    {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
                                 </div>
                             </form>
                             <div className="mb-3">

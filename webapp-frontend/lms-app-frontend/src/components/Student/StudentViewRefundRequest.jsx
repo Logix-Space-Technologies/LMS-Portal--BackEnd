@@ -1,6 +1,8 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import StudNavBar from './StudNavBar'
+import '../../config/config'
 
 const StudentViewRefundRequest = () => {
 
@@ -25,11 +27,25 @@ const StudentViewRefundRequest = () => {
         console.log(data)
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-                if (response.data.status === "success") {
+                if (response.data.data) {
                     setStudentViewRefundReqData(response.data.data)
                     console.log(response.data)
                 } else {
-                    console.log(response.data.status)
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                        sessionStorage.removeItem("subtaskId");
+                    } else {
+                        if (response.data.status === "No refund requests found.") {
+                            console.log(response.data.status)
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
                 }
             })
             .catch(error => {
@@ -53,10 +69,20 @@ const StudentViewRefundRequest = () => {
         axios.post(apiUrl1, data1, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    navigate("/studViewRefundReq")
                     alert("Your Refund Request Has Being Successfully Cancelled!!")
+                    window.location.reload();
                 } else {
-                    alert(response.data.status)                   
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                        sessionStorage.removeItem("subtaskId");
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -75,10 +101,20 @@ const StudentViewRefundRequest = () => {
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    navigate("/studViewRefundReq")
                     alert("Amount Received Status Updated Successfully.")
+                    window.location.reload();
                 } else {
-                    alert(response.data.status)
+                    if (response.data.status === 'Unauthorized User!!') {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                        sessionStorage.removeItem("subtaskId");
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -88,6 +124,7 @@ const StudentViewRefundRequest = () => {
 
     return (
         <div>
+            <StudNavBar />
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">
@@ -114,7 +151,7 @@ const StudentViewRefundRequest = () => {
                                                     <div className="card">
                                                         <div className="card-body">
                                                             <h2 className="card-title">{value.studName}</h2>
-                                                            <p className="card-text">Requested Date : {new Date(value.requestedDate).toLocaleDateString()}</p>
+                                                            <p className="card-text">Requested Date : {value.requestedDate}</p>
                                                             <p className="card-text">Reason : {value.reason}</p>
                                                             {value.approvalStatus === "Not Approved" && value.refundStatus === "Pending" && value.AmountReceivedStatus === "Not Received" && (
                                                                 <>
@@ -133,7 +170,7 @@ const StudentViewRefundRequest = () => {
                                                                 <>
                                                                     <p className="card-text">Refund Approval : {value.refundStatus}</p>
                                                                     <p className="card-text">Approved Amount : {value.approvedAmnt}</p>
-                                                                    <p className="card-text">Refund Initiated Date : {new Date(value.refundInitiatedDate).toLocaleDateString()}</p>
+                                                                    <p className="card-text">Refund Initiated Date : {value.refundInitiatedDate}</p>
                                                                     <p className="card-text">Transaction No. : {value.transactionNo}</p>
                                                                     <p className="card-text">Approval Status : {value.approvalStatus}</p>
                                                                     <p className="card-text">Admin Remarks : {value.adminRemarks}</p>
@@ -152,7 +189,7 @@ const StudentViewRefundRequest = () => {
                                                                 <>
                                                                     <p className="card-text">Refund Approval : {value.refundStatus}</p>
                                                                     <p className="card-text">Approved Amount : {value.approvedAmnt}</p>
-                                                                    <p className="card-text">Refund Initiated Date : {new Date(value.refundInitiatedDate).toLocaleDateString()}</p>
+                                                                    <p className="card-text">Refund Initiated Date : {value.refundInitiatedDate}</p>
                                                                     <p className="card-text">Transaction No. : {value.transactionNo}</p>
                                                                     <p className="card-text">Approval Status : {value.approvalStatus}</p>
                                                                     <p className="card-text">Admin Remarks : {value.adminRemarks}</p>

@@ -9,10 +9,18 @@ const AdminCountView = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/adminDashboard"
 
     const getData = () => {
-        let token = { "token": sessionStorage.getItem("admtoken") }
-        axios.post(apiUrl, token).then(
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        };
+        axios.post(apiUrl, {}, axiosConfig).then(
             (Response) => {
                 setCollegeData(Response.data.data)
+                console.log(Response.data.data)
             }
         )
     }

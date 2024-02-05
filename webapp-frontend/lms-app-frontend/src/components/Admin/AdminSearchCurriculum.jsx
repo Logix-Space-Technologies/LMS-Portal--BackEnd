@@ -1,6 +1,7 @@
 import axios from 'axios'
 import '../../config/config'
 import React, { useState } from 'react'
+import Navbar from './Navbar'
 
 const AdminSearchCurriculum = () => {
 
@@ -79,6 +80,8 @@ const AdminSearchCurriculum = () => {
 
 
     return (
+        <div>
+            <Navbar/>
         <div>
             <div className="container">
                 <div className="row">
@@ -174,6 +177,7 @@ const AdminSearchCurriculum = () => {
                     <div className="col-12 text-center">No Curriculum Found!!</div>
                 ))}
             </div>
+        </div>
         </div>
     )
 }

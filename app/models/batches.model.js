@@ -158,6 +158,34 @@ Batches.updateBatch = (updatedBatch, result) => {
 };
 
 
+Batches.adminBatchView = (collegeId, result) => {
+    db.query("SELECT b. * FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND b.collegeId = ?", collegeId, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null)
+            return
+        } else {
+            console.log("Batches: ", res);
+            result(null, res)
+        }
+    })
+}
+
+
+Batches.viewOneBatch = (batchId, result) => {
+    db.query("SELECT * FROM batches WHERE id = 1 AND  isActive = 1 AND deleteStatus = 0 ", batchId,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("data: ", res);
+            result(null, res);
+        })
+}
+
+
 
 module.exports = Batches;
 

@@ -42,7 +42,9 @@ const StudentChangePassword = () => {
                         sessionStorage.removeItem("studentkey");
                         sessionStorage.removeItem("studentId");
                         sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
                         sessionStorage.removeItem("studLoginToken");
+                        sessionStorage.removeItem("subtaskId");
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.oldPassword) {
                             alert(Response.data.data.oldPassword);
@@ -53,7 +55,16 @@ const StudentChangePassword = () => {
                                 if (Response.data.status === "Old password and new password cannot be same.") {
                                     alert(Response.data.status)
                                 } else {
-                                    alert(Response.data.status)
+                                    if (Response.data.status === "Unauthorized User!!") {
+                                        navigate("/studentLogin")
+                                        sessionStorage.removeItem("studentkey");
+                                        sessionStorage.removeItem("studentId");
+                                        sessionStorage.removeItem("studemail");
+                                        sessionStorage.removeItem("studBatchId");
+                                        sessionStorage.removeItem("studLoginToken");
+                                    } else {
+                                        alert(Response.data.status)
+                                    }
                                 }
                             }
                         }

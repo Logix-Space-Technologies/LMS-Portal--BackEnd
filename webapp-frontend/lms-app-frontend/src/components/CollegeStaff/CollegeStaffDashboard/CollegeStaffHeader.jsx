@@ -1,10 +1,15 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import '../../../config/config'
+import { useNavigate } from 'react-router-dom';
 
 const CollegeStaffHeader = () => {
     const [colgStaffData, setColgStaffData] = useState({});
+
     const apiURL = global.config.urls.api.server + "/api/lms/profileViewByCollegeStaff";
+
+    const navigate = useNavigate()
+
     const getData = () => {
         let data = { "id": sessionStorage.getItem("clgStaffId") };
         console.log(data)
@@ -25,6 +30,7 @@ const CollegeStaffHeader = () => {
     }
 
     const logOut = () => {
+        navigate("/clgStafflogin")
         sessionStorage.removeItem("clgstaffkey");
         sessionStorage.removeItem("clgStaffId");
         sessionStorage.removeItem("clgStaffEmail");
@@ -72,7 +78,7 @@ const CollegeStaffHeader = () => {
                         </a>
                         <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                             <a href="/clgstaffchangepassword" className="dropdown-item">Change Password</a>
-                            <a href="/clgStafflogin" onClick={logOut} className="dropdown-item">Log Out</a>
+                            <a onClick={logOut} className="dropdown-item">Log Out</a>
                         </div>
                     </div>
                 </div>

@@ -1,50 +1,48 @@
-
 function upcomingSessionContent(studName, sessionName, date, time, venueORlink) {
-    console.log(studName)
-    console.log(sessionName, date, time, venueORlink)
-    content = `
-    <!DOCTYPE html>
-<html>
-<head>
-    <title>Upcoming Session Schedule</title>
-    <style>
-        body {
-            background-color: #f8f8f8;
-            color: #333;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 600px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .header img {
-            max-width: 120px;
-            margin-bottom: 20px;
-        }
-        .content {
-            margin-top: 20px;
-        }
-        .footer {
-            margin-top: 30px;
-            font-size: smaller;
-            text-align: center;
-            color: #777;
-        }
-    </style>
-</head>
-<body>
- 
-<div class="container">
-    <div class="header">
-        <img src="https://www.linkurcodes.com/images/logo.png" alt="School Logo">
-    </div>
-    <div class="content">
+    content = `<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Session Created</title>
+        <style>
+            body {
+                background-color: #faf4f4;
+                color: #140101;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+            }
+            .container {
+                border-radius: 8px;
+    
+                background-color: #ece9e9;
+                border-radius: 8px;
+                padding: 20px;
+                margin: 20px auto;
+                max-width: 600px;
+            }
+            .logo-header img {
+                max-width: 30%;
+                height: auto;
+            }
+            .content {
+                margin-top: 20px;
+                border: 2px solid #a3a0a0; /* Added a border to content */
+                padding: 20px; 
+            }
+            .footer {
+                margin-top: 30px;
+                font-size: smaller;
+                color: grey;
+            }
+        </style>
+    </head>
+    <body>
+    
+    <div class="container">
+        <div class="logo-header">
+            <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+        </div>
+        <div class="content">
         <h2>New Session Schedule Announcement</h2>
  
         <p>Dear ${studName},</p>
@@ -66,14 +64,15 @@ function upcomingSessionContent(studName, sessionName, date, time, venueORlink) 
  
        
     </div>
-    <div class="footer">
-        <p>If you have any questions or need further information, please do not hesitate to contact us at <a href="mailto:admin@linkurcodes.com">admin@linkurcodes.com</a>.</p>
-     
+   
+        <div class="footer">
+            <p>If you have any questions, feel free to reach out to us !! </p>
+        </div>
     </div>
-</div>
- 
-</body>
-</html>`
+    
+    </body>
+    </html>
+    `
     return content;
 }
 
@@ -81,6 +80,7 @@ function admStaffAddHTMLContent(AdStaffName) {
     content = `<!DOCTYPE html>
     <html>
     <head>
+        <title>Registration Successful</title>
         <style>
             .container {
                 font-family: Arial, sans-serif;
@@ -157,7 +157,7 @@ function collegeStaffTextContent(collegeStaffName, clgName) {
     content = `
     Dear ${collegeStaffName},
  
-    We hope this email finds you well. We are pleased to inform you that your registration with the Link Ur Codes portal has been successfully completed. As the class-in-charge for ${clgName}, you are now the official point of contact and can fully access the resources available on our platform.
+    We hope this email finds you well. We are pleased to inform you that your registration with the Link Ur Codes portal has been successfully completed. As the batch-in-charge for ${clgName}, you are now the official point of contact and can fully access the resources available on our platform.
      
     The Link Ur Codes portal is designed to provide a comprehensive and interactive learning experience for students and educators in the field of coding and programming.
     To get started, please log in with your registered email and password at Link Ur Codes Portal. We highly recommend updating your profile and exploring the various sections of the portal to familiarize yourself with its functionalities.
@@ -179,7 +179,7 @@ function collegeStaffHtmlContent(collegeStaffName, collegeName) {
     <html>
     
     <head>
-        <title>New Task Available</title>
+        <title>Registration Successful</title>
         <style>
             body {
                 background-color: #faf4f4;
@@ -208,7 +208,7 @@ function collegeStaffHtmlContent(collegeStaffName, collegeName) {
                 margin-top: 20px;
                 border: 2px solid #a3a0a0;
                 /* Added a border to content */
-                padding: 20px;/
+                padding: 20px;
             }
     
             .footer {
@@ -229,7 +229,7 @@ function collegeStaffHtmlContent(collegeStaffName, collegeName) {
                 <h1>Registration Successful</h1>
                 <p>Dear ${collegeStaffName},</p>
                 <p>We hope this email finds you well. We are pleased to inform you that your registration with the Link Ur
-                    Codes portal has been successfully completed. As the class-in-charge for ${collegeName}, you are now the
+                    Codes portal has been successfully completed. As the batch-in-charge for ${collegeName}, you are now the
                     official point of contact and can fully access the resources available on our platform.</p>
                 <p>The Link Ur Codes portal is designed to provide a comprehensive and interactive learning experience for
                     students and educators in the field of coding and programming.</p>
@@ -262,7 +262,7 @@ function collegeHtmlContent(collegeName) {
     content = `<!DOCTYPE html>
 <html>
 <head>
-    <title>New Task Available</title>
+    <title>College Registration Succesful</title>
     <style>
         body {
             background-color: #faf4f4;
@@ -287,7 +287,7 @@ function collegeHtmlContent(collegeName) {
         .content {
             margin-top: 20px;
             border: 2px solid #a3a0a0; /* Added a border to content */
-            padding: 20px; /
+            padding: 20px;
         }
         .footer {
             margin-top: 30px;
@@ -339,7 +339,7 @@ function cancelSessionContent(participantName, date, time) {
     content = `<!DOCTYPE html>
     <html>
     <head>
-        <title>New Task Available</title>
+        <title>Session Cancellation</title>
         <style>
             body {
                 background-color: #faf4f4;
@@ -364,7 +364,7 @@ function cancelSessionContent(participantName, date, time) {
             .content {
                 margin-top: 20px;
                 border: 2px solid #a3a0a0; /* Added a border to content */
-                padding: 20px; /
+                padding: 20px; 
             }
             .footer {
                 margin-top: 30px;
@@ -413,7 +413,81 @@ function cancelSessionTextContent(participantName, date, time) {
     return content;
 }
 
+function newTaskHtmlContent(participantName, dueDate) {
+    content = `<!DOCTYPE html>
+    <html>
+    <head>
+        <title>New Task Available</title>
+        <style>
+            body {
+                background-color: #faf4f4;
+                color: #140101;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+            }
+            .container {
+                border-radius: 8px;
+    
+                background-color: #ece9e9;
+                border-radius: 8px;
+                padding: 20px;
+                margin: 20px auto;
+                max-width: 600px;
+            }
+            .logo-header img {
+                max-width: 30%;
+                height: auto;
+            }
+            .content {
+                margin-top: 20px;
+                border: 2px solid #a3a0a0; /* Added a border to content */
+                padding: 20px; 
+            }
+            .footer {
+                margin-top: 30px;
+                font-size: smaller;
+                color: grey;
+            }
+        </style>
+    </head>
+    <body>
+    
+    <div class="container">
+        <div class="logo-header">
+            <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+        </div>
+        <div class="content">
+            <h1>A New Task for You</h1>
+            <p>Dear ${participantName},</p>
+            <p>A new task has been added to your portal that requires your attention. Please complete this task before the due date to stay on track with your progress.</p>
+            <p><strong>Task Deadline: ${dueDate}</strong></p>
+            <p>For more details and to complete the task, log on to the web or mobile app.</p>
+           
+        </div>
+        <div class="footer">
+            <p>If you need assistance, please contact our support team :  admin@linkurcodes.com </p>
+        </div>
+    </div>
+    
+    </body>
+    </html>`
+    return content;
+}
 
+function newTaskTextContent(participantName, dueDate) {
+    content = `Dear ${participantName},
+
+    We are excited to inform you that a new task has been added to your portal on Link Ur Codes.
+    
+    Please complete this task before the due date: ${dueDate}.
+    
+    For more details, log on to the web or mobile app.
+    
+    Best Regards,
+    Link Ur Codes Team`
+    return content;
+}
 
 module.exports = {
     admStaffAddHTMLContent,
@@ -424,6 +498,8 @@ module.exports = {
     collegeHtmlContent,
     collegeTextContent,
     cancelSessionContent,
-    cancelSessionTextContent
+    cancelSessionTextContent,
+    newTaskHtmlContent,
+    newTaskTextContent
 };
 

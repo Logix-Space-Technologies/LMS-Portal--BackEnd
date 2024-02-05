@@ -135,7 +135,7 @@ exports.adminStaffUpdate = (request, res) => {
         }
         // Validation for mobile number
         if (!Validator.isValidMobileNumber(request.body.PhNo).isValid) {
-            validationErrors.mobile = Validator.isValidMobileNumber(request.body.PhNo).message;
+            validationErrors.PhNo = Validator.isValidMobileNumber(request.body.PhNo).message;
         }
         // Validation for Address
         if (!Validator.isValidAddress(request.body.Address).isValid) {
@@ -288,45 +288,50 @@ exports.adminStaffLogin = (request, response) => {
 
 // Admin-Staff Change Password
 exports.adminStaffChangePswd = (request, response) => {
-    const { Email, oldAdSfPassword, newAdSfPassword} = request.body
-    const token = request.headers.token
+    const { Email, oldAdSfPassword, newAdSfPassword } = request.body;
+    const token = request.headers.token;
+
+    // Basic Validation
+    const validationErrors = {};
+    if (Validator.isEmpty(Email).isValid) {
+        validationErrors.Email = "Email is required";
+    }
+    if (Validator.isEmpty(oldAdSfPassword).isValid) {
+        validationErrors.oldAdSfPassword = "Old password is required";
+    }
+    if (Validator.isEmpty(newAdSfPassword).isValid) {
+        validationErrors.newAdSfPassword = "New password is required";
+    }
+    if (oldAdSfPassword === newAdSfPassword) {
+        validationErrors.newAdSfPassword = "Old password and new password cannot be same";
+    }
+    if (!Validator.isValidPassword(newAdSfPassword).isValid) {
+        validationErrors.newAdSfPassword = "New password is not valid";
+    }
+
+    // If validation fails
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
+
+    // JWT Verification
     jwt.verify(token, "lmsappadmstaff", (error, decoded) => {
+        if (error) {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+
         if (decoded) {
-            if (oldAdSfPassword === newAdSfPassword) {
-                response.json({ "status": "Old password and new password cannot be same." });
-                return;
-            }
             AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword }, (err, result) => {
                 if (err) {
-                    return response.json({ "status": err })
+                    return response.json({ "status": err });
                 }
-                const validationErrors = {}
-
-                const passwordValidation = Validator.isValidPassword(newAdSfPassword)
-                if (!passwordValidation.isValid) {
-                    validationErrors.password = passwordValidation.message
-                    return response.json({ "status": validationErrors })
-                }
-
-                if (result.status === "Password Updated Successfully.") {
-                    const hashedNewPassword = bcrypt.hashSync(newAdSfPassword, 10)
-
-                    AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword: hashedNewPassword }, (updateErr, UpdateResult) => {
-                        if (updateErr) {
-                            return response.json({ "status": updateErr })
-                        } else {
-                            return response.json({ "status": "Password Updated Successfully." })
-                        }
-                    })
-                } else {
-                    return response.json(result)
-                }
-            })
+                return response.json({ "status": "success" });
+            });
         } else {
-            return response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" });
         }
-    })
-}
+    });
+};
 
 exports.searchCollegesByAdminStaff = (request, response) => {
     const collegeSearchQuery = request.body.collegeSearchQuery;
@@ -408,3 +413,27 @@ exports.adsfViewSubmttedTask = (request, response) => {
         }
     })
 }
+
+
+exports.viewOneAdminStaff = (request, response) => {
+    const trainerToken = request.headers.token;
+    const key = request.headers.key; //give respective keys of admin and adminstaff
+    const id = request.body.id; 
+
+    jwt.verify(trainerToken, key, (err, decoded) => {
+        if (decoded) {
+            AdminStaff.viewOneAdminStaff(id, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No Admin staff are currently active" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
