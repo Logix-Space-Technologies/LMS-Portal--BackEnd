@@ -48,7 +48,7 @@ Admin.findByUserName = (username, result) => {
 
 
 
-Admin.changePassword = (ad, result) => {
+Admin.adminChangePassword = (ad, result) => {
     // Retrieve the hashed old password from the database
     const getPasswordQuery = "SELECT Password FROM admin WHERE userName = ?";
     db.query(getPasswordQuery, [ad.userName], (getPasswordErr, getPasswordRes) => {
@@ -72,8 +72,7 @@ Admin.changePassword = (ad, result) => {
                         result(updateErr, null);
                         return;
                     } else {
-                        logAdminStaff(0, "Password updated")
-                        result("Password Updated Successfully!!!", null);
+                        result(null, null);
                     }
                 });
             } else {
