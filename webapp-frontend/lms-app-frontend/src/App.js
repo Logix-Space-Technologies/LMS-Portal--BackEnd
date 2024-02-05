@@ -83,6 +83,7 @@ import AdminViewAllTasks from './components/Admin/AdminViewAllTasks';
 import AdminSearchTrainer from './components/Admin/AdminSearchTrainer';
 import StudentUpdateSubmittedTask from './components/Student/StudentUpdateSubmittedTask';
 import AdminStaffChangePassword from './components/AdminStaff/AdminStaffChangePassword';
+import AdminAddTrainer from './components/Admin/AdminAddTrainer';
 
 
 
@@ -136,6 +137,7 @@ function App() {
           <Route path='/AdminSendNotification' element={<AdminSendNotification/>}/>
           <Route path='/AdminViewAllTasks' element={<AdminViewAllTasks/>}/>
           <Route path='/adminSearchTrainers' element={<AdminSearchTrainer/>}/>
+          <Route path='/adminAddtrainer' element={<AdminAddTrainer/>}/>
 
 
 
