@@ -87,48 +87,50 @@ exports.adminLogin = (request, response) => {
 
 exports.adminChangePwd = (request, response) => {
     const { userName, oldPassword, newPassword } = request.body;
-    const token = request.headers.token
+    const token = request.headers.token;
 
+    // Basic Validation
+    const validationErrors = {};
+    if (Validator.isEmpty(userName).isValid) {
+        validationErrors.userName = "Username is required";
+    }
+    if (Validator.isEmpty(oldPassword).isValid) {
+        validationErrors.oldPassword = "Old password is required";
+    }
+    if (Validator.isEmpty(newPassword).isValid) {
+        validationErrors.newPassword = "New password is required";
+    }
+    if (oldPassword === newPassword) {
+        validationErrors.newPassword = "Old password and new password cannot be the same";
+    }
+    if (!Validator.isValidPassword(newPassword).isValid) {
+        validationErrors.newPassword = "New password is not valid";
+    }
+
+    // If validation fails
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
+
+    // JWT Verification
     jwt.verify(token, "lmsapp", (error, decoded) => {
+        if (error) {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+
         if (decoded) {
-            Admin.changePassword({ userName, oldPassword, newPassword }, (err, result) => {
+            Admin.adminChangePassword({ userName, oldPassword, newPassword }, (err, result) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
-                if (oldPassword === newPassword) {
-                    return response.json({ "status": "Old Password and New Password cannot be same." })
-                }
-
-                const validationErrors = {};
-
-                const passwordValidation = Validator.isValidPassword(newPassword);
-
-                if (!passwordValidation.isValid) {
-                    validationErrors.password = passwordValidation.message;
-                    return response.json({ "status": validationErrors });
-                }
-
-                if (result.status === "Password Updated Successfully!!!") {
-                    const hashedNewPassword = bcrypt.hashSync(newPassword, 10);
-
-                    Admin.changePassword({ userName, oldPassword, newPassword: hashedNewPassword }, (updateErr, updateResult) => {
-                        if (updateErr) {
-                            return response.json({ "status": updateErr });
-                        } else {
-                            logAdminStaff(0,"Admin Password Changed")
-                            return response.json({ "status": "Password Successfully Updated!!!" });
-                        }
-                    });
-                } else {
-                    return response.json(result);
-                }
+                return response.json({ "status": "success" });
             });
-
         } else {
-            response.json({ "status": "Unauthorized User!!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
+
 
 
 exports.adminDashBoards = (request, response) => {

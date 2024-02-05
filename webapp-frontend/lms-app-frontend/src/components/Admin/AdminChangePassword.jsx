@@ -33,30 +33,26 @@ const AdminChangePassword = () => {
 
         axios.post(apiurl, updateField, axiosConfig).then(
             (response) => {
-                if (updateField.oldPassword === updateField.newPassword) {
-                    alert("Old password and New password cannot be same.")
-                } else {
-                    if (response.data.status === "Password Updated Successfully!!!") {
-                        alert("Password Changed Successfully");
-                        navigate("/");
-                        sessionStorage.removeItem("adminId")
-                        sessionStorage.removeItem("admkey")
-                        sessionStorage.removeItem("admtoken")
-                        sessionStorage.removeItem("userName")
-                        sessionStorage.removeItem("trainerId")
-                        sessionStorage.removeItem("curriculumId")
-                        sessionStorage.removeItem("clgStaffId")
-                        sessionStorage.removeItem("batchId")
+                if (response.data.status === "success") {
+                    alert("Password Changed Successfully");
+                    navigate("/");
+                    sessionStorage.removeItem("adminId")
+                    sessionStorage.removeItem("admkey")
+                    sessionStorage.removeItem("admtoken")
+                    sessionStorage.removeItem("userName")
+                    sessionStorage.removeItem("trainerId")
+                    sessionStorage.removeItem("curriculumId")
+                    sessionStorage.removeItem("clgStaffId")
+                    sessionStorage.removeItem("batchId")
 
+                } else {
+                    if (response.data.status === "Validation failed" && response.data.data.oldPassword) {
+                        alert(response.data.data.oldPassword);
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.oldPassword) {
-                            alert(response.data.data.oldPassword);
+                        if (response.data.status === "Validation failed" && response.data.data.newPassword) {
+                            alert(response.data.data.newPassword);
                         } else {
-                            if (response.data.status === "Validation failed" && response.data.data.newPassword) {
-                                alert(response.data.data.newPassword);
-                            } else {
-                                alert(response.data.status)
-                            }
+                            alert(response.data.status)
                         }
                     }
                 }
