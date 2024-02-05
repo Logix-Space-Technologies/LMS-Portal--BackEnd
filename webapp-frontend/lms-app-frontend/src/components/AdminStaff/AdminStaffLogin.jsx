@@ -35,8 +35,10 @@ const AdminStaffLogin = () => {
                 if (Response.data.status === "Success") {
                     let admstafftoken = Response.data.token
                     let admstaffkey = "lmsappadmstaff"
+                    let Email = Response.data.data.Email;
                     sessionStorage.setItem("admstaffLogintoken", admstafftoken)
                     sessionStorage.setItem("admstaffkey", admstaffkey)
+                    sessionStorage.setItem("Email", Email)
                     navigate("/addcollege")
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {

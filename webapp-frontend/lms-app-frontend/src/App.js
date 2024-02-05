@@ -77,6 +77,7 @@ import AdminViewAllAdminStaff from './components/Admin/AdminViewAllAdmStaff';
 import AdmStaffNavBar from './components/AdminStaff/AdmStaffNavBar';
 import AdminSendNotification from './components/Admin/AdminSendNotifications';
 import AdminViewAllTasks from './components/Admin/AdminViewAllTasks';
+import AdminStaffChangePassword from './components/AdminStaff/AdminStaffChangePassword';
 
 
 
@@ -117,9 +118,7 @@ function App() {
           <Route path='/adminviewallcollege' element={<AdminViewAllCollege/>}/>
           <Route path='/adminviewallcurriculum' element={<AdminViewAllCurriculum/>}/>
           <Route path='/AdminViewRefundRequests' element={<AdminViewRefundRequests/>}/>
-
           <Route path='/adminupdatecollegestaff' element={<AdminUpdateCollegeStaff/>}/>
-
           <Route path='/AdminUpdateCurriculum' element={<AdminUpdateCurriculum/>}/>
           <Route path='/adminSearchBatch' element={<AdminSearchBatch/>}/>
           <Route path='/AdminViewStudentLog' element={<AdminViewStudentLog/>}/>
@@ -143,6 +142,7 @@ function App() {
           {/* ================================================================================================================= */}
           <Route path='/admstafflogin' element={<AdminStaffLogin />} />
           <Route path='/admstaffnavbar' element={<AdmStaffNavBar/>}/>
+          <Route path='/AdminStaffChangePassword' element={<AdminStaffChangePassword/>}/>
 
 
 
