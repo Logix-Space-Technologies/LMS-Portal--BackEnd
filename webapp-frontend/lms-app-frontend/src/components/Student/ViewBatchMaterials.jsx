@@ -41,6 +41,7 @@ const MaterialView = () => {
             sessionStorage.removeItem("studemail");
             sessionStorage.removeItem("studBatchId");
             sessionStorage.removeItem("studLoginToken");
+            sessionStorage.removeItem("subtaskId");
           } else {
             alert(response.data.status);
           }
