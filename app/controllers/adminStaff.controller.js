@@ -288,53 +288,50 @@ exports.adminStaffLogin = (request, response) => {
 
 // Admin-Staff Change Password
 exports.adminStaffChangePswd = (request, response) => {
-    const { Email, oldAdSfPassword, newAdSfPassword } = request.body
-    const token = request.headers.token
+    const { Email, oldAdSfPassword, newAdSfPassword } = request.body;
+    const token = request.headers.token;
+
+    // Basic Validation
+    const validationErrors = {};
+    if (Validator.isEmpty(Email).isValid) {
+        validationErrors.Email = "Email is required";
+    }
+    if (Validator.isEmpty(oldAdSfPassword).isValid) {
+        validationErrors.oldAdSfPassword = "Old password is required";
+    }
+    if (Validator.isEmpty(newAdSfPassword).isValid) {
+        validationErrors.newAdSfPassword = "New password is required";
+    }
+    if (oldAdSfPassword === newAdSfPassword) {
+        validationErrors.newAdSfPassword = "Old password and new password cannot be same";
+    }
+    if (!Validator.isValidPassword(newAdSfPassword).isValid) {
+        validationErrors.newAdSfPassword = "New password is not valid";
+    }
+
+    // If validation fails
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
+
+    // JWT Verification
     jwt.verify(token, "lmsappadmstaff", (error, decoded) => {
+        if (error) {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+
         if (decoded) {
-            if (oldAdSfPassword === newAdSfPassword) {
-                response.json({ "status": "Old password and new password cannot be same." });
-                return;
-            }
             AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword }, (err, result) => {
                 if (err) {
-                    return response.json({ "status": err })
+                    return response.json({ "status": err });
                 }
-                // Checking validations
-                const validationErrors = {};
-
-                // Validation for AdStaffName
-                if (Validator.isEmpty(newAdSfPassword).isValid) {
-                    validationErrors.newAdSfPassword = Validator.isEmpty(newAdSfPassword).message;
-                }
-                if (Validator.isEmpty(oldAdSfPassword).isValid) {
-                    validationErrors.oldAdSfPassword = Validator.isEmpty(oldAdSfPassword).message;
-                }
-                if (!Validator.isValidPassword(oldAdSfPassword).isValid) {
-                    validationErrors.oldAdSfPassword = Validator.isValidPassword(oldAdSfPassword).message;
-                }
-                if (Validator.isValidPassword(newAdSfPassword).isValid) {
-                    validationErrors.newAdSfPassword = Validator.isValidPassword(newAdSfPassword).message;
-                }
-                // If validation fails
-                if (Object.keys(validationErrors).length > 0) {
-                    return response.json({ "status": "Validation failed", "data": validationErrors });
-                }
-                const hashedNewPassword = bcrypt.hashSync(newAdSfPassword, 10)
-
-                AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword: hashedNewPassword }, (updateErr, UpdateResult) => {
-                    if (updateErr) {
-                        return response.json({ "status": updateErr })
-                    } else {
-                        return response.json({ "status": "Password Updated Successfully." })
-                    }
-                })
-            })
+                return response.json({ "status": "success" });
+            });
         } else {
-            return response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" });
         }
-    })
-}
+    });
+};
 
 exports.searchCollegesByAdminStaff = (request, response) => {
     const collegeSearchQuery = request.body.collegeSearchQuery;
