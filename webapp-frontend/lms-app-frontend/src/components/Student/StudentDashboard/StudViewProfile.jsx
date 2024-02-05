@@ -15,6 +15,7 @@ const StudViewProfile = () => {
         sessionStorage.removeItem("studemail");
         sessionStorage.removeItem("studBatchId");
         sessionStorage.removeItem("studLoginToken");
+        sessionStorage.removeItem("subtaskId");
     }
 
     const getData = () => {

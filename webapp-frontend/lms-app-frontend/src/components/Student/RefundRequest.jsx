@@ -67,6 +67,7 @@ const RefundRequestForm = () => {
                             sessionStorage.removeItem("studemail");
                             sessionStorage.removeItem("studBatchId");
                             sessionStorage.removeItem("studLoginToken");
+                            sessionStorage.removeItem("subtaskId");
                         }
                         setInputField((prevInputField) => ({
                             ...prevInputField,

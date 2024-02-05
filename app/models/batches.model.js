@@ -172,6 +172,20 @@ Batches.adminBatchView = (collegeId, result) => {
 }
 
 
+Batches.viewOneBatch = (batchId, result) => {
+    db.query("SELECT * FROM batches WHERE id = 1 AND  isActive = 1 AND deleteStatus = 0 ", batchId,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("data: ", res);
+            result(null, res);
+        })
+}
+
+
 
 module.exports = Batches;
 

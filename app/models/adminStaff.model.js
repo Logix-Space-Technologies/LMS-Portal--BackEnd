@@ -293,4 +293,17 @@ AdminStaff.viewSubmittedTask = (result) => {
 }
 
 
+AdminStaff.viewOneAdminStaff = (id, result) => {
+    db.query("SELECT id, AdStaffName, Address, AadharNo, PhNo FROM admin_staff WHERE id = ? AND  isActive = 1 AND deleteStatus = 0", id,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("Trainer: ", res);
+            result(null, res);
+        })
+}
+
 module.exports = AdminStaff

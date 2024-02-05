@@ -266,3 +266,27 @@ exports.batchViewAdmin = (request, response) => {
     });
 }
 
+
+exports.viewOneBatch = (request, response) => {
+    const batchToken = request.headers.token;
+    const key = request.headers.key; //give respective keys of admin and adminstaff
+    const batchId = request.body.id; 
+
+    jwt.verify(batchToken, key, (err, decoded) => {
+        if (decoded) {
+            Batches.viewOneBatch(batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No batches are currently active" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
+
