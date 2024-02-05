@@ -408,3 +408,27 @@ exports.adsfViewSubmttedTask = (request, response) => {
         }
     })
 }
+
+
+exports.viewOneAdminStaff = (request, response) => {
+    const trainerToken = request.headers.token;
+    const key = request.headers.key; //give respective keys of admin and adminstaff
+    const id = request.body.id; 
+
+    jwt.verify(trainerToken, key, (err, decoded) => {
+        if (decoded) {
+            AdminStaff.viewOneAdminStaff(id, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No Admin staff are currently active" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};

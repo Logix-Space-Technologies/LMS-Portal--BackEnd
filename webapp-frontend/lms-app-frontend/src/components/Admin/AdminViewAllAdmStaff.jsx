@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import '../../config/config';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AdminViewAllAdminStaff = () => {
   const [clgStaffData, setClgStaffData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate()
 
   const viewUrl = global.config.urls.api.server + "/api/lms/viewalladmstaff";
 
@@ -60,6 +62,12 @@ const AdminViewAllAdminStaff = () => {
       });
   };
 
+  const updateClick = (id) => {
+    let data = id;
+    sessionStorage.setItem("admStaffId", data)
+    navigate("/adminupdateadminstaff")
+  }
+
   useEffect(() => {
     getData();
   }, []);
@@ -109,6 +117,12 @@ const AdminViewAllAdminStaff = () => {
                     onClick={() => handleDeleteClick(value.id)}
                   >
                     Delete
+                  </button>
+                  <button
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+                    onClick={() => updateClick(value.id)}
+                  >
+                    Update
                   </button>
                 </div>
               </div>

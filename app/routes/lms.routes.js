@@ -58,6 +58,8 @@ router.post("/viewAllBatches", BatchesController.batchView)
 
 router.post("/updateAdminStaff", AdminStaffController.adminStaffUpdate)
 
+router.post("/viewoneadminstaff", AdminStaffController.viewOneAdminStaff)
+
 router.post("/searchBatch", BatchesController.searchBatch)
 
 router.post("/addtask", taskController.createTask);

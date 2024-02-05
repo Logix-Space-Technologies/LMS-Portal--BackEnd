@@ -83,6 +83,7 @@ import AdminViewAllTasks from './components/Admin/AdminViewAllTasks';
 import AdminSearchTrainer from './components/Admin/AdminSearchTrainer';
 import StudentUpdateSubmittedTask from './components/Student/StudentUpdateSubmittedTask';
 import AdminUpdateBatch from './components/Admin/AdminUpdateBatch';
+import AdminUpdateAdminStaff from './components/Admin/AdminUpdateAdminStaff';
 
 
 
@@ -137,6 +138,7 @@ function App() {
           <Route path='/AdminViewAllTasks' element={<AdminViewAllTasks/>}/>
           <Route path='/adminSearchTrainers' element={<AdminSearchTrainer/>}/>
           <Route path='/adminupdatebatch' element={<AdminUpdateBatch/>}/>
+          <Route path='/adminupdateadminstaff' element={<AdminUpdateAdminStaff/>}/>
 
 
 
