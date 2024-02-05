@@ -373,5 +373,26 @@ exports.cancelSession = (request, response) => {
     });
 };
 
+exports.isSessionHappeningToday = (request, response) => {
+    const sessionToken = request.headers.token;
+    jwt.verify(sessionToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Session.CheckIsTodaySessionAvailable((err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": false });
+                } else {
+                    return response.json({ "status": true , "data": data});
+                }
+            });
+
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+}
+
 
 
