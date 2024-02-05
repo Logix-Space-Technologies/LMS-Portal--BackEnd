@@ -1,6 +1,17 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const ClgStaffNavbar = () => {
+    const navigate = useNavigate()
+
+    const logOut = () => {
+        navigate("/clgStafflogin")
+        sessionStorage.removeItem("clgstaffkey");
+        sessionStorage.removeItem("clgStaffId");
+        sessionStorage.removeItem("clgStaffEmail");
+        sessionStorage.removeItem("clgstaffLogintoken");
+        sessionStorage.removeItem("clgStaffCollegeId");
+    }
   return (
     <div>
          <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -36,7 +47,7 @@ const ClgStaffNavbar = () => {
                             <a className="nav-link" href="/clgstaffviewattendance">View Attendance List</a>
                         </li>
                         <li className="nav-item">
-                            <a href="/clgStafflogin" className="dropdown-item">Log Out</a> 
+                            <a onClick={logOut} className="dropdown-item">Log Out</a> 
                         </li>
                     </ul>
                 </div>

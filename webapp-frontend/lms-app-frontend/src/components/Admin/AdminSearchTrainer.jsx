@@ -1,14 +1,13 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-import ClgStaffNavbar from './ClgStaffNavbar'
+import Navbar from './Navbar'
 import '../../config/config'
 
-const CollegeStaffSearchTask = () => {
+const AdminSearchTrainer = () => {
 
     const [inputField, setInputField] = useState(
         {
-            "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
-            "taskQuery": ""
+            "TrainerSearchQuery": ""
         }
     )
 
@@ -16,7 +15,9 @@ const CollegeStaffSearchTask = () => {
 
     const [isLoading, setIsLoading] = useState(true)
 
-    const apiLink = global.config.urls.api.server + "/api/lms/collegeStaffSearchTasks"
+    const apiUrl = global.config.urls.api.server + "/api/lms/searchTrainer"
+
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/deleteTrainer"
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
@@ -26,38 +27,63 @@ const CollegeStaffSearchTask = () => {
         console.log(inputField)
         let axiosConfig = {
             headers: {
-                "content-type": "application/json;charset=UTF-8",
+                'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("clgstaffLogintoken"),
-                "key": sessionStorage.getItem("clgstaffkey")
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
             }
-        };
-        axios.post(apiLink, inputField, axiosConfig).then(
+        }
+        axios.post(apiUrl, inputField, axiosConfig).then(
             (response) => {
                 setUpdateField(response.data.data)
                 setIsLoading(false)
                 console.log(response.data.data)
-                setInputField({
-                    "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
-                    "taskQuery": ""
-                })
+                setInputField(
+                    {
+                        "TrainerSearchQuery": ""
+                    }
+                )
+            }
+        )
+    }
+
+    //Delete Function
+    const deleteClick = (id) => {
+        let deletedata = { "id": id }
+        let axiosConfig2 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        }
+        axios.post(apiUrl2, deletedata, axiosConfig2).then(
+            (response) => {
+                console.log(deletedata)
+                if (response.data.status === "success") {
+                    alert("Trainer Deleted Successfully!!")
+                    window.location.reload();
+                } else {
+                    alert(response.data.status)
+                }
             }
         )
     }
 
     return (
         <div>
-            <ClgStaffNavbar/>
+            <Navbar /><br />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                         <div className="row g-3">
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <h1>Search Task</h1>
+                                <h1>Search Trainers</h1>
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <label htmlFor="" className="form-label">Task Name/Task Description/Task Type/Batch Name</label>
-                                <input onChange={inputHandler} type="text" className="form-control" name="taskQuery" value={inputField.taskQuery} />
+                                <label htmlFor="" className="form-label">Trainer Name/Email/Contact No.</label>
+                                <input onChange={inputHandler} type="text" className="form-control" name="TrainerSearchQuery" value={inputField.TrainerSearchQuery} />
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                 <button onClick={readValue} className="btn btn-warning">Search</button>
@@ -73,7 +99,7 @@ const CollegeStaffSearchTask = () => {
                     <div className="row g-3">
                         <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-sm border border-gray-200">
                             <header className="px-5 py-4 border-b border-gray-100">
-                                <h2 className="font-semibold text-2xl text-gray-800">List of Tasks</h2>
+                                <h2 className="font-semibold text-2xl text-gray-800">List of Trainers</h2>
                             </header>
                             <div className="p-3">
                                 <div className="overflow-x-auto">
@@ -81,25 +107,22 @@ const CollegeStaffSearchTask = () => {
                                         <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
                                             <tr>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Batch Name</div>
+                                                    <div className="font-semibold text-center"></div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Task Title</div>
+                                                    <div className="font-semibold text-center">Trainer Name</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Task Description</div>
+                                                    <div className="font-semibold text-center">About</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Task Type</div>
+                                                    <div className="font-semibold text-center">Email</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Task Material</div>
+                                                    <div className="font-semibold text-center">Contact No.</div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Total Score</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Due Date</div>
+                                                    <div className="font-semibold text-center"></div>
                                                 </th>
                                                 <th className="p-4 whitespace-nowrap">
                                                     <div className="font-semibold text-center"></div>
@@ -111,25 +134,35 @@ const CollegeStaffSearchTask = () => {
                                                 (value, index) => (
                                                     <tr key={index}>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.batchName}</div>
+                                                            <div className="flex items-center">
+                                                                <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
+                                                                    <img
+                                                                        className="rounded mx-auto d-block"
+                                                                        src={value.profilePicture}
+                                                                        width="150px"
+                                                                        height="140px"
+                                                                        alt=""
+                                                                    />
+                                                                </div>
+                                                            </div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.taskTitle}</div>
+                                                            <div className="text-center">{value.trainerName}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.taskDesc}</div>
+                                                            <div className="text-center">{value.about}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.taskType}</div>
+                                                            <div className="text-center">{value.email}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <a target="_blank" href={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 shadow rounded-md hover:bg-blue-500">View Material</a>
+                                                            <div className="text-center">{value.phoneNumber}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.totalScore}</div>
+                                                            <button onClick="#" className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{new Date(value.dueDate).toLocaleDateString()}</div>
+                                                            <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
                                                         </td>
                                                     </tr>
                                                 )
@@ -142,11 +175,11 @@ const CollegeStaffSearchTask = () => {
                     </div>
 
                 ) : (
-                    <div className="col-12 text-center">No Tasks Found!!</div>
+                    <div className="col-12 text-center">No Trainers Found!!</div>
                 ))}
             </div>
         </div >
     )
 }
 
-export default CollegeStaffSearchTask
+export default AdminSearchTrainer

@@ -145,7 +145,7 @@ exports.cancelRefundRequest= (request, response) => {
                     response.json({ "status": err });
                 } else {
                     console.log("Refund request successfully cancelled");
-                    response.json({ "status": "success", "data": data });
+                    response.json({ "status": "success"});
                 }
             });
         } else {

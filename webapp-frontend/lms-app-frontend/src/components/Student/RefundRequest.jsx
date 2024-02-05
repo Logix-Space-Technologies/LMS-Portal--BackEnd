@@ -1,8 +1,8 @@
-//RefundRequest.jsx
-
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import StudNavBar from './StudNavBar';
+import '../../config/config'
+import { useNavigate } from 'react-router-dom';
 
 const RefundRequestForm = () => {
     const [inputField, setInputField] = useState({
@@ -11,6 +11,8 @@ const RefundRequestForm = () => {
     });
 
     const [errors, setErrors] = useState({});
+
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/refundRequest";
     useEffect(() => {
@@ -58,6 +60,13 @@ const RefundRequestForm = () => {
                             alert("No payment history found for the student.");
                         } else if (response.data.status === "Failed to create refund request.") {
                             alert("Failed to create refund request.");
+                        } else if (response.data.status === "Unauthorized User!!") {
+                            navigate("/studentLogin")
+                            sessionStorage.removeItem("studentkey");
+                            sessionStorage.removeItem("studentId");
+                            sessionStorage.removeItem("studemail");
+                            sessionStorage.removeItem("studBatchId");
+                            sessionStorage.removeItem("studLoginToken");
                         }
                         setInputField((prevInputField) => ({
                             ...prevInputField,
@@ -89,7 +98,7 @@ const RefundRequestForm = () => {
 
     return (
         <div>
-            <StudNavBar/>
+            <StudNavBar />
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">

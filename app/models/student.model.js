@@ -981,7 +981,7 @@ SubmitTask.studentUpdateSubmittedTask = (updateSubTask, result) => {
 };
 
 SubmitTask.studentviewsubmittedtask = (id, result) => {
-    db.query("SELECT * FROM `submit_task` WHERE id = ?", [id],
+    db.query("SELECT `gitLink`, `remarks` FROM `submit_task` WHERE `id` = ?", [id],
         (err, res) => {
             if (err) {
                 console.error("Error: ", err);
