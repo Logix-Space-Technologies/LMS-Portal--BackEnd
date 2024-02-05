@@ -68,6 +68,8 @@ router.post("/deleteTask", taskController.taskDelete)
 
 router.post("/updateBatch", BatchesController.batchUpdate);
 
+router.post("/viewonebatch", BatchesController.viewOneBatch);
+
 router.post('/searchCollegeStaff', ClgStaffController.searchCollegeStaff);
 
 router.post("/viewtasks", taskController.taskView)

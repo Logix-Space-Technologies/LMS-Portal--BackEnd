@@ -82,6 +82,7 @@ import AdmStaffViewProfile from './components/AdminStaff/AdminStaffDashboard/Adm
 import AdminViewAllTasks from './components/Admin/AdminViewAllTasks';
 import AdminSearchTrainer from './components/Admin/AdminSearchTrainer';
 import StudentUpdateSubmittedTask from './components/Student/StudentUpdateSubmittedTask';
+import AdminUpdateBatch from './components/Admin/AdminUpdateBatch';
 
 
 
@@ -135,7 +136,7 @@ function App() {
           <Route path='/AdminSendNotification' element={<AdminSendNotification/>}/>
           <Route path='/AdminViewAllTasks' element={<AdminViewAllTasks/>}/>
           <Route path='/adminSearchTrainers' element={<AdminSearchTrainer/>}/>
-
+          <Route path='/adminupdatebatch' element={<AdminUpdateBatch/>}/>
 
 
 
