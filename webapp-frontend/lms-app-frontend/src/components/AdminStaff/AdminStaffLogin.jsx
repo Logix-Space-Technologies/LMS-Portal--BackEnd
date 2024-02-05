@@ -35,9 +35,11 @@ const AdminStaffLogin = () => {
                 if (Response.data.status === "Success") {
                     let admstafftoken = Response.data.token
                     let admstaffkey = "lmsappadmstaff"
+                    let Email = Response.data.data.Email;
                     let admstaffId = Response.data.data.id
                     sessionStorage.setItem("admstaffId",admstaffId)
                     sessionStorage.setItem("admstaffLogintoken", admstafftoken)
+                    sessionStorage.setItem("Email", Email)
                     sessionStorage.setItem("admstaffkey", admstaffkey)
                     navigate("/admstaffdashboard")
                 } else {
