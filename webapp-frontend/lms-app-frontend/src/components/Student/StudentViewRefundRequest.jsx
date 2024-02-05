@@ -38,6 +38,7 @@ const StudentViewRefundRequest = () => {
                         sessionStorage.removeItem("studemail");
                         sessionStorage.removeItem("studBatchId");
                         sessionStorage.removeItem("studLoginToken");
+                        sessionStorage.removeItem("subtaskId");
                     } else {
                         if (response.data.status === "No refund requests found.") {
                             console.log(response.data.status)
@@ -78,6 +79,7 @@ const StudentViewRefundRequest = () => {
                         sessionStorage.removeItem("studemail");
                         sessionStorage.removeItem("studBatchId");
                         sessionStorage.removeItem("studLoginToken");
+                        sessionStorage.removeItem("subtaskId");
                     } else {
                         alert(response.data.status)
                     }
@@ -109,6 +111,7 @@ const StudentViewRefundRequest = () => {
                         sessionStorage.removeItem("studemail");
                         sessionStorage.removeItem("studBatchId");
                         sessionStorage.removeItem("studLoginToken");
+                        sessionStorage.removeItem("subtaskId");
                     } else {
                         alert(response.data.status)
                     }
