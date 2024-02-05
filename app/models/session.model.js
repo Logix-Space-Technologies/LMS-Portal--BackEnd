@@ -319,5 +319,21 @@ Session.fetchAttendenceCode = (attendenceCode, result) => {
         })
 }
 
+Session.CheckIsTodaySessionAvailable = (result) => {
+    db.query("SELECT * FROM sessiondetails WHERE cancelStatus = 0 AND deleteStatus = 0 AND isActive = 1 AND date = CURRENT_DATE()", (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                return
+            }
+            if (res.length === 0) {
+                console.log("Session Not Found")
+                result("Session Not Found", null)
+                return
+            }
+            result(null, res)
+        })
+}
+
 
 module.exports = Session

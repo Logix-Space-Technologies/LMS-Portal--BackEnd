@@ -10,6 +10,7 @@ const StudNavBar = () => {
         sessionStorage.removeItem("studemail");
         sessionStorage.removeItem("studBatchId");
         sessionStorage.removeItem("studLoginToken");
+        sessionStorage.removeItem("subtaskId");
     }
   return (
     <div>

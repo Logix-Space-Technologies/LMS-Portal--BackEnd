@@ -25,6 +25,9 @@ const AdmStaffNavBar = () => {
                             <li className="nav-item">
                                 <a className="nav-link active" aria-current="page" href="/admstaffdashboard">Admin Staff Dashboard</a>
                             </li>
+                            <li>
+                                <a className="nav-link active" aria-current="page" href="/AdminStaffChangePassword">Change Password</a>
+                            </li>
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Functionalities

@@ -84,6 +84,8 @@ import AdminSearchTrainer from './components/Admin/AdminSearchTrainer';
 import StudentUpdateSubmittedTask from './components/Student/StudentUpdateSubmittedTask';
 import AdminUpdateBatch from './components/Admin/AdminUpdateBatch';
 import AdminUpdateAdminStaff from './components/Admin/AdminUpdateAdminStaff';
+import AdminStaffChangePassword from './components/AdminStaff/AdminStaffChangePassword';
+
 
 
 
@@ -156,6 +158,8 @@ function App() {
           <Route path='/admstaffheader' element={<AdminStaffHeader/>}/>
           <Route path='/admstaffdashboard' element={<AdmStaffDashBoard/>}/>
           <Route path='/admstaffviewprofile' element={<AdmStaffViewProfile/>}/>
+          <Route path='/AdminStaffChangePassword' element={<AdminStaffChangePassword/>}/>
+
 
 
 
