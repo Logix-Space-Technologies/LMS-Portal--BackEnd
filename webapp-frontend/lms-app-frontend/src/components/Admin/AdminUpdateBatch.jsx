@@ -5,6 +5,16 @@ import axios from 'axios'
 
 const AdminUpdateBatch = () => {
 
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+
     const [batchData, setBatchData] = useState([])
     const [updateField, setUpdateField] = useState({
         "id": sessionStorage.getItem("batchId"),
@@ -59,26 +69,22 @@ const AdminUpdateBatch = () => {
                     alert("Batch Updated!")
                     navigate("/adminviewallbatches")
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                        alert(response.data.data.trainerName)
+                    if (response.data.status === "Validation failed" && response.data.data.batchName) {
+                        alert(response.data.data.batchName)
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                            alert(response.data.data.trainerName)
+                        if (response.data.status === "Validation failed" && response.data.data.regStartDate) {
+                            alert(response.data.data.regStartDate)
                         } else {
-                            if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                                alert(response.data.data.trainerName)
+                            if (response.data.status === "Validation failed" && response.data.data.regEndDate) {
+                                alert(response.data.data.regEndDate)
                             } else {
-                                if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                                    alert(response.data.data.trainerName)
+                                if (response.data.status === "Validation failed" && response.data.data.batchDesc) {
+                                    alert(response.data.data.batchDesc)
                                 } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                                        alert(response.data.data.trainerName)
+                                    if (response.data.status === "Validation failed" && response.data.data.batchAmount) {
+                                        alert(response.data.data.batchAmount)
                                     } else {
-                                        if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                                            alert(response.data.data.trainerName)
-                                        } else {
-                                            alert(response.data.status)
-                                        }
+                                        alert(response.data.status)
                                     }
                                 }
                             }
@@ -89,8 +95,8 @@ const AdminUpdateBatch = () => {
         )
     }
 
-    const getData = () =>{
-        let data = { "id": sessionStorage.getItem("batchId")}
+    const getData = () => {
+        let data = { "id": sessionStorage.getItem("batchId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -99,7 +105,7 @@ const AdminUpdateBatch = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         }
-        
+
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
                 setBatchData(response.data.data)
@@ -143,23 +149,38 @@ const AdminUpdateBatch = () => {
 
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Batch Name</label>
-                                                <input type="text" className="form-control" name="batchName" onChange={updateHandler} value={updateField.batchName}/>
+                                                <input type="text" className="form-control" name="batchName" onChange={updateHandler} value={updateField.batchName} />
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Registration Start Date</label>
-                                                <input type="date" className="form-control" name="regStartDate" onChange={updateHandler} value={updateField.regStartDate}/>
+                                                <input
+                                                    type="date"
+                                                    className="form-control"
+                                                    name="regStartDate"
+                                                    onChange={updateHandler}
+                                                    value={updateField.regStartDate ? formatDate(updateField.regStartDate) : ''}
+                                                />
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Registration End Date</label>
-                                                <input type="date" className="form-control" name="regEndDate" onChange={updateHandler} value={updateField.regEndDate}/>
+                                                <input
+                                                    type="date"
+                                                    className="form-control"
+                                                    name="regEndDate"
+                                                    onChange={updateHandler}
+                                                    value={updateField.regEndDate ? formatDate(updateField.regEndDate) : ''}
+                                                />
                                             </div>
+
+
+
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Description</label>
                                                 <input type="text" className="form-control" name="batchDesc" onChange={updateHandler} value={updateField.batchDesc} />
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Amount</label>
-                                                <input type="text" className="form-control" name="batchAmount" onChange={updateHandler} value={updateField.batchAmount}/>
+                                                <input type="text" className="form-control" name="batchAmount" onChange={updateHandler} value={updateField.batchAmount} />
                                             </div>
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
