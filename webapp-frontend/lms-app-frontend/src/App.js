@@ -82,7 +82,11 @@ import AdmStaffViewProfile from './components/AdminStaff/AdminStaffDashboard/Adm
 import AdminViewAllTasks from './components/Admin/AdminViewAllTasks';
 import AdminSearchTrainer from './components/Admin/AdminSearchTrainer';
 import StudentUpdateSubmittedTask from './components/Student/StudentUpdateSubmittedTask';
+import AdminUpdateBatch from './components/Admin/AdminUpdateBatch';
+import AdminUpdateAdminStaff from './components/Admin/AdminUpdateAdminStaff';
 import AdminStaffChangePassword from './components/AdminStaff/AdminStaffChangePassword';
+import AdminStaffViewAllMaterial from './components/AdminStaff/AdminStaffViewAllMaterial';
+
 
 
 
@@ -136,7 +140,8 @@ function App() {
           <Route path='/AdminSendNotification' element={<AdminSendNotification/>}/>
           <Route path='/AdminViewAllTasks' element={<AdminViewAllTasks/>}/>
           <Route path='/adminSearchTrainers' element={<AdminSearchTrainer/>}/>
-
+          <Route path='/adminupdatebatch' element={<AdminUpdateBatch/>}/>
+          <Route path='/adminupdateadminstaff' element={<AdminUpdateAdminStaff/>}/>
 
 
 
@@ -155,6 +160,7 @@ function App() {
           <Route path='/admstaffdashboard' element={<AdmStaffDashBoard/>}/>
           <Route path='/admstaffviewprofile' element={<AdmStaffViewProfile/>}/>
           <Route path='/AdminStaffChangePassword' element={<AdminStaffChangePassword/>}/>
+          <Route path='/AdminStaffViewAllMaterial' element={<AdminStaffViewAllMaterial/>}/>
 
 
 

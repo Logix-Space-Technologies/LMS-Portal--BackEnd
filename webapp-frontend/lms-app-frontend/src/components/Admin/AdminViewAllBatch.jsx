@@ -56,7 +56,7 @@ const AdminViewAllBatch = () => {
     const UpdateClick = (id) => {
         let data = id
         sessionStorage.setItem("batchId", data)
-        navigate("/adminviewallcurriculum")
+        navigate("/adminupdatebatch")
 
     }
 

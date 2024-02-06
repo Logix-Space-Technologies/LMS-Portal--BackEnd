@@ -33,29 +33,26 @@ const AdminStaffChangePassword = () => {
 
         axios.post(apiurl, updateField, axiosConfig).then(
             (response) => {
-                if (updateField.oldAdSfPassword === updateField.newAdSfPassword) {
-                    alert("Old password and New password cannot be same.")
+                if (response.data.status === "success") {
+                    alert("Password Changed Successfully");
+                    navigate("/admstafflogin");
+                    sessionStorage.removeItem("admstaffLogintoken")
+                    sessionStorage.removeItem("admstaffkey")
+                    sessionStorage.removeItem("Email")
+                    navigate("/admstafflogin");
                 } else {
-                    if (response.data.status === "Password Updated Successfully.") {
-                        alert("Password Changed Successfully");
-                        navigate("/admstafflogin");
-                        sessionStorage.removeItem("admstaffLogintoken")
-                        sessionStorage.removeItem("admstaffkey")
-                        sessionStorage.removeItem("Email")
-                        navigate("/admstafflogin");
+                    if (response.data.status === "Validation failed" && response.data.data.oldAdSfPassword) {
+                        alert(response.data.data.oldAdSfPassword);
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.oldAdSfPassword) {
-                            alert(response.data.data.oldAdSfPassword);
+                        if (response.data.status === "Validation failed" && response.data.data.newAdSfPassword) {
+                            alert(response.data.data.newAdSfPassword);
                         } else {
-                            if (response.data.status === "Validation failed" && response.data.data.newAdSfPassword) {
-                                alert(response.data.data.newAdSfPassword);
-                            } else {
-                                alert(response.data.status)
-                            }
+                            alert(response.data.status)
                         }
                     }
                 }
             }
+
         )
     }
     return (
