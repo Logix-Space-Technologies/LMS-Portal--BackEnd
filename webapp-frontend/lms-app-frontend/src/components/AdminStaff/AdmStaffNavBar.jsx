@@ -37,7 +37,9 @@ const AdmStaffNavBar = () => {
                                 </a>
                                 <ul className="dropdown-menu">
                                     <li><a className="dropdown-item" href="#">View All College</a></li>
+                                    <li><a className="dropdown-item" href="/adminstaffviewsubmittedtask">View Submitted Task</a></li>
                                 </ul>
+                                
                             </li>
                             <li className="nav-item">
                                 <a onClick={logOut} className="dropdown-item">Log Out</a>

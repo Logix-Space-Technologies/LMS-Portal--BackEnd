@@ -87,6 +87,8 @@ import AdminUpdateAdminStaff from './components/Admin/AdminUpdateAdminStaff';
 import AdminStaffChangePassword from './components/AdminStaff/AdminStaffChangePassword';
 import AdminStaffViewAllMaterial from './components/AdminStaff/AdminStaffViewAllMaterial';
 import AdminAddCurriculum from './components/Admin/AdminAddCurriculum';
+import AdminStaffViewSubmittedTask from './components/AdminStaff/AdminStaffViewSubmittedTask';
+import AdminStaffEvaluateTask from './components/AdminStaff/AdminStaffEvaluateTask';
 
 
 
@@ -162,6 +164,8 @@ function App() {
           <Route path='/admstaffviewprofile' element={<AdmStaffViewProfile/>}/>
           <Route path='/AdminStaffChangePassword' element={<AdminStaffChangePassword/>}/>
           <Route path='/AdminStaffViewAllMaterial' element={<AdminStaffViewAllMaterial/>}/>
+          <Route path='/adminstaffviewsubmittedtask' element={<AdminStaffViewSubmittedTask/>}/>
+          <Route path='/adminstaffevaluatetask' element={<AdminStaffEvaluateTask/>}/>
 
 
 
