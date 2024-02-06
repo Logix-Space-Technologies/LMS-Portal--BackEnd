@@ -73,6 +73,9 @@ const Navbar = () => {
                             <a className="nav-link" href="/adminSearchTrainers">Search Trainers</a>
                         </li>
                         <li className="nav-item">
+                            <a className="nav-link" href="/adminAddcurriculum">Add Curriculum</a>
+                        </li>
+                        <li className="nav-item">
                             <a className="nav-link" href="/adminAddtrainer">Add Trainers</a>
                         </li>
                         <li className="nav-item dropdown">
