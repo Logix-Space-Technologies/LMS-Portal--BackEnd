@@ -2,8 +2,11 @@ import React, { useState } from 'react'
 import Navbar from './Navbar'
 import axios from 'axios'
 import '../../config/config'
+import { useNavigate } from 'react-router-dom'
 
 const AdminSearchBatch = () => {
+
+    const navigate = useNavigate()
 
     const [inputField, setInputField] = useState(
         {
@@ -68,6 +71,13 @@ const AdminSearchBatch = () => {
                 }
             }
         )
+    }
+
+    const UpdateClick = (id) => {
+        let data = id
+        sessionStorage.setItem("batchId", data)
+        navigate("/adminupdatebatch")
+
     }
 
   return (
@@ -154,7 +164,7 @@ const AdminSearchBatch = () => {
                                                             <div className="text-center">{value.batchAmount}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <button onClick="#" className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
+                                                            <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
                                                             <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>

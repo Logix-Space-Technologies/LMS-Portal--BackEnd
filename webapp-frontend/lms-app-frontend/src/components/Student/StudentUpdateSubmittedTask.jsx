@@ -44,7 +44,7 @@ const StudentUpdateSubmittedTask = () => {
                         sessionStorage.removeItem("studemail");
                         sessionStorage.removeItem("studBatchId");
                         sessionStorage.removeItem("studLoginToken");
-                        sessionStorage.removeItem("submitTaskId")
+                        sessionStorage.removeItem("subtaskId");
                     } else {
                         alert(response.data.status)
                     }
@@ -83,7 +83,7 @@ const StudentUpdateSubmittedTask = () => {
                         sessionStorage.removeItem("studemail");
                         sessionStorage.removeItem("studBatchId");
                         sessionStorage.removeItem("studLoginToken");
-                        sessionStorage.removeItem("submitTaskId")
+                        sessionStorage.removeItem("subtaskId");
                     } else {
                         alert(response.data.status)
                     }
