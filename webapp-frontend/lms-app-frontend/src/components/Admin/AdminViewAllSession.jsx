@@ -203,6 +203,7 @@ const AdminViewAllSession = () => {
                     </tbody>
                 </table>
             </div>
+            {/* QR CODE RENDERING */}
             {qrCodeAttendance && (
                 <div className="mt-4 p-4 border border-gray-200 rounded">
                     <QRCodeCanvas value={qrCodeAttendance} />
