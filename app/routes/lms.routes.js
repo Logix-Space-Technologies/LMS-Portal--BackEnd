@@ -246,6 +246,8 @@ router.post('/viewOneCurriculum', curriculumController.viewOneCurriculum)
 
 router.post('/isSessionHappeningToday', SessionsController.isSessionHappeningToday)
 
+router.post('/AdmViewAllMaterial', AdminStaffController.AdmViewAllMaterial)
+
 
 
 

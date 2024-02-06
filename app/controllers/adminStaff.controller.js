@@ -437,3 +437,22 @@ exports.viewOneAdminStaff = (request, response) => {
         }
     });
 };
+
+exports.AdmViewAllMaterial = (request, response) => {
+    const admstaffToken = request.headers.token
+    const key = request.headers.key;
+    jwt.verify(admstaffToken, key, (err, decoded) => {
+        if (decoded) {
+            AdminStaff.AdmViewAllMaterial((err, data) => {
+                if (err) {
+                    console.log(err)
+                    response.json({ "status": err })
+                } else {
+                    response.json(data)
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" })
+        }
+    })
+}
