@@ -310,4 +310,19 @@ AdminStaff.viewOneAdminStaff = (id, result) => {
         })
 }
 
+AdminStaff.AdmViewAllMaterial = async (result) => {
+    let query = "SELECT fileName,materialDesc,uploadFile,remarks,addedDate,materialType FROM materials WHERE deleteStatus = 0 AND isActive = 1";
+    db.query(query, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        } else {
+            console.log("Materials: ", res);
+            result(null, res);
+
+        }
+    });
+}
+
 module.exports = AdminStaff
