@@ -74,6 +74,7 @@ function isValidMobileNumber(mobileNumber) {
 }
 
 function isValidAmount(amount) {
+    console.log(amount)
     return {
         isValid: amount > 0,
         message: "Value must be greater than zero"
@@ -135,6 +136,8 @@ function isValidDate(date) {
 function isDateGreaterThanToday(date) {
     const inputDate = new Date(date);
     const currentDate = new Date();
+    console.log(inputDate)
+    console.log(currentDate)
 
     return {
         isValid: inputDate > currentDate,

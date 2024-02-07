@@ -36,7 +36,6 @@ const AdminUpdateBatch = () => {
     }
 
     const readNewValue = () => {
-        console.log(updateField)
         let axiosConfig = {
             headers: {
                 'content-type': 'multipart/form-data',
@@ -54,6 +53,7 @@ const AdminUpdateBatch = () => {
             "batchDesc": updateField.batchDesc,
             "batchAmount": updateField.batchAmount
         }
+        console.log(data)
         axios.post(apiUrl2, data, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Updated Batch Details") {
@@ -69,19 +69,19 @@ const AdminUpdateBatch = () => {
                     alert("Batch Updated!")
                     navigate("/adminviewallbatches")
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.batchName) {
+                    if (response.data.status === "Validation Failed" && response.data.data.batchName) {
                         alert(response.data.data.batchName)
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.regStartDate) {
+                        if (response.data.status === "Validation Failed" && response.data.data.regStartDate) {
                             alert(response.data.data.regStartDate)
                         } else {
-                            if (response.data.status === "Validation failed" && response.data.data.regEndDate) {
+                            if (response.data.status === "Validation Failed" && response.data.data.regEndDate) {
                                 alert(response.data.data.regEndDate)
                             } else {
-                                if (response.data.status === "Validation failed" && response.data.data.batchDesc) {
+                                if (response.data.status === "Validation Failed" && response.data.data.batchDesc) {
                                     alert(response.data.data.batchDesc)
                                 } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.batchAmount) {
+                                    if (response.data.status === "Validation Failed" && response.data.data.batchAmount) {
                                         alert(response.data.data.batchAmount)
                                     } else {
                                         alert(response.data.status)

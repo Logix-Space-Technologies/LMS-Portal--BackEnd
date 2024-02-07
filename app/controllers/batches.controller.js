@@ -165,18 +165,17 @@ exports.searchBatch = (request, response) => {
 }
 
 exports.batchUpdate = (request, response) => {
-    const {
-        id,
-        collegeId,
-        batchName,
-        regStartDate,
-        regEndDate,
-        batchDesc,
-        batchAmount,
-    } = request.body;
+    // const {
+    //     id,
+    //     collegeId,
+    //     batchName,
+    //     regStartDate,
+    //     regEndDate,
+    //     batchDesc,
+    //     batchAmount,
+    // } = request.body;
 
     const batchUpdateToken = request.headers.token;
-    console.log(batchUpdateToken)
     key = request.headers.key
     jwt.verify(batchUpdateToken, key, (err, decoded) => {
         if (decoded) {
@@ -184,41 +183,49 @@ exports.batchUpdate = (request, response) => {
             const validationErrors = {};
 
 
-            if (!Validator.isValidName(batchName).isValid) {
-                validationErrors.batchName = Validator.isValidName(batchName).message;
+            if (!Validator.isValidName(request.body.batchName).isValid) {
+                validationErrors.batchName = Validator.isValidName(request.body.batchName).message;
             }
 
-            if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
-                validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
+            if (Validator.isEmpty(request.body.regStartDate).isValid) {
+                validationErrors.regstartdate = Validator.isEmpty(request.body.regStartDate).message;
             }
-            if (!Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).isValid) {
-                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).message
-            }
-
-            if (!Validator.isDateGreaterThanToday(regEndDate).isValid) {
-                validationErrors.regEndDate = Validator.isDateGreaterThanToday(regEndDate).message;
+            if (!Validator.isValidDate(request.body.regStartDate).isValid) {
+                validationErrors.regstartdate = Validator.isValidDate(request.body.regStartDate).message
             }
 
-            if (Validator.isEmpty(batchDesc).isValid) {
-                validationErrors.batchDesc = Validator.isEmpty(batchDesc).message;
+            if (Validator.isEmpty(request.body.regEndDate).isValid) {
+                validationErrors.regenddate = Validator.isEmpty(request.body.regEndDate).message
+            }
+            if (!Validator.isLaterDate(request.body.regEndDate, request.body.regStartDate).isValid) {
+                validationErrors.regenddate = Validator.isLaterDate(request.body.regEndDate, request.body.regStartDate).message
+            }
+            if (!Validator.isValidDate(request.body.regEndDate).isValid) {
+                validationErrors.regenddate = Validator.isValidDate(request.body.regEndDate).message
             }
 
-            if (!Validator.isValidAmount(batchAmount).isValid) {
-                validationErrors.batchAmount = Validator.isValidAmount(batchAmount).message;
+            if (Validator.isEmpty(request.body.batchDesc).isValid) {
+                validationErrors.batchDesc = Validator.isEmpty(request.body.batchDesc).message;
             }
+
+            if (!Validator.isValidAmount(request.body.batchAmount).isValid) {
+                validationErrors.batchAmount = Validator.isValidAmount(request.body.batchAmount).message;
+            }
+            
+            console.log("batch amount in controller: ", request.body.batchAmount)
 
             if (Object.keys(validationErrors).length > 0) {
                 return response.json({ "status": "Validation Failed", "data": validationErrors });
             }
 
             const updatedBatch = new Batches({
-                id: id,
-                collegeId: collegeId,
-                batchName: batchName,
-                regStartDate: regStartDate,
-                regEndDate: regEndDate,
-                batchDesc: batchDesc,
-                batchAmount: batchAmount
+                id: request.body.id,
+                collegeId: request.body.collegeId,
+                batchName: request.body.batchName,
+                regStartDate: request.body.regStartDate,
+                regEndDate: request.body.regEndDate,
+                batchDesc: request.body.batchDesc,
+                batchAmount: request.body.batchAmount
             });
 
             Batches.updateBatch(updatedBatch, (err, data) => {
