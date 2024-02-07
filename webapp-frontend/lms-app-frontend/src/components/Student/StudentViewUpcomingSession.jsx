@@ -36,7 +36,11 @@ const StudentViewUpcomingSession = () => {
                         sessionStorage.removeItem("studLoginToken");
                         sessionStorage.removeItem("subtaskId");
                     } else {
-                        alert(response.data.status)
+                        if (!response.data.data) {
+                            console.log(response.data.status)
+                        } else {
+                            alert(response.data.status)
+                        }
                     }
                 }
             })
@@ -57,7 +61,7 @@ const StudentViewUpcomingSession = () => {
 
     return (
         <div>
-            <StudNavBar/>
+            <StudNavBar />
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">

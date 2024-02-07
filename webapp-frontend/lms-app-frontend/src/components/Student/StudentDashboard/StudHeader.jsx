@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../../config/config'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const StudHeader = () => {
     const [studData, setStudData] = useState([])
@@ -141,14 +141,14 @@ const StudHeader = () => {
                             </div> */}
                     <div className="nav-item dropdown">
                         {studData.map((value, index) => {
-                            return <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            return <Link className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                 <img className="rounded-circle me-lg-2" src={value.studProfilePic} alt="" style={{ width: 40, height: 40 }} />
                                 <span className="d-none d-lg-inline-flex">{value.studName}</span>
-                            </a>
+                            </Link>
                         })}
                         <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="/studChangePassword" className="dropdown-item">Change Password</a>
-                            <a onClick={logOut} href="/studentLogin" className="dropdown-item">Log Out</a>
+                            <Link to="/studChangePassword" className="dropdown-item">Change Password</Link>
+                            <Link onClick={logOut} to="/studentLogin" className="dropdown-item">Log Out</Link>
                         </div>
 
                     </div>
