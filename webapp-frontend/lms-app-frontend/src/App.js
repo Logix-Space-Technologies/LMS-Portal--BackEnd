@@ -86,6 +86,7 @@ import AdminUpdateBatch from './components/Admin/AdminUpdateBatch';
 import AdminUpdateAdminStaff from './components/Admin/AdminUpdateAdminStaff';
 import AdminStaffChangePassword from './components/AdminStaff/AdminStaffChangePassword';
 import AdminStaffViewAllMaterial from './components/AdminStaff/AdminStaffViewAllMaterial';
+import AdminStaffUpdateMaterial from './components/AdminStaff/AdminStaffUpdateMaterial';
 
 
 
@@ -161,6 +162,7 @@ function App() {
           <Route path='/admstaffviewprofile' element={<AdmStaffViewProfile/>}/>
           <Route path='/AdminStaffChangePassword' element={<AdminStaffChangePassword/>}/>
           <Route path='/AdminStaffViewAllMaterial' element={<AdminStaffViewAllMaterial/>}/>
+          <Route path='/AdminStaffUpdateMaterial' element={<AdminStaffUpdateMaterial/>}/>
 
 
 
