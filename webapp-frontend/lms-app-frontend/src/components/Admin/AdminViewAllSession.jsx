@@ -1,10 +1,12 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
+import { QRCodeCanvas } from 'qrcode.react'
 import Navbar from './Navbar'
 
 const AdminViewAllSession = () => {
     const [sessionData, setSessionData] = useState([])
+    const [qrCodeAttendance, setQrCodeAttendance] = useState(null) // State to track attendance code for QR code
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions"
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession"
@@ -49,6 +51,36 @@ const AdminViewAllSession = () => {
 
     }
 
+    const isSessionToday = (date) => {
+        const today = new Date();
+        console.log(today);
+
+        // Split the date string into day, month, and year parts
+        const dateParts = date.split('/');
+        const day = parseInt(dateParts[0], 10);
+        const month = parseInt(dateParts[1] - 1, 10); // Subtract 1 from the month to match JavaScript's month numbering (0-11)
+        const year = parseInt(dateParts[2], 10);
+
+        const sessionDate = new Date(year, month, day);
+        console.log("session date: ", sessionDate);
+
+        // Compare the dates
+        return (
+            today.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) ===
+            sessionDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })
+        );
+    };
+
+    function formatTime(timeString) {
+        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+        return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
+    }
+
+
+    const handleShowQRCode = (attendanceCode) => {
+        setQrCodeAttendance(attendanceCode); // Set the attendance code for QR code generation
+    }
+
     useEffect(() => { getData() }, [])
     return (
         <div>
@@ -84,13 +116,10 @@ const AdminViewAllSession = () => {
                                 Venue OR Link
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Trainer Id
+                                Trainer Name
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Attendence Code
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Added Date
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Cancel Status
@@ -110,7 +139,6 @@ const AdminViewAllSession = () => {
                                     <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                         <div className="ps-3">
                                             <div className="text-base font-semibold">{value.sessionName}</div>
-
                                         </div>
                                     </th>
                                     <td className="px-6 py-4">
@@ -123,7 +151,7 @@ const AdminViewAllSession = () => {
                                         {value.date}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {value.time}
+                                        {formatTime(value.time)}
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.type}
@@ -135,13 +163,14 @@ const AdminViewAllSession = () => {
                                         {value.venueORlink}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {value.trainerId}
+                                        {value.trainerName}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button value={value.attendenceCode} className="btn btn-primary">View Attendance Code</button>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {value.addedDate}
+                                        {isSessionToday(value.date) && value.cancelStatus === "ACTIVE" && (
+                                            <button onClick={() => handleShowQRCode(value.attendenceCode)} className="btn btn-primary">
+                                                Show QR
+                                            </button>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.cancelStatus}
@@ -153,7 +182,7 @@ const AdminViewAllSession = () => {
                                     </td>
 
                                     <td className="px-6 py-4">
-                                        <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Update</a>
+                                        <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update</a>
                                     </td>
                                 </tr>
                             }
@@ -174,7 +203,13 @@ const AdminViewAllSession = () => {
                     </tbody>
                 </table>
             </div>
+            {/* QR Code Rendering */}
+            {qrCodeAttendance && (
+                <div className="mt-4 p-4 border border-gray-200 rounded">
+                    <QRCodeCanvas value={qrCodeAttendance} />
+                </div>
 
+            )}
 
         </div>
     )

@@ -46,6 +46,7 @@ exports.createCurriculum = (request, response) => {
 
     uploadFile(request, response, async (error) => {
         if (error) {
+            console.log("Message : ", error.message)
             return response.status(500).json({ "status": error.message });
         }
 
@@ -89,10 +90,6 @@ exports.createCurriculum = (request, response) => {
                         validationErrors.curriculumTitle = Validator.isEmpty(request.body.curriculumTitle).message;
                     }
 
-                    if (!Validator.isValidName(request.body.curriculumTitle).isValid) {
-                        validationErrors.curriculumTitle = Validator.isValidName(request.body.curriculumTitle).message;
-                    }
-
                     if (Validator.isEmpty(request.body.curriculumDesc).isValid) {
                         validationErrors.curriculumDesc = Validator.isEmpty(request.body.curriculumDesc).message;
                     }
@@ -133,6 +130,7 @@ exports.createCurriculum = (request, response) => {
         } catch (err) {
             fs.unlinkSync(file.path);
             response.status(500).json({ "status": err.message });
+            console.log(err.message)
         }
     });
 };
@@ -280,10 +278,6 @@ exports.updateCurriculum = (request, response) => {
                     // Validate curriculumTitle
                     if (Validator.isEmpty(request.body.curriculumTitle).isValid) {
                         validationErrors.curriculumTitle = Validator.isEmpty(request.body.curriculumTitle).message;
-                    }
-
-                    if (!Validator.isValidName(request.body.curriculumTitle).isValid) {
-                        validationErrors.curriculumTitle = Validator.isValidName(request.body.curriculumTitle).message;
                     }
 
                     // Validate curriculumDesc

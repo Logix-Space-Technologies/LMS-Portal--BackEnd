@@ -2,16 +2,16 @@ import React, { useState } from 'react'
 import '../../config/config'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Navbar from './Navbar';
 
-const AdminChangePassword = () => {
+
+const AdminStaffChangePassword = () => {
     const [updateField, setUpdateField] = useState({
-        "userName": sessionStorage.getItem("userName"),
-        "oldPassword": "",
-        "newPassword": ""
+        "Email": sessionStorage.getItem("Email"),
+        "oldAdSfPassword": "",
+        "newAdSfPassword": ""
     })
 
-    const apiurl = global.config.urls.api.server + "/api/lms/admchangepwd";
+    const apiurl = global.config.urls.api.server + "/api/lms/adminStaffChangePassword";
     const navigate = useNavigate();
 
 
@@ -27,7 +27,7 @@ const AdminChangePassword = () => {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken")
+                "token": sessionStorage.getItem("admstaffLogintoken")
             }
         };
 
@@ -35,33 +35,28 @@ const AdminChangePassword = () => {
             (response) => {
                 if (response.data.status === "success") {
                     alert("Password Changed Successfully");
-                    navigate("/");
-                    sessionStorage.removeItem("adminId")
-                    sessionStorage.removeItem("admkey")
-                    sessionStorage.removeItem("admtoken")
-                    sessionStorage.removeItem("userName")
-                    sessionStorage.removeItem("trainerId")
-                    sessionStorage.removeItem("curriculumId")
-                    sessionStorage.removeItem("clgStaffId")
-                    sessionStorage.removeItem("batchId")
-
+                    navigate("/admstafflogin");
+                    sessionStorage.removeItem("admstaffLogintoken")
+                    sessionStorage.removeItem("admstaffkey")
+                    sessionStorage.removeItem("Email")
+                    navigate("/admstafflogin");
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.oldPassword) {
-                        alert(response.data.data.oldPassword);
+                    if (response.data.status === "Validation failed" && response.data.data.oldAdSfPassword) {
+                        alert(response.data.data.oldAdSfPassword);
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.newPassword) {
-                            alert(response.data.data.newPassword);
+                        if (response.data.status === "Validation failed" && response.data.data.newAdSfPassword) {
+                            alert(response.data.data.newAdSfPassword);
                         } else {
                             alert(response.data.status)
                         }
                     }
                 }
             }
+
         )
     }
     return (
         <div>
-            <Navbar />
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
@@ -79,16 +74,16 @@ const AdminChangePassword = () => {
                                         </div>
                                         <ul className="list-unstyled mb-1-9">
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                                <label htmlFor="" className="form-label">UserName :</label>
-                                                <input onChange={updateHandler} type="text" className="form-control" name="userName" value={updateField.userName} disabled />
+                                                <label htmlFor="" className="form-label">Email :</label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="Email" value={updateField.Email} disabled />
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Old Password :</label>
-                                                <input onChange={updateHandler} type="password" className="form-control" name="oldPassword" value={updateField.oldPassword} />
+                                                <input onChange={updateHandler} type="password" className="form-control" name="oldAdSfPassword" value={updateField.oldAdSfPassword} />
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">New Password :</label>
-                                                <input onChange={updateHandler} type="password" className="form-control" name="newPassword" value={updateField.newPassword} />
+                                                <input onChange={updateHandler} type="password" className="form-control" name="newAdSfPassword" value={updateField.newAdSfPassword} />
                                             </div>
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
@@ -110,4 +105,4 @@ const AdminChangePassword = () => {
     )
 }
 
-export default AdminChangePassword
+export default AdminStaffChangePassword

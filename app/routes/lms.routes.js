@@ -58,6 +58,8 @@ router.post("/viewAllBatches", BatchesController.batchView)
 
 router.post("/updateAdminStaff", AdminStaffController.adminStaffUpdate)
 
+router.post("/viewoneadminstaff", AdminStaffController.viewOneAdminStaff)
+
 router.post("/searchBatch", BatchesController.searchBatch)
 
 router.post("/addtask", taskController.createTask);
@@ -241,6 +243,10 @@ router.post('/adminviewonetrainer', TrainerController.viewOneTrainer)
 router.post('/generateAttendancePdf', StudentController.generateBatchWiseAttendanceList)
 
 router.post('/viewOneCurriculum', curriculumController.viewOneCurriculum)
+
+router.post('/isSessionHappeningToday', SessionsController.isSessionHappeningToday)
+
+router.post('/AdmViewAllMaterial', AdminStaffController.AdmViewAllMaterial)
 
 
 
