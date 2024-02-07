@@ -850,18 +850,27 @@ Student.studentNotificationView = (studId, result) => {
                         result(null, { status: "Batch not found" });
                         return;
                     }
-                    db.query("SELECT message, sendBy, title, addedDate,sendDateTime FROM notifications WHERE batchId = ? ORDER BY sendDateTime DESC", [batchId], (err, notificationsRes) => {
-                        if (err) {
-                            console.log("error: ", err);
-                            result(err, null);
-                            return;
-                        } else {
-                            const formattedNotification = notificationsRes.map(notification => ({ ...notification, sendDateTime: notification.sendDateTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: notification.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
-                            console.log("Notifications: ", formattedNotification);
-                            result(null, formattedNotification);
-                            return;
+                    db.query(
+                        "SELECT message, sendBy, title, addedDate, sendDateTime, " +
+                        "CASE " +
+                        "WHEN TIMESTAMPDIFF(MINUTE, sendDateTime, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, sendDateTime, NOW()), ' minute', IF(TIMESTAMPDIFF(MINUTE, sendDateTime, NOW()) = 1, '', 's'), ' ago') " +
+                        "WHEN TIMESTAMPDIFF(HOUR, sendDateTime, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, sendDateTime, NOW()), ' hour', IF(TIMESTAMPDIFF(HOUR, sendDateTime, NOW()) = 1, '', 's'), ' ago') " +
+                        "ELSE CONCAT(TIMESTAMPDIFF(DAY, sendDateTime, NOW()), ' day', IF(TIMESTAMPDIFF(DAY, sendDateTime, NOW()) = 1, '', 's'), ' ago') " +
+                        "END AS formattedDateTime " +
+                        "FROM notifications WHERE batchId = ? ORDER BY sendDateTime DESC",
+                        [batchId],
+                        (err, notificationsRes) => {
+                            if (err) {
+                                console.log("error: ", err);
+                                result(err, null);
+                                return;
+                            } else {
+                                console.log("Notifications: ", notificationsRes);
+                                result(null, notificationsRes);
+                                return;
+                            }
                         }
-                    });
+                    );
                 }
             });
         }
