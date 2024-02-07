@@ -16,7 +16,7 @@ const Material = function (material) {
 
 
 Material.materialCreate = (newMaterial, result) => {
-    db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [newMaterial.batchId], (err, batchRes) => {
+    db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1 ORDER BY addedDate DESC", [newMaterial.batchId], (err, batchRes) => {
         if (err) {
             console.error("Error checking existing batch: ", err);
             result(err, null);
