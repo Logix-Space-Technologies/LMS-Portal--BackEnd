@@ -92,6 +92,8 @@ router.post("/studreg", StudentController.createStudent)
 
 router.post("/studViewTask", StudentController.studentTaskView)
 
+router.post("/studViewTaskOfSessions", StudentController.studentSessionRelatedTaskView)
+
 router.post("/studentLogin", StudentController.studLog)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)

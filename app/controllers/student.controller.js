@@ -252,6 +252,29 @@ exports.studentTaskView = (request, response) => {
     })
 }
 
+exports.studentSessionRelatedTaskView = (request, response) => {
+    const studId = request.body.id
+    const sessionId = request.body.sessionId
+    const studTaskToken = request.headers.token
+    jwt.verify(studTaskToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Tasks.studentSessionRelatedTaskView(studId,sessionId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No tasks found!" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+
 
 exports.StdChangePassword = (request, response) => {
     const { studEmail, oldPassword, newPassword } = request.body;
