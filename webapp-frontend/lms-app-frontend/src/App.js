@@ -86,7 +86,8 @@ import AdminUpdateBatch from './components/Admin/AdminUpdateBatch';
 import AdminUpdateAdminStaff from './components/Admin/AdminUpdateAdminStaff';
 import AdminStaffChangePassword from './components/AdminStaff/AdminStaffChangePassword';
 import AdminStaffViewAllMaterial from './components/AdminStaff/AdminStaffViewAllMaterial';
-
+import AdminAddCurriculum from './components/Admin/AdminAddCurriculum';
+import AdminAddTrainer from './components/Admin/AdminAddTrainer';
 
 
 
@@ -142,6 +143,9 @@ function App() {
           <Route path='/adminSearchTrainers' element={<AdminSearchTrainer/>}/>
           <Route path='/adminupdatebatch' element={<AdminUpdateBatch/>}/>
           <Route path='/adminupdateadminstaff' element={<AdminUpdateAdminStaff/>}/>
+          <Route path='/adminAddcurriculum' element={<AdminAddCurriculum/>}/>
+          <Route path='/adminAddtrainer' element={<AdminAddTrainer/>}/>
+
 
 
 
