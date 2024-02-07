@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
@@ -14,9 +14,20 @@ const AdminAddCurriculum = () => {
 
     const [file, setFile] = useState(null)
     const [key, setKey] = useState('');
+    const [fileType, setFileType] = useState("");
 
     const fileUploadHandler = (event) => {
-        setFile(event.target.files[0])
+        setErrors({});
+        const uploadedFile = event.target.files[0];
+        if (uploadedFile) {
+            setErrors({});
+            setFile(uploadedFile);
+            const extension = uploadedFile.name.split('.').pop().toLowerCase();
+            setFileType(extension);
+        } else {
+            setFile(null);
+            setFileType("");
+        }
     }
 
     const [errors, setErrors] = useState({})
@@ -89,7 +100,6 @@ const AdminAddCurriculum = () => {
         }
         e.preventDefault();
         const validationErrors = validateForm(inputField);
-        console.log(validationErrors)
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig3 = {
                 headers: {
@@ -105,7 +115,7 @@ const AdminAddCurriculum = () => {
                 "curriculumTitle": inputField.curriculumTitle,
                 "curriculumDesc": inputField.curriculumDesc,
                 "curriculumFileLink": file,
-                "addedBy" : addedBy
+                "addedBy": addedBy
             }
             console.log(data)
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
@@ -120,42 +130,49 @@ const AdminAddCurriculum = () => {
                         curriculumFileLink: '',
                     })
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.amount) {
-                        alert(response.data.data.amount)
+                    if (response.data.status === "Validation failed" && response.data.data.addedBy) {
+                        alert(response.data.data.addedBy)
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.name) {
-                            alert(response.data.data.name)
+                        if (response.data.status === "Validation failed" && response.data.data.batchId) {
+                            alert(response.data.data.batchId)
                         } else {
-                            if (response.data.status === "Validation failed" && response.data.data.address) {
-                                alert(response.data.data.address)
+                            if (response.data.status === "Validation failed" && response.data.data.curriculumTitle) {
+                                alert(response.data.data.curriculumTitle)
                             } else {
-                                if (response.data.status === "Validation failed" && response.data.data.name) {
-                                    alert(response.data.data.name)
+                                if (response.data.status === "Validation failed" && response.data.data.curriculumDesc) {
+                                    alert(response.data.data.curriculumDesc)
                                 } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.totalScore) {
-                                        alert(response.data.data.totalScore)
-                                    } else {
-                                        if (response.data.status === "Validation failed" && response.data.data.date) {
-                                            alert(response.data.data.date)
-                                        } else {
-                                            if (response.data.status === "Validation failed" && response.data.data.date) {
-                                                alert(response.data.data.date)
-                                            } else {
-                                                if (response.status === "400" && response.data.status) {
-                                                    alert(response.data.status)
-                                                } else {
-                                                    alert(response.data.status)
-                                                }
-                                            }
-                                        }
-                                    }
+                                    alert(response.status)
                                 }
                             }
                         }
                     }
                 }
             }
-            )
+            ).catch(error => {
+                if (error.response) {
+                    // Extract the status code from the response
+                    const statusCode = error.response.status;
+
+                    if (statusCode === 400) {
+                        console.log("Status 400:", error.response.data);
+                        alert(error.response.data.status)
+                        // Additional logic for status 400
+                    } else if (statusCode === 500) {
+                        console.log("Status 500:", error.response.data);
+                        alert(error.response.data.status)
+                        // Additional logic for status 500
+                    } else {
+                        console.log(error.response.data);
+                        alert(error.response.data.status)
+                    }
+                } else if (error.request) {
+                    console.log(error.request);
+                } else {
+                    console.log('Error', error.message);
+                }
+                console.log(error.config);
+            });
         } else {
             setErrors(validationErrors);
         }
@@ -175,6 +192,9 @@ const AdminAddCurriculum = () => {
         }
         if (!data.curriculumDesc.trim()) {
             errors.curriculumDesc = 'Curriculum Description is required';
+        }
+        if (fileType !== "pdf" && fileType !== "docx") {
+            errors.file = "File must be in PDF or DOCX format";
         }
         return errors;
     }
@@ -281,6 +301,7 @@ const AdminAddCurriculum = () => {
                                             Curriculum File <span className="text-danger">*</span>
                                         </label>
                                         <input type="file" className="form-control" name="curriculumFileLink" id="curriculumFileLink" onChange={fileUploadHandler} />
+                                        {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
                                     </div>
                                     <div className="col-12">
                                         <div className="d-grid">
