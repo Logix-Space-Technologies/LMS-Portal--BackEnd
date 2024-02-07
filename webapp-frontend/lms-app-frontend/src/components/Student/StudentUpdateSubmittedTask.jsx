@@ -23,6 +23,7 @@ const StudentUpdateSubmittedTask = () => {
 
     const getData = () => {
         let data = { "id": sessionStorage.getItem("subtaskId") }
+        console.log(data)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -65,7 +66,7 @@ const StudentUpdateSubmittedTask = () => {
             }
         };
         let data = {
-            "id": sessionStorage.getItem("submitTaskId"),
+            "id": sessionStorage.getItem("subtaskId"),
             "gitLink": updateSubTaskField.gitLink,
             "remarks": updateSubTaskField.remarks
         }

@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import StudNavBar from './StudNavBar';
 import '../../config/config'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const RefundRequestForm = () => {
     const [inputField, setInputField] = useState({
@@ -99,7 +99,6 @@ const RefundRequestForm = () => {
 
     return (
         <div>
-            <StudNavBar />
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">
@@ -111,7 +110,14 @@ const RefundRequestForm = () => {
                                             <a href="#!">
                                                 <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
                                             </a><br /><br />
-                                            <h3>Refund request</h3>
+                                            <div className="flex justify-between items-center mb-3">
+                                                <div className="flex-grow text-center">
+                                                    <h1>Refund Request</h1>
+                                                </div>
+                                                <div>
+                                                    <Link className="btn btn-danger" to="/studdashboard">Back</Link>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

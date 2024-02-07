@@ -29,9 +29,6 @@ const StudNavBar = () => {
                                 <Link className="nav-link" to='/studentviewattendance'>View Attendance</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to='/refundrequest'>Refund Request</Link>
-                            </li>
-                            <li className="nav-item">
                                 <Link className="nav-link" to='/studviewcollege'>View College Details</Link>
                             </li>
                             <li className="nav-item">
@@ -55,7 +52,6 @@ const StudNavBar = () => {
                                 </Link>
                                 <ul className="dropdown-menu">
                                     <li><a className="dropdown-item" href="/studViewRefundReq">View Refund Request</a></li>
-                                    <li><a className="dropdown-item" href="/studentviewtransaction">View Transaction Details</a></li>
                                     <li><a className="dropdown-item" href="/studMaterialView">View Materials</a></li>
                                 </ul>
                             </li>
