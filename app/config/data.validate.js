@@ -112,7 +112,7 @@ function isValidEmail(email) {
 function isValidPassword(password) {
     return {
         isValid: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(password),
-        message: "Password must include at least 8 characters, one uppercase letter, one lowercase letter, numbers and special characters"
+        message: "Password must include at least 8 characters and cannot exceed 12 characters, one uppercase letter, one lowercase letter, numbers and special characters"
     };
 }
 
