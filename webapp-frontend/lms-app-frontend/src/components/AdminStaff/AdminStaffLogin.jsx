@@ -37,10 +37,12 @@ const AdminStaffLogin = () => {
                     let admstaffkey = "lmsappadmstaff"
                     let Email = Response.data.data.Email;
                     let admstaffId = Response.data.data.id
+                    let AdStaffName = Response.data.data.AdStaffName
                     sessionStorage.setItem("admstaffId",admstaffId)
                     sessionStorage.setItem("admstaffLogintoken", admstafftoken)
                     sessionStorage.setItem("Email", Email)
                     sessionStorage.setItem("admstaffkey", admstaffkey)
+                    sessionStorage.setItem("AdStaffName", AdStaffName)
                     navigate("/admstaffdashboard")
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
