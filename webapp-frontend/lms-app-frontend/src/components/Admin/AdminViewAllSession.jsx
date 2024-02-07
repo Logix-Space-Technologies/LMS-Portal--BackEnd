@@ -11,7 +11,8 @@ const QRCodeModal = ({ qrCodeAttendance, onClose }) => {
                     <h2 className="text-xl font-semibold">Attendance QR Code</h2>
                 </div>
                 <div className="flex justify-center">
-                    <QRCodeCanvas value={qrCodeAttendance} />
+                    {/* Adjust size of QR code by setting width and height */}
+                    <QRCodeCanvas value={qrCodeAttendance} size={500} />
                 </div>
                 <div className="flex justify-center mt-4">
                     <button onClick={onClose} className="btn btn-primary">Close</button>
