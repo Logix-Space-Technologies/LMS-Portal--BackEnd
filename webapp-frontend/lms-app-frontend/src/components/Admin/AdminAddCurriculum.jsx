@@ -24,6 +24,9 @@ const AdminAddCurriculum = () => {
             setFile(uploadedFile);
             const extension = uploadedFile.name.split('.').pop().toLowerCase();
             setFileType(extension);
+        } else {
+            setFile(null);
+            setFileType("");
         }
     }
 

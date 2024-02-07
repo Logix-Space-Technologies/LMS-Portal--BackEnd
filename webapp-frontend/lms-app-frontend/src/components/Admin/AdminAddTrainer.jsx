@@ -14,8 +14,20 @@ const AdminAddTrainer = () => {
 
     const [file, setFile] = useState(null)
 
+    const [fileType, setFileType] = useState("");
+
     const fileUploadHandler = (event) => {
-        setFile(event.target.files[0])
+        setErrors({});
+        const uploadedFile = event.target.files[0];
+        if (uploadedFile) {
+            setErrors({});
+            setFile(uploadedFile);
+            const extension = uploadedFile.name.split('.').pop().toLowerCase();
+            setFileType(extension);
+        } else {
+            setFile(null);
+            setFileType("");
+        }
     }
 
     const [errors, setErrors] = useState({})
@@ -62,34 +74,27 @@ const AdminAddTrainer = () => {
                         phoneNumber: '',
                         profilePicture: ''
                     })
+                    window.location.reload()
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.amount) {
-                        alert(response.data.data.amount)
+                    if (response.data.status === "Validation failed" && response.data.data.trainerName) {
+                        alert(response.data.data.trainerName)
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.name) {
-                            alert(response.data.data.name)
+                        if (response.data.status === "Validation failed" && response.data.data.about) {
+                            alert(response.data.data.about)
                         } else {
-                            if (response.data.status === "Validation failed" && response.data.data.address) {
-                                alert(response.data.data.address)
+                            if (response.data.status === "Validation failed" && response.data.data.email) {
+                                alert(response.data.data.email)
                             } else {
-                                if (response.data.status === "Validation failed" && response.data.data.name) {
-                                    alert(response.data.data.name)
+                                if (response.data.status === "Validation failed" && response.data.data.phoneNumber) {
+                                    alert(response.data.data.phoneNumber)
                                 } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.totalScore) {
-                                        alert(response.data.data.totalScore)
+                                    if (response.data.status === "Validation failed" && response.data.data.password) {
+                                        alert(response.data.data.password)
                                     } else {
                                         if (response.data.status === "Validation failed" && response.data.data.date) {
                                             alert(response.data.data.date)
                                         } else {
-                                            if (response.data.status === "Validation failed" && response.data.data.date) {
-                                                alert(response.data.data.date)
-                                            } else {
-                                                if (response.status === "400" && response.data.status) {
-                                                    alert(response.data.status)
-                                                } else {
-                                                    alert(response.data.status)
-                                                }
-                                            }
+                                            alert(response.data.status)
                                         }
                                     }
                                 }
@@ -98,7 +103,30 @@ const AdminAddTrainer = () => {
                     }
                 }
             }
-            )
+            ).catch(error => {
+                if (error.response) {
+                    // Extract the status code from the response
+                    const statusCode = error.response.status;
+
+                    if (statusCode === 400) {
+                        console.log("Status 400:", error.response.data);
+                        alert(error.response.data.status)
+                        // Additional logic for status 400
+                    } else if (statusCode === 500) {
+                        console.log("Status 500:", error.response.data);
+                        alert(error.response.data.status)
+                        // Additional logic for status 500
+                    } else {
+                        console.log(error.response.data);
+                        alert(error.response.data.status)
+                    }
+                } else if (error.request) {
+                    console.log(error.request);
+                } else {
+                    console.log('Error', error.message);
+                }
+                console.log(error.config);
+            });
         } else {
             setErrors(validationErrors);
         }
@@ -121,6 +149,9 @@ const AdminAddTrainer = () => {
         }
         if (!data.phoneNumber.trim()) {
             errors.phoneNumber = 'Contact Details required';
+        }
+        if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+            errors.file = "File must be in jpg/jpeg/png/webp/heif format";
         }
         return errors;
     }
@@ -213,6 +244,7 @@ const AdminAddTrainer = () => {
                                             Profile Pic <span className="text-danger">*</span>
                                         </label>
                                         <input type="file" className="form-control" name="profilePicture" id="profilePicture" onChange={fileUploadHandler} />
+                                        {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
                                     </div>
                                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                         <label htmlFor="password" className="form-label">
