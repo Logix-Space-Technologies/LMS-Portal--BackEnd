@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const StudSideBar = () => {
     return (
@@ -12,7 +13,7 @@ const StudSideBar = () => {
                     <div className="nav-item dropdown">
                         <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i className="fa fa-laptop me-2" />Features</a>
                         <div className="dropdown-menu bg-transparent border-0">
-                            <a href="/studentViewTask" className="dropdown-item">View Assigned Tasks</a>
+                            <Link to='/studentViewTask' className="dropdown-item">View Assigned Tasks</Link>
                         </div>
                     </div>
                 </div>
