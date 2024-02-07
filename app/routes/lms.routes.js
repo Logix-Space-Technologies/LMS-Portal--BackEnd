@@ -224,6 +224,8 @@ router.post('/updateMaterial', MaterialController.updateMaterial)
 
 router.post('/studentViewAttendance', AttendenceController.studentViewAttendance)
 
+router.post('/studentViewSessionWiseAttendance', AttendenceController.studentViewSessionWiseAttendance)
+
 router.post('/viewCollegeStudent', CollegeController.studentViewCollege)
 
 router.post('/viewUpcomingSessions', SessionsController.viewUpcomingSessions)
