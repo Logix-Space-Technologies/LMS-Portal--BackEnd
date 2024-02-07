@@ -51,12 +51,12 @@ const StudNavBar = () => {
                                     Functionalities
                                 </Link>
                                 <ul className="dropdown-menu">
-                                    <li><a className="dropdown-item" href="/studViewRefundReq">View Refund Request</a></li>
-                                    <li><a className="dropdown-item" href="/studMaterialView">View Materials</a></li>
+                                    <li><Link className="dropdown-item" to="/studViewRefundReq">View Refund Request</Link></li>
+                                    <li><Link className="dropdown-item" to="/studMaterialView">View Materials</Link></li>
                                 </ul>
                             </li>
                             <li className="nav-item">
-                                <a onClick={logOut} className="dropdown-item">Log Out</a>
+                                <button onClick={logOut} className="btn btn-primary">Log Out</button>
                             </li>
                         </ul>
                     </div>
