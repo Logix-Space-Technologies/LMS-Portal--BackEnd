@@ -71,7 +71,11 @@ const StudHeader = () => {
                         logOut()
                         navigate("/studentLogin")
                     } else {
-                        alert(response.data.status)
+                        if (!response.data.data) {
+                            console.log(response.data.status)
+                        } else {
+                            alert(response.data.status)
+                        }
                     }
                 }
             }
@@ -95,14 +99,20 @@ const StudHeader = () => {
                         <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
                     </h2>
                 </a>
-                {sessionData ? (sessionData.map(
-                    (value, index) => {
-                        return <div className="session-name">
-                            <p>Next Session: {value.date}, {formatTime(value.time)}</p>
+                {sessionData && sessionData.length > 0 ? (
+                    sessionData.map((value, index) => {
+                        return (
+                            <div className="session-name" key={index}>
+                                <p>Next Session: {value.date}, {formatTime(value.time)}</p>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div className="session-name">
+                        <p>Next Session: No Upcoming Session</p>
+                    </div>
+                )}
 
-                        </div>
-                    }
-                )) : <p>Next Session: No Upcoming Session</p>}
 
                 <div className="navbar-nav align-items-center ms-auto">
                     {/* <div className="nav-item dropdown">
