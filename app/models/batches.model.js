@@ -180,10 +180,10 @@ Batches.viewOneBatch = (batchId, result) => {
                 result(err, null);
                 return;
             }
-            const formattedBatchs = res.map(batch => ({ ...batch, regStartDate: batch.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batch.regEndDate ? batch.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
+            const formattedBatches = res.map(batch => ({ ...batch, regStartDate: batch.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batch.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); // Formats the date as 'YYYY-MM-DD'
 
-            console.log("data: ", formattedBatchs);
-            result(null, formattedBatchs);
+            console.log("data: ", formattedBatches);
+            result(null, formattedBatches);
         })
 }
 

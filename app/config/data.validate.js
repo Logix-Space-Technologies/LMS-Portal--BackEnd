@@ -136,8 +136,6 @@ function isValidDate(date) {
 function isDateGreaterThanToday(date) {
     const inputDate = new Date(date);
     const currentDate = new Date();
-    console.log(inputDate)
-    console.log(currentDate)
 
     return {
         isValid: inputDate > currentDate,

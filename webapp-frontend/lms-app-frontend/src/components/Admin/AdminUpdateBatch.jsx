@@ -5,16 +5,15 @@ import axios from 'axios'
 
 const AdminUpdateBatch = () => {
 
+    function convertToISODate(dateString) {
+        const parts = dateString.split('/');
+        if (parts.length !== 3) return ''; // Handle invalid date format
+    
+        const [day, month, year] = parts;
+        return  `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
 
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    };
-
-
+    // const [errors, setErrors] = useState({});
     const [batchData, setBatchData] = useState([])
     const [updateField, setUpdateField] = useState({
         "id": sessionStorage.getItem("batchId"),
@@ -38,7 +37,7 @@ const AdminUpdateBatch = () => {
     const readNewValue = () => {
         let axiosConfig = {
             headers: {
-                'content-type': 'multipart/form-data',
+                'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
                 "token": sessionStorage.getItem("admtoken"),
                 "key": sessionStorage.getItem("admkey")
@@ -82,7 +81,7 @@ const AdminUpdateBatch = () => {
                                     alert(response.data.data.batchDesc)
                                 } else {
                                     if (response.data.status === "Validation Failed" && response.data.data.batchAmount) {
-                                        alert(response.data.data.batchAmount)
+                                        alert("batch amount: ", response.data.data.batchAmount)
                                     } else {
                                         alert(response.data.status)
                                     }
@@ -96,6 +95,24 @@ const AdminUpdateBatch = () => {
     }
 
     const getData = () => {
+        // let newErrors = {};
+        // if (!updateField.regStartDate || !updateField.regStartDate.trim()) {
+        //     newErrors.regStartDate = "Registration start date is required!";
+        // } else if (!/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)\d\d$/i.test(updateField.regStartDate)) {
+        //     newErrors.regStartDate = 'Invalid Date';
+        // }
+
+        // if (!updateField.regEndDate || !updateField.regEndDate.trim()) {
+        //     newErrors.regEndDate = "Registration End date is required!";
+        // } else if (!/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)\d\d$/i.test(updateField.regEndDate)) {
+        //     newErrors.regEndDate = 'Invalid Date';
+        // }
+
+        // if (Object.keys(newErrors).length > 0) {
+        //     setErrors(newErrors);
+        //     return;
+        // }
+
         let data = { "id": sessionStorage.getItem("batchId") }
         let axiosConfig = {
             headers: {
@@ -158,8 +175,9 @@ const AdminUpdateBatch = () => {
                                                     className="form-control"
                                                     name="regStartDate"
                                                     onChange={updateHandler}
-                                                    value={updateField.regStartDate ? formatDate(updateField.regStartDate) : ''}
+                                                    value={convertToISODate(updateField.regStartDate)}
                                                 />
+                                                {/* {errors.regStartDate && <span style={{ color: 'red' }} className="error">{errors.regStartDate}</span>} */}
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Registration End Date</label>
@@ -168,12 +186,10 @@ const AdminUpdateBatch = () => {
                                                     className="form-control"
                                                     name="regEndDate"
                                                     onChange={updateHandler}
-                                                    value={updateField.regEndDate ? formatDate(updateField.regEndDate) : ''}
+                                                    value={convertToISODate(updateField.regEndDate)}
                                                 />
+                                                {/* {errors.regEndDate && <span style={{ color: 'red' }} className="error">{errors.regEndDate}</span>} */}
                                             </div>
-
-
-
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Description</label>
                                                 <input type="text" className="form-control" name="batchDesc" onChange={updateHandler} value={updateField.batchDesc} />
