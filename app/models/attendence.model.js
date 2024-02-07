@@ -84,5 +84,19 @@ Attendence.studentViewAttendance = (studentId, result) => {
     });
 };
 
+Attendence.studentViewSessionWiseAttendance = (studentId, sessionId, result) => {
+    db.query("SELECT sd.sessionName, sd.date, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendance_status FROM attendence a JOIN sessiondetails sd ON a.sessionId = sd.id JOIN student s ON s.id = a.studId WHERE sd.cancelStatus = 0 AND s.id = ? AND a.sessionId = ? AND sd.date <= CURRENT_DATE()", [studentId, sessionId], (err, res) => {
+        if (err) {
+            console.log("error:", err);
+            result(err, null);
+            return;
+        }
+        // Format the date for each session
+        const formattedAttendance = res.map(attendance => ({ ...attendance, date: attendance.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })})); // Formats the date as 'YYYY-MM-DD'
+        console.log("attendance:", formattedAttendance);
+        result(null, formattedAttendance);
+    });
+};
+
 
 module.exports = Attendence;
