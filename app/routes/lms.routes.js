@@ -252,6 +252,8 @@ router.post('/isSessionHappeningToday', SessionsController.isSessionHappeningTod
 
 router.post('/AdmViewAllMaterial', AdminStaffController.AdmViewAllMaterial)
 
+router.post('/AdmViewOneMaterial', AdminStaffController.viewOneMaterial)
+
 
 
 
