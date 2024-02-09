@@ -311,18 +311,32 @@ AdminStaff.viewOneAdminStaff = (id, result) => {
 }
 
 AdminStaff.AdmViewAllMaterial = async (result) => {
-    let query = "SELECT fileName,materialDesc,uploadFile,remarks,addedDate,materialType FROM materials WHERE deleteStatus = 0 AND isActive = 1";
+    let query = "SELECT id,fileName,materialDesc,uploadFile,remarks,addedDate,materialType FROM materials WHERE deleteStatus = 0 AND isActive = 1";
     db.query(query, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
             return;
         } else {
-            console.log("Materials: ", res);
-            result(null, res);
+            const formattedMaterials = res.map(materials => ({ ...materials, addedDate: materials.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })})); // Formats the date as 'YYYY-MM-DD'
+            console.log("Materials: ", formattedMaterials);
+            result(null, formattedMaterials);
 
         }
     });
+}
+
+AdminStaff.viewOneMaterial = (materialId, result) => {
+    db.query("SELECT fileName,batchId,materialDesc,uploadFile,remarks,addedDate,materialType FROM materials WHERE deleteStatus = 0 AND isActive = 1 AND id = ?", materialId,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("Material: ", res);
+            result(null, res);
+        })
 }
 
 module.exports = AdminStaff

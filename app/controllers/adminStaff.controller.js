@@ -456,3 +456,27 @@ exports.AdmViewAllMaterial = (request, response) => {
         }
     })
 }
+
+exports.viewOneMaterial = (request, response) => {
+    const materialToken = request.headers.token;
+    const key = request.headers.key; //give respective keys of admin and adminstaff
+    const materialId = request.body.id; 
+
+    jwt.verify(materialToken, key, (err, decoded) => {
+        if (decoded) {
+            AdminStaff.viewOneMaterial(materialId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No Material Found" });
+                } else {
+                    return response.json({ "status": "success", "Material": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
+

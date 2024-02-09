@@ -86,9 +86,12 @@ import AdminUpdateBatch from './components/Admin/AdminUpdateBatch';
 import AdminUpdateAdminStaff from './components/Admin/AdminUpdateAdminStaff';
 import AdminStaffChangePassword from './components/AdminStaff/AdminStaffChangePassword';
 import AdminStaffViewAllMaterial from './components/AdminStaff/AdminStaffViewAllMaterial';
+import AdminStaffUpdateMaterial from './components/AdminStaff/AdminStaffUpdateMaterial';
 import AdminAddCurriculum from './components/Admin/AdminAddCurriculum';
 import AdminAddTrainer from './components/Admin/AdminAddTrainer';
 import AdminStaffViewSubmittedTask from './components/AdminStaff/AdminStaffViewSubmittedTask';
+import AdminStaffEvaluateTask from './components/AdminStaff/AdminStaffEvaluateTask';
+import AdminViewLog from './components/Admin/AdminViewLog';
 
 
 
@@ -147,8 +150,7 @@ function App() {
           <Route path='/adminupdateadminstaff' element={<AdminUpdateAdminStaff/>}/>
           <Route path='/adminAddcurriculum' element={<AdminAddCurriculum/>}/>
           <Route path='/adminAddtrainer' element={<AdminAddTrainer/>}/>
-
-
+          <Route path='/adminViewlog' element={<AdminViewLog/>}/>
 
 
 
@@ -167,8 +169,10 @@ function App() {
           <Route path='/admstaffviewprofile' element={<AdmStaffViewProfile/>}/>
           <Route path='/AdminStaffChangePassword' element={<AdminStaffChangePassword/>}/>
           <Route path='/AdminStaffViewAllMaterial' element={<AdminStaffViewAllMaterial/>}/>
+          <Route path='/AdminStaffUpdateMaterial' element={<AdminStaffUpdateMaterial/>}/>
           <Route path='/adminstaffviewsubmittedtask' element={<AdminStaffViewSubmittedTask/>}/>
           
+
 
 
 

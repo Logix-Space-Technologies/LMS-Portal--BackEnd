@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import '../../config/config'
 
 const AdminUpdateAdminStaff = () => {
 
