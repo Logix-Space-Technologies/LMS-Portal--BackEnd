@@ -90,7 +90,6 @@ import AdminStaffUpdateMaterial from './components/AdminStaff/AdminStaffUpdateMa
 import AdminAddCurriculum from './components/Admin/AdminAddCurriculum';
 import AdminAddTrainer from './components/Admin/AdminAddTrainer';
 import AdminStaffViewSubmittedTask from './components/AdminStaff/AdminStaffViewSubmittedTask';
-import AdminStaffEvaluateTask from './components/AdminStaff/AdminStaffEvaluateTask';
 import AdminViewLog from './components/Admin/AdminViewLog';
 
 
