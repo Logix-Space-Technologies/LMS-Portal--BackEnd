@@ -8,9 +8,6 @@ exports.evaluateTask = (request, response) => {
             const { id, adminstaffId, evaluatorRemarks, score } = request.body;
             const validationErrors = {};
 
-            if (!id) {
-                validationErrors.id = "Task ID cannot be empty";
-            }
 
             if (!adminstaffId) {
                 validationErrors.adminstaffId = "Admin Staff ID cannot be empty";
@@ -32,6 +29,7 @@ exports.evaluateTask = (request, response) => {
                 evaluatorRemarks: evaluatorRemarks,
                 score: score
             });
+            console.log(submitTask)
 
             SubmitTask.evaluateTask(submitTask, (error, data) => {
                 if (error) {
