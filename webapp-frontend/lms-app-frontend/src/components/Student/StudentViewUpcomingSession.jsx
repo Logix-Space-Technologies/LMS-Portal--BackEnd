@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import StudNavBar from './StudNavBar'
 import '../../config/config'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const StudentViewUpcomingSession = () => {
 
@@ -57,6 +57,25 @@ const StudentViewUpcomingSession = () => {
         return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
     }
 
+    // Function to determine if the session is current or past (enabling attendance)
+    const isSessionAccessible = (sessionDate, sessionTime) => {
+        const [day, month, year] = sessionDate.split('/');
+        const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        const timeParts = sessionTime.match(/(\d+):(\d+) (\w+)/);
+        let hours = parseInt(timeParts[1], 10);
+        const minutes = timeParts[2];
+        const ampm = timeParts[3];
+
+        if (ampm === 'PM' && hours < 12) hours += 12;
+        else if (ampm === 'AM' && hours === 12) hours = 0;
+
+        const sessionDateTime = new Date(`${formattedDate}T${hours.toString().padStart(2, '0')}:${minutes}`);
+        const now = new Date();
+
+        // Enables attendance from the session date and time
+        return now >= sessionDateTime;
+    };
+
     useEffect(() => { getData() }, [])
 
     return (
@@ -85,17 +104,48 @@ const StudentViewUpcomingSession = () => {
                                         ) : (
                                             studentViewUpcomingSessionData.map((value, index) => {
                                                 return (
-                                                    <div key={index} className="col-12">
-                                                        <div className="card shadow"> {/* Add "shadow" class here */}
-                                                            <div className="card-body rounded shadow-sm">
-                                                                <h5 className="card-title">Session Name: {value.sessionName}</h5>
-                                                                <p className="card-text">Date: {value.date}</p>
-                                                                <p className="card-text">Time: {formatTime(value.time)}</p>
-                                                                <p className="card-text">Type: {value.type}</p>
-                                                                <p className="card-text">Remarks: {value.remarks}</p>
-                                                                <p className="card-text">Venue/Link: {value.venueORlink}</p>
-                                                                <p className="card-text">Trainer Name: {value.trainerName}</p>
-                                                            </div>
+                                                    <div key={index} style={{ position: 'relative', width: '700px', height: '317px', borderRadius: '10px', transition: '0.3s', fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', display: 'flex', flexDirection: 'column' }}>
+                                                        <div style={{ padding: '10px 16px', backgroundColor: '#AAF1F5', color: 'white', borderTopLeftRadius: '10px', borderTopRightRadius: '10px' }}>
+                                                            <h4><b>{value.sessionName}</b></h4>
+                                                        </div>
+                                                        <div style={{ padding: '2px 16px', flex: '1 0 auto', backgroundColor: '#EFF1DB', paddingTop: value.venueORlink.includes('meet.google.com') ? '60px' : '40px', }}>
+                                                            <p style={{ marginBottom: '10px' }}><b>Date:</b> {value.date}</p>
+                                                            <p style={{ marginBottom: '10px' }}><b>Time:</b> {formatTime(value.time)}</p>
+                                                            <p style={{ marginBottom: '10px' }}><b>Type:</b> {value.type}</p>
+                                                            <p style={{ marginBottom: '10px' }}><b>Trainer Name:</b> {value.trainerName}</p>
+                                                            {!value.venueORlink.includes("meet.google.com") && (
+                                                                <p style={{ marginBottom: '10px' }}><b>Venue:</b> {value.venueORlink}</p>
+                                                            )}
+                                                        </div>
+                                                        <div style={{ padding: '10px 16px', backgroundColor: '#D3B5E5', color: 'white', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px', display: 'flex', justifyContent: 'space-around' }}>
+                                                            {value.venueORlink.includes("meet.google.com") && (
+                                                                <Link to={value.venueORlink} target='_blank' rel='noopener noreferrer' style={{ color: 'white', textDecoration: 'none', backgroundColor: '#FBC740', padding: '10px', borderRadius: '5px', margin: '0 10px' }} class="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
+                                                                    <img src="https://www.svgrepo.com/show/504419/google-meet.svg" class="w-4 h-4 me-2" aria-hidden="true" alt='' />
+                                                                    Meeting Link
+                                                                </Link>
+
+                                                            )}
+                                                            {isSessionAccessible(value.date, formatTime(value.time)) ? (
+                                                                <>
+                                                                    <Link to="#" style={{ color: 'white', textDecoration: 'none', backgroundColor: '#009534', padding: '10px', borderRadius: '5px', margin: '0 10px' }} class="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
+                                                                        <img src="https://www.svgrepo.com/show/305294/people.svg" class="w-4 h-4 me-2" aria-hidden="true" alt='' />
+                                                                        Attendance
+                                                                    </Link>
+                                                                    <Link to="#" style={{ color: 'white', textDecoration: 'none', backgroundColor: '#3498DB', padding: '10px', borderRadius: '5px', margin: '0 10px' }} class="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
+                                                                        <img src="https://www.svgrepo.com/show/332592/unordered-list.svg" class="w-4 h-4 me-2" aria-hidden="true" alt='' />
+                                                                        Tasks
+                                                                    </Link>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <div style={{ color: 'grey', padding: '10px', borderRadius: '5px', margin: '0 10px', textAlign: 'center', backgroundColor: '#f0f0f0' }}>
+                                                                        Attendance (Unavailable)
+                                                                    </div>
+                                                                    <div style={{ color: 'grey', padding: '10px', borderRadius: '5px', margin: '0 10px', textAlign: 'center', backgroundColor: '#f0f0f0' }}>
+                                                                        Tasks (Unavailable)
+                                                                    </div>
+                                                                </>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 );
