@@ -171,7 +171,7 @@ function App() {
           <Route path='/AdminStaffViewAllMaterial' element={<AdminStaffViewAllMaterial/>}/>
           <Route path='/AdminStaffUpdateMaterial' element={<AdminStaffUpdateMaterial/>}/>
           <Route path='/adminstaffviewsubmittedtask' element={<AdminStaffViewSubmittedTask/>}/>
-          <Route path='/adminstaffevaluatetask' element={<AdminStaffEvaluateTask/>}/>
+          
 
 
 

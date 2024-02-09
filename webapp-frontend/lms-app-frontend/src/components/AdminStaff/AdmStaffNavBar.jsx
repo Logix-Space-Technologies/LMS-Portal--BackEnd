@@ -45,17 +45,6 @@ const AdmStaffNavBar = () => {
                                 <a onClick={logOut} className="dropdown-item">Log Out</a>
                             </li>
                         </ul>
-                        <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Functionalities
-                            </a>
-                            <ul className="dropdown-menu">
-                                <li><a className="dropdown-item" href="#">View All College</a></li>
-                            </ul>
-                        </li>
-                        <li className="nav-item">
-                            <a onClick={logOut} className="dropdown-item">Log Out</a>
-                        </li>
                     </div>
                 </div>
             </nav >
