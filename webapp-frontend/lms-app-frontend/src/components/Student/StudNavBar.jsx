@@ -26,9 +26,6 @@ const StudNavBar = () => {
                                 <Link className="nav-link active" aria-current="page" to='/studentViewTask'>View Task</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to='/studentviewattendance'>View Attendance</Link>
-                            </li>
-                            <li className="nav-item">
                                 <Link className="nav-link" to='/studviewcollege'>View College Details</Link>
                             </li>
                             <li className="nav-item">
@@ -46,14 +43,11 @@ const StudNavBar = () => {
                             <li className="nav-item">
                                 <Link className="nav-link" to='/studdashboard'>Student Dashboard</Link>
                             </li>
-                            <li className="nav-item dropdown">
-                                <Link className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Functionalities
-                                </Link>
-                                <ul className="dropdown-menu">
-                                    <li><Link className="dropdown-item" to="/studViewRefundReq">View Refund Request</Link></li>
-                                    <li><Link className="dropdown-item" to="/studMaterialView">View Materials</Link></li>
-                                </ul>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/studViewRefundReq">View Refund Request</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/studMaterialView">View Materials</Link>
                             </li>
                             <li className="nav-item">
                                 <button onClick={logOut} className="btn btn-primary">Log Out</button>

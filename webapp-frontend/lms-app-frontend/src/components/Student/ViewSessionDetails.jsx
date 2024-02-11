@@ -82,7 +82,6 @@ const SessionView = () => {
 
     // Combine the reformatted date with the reformatted time
     const sessionDateTime = new Date(`${formattedDate}T${formattedTime}`);
-    console.log(sessionDateTime);
 
     const now = new Date();
     if (sessionDateTime > now) {
@@ -90,6 +89,10 @@ const SessionView = () => {
     } else {
       return '#dc3545'; // Red color for past sessions
     }
+  }
+
+  const attendanceClick = (id) => {
+    sessionStorage.setItem("SessionId", id);
   }
 
 
@@ -156,7 +159,7 @@ const SessionView = () => {
                             )}
                             {isSessionAccessible(session.date, formatTime(session.time)) ? (
                               <>
-                                <Link to="#" style={{ color: 'white', textDecoration: 'none', backgroundColor: '#009534', padding: '10px', borderRadius: '5px', margin: '0 10px' }} class="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
+                                <Link to="/studentviewattendance" onClick={()=>attendanceClick(session.id)} style={{ color: 'white', textDecoration: 'none', backgroundColor: '#009534', padding: '10px', borderRadius: '5px', margin: '0 10px' }} class="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
                                   <img src="https://www.svgrepo.com/show/305294/people.svg" class="w-4 h-4 me-2" aria-hidden="true" alt='' />
                                   Attendance
                                 </Link>

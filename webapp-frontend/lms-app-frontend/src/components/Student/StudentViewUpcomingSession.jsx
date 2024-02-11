@@ -57,25 +57,6 @@ const StudentViewUpcomingSession = () => {
         return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
     }
 
-    // Function to determine if the session is current or past (enabling attendance)
-    const isSessionAccessible = (sessionDate, sessionTime) => {
-        const [day, month, year] = sessionDate.split('/');
-        const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-        const timeParts = sessionTime.match(/(\d+):(\d+) (\w+)/);
-        let hours = parseInt(timeParts[1], 10);
-        const minutes = timeParts[2];
-        const ampm = timeParts[3];
-
-        if (ampm === 'PM' && hours < 12) hours += 12;
-        else if (ampm === 'AM' && hours === 12) hours = 0;
-
-        const sessionDateTime = new Date(`${formattedDate}T${hours.toString().padStart(2, '0')}:${minutes}`);
-        const now = new Date();
-
-        // Enables attendance from the session date and time
-        return now >= sessionDateTime;
-    };
-
     useEffect(() => { getData() }, [])
 
     return (
@@ -124,27 +105,6 @@ const StudentViewUpcomingSession = () => {
                                                                     Meeting Link
                                                                 </Link>
 
-                                                            )}
-                                                            {isSessionAccessible(value.date, formatTime(value.time)) ? (
-                                                                <>
-                                                                    <Link to="#" style={{ color: 'white', textDecoration: 'none', backgroundColor: '#009534', padding: '10px', borderRadius: '5px', margin: '0 10px' }} class="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
-                                                                        <img src="https://www.svgrepo.com/show/305294/people.svg" class="w-4 h-4 me-2" aria-hidden="true" alt='' />
-                                                                        Attendance
-                                                                    </Link>
-                                                                    <Link to="#" style={{ color: 'white', textDecoration: 'none', backgroundColor: '#3498DB', padding: '10px', borderRadius: '5px', margin: '0 10px' }} class="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
-                                                                        <img src="https://www.svgrepo.com/show/332592/unordered-list.svg" class="w-4 h-4 me-2" aria-hidden="true" alt='' />
-                                                                        Tasks
-                                                                    </Link>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <div style={{ color: 'grey', padding: '10px', borderRadius: '5px', margin: '0 10px', textAlign: 'center', backgroundColor: '#f0f0f0' }}>
-                                                                        Attendance (Unavailable)
-                                                                    </div>
-                                                                    <div style={{ color: 'grey', padding: '10px', borderRadius: '5px', margin: '0 10px', textAlign: 'center', backgroundColor: '#f0f0f0' }}>
-                                                                        Tasks (Unavailable)
-                                                                    </div>
-                                                                </>
                                                             )}
                                                         </div>
                                                     </div>
