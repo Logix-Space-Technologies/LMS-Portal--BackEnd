@@ -6,6 +6,15 @@ import '../../config/config'
 
 const AdminUpdateBatch = () => {
 
+    function convertToISODate(dateString) {
+        const parts = dateString.split('/');
+        if (parts.length !== 3) return ''; // Handle invalid date format
+    
+        const [day, month, year] = parts;
+        return  `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+
+    // const [errors, setErrors] = useState({});
     const [batchData, setBatchData] = useState([])
     const [updateField, setUpdateField] = useState({
         "id": sessionStorage.getItem("batchId"),
@@ -27,10 +36,9 @@ const AdminUpdateBatch = () => {
     }
 
     const readNewValue = () => {
-        console.log(updateField)
         let axiosConfig = {
             headers: {
-                'content-type': 'multipart/form-data',
+                'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
                 "token": sessionStorage.getItem("admtoken"),
                 "key": sessionStorage.getItem("admkey")
@@ -45,6 +53,7 @@ const AdminUpdateBatch = () => {
             "batchDesc": updateField.batchDesc,
             "batchAmount": updateField.batchAmount
         }
+        console.log(data)
         axios.post(apiUrl2, data, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Updated Batch Details") {
@@ -60,26 +69,22 @@ const AdminUpdateBatch = () => {
                     alert("Batch Updated!")
                     navigate("/adminviewallbatches")
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                        alert(response.data.data.trainerName)
+                    if (response.data.status === "Validation Failed" && response.data.data.batchName) {
+                        alert(response.data.data.batchName)
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                            alert(response.data.data.trainerName)
+                        if (response.data.status === "Validation Failed" && response.data.data.regStartDate) {
+                            alert(response.data.data.regStartDate)
                         } else {
-                            if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                                alert(response.data.data.trainerName)
+                            if (response.data.status === "Validation Failed" && response.data.data.regEndDate) {
+                                alert(response.data.data.regEndDate)
                             } else {
-                                if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                                    alert(response.data.data.trainerName)
+                                if (response.data.status === "Validation Failed" && response.data.data.batchDesc) {
+                                    alert(response.data.data.batchDesc)
                                 } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                                        alert(response.data.data.trainerName)
+                                    if (response.data.status === "Validation Failed" && response.data.data.batchAmount) {
+                                        alert("batch amount: ", response.data.data.batchAmount)
                                     } else {
-                                        if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                                            alert(response.data.data.trainerName)
-                                        } else {
-                                            alert(response.data.status)
-                                        }
+                                        alert(response.data.status)
                                     }
                                 }
                             }
@@ -90,8 +95,26 @@ const AdminUpdateBatch = () => {
         )
     }
 
-    const getData = () =>{
-        let data = { "id": sessionStorage.getItem("batchId")}
+    const getData = () => {
+        // let newErrors = {};
+        // if (!updateField.regStartDate || !updateField.regStartDate.trim()) {
+        //     newErrors.regStartDate = "Registration start date is required!";
+        // } else if (!/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)\d\d$/i.test(updateField.regStartDate)) {
+        //     newErrors.regStartDate = 'Invalid Date';
+        // }
+
+        // if (!updateField.regEndDate || !updateField.regEndDate.trim()) {
+        //     newErrors.regEndDate = "Registration End date is required!";
+        // } else if (!/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)\d\d$/i.test(updateField.regEndDate)) {
+        //     newErrors.regEndDate = 'Invalid Date';
+        // }
+
+        // if (Object.keys(newErrors).length > 0) {
+        //     setErrors(newErrors);
+        //     return;
+        // }
+
+        let data = { "id": sessionStorage.getItem("batchId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -100,7 +123,7 @@ const AdminUpdateBatch = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         }
-        
+
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
                 setBatchData(response.data.data)
@@ -144,15 +167,29 @@ const AdminUpdateBatch = () => {
 
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Batch Name</label>
-                                                <input type="text" className="form-control" name="batchName" onChange={updateHandler} value={updateField.batchName}/>
+                                                <input type="text" className="form-control" name="batchName" onChange={updateHandler} value={updateField.batchName} />
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Registration Start Date</label>
-                                                <input type="date" className="form-control" name="regStartDate" onChange={updateHandler} value={updateField.regStartDate}/>
+                                                <input
+                                                    type="date"
+                                                    className="form-control"
+                                                    name="regStartDate"
+                                                    onChange={updateHandler}
+                                                    value={convertToISODate(updateField.regStartDate)}
+                                                />
+                                                {/* {errors.regStartDate && <span style={{ color: 'red' }} className="error">{errors.regStartDate}</span>} */}
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Registration End Date</label>
-                                                <input type="date" className="form-control" name="regEndDate" onChange={updateHandler} value={updateField.regEndDate}/>
+                                                <input
+                                                    type="date"
+                                                    className="form-control"
+                                                    name="regEndDate"
+                                                    onChange={updateHandler}
+                                                    value={convertToISODate(updateField.regEndDate)}
+                                                />
+                                                {/* {errors.regEndDate && <span style={{ color: 'red' }} className="error">{errors.regEndDate}</span>} */}
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Description</label>
@@ -160,7 +197,7 @@ const AdminUpdateBatch = () => {
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Amount</label>
-                                                <input type="text" className="form-control" name="batchAmount" onChange={updateHandler} value={updateField.batchAmount}/>
+                                                <input type="text" className="form-control" name="batchAmount" onChange={updateHandler} value={updateField.batchAmount} />
                                             </div>
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">

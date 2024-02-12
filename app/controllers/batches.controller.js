@@ -215,8 +215,8 @@ exports.batchUpdate = (request, response) => {
                 id: id,
                 collegeId: collegeId,
                 batchName: batchName,
-                regStartDate: regStartDate.split('/').reverse().join('-'),
-                regEndDate: regEndDate.split('/').reverse().join('-'),
+                regStartDate: regStartDate,
+                regEndDate: regEndDate,
                 batchDesc: batchDesc,
                 batchAmount: batchAmount
             });
