@@ -1,15 +1,35 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { QRCodeCanvas } from 'qrcode.react';
+import Navbar from './Navbar';
 import '../../config/config'
-import { QRCodeCanvas } from 'qrcode.react'
-import Navbar from './Navbar'
+
+const QRCodeModal = ({ qrCodeAttendance, onClose }) => {
+    return (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50">
+            <div className="bg-white p-8 rounded-lg shadow-lg">
+                <div className="text-center mb-4">
+                    <h2 className="text-xl font-semibold">Attendance QR Code</h2>
+                </div>
+                <div className="flex justify-center">
+                    {/* Adjust size of QR code by setting width and height */}
+                    <QRCodeCanvas value={qrCodeAttendance} size={500} />
+                </div>
+                <div className="flex justify-center mt-4">
+                    <button onClick={onClose} className="btn btn-primary">Close</button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const AdminViewAllSession = () => {
-    const [sessionData, setSessionData] = useState([])
-    const [qrCodeAttendance, setQrCodeAttendance] = useState(null) // State to track attendance code for QR code
+    const [sessionData, setSessionData] = useState([]);
+    const [qrCodeAttendance, setQrCodeAttendance] = useState(null);
+    const [showQRModal, setShowQRModal] = useState(false);
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions"
-    const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession"
+    const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
+    const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession";
 
     const getData = () => {
         let axiosConfig = {
@@ -19,17 +39,16 @@ const AdminViewAllSession = () => {
                 "token": sessionStorage.getItem("admtoken"),
                 "key": sessionStorage.getItem("admkey")
             }
-        }
+        };
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
-                setSessionData(response.data.Sessions)
-                console.log(response.data.Sessions)
+                setSessionData(response.data.Sessions);
             }
-        )
-    }
+        );
+    };
 
     const handleClick = (id) => {
-        let data = { "id": id }
+        let data = { "id": id };
         let axiosConfigTwo = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -37,34 +56,25 @@ const AdminViewAllSession = () => {
                 "token": sessionStorage.getItem("admtoken"),
                 "key": sessionStorage.getItem("admkey")
             }
-        }
+        };
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "success") {
-                    // Reload the page after deleting trainer
                     window.location.reload();
                 } else {
-                    alert(response.data.status)
+                    alert(response.data.status);
                 }
             }
-        )
-
-    }
+        );
+    };
 
     const isSessionToday = (date) => {
         const today = new Date();
-        console.log(today);
-
-        // Split the date string into day, month, and year parts
         const dateParts = date.split('/');
         const day = parseInt(dateParts[0], 10);
-        const month = parseInt(dateParts[1] - 1, 10); // Subtract 1 from the month to match JavaScript's month numbering (0-11)
+        const month = parseInt(dateParts[1] - 1, 10);
         const year = parseInt(dateParts[2], 10);
-
         const sessionDate = new Date(year, month, day);
-        console.log("session date: ", sessionDate);
-
-        // Compare the dates
         return (
             today.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) ===
             sessionDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })
@@ -76,12 +86,17 @@ const AdminViewAllSession = () => {
         return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
     }
 
-
     const handleShowQRCode = (attendanceCode) => {
-        setQrCodeAttendance(attendanceCode); // Set the attendance code for QR code generation
-    }
+        setQrCodeAttendance(attendanceCode);
+        setShowQRModal(true);
+    };
 
-    useEffect(() => { getData() }, [])
+    const handleCloseQRModal = () => {
+        setShowQRModal(false);
+    };
+
+    useEffect(() => { getData() }, []);
+
     return (
         <div>
             <Navbar /><br />
@@ -94,6 +109,7 @@ const AdminViewAllSession = () => {
                             <th scope="col" className="px-6 py-3">
                                 Name
                             </th>
+
                             <th scope="col" className="px-6 py-3">
                                 Id
                             </th>
@@ -119,17 +135,17 @@ const AdminViewAllSession = () => {
                                 Trainer Name
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Attendence Code
-                            </th>
-                            <th scope="col" className="px-6 py-3">
                                 Cancel Status
                             </th>
                             <th scope="col" className="px-6 py-3">
-
+                                Attendence Code
                             </th>
                             <th scope="col" className="px-6 py-3">
 
                             </th>
+                            <th scope="col" className="px-6 py-3">
+                            </th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -166,6 +182,9 @@ const AdminViewAllSession = () => {
                                         {value.trainerName}
                                     </td>
                                     <td className="px-6 py-4">
+                                        {value.cancelStatus}
+                                    </td>
+                                    <td className="px-6 py-4">
                                         {isSessionToday(value.date) && value.cancelStatus === "ACTIVE" && (
                                             <button onClick={() => handleShowQRCode(value.attendenceCode)} className="btn btn-primary">
                                                 Show QR
@@ -173,17 +192,18 @@ const AdminViewAllSession = () => {
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {value.cancelStatus}
+                                        {value.cancelStatus === "ACTIVE" && (
+                                            <button onClick={() => handleClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                                Cancel Session
+                                            </button>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button onClick={() => handleClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
-                                            Cancel Session
-                                        </button>
+                                        {value.cancelStatus === "ACTIVE" && (                                           
+                                                <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update</a>                                           
+                                        )}
                                     </td>
 
-                                    <td className="px-6 py-4">
-                                        <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update</a>
-                                    </td>
                                 </tr>
                             }
                         )) : <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
@@ -203,16 +223,27 @@ const AdminViewAllSession = () => {
                     </tbody>
                 </table>
             </div>
-            {/* QR Code Rendering */}
-            {qrCodeAttendance && (
-                <div className="mt-4 p-4 border border-gray-200 rounded">
-                    <QRCodeCanvas value={qrCodeAttendance} />
-                </div>
-
+            {/* QR Code Modal */}
+            {showQRModal && qrCodeAttendance && (
+                <QRCodeModal qrCodeAttendance={qrCodeAttendance} onClose={handleCloseQRModal} />
             )}
-
         </div>
-    )
-}
+    );
+};
 
-export default AdminViewAllSession
+export default AdminViewAllSession;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

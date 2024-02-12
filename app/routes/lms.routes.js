@@ -92,6 +92,8 @@ router.post("/studreg", StudentController.createStudent)
 
 router.post("/studViewTask", StudentController.studentTaskView)
 
+router.post("/studViewTaskOfSessions", StudentController.studentSessionRelatedTaskView)
+
 router.post("/studentLogin", StudentController.studLog)
 
 router.post("/AdminStaffLogin", AdminStaffController.adminStaffLogin)
@@ -222,6 +224,8 @@ router.post('/updateMaterial', MaterialController.updateMaterial)
 
 router.post('/studentViewAttendance', AttendenceController.studentViewAttendance)
 
+router.post('/studentViewSessionWiseAttendance', AttendenceController.studentViewSessionWiseAttendance)
+
 router.post('/viewCollegeStudent', CollegeController.studentViewCollege)
 
 router.post('/viewUpcomingSessions', SessionsController.viewUpcomingSessions)
@@ -247,6 +251,8 @@ router.post('/viewOneCurriculum', curriculumController.viewOneCurriculum)
 router.post('/isSessionHappeningToday', SessionsController.isSessionHappeningToday)
 
 router.post('/AdmViewAllMaterial', AdminStaffController.AdmViewAllMaterial)
+
+router.post('/AdmViewOneMaterial', AdminStaffController.viewOneMaterial)
 
 
 

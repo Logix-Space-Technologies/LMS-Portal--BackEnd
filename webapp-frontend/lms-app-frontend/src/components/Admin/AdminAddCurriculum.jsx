@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
+import '../../config/config'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminAddCurriculum = () => {
@@ -24,6 +25,9 @@ const AdminAddCurriculum = () => {
             setFile(uploadedFile);
             const extension = uploadedFile.name.split('.').pop().toLowerCase();
             setFileType(extension);
+        } else {
+            setFile(null);
+            setFileType("");
         }
     }
 

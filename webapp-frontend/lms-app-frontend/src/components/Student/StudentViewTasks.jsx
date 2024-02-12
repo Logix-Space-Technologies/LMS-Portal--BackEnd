@@ -107,7 +107,7 @@ const StudentViewTasks = () => {
                             alert(response.data.data.remarks);
                         } else {
                             if (response.data.status === "Unauthorized Access!!") {
-                                window.location.reload();
+                                navigate("/studentLogin")
                                 sessionStorage.removeItem("studentkey");
                                 sessionStorage.removeItem("studentId");
                                 sessionStorage.removeItem("studemail");

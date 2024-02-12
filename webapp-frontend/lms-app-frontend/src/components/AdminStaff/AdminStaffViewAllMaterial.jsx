@@ -30,6 +30,13 @@ const AdminStaffViewAllMaterial = () => {
         )
     }
 
+    const UpdateClick = (id) => {
+        let data = id
+        sessionStorage.setItem("materialId", data)
+        navigate("/AdminStaffUpdateMaterial")
+
+    }
+
     useEffect(() => { getData() }, [])
     return (
         <div>
@@ -78,7 +85,7 @@ const AdminStaffViewAllMaterial = () => {
                                             <a target="_blank" href={value.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</a>
+                                            <a onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</a>
                                         </td>
                                     </tr>
                                 );
