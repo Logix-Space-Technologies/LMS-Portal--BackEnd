@@ -6,16 +6,16 @@ import '../../config/config'
 
 const AdminViewRefundRequests = () => {
   const [refundRequests, setRefundRequests] = useState([]);
-const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
+  const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
   const getData = () => {
     let axiosConfig = {
-        headers: {
-          'content-type': 'application/json;charset=UTF-8',
-          "Access-Control-Allow-Origin": "*",
-          "token": sessionStorage.getItem("admtoken"),
-          "key": sessionStorage.getItem("admkey")
-        }
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*",
+        "token": sessionStorage.getItem("admtoken"),
+        "key": sessionStorage.getItem("admkey")
       }
+    }
 
     axios.post(apiUrl, {}, axiosConfig)
       .then((response) => {
@@ -64,8 +64,8 @@ const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
                       </tr>
                     </thead>
                     <tbody>
-                      {refundRequests.map((value, index) => (
-                        <tr key={index}>
+                      {refundRequests.map((value, index) => {
+                        return <tr key={index}>
                           <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.studName}
                           </td>
@@ -82,7 +82,7 @@ const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
                             {value.refundAmnt}
                           </td>
                         </tr>
-                      ))}
+                      })}
                     </tbody>
                   </table>
                 </div>
