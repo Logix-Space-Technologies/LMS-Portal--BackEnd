@@ -136,7 +136,7 @@ const AdminViewAllBatch = () => {
                                         </button>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button onClick="#" className="btn btn-success p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
+                                        <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
                                     </td>
                                     <td className="px-6 py-4">
                                         <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
