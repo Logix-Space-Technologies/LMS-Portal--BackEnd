@@ -31,7 +31,6 @@ const MaterialView = () => {
       .then(response => {
         if (response.data.status === "success") {
           setMaterials(response.data.data);
-          console.log(response.data)
           setLoading(false);
         } else {
           if (response.data.status === "Unauthorized User!!") {

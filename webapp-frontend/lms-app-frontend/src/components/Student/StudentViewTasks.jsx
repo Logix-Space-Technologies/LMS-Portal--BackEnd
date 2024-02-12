@@ -32,7 +32,6 @@ const StudentViewTasks = () => {
             (response) => {
                 if (response.data.data) {
                     setStudViewTaskData(response.data.data);
-                    console.log(response.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
