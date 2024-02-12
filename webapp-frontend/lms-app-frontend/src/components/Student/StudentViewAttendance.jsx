@@ -8,7 +8,7 @@ const StudentViewAttendance = () => {
     const [studentViewAttendance, setStudentViewAttendance] = useState([]);
     const navigate = useNavigate()
 
-    const apiUrl = global.config.urls.api.server + '/api/lms/studentViewAttendance';
+    const apiUrl = global.config.urls.api.server + '/api/lms/studentViewSessionWiseAttendance';
 
     const getData = () => {
         const data = { "studId": sessionStorage.getItem('studentId'), "sessionId": sessionStorage.getItem("SessionId") };
