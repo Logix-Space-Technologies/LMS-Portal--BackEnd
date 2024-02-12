@@ -91,10 +91,9 @@ const SessionView = () => {
     }
   }
 
-  const attendanceClick = (id) => {
+  const sessionClick = (id) => {
     sessionStorage.setItem("SessionId", id);
   }
-
 
   // Function to determine if the session date is current or past (enabling attendance)
   const isSessionAccessible = (sessionDate) => {
@@ -156,11 +155,11 @@ const SessionView = () => {
                             )}
                             {isSessionAccessible(session.date) ? (
                               <>
-                                <Link to="/studentviewattendance" onClick={() => attendanceClick(session.id)} style={{ color: 'white', textDecoration: 'none', backgroundColor: '#009534', padding: '10px', borderRadius: '5px', margin: '0 10px' }} class="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
+                                <Link to="/studentviewattendance" onClick={() => sessionClick(session.id)} style={{ color: 'white', textDecoration: 'none', backgroundColor: '#009534', padding: '10px', borderRadius: '5px', margin: '0 10px' }} class="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
                                   <img src="https://www.svgrepo.com/show/305294/people.svg" class="w-4 h-4 me-2" aria-hidden="true" alt='' />
                                   Attendance
                                 </Link>
-                                <Link to="#" style={{ color: 'white', textDecoration: 'none', backgroundColor: '#3498DB', padding: '10px', borderRadius: '5px', margin: '0 10px' }} class="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
+                                <Link to="/studviewtasksessionwise" onClick={()=> sessionClick(session.id)} style={{ color: 'white', textDecoration: 'none', backgroundColor: '#3498DB', padding: '10px', borderRadius: '5px', margin: '0 10px' }} class="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
                                   <img src="https://www.svgrepo.com/show/332592/unordered-list.svg" class="w-4 h-4 me-2" aria-hidden="true" alt='' />
                                   Tasks
                                 </Link>
