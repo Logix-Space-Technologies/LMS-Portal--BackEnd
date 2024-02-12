@@ -276,7 +276,7 @@ Refund.rejectRefund = (admStaffId, adminRemarks, refundId, result) => {
 
 Refund.getSuccessfulRefunds = (result) => {
     db.query(
-        "SELECT s.studName, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, r.approvedAmnt, r.transactionNo FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.refundApprovalStatus=1",
+        "SELECT s.studName, s.membership_no, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, r.refundInitiatedDate, r.approvedAmnt, r.transactionNo FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.refundApprovalStatus = 1 AND r.cancelStatus = 0",
         (err, res) => {
             if (err) {
                 console.error("Error retrieving successful refunds:", err);
