@@ -23,7 +23,6 @@ const StudentBatchInCharge = () => {
         axios.post(apiUrl, data, axiosConfig).then((response) => {
             if (response.data.data) {
                 setStaffData(response.data.data);
-                console.log(response.data)
             } else {
                 if (response.data.status === "Invalid or expired token.") {
                     navigate("/studentLogin")

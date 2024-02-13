@@ -30,7 +30,6 @@ const CollegeStaffHeader = () => {
     }
 
     const logOut = () => {
-        navigate("/clgStafflogin")
         sessionStorage.removeItem("clgstaffkey");
         sessionStorage.removeItem("clgStaffId");
         sessionStorage.removeItem("clgStaffEmail");
@@ -78,7 +77,7 @@ const CollegeStaffHeader = () => {
                         </Link>
                         <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                             <Link to="/clgstaffchangepassword" className="dropdown-item">Change Password</Link>
-                            <Link onClick={logOut} className="dropdown-item">Log Out</Link>
+                            <Link to="/clgStafflogin" onClick={logOut} className="dropdown-item">Log Out</Link>
                         </div>
                     </div>
                 </div>

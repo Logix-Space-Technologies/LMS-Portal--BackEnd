@@ -25,7 +25,6 @@ const StudentViewUpcomingSession = () => {
             (response) => {
                 if (response.data.status === "success") {
                     setStudentViewUpcomingSessionData(response.data.data)
-                    console.log(response.data)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
                         navigate("/studentLogin")
@@ -73,9 +72,9 @@ const StudentViewUpcomingSession = () => {
                                     </div>
                                     {loading ? (
                                         <div className="col-12 text-center">
-                                            <div class="text-center">
-                                                <div class="spinner-border" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
+                                            <div className="text-center">
+                                                <div className="spinner-border" role="status">
+                                                    <span className="visually-hidden">Loading...</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -100,8 +99,8 @@ const StudentViewUpcomingSession = () => {
                                                         </div>
                                                         <div style={{ padding: '10px 16px', backgroundColor: '#D3B5E5', color: 'white', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px', display: 'flex', justifyContent: 'space-around' }}>
                                                             {value.venueORlink.includes("meet.google.com") && (
-                                                                <Link to={value.venueORlink} target='_blank' rel='noopener noreferrer' style={{ color: 'white', textDecoration: 'none', backgroundColor: '#FBC740', padding: '10px', borderRadius: '5px', margin: '0 10px' }} class="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
-                                                                    <img src="https://www.svgrepo.com/show/504419/google-meet.svg" class="w-4 h-4 me-2" aria-hidden="true" alt='' />
+                                                                <Link to={value.venueORlink} target='_blank' rel='noopener noreferrer' style={{ color: 'white', textDecoration: 'none', backgroundColor: '#FBC740', padding: '10px', borderRadius: '5px', margin: '0 10px' }} className="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
+                                                                    <img src="https://www.svgrepo.com/show/504419/google-meet.svg" className="w-4 h-4 me-2" aria-hidden="true" alt='' />
                                                                     Meeting Link
                                                                 </Link>
 

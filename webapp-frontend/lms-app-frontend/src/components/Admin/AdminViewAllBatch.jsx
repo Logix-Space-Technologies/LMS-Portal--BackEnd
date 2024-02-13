@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
 import Navbar from './Navbar'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 
 const AdminViewAllBatch = () => {
@@ -31,7 +31,7 @@ const AdminViewAllBatch = () => {
     }
 
     const deleteClick = (id) => {
-        let deletedata = { "id" : id }
+        let deletedata = { "id": id }
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -131,9 +131,16 @@ const AdminViewAllBatch = () => {
                                         {new Date(value.addedDate).toLocaleDateString()}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                                        <Link to={value.curriculumFileLink || '#'}
+                                            onClick={(e) => {
+                                                if (!value.curriculumFileLink) {
+                                                    e.preventDefault(); // Prevent link navigation
+                                                    alert('No curriculum uploaded'); // Show alert
+                                                }
+                                            }}
+                                            className="btn bg-blue-500 text-white px-4 py-2 rounded-md">
                                             View Curriculum
-                                        </button>
+                                        </Link>
                                     </td>
                                     <td className="px-6 py-4">
                                         <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>

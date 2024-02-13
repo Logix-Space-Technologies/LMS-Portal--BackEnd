@@ -24,12 +24,10 @@ const StudentViewRefundRequest = () => {
                 "key": sessionStorage.getItem("studentkey")
             }
         }
-        console.log(data)
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
                     setStudentViewRefundReqData(response.data.data)
-                    console.log(response.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
@@ -136,9 +134,9 @@ const StudentViewRefundRequest = () => {
                                     </div>
                                     {loading ? (
                                         <div className="col-12 text-center">
-                                            <div class="text-center">
-                                                <div class="spinner-border" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
+                                            <div className="text-center">
+                                                <div className="spinner-border" role="status">
+                                                    <span className="visually-hidden">Loading...</span>
                                                 </div>
                                             </div>
                                         </div>

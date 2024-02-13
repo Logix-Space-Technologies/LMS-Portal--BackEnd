@@ -92,6 +92,7 @@ import AdminAddTrainer from './components/Admin/AdminAddTrainer';
 import AdminStaffViewSubmittedTask from './components/AdminStaff/AdminStaffViewSubmittedTask';
 import AdminViewLog from './components/Admin/AdminViewLog';
 import AdminViewSuccessfulRefunds from './components/Admin/AdminViewSuccessfulRefunds';
+import StudentViewOneTask from './components/Student/StudentViewOneTask';
 
 
 
@@ -224,6 +225,7 @@ function App() {
           <Route path='/studViewUpcomingSession' element={<StudentViewUpcomingSession />} />
           <Route path='/studnavbar' element={<StudNavBar/>}/>
           <Route path='/studupdatesubtask' element={<StudentUpdateSubmittedTask/>}/>
+          <Route path='/studviewtasksessionwise' element={<StudentViewOneTask/>}/>
 
 
 
