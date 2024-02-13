@@ -80,7 +80,7 @@ Batches.batchDelete = (batchId, result) => {
 
 
 Batches.batchView = (result) => {
-    db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus=0 AND b.isActive= 1;", (err, res) => {
+    db.query("SELECT c.collegeName, b.*, cu.curriculumFileLink FROM batches b JOIN college c ON b.collegeId = c.id LEFT JOIN curriculum cu ON cu.batchId = b.id WHERE b.deleteStatus=0 AND b.isActive= 1;", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)
