@@ -335,5 +335,18 @@ Session.CheckIsTodaySessionAvailable = (result) => {
         })
 }
 
+Session.viewOneSession = (sessionId, result) => {
+    db.query("SELECT id,sessionName,date,time,type,remarks,venueORlink,trainerId FROM sessiondetails WHERE id = ? AND isActive = 1 AND deleteStatus = 0", sessionId,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("data: ", res);
+            result(null, res);
+        });
+};
+
 
 module.exports = Session

@@ -91,6 +91,7 @@ import AdminAddCurriculum from './components/Admin/AdminAddCurriculum';
 import AdminAddTrainer from './components/Admin/AdminAddTrainer';
 import AdminStaffViewSubmittedTask from './components/AdminStaff/AdminStaffViewSubmittedTask';
 import AdminStaffEvaluateTask from './components/AdminStaff/AdminStaffEvaluateTask';
+import AdminUpdateSession from './components/Admin/AdminUpdateSession';
 
 
 
@@ -149,6 +150,7 @@ function App() {
           <Route path='/adminupdateadminstaff' element={<AdminUpdateAdminStaff/>}/>
           <Route path='/adminAddcurriculum' element={<AdminAddCurriculum/>}/>
           <Route path='/adminAddtrainer' element={<AdminAddTrainer/>}/>
+          <Route path='/AdminUpdateSession' element={<AdminUpdateSession/>}/>
 
 
 

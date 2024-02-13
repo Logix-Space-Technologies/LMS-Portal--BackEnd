@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import Navbar from './Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const QRCodeModal = ({ qrCodeAttendance, onClose }) => {
     return (
@@ -26,6 +27,7 @@ const AdminViewAllSession = () => {
     const [sessionData, setSessionData] = useState([]);
     const [qrCodeAttendance, setQrCodeAttendance] = useState(null);
     const [showQRModal, setShowQRModal] = useState(false);
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession";
@@ -93,6 +95,13 @@ const AdminViewAllSession = () => {
     const handleCloseQRModal = () => {
         setShowQRModal(false);
     };
+
+    const UpdateClick = (id) => {
+        let data = id
+        sessionStorage.setItem("sessionId", data)
+        navigate("/AdminUpdateSession")
+
+    }
 
     useEffect(() => { getData() }, []);
 
@@ -199,7 +208,7 @@ const AdminViewAllSession = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.cancelStatus === "ACTIVE" && (                                           
-                                                <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update</a>                                           
+                                                <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">Update Session</button>                                        
                                         )}
                                     </td>
 
