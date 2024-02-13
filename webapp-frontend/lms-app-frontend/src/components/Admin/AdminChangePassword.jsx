@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import '../../config/config'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from './Navbar';
 
@@ -96,7 +96,7 @@ const AdminChangePassword = () => {
                                             </div>
                                             <br></br>
                                             <div class="mb-3">
-                                                <a class="btn btn-danger" href="#">Back</a>
+                                                <Link class="btn btn-danger" to="#">Back</Link>
                                             </div>
                                         </ul>
                                     </div>

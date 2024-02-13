@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import '../../config/config'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import AdmStaffNavBar from './AdmStaffNavBar';
 
 
 const AdminStaffChangePassword = () => {
@@ -57,6 +58,7 @@ const AdminStaffChangePassword = () => {
     }
     return (
         <div>
+            <AdmStaffNavBar/>
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
@@ -91,7 +93,7 @@ const AdminStaffChangePassword = () => {
                                             </div>
                                             <br></br>
                                             <div class="mb-3">
-                                                <a class="btn btn-danger" href="#">Back</a>
+                                                <Link class="btn btn-danger" to="#">Back</Link>
                                             </div>
                                         </ul>
                                     </div>
