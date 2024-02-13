@@ -82,7 +82,20 @@ const Navbar = () => {
                                 Functionalities
                             </Link>
                             <ul className="dropdown-menu">
-
+                                <li><a className="dropdown-item" href="/adminviewallcollege">View All College</a></li>
+                                <li><a className="dropdown-item" href="/adminviewallstudents">View All Students</a></li>
+                                <li><a className="dropdown-item" href="/adminviewalltrainers">View All Trainers</a></li>
+                                <li><a className="dropdown-item" href="/adminviewallbatches">View All Batches</a></li>
+                                <li><a className="dropdown-item" href="/AdminViewAllSession">View All Session</a></li>
+                                <li><a className="dropdown-item" href="/adminsearchstudent">Search Student</a></li>
+                                <li><a className="dropdown-item" href="/adminviewCollegeStaffLog">View College Staff Log</a></li>
+                                <li><a className="dropdown-item" href="/AdminViewRefundRequests">View Refund Requests</a></li>
+                                <li><a className="dropdown-item" href="/AdminViewStudentLog">View student log</a></li>
+                                <li><a className="dropdown-item" href="/AdminSearchSessionDetails">Search session details</a></li>
+                                <li><a className="dropdown-item" href="/AdminSearchCollegeStaff">Search college staffs</a></li>
+                                <li><a className="dropdown-item" href="/AdminViewAllAdminStaff">View admin staffs</a></li>
+                                <li><a className="dropdown-item" href="/AdminSendNotification">Send notifications</a></li>
+                                <li><a className="dropdown-item" href="/UpdateTask">UpdateTask</a></li>
                                 <li><Link className="dropdown-item" to="/adminviewallcollege">View All College</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewallstudents">View All Students</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>

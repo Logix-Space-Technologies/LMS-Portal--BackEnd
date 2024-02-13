@@ -248,6 +248,8 @@ router.post('/generateAttendancePdf', StudentController.generateBatchWiseAttenda
 
 router.post('/viewOneCurriculum', curriculumController.viewOneCurriculum)
 
+router.post('/viewOneTask', taskController.viewOneTask)
+
 router.post('/isSessionHappeningToday', SessionsController.isSessionHappeningToday)
 
 router.post('/AdmViewAllMaterial', AdminStaffController.AdmViewAllMaterial)
