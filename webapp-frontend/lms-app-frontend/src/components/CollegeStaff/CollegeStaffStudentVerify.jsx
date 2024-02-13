@@ -46,6 +46,7 @@ const CollegeStaffStudentVerify = () => {
             (response) => {
                 if (response.data.status === "Success") {
                     alert("Student verified successfully!!")
+                    window.location.reload()
                 } else {
                     alert(response.data.status)
                 }
