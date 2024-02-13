@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import Navbar from './Navbar';
+import '../../config/config'
 import { useNavigate } from 'react-router-dom';
 
 const QRCodeModal = ({ qrCodeAttendance, onClose }) => {

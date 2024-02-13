@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
+import '../../config/config'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminAddCurriculum = () => {

@@ -4,6 +4,7 @@ import AdminSideBar from './AdminSideBar'
 import AdminCountView from './AdminCountView'
 import AdminTableView from './AdminTableView'
 import AdminFooter from './AdminFooter'
+import { Link } from 'react-router-dom'
 
 const AdminDashboard = () => {
   return (
@@ -23,7 +24,7 @@ const AdminDashboard = () => {
                 {/* Footer End */}
             </div>
             {/* Back to Top */}
-            <a href="#" className="btn btn-lg btn-primary btn-lg-square back-to-top"><i className="bi bi-arrow-up" /></a>
+            <Link to="#" className="btn btn-lg btn-primary btn-lg-square back-to-top"><i className="bi bi-arrow-up" /></Link>
         </div>
   )
 }

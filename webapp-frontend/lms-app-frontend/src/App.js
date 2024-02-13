@@ -90,8 +90,12 @@ import AdminStaffUpdateMaterial from './components/AdminStaff/AdminStaffUpdateMa
 import AdminAddCurriculum from './components/Admin/AdminAddCurriculum';
 import AdminAddTrainer from './components/Admin/AdminAddTrainer';
 import AdminStaffViewSubmittedTask from './components/AdminStaff/AdminStaffViewSubmittedTask';
+import AdminViewLog from './components/Admin/AdminViewLog';
+import AdminViewSuccessfulRefunds from './components/Admin/AdminViewSuccessfulRefunds';
+import StudentViewOneTask from './components/Student/StudentViewOneTask';
 import AdminStaffEvaluateTask from './components/AdminStaff/AdminStaffEvaluateTask';
 import AdminUpdateSession from './components/Admin/AdminUpdateSession';
+
 
 
 
@@ -150,8 +154,9 @@ function App() {
           <Route path='/adminupdateadminstaff' element={<AdminUpdateAdminStaff/>}/>
           <Route path='/adminAddcurriculum' element={<AdminAddCurriculum/>}/>
           <Route path='/adminAddtrainer' element={<AdminAddTrainer/>}/>
+          <Route path='/adminViewlog' element={<AdminViewLog/>}/>
+          <Route path='/adminViewSuccessfulrefunds' element={<AdminViewSuccessfulRefunds/>}/>
           <Route path='/AdminUpdateSession' element={<AdminUpdateSession/>}/>
-
 
 
 
@@ -173,7 +178,7 @@ function App() {
           <Route path='/AdminStaffViewAllMaterial' element={<AdminStaffViewAllMaterial/>}/>
           <Route path='/AdminStaffUpdateMaterial' element={<AdminStaffUpdateMaterial/>}/>
           <Route path='/adminstaffviewsubmittedtask' element={<AdminStaffViewSubmittedTask/>}/>
-          <Route path='/adminstaffevaluatetask' element={<AdminStaffEvaluateTask/>}/>
+          
 
 
 
@@ -225,6 +230,7 @@ function App() {
           <Route path='/studViewUpcomingSession' element={<StudentViewUpcomingSession />} />
           <Route path='/studnavbar' element={<StudNavBar/>}/>
           <Route path='/studupdatesubtask' element={<StudentUpdateSubmittedTask/>}/>
+          <Route path='/studviewtasksessionwise' element={<StudentViewOneTask/>}/>
 
 
 

@@ -1,7 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
-import StudNavBar from './StudNavBar'
 import { Link, useNavigate } from 'react-router-dom'
 
 const StudentViewTransaction = () => {
@@ -24,7 +23,6 @@ const StudentViewTransaction = () => {
             (response) => {
                 if (response.data.data) {
                     setTransactionData(response.data.data)
-                    console.log(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User") {
                         navigate("/studentLogin")

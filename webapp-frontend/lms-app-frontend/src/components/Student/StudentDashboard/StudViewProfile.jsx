@@ -24,7 +24,6 @@ const StudViewProfile = () => {
 
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
-        console.log(data)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -37,7 +36,6 @@ const StudViewProfile = () => {
             (response) => {
                 if (response.data.data) {
                     setStudData(response.data.data)
-                    console.log(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         logOut()

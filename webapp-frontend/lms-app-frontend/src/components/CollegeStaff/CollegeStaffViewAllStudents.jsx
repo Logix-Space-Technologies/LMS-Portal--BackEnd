@@ -6,6 +6,8 @@ import ClgStaffNavbar from './ClgStaffNavbar';
 const CollegeStaffViewAllStudents = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [studentsPerPage] = useState(2); // Number of students per page
 
   const apiUrl = global.config.urls.api.server + "/api/lms/collegeStaffViewStudent";
   const token = sessionStorage.getItem("clgstaffLogintoken");
@@ -47,50 +49,129 @@ const CollegeStaffViewAllStudents = () => {
       });
   };
 
+  // Logic for displaying current students
+  const indexOfLastStudent = currentPage * studentsPerPage;
+  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+  const currentStudents = students ? students.slice(indexOfFirstStudent, indexOfLastStudent) : [];
+
+
+  // Change page
+  const paginate = pageNumber => setCurrentPage(pageNumber);
+
+  // Total pages
+  const pageNumbers = [];
+  if (students && students.length > 0) {
+    students.forEach((student, index) => {
+      const pageNumber = index + 1;
+      pageNumbers.push(pageNumber);
+    });
+  }
+
   return (
     <div>
       <ClgStaffNavbar />
-      <div className="bg-light py-3 py-md-5">
-        <div className="container">
-          <div className="row justify-content-md-center">
-            <div className="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
-              <div className="bg-white p-4 p-md-5 rounded shadow-sm">
-                <div className="row gy-3 gy-md-4 overflow-hidden">
-                  <div className="col-12">
-                    <h3>Student Details</h3>
-                  </div>
-                  {loading ? (
-                    <div className="col-12 text-center">Loading...</div>
-                  ) : (
-                    students.length === 0 ? (
-                      <div className="col-12 text-center">No students found!</div>
-                    ) : (
-                      students.map((student, index) => (
-                        <div key={index} className="col-12">
-                          <div className="card">
-                            <div className="card-body">
-                              <h5 className="card-title">{student.studName}</h5>
-                              <p className="card-text">Batch Name: {student.batchName}</p>
-                              <p className="card-text">Admission Number: {student.admNo}</p>
-                              <p className="card-text">Roll Number: {student.rollNo}</p>
-                              <p className="card-text">Department: {student.studDept}</p>
-                              <p className="card-text">Course: {student.course}</p>
-                              <p className="card-text">Email: {student.studEmail}</p>
-                              <p className="card-text">Phone Number: {student.studPhNo}</p>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <br /><br />
+      <div className="flex justify-between items-center mt-16 ml-16 mb-16">
+        <h2 className="text-lg font-bold">College Staff View Student</h2>
       </div>
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th scope="col" className="px-6 py-3">
+                Name
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Batch Name
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Admission Number
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Roll Number
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Department
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Course
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Email
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Phone Number
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentStudents.map((student, index) => (
+              <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                  <div className="ps-3">
+                    <div className="text-base font-semibold">{student.studName}</div>
+                  </div>
+                </th>
+                <td className="px-6 py-4">
+                  {student.batchName}
+                </td>
+                <td className="px-6 py-4">
+                  {student.admNo}
+                </td>
+                <td className="px-6 py-4">
+                  {student.rollNo}
+                </td>
+                <td className="px-6 py-4">
+                  {student.studDept}
+                </td>
+                <td className="px-6 py-4">
+                  {student.course}
+                </td>
+                <td className="px-6 py-4">
+                  {student.studEmail}
+                </td>
+                <td className="px-6 py-4">
+                  {student.studPhNo}
+                </td>
+              </tr>
+            ))}
+            {currentStudents.length === 0 && (
+              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td colSpan="11" className="px-6 py-4" style={{ textAlign: 'center' }}>
+                  No Students Found !!
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      <div className="flex justify-center mt-8">
+        <nav>
+          <ul className="flex list-style-none">
+            {currentPage > 1 && (
+              <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                Previous
+              </li>
+            )}
+            {pageNumbers.map(number => (
+              <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                {number}
+              </li>
+            ))}
+            {currentPage < pageNumbers.length && (
+              <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                Next
+              </li>
+            )}
+          </ul>
+        </nav>
+      </div>
+
     </div>
   );
 };
 
 export default CollegeStaffViewAllStudents;
+
+
+

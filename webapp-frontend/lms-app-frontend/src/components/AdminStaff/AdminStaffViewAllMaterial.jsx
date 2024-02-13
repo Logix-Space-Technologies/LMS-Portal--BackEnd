@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import AdmStaffNavBar from './AdmStaffNavBar'
 
@@ -82,10 +82,10 @@ const AdminStaffViewAllMaterial = () => {
                                         <td className="px-6 py-4">{value.materialType}</td>
                                         <td className="px-6 py-4">{value.addedDate}</td>
                                         <td className="px-6 py-4">
-                                            <a target="_blank" href={value.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
+                                            <Link target="_blank" to={value.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <a onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</a>
+                                            <Link onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</Link>
                                         </td>
                                     </tr>
                                 );

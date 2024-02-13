@@ -1,113 +1,688 @@
 {
- 
- "name": "lms-portal--backend",
- 
- "version": "1.0.0",
- 
- "description": "",
- 
- "main": "index.js",
- 
- "scripts": {
- 
-  
- "test": "echo \"Error: no test specified\" && exit 1"
- 
- },
- 
- "repository": {
- 
-  
- "type": "git",
- 
-  
- "url": "git+https://github.com/anishpdm/LMS-Portal--BackEnd.git"
- 
- },
- 
- "author": "Logix Space Technologies Pvt Ltd",
- 
- "license": "ISC",
- 
- "bugs": {
- 
-  
- "url": "https://github.com/anishpdm/LMS-Portal--BackEnd/issues"
- 
- },
- 
- "homepage": "https://lmsapp.linkurcodes.com",
- 
- "dependencies": {
- 
-  
- "@aws-sdk/client-s3": "^3.489.0",
- 
-  
- "@aws-sdk/lib-storage": "^3.489.0",
- 
-  
- "@sendgrid/mail": "^8.1.0",
- 
-  
- "axios": "^1.6.4",
- 
-  
- "bcrypt": "^5.1.1",
- 
-  
- "body-parser": "^1.20.2",
- 
-  
- "cors": "^2.8.5",
- 
-  
- "dotenv": "^16.3.1",
- 
-  
- "express": "^4.18.2",
- 
-  
- "jsonwebtoken": "^9.0.2",
- 
-  
- "moment": "^2.30.1",
- 
-  
- "moment-timezone": "^0.5.44",
- 
-  
- "multer": "^1.4.5-lts.1",
- 
-  
- "mysql": "^2.18.1",
- 
-  
- "mysql2": "^3.7.0",
- 
-  
- "nodemailer": "^6.9.8",
- 
-  
- "pdfkit": "^0.12.0",
- 
-  
- "pdfkit-table": "^0.1.99",
- 
-  
- "pdfmake": "^0.2.9",
- 
-  
- "qrcode.react": "^3.1.0",
- 
-  
- "react-router-dom": "^6.21.3",
- 
-  
- "regex": "^0.1.1",
- 
-  
- "roboto-font": "^0.1.0"
- 
- }
+ 
+
+
+
+
+
+
+
+
+"name": "lms-portal--backend",
+ 
+
+
+
+
+
+
+
+
+"version": "1.0.0",
+ 
+
+
+
+
+
+
+
+
+"description": "",
+ 
+
+
+
+
+
+
+
+
+"main": "index.js",
+ 
+
+
+
+
+
+
+
+
+"scripts": {
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"test": "echo \"Error: no test specified\" && exit 1"
+ 
+
+
+
+
+
+
+
+
+},
+ 
+
+
+
+
+
+
+
+
+"repository": {
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"type": "git",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"url": "git+https://github.com/anishpdm/LMS-Portal--BackEnd.git"
+ 
+
+
+
+
+
+
+
+
+},
+ 
+
+
+
+
+
+
+
+
+"author": "Logix Space Technologies Pvt Ltd",
+ 
+
+
+
+
+
+
+
+
+"license": "ISC",
+ 
+
+
+
+
+
+
+
+
+"bugs": {
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"url": "https://github.com/anishpdm/LMS-Portal--BackEnd/issues"
+ 
+
+
+
+
+
+
+
+
+},
+ 
+
+
+
+
+
+
+
+
+"homepage": "https://lmsapp.linkurcodes.com",
+ 
+
+
+
+
+
+
+
+
+"dependencies": {
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"@aws-sdk/client-s3": "^3.489.0",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"@aws-sdk/lib-storage": "^3.489.0",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"@sendgrid/mail": "^8.1.0",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"axios": "^1.6.4",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"bcrypt": "^5.1.1",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"body-parser": "^1.20.2",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"cors": "^2.8.5",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+"date-fns": "^3.3.1",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+"dotenv": "^16.3.1",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"express": "^4.18.2",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"jsonwebtoken": "^9.0.2",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"moment": "^2.30.1",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"moment-timezone": "^0.5.44",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"multer": "^1.4.5-lts.1",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"mysql": "^2.18.1",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"mysql2": "^3.7.0",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"nodemailer": "^6.9.8",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"pdfkit": "^0.12.0",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"pdfkit-table": "^0.1.99",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"pdfmake": "^0.2.9",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"qrcode.react": "^3.1.0",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+"react-router-dom": "^6.21.3",
+
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"regex": "^0.1.1",
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+"roboto-font": "^0.1.0"
+ 
+
+
+
+
+
+
+
+
+}
 }
