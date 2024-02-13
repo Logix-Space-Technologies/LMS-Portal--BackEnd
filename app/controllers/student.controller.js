@@ -207,7 +207,7 @@ exports.studLog = (request, response) => {
             },
                 (error, token) => {
                     if (error) {
-                        return response.json({ "status": "Unauthorized User!!" })
+                        return response.json({ "status": error.message })
                     } else {
                         if (type === 'web') {
                             // Code for web app
