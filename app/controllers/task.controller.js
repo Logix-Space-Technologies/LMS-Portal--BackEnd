@@ -283,7 +283,7 @@ exports.taskUpdate = (request, response) => {
 
                     // If validation fails
                     if (Object.keys(validationErrors).length > 0) {
-                        return response.json({ "status": "Validation failed", "data": validationErrors });
+                        return response.status(400).json({ "status": "Validation failed", "data": validationErrors });
                     }
 
 
@@ -306,17 +306,17 @@ exports.taskUpdate = (request, response) => {
                             if (err.kind === "not_found") {
                                 return response.json({ "status": "Task with provided Id is not found." });
                             } else {
-                                return response.json({ "status": err });
+                                return response.status(422).json({ "status": err });
                             }
                         } else {
                             if(key=="lmsapp"){
                                 logAdminStaff(0,"Admin Updated Task")
                             }
-                            return response.json({ "status": "success", "data": data });
+                            return response.status(200).json({ "status": "success", "data": data });
                         }
                     });
                 } else {
-                    return response.json({ "status": "Unauthorized access!!" });
+                    return response.status(403).json({ "status": "Unauthorized access!!" });
                 }
             });
 
@@ -399,5 +399,32 @@ exports.collegeStaffSearchTasks = (request, response) => {
         } else {
             response.json({ "status": "Unauthorized User!!" });
         }
+    });
+};
+
+
+
+
+exports.viewOneTask = (request, response) => {
+    const token = request.headers.token;
+    const key = request.headers.key;
+    const id = request.body.id;
+
+    jwt.verify(token, key, (err, decoded) => {
+        if (err || !decoded) {
+            return response.status(401).json({ "status": "Unauthorized: Invalid or missing token" });
+        }
+
+        Tasks.findById(id, (err, data) => {
+            if (err) {
+                if (err.kind === "not_found") {
+                    response.status(404).json({ "status": "Task not found" });
+                } else {
+                    response.status(500).json({ "status": "Error retrieving task" });
+                }
+            } else {
+                response.json({ "status": "success", "data": data });
+            }
+        });
     });
 };
