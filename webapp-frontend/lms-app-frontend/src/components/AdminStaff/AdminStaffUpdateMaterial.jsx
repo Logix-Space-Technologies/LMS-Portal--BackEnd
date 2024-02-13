@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios';
 import AdmStaffNavBar from './AdmStaffNavBar';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AdminStaffUpdateMaterial = () => {
 
@@ -195,15 +195,15 @@ const AdminStaffUpdateMaterial = () => {
                                             </div>
                                             <br></br>
                                             <div class="mb-3">
-                                                <a class="btn btn-danger" href="/AdminStaffViewAllMaterial">Back</a>
+                                                <Link class="btn btn-danger" to="/AdminStaffViewAllMaterial">Back</Link>
                                             </div>
                                         </ul>
 
                                         <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                            <li><a href="#!"><i className="ti-twitter-alt" /></a></li>
-                                            <li><a href="#!"><i className="ti-facebook" /></a></li>
-                                            <li><a href="#!"><i className="ti-pinterest" /></a></li>
-                                            <li><a href="#!"><i className="ti-instagram" /></a></li>
+                                            <li><Link to="#!"><i className="ti-twitter-alt" /></Link></li>
+                                            <li><Link to="#!"><i className="ti-facebook" /></Link></li>
+                                            <li><Link to="#!"><i className="ti-pinterest" /></Link></li>
+                                            <li><Link to="#!"><i className="ti-instagram" /></Link></li>
                                         </ul>
                                     </div>
                                 </div>

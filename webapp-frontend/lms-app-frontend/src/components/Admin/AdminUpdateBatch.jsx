@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import '../../config/config'
 
@@ -9,10 +9,13 @@ const AdminUpdateBatch = () => {
     function convertToISODate(dateString) {
         const parts = dateString.split('/');
         if (parts.length !== 3) return ''; // Handle invalid date format
-    
+
         const [day, month, year] = parts;
-        return  `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        console.log("ISO Date:", isoDate);
+        return isoDate;
     }
+
 
     // const [errors, setErrors] = useState({});
     const [batchData, setBatchData] = useState([])
@@ -178,6 +181,7 @@ const AdminUpdateBatch = () => {
                                                     onChange={updateHandler}
                                                     value={convertToISODate(updateField.regStartDate)}
                                                 />
+
                                                 {/* {errors.regStartDate && <span style={{ color: 'red' }} className="error">{errors.regStartDate}</span>} */}
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -210,10 +214,10 @@ const AdminUpdateBatch = () => {
                                         </ul>
 
                                         <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                            <li><a href="#!"><i className="ti-twitter-alt" /></a></li>
-                                            <li><a href="#!"><i className="ti-facebook" /></a></li>
-                                            <li><a href="#!"><i className="ti-pinterest" /></a></li>
-                                            <li><a href="#!"><i className="ti-instagram" /></a></li>
+                                            <li><Link to="#!"><i className="ti-twitter-alt" /></Link></li>
+                                            <li><Link to="#!"><i className="ti-facebook" /></Link></li>
+                                            <li><Link to="#!"><i className="ti-pinterest" /></Link></li>
+                                            <li><Link to="#!"><i className="ti-instagram" /></Link></li>
                                         </ul>
                                     </div>
                                 </div>
