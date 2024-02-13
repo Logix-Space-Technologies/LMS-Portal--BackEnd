@@ -161,7 +161,7 @@ const AddAdminStaff = () => {
                                     </div>
                                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                         <label for="" class="form-label">Password</label>
-                                        <input onChange={inputHandler} type="text" class="form-control" name="Password" value={inputField.Password} id="Password" />
+                                        <input onChange={inputHandler} type="password" class="form-control" name="Password" value={inputField.Password} id="Password" />
                                         {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
                                     </div>
                                     <div class="col-12">

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
 import Navbar from './Navbar'
+import { Link } from 'react-router-dom'
 
 const AddCollegeStaff = () => {
 
@@ -221,9 +222,9 @@ const AddCollegeStaff = () => {
                   <div class="row">
                     <div class="col-12">
                       <div class="text-center mb-5">
-                        <a href="#!">
+                        <Link to="#!">
                           <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
-                        </a><br /><br />
+                        </Link><br /><br />
                         <h3>Add College Staff</h3>
                       </div>
                     </div>

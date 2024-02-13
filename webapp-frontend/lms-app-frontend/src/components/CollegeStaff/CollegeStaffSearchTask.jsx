@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import ClgStaffNavbar from './ClgStaffNavbar'
+import '../../config/config'
 
 const CollegeStaffSearchTask = () => {
 

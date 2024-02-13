@@ -344,21 +344,20 @@ Student.findByEmail = (Email, result) => {
                                         }
 
 
-                                        db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1", [Email],
+                                        db.query("SELECT s.*, r.refundReqStatus, CASE WHEN cm.studentId IS NOT NULL THEN TRUE ELSE FALSE END AS communityManager FROM student s LEFT JOIN ( SELECT studId, CASE WHEN SUM(cancelStatus = 0) > 0 THEN 'Refund Request Active' ELSE 'No Refund Request' END AS refundReqStatus FROM refund GROUP BY studId ) r ON s.id = r.studId LEFT JOIN communitymanagers cm ON s.id = cm.studentId AND s.batchId = cm.batchId WHERE BINARY s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1", [Email],
                                             (err, res) => {
                                                 if (err) {
-                                                    console.log("Error : ", err)
-                                                    return result(err, null)
-
+                                                    console.log("Error : ", err);
+                                                    return result(err, null);
                                                 }
 
                                                 if (res.length > 0) {
-                                                    result(null, res[0])
-                                                    //Log for student login
-                                                    logStudent(res[0].id, "Student logged In")
-                                                    return
+                                                    // Log student login
+                                                    logStudent(res[0].id, "Student logged In");
+                                                    result(null, res[0]);
                                                 }
-                                            })
+                                            });
+
                                     })
 
                             }
@@ -372,7 +371,7 @@ Student.findByEmail = (Email, result) => {
 
 
 Tasks.studentTaskView = (studId, result) => {
-    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, asf.AdStaffName AS 'evaluatorName', st.score, st.lateSubDate,st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1", [studId],
+    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, asf.AdStaffName AS 'evaluatorName', st.score, st.lateSubDate,st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 ORDER BY t.addeddate DESC", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -386,6 +385,31 @@ Tasks.studentTaskView = (studId, result) => {
             }
         })
 }
+
+Tasks.studentSessionRelatedTaskView = (studId, sessionId, result) => {
+    db.query(
+        "SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, asf.AdStaffName AS 'evaluatorName', st.score, st.lateSubDate, st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id JOIN sessionDetails sd ON t.batchId = sd.batchId AND t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND sd.id = ? ORDER BY t.addedDate DESC",
+        [studId, sessionId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                const formattedTasks = res.map(tasks => ({
+                    ...tasks,
+                    dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }),
+                    subDate: tasks.subDate ? tasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null,
+                    lateSubDate: tasks.lateSubDate ? tasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null,
+                    updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null
+                }));
+                console.log("Tasks: ", formattedTasks);
+                result(null, formattedTasks);
+                return;
+            }
+        }
+    );
+};
 
 Student.StdChangePassword = (student, result) => {
     const studentPassword = "SELECT password, id FROM student WHERE studEmail=? AND deleteStatus = 0 AND isActive = 1 AND ispaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
@@ -850,18 +874,27 @@ Student.studentNotificationView = (studId, result) => {
                         result(null, { status: "Batch not found" });
                         return;
                     }
-                    db.query("SELECT message, sendBy, title, addedDate,sendDateTime FROM notifications WHERE batchId = ? ORDER BY sendDateTime DESC", [batchId], (err, notificationsRes) => {
-                        if (err) {
-                            console.log("error: ", err);
-                            result(err, null);
-                            return;
-                        } else {
-                            const formattedNotification = notificationsRes.map(notification => ({ ...notification, sendDateTime: notification.sendDateTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: notification.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
-                            console.log("Notifications: ", formattedNotification);
-                            result(null, formattedNotification);
-                            return;
+                    db.query(
+                        "SELECT message, sendBy, title, addedDate, sendDateTime, " +
+                        "CASE " +
+                        "WHEN TIMESTAMPDIFF(MINUTE, sendDateTime, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, sendDateTime, NOW()), ' minute', IF(TIMESTAMPDIFF(MINUTE, sendDateTime, NOW()) = 1, '', 's'), ' ago') " +
+                        "WHEN TIMESTAMPDIFF(HOUR, sendDateTime, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, sendDateTime, NOW()), ' hour', IF(TIMESTAMPDIFF(HOUR, sendDateTime, NOW()) = 1, '', 's'), ' ago') " +
+                        "ELSE CONCAT(TIMESTAMPDIFF(DAY, sendDateTime, NOW()), ' day', IF(TIMESTAMPDIFF(DAY, sendDateTime, NOW()) = 1, '', 's'), ' ago') " +
+                        "END AS formattedDateTime " +
+                        "FROM notifications WHERE batchId = ? ORDER BY sendDateTime DESC",
+                        [batchId],
+                        (err, notificationsRes) => {
+                            if (err) {
+                                console.log("error: ", err);
+                                result(err, null);
+                                return;
+                            } else {
+                                console.log("Notifications: ", notificationsRes);
+                                result(null, notificationsRes);
+                                return;
+                            }
                         }
-                    });
+                    );
                 }
             });
         }
@@ -874,7 +907,7 @@ Student.studentNotificationView = (studId, result) => {
 
 Student.viewSession = (batchId, result) => {
     db.query(
-        "SELECT DISTINCT s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, s.attendenceCode FROM sessiondetails s JOIN student st ON s.batchId = st.batchId WHERE s.deleteStatus = 0 AND s.isActive = 1 AND st.deleteStatus = 0 AND st.isActive = 1 AND s.batchId = ?",
+        "SELECT DISTINCT s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink FROM sessiondetails s JOIN student st ON s.batchId = st.batchId WHERE s.deleteStatus = 0 AND s.isActive = 1 AND st.deleteStatus = 0 AND st.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;",
         [batchId],
         (err, res) => {
             if (err) {
@@ -981,7 +1014,7 @@ SubmitTask.studentUpdateSubmittedTask = (updateSubTask, result) => {
 };
 
 SubmitTask.studentviewsubmittedtask = (id, result) => {
-    db.query("SELECT * FROM `submit_task` WHERE id = ?", [id],
+    db.query("SELECT `gitLink`, `remarks` FROM `submit_task` WHERE `id` = ?", [id],
         (err, res) => {
             if (err) {
                 console.error("Error: ", err);

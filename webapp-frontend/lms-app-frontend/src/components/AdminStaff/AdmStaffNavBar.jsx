@@ -1,36 +1,53 @@
 import React from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
 const AdmStaffNavBar = () => {
+    const navigate = useNavigate()
+    const logOut = () => {
+        sessionStorage.removeItem("admstaffLogintoken")
+        sessionStorage.removeItem("admstaffkey")
+        sessionStorage.removeItem("admstaffId")
+    }
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="#">Admin</a>
+                    <Link className="navbar-brand" to="#">Admin</Link>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav">
                             <li className="nav-item">
-                                <a className="nav-link active" aria-current="page" href="/addcollege">Add College</a>
-                            </li>
-                            
-                            <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Functionalities
-                                </a>
-                                <ul className="dropdown-menu">
-                                    <li><a className="dropdown-item" href="#">View All College</a></li>                                    
-                                </ul>
+                                <Link className="nav-link active" aria-current="page" to="/addcollege">Add College</Link>
                             </li>
                             <li className="nav-item">
-                                <a href="/admstafflogin" className="dropdown-item">Log Out</a>
+                                <Link className="nav-link active" aria-current="page" to="/admstaffdashboard">Admin Staff Dashboard</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link active" aria-current="page" to="/AdminStaffViewAllMaterial">View All Materials</Link>
+                            </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/AdminStaffChangePassword">Change Password</Link>
+                            </li>
+                            <li className="nav-item dropdown">
+                                <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Functionalities
+                                </Link>
+                                <ul className="dropdown-menu">
+                                    <li><Link className="dropdown-item" to="#">View All College</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminstaffviewsubmittedtask">View Submitted Task</Link></li>
+                                </ul>
+                                
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/admstafflogin" onClick={logOut} className="dropdown-item">Log Out</Link>
                             </li>
                         </ul>
                     </div>
                 </div>
-            </nav>
-        </div>
+            </nav >
+        </div >
     )
 }
 

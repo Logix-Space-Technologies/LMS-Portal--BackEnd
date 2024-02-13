@@ -80,7 +80,7 @@ Batches.batchDelete = (batchId, result) => {
 
 
 Batches.batchView = (result) => {
-    db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus=0 AND b.isActive= 1;", (err, res) => {
+    db.query("SELECT c.collegeName, b.*, cu.curriculumFileLink FROM batches b JOIN college c ON b.collegeId = c.id LEFT JOIN curriculum cu ON cu.batchId = b.id WHERE b.deleteStatus=0 AND b.isActive= 1;", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)
@@ -169,6 +169,22 @@ Batches.adminBatchView = (collegeId, result) => {
             result(null, res)
         }
     })
+}
+
+
+Batches.viewOneBatch = (batchId, result) => {
+    db.query("SELECT id, collegeId, batchName, regStartDate, regEndDate, batchDesc, batchAmount FROM batches WHERE id = ? AND isActive = 1 AND deleteStatus = 0", batchId,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            const formattedBatches = res.map(batch => ({ ...batch, regStartDate: batch.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batch.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); // Formats the date as 'YYYY-MM-DD'
+
+            console.log("data: ", formattedBatches);
+            result(null, formattedBatches);
+        })
 }
 
 

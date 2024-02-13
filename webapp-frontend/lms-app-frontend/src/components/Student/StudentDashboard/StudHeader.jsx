@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../../config/config'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const StudHeader = () => {
     const [studData, setStudData] = useState([])
@@ -20,11 +20,11 @@ const StudHeader = () => {
         sessionStorage.removeItem("studemail");
         sessionStorage.removeItem("studBatchId");
         sessionStorage.removeItem("studLoginToken");
+        sessionStorage.removeItem("subtaskId");
     }
 
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
-        console.log(data)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -36,10 +36,13 @@ const StudHeader = () => {
             (response) => {
                 if (response.data.data) {
                     setStudData(response.data.data)
-                    console.log(response.data.data)
                 } else {
-                    logOut()
-                    navigate("/studentLogin")
+                    if (response.data.status === "Unauthorized User!!") {
+                        logOut()
+                        navigate("/studentLogin")
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -60,10 +63,17 @@ const StudHeader = () => {
             (response) => {
                 if (response.data.data) {
                     setSessionData(response.data.data)
-                    console.log(response.data.data)
                 } else {
-                    logOut()
-                    navigate("/studentLogin")
+                    if (response.data.status === "Unauthorized access!!") {
+                        logOut()
+                        navigate("/studentLogin")
+                    } else {
+                        if (!response.data.data) {
+                            console.log(response.data.status)
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
                 }
             }
         )
@@ -86,14 +96,20 @@ const StudHeader = () => {
                         <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
                     </h2>
                 </a>
-                {sessionData ? (sessionData.map(
-                    (value, index) => {
-                        return <div className="session-name">
-                            <p>Next Session: {value.date}, {formatTime(value.time)}</p>
+                {sessionData && sessionData.length > 0 ? (
+                    sessionData.map((value, index) => {
+                        return (
+                            <div className="session-name" key={index}>
+                                <p>Next Session: {value.date}, {formatTime(value.time)}</p>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div className="session-name">
+                        <p>Next Session: No Upcoming Session</p>
+                    </div>
+                )}
 
-                        </div>
-                    }
-                )) : <p>Next Session: No Upcoming Session</p>}
 
                 <div className="navbar-nav align-items-center ms-auto">
                     {/* <div className="nav-item dropdown">
@@ -122,14 +138,14 @@ const StudHeader = () => {
                             </div> */}
                     <div className="nav-item dropdown">
                         {studData.map((value, index) => {
-                            return <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            return <Link className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                 <img className="rounded-circle me-lg-2" src={value.studProfilePic} alt="" style={{ width: 40, height: 40 }} />
                                 <span className="d-none d-lg-inline-flex">{value.studName}</span>
-                            </a>
+                            </Link>
                         })}
                         <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="/studChangePassword" className="dropdown-item">Change Password</a>
-                            <a onClick={logOut} href="/studentLogin" className="dropdown-item">Log Out</a>
+                            <Link to="/studChangePassword" className="dropdown-item">Change Password</Link>
+                            <Link onClick={logOut} to="/studentLogin" className="dropdown-item">Log Out</Link>
                         </div>
 
                     </div>

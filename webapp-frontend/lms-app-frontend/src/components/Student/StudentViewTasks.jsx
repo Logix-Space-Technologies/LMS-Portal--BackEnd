@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import StudNavBar from './StudNavBar';
+import '../../config/config'
+import { useNavigate } from 'react-router-dom';
 
 const StudentViewTasks = () => {
     const [studViewTaskData, setStudViewTaskData] = useState([]);
@@ -11,6 +13,7 @@ const StudentViewTasks = () => {
     });
 
     let [taskId, setTaskId] = useState({})
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studViewTask";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
@@ -27,11 +30,30 @@ const StudentViewTasks = () => {
         };
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-                setStudViewTaskData(response.data.data);
-                console.log(response.data);
+                if (response.data.data) {
+                    setStudViewTaskData(response.data.data);
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.removeItem("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                        sessionStorage.removeItem("subtaskId");
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         );
     };
+
+    const updateSubTask = (id) => {
+        let data = id
+        sessionStorage.setItem("subtaskId", data)
+        navigate("/studupdatesubtask")
+    }
 
     const inputHandler = (event) => {
         setErrors({}); // Clear previous errors
@@ -83,7 +105,17 @@ const StudentViewTasks = () => {
                         if (response.data.status === "Validation failed" && response.data.data.remarks) {
                             alert(response.data.data.remarks);
                         } else {
-                            alert(response.data.status);
+                            if (response.data.status === "Unauthorized Access!!") {
+                                navigate("/studentLogin")
+                                sessionStorage.removeItem("studentkey");
+                                sessionStorage.removeItem("studentId");
+                                sessionStorage.removeItem("studemail");
+                                sessionStorage.removeItem("studBatchId");
+                                sessionStorage.removeItem("studLoginToken");
+                                sessionStorage.removeItem("subtaskId");
+                            } else {
+                                alert(response.data.status);
+                            }
                         }
                     }
                 }
@@ -129,7 +161,7 @@ const StudentViewTasks = () => {
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Due Date:</strong> {task.dueDate}
                                             </p>
-                                            {task.subDate < task.dueDate && task.updatedDate === null &&(
+                                            {task.subDate < task.dueDate && task.updatedDate === null && (
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
@@ -138,7 +170,7 @@ const StudentViewTasks = () => {
 
                                                 </>
                                             )}
-                                            {task.subDate < task.dueDate && task.updatedDate != null &&(
+                                            {task.subDate < task.dueDate && task.updatedDate != null && (
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
@@ -147,7 +179,7 @@ const StudentViewTasks = () => {
 
                                                 </>
                                             )}
-                                            {task.subDate > task.dueDate && task.updatedDate === null &&(
+                                            {task.subDate > task.dueDate && task.updatedDate === null && (
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
@@ -156,7 +188,7 @@ const StudentViewTasks = () => {
 
                                                 </>
                                             )}
-                                            {task.subDate > task.dueDate && task.updatedDate != null &&(
+                                            {task.subDate > task.dueDate && task.updatedDate != null && (
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
@@ -201,7 +233,7 @@ const StudentViewTasks = () => {
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Due Date:</strong> {task.dueDate}
                                             </p>
-                                            {task.subDate < task.dueDate && task.updatedDate === null &&(
+                                            {task.subDate < task.dueDate && task.updatedDate === null && (
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
@@ -210,7 +242,7 @@ const StudentViewTasks = () => {
 
                                                 </>
                                             )}
-                                            {task.subDate < task.dueDate && task.updatedDate != null &&(
+                                            {task.subDate < task.dueDate && task.updatedDate != null && (
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
@@ -219,7 +251,7 @@ const StudentViewTasks = () => {
 
                                                 </>
                                             )}
-                                            {task.subDate > task.dueDate && task.updatedDate === null &&(
+                                            {task.subDate > task.dueDate && task.updatedDate === null && (
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
@@ -228,7 +260,7 @@ const StudentViewTasks = () => {
 
                                                 </>
                                             )}
-                                            {task.subDate > task.dueDate && task.updatedDate != null &&(
+                                            {task.subDate > task.dueDate && task.updatedDate != null && (
                                                 <>
 
                                                     <p className="text-gray-700 mb-2">
@@ -250,7 +282,7 @@ const StudentViewTasks = () => {
 
                                             </td>
                                             <td>
-                                                <button className="btn btn-primary">Update</button>
+                                                <button onClick={() => { updateSubTask(task.submitTaskId) }} className="btn btn-primary">Update</button>
                                             </td>
                                         </>
                                     )}

@@ -169,8 +169,9 @@ Tasks.taskView = (result) => {
             result(err, null)
             return
         } else {
-            console.log("Tasks: ", res);
-            result(null, res)
+            const formattedTasks = res.map(Tasks => ({ ...Tasks, addedDate: Tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), dueDate: Tasks.dueDate ? Tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null})); // Formats the date as 'YYYY-MM-DD'
+            console.log("Tasks: ", formattedTasks);
+            result(null, formattedTasks)
         }
     })
 }

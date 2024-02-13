@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar';
 import axios from 'axios';
+import '../../config/config'
+import { Link } from 'react-router-dom';
 
 const AdminAddTask = () => {
 
@@ -225,14 +227,14 @@ const AdminAddTask = () => {
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="text-center mb-5">
-                                            <a href="#!">
+                                            <Link to="#!">
                                                 <img
                                                     src="https://www.linkurcodes.com/images/logo.png"
                                                     alt=""
                                                     width="175"
                                                     height="57"
                                                 />
-                                            </a>
+                                            </Link>
                                             <br />
                                             <br />
                                             <h3>Admin Add Task</h3>

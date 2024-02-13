@@ -97,3 +97,25 @@ exports.studentViewAttendance = (request, response) => {
         }
     });
 };
+
+exports.studentViewSessionWiseAttendance = (request, response) => {
+    const attendanceToken = request.headers.token;
+    const studId = request.body.studId;
+    const sessionId = request.body.sessionId;
+    jwt.verify(attendanceToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Attendence.studentViewSessionWiseAttendance(studId,sessionId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                }
+                if (data.length == 0) {
+                    response.json({ "status": "No attendance records found!" });
+                } else {
+                    response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};

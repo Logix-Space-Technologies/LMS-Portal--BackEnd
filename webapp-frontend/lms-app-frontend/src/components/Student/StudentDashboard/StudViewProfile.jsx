@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import '../../../config/config'
 
 const StudViewProfile = () => {
     const [studData, setStudData] = useState([])
@@ -14,11 +15,15 @@ const StudViewProfile = () => {
         sessionStorage.removeItem("studemail");
         sessionStorage.removeItem("studBatchId");
         sessionStorage.removeItem("studLoginToken");
+        sessionStorage.removeItem("subtaskId");
+    }
+
+    const navRefund = () => {
+        navigate("/refundrequest")
     }
 
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
-        console.log(data)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -31,10 +36,13 @@ const StudViewProfile = () => {
             (response) => {
                 if (response.data.data) {
                     setStudData(response.data.data)
-                    console.log(response.data.data)
                 } else {
-                    logOut()
-                    navigate("/studentLogin")
+                    if (response.data.status === "Unauthorized User!!") {
+                        logOut()
+                        navigate("/studentLogin")
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -74,9 +82,22 @@ const StudViewProfile = () => {
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Phone Number : {value.studPhNo}</span></li>
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Email : {value.studEmail}</span></li>
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Profile Validity : {value.validity.split('-').reverse().join('/')}</span></li>
-                                                <div className="mb-3">
-                                                    <a className="btn btn-success btn-lg" href="/studentupdateprofile">Update Details</a>
+
+                                                <div className="flex justify-between items-center mb-3">
+                                                    <div style={{ marginRight: '15px', marginBottom: '10px' }}>
+                                                        <Link className="btn btn-success btn-lg" to='/studentupdateprofile' style={{ fontSize: '14px' }}>Edit Profile</Link> {/* Adjust fontSize as needed */}
+                                                    </div>
+                                                    <div style={{ marginRight: '15px', marginBottom: '10px' }}>
+                                                        <Link className="btn btn-success btn-lg" to='/studentviewtransaction' style={{ fontSize: '14px' }}>View Transaction Details</Link> {/* Adjust fontSize as needed */}
+                                                    </div>
+                                                    <div style={{ marginBottom: '10px' }}>
+                                                        <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                            Exit From Link Ur Codes
+                                                        </button>
+                                                    </div>
                                                 </div>
+
+
                                             </ul>
                                             <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
                                                 <li><a href="#!"><i className="ti-twitter-alt" /></a></li>
@@ -90,6 +111,27 @@ const StudViewProfile = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div className="row">
+                <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to apply for refund?</h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div className="modal-body">
+                                <p>This action cannot be undone.</p>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No, cancel</button>
+                                <button onClick={navRefund} type="button" className="btn btn-danger" data-bs-dismiss="modal">Yes, I'm sure</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div >
     )

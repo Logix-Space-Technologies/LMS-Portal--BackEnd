@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const AdminUpdateTrainer = () => {
@@ -124,7 +124,7 @@ const AdminUpdateTrainer = () => {
                                             <label htmlFor="" className="form-label">Id</label>
                                             <input type="text" className="form-control" name="id" value={updateField.id} disabled />
                                         </div>
-                                
+
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label htmlFor="" className="form-label">Trainer Name</label>
                                             <input onChange={updateHandler} type="text" className="form-control" name="trainerName" value={updateField.trainerName} />
@@ -137,8 +137,8 @@ const AdminUpdateTrainer = () => {
                                             <label htmlFor="" className="form-label">Phone No:</label>
                                             <input onChange={updateHandler} type="text" className="form-control" name="phoneNumber" value={updateField.phoneNumber} />
                                         </div>
-                                        
-                                        
+
+
                                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                             <label for="studProfilePic" className="form-label">
                                                 Profile Picture <span className="text-danger">*</span>
@@ -156,10 +156,10 @@ const AdminUpdateTrainer = () => {
                                     </ul>
 
                                     <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                        <li><a href="#!"><i className="ti-twitter-alt" /></a></li>
-                                        <li><a href="#!"><i className="ti-facebook" /></a></li>
-                                        <li><a href="#!"><i className="ti-pinterest" /></a></li>
-                                        <li><a href="#!"><i className="ti-instagram" /></a></li>
+                                        <li><Link to="#!"><i className="ti-twitter-alt" /></Link></li>
+                                        <li><Link to="#!"><i className="ti-facebook" /></Link></li>
+                                        <li><Link to="#!"><i className="ti-pinterest" /></Link></li>
+                                        <li><Link to="#!"><i className="ti-instagram" /></Link></li>
                                     </ul>
                                 </div>
                             </div>
