@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom'
 const AdmStaffNavBar = () => {
     const navigate = useNavigate()
     const logOut = () => {
-        navigate("/admstafflogin")
         sessionStorage.removeItem("admstaffLogintoken")
         sessionStorage.removeItem("admstaffkey")
         sessionStorage.removeItem("admstaffId")
@@ -42,7 +41,7 @@ const AdmStaffNavBar = () => {
                                 
                             </li>
                             <li className="nav-item">
-                                <a onClick={logOut} className="dropdown-item">Log Out</a>
+                                <Link to="/admstafflogin" onClick={logOut} className="dropdown-item">Log Out</Link>
                             </li>
                         </ul>
                     </div>

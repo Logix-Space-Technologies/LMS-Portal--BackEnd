@@ -36,7 +36,6 @@ const AdminStaffHeader = () => {
     const navigate = useNavigate()
 
     const logOut = () => {
-        navigate("/admstafflogin")
         sessionStorage.removeItem("admstaffLogintoken")
         sessionStorage.removeItem("admstaffkey")
         sessionStorage.removeItem("admstaffId")
@@ -59,7 +58,7 @@ const AdminStaffHeader = () => {
                         </Link>
                         <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                             <Link to="#" className="dropdown-item">Change Password</Link>
-                            <Link onClick={logOut} className="dropdown-item">Log Out</Link>
+                            <Link to="/admstafflogin" onClick={logOut} className="dropdown-item">Log Out</Link>
                         </div>
 
                     </div>
