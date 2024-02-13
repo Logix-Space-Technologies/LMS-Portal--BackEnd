@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
 import Navbar from './Navbar'
 
@@ -178,10 +178,10 @@ const AdminUpdateCurriculum = () => {
                                         </ul>
 
                                         <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                            <li><a href="#!"><i className="ti-twitter-alt" /></a></li>
-                                            <li><a href="#!"><i className="ti-facebook" /></a></li>
-                                            <li><a href="#!"><i className="ti-pinterest" /></a></li>
-                                            <li><a href="#!"><i className="ti-instagram" /></a></li>
+                                        <li><Link to="#!"><i className="ti-twitter-alt" /></Link></li>
+                                        <li><Link to="#!"><i className="ti-facebook" /></Link></li>
+                                        <li><Link to="#!"><i className="ti-pinterest" /></Link></li>
+                                        <li><Link to="#!"><i className="ti-instagram" /></Link></li>
                                         </ul>
                                     </div>
                                 </div>

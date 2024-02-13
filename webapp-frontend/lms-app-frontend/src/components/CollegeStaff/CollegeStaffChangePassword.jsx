@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import '../../config/config'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const CollegeStaffChangePassword = () => {
@@ -90,7 +90,7 @@ const CollegeStaffChangePassword = () => {
                                         </div>
                                         <br></br>
                                         <div class="mb-3">
-                                            <a class="btn btn-danger" href="/collegeStaffDashboard">Back</a>
+                                            <Link class="btn btn-danger" to="/collegeStaffDashboard">Back</Link>
                                         </div>
                                     </ul>
                                 </div>
