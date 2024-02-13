@@ -60,6 +60,7 @@ const MaterialView = () => {
                 <div className="row gy-3 gy-md-4 overflow-hidden">
                   <div className="col-12">
                     <h3>Batch Materials</h3>
+                    {/* View Batch Materials Table */}
                   </div>
                   <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
