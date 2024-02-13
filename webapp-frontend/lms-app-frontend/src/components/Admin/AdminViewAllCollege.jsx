@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
 import Navbar from './Navbar'
+import { useNavigate } from 'react-router-dom'
 
 const AdminViewAllCollege = () => {
     const [collegeData, setCollegeData] = useState([])
+
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewallcolleges"
 
@@ -47,12 +50,18 @@ const AdminViewAllCollege = () => {
                 }
             }
         )
+    }
 
+    const UpdateClick = (id) => {
+        let data = id
+        sessionStorage.setItem("clgId", data)
+        navigate("/adminUpdateclg")
     }
 
     useEffect(() => { getData() }, [])
-  return (
-    <div>
+
+    return (
+        <div>
             <Navbar /><br />
             <strong>Admin View All College</strong>
             <br /><br />
@@ -60,8 +69,8 @@ const AdminViewAllCollege = () => {
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                        <th scope="col" className="px-6 py-3">
-                                
+                            <th scope="col" className="px-6 py-3">
+
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Id
@@ -119,6 +128,9 @@ const AdminViewAllCollege = () => {
                                         {value.collegeMobileNumber}
                                     </td>
                                     <td className="px-6 py-4">
+                                        <a onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update College</a>
+                                    </td>
+                                    <td className="px-6 py-4">
                                         <a onClick={() => { handleClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete College</a>
                                     </td>
                                 </tr>
@@ -143,7 +155,7 @@ const AdminViewAllCollege = () => {
 
 
         </div>
-  )
+    )
 }
 
 export default AdminViewAllCollege

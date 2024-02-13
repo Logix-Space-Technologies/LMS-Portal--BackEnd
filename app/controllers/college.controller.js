@@ -259,9 +259,6 @@ exports.updateCollege = (request, response) => {
                         validationErrors.mobile = Validator.isValidMobileNumber(request.body.collegeMobileNumber).message
                     }
 
-                    if (Validator.isEmpty(request.file).isValid) {
-                        validationErrors.image = Validator.isEmpty(request.file).message
-                    }
                     if (!Validator.isValidImageWith1mbConstratint(request.file).isValid) {
                         validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message
                     }
@@ -398,10 +395,10 @@ exports.viewOneClgDetail = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
-                if (!data) {
+                if (!data || data.length === 0) {
                     return response.json({ "status": "No Colleges Exist" });
                 } else {
-                    return response.json({ "status": "success", "College Details": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             })
         } else {
