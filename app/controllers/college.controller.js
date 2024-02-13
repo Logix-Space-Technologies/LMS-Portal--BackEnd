@@ -157,8 +157,8 @@ exports.collegeCreate = (request, response) => {
                             const collegeEmailContent = mailContents.collegeHtmlContent(collegeName)
                             const collegeTextContent = mailContents.collegeTextContent(collegeName)
                             mail.sendEmail(collegeEmail, 'Registration Successful!', collegeEmailContent, collegeTextContent);
-                            if(key=="lmsapp"){
-                                logAdminStaff(0,"Admin Created College")
+                            if (key == "lmsapp") {
+                                logAdminStaff(0, "Admin Created College")
                             }
                             return response.json({ "status": "success", "data": data });
                         }
@@ -288,8 +288,8 @@ exports.updateCollege = (request, response) => {
                                 response.json({ "status": err })
                             }
                         } else {
-                            if(key=="lmsapp"){
-                                logAdminStaff(0,"Admin Updated College")
+                            if (key == "lmsapp") {
+                                logAdminStaff(0, "Admin Updated College")
                             }
                             return response.json({ "status": "College Details Updated", "data": data })
                         }
@@ -298,11 +298,11 @@ exports.updateCollege = (request, response) => {
                     response.json({ "status": "Unauthorized Access!!!" })
                 }
             });
-            } catch (err) {
-                fs.unlinkSync(file.path);
-                response.status(500).json({ "status": err.message });
-            }
-        });
+        } catch (err) {
+            fs.unlinkSync(file.path);
+            response.status(500).json({ "status": err.message });
+        }
+    });
 };
 
 
@@ -323,9 +323,9 @@ exports.deleteCollege = (request, response) => {
                         return response.json({ "status": err })
                     }
                 }
-                
-                logAdminStaff(0,"Admin Deleted College")
-                
+
+                logAdminStaff(0, "Admin Deleted College")
+
                 return response.json({ "status": "College deleted." })
             })
         } else {
@@ -381,6 +381,31 @@ exports.studentViewCollege = (request, response) => {
             })
         } else {
             response.json({ "status": "Unauthorized User!!" })
+        }
+    })
+}
+
+
+exports.viewOneClgDetail = (request, response) => {
+    const clgToken = request.headers.token;
+    const key = request.headers.key;
+    const clgId = request.body.id;
+    console.log(clgId)
+
+    jwt.verify(clgToken, key, (err, decoded) => {
+        if (decoded) {
+            College.viewOneCollege(clgId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (!data) {
+                    return response.json({ "status": "No Colleges Exist" });
+                } else {
+                    return response.json({ "status": "success", "College Details": data });
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized Access!!" });
         }
     })
 }

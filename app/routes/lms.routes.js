@@ -254,7 +254,7 @@ router.post('/AdmViewAllMaterial', AdminStaffController.AdmViewAllMaterial)
 
 router.post('/AdmViewOneMaterial', AdminStaffController.viewOneMaterial)
 
-
+router.post('/viewOneclg',CollegeController.viewOneClgDetail)
 
 
 
