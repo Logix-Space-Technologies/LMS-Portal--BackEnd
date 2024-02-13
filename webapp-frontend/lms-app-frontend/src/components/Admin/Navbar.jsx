@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom'
 const Navbar = () => {
     const navigate = useNavigate()
     const logout = () => {
-        navigate("/")
         sessionStorage.removeItem("adminId")
         sessionStorage.removeItem("admkey")
         sessionStorage.removeItem("admtoken")
@@ -104,7 +103,7 @@ const Navbar = () => {
                             </ul>
                         </li>
                         <li className="nav-item">
-                            <Link onClick={logout} className="dropdown-item">Log Out</Link>
+                            <Link to="/" onClick={logout} className="dropdown-item">Log Out</Link>
                         </li>
                     </ul>
                 </div>

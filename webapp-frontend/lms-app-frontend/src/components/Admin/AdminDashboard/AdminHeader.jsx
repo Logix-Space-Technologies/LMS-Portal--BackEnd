@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom'
 const AdminHeader = () => {
     const navigate = useNavigate()
     const logout = () => {
-        navigate("/")
         sessionStorage.removeItem("adminId")
         sessionStorage.removeItem("admkey")
         sessionStorage.removeItem("admtoken")
@@ -54,7 +53,7 @@ const AdminHeader = () => {
                                 </Link>
                                 <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                                     <Link to="#" className="dropdown-item">Change Password</Link>
-                                    <Link onClick={logout} className="dropdown-item">Log Out</Link>
+                                    <Link to="/" onClick={logout} className="dropdown-item">Log Out</Link>
                                 </div>
                             </div>
                         </div>

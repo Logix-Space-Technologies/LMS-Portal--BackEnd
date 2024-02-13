@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
 import Navbar from './Navbar'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 
 const AdminViewAllBatch = () => {
@@ -129,11 +129,6 @@ const AdminViewAllBatch = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         {new Date(value.addedDate).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                                            View Curriculum
-                                        </button>
                                     </td>
                                     <td className="px-6 py-4">
                                         <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
