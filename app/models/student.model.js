@@ -344,21 +344,20 @@ Student.findByEmail = (Email, result) => {
                                         }
 
 
-                                        db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1", [Email],
+                                        db.query("SELECT s.*, r.refundReqStatus FROM student s LEFT JOIN (SELECT studId, CASE WHEN SUM(cancelStatus = 0) > 0 THEN 'Refund Request Active' ELSE 'No Refund Request' END AS refundReqStatus FROM refund GROUP BY studId) r ON s.id = r.studId WHERE BINARY s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1", [Email],
                                             (err, res) => {
                                                 if (err) {
-                                                    console.log("Error : ", err)
-                                                    return result(err, null)
-
+                                                    console.log("Error : ", err);
+                                                    return result(err, null);
                                                 }
 
                                                 if (res.length > 0) {
-                                                    result(null, res[0])
-                                                    //Log for student login
-                                                    logStudent(res[0].id, "Student logged In")
-                                                    return
+                                                    // Log student login
+                                                    logStudent(res[0].id, "Student logged In");
+                                                    result(null, res[0]);
                                                 }
-                                            })
+                                            });
+
                                     })
 
                             }
