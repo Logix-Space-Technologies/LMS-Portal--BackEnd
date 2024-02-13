@@ -254,6 +254,8 @@ router.post('/AdmViewAllMaterial', AdminStaffController.AdmViewAllMaterial)
 
 router.post('/AdmViewOneMaterial', AdminStaffController.viewOneMaterial)
 
+router.post('/AdmViewOneSession', SessionsController.viewOneSession)
+
 
 
 

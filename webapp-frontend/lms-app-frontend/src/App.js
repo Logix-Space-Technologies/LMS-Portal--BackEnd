@@ -93,6 +93,9 @@ import AdminStaffViewSubmittedTask from './components/AdminStaff/AdminStaffViewS
 import AdminViewLog from './components/Admin/AdminViewLog';
 import AdminViewSuccessfulRefunds from './components/Admin/AdminViewSuccessfulRefunds';
 import StudentViewOneTask from './components/Student/StudentViewOneTask';
+import AdminStaffEvaluateTask from './components/AdminStaff/AdminStaffEvaluateTask';
+import AdminUpdateSession from './components/Admin/AdminUpdateSession';
+
 
 
 
@@ -153,6 +156,8 @@ function App() {
           <Route path='/adminAddtrainer' element={<AdminAddTrainer/>}/>
           <Route path='/adminViewlog' element={<AdminViewLog/>}/>
           <Route path='/adminViewSuccessfulrefunds' element={<AdminViewSuccessfulRefunds/>}/>
+          <Route path='/AdminUpdateSession' element={<AdminUpdateSession/>}/>
+
 
 
 
