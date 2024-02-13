@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../../config/config'
+import '../../config/config';
 import StudNavBar from './StudNavBar';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const MaterialView = () => {
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchMaterials();
@@ -34,13 +34,8 @@ const MaterialView = () => {
           setLoading(false);
         } else {
           if (response.data.status === "Unauthorized User!!") {
-            navigate("/studentLogin")
-            sessionStorage.removeItem("studentkey");
-            sessionStorage.removeItem("studentId");
-            sessionStorage.removeItem("studemail");
-            sessionStorage.removeItem("studBatchId");
-            sessionStorage.removeItem("studLoginToken");
-            sessionStorage.removeItem("subtaskId");
+            navigate("/studentLogin");
+            sessionStorage.clear();
           } else {
             alert(response.data.status);
           }
@@ -66,28 +61,68 @@ const MaterialView = () => {
                   <div className="col-12">
                     <h3>Batch Materials</h3>
                   </div>
-                  {loading ? (
-                    <div className="col-12 text-center">Loading...</div>
-                  ) : (
-                    materials.length === 0 ? (
-                      <div className="col-12 text-center">No materials found!</div>
-                    ) : (
-                      materials.map((material, index) => (
-                        <div key={index} className="col-12">
-                          <div className="card">
-                            <div className="card-body">
-                              <h5 className="card-title">{material.batchName}</h5>
-                              <p className="card-text">Material ID: {material.id}</p>
-                              <p className="card-text">Material Name: {material.fileName}</p>
-                              <p className="card-text">Material Type: {material.materialType}</p>
-                              <p className="card-text">Material Description: {material.materialDesc}</p>
-                              <a target="_blank" href={material.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )
-                  )}
+                  <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                      <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                          <th scope="col" className="px-6 py-3">
+                            Batch Name
+                          </th>
+                          <th scope="col" className="px-6 py-3">
+                            Material ID
+                          </th>
+                          <th scope="col" className="px-6 py-3">
+                            Material Name
+                          </th>
+                          <th scope="col" className="px-6 py-3">
+                            Material Type
+                          </th>
+                          <th scope="col" className="px-6 py-3">
+                            Material Description
+                          </th>
+                          <th scope="col" className="px-6 py-3">
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {loading ? (
+                          <tr>
+                            <td colSpan="6" className="text-center">Loading...</td>
+                          </tr>
+                        ) : (
+                          materials.length === 0 ? (
+                            <tr>
+                              <td colSpan="6" className="text-center">No materials found!</td>
+                            </tr>
+                          ) : (
+                            materials.map((material, index) => (
+                              <tr key={index} className={index % 2 === 0 ? 'even:bg-gray-50 even:dark:bg-gray-800' : 'odd:bg-white odd:dark:bg-gray-900 border-b dark:border-gray-700'}>
+                                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                  {material.batchName}
+                                </td>
+                                <td className="px-6 py-4">
+                                  {material.id}
+                                </td>
+                                <td className="px-6 py-4">
+                                  {material.fileName}
+                                </td>
+                                <td className="px-6 py-4">
+                                  {material.materialType}
+                                </td>
+                                <td className="px-6 py-4">
+                                  {material.materialDesc}
+                                </td>
+                                <td className="px-6 py-4">
+                                  <Link target="_blank" to={material.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
+                                </td>
+                              </tr>
+                            ))
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
