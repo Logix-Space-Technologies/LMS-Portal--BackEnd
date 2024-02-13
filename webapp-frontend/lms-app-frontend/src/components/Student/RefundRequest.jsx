@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import StudNavBar from './StudNavBar';
 import '../../config/config'
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -48,6 +47,7 @@ const RefundRequestForm = () => {
                 (response) => {
                     if (response.data.status === 'success') {
                         alert('Refund request successfully created');
+                        navigate("/studdashboard")
                         setInputField((prevInputField) => ({
                             ...prevInputField,
                             reason: "",
