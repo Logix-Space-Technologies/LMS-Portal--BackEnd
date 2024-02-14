@@ -115,74 +115,63 @@ const SessionView = () => {
 
     <div>
       <StudNavBar />
-      <div className="bg-light py-3 py-md-5">
-        <div className="container">
-          <div className="row justify-content-md-center">
-            <div className="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
-              <div className="bg-white p-4 p-md-5 rounded shadow-sm">
-                <div className="row gy-3 gy-md-4 overflow-hidden">
-                  <div className="col-12">
-                    <h3>Session Details</h3>
+      <br />
+      <h1 style={{ marginLeft: '20px', textAlign:'center' }}>View All Sessions</h1>
+      <br />
+      {loading ? (
+        <div className="col-12 text-center">Loading...</div>
+      ) : (
+        sessions.length === 0 ? (
+          <div className="col-12 text-center">No sessions found!</div>
+        ) : (
+          sessions.map((session, index) => (
+            <div class="max-w-2xl mx-auto">
+              <div key={index} className="flex mb-6">
+                <div className="w-2 rounded-l-xl" style={{ backgroundColor: getSessionStatusColor(session.date, formatTime(session.time)) }}></div>
+                <div className="flex-grow bg-white rounded-r-xl shadow-lg p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg text-blue-600 font-semibold">{session.sessionName}</h2>
+                    <button className="text-blue-600 text-sm">
+                      <span>...</span>
+                    </button>
                   </div>
-                  {loading ? (
-                    <div className="col-12 text-center">Loading...</div>
-                  ) : (
-                    sessions.length === 0 ? (
-                      <div className="col-12 text-center">No sessions found!</div>
+                  <p className="text-sm text-gray-600">{session.remarks}</p>
+                  <p className="text-sm text-gray-600 mt-1">Date: {session.date}</p>
+                  <p className="text-sm text-gray-600">Time: {formatTime(session.time)}</p>
+                  <p className="text-sm text-gray-600">Type: {session.type}</p>
+
+                  <div className="flex gap-4 mt-4">
+                    {session.venueORlink.includes("meet.google.com") && (
+                      <a href={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</a>
+                    )}
+                    {isSessionAccessible(session.date) ? (
+                      <>
+                        <Link to="/studentviewattendance" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Attendance
+                        </Link>
+                        <Link to="/studviewtasksessionwise" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Tasks
+                        </Link>
+                      </>
                     ) : (
-                      sessions.map((session, index) => (
-                        <div class="max-w-2xl mx-auto">
-                          <div key={index} className="flex mb-6">
-                            <div className="w-2 rounded-l-xl" style={{ backgroundColor: getSessionStatusColor(session.date, formatTime(session.time)) }}></div>
-                            <div className="flex-grow bg-white rounded-r-xl shadow-lg p-6">
-                              <div className="flex justify-between items-center mb-4">
-                                <h2 className="text-lg text-blue-600 font-semibold">{session.sessionName}</h2>
-                                <button className="text-blue-600 text-sm">
-                                  <span>...</span>
-                                </button>
-                              </div>
-                              <p className="text-sm text-gray-600">{session.remarks}</p>
-                              <p className="text-sm text-gray-600 mt-1">Date: {session.date}</p>
-                              <p className="text-sm text-gray-600">Time: {formatTime(session.time)}</p>
-                              <p className="text-sm text-gray-600">Type: {session.type}</p>
+                      <>
+                        <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Attendance (Unavailable)
+                        </Link>
+                        <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Tasks (Unavailable)
+                        </Link>
+                      </>
+                    )}
 
-                              <div className="flex gap-4 mt-4">
-                                {session.venueORlink.includes("meet.google.com") && (
-                                  <a href={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</a>
-                                )}
-                                {isSessionAccessible(session.date) ? (
-                                  <>
-                                    <Link to="/studentviewattendance" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
-                                      Attendance
-                                    </Link>
-                                    <Link to="/studviewtasksessionwise" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
-                                      Tasks
-                                    </Link>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
-                                      Attendance (Unavailable)
-                                    </Link>
-                                    <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
-                                      Tasks (Unavailable)
-                                    </Link>
-                                  </>
-                                )}
-
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )
-                  )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          ))
+        )
+      )}
+
     </div>
   );
 };
