@@ -90,7 +90,7 @@ const AdminUpdateCollege = () => {
                         })
                         alert("College Details Updated Successfully")
                         setFile(null)
-                        // navigate("")
+                        navigate("")
                     } else {
                         if (response.data.status === "Validation Failed" && response.data.data.name) {
                             alert(response.data.data.name)
@@ -246,7 +246,7 @@ const AdminUpdateCollege = () => {
                                         </div>
                                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                             <label for="studProfilePic" className="form-label">
-                                                College Image  <span className="text-danger">*</span>
+                                                College Image
                                             </label>
                                             <input type="file" onChange={fileUploadHandler} className="form-control" name="collegeImage" id="collegeImage" accept="image/*" />
                                             {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
@@ -269,7 +269,6 @@ const AdminUpdateCollege = () => {
                                     </ul>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
