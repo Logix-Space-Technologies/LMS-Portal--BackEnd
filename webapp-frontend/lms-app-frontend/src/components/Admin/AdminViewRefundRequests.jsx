@@ -2,18 +2,30 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
 import '../../config/config'
+import { Link } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 
 const AdminViewRefundRequests = () => {
   const [refundRequests, setRefundRequests] = useState([]);
+  const [key, setKey] = useState('');
+
   const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
+
   const getData = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
     let axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
         "Access-Control-Allow-Origin": "*",
-        "token": sessionStorage.getItem("admtoken"),
-        "key": sessionStorage.getItem("admkey")
+        "token": token,
+        "key": currentKey
       }
     }
 
@@ -27,13 +39,18 @@ const AdminViewRefundRequests = () => {
       });
   };
 
+  // Update key state when component mounts
+  useEffect(() => {
+    setKey(sessionStorage.getItem("admkey") || '');
+  }, []);
+
   useEffect(() => {
     getData();
   }, []);
 
   return (
     <div>
-      <Navbar />
+      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
       <div>
         {/* ====== Table Section Start */}
         <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
@@ -61,6 +78,16 @@ const AdminViewRefundRequests = () => {
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                           Refund Amount
                         </th>
+                        {key !== 'lmsapp' && (
+                          <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+
+                          </th>
+                        )}
+                        {key !== 'lmsapp' && (
+                          <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+
+                          </th>
+                        )}
                       </tr>
                     </thead>
                     <tbody>
@@ -73,7 +100,7 @@ const AdminViewRefundRequests = () => {
                             {value.collegeName}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                            {new Date(value.requestedDate).toLocaleDateString()}
+                            {value.requestedDate}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.reason}
@@ -81,6 +108,16 @@ const AdminViewRefundRequests = () => {
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.refundAmnt}
                           </td>
+                          {key !== 'lmsapp' && (
+                            <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                              <Link to="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Approve Refund</Link>
+                            </td>
+                          )}
+                          {key !== 'lmsapp' && (
+                            <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                              <Link to="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Reject Refund</Link>
+                            </td>
+                          )}
                         </tr>
                       })}
                     </tbody>

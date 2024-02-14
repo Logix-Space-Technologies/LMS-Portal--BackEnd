@@ -118,12 +118,13 @@ Refund.getRefundRequests = (result) => {
             }
             if (res.length === 0) {
                 console.log("No refund requests found");
-                result("No refund requests found.",null );
+                result("No refund requests found.", null);
                 return;
             }
-
+            // Format the date for each session
+            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate ? refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
             // Return all refund requests
-            result(null, res);
+            result(null, formattedRefunds);
         }
     );
 };

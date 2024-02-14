@@ -2,7 +2,6 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const AdmStaffNavBar = () => {
-    const navigate = useNavigate()
     const logOut = () => {
         sessionStorage.removeItem("admstaffLogintoken")
         sessionStorage.removeItem("admstaffkey")
@@ -31,7 +30,10 @@ const AdmStaffNavBar = () => {
                                 <Link className="nav-link active" aria-current="page" to="/AdminStaffChangePassword">Change Password</Link>
                             </li>
                             <li>
-                                <Link className="nav-link active" aria-current="page" to="/adminStaffAddmaterials">AdminStaff Add Materials</Link>
+                                <Link className="nav-link active" aria-current="page" to="/adminStaffAddmaterials">Add Materials</Link>
+                            </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/AdminViewRefundRequests">View Refunds</Link>
                             </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
