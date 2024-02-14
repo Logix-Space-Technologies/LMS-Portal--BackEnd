@@ -6,9 +6,24 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const StudentViewAttendance = () => {
     const [studentViewAttendance, setStudentViewAttendance] = useState([]);
+    const [inputField, setInputField] = useState(
+        {
+            "attendenceCode": "",
+            "studId": ""
+        }
+    )
+
+    const [errors, setErrors] = useState({});
+
     const navigate = useNavigate()
 
+    const attendanceHandler = (event) => {
+        setErrors({}); // Clear previous errors
+        setInputField({...inputField, [event.target.name]: event.target.value})
+    }
+
     const apiUrl = global.config.urls.api.server + '/api/lms/studentViewSessionWiseAttendance';
+    const apiUrl2 = global.config.urls.api.server + '/api/lms//studmarkattendance'
 
     const getData = () => {
         const data = { "studId": sessionStorage.getItem('studentId'), "sessionId": sessionStorage.getItem("SessionId") };
@@ -41,6 +56,57 @@ const StudentViewAttendance = () => {
             }
         });
     };
+
+    const submitAttendance = () => {
+        let newErrors = {};
+        if (!inputField.attendenceCode.trim()) {
+            newErrors.attendenceCode = "Attendance Code is  required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("studLoginToken"),
+                "key": sessionStorage.getItem("studentkey")
+            }
+        };
+
+        let data2 = {
+            "attendenceCode": inputField.attendenceCode,
+            "studId": sessionStorage.getItem('studentId')
+        }
+
+        axios.post(apiUrl2, data2, axiosConfig).then(
+            (response) => {
+                if (response.data.status === "success") {
+                    alert("Attendance Marked Successfully!!!")
+                    navigate("/studSessionView")
+                    setInputField({
+                        "attendenceCode": "",
+                        "studId": ""
+                    })
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.clear("studentkey");
+                        sessionStorage.removeItem("studentId");
+                        sessionStorage.removeItem("studemail");
+                        sessionStorage.removeItem("studBatchId");
+                        sessionStorage.removeItem("studLoginToken");
+                        sessionStorage.removeItem("subtaskId");
+                        sessionStorage.removeItem("SessionId")
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
+            }
+        )
+    }
 
 
     useEffect(() => {
@@ -110,7 +176,9 @@ const StudentViewAttendance = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         {isSessionCurrentDate && !isPresent && (
-                                            <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Mark Attendance</a>
+                                            <Link type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                Mark Attendance
+                                            </Link>
                                         )}
                                     </td>
                                 </tr>
@@ -119,6 +187,30 @@ const StudentViewAttendance = () => {
                         })}
                     </tbody>
                 </table>
+            </div>
+            <div>
+                {/* Modal */}
+                <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel">Mark Attendance</h1>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                            </div>
+                            <div className="modal-body">
+                                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                    <label htmlFor="" className="form-label">Attendance Code</label>
+                                    <input type="text" className="form-control" onChange={attendanceHandler} name="attendenceCode" value={inputField.attendenceCode} />
+                                    {errors.attendenceCode && <span style={{ color: 'red' }} className="error">{errors.gitLink}</span>}
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" onClick={submitAttendance} className="btn btn-primary" data-bs-dismiss="modal">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
