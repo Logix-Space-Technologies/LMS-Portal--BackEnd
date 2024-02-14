@@ -205,5 +205,18 @@ College.studentViewCollege = (studentId, result) => {
     })
 }
 
+College.viewOneCollege = (id, result) => {
+    db.query("SELECT * FROM college WHERE isActive = 1 AND deleteStatus = 0 AND id = ?", [id],
+    (err, res) => {
+        if (err) {
+            console.log("Error : ", err);
+            result(err, null);
+            return;
+        }
+        console.log("College : ", res);
+        result(null, res);
+    })
+}
+
 
 module.exports = College;

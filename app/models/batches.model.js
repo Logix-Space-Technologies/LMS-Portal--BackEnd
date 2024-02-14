@@ -180,10 +180,8 @@ Batches.viewOneBatch = (batchId, result) => {
                 result(err, null);
                 return;
             }
-            const formattedBatches = res.map(batch => ({ ...batch, regStartDate: batch.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batch.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); // Formats the date as 'YYYY-MM-DD'
-
-            console.log("data: ", formattedBatches);
-            result(null, formattedBatches);
+            console.log("data: ", res);
+            result(null, res);
         })
 }
 
