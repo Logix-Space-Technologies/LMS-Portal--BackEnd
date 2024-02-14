@@ -41,7 +41,7 @@ const AdminStaffAddMaterials = () => {
 
     const apiUrl = global.config.urls.api.server + "/api/lms/AddMaterials";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/viewallcolleges";
-    const batchUrl = global.config.urls.api.server + "/api/lms/viewAllBatches";
+    const batchUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
 
     const getData = () => {
         let axiosConfig = {
@@ -55,7 +55,7 @@ const AdminStaffAddMaterials = () => {
         axios.post(apiUrl2, {}, axiosConfig).then(
             (response) => {
                 setOutputField(response.data.data)
-                console.log(response.data.data)
+                console.log(response.data)
             }
         )
     }
