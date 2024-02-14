@@ -31,13 +31,24 @@ const AdminViewRefundRequests = () => {
 
     axios.post(apiUrl, {}, axiosConfig)
       .then((response) => {
-        setRefundRequests(response.data.data);
-        console.log(response.data);
+        if (response.data.status === "success") {
+          setRefundRequests(response.data.data);
+        } else {
+          if (!response.data.data) {
+            console.log("No Refund Requests Found!!")
+          } else {
+            alert(response.data.status)
+          }
+        }
       })
       .catch((error) => {
         console.error('Error retrieving refund requests:', error);
       });
   };
+
+  const handleClick = (id) => {
+    sessionStorage.setItem("refundId", id)
+  }
 
   // Update key state when component mounts
   useEffect(() => {
@@ -110,12 +121,12 @@ const AdminViewRefundRequests = () => {
                           </td>
                           {key !== 'lmsapp' && (
                             <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                              <Link to="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Approve Refund</Link>
+                              <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Approve Refund</Link>
                             </td>
                           )}
                           {key !== 'lmsapp' && (
                             <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                              <Link to="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Reject Refund</Link>
+                              <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Reject Refund</Link>
                             </td>
                           )}
                         </tr>
