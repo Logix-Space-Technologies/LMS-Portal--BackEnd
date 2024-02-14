@@ -82,7 +82,7 @@ const Navbar = () => {
                                 Functionalities
                             </Link>
                             <ul className="dropdown-menu">
-
+                                <li><Link className="dropdown-item" to="/UpdateTask">Update Task</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewallcollege">View All College</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewallstudents">View All Students</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
