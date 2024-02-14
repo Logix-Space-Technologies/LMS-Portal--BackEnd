@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
 import Navbar from './Navbar'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminViewAllCollege = () => {
@@ -52,6 +52,7 @@ const AdminViewAllCollege = () => {
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "College deleted.") {
+                    alert("College Deleted Successfully!!!")
                     // Reload the page after deleting college
                     window.location.reload();
                 } else {
@@ -64,7 +65,6 @@ const AdminViewAllCollege = () => {
     const UpdateClick = (id) => {
         let data = id
         sessionStorage.setItem("clgId", data)
-        navigate("/adminUpdateclg")
     }
 
     // Update key state when component mounts
@@ -143,11 +143,11 @@ const AdminViewAllCollege = () => {
                                         {value.collegeMobileNumber}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <a onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update College</a>
+                                        <Link to="/adminUpdateclg" onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update College</Link>
                                     </td>
                                     {key === 'lmsapp' && (
                                         <td className="px-6 py-4">
-                                            <a onClick={() => { handleClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete College</a>
+                                            <Link onClick={() => { handleClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete College</Link>
                                         </td>
                                     )}
                                 </tr>

@@ -74,6 +74,7 @@ const AdminSearchCollege = () => {
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "College deleted.") {
+                    alert("College Deleted Successfully!!!")
                     // Reload the page after deleting college
                     window.location.reload();
                 } else {
