@@ -1,10 +1,9 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import StudNavBar from './StudNavBar';
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 import '../../config/config'
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const StudentViewTasks = () => {
+const StudentViewOneTask = () => {
     const [studViewTaskData, setStudViewTaskData] = useState([]);
     const [errors, setErrors] = useState({});
     const [inputField, setInputField] = useState({
@@ -15,11 +14,12 @@ const StudentViewTasks = () => {
     let [taskId, setTaskId] = useState({})
     const navigate = useNavigate()
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/studViewTask";
+    const apiUrl = global.config.urls.api.server + "/api/lms/studViewTaskOfSessions";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
 
     const getData = () => {
-        let data = { "id": sessionStorage.getItem("studentId") };
+        let data = { "id": sessionStorage.getItem("studentId"), "sessionId": sessionStorage.getItem("SessionId") };
+        console.log(data)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -32,6 +32,7 @@ const StudentViewTasks = () => {
             (response) => {
                 if (response.data.data) {
                     setStudViewTaskData(response.data.data);
+                    console.log(response.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
@@ -41,6 +42,7 @@ const StudentViewTasks = () => {
                         sessionStorage.removeItem("studBatchId");
                         sessionStorage.removeItem("studLoginToken");
                         sessionStorage.removeItem("subtaskId");
+                        sessionStorage.removeItem("SessionId")
                     } else {
                         alert(response.data.status)
                     }
@@ -129,12 +131,12 @@ const StudentViewTasks = () => {
     };
 
     useEffect(() => { getData(); }, []);
-
     return (
         <div>
-            <StudNavBar />
-            <br />
-            <h1>Student View Tasks</h1><br />
+            <div className="flex justify-between items-center mt-4 ml-4 mb-4">
+                <h2 className="text-lg font-bold">Student View Tasks</h2>
+                <Link to="/studSessionView" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
+            </div>
             <section className="flex flex-col justify-center antialiased bg-gray-100 text-gray-600 min-h-screen p-4">
                 <div className="h-full">
                     {/* Cards */}
@@ -354,7 +356,7 @@ const StudentViewTasks = () => {
                 </div>
             </section>
         </div>
-    );
-};
+    )
+}
 
-export default StudentViewTasks;
+export default StudentViewOneTask

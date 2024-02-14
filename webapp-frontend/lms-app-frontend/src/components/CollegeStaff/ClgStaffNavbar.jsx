@@ -1,11 +1,9 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const ClgStaffNavbar = () => {
-    const navigate = useNavigate()
 
     const logOut = () => {
-        navigate("/clgStafflogin")
         sessionStorage.removeItem("clgstaffkey");
         sessionStorage.removeItem("clgStaffId");
         sessionStorage.removeItem("clgStaffEmail");
@@ -16,38 +14,38 @@ const ClgStaffNavbar = () => {
     <div>
          <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
-                <a className="navbar-brand" href="#">College Staff</a>
+                <Link className="navbar-brand" to="#">College Staff</Link>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
                         <li className="nav-item"> 
-                            <a className="nav-link active" aria-current="page" href="/studentverification">Student Verification</a>
+                            <Link className="nav-link active" aria-current="page" to="/studentverification">Student Verification</Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/colgstaffsearchbatch">College Staff Search Batch</a>
+                            <Link className="nav-link" to="/colgstaffsearchbatch">College Staff Search Batch</Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/colgstaffsearchstudent">College Staff Search Student</a>
+                            <Link className="nav-link" to="/colgstaffsearchstudent">College Staff Search Student</Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/clgStaffSearchTask">College Staff Search Task</a>
+                            <Link className="nav-link" to="/clgStaffSearchTask">College Staff Search Task</Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/collegeStaffViewBatch">View All Batches</a>
+                            <Link className="nav-link" to="/collegeStaffViewBatch">View All Batches</Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/collegeStaffViewAllStudents">View All Students</a>
+                            <Link className="nav-link" to="/collegeStaffViewAllStudents">View All Students</Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/clgstaffviewtask">View All Tasks</a>
+                            <Link className="nav-link" to="/clgstaffviewtask">View All Tasks</Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/clgstaffviewattendance">View Attendance List</a>
+                            <Link className="nav-link" to="/clgstaffviewattendance">View Attendance List</Link>
                         </li>
                         <li className="nav-item">
-                            <a onClick={logOut} className="dropdown-item">Log Out</a> 
+                            <Link to="/clgStafflogin" onClick={logOut} className="dropdown-item">Log Out</Link> 
                         </li>
                     </ul>
                 </div>

@@ -205,7 +205,7 @@ Session.viewSessions = (result) => {
 }
 
 Session.viewUpcomingSessions = (batchId, result) => {
-    const query = "SELECT sd.id, sd.batchId, sd.sessionName, sd.date, sd.time, sd.type, sd.remarks, sd.venueORlink, t.trainerName, sd.addedDate, sd.updatedDate FROM sessiondetails sd JOIN trainersinfo t ON sd.trainerId = t.id WHERE sd.isActive = 1 AND sd.deleteStatus = 0 AND sd.cancelStatus = 0 AND (sd.date > CURRENT_DATE OR (sd.date = CURRENT_DATE AND sd.time >= CURRENT_TIME)) AND sd.batchId = ?;";
+    const query = "SELECT sd.id, sd.batchId, sd.sessionName, sd.date, sd.time, sd.type, sd.remarks, sd.venueORlink, t.trainerName, sd.addedDate, sd.updatedDate FROM sessiondetails sd JOIN trainersinfo t ON sd.trainerId = t.id WHERE sd.isActive = 1 AND sd.deleteStatus = 0 AND sd.cancelStatus = 0 AND (sd.date > CURRENT_DATE OR (sd.date = CURRENT_DATE AND sd.time >= CURRENT_TIME)) AND sd.batchId = ? ORDER BY sd.date DESC;";
     db.query(query, [batchId], (err, res) => {
         if (err) {
             console.log("error: ", err);
@@ -334,6 +334,19 @@ Session.CheckIsTodaySessionAvailable = (result) => {
             result(null, res)
         })
 }
+
+Session.viewOneSession = (sessionId, result) => {
+    db.query("SELECT id,sessionName,date,time,type,remarks,venueORlink,trainerId FROM sessiondetails WHERE id = ? AND isActive = 1 AND deleteStatus = 0", sessionId,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("data: ", res);
+            result(null, res);
+        });
+};
 
 
 module.exports = Session

@@ -3,6 +3,7 @@ import AdminStaffHeader from './AdminStaffHeader'
 import AdminStaffSideBar from './AdminStaffSideBar'
 import AdminStaffFooter from './AdminStaffFooter'
 import AdmStaffViewProfile from './AdmStaffViewProfile'
+import { Link } from 'react-router-dom'
 
 const AdmStaffDashBoard = () => {
   return (
@@ -19,7 +20,7 @@ const AdmStaffDashBoard = () => {
            <AdminStaffFooter/>
         </div>
         {/* Back To Top */}
-        <a href="#" className="btn btn-lg btn-primary btn-lg-square back-to-top"><i className="bi bi-arrow-up" /></a>
+        <Link to="#" className="btn btn-lg btn-primary btn-lg-square back-to-top"><i className="bi bi-arrow-up" /></Link>
     </div>
     </div>
   )

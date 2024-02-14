@@ -146,7 +146,7 @@ exports.sessionUpdate = (request, response) => {
     jwt.verify(sessionUpdateToken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
-
+            console.log(request.body.date)
             if (Validator.isEmpty(request.body.sessionName).isValid) {
                 validationErrors.sessionName = Validator.isEmpty(request.body.sessionName).message;
             }
@@ -393,6 +393,30 @@ exports.isSessionHappeningToday = (request, response) => {
         }
     });
 }
+
+exports.viewOneSession = (request, response) => {
+    const sessionToken = request.headers.token;
+    const key = request.headers.key; // Provide the respective keys for admin and admin staff
+    const sessionId = request.body.id; // Assuming the session ID is provided in the request body
+
+    jwt.verify(sessionToken, key, (err, decoded) => {
+        if (decoded) {
+            Session.viewOneSession(sessionId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (!data || data.length === 0) {
+                    return response.json({ "status": "No session found with the provided ID" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
+
 
 
 
