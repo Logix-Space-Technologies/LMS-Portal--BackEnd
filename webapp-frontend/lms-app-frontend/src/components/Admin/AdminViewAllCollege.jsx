@@ -3,9 +3,11 @@ import '../../config/config'
 import axios from 'axios'
 import Navbar from './Navbar'
 import { useNavigate } from 'react-router-dom'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminViewAllCollege = () => {
     const [collegeData, setCollegeData] = useState([])
+    const [key, setKey] = useState('');
 
     const navigate = useNavigate()
 
@@ -14,12 +16,19 @@ const AdminViewAllCollege = () => {
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteCollege"
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         axios.post(apiUrl, {}, axiosConfig).then(
@@ -58,11 +67,15 @@ const AdminViewAllCollege = () => {
         navigate("/adminUpdateclg")
     }
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     useEffect(() => { getData() }, [])
 
     return (
         <div>
-            <Navbar /><br />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <strong>Admin View All College</strong>
             <br /><br />
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -93,9 +106,11 @@ const AdminViewAllCollege = () => {
                             <th scope="col" className="px-6 py-3">
 
                             </th>
-                            <th scope="col" className="px-6 py-3">
+                            {key === 'lmsapp' && (
+                                <th scope="col" className="px-6 py-3">
 
-                            </th>
+                                </th>
+                            )}
                         </tr>
                     </thead>
                     <tbody>
@@ -130,9 +145,11 @@ const AdminViewAllCollege = () => {
                                     <td className="px-6 py-4">
                                         <a onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update College</a>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <a onClick={() => { handleClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete College</a>
-                                    </td>
+                                    {key === 'lmsapp' && (
+                                        <td className="px-6 py-4">
+                                            <a onClick={() => { handleClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete College</a>
+                                        </td>
+                                    )}
                                 </tr>
                             }
                         )) : <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
