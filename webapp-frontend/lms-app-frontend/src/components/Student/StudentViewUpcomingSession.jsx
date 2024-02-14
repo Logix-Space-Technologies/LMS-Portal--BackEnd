@@ -62,7 +62,7 @@ const StudentViewUpcomingSession = () => {
         <div>
             <StudNavBar />
             <br />
-            <h1 style={{ marginLeft: '20px', textAlign: 'center' }}>View Upcoming Sessions</h1>
+            <h1 style={{ marginLeft: '30px', textAlign: 'center' }}>View Upcoming Sessions</h1>
             <br />
             {loading ? (
                 <div className="col-12 text-center">
