@@ -38,17 +38,12 @@ const AddCollege = () => {
     let currentKey = sessionStorage.getItem("admkey");
     let token = sessionStorage.getItem("admtoken");
     if (currentKey !== 'lmsapp') {
-      currentKey  = sessionStorage.getItem("admstaffkey");
+      currentKey = sessionStorage.getItem("admstaffkey");
       token = sessionStorage.getItem("admstaffLogintoken");
       setKey(currentKey); // Update the state if needed
     }
-    console.log("key: ",key)
-    console.log("token: ",token)
-    console.log(inputField)
-    console.log(file)
     e.preventDefault()
     const validationErrors = validateForm(inputField)
-    console.log(validationErrors)
     if (Object.keys(validationErrors).length === 0) {
       let axiosConfig = {
         headers: {
@@ -68,7 +63,6 @@ const AddCollege = () => {
         "collegeMobileNumber": inputField.collegeMobileNumber,
         "collegeImage": file
       }
-      console.log(data)
       axios.post(apiUrl, data, axiosConfig).then(
         (response) => {
           if (response.data.status === "success") {
@@ -76,32 +70,28 @@ const AddCollege = () => {
             setInputField({ "collegeName": "", "collegeCode": "", "collegeAddress": "", "website": "", "email": "", "collegePhNo": "", "collegeMobileNumber": "" })
             setFile(null)
           } else {
-            if (response.data.status === "Validation failed" && response.data.data.image) {
-              alert(response.data.data.image)
+            if (response.data.status === "Validation failed" && response.data.data.name) {
+              alert(response.data.data.name)
             } else {
-              if (response.data.status === "Validation failed" && response.data.data.name) {
-                alert(response.data.data.name)
+              if (response.data.status === "Validation failed" && response.data.data.address) {
+                alert(response.data.data.address)
               } else {
-                if (response.data.status === "Validation failed" && response.data.data.address) {
-                  alert(response.data.data.address)
+                if (response.data.status === "Validation failed" && response.data.data.website) {
+                  alert(response.data.data.website)
                 } else {
-                  if (response.data.status === "Validation failed" && response.data.data.website) {
-                    alert(response.data.data.website)
+                  if (response.data.status === "Validation failed" && response.data.data.email) {
+                    alert(response.data.data.email)
                   } else {
-                    if (response.data.status === "Validation failed" && response.data.data.email) {
-                      alert(response.data.data.email)
+                    if (response.data.status === "Validation failed" && response.data.data.phone) {
+                      alert(response.data.data.phone)
                     } else {
-                      if (response.data.status === "Validation failed" && response.data.data.phone) {
-                        alert(response.data.data.phone)
+                      if (response.data.status === "Validation failed" && response.data.data.mobile) {
+                        alert(response.data.data.mobile)
                       } else {
-                        if (response.data.status === "Validation failed" && response.data.data.mobile) {
-                          alert(response.data.data.mobile)
+                        if (response.data.status === "Validation failed" && response.data.data.code) {
+                          alert(response.data.data.code)
                         } else {
-                          if (response.data.status === "Validation failed" && response.data.data.code) {
-                            alert(response.data.data.code)
-                          } else {
-                            alert(response.data.status)
-                          }
+                          alert(response.data.status)
                         }
                       }
                     }
@@ -111,7 +101,27 @@ const AddCollege = () => {
             }
           }
         }
-      )
+      ).catch(error => {
+        if (error.response) {
+          // Extract the status code from the response
+          const statusCode = error.response.status;
+
+          if (statusCode === 400) {
+            alert(error.response.data.status)
+            // Additional logic for status 400
+          } else if (statusCode === 500) {
+            alert(error.response.data.status)
+            // Additional logic for status 500
+          } else {
+            alert(error.response.data.status)
+          }
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log('Error', error.message);
+        }
+        console.log(error.config);
+      })
     } else {
       setErrors(validationErrors);
     }
@@ -157,14 +167,14 @@ const AddCollege = () => {
   return (
     <div>
       {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
-      <div class="bg-light py-3 py-md-5">
-        <div class="container">
-          <div class="row justify-content-md-center">
-            <div class="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
-              <div class="bg-white p-4 p-md-5 rounded shadow-sm">
-                <div class="row">
-                  <div class="col-12">
-                    <div class="text-center mb-5">
+      <div className="bg-light py-3 py-md-5">
+        <div className="container">
+          <div className="row justify-content-md-center">
+            <div className="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
+              <div className="bg-white p-4 p-md-5 rounded shadow-sm">
+                <div className="row">
+                  <div className="col-12">
+                    <div className="text-center mb-5">
                       <a href="#!">
                         <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
                       </a><br /><br />
@@ -172,40 +182,40 @@ const AddCollege = () => {
                     </div>
                   </div>
                 </div>
-                <div class="row gy-3 gy-md-4 overflow-hidden">
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="" class="form-label">College Name <span class="text-danger">*</span></label>
-                    <input onChange={inputHandler} type="text" class="form-control" name="collegeName" value={inputField.collegeName} id="collegeName" />
+                <div className="row gy-3 gy-md-4 overflow-hidden">
+                  <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                    <label htmlFor="" className="form-label">College Name <span className="text-danger">*</span></label>
+                    <input onChange={inputHandler} type="text" className="form-control" name="collegeName" value={inputField.collegeName} id="collegeName" />
                     {errors.collegeName && <span style={{ color: 'red' }} className="error">{errors.collegeName}</span>}
                   </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="" class="form-label">College Code <span class="text-danger">*</span></label>
-                    <input onChange={inputHandler} type="text" class="form-control" name="collegeCode" value={inputField.collegeCode} id="collegeCode" />
+                  <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                    <label htmlFor="" className="form-label">College Code <span className="text-danger">*</span></label>
+                    <input onChange={inputHandler} type="text" className="form-control" name="collegeCode" value={inputField.collegeCode} id="collegeCode" />
                     {errors.collegeCode && <span style={{ color: 'red' }} className="error">{errors.collegeCode}</span>}
                   </div>
-                  <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                    <label for="" class="form-label">College Address <span class="text-danger">*</span></label>
+                  <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                    <label htmlFor="" className="form-label">College Address <span className="text-danger">*</span></label>
                     <textarea onChange={inputHandler} name="collegeAddress" id="collegeAddress" cols="30" rows="5" className="input form-control" value={inputField.collegeAddress} ></textarea>
                     {errors.collegeAddress && <span style={{ color: 'red' }} className="error">{errors.collegeAddress}</span>}
                   </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="" class="form-label">College Website <span class="text-danger">*</span></label>
-                    <input onChange={inputHandler} type="text" class="form-control" name="website" value={inputField.website} id="website" />
+                  <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                    <label htmlFor="" className="form-label">College Website <span className="text-danger">*</span></label>
+                    <input onChange={inputHandler} type="text" className="form-control" name="website" value={inputField.website} id="website" />
                     {errors.website && <span style={{ color: 'red' }} className="error">{errors.website}</span>}
                   </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="" class="form-label">College Email <span class="text-danger">*</span></label>
-                    <input onChange={inputHandler} type="text" class="form-control" name="email" value={inputField.email} id="email" />
+                  <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                    <label htmlFor="" className="form-label">College Email <span className="text-danger">*</span></label>
+                    <input onChange={inputHandler} type="text" className="form-control" name="email" value={inputField.email} id="email" />
                     {errors.email && <span style={{ color: 'red' }} className="error">{errors.email}</span>}
                   </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="" class="form-label">College Phone No. </label>
-                    <input onChange={inputHandler} type="text" class="form-control" name="collegePhNo" value={inputField.collegePhNo} id="collegePhNo" />
+                  <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                    <label htmlFor="" className="form-label">College Phone No. </label>
+                    <input onChange={inputHandler} type="text" className="form-control" name="collegePhNo" value={inputField.collegePhNo} id="collegePhNo" />
                     {errors.collegePhNo && <span style={{ color: 'red' }} className="error">{errors.collegePhNo}</span>}
                   </div>
-                  <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                    <label for="" class="form-label">College Mobile No. <span class="text-danger">*</span></label>
-                    <input onChange={inputHandler} type="text" class="form-control" name="collegeMobileNumber" value={inputField.collegeMobileNumber} id="collegeMobileNumber" />
+                  <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                    <label htmlFor="" className="form-label">College Mobile No. <span className="text-danger">*</span></label>
+                    <input onChange={inputHandler} type="text" className="form-control" name="collegeMobileNumber" value={inputField.collegeMobileNumber} id="collegeMobileNumber" />
                     {errors.collegeMobileNumber && <span style={{ color: 'red' }} className="error">{errors.collegeMobileNumber}</span>}
                   </div>
                   <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -215,16 +225,16 @@ const AddCollege = () => {
                     <input type="file" className="form-control" name="collegeImage" id="collegeImage" accept="image/*" onChange={fileUploadHandler} />
                     {errors.collegeImage && <span style={{ color: 'red' }} className="error">{errors.collegeImage}</span>}
                   </div>
-                  <div class="col-12">
-                    <div class="d-grid">
-                      <button onClick={handleSubmit} class="btn btn-primary btn-lg" type="submit">Register</button>
+                  <div className="col-12">
+                    <div className="d-grid">
+                      <button onClick={handleSubmit} className="btn btn-primary btn-lg" type="submit">Register</button>
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-12">
-                    <hr class="mt-5 mb-4 border-secondary-subtle" />
-                    <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center">
+                <div className="row">
+                  <div className="col-12">
+                    <hr className="mt-5 mb-4 border-secondary-subtle" />
+                    <div className="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center">
                       &copy; 2024 Link Ur Codes. All rights reserved.
                     </div>
                   </div>

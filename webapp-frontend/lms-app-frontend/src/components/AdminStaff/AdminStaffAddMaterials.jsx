@@ -55,7 +55,6 @@ const AdminStaffAddMaterials = () => {
         axios.post(apiUrl2, {}, axiosConfig).then(
             (response) => {
                 setOutputField(response.data.data)
-                console.log(response.data)
             }
         )
     }

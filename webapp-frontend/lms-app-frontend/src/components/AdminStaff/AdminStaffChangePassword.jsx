@@ -22,8 +22,6 @@ const AdminStaffChangePassword = () => {
     }
 
     const readNewValue = () => {
-        console.log(updateField)
-
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -40,7 +38,6 @@ const AdminStaffChangePassword = () => {
                     sessionStorage.removeItem("admstaffLogintoken")
                     sessionStorage.removeItem("admstaffkey")
                     sessionStorage.removeItem("Email")
-                    navigate("/admstafflogin");
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.oldAdSfPassword) {
                         alert(response.data.data.oldAdSfPassword);
@@ -92,8 +89,8 @@ const AdminStaffChangePassword = () => {
                                                 <button onClick={readNewValue} className="btn btn-warning">Update</button>
                                             </div>
                                             <br></br>
-                                            <div class="mb-3">
-                                                <Link class="btn btn-danger" to="#">Back</Link>
+                                            <div className="mb-3">
+                                                <Link className="btn btn-danger" to="#">Back</Link>
                                             </div>
                                         </ul>
                                     </div>
