@@ -84,27 +84,30 @@ const StudentViewUpcomingSession = () => {
                                         ) : (
                                             studentViewUpcomingSessionData.map((value, index) => {
                                                 return (
-                                                    <div key={index} style={{ position: 'relative', width: '700px', height: '317px', borderRadius: '10px', transition: '0.3s', fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', display: 'flex', flexDirection: 'column' }}>
-                                                        <div style={{ padding: '10px 16px', backgroundColor: '#AAF1F5', color: 'white', borderTopLeftRadius: '10px', borderTopRightRadius: '10px' }}>
-                                                            <h4><b>{value.sessionName}</b></h4>
-                                                        </div>
-                                                        <div style={{ padding: '2px 16px', flex: '1 0 auto', backgroundColor: '#EFF1DB', paddingTop: value.venueORlink.includes('meet.google.com') ? '60px' : '40px', }}>
-                                                            <p style={{ marginBottom: '10px' }}><b>Date:</b> {value.date}</p>
-                                                            <p style={{ marginBottom: '10px' }}><b>Time:</b> {formatTime(value.time)}</p>
-                                                            <p style={{ marginBottom: '10px' }}><b>Type:</b> {value.type}</p>
-                                                            <p style={{ marginBottom: '10px' }}><b>Trainer Name:</b> {value.trainerName}</p>
-                                                            {!value.venueORlink.includes("meet.google.com") && (
-                                                                <p style={{ marginBottom: '10px' }}><b>Venue:</b> {value.venueORlink}</p>
-                                                            )}
-                                                        </div>
-                                                        <div style={{ padding: '10px 16px', backgroundColor: '#D3B5E5', color: 'white', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px', display: 'flex', justifyContent: 'space-around' }}>
-                                                            {value.venueORlink.includes("meet.google.com") && (
-                                                                <Link to={value.venueORlink} target='_blank' rel='noopener noreferrer' style={{ color: 'white', textDecoration: 'none', backgroundColor: '#FBC740', padding: '10px', borderRadius: '5px', margin: '0 10px' }} className="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
-                                                                    <img src="https://www.svgrepo.com/show/504419/google-meet.svg" className="w-4 h-4 me-2" aria-hidden="true" alt='' />
-                                                                    Meeting Link
-                                                                </Link>
-
-                                                            )}
+                                                    <div class="max-w-2xl mx-auto">
+                                                        <div key={index} className="flex mb-6">
+                                                            <div className="w-2 bg-blue-500 rounded-l-xl"></div>
+                                                            <div className="flex-grow bg-white rounded-r-xl shadow-lg p-6">
+                                                                <div className="flex justify-between items-center mb-4">
+                                                                    <h2 className="text-lg text-blue-600 font-semibold">{value.sessionName}</h2>
+                                                                    <button className="text-blue-600 text-sm">
+                                                                        <span>...</span>
+                                                                    </button>
+                                                                </div>
+                                                                <p className="text-sm text-gray-600">{value.remarks}</p>
+                                                                <p className="text-sm text-gray-600 mt-1">Date: {value.date}</p>
+                                                                <p className="text-sm text-gray-600">Time: {formatTime(value.time)}</p>
+                                                                <p className="text-sm text-gray-600">Trainer Name: {value.trainerName}</p>
+                                                                <p className="text-sm text-gray-600">Type: {value.type}</p>
+                                                                {!value.venueORlink.includes("meet.google.com") && (
+                                                                    <p className="text-sm text-gray-600">Venue: {value.venueORlink}</p>
+                                                                )}
+                                                                <div className="flex gap-4 mt-4">
+                                                                    {value.venueORlink.includes("meet.google.com") && (
+                                                                        <a href={value.venueORlink} className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold" target='_blank' rel='noopener noreferrer'>Meeting Link</a>
+                                                                    )}
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 );
