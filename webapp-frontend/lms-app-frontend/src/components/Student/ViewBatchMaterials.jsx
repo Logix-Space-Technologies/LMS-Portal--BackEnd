@@ -79,7 +79,7 @@ const MaterialView = () => {
                             Material Description
                           </th>
                           <th scope="col" className="px-6 py-3">
-                            
+
                           </th>
                         </tr>
                       </thead>
@@ -109,8 +109,13 @@ const MaterialView = () => {
                                   {material.materialDesc}
                                 </td>
                                 <td className="px-6 py-4">
-                                  <Link target="_blank" to={material.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
+                                  {material.materialType.toLowerCase() === 'video' && material.uploadFile.toLowerCase().endsWith('.mp4') ? (
+                                    <a href={material.uploadFile} target="_blank" rel="noopener noreferrer" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Watch Video</a>
+                                  ) : (
+                                    <Link to={material.uploadFile} target="_blank" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
+                                  )}
                                 </td>
+
                               </tr>
                             ))
                           )
