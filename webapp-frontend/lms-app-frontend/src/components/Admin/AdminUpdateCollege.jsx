@@ -257,7 +257,7 @@ const AdminUpdateCollege = () => {
                                         </div>
                                         <br></br>
                                         <div class="mb-3">
-                                            <a class="btn btn-danger" href="/adminviewallclgstaff">Back</a>
+                                            <a class="btn btn-danger" href="/adminviewallcollege">Back</a>
                                         </div>
                                     </ul>
 
