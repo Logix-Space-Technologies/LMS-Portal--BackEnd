@@ -96,6 +96,7 @@ import AdminViewSuccessfulRefunds from './components/Admin/AdminViewSuccessfulRe
 import AdminUpdateCollege from './components/Admin/AdminUpdateCollege';
 import StudentViewOneTask from './components/Student/StudentViewOneTask';
 import AdminUpdateSession from './components/Admin/AdminUpdateSession';
+import AdminStaffAddMaterials from './components/AdminStaff/AdminStaffAddMaterials';
 
 
 
@@ -178,6 +179,7 @@ function App() {
           <Route path='/AdminStaffViewAllMaterial' element={<AdminStaffViewAllMaterial/>}/>
           <Route path='/AdminStaffUpdateMaterial' element={<AdminStaffUpdateMaterial/>}/>
           <Route path='/adminstaffviewsubmittedtask' element={<AdminStaffViewSubmittedTask/>}/>
+          <Route path='/adminStaffAddmaterials' element={<AdminStaffAddMaterials/>}/>
           
 
 
