@@ -191,9 +191,9 @@ exports.batchUpdate = (request, response) => {
             if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
                 validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
             }
-            if (!Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).isValid) {
-                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).message
-            }
+            // if (!Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).isValid) {
+            //     validationErrors.regEndDate = Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).message
+            // }
 
             if (!Validator.isDateGreaterThanToday(regEndDate).isValid) {
                 validationErrors.regEndDate = Validator.isDateGreaterThanToday(regEndDate).message;
@@ -278,7 +278,7 @@ exports.viewOneBatch = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
-                if (data.length === 0) {
+                if (!data || data.length === 0) {
                     return response.json({ "status": "No batches are currently active" });
                 } else {
                     return response.json({ "status": "success", "data": data });
