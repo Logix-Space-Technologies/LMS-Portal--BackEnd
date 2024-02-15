@@ -1,147 +1,363 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import '../../config/config';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AdminUpdateTask = () => {
+    const [taskData, setTaskData] = useState([]);
+    const [file, setFile] = useState(null)
+    const [fileType, setFileType] = useState("");
+    const [errors, setErrors] = useState({})
     const [updateField, setUpdateField] = useState({
-        "id": sessionStorage.getItem("taskId"),
-        "batchId": sessionStorage.getItem("batchId"),
-        "taskTitle": "",
-        "taskDesc": "",
-        "taskType": "",
-        "totalScore": "",
-        "dueDate": "",
-        "taskFileUpload": ""
+        "id": sessionStorage.getItem('taskId'),
+        "batchId": '',
+        "taskTitle": '',
+        "taskDesc": '',
+        "taskType": '',
+        "totalScore": '',
+        "dueDate": '',
+        "taskFileUpload": file,
     });
-    const [validationErrors, setValidationErrors] = useState({});
+    const apiURL = global.config.urls.api.server + '/api/lms/viewOneTask';
+    const apiUrl2 = global.config.urls.api.server + '/api/lms/updateTask';
     const navigate = useNavigate();
 
-    const apiURL = global.config.urls.api.server + "/api/lms/adminviewonetask";
-    const apiUrl2 = global.config.urls.api.server + "/api/lms/updateTask";
-
     const updateHandler = (event) => {
-        setUpdateField({ ...updateField, [event.target.name]: event.target.value });
+        setErrors({});
+        setUpdateField({ ...updateField, [event.target.name]: event.target.value })
     }
 
     const fileUploadHandler = (event) => {
-        setUpdateField({ ...updateField, taskFileUpload: event.target.files[0] });
+        setErrors({});
+        const uploadedFile = event.target.files[0];
+        if (uploadedFile) {
+            setErrors({});
+            setFile(uploadedFile);
+            const extension = uploadedFile.name.split('.').pop().toLowerCase();
+            setFileType(extension);
+        } else {
+            setFile(null);
+            setFileType("");
+        }
+    }
+
+    const readNewValue = (e) => {
+        e.preventDefault();
+        const validationErrors = validateForm(updateField);
+        console.log(updateField)
+        if (Object.keys(validationErrors).length === 0) {
+            let axiosConfig2 = {
+                headers: {
+                    'content-type': 'multipart/form-data',
+                    "Access-Control-Allow-Origin": "*",
+                    "token": sessionStorage.getItem("admtoken"),
+                    "key": sessionStorage.getItem("admkey")
+                }
+            }
+            let data = {
+                "id": sessionStorage.getItem('taskId'),
+                "batchId": updateField.batchId,
+                "taskTitle": updateField.taskTitle,
+                "taskDesc": updateField.taskDesc,
+                "taskType": updateField.taskType,
+                "totalScore": updateField.totalScore,
+                "dueDate": updateField.dueDate,
+                "taskFileUpload": file,
+            }
+            axios.post(apiUrl2, data, axiosConfig2).then(
+                (Response) => {
+                    if (Response.data.status === "success") {
+                        setUpdateField({
+                            "id": sessionStorage.getItem('taskId'),
+                            "batchId": '',
+                            "taskTitle": '',
+                            "taskDesc": '',
+                            "taskType": '',
+                            "totalScore": '',
+                            "dueDate": '',
+                        })
+                        alert("Task Updated Successfully")
+                        navigate(-1)
+                    } else {
+                        if (Response.data.status === "Validation failed" && Response.data.data.value) {
+                            alert(Response.data.data.value)
+                        } else {
+                            if (Response.data.status === "Validation failed" && Response.data.data.name) {
+                                alert(Response.data.data.name)
+                            } else {
+                                if (Response.data.status === "Validation failed" && Response.data.data.desc) {
+                                    alert(Response.data.data.desc)
+                                } else {
+                                    if (Response.data.status === "Validation failed" && Response.data.data.type) {
+                                        alert(Response.data.data.type)
+                                    } else {
+                                        if (Response.data.status === "Validation failed" && Response.data.data.score) {
+                                            alert(Response.data.data.score)
+                                        } else {
+                                            if (Response.data.status === "Validation failed" && Response.data.data.date) {
+                                                alert(Response.data.data.date)
+                                            } else {
+                                                alert(Response.data.status)
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+            ).catch(error => {
+                if (error.response) {
+                    // Extract the status code from the response
+                    const statusCode = error.response.status;
+
+                    if (statusCode === 400) {
+                        alert(error.response.data.status)
+                        // Additional logic for status 400
+                    } else if (statusCode === 500) {
+                        alert(error.response.data.status)
+                        // Additional logic for status 500
+                    } else {
+                        alert(error.response.data.status)
+                    }
+                } else if (error.request) {
+                    console.log(error.request);
+                } else {
+                    console.log('Error', error.message);
+                }
+                console.log(error.config);
+            })
+        } else {
+            setErrors(validationErrors);
+        }
+    }
+
+    const validateForm = (data) => {
+        let errors = {};
+
+        if (!data.batchId) {
+            errors.batchId = 'Batch Name is required';
+        }
+        if (!data.taskTitle) {
+            errors.taskTitle = 'Task Title is required';
+        }
+        if (!data.taskDesc) {
+            errors.taskDesc = 'Task Description is required';
+        }
+        if (!data.taskType) {
+            errors.taskType = 'Task Type is required';
+        }
+        if (!data.totalScore) {
+            errors.totalScore = 'Total Score is required';
+        }
+        if (!data.dueDate) {
+            errors.dueDate = 'Due Date is required';
+        }
+        if (fileType !== "pdf" && fileType !== "docx") {
+            errors.file = "File must be in PDF or DOCX format";
+        }
+        return errors;
+    }
+
+    const getData = () => {
+        let data = { "id": sessionStorage.getItem('taskId') };
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                'Access-Control-Allow-Origin': '*',
+                "token": sessionStorage.getItem('admtoken'),
+                "key": sessionStorage.getItem('admkey'),
+            }
+        }
+        axios.post(apiURL, data, axiosConfig).then((response) => {
+            setTaskData(response.data.data);
+            setUpdateField(response.data.data);
+            console.log(response.data.data);
+        });
+    };
+
+    const handleBackButton = () => {
+      navigate(-1)
     }
 
     useEffect(() => {
-        const getData = async () => {
-            try {
-                const response = await axios.post(apiURL, { id: sessionStorage.getItem("taskId") }, {
-                    headers: {
-                        'Content-Type': 'application/json;charset=UTF-8',
-                        "Access-Control-Allow-Origin": "*",
-                        "token": sessionStorage.getItem("admtoken"),
-                        "key": sessionStorage.getItem("admkey")
-                    }
-                });
-                setUpdateField(response.data.data[0]);
-            } catch (error) {
-                console.error("Error:", error.message);
-                alert("An unexpected error occurred.");
-            }
-        };
+        const formattedDate = formatDate(updateField.dueDate);
+        setUpdateField({ ...updateField, dueDate: formattedDate });
+    }, [updateField.dueDate]);
+
+    useEffect(() => {
         getData();
-    }, [apiURL]);
-
-    const readNewValue = () => {
-        let formData = new FormData();
-        formData.append("id", sessionStorage.getItem("taskId"));
-        formData.append("batchId", updateField.batchId);
-        formData.append("taskTitle", updateField.taskTitle);
-        formData.append("taskDesc", updateField.taskDesc);
-        formData.append("taskType", updateField.taskType);
-        formData.append("totalScore", updateField.totalScore);
-        formData.append("dueDate", updateField.dueDate);
-        formData.append("taskFileUpload", updateField.taskFileUpload);
-
-        axios.post(apiUrl2, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
-            }
-        })
-            .then((response) => {
-                if (response.status === 200 && response.data.status === "success") {
-                    alert("Task Updated Successfully");
-                    navigate("/adminviewalltasks");
-                } else if (response.status === 400) {
-                    if (response.data && response.data.status === "Validation failed") {
-                        setValidationErrors(response.data.data || {});
-                    } else {
-                        alert("Bad request: " + response.data.status);
-                    }
-                } else if (response.status === 403) {
-                    alert("Unauthorized access!!");
-                    navigate("/");
-                } else if (response.status === 404) {
-                    alert("Task not found");
-                } else if (response.status === 422) {
-                    alert("Unprocessable Entity: " + response.data.status);
-                } else if (response.status === 500) {
-                    alert("Internal server error: " + response.data.status);
-                } else {
-                    alert("Unexpected error: " + response.data.status);
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error.message);
-                alert("An unexpected error occurred.");
-            });
-    };
-
+    }, []);
     return (
-        <div className="container d-flex justify-content-center align-items-center min-vh-100">
-            <div className="card w-75">
-                <div className="card-body">
-                    <h3 className="card-title text-center mb-4">Update Task Details</h3>
-                    <form>
-                        <div className="mb-3">
-                            <label htmlFor="taskTitle" className="form-label">Task Title</label>
-                            <input onChange={updateHandler} type="text" className="form-control" id="taskTitle" name="taskTitle" value={updateField.taskTitle} />
+        <div className="container">
+            <div className="row">
+                <div className="col-lg-12 mb-4 mb-sm-5">
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <h3 className="h2 text-black mb-0">Update Task Details</h3>
+                    <br></br>
+                    <div className="card card-style1 --bs-primary-border-subtle border-5">
+                        <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
+                            <div className="row align-items-center">
+                                <div className="col-lg-6 px-xl-10">
+                                    <ul className="list-unstyled mb-1-9">
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">
+                                                Id
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                name="id"
+                                                value={updateField.id}
+                                                disabled
+                                            />
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">
+                                                BatchId
+                                            </label>
+                                            <input
+                                                onChange={updateHandler}
+                                                type="text"
+                                                className="form-control"
+                                                name="batchId"
+                                                value={updateField.batchId}
+                                            />
+                                            {errors.batchId && (<span style={{ color: 'red' }} className="error">{errors.batchId}</span>)}
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">
+                                                Task Title
+                                            </label>
+                                            <input
+                                                onChange={updateHandler}
+                                                type="text"
+                                                className="form-control"
+                                                name="taskTitle"
+                                                value={updateField.taskTitle}
+                                            />
+                                            {errors.taskTitle && (<span style={{ color: 'red' }} className="error">{errors.taskTitle}</span>)}
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">
+                                                Task Description
+                                            </label>
+                                            <input
+                                                onChange={updateHandler}
+                                                type="text"
+                                                className="form-control"
+                                                name="taskDesc"
+                                                value={updateField.taskDesc}
+                                            />
+                                            {errors.taskDesc && (<span style={{ color: 'red' }} className="error">{errors.taskDesc}</span>)}
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">
+                                                Task Type
+                                            </label>
+                                            <input
+                                                onChange={updateHandler}
+                                                type="text"
+                                                className="form-control"
+                                                name="taskType"
+                                                value={updateField.taskType}
+                                            />
+                                            {errors.taskType && (<span style={{ color: 'red' }} className="error">{errors.taskType}</span>)}
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">
+                                                Total Score
+                                            </label>
+                                            <input
+                                                onChange={updateHandler}
+                                                type="text"
+                                                className="form-control"
+                                                name="totalScore"
+                                                value={updateField.totalScore}
+                                            />
+                                            {errors.totalScore && (<span style={{ color: 'red' }} className="error">{errors.totalScore}</span>)}
+                                        </div>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">
+                                                Due Date
+                                            </label>
+                                            <input
+                                                onChange={updateHandler}
+                                                type="text"
+                                                className="form-control"
+                                                name="dueDate"
+                                                value={updateField.dueDate}
+                                            />
+                                            {errors.dueDate && (<span style={{ color: 'red' }} className="error">{errors.dueDate}</span>)}
+                                        </div>
+                                        <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                            <label for="studProfilePic" className="form-label">
+                                                File <span className="text-danger">*</span>
+                                            </label>
+                                            <input onChange={fileUploadHandler} type="file" className="form-control" name="taskFileUpload" id="taskFileUpload" accept="pdf/*" />
+                                            {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
+                                        </div>
+                                        <br></br>
+                                        <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
+                                            <button onClick={readNewValue} className="btn btn-warning">
+                                                Update
+                                            </button>
+                                        </div>
+                                        <br></br>
+                                        <div className="mb-3">
+                                            <Link className="btn btn-danger" onClick={handleBackButton}>
+                                                Back
+                                            </Link>
+                                        </div>
+                                    </ul>
+
+                                    <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
+                                        <li>
+                                            <a href="#!">
+                                                <i className="ti-twitter-alt" />
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#!">
+                                                <i className="ti-facebook" />
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#!">
+                                                <i className="ti-pinterest" />
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#!">
+                                                <i className="ti-instagram" />
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                        <div className="mb-3">
-                            <label htmlFor="taskDesc" className="form-label">Task Description</label>
-                            <textarea onChange={updateHandler} className="form-control" id="taskDesc" name="taskDesc" rows="3" value={updateField.taskDesc}></textarea>
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="taskType" className="form-label">Task Type</label>
-                            <input onChange={updateHandler} type="text" className="form-control" id="taskType" name="taskType" value={updateField.taskType} />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="totalScore" className="form-label">Total Score</label>
-                            <input onChange={updateHandler} type="text" className="form-control" id="totalScore" name="totalScore" value={updateField.totalScore} />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="dueDate" className="form-label">Due Date</label>
-                            <input onChange={updateHandler} type="date" className="form-control" id="dueDate" name="dueDate" value={updateField.dueDate} />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="taskFileUpload" className="form-label">Task File Upload</label>
-                            <input onChange={fileUploadHandler} type="file" className="form-control" id="taskFileUpload" name="taskFileUpload" accept="image/*" />
-                        </div>
-                        <div className="d-flex justify-content-center">
-                            <button type="button" onClick={readNewValue} className="btn btn-primary me-2">Update</button>
-                            <Link to="/adminviewalltasks" className="btn btn-danger">Back</Link>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-            {/* Alert for validation errors */}
-            {Object.keys(validationErrors).length > 0 && (
-                <div className="alert alert-danger mt-3" role="alert">
-                    {Object.values(validationErrors).map((error, index) => (
-                        <p key={index}>{error}</p>
-                    ))}
-                </div>
-            )}
         </div>
-    );
+    )
+}
+
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    if (!isNaN(date.getTime())) {
+        const year = date.getFullYear();
+        let month = (1 + date.getMonth()).toString().padStart(2, '0');
+        let day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    } else {
+        return '';
+    }
 };
 
-export default AdminUpdateTask;
+export default AdminUpdateTask

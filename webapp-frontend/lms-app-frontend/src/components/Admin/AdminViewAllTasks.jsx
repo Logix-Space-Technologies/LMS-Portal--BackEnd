@@ -1,14 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import '../../config/config';
-import Navbar from './Navbar';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import '../../config/config'
+import Navbar from './Navbar'
+import axios from 'axios'
+import { Link, useNavigate } from 'react-router-dom'
 
 const AdminViewAllTasks = () => {
     const [taskData, setTaskData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of tasks per page
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/viewtasks";
+
+    const apiUrl = global.config.urls.api.server + "/api/lms/viewtasks"
+    const deleteUrl = global.config.urls.api.server + '/api/lms/deleteTask'
+
+    const navigate = useNavigate()
+
 
     const getData = () => {
         let axiosConfig = {
@@ -27,7 +33,6 @@ const AdminViewAllTasks = () => {
         );
     };
 
-    useEffect(() => { getData() }, []);
 
     // Logic for displaying current tasks
     const indexOfLastTask = currentPage * tasksPerPage;
@@ -36,6 +41,35 @@ const AdminViewAllTasks = () => {
 
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    const deleteTask = (id) => {
+        const axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        };
+        axios.post(deleteUrl, { id }, axiosConfig)
+            .then(() => {
+                alert("Task deleted successfully");
+                window.location.reload()
+            })
+            .catch(error => {
+                console.error("Delete failed:", error);
+            })
+    };
+
+    const handleUpdateClick = (taskId) => {
+        // Store task ID in sessionStorage to use in the update page
+        sessionStorage.setItem("taskId", taskId);
+        // Navigate to the update task page
+        navigate("/AdminUpdateTask");
+    };
+
+useEffect(() => { getData() }, []);
+
 
     return (
         <div>
@@ -74,10 +108,13 @@ const AdminViewAllTasks = () => {
                                         <td className="px-6 py-4">{value.dueDate}</td>
                                         <td className="px-6 py-4">{value.addedDate}</td>
                                         <td className="px-6 py-4">
-                                            <a target="_blank" href={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View File</a>
+                                            <Link target="_blank" to={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View File</Link>
                                         </td>
-                                        <td className="p-4 whitespace-nowrap">
-                                            <button className="btn btn-danger">Delete</button>
+                                        <td className="px-6 py-4">
+                                            <button onClick={() => handleUpdateClick(value.id)} className="btn btn-primary btn-sm me-2">Update</button>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <button onClick={() => deleteTask(value.id)} className="btn btn-danger btn-sm">Delete</button>
                                         </td>
                                     </tr>
                                 );

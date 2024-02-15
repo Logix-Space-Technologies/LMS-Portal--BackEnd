@@ -252,23 +252,25 @@ exports.taskUpdate = (request, response) => {
                     if (Validator.isEmpty(batchId).isValid) {
                         validationErrors.value = Validator.isEmpty(batchId).message;
                     }
-                    if (!Validator.isValidAmount(batchId).isValid) {
-                        validationErrors.amount = Validator.isValidAmount(batchId).message; //validation for batch id
+                    if (Validator.isEmpty(taskTitle).isValid) {
+                        validationErrors.name = Validator.isEmpty(taskTitle).message;
                     }
-                    if (!Validator.isValidName(taskTitle).isValid) {
-                        validationErrors.name = Validator.isValidName(taskTitle).message;
-                    }
-
+                    if (Validator.isEmpty(taskDesc).isValid) {
+                        validationErrors.desc = Validator.isEmpty(taskDesc).message;
+                    } 
                     if (!Validator.isValidAddress(taskDesc).isValid) {
-                        validationErrors.address = Validator.isValidAddress(taskDesc).message; //validation for task description.
+                        validationErrors.desc = Validator.isValidAddress(taskDesc).message; //validation for task description.
                     }
 
-                    if (!Validator.isValidName(taskType).isValid) {
-                        validationErrors.name = Validator.isValidName(taskType).message; //validation for task type
+                    if (Validator.isEmpty(taskType).isValid) {
+                        validationErrors.type = Validator.isEmpty(taskType).message; //validation for task type
                     }
 
                     if (!Validator.isValidAmount(totalScore).isValid) {
-                        validationErrors.amount = Validator.isValidAmount(totalScore).message; //validation for total score
+                        validationErrors.score = Validator.isValidAmount(totalScore).message; //validation for total score
+                    }
+                    if (Validator.isEmpty(totalScore).isValid) {
+                        validationErrors.score = Validator.isEmpty(totalScore).message; //validation for task type
                     }
 
                     if (!Validator.isValidDate(dueDate).isValid) {
@@ -283,7 +285,7 @@ exports.taskUpdate = (request, response) => {
 
                     // If validation fails
                     if (Object.keys(validationErrors).length > 0) {
-                        return response.status(400).json({ "status": "Validation failed", "data": validationErrors });
+                        return response.json({ "status": "Validation failed", "data": validationErrors });
                     }
 
 
