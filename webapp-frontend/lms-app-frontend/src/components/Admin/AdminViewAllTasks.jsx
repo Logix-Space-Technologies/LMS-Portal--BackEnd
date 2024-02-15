@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import Navbar from './Navbar'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
 
 const AdminViewAllTasks = () => {
     const [taskData, setTaskData] = useState([])
@@ -107,7 +108,7 @@ const AdminViewAllTasks = () => {
                                             {value.addedDate}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <a target="_blank" href={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View File</a>
+                                            <Link target="_blank" to={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View File</Link>
                                         </td>
                                         <td className="p-4 whitespace-nowrap">
                                             <button className="btn btn-danger">Delete</button>
