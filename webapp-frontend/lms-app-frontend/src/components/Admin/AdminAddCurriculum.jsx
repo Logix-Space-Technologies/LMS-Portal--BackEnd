@@ -106,8 +106,8 @@ const AdminAddCurriculum = () => {
                 headers: {
                     'content-type': 'multipart/form-data',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("admtoken"),
-                    "key": sessionStorage.getItem("admkey")
+                    "token": token,
+                    "key": currentKey
                 }
             }
             console.log(axiosConfig3)
