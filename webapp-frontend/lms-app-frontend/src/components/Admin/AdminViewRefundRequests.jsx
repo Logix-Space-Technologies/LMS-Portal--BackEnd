@@ -9,8 +9,16 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 const AdminViewRefundRequests = () => {
   const [refundRequests, setRefundRequests] = useState([]);
   const [key, setKey] = useState('');
+  const [errors, setErrors] = useState({});
+  const [reject, setReject] = useState({})
+  const [inputField, setInputField] = useState({
+    "admStaffId": "",
+    "adminRemarks": "",
+    "refundId": ""
+  });
 
   const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
+  const apiUrl2 = global.config.urls.api.server + "/api/lms/rejectRefund"
 
   const getData = () => {
     let currentKey = sessionStorage.getItem("admkey");
@@ -28,7 +36,6 @@ const AdminViewRefundRequests = () => {
         "key": currentKey
       }
     }
-
     axios.post(apiUrl, {}, axiosConfig)
       .then((response) => {
         if (response.data.status === "success") {
@@ -41,14 +48,70 @@ const AdminViewRefundRequests = () => {
           }
         }
       })
-      .catch((error) => {
-        console.error('Error retrieving refund requests:', error);
-      });
   };
 
   const handleClick = (id) => {
     sessionStorage.setItem("refundId", id)
   }
+
+  const inputHandler = (event) => {
+    setErrors({}); // Clear previous errors
+    setInputField({ ...inputField, [event.target.name]: event.target.value });
+  };
+
+  const validateForm = (data) => {
+    let errors = {};
+
+    if (!data.adminRemarks.trim()) {
+      errors.adminRemarks = 'Remark is required';
+    }
+    return errors;
+  }
+
+  const rejectRefund = () => {
+    const validationErrors = validateForm(inputField)
+    if (Object.keys(validationErrors).length === 0) {
+      let currentKey = sessionStorage.getItem("admkey");
+      let token = sessionStorage.getItem("admtoken");
+      if (currentKey !== 'lmsapp') {
+        currentKey = sessionStorage.getItem("admstaffkey");
+        token = sessionStorage.getItem("admstaffLogintoken");
+        setKey(currentKey); // Update the state if needed
+      }
+      let axiosConfig = {
+        headers: {
+          'content-type': 'application/json;charset=UTF-8',
+          "Access-Control-Allow-Origin": "*",
+          "token": token,
+          "key": currentKey
+        }
+      }
+      let data2 = {
+        "refundId": reject,
+        "admStaffId": sessionStorage.getItem("admstaffId"),
+        "adminRemarks": inputField.adminRemarks
+      }
+      console.log(data2)
+      axios.post(apiUrl2, data2, axiosConfig).then(
+        (response) => {
+          if (response.data.status === "Refund Request Cancelled.") {
+            alert("Refund Request Rejected")
+            window.location.reload() // Refresh the data
+            setInputField({
+              adminRemarks: ""
+            });
+          } else {
+            alert(response.data.status);
+          }
+        }
+      )
+    }
+  }
+
+  const readValue = (id) => {
+    setReject(id)
+    console.log(id)
+  };
 
   // Update key state when component mounts
   useEffect(() => {
@@ -121,12 +184,14 @@ const AdminViewRefundRequests = () => {
                           </td>
                           {key !== 'lmsapp' && (
                             <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                              <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Approve Refund</Link>
+                              {/* <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Approve Refund</Link> */}
+                              <button onClick={() => handleClick(value.id)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Approve Refund</button>
                             </td>
                           )}
                           {key !== 'lmsapp' && (
                             <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                              <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Reject Refund</Link>
+                              {/* <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Reject Refund</Link> */}
+                              <button type="button" onClick={() => readValue(value.refundId)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Reject Refund</button>
                             </td>
                           )}
                         </tr>
@@ -139,8 +204,39 @@ const AdminViewRefundRequests = () => {
           </div>
         </section>
       </div>
+      {key !== 'lmsapp' && (
+        <div className="flex justify-end">
+          <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h1 className="modal-title fs-5" id="exampleModalLabel">Reject Refund</h1>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                </div>
+                <div className="modal-body">
+                  <form>
+                    <div className="mb-3">
+                      <label htmlFor="message-text" className="col-form-label">Remarks<span className="text-danger">*</span></label>
+                      <textarea name="adminRemarks" className="form-control" value={inputField.adminRemarks} onChange={inputHandler} />
+                      {errors.adminRemarks && <span style={{ color: 'red' }} className="error">{errors.adminRemarks}</span>}
+                    </div>
+                  </form>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button data-bs-dismiss="modal" onClick={() => rejectRefund()} type="button" className="btn btn-primary">
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
+
 
 export default AdminViewRefundRequests;
