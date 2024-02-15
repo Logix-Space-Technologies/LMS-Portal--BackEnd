@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const AdminUpdateTask = () => {
@@ -102,17 +102,17 @@ const AdminUpdateTask = () => {
                                         }
                                     }
                                 }
-    
+
                             }
                         }
                     }
-    
+
                 }
             ).catch(error => {
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
-    
+
                     if (statusCode === 400) {
                         alert(error.response.data.status)
                         // Additional logic for status 400
@@ -177,6 +177,10 @@ const AdminUpdateTask = () => {
             console.log(response.data.data);
         });
     };
+
+    const handleBackButton = () => {
+      navigate(-1)
+    }
 
     useEffect(() => {
         const formattedDate = formatDate(updateField.dueDate);
@@ -305,10 +309,10 @@ const AdminUpdateTask = () => {
                                             </button>
                                         </div>
                                         <br></br>
-                                        <div class="mb-3">
-                                            <a class="btn btn-danger" href="/AdminViewAllTasks">
+                                        <div className="mb-3">
+                                            <Link className="btn btn-danger" onClick={handleBackButton}>
                                                 Back
-                                            </a>
+                                            </Link>
                                         </div>
                                     </ul>
 

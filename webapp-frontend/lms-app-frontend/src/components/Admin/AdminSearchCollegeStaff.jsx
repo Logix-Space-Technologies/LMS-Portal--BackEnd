@@ -9,7 +9,7 @@ const AdminSearchCollegeStaff = () => {
     });
 
     const [collegeStaff, setCollegeStaff] = useState([]);
-    const [isLoading, setIsLoading] = useState(true); // Initialize isLoading to true
+    const [isLoading, setIsLoading] = useState(false); 
 
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchCollegeStaff";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deletecolgstaff";
@@ -73,7 +73,7 @@ const AdminSearchCollegeStaff = () => {
                 {isLoading ? (
                     <div className="col-12 text-center">Loading...</div>
                 ) : (
-                    collegeStaff && collegeStaff.length > 0 ? (
+                    collegeStaff ? (
                         <div className="row">
                             {collegeStaff.map((staff, index) => (
                                 <div key={index} className="col-md-4 mb-3">

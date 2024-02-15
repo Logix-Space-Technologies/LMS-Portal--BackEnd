@@ -9,6 +9,7 @@ const AdminSearchTasks = () => {
         taskQuery: ""
     });
     const [tasks, setTasks] = useState([]);
+    const [searchExecuted, setSearchExecuted] = useState(false); // New state variable
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -34,6 +35,7 @@ const AdminSearchTasks = () => {
             .then(response => {
                 setTasks(response.data.data);
                 setIsLoading(false);
+                setSearchExecuted(true); // Set the flag to indicate search executed
             })
             .catch(error => {
                 console.error("Search failed:", error);
@@ -61,9 +63,9 @@ const AdminSearchTasks = () => {
             .finally(() => setIsLoading(false));
     };
 
-    const handleUpdateClick = (task) => {
+    const handleUpdateClick = (taskId) => {
         // Store task ID in sessionStorage to use in the update page
-        sessionStorage.setItem("taskId", task.id);
+        sessionStorage.setItem("taskId", taskId);
         // Navigate to the update task page
         navigate("/AdminUpdateTask");
     };
@@ -95,7 +97,7 @@ const AdminSearchTasks = () => {
                             <span className="visually-hidden">Loading...</span>
                         </div>
                     </div>
-                ) : tasks.length > 0 ? (
+                ) : (searchExecuted && tasks ? (
                     <div className="table-responsive">
                         <table className="table table-hover">
                             <thead className="table-light">
@@ -115,7 +117,7 @@ const AdminSearchTasks = () => {
                                         <td>{task.taskDesc}</td>
                                         <td>{task.taskType}</td>
                                         <td>
-                                            <button onClick={() => handleUpdateClick(task)} className="btn btn-primary btn-sm me-2">Update</button>
+                                            <button onClick={() => handleUpdateClick(task.id)} className="btn btn-primary btn-sm me-2">Update</button>
                                             <button onClick={() => deleteTask(task.id)} className="btn btn-danger btn-sm">Delete</button>
                                         </td>
                                     </tr>
@@ -123,15 +125,11 @@ const AdminSearchTasks = () => {
                             </tbody>
                         </table>
                     </div>
-                ) : tasks.length < 0 ? (
-                    <div className="alert alert-info" role="alert">
-                        No tasks found.
-                    </div>
-                ) : (
-                    <div>
-
-                    </div>
-                )}
+                ) : (searchExecuted && !tasks ? ( // Check if search executed but no tasks found
+                <div className="alert alert-info" role="alert">
+                    No tasks found.
+                </div>
+            ) : null))}
             </div>
         </div>
     );

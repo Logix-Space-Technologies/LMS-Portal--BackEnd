@@ -6,17 +6,18 @@ import '../../config/config';
 const AdminSearchSessionDetails = () => {
     const [inputField, setInputField] = useState({ "SessionSearchQuery": "" });
     const [updateField, setUpdateField] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Assign the API links as searchApiLink and deleteApiLink
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchSession";
-    const deleteApiLink = `${global.config.urls.api.server}/api/lms/deleteSessions`;
+    const deleteApiLink = global.config.urls.api.server + "/api/lms/deleteSessions";
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
 
     const readValue = () => {
+        setIsLoading(true)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -79,7 +80,7 @@ const AdminSearchSessionDetails = () => {
                     {isLoading ? (
                         <div className="col-12 text-center"><p>Loading...</p></div>
                     ) : (
-                        updateField && updateField.length > 0 ? (
+                        updateField ? (
                             updateField.map((value, index) => (
                                 <div key={index} className="col-md-4 mb-3">
                                     <div className="card">
