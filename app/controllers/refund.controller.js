@@ -121,7 +121,7 @@ exports.getSuccessfulRefunds = (request, response) => {
             Refund.getSuccessfulRefunds((err, data) => {
                 if (err) {
                     console.log(err);
-                    response.json({ "status": "Failed to retrieve successful refunds." });
+                    response.json({ "status": err });
                 } else {
                     console.log("Successful refunds successfully retrieved");
                     response.json({ "status": "success", "data": data });
