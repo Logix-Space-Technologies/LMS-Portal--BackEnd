@@ -22,7 +22,6 @@ const AdminStaffHeader = () => {
             (response) => {
                 if (response.data.data) {
                     setAdmStaffData(response.data.data)
-                    console.log(response.data)
                 } else {
                     navigate("/admstafflogin")
                     sessionStorage.removeItem("admstaffLogintoken")

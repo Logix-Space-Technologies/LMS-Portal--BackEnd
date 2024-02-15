@@ -336,8 +336,9 @@ exports.deleteCollege = (request, response) => {
 exports.searchCollege = (request, response) => {
     const collegeSearchQuery = request.body.collegeSearchQuery
     const collegeSearchToken = request.headers.token
+    const collegeSearchKey = request.headers.key
 
-    jwt.verify(collegeSearchToken, "lmsapp", (err, decoded) => {
+    jwt.verify(collegeSearchToken, collegeSearchKey, (err, decoded) => {
         if (decoded) {
             if (!collegeSearchQuery) {
                 console.log("Search Item is required.")

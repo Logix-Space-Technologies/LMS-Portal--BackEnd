@@ -13,6 +13,8 @@ const AdminUpdateCollege = () => {
 
     const [errors, setErrors] = useState({})
 
+    const [key, setKey] = useState('');
+
     const [updateField, setUpdateField] = useState(
         {
             "id": "",
@@ -50,6 +52,13 @@ const AdminUpdateCollege = () => {
     }
 
     const readNewValue = (e) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         e.preventDefault()
         const validationErrors = validateForm(updateField)
         console.log(validationErrors)
@@ -58,8 +67,8 @@ const AdminUpdateCollege = () => {
                 headers: {
                     'content-type': 'multipart/form-data',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("admtoken"),
-                    "key": sessionStorage.getItem("admkey")
+                    "token": token,
+                    "key": currentKey
                 }
             }
             let data = {
@@ -76,7 +85,8 @@ const AdminUpdateCollege = () => {
             console.log(data)
             axios.post(apiUrl, data, axiosConfig).then(
                 (response) => {
-                    if (response.data.status === "success") {
+                    if (response.data.status === "College Details Updated") {
+                        navigate(-1)
                         setUpdateField({
                             "id": sessionStorage.getItem("clgId"),
                             "collegeName": "",
@@ -90,7 +100,6 @@ const AdminUpdateCollege = () => {
                         })
                         alert("College Details Updated Successfully")
                         setFile(null)
-                        navigate("")
                     } else {
                         if (response.data.status === "Validation Failed" && response.data.data.name) {
                             alert(response.data.data.name)
@@ -169,13 +178,20 @@ const AdminUpdateCollege = () => {
     };
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "id": sessionStorage.getItem("clgId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         axios.post(apiUrl2, data, axiosConfig).then(
