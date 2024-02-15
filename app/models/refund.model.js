@@ -272,7 +272,7 @@ Refund.rejectRefund = (admStaffId, adminRemarks, refundId, result) => {
                 result("Refund Request Not Found.", null)
                 return
             }
-            result("Refund Rejected.", null)
+            result(null, null)
         })
 }
 
