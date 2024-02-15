@@ -24,8 +24,6 @@ const AdminStaffViewAllMaterial = () => {
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
                 setmaterialData(response.data)
-                console.log(materialData)
-                console.log(response.data)
             }
         )
     }

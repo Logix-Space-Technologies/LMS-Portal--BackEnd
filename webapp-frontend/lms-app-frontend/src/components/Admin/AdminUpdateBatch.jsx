@@ -6,17 +6,6 @@ import '../../config/config'
 
 const AdminUpdateBatch = () => {
 
-    function convertToISODate(dateString) {
-        const parts = dateString.split('/');
-        if (parts.length !== 3) return ''; // Handle invalid date format
-
-        const [day, month, year] = parts;
-        const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-        console.log("ISO Date:", isoDate);
-        return isoDate;
-    }
-
-
     // const [errors, setErrors] = useState({});
     const [batchData, setBatchData] = useState([])
     const [updateField, setUpdateField] = useState({
@@ -138,6 +127,12 @@ const AdminUpdateBatch = () => {
         )
     }
 
+    useEffect(() => {
+        const formattedStartDate = formatDate(updateField.regStartDate);
+        const formattedEndDate = formatDate(updateField.regEndDate);
+        setUpdateField({ ...updateField, regStartDate: formattedStartDate, regEndDate: formattedEndDate });
+    }, [updateField.regStartDate, updateField.regEndDate]);
+
     useEffect(() => { getData() }, [])
 
 
@@ -175,11 +170,11 @@ const AdminUpdateBatch = () => {
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Registration Start Date</label>
                                                 <input
-                                                    type="date"
+                                                    type="text"
                                                     className="form-control"
                                                     name="regStartDate"
                                                     onChange={updateHandler}
-                                                    value={convertToISODate(updateField.regStartDate)}
+                                                    value={updateField.regStartDate}
                                                 />
 
                                                 {/* {errors.regStartDate && <span style={{ color: 'red' }} className="error">{errors.regStartDate}</span>} */}
@@ -187,11 +182,11 @@ const AdminUpdateBatch = () => {
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Registration End Date</label>
                                                 <input
-                                                    type="date"
+                                                    type="text"
                                                     className="form-control"
                                                     name="regEndDate"
                                                     onChange={updateHandler}
-                                                    value={convertToISODate(updateField.regEndDate)}
+                                                    value={updateField.regEndDate}
                                                 />
                                                 {/* {errors.regEndDate && <span style={{ color: 'red' }} className="error">{errors.regEndDate}</span>} */}
                                             </div>
@@ -208,7 +203,7 @@ const AdminUpdateBatch = () => {
                                                 <button onClick={readNewValue} className="btn btn-warning">Update</button>
                                             </div>
                                             <br></br>
-                                            <div class="mb-3">
+                                            <div className="mb-3">
                                                 <a class="btn btn-danger" href="/adminviewalltrainers">Back</a>
                                             </div>
                                         </ul>
@@ -230,5 +225,17 @@ const AdminUpdateBatch = () => {
         </>
     )
 }
+
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    if (!isNaN(date.getTime())) {
+        const year = date.getFullYear();
+        let month = (1 + date.getMonth()).toString().padStart(2, '0');
+        let day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    } else {
+        return '';
+    }
+};
 
 export default AdminUpdateBatch

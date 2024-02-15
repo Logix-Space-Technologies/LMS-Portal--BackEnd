@@ -115,77 +115,63 @@ const SessionView = () => {
 
     <div>
       <StudNavBar />
-      <div className="bg-light py-3 py-md-5">
-        <div className="container">
-          <div className="row justify-content-md-center">
-            <div className="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
-              <div className="bg-white p-4 p-md-5 rounded shadow-sm">
-                <div className="row gy-3 gy-md-4 overflow-hidden">
-                  <div className="col-12">
-                    <h3>Session Details</h3>
+      <br />
+      <h1 style={{ marginLeft: '20px', textAlign:'center' }}>View All Sessions</h1>
+      <br />
+      {loading ? (
+        <div className="col-12 text-center">Loading...</div>
+      ) : (
+        sessions.length === 0 ? (
+          <div className="col-12 text-center">No sessions found!</div>
+        ) : (
+          sessions.map((session, index) => (
+            <div class="max-w-2xl mx-auto">
+              <div key={index} className="flex mb-6">
+                <div className="w-2 rounded-l-xl" style={{ backgroundColor: getSessionStatusColor(session.date, formatTime(session.time)) }}></div>
+                <div className="flex-grow bg-white rounded-r-xl shadow-lg p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg text-blue-600 font-semibold">{session.sessionName}</h2>
+                    <button className="text-blue-600 text-sm">
+                      <span>...</span>
+                    </button>
                   </div>
-                  {loading ? (
-                    <div className="col-12 text-center">Loading...</div>
-                  ) : (
-                    sessions.length === 0 ? (
-                      <div className="col-12 text-center">No sessions found!</div>
+                  <p className="text-sm text-gray-600">{session.remarks}</p>
+                  <p className="text-sm text-gray-600 mt-1">Date: {session.date}</p>
+                  <p className="text-sm text-gray-600">Time: {formatTime(session.time)}</p>
+                  <p className="text-sm text-gray-600">Type: {session.type}</p>
+
+                  <div className="flex gap-4 mt-4">
+                    {session.venueORlink.includes("meet.google.com") && (
+                      <a href={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</a>
+                    )}
+                    {isSessionAccessible(session.date) ? (
+                      <>
+                        <Link to="/studentviewattendance" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Attendance
+                        </Link>
+                        <Link to="/studviewtasksessionwise" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Tasks
+                        </Link>
+                      </>
                     ) : (
-                      sessions.map((session, index) => (
-                        <div key={index} style={{ position: 'relative', width: '700px', height: '317px', borderRadius: '10px', transition: '0.3s', fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', display: 'flex', flexDirection: 'column' }}>
-                          <div style={{ width: '10px', height: '100%', backgroundColor: getSessionStatusColor(session.date, formatTime(session.time)), position: 'absolute', left: 0, borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px' }}></div>
-                          <div style={{ padding: '10px 16px', backgroundColor: '#AAF1F5', color: 'white', borderTopLeftRadius: '10px', borderTopRightRadius: '10px' }}>
-                            <h4><b>{session.sessionName}</b></h4>
-                          </div>
-                          <div style={{ padding: '2px 16px', flex: '1 0 auto', backgroundColor: '#EFF1DB', paddingTop: session.venueORlink.includes('meet.google.com') ? '60px' : '40px', }}>
-                            <p style={{ marginBottom: '10px' }}><b>Date:</b> {session.date}</p>
-                            <p style={{ marginBottom: '10px' }}><b>Time:</b> {formatTime(session.time)}</p>
-                            <p style={{ marginBottom: '10px' }}><b>Type:</b> {session.type}</p>
-                            {!session.venueORlink.includes("meet.google.com") && (
-                              <p style={{ marginBottom: '10px' }}><b>Venue:</b> {session.venueORlink}</p>
-                            )}
-                          </div>
-                          <div style={{ padding: '10px 16px', backgroundColor: '#D3B5E5', color: 'white', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px', display: 'flex', justifyContent: 'space-around' }}>
-                            {session.venueORlink.includes("meet.google.com") && (
-                              <Link to={session.venueORlink} target='_blank' rel='noopener noreferrer' style={{ color: 'white', textDecoration: 'none', backgroundColor: '#FBC740', padding: '10px', borderRadius: '5px', margin: '0 10px' }} className="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
-                                <img src="https://www.svgrepo.com/show/504419/google-meet.svg" className="w-4 h-4 me-2" aria-hidden="true" alt='' />
-                                Meeting Link
-                              </Link>
+                      <>
+                        <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Attendance (Unavailable)
+                        </Link>
+                        <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Tasks (Unavailable)
+                        </Link>
+                      </>
+                    )}
 
-                            )}
-                            {isSessionAccessible(session.date) ? (
-                              <>
-                                <Link to="/studentviewattendance" onClick={() => sessionClick(session.id)} style={{ color: 'white', textDecoration: 'none', backgroundColor: '#009534', padding: '10px', borderRadius: '5px', margin: '0 10px' }} className="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
-                                  <img src="https://www.svgrepo.com/show/305294/people.svg" className="w-4 h-4 me-2" aria-hidden="true" alt='' />
-                                  Attendance
-                                </Link>
-                                <Link to="/studviewtasksessionwise" onClick={()=> sessionClick(session.id)} style={{ color: 'white', textDecoration: 'none', backgroundColor: '#3498DB', padding: '10px', borderRadius: '5px', margin: '0 10px' }} className="text-black bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 me-2 mb-2">
-                                  <img src="https://www.svgrepo.com/show/332592/unordered-list.svg" className="w-4 h-4 me-2" aria-hidden="true" alt='' />
-                                  Tasks
-                                </Link>
-                              </>
-                            ) : (
-                              <>
-                                <div style={{ color: 'grey', padding: '10px', borderRadius: '5px', margin: '0 10px', textAlign: 'center', backgroundColor: '#f0f0f0' }}>
-                                  Attendance (Unavailable)
-                                </div>
-                                <div style={{ color: 'grey', padding: '10px', borderRadius: '5px', margin: '0 10px', textAlign: 'center', backgroundColor: '#f0f0f0' }}>
-                                  Tasks (Unavailable)
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      ))
-
-
-                    )
-                  )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          ))
+        )
+      )}
+
     </div>
   );
 };

@@ -1,7 +1,9 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import '../../config/config'
+import { useNavigate } from 'react-router-dom'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminSearchCollege = () => {
 
@@ -13,29 +15,43 @@ const AdminSearchCollege = () => {
 
     const [updateField, setUpdateField] = useState([])
 
+    const [key, setKey] = useState('');
+
+    const navigate = useNavigate()
+
     const [isLoading, setIsLoading] = useState(true)
 
     const apiUrl = global.config.urls.api.server + "/api/lms/searchCollege"
+
+    const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteCollege"
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
     }
 
     const readValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         console.log(inputField)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
+        console.log(currentKey)
         axios.post(apiUrl, inputField, axiosConfig).then(
             (response) => {
                 setUpdateField(response.data.data)
                 setIsLoading(false)
-                console.log(response.data.data)
+                console.log(response.data)
                 setInputField(
                     {
                         "collegeSearchQuery": ""
@@ -45,9 +61,43 @@ const AdminSearchCollege = () => {
         )
     }
 
+    const handleClick = (id) => {
+        let data = { "id": id }
+        let axiosConfigTwo = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        }
+        axios.post(apiUrlTwo, data, axiosConfigTwo).then(
+            (response) => {
+                if (response.data.status === "College deleted.") {
+                    alert("College Deleted Successfully!!!")
+                    // Reload the page after deleting college
+                    window.location.reload();
+                } else {
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
+
+    const UpdateClick = (id) => {
+        let data = id
+        sessionStorage.setItem("clgId", data)
+        navigate("/adminUpdateclg")
+    }
+
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
     return (
         <div>
-            <Navbar /><br />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -145,11 +195,13 @@ const AdminSearchCollege = () => {
                                                             <div className="text-center">{value.collegeMobileNumber}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <button onClick="#" className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
+                                                            <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
                                                         </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <button onClick="#" className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
-                                                        </td>
+                                                        {key === 'lmsapp' && (
+                                                            <td className="p-4 whitespace-nowrap">
+                                                                <button onClick={() => { handleClick(value.id) }} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
+                                                            </td>
+                                                        )}
 
 
                                                     </tr>

@@ -109,7 +109,7 @@ Refund.createRefundRequest = (newRefund, result) => {
 
 Refund.getRefundRequests = (result) => {
     db.query(
-        "SELECT student.studName, college.collegeName, refund.studId, refund.requestedDate, refund.reason, refund.refundAmnt FROM refund JOIN student ON refund.studId = student.id JOIN college ON student.collegeId = college.id WHERE refund.cancelStatus = 0 AND student.deleteStatus = 0 AND student.isActive = 1 AND student.isVerified = 1 ORDER BY refund.requestedDate DESC",
+        "SELECT r.id AS refundId, s.studName, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.cancelStatus = 0 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 ORDER BY r.requestedDate DESC",
         (err, res) => {
             if (err) {
                 console.error("Error retrieving refund requests:", err);
@@ -118,12 +118,14 @@ Refund.getRefundRequests = (result) => {
             }
             if (res.length === 0) {
                 console.log("No refund requests found");
-                result("No refund requests found.",null );
+                result("No refund requests found.", null);
                 return;
             }
-
+            // Format the date for each session
+            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate ? refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
             // Return all refund requests
-            result(null, res);
+            console.log(formattedRefunds)
+            result(null, formattedRefunds);
         }
     );
 };

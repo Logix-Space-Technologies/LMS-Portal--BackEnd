@@ -2,7 +2,6 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const AdmStaffNavBar = () => {
-    const navigate = useNavigate()
     const logOut = () => {
         sessionStorage.removeItem("admstaffLogintoken")
         sessionStorage.removeItem("admstaffkey")
@@ -12,7 +11,7 @@ const AdmStaffNavBar = () => {
         <div>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
-                    <Link className="navbar-brand" to="#">Admin</Link>
+                    <Link className="navbar-brand" to="#">Admin Staff</Link>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
@@ -30,13 +29,20 @@ const AdmStaffNavBar = () => {
                             <li>
                                 <Link className="nav-link active" aria-current="page" to="/AdminStaffChangePassword">Change Password</Link>
                             </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/adminStaffAddmaterials">Add Materials</Link>
+                            </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/AdminViewRefundRequests">View Refunds</Link>
+                            </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Functionalities
                                 </Link>
                                 <ul className="dropdown-menu">
-                                    <li><Link className="dropdown-item" to="#">View All College</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminviewallcollege">View All College</Link></li>
                                     <li><Link className="dropdown-item" to="/adminstaffviewsubmittedtask">View Submitted Task</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminSearchClg">Search Colleges</Link></li>
                                 </ul>
                                 
                             </li>
