@@ -8,6 +8,8 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 const AdminViewAllCollege = () => {
     const [collegeData, setCollegeData] = useState([])
     const [key, setKey] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [collegesPerPage] = useState(10); // Number of colleges per page
 
     const navigate = useNavigate()
 
@@ -67,10 +69,26 @@ const AdminViewAllCollege = () => {
         sessionStorage.setItem("clgId", data)
     }
 
-    // Update key state when component mounts
+    // Logic for displaying current colleges
+    const indexOfLastCollege = currentPage * collegesPerPage;
+    const indexOfFirstCollege = indexOfLastCollege - collegesPerPage;
+    const currentColleges = collegeData ? collegeData.slice(indexOfFirstCollege, indexOfLastCollege) : [];
+
+    // Change page
+    const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    // Total pages
+    const pageNumbers = [];
+    if (collegeData && collegeData.length > 0) {
+        for (let i = 1; i <= Math.ceil(collegeData.length / collegesPerPage); i++) {
+            pageNumbers.push(i);
+        }
+    }
+
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
+
     useEffect(() => { getData() }, [])
 
     return (
@@ -114,63 +132,74 @@ const AdminViewAllCollege = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {collegeData ? (collegeData.map(
-                            (value, index) => {
-                                return <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <img className="w-10 h-10 rounded-full" src={value.collegeImage} alt="" />
-                                        <div className="ps-3">
-                                            <div className="text-base font-semibold">{value.collegeName}</div>
-                                            <div className="font-normal text-gray-500">{value.email}</div>
-                                        </div>
-                                    </th>
+                        {currentColleges.map((value, index) => (
+                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                                    <img className="w-10 h-10 rounded-full" src={value.collegeImage} alt="" />
+                                    <div className="ps-3">
+                                        <div className="text-base font-semibold">{value.collegeName}</div>
+                                        <div className="font-normal text-gray-500">{value.email}</div>
+                                    </div>
+                                </th>
+                                <td className="px-6 py-4">
+                                    {value.id}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.collegeCode}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.collegeAddress}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.website}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.collegePhNo}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.collegeMobileNumber}
+                                </td>
+                                <td className="px-6 py-4">
+                                    <Link to="/adminUpdateclg" onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update College</Link>
+                                </td>
+                                {key === 'lmsapp' && (
                                     <td className="px-6 py-4">
-                                        {value.id}
+                                        <Link onClick={() => { handleClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete College</Link>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        {value.collegeCode}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {value.collegeAddress}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {value.website}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {value.collegePhNo}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {value.collegeMobileNumber}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <Link to="/adminUpdateclg" onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update College</Link>
-                                    </td>
-                                    {key === 'lmsapp' && (
-                                        <td className="px-6 py-4">
-                                            <Link onClick={() => { handleClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete College</Link>
-                                        </td>
-                                    )}
-                                </tr>
-                            }
-                        )) : <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <td className="px-6 py-4">
-
-                            </td>
-                            <td className="px-6 py-4">
-                                No Colleges Found !!
-                            </td>
-                            <td className="px-6 py-4">
-
-                            </td>
-                            <td className="px-6 py-4">
-
-                            </td>
-                        </tr>}
+                                )}
+                            </tr>
+                        ))}
+                        {currentColleges.length === 0 && (
+                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td colSpan="8" className="px-6 py-4" style={{ textAlign: 'center' }}>
+                                    No Colleges Found !!
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
-
-
+            <div className="flex justify-center mt-8">
+                <nav>
+                    <ul className="flex list-style-none">
+                        {currentPage > 1 && (
+                            <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                Previous
+                            </li>
+                        )}
+                        {pageNumbers.map(number => (
+                            <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                {number}
+                            </li>
+                        ))}
+                        {currentPage < pageNumbers.length && (
+                            <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                Next
+                            </li>
+                        )}
+                    </ul>
+                </nav>
+            </div>
         </div>
     )
 }
