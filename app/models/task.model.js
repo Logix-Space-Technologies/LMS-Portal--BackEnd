@@ -211,7 +211,7 @@ Tasks.collegeStaffSearchTasks = (searchKey, collegeId, result) => {
 
 
 Tasks.findById = (id, result) => {
-    db.query("SELECT batchId,taskTitle,dueDate,taskType,totalScore,taskDesc FROM task WHERE id =?  AND deleteStatus = 0 AND isActive = 1", [id], (err, res) => {
+    db.query("SELECT batchId,taskTitle,dueDate,taskType,totalScore,taskDesc,taskFileUpload FROM task WHERE id =?  AND deleteStatus = 0 AND isActive = 1", [id], (err, res) => {
         if (err) {
             result(err, null);
             return;
