@@ -5,12 +5,16 @@ import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 
 const AdminViewAllTasks = () => {
-    const [taskData, setTaskData] = useState([])
+    const [taskData, setTaskData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [tasksPerPage] = useState(10); // Number of tasks per page
+
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewtasks"
     const deleteUrl = global.config.urls.api.server + '/api/lms/deleteTask'
 
     const navigate = useNavigate()
+
 
     const getData = () => {
         let axiosConfig = {
@@ -20,14 +24,23 @@ const AdminViewAllTasks = () => {
                 "token": sessionStorage.getItem("admtoken"),
                 "key": sessionStorage.getItem("admkey")
             }
-        }
+        };
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
-                setTaskData(response.data.data)
-                console.log(response.data.data)
+                setTaskData(response.data.data);
+                console.log(response.data.data);
             }
-        )
-    }
+        );
+    };
+
+
+    // Logic for displaying current tasks
+    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+    const currentTasks = taskData ? taskData.slice(indexOfFirstTask, indexOfLastTask) : [];
+
+    // Change page
+    const paginate = pageNumber => setCurrentPage(pageNumber);
 
     const deleteTask = (id) => {
         const axiosConfig = {
@@ -55,8 +68,9 @@ const AdminViewAllTasks = () => {
         navigate("/AdminUpdateTask");
     };
 
+useEffect(() => { getData() }, []);
 
-    useEffect(() => { getData() }, [])
+
     return (
         <div>
             <Navbar /><br />
@@ -66,76 +80,33 @@ const AdminViewAllTasks = () => {
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" className="px-6 py-3">
-                                Batch Name
-                            </th>
-
-                            <th scope="col" className="px-6 py-3">
-                                Id
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Batch Id
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Task Title
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Task Description
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Task Type
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Total Score
-                            </th><th scope="col" className="px-6 py-3">
-                                Due Date
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Added Date
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-
-                            </th>
+                            <th scope="col" className="px-6 py-3">Batch Name</th>
+                            <th scope="col" className="px-6 py-3">Id</th>
+                            <th scope="col" className="px-6 py-3">Batch Id</th>
+                            <th scope="col" className="px-6 py-3">Task Title</th>
+                            <th scope="col" className="px-6 py-3">Task Description</th>
+                            <th scope="col" className="px-6 py-3">Task Type</th>
+                            <th scope="col" className="px-6 py-3">Total Score</th>
+                            <th scope="col" className="px-6 py-3">Due Date</th>
+                            <th scope="col" className="px-6 py-3">Added Date</th>
+                            <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {taskData && taskData.length > 0 ? (
-                            taskData.map((value, index) => {
+                        {currentTasks.length > 0 ? (
+                            currentTasks.map((value, index) => {
                                 return (
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td className="px-6 py-4">
-                                            {value.batchName}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.id}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.batchId}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.taskTitle}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.taskDesc}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.taskType}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.totalScore}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.dueDate}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.addedDate}
-                                        </td>
+                                        <td className="px-6 py-4">{value.batchName}</td>
+                                        <td className="px-6 py-4">{value.id}</td>
+                                        <td className="px-6 py-4">{value.batchId}</td>
+                                        <td className="px-6 py-4">{value.taskTitle}</td>
+                                        <td className="px-6 py-4">{value.taskDesc}</td>
+                                        <td className="px-6 py-4">{value.taskType}</td>
+                                        <td className="px-6 py-4">{value.totalScore}</td>
+                                        <td className="px-6 py-4">{value.dueDate}</td>
+                                        <td className="px-6 py-4">{value.addedDate}</td>
                                         <td className="px-6 py-4">
                                             <Link target="_blank" to={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View File</Link>
                                         </td>
@@ -157,9 +128,31 @@ const AdminViewAllTasks = () => {
                         )}
                     </tbody>
                 </table>
+                {/* Pagination */}
+                <div className="flex justify-center mt-8">
+                    <nav>
+                        <ul className="flex list-style-none">
+                            {currentPage > 1 && (
+                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Previous
+                                </li>
+                            )}
+                            {Array.from({ length: Math.ceil(taskData.length / tasksPerPage) }, (_, i) => (
+                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                    {i + 1}
+                                </li>
+                            ))}
+                            {currentPage < Math.ceil(taskData.length / tasksPerPage) && (
+                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Next
+                                </li>
+                            )}
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default AdminViewAllTasks
+export default AdminViewAllTasks;
