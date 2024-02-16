@@ -9,7 +9,12 @@ const AdminSearchCollegeStaff = () => {
     });
 
     const [collegeStaff, setCollegeStaff] = useState([]);
-    const [isLoading, setIsLoading] = useState(false); 
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [staffPerPage] = useState(1); // Number of staff per page
+
+    const [searchPerformed, setSearchPerformed] = useState(false); // Added state to track search
 
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchCollegeStaff";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deletecolgstaff";
@@ -19,7 +24,7 @@ const AdminSearchCollegeStaff = () => {
     };
 
     const searchCollegeStaff = () => {
-        setIsLoading(true); // Set isLoading to true when searching
+        setIsLoading(true);
 
         let axiosConfig = {
             headers: {
@@ -33,9 +38,11 @@ const AdminSearchCollegeStaff = () => {
         axios.post(searchApiLink, { searchQuery: inputField.searchQuery }, axiosConfig)
             .then(response => {
                 setCollegeStaff(response.data.data);
-                setIsLoading(false); // Set isLoading to false after the search is performed
+                setIsLoading(false);
+                setCurrentPage(1); // Reset to the first page after the search
+                setSearchPerformed(true); // Set searchPerformed to true
             })
-            .catch(() => setIsLoading(false)); // Set isLoading to false in case of an error
+            .catch(() => setIsLoading(false));
     };
 
     const deleteStaff = (id) => {
@@ -56,6 +63,23 @@ const AdminSearchCollegeStaff = () => {
             });
     };
 
+    // Logic for displaying current staff
+    const indexOfLastStaff = currentPage * staffPerPage;
+    const indexOfFirstStaff = indexOfLastStaff - staffPerPage;
+    const currentStaff = collegeStaff ? collegeStaff.slice(indexOfFirstStaff, indexOfLastStaff) : [];
+
+    // Change page
+    const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    // Total pages
+    const pageNumbers = [];
+    if (collegeStaff && collegeStaff.length > 0) {
+        collegeStaff.forEach((staff, index) => {
+            const pageNumber = index + 1;
+            pageNumbers.push(pageNumber);
+        });
+    }
+
     return (
         <div>
             <Navbar />
@@ -70,29 +94,60 @@ const AdminSearchCollegeStaff = () => {
                     </div>
                 </div>
                 <br />
-                {isLoading ? (
-                    <div className="col-12 text-center">Loading...</div>
-                ) : (
-                    collegeStaff ? (
-                        <div className="row">
-                            {collegeStaff.map((staff, index) => (
-                                <div key={index} className="col-md-4 mb-3">
-                                    <div className="card">
-                                        <div className="card-body">
-                                            <h5 className="card-title">{staff.collegeStaffName}</h5>
-                                            <p className="card-text">{staff.email}</p>
-                                            <p className="card-text">{staff.phNo}</p>
-                                            <p className="card-text">{staff.department}</p>
-                                            <p className="card-text">{staff.collegeName}</p>
-                                            <button className="btn btn-danger mt-3" onClick={() => deleteStaff(staff.id)}>Delete</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                {searchPerformed && !isLoading && collegeStaff && collegeStaff.length > 0 && (
+                    <div>
+                        <strong>College Staff Details</strong>
+                                    <br /><br />
+                        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3">Staff Name</th>
+                                        <th scope="col" className="px-6 py-3">Email</th>
+                                        <th scope="col" className="px-6 py-3">Phone Number</th>
+                                        <th scope="col" className="px-6 py-3">Department</th>
+                                        <th scope="col" className="px-6 py-3">College Name</th>
+                                        <th scope="col" className="px-6 py-3"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentStaff.map((staff, index) => (
+                                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                            <td className="px-6 py-4">{staff.collegeStaffName}</td>
+                                            <td className="px-6 py-4">{staff.email}</td>
+                                            <td className="px-6 py-4">{staff.phNo}</td>
+                                            <td className="px-6 py-4">{staff.department}</td>
+                                            <td className="px-6 py-4">{staff.collegeName}</td>
+                                            <td className="p-4 whitespace-nowrap">
+                                                <button className="btn btn-danger mt-3" onClick={() => deleteStaff(staff.id)}>Delete</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
-                    ) : (
-                        <div className="col-12 text-center">No College Staff Found!</div>
-                    )
+                        <div className="flex justify-center mt-8">
+                            <nav>
+                                <ul className="flex list-style-none">
+                                    {currentPage > 1 && (
+                                        <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Previous</li>
+                                    )}
+                                    {Array.from({ length: Math.ceil(collegeStaff.length / staffPerPage) }, (_, i) => (
+                                        <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>{i + 1}</li>
+                                    ))}
+                                    {currentPage < Math.ceil(collegeStaff.length / staffPerPage) && (
+                                        <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Next</li>
+                                    )}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                )}
+                {searchPerformed && !isLoading && collegeStaff && collegeStaff.length === 0 && (
+                    <div className="col-12 text-center">No College Staff Found!</div>
+                )}
+                {isLoading && (
+                    <div className="col-12 text-center">Loading...</div>
                 )}
             </div>
         </div>
