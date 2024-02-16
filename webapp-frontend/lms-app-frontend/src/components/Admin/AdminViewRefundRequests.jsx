@@ -17,6 +17,9 @@ const AdminViewRefundRequests = () => {
     "refundId": ""
   });
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [studentsPerPage] = useState(2); // Number of students per page
+
   const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/rejectRefund"
 
@@ -113,6 +116,24 @@ const AdminViewRefundRequests = () => {
     console.log(id)
   };
 
+  // Logic for displaying current students
+  const indexOfLastStudent = currentPage * studentsPerPage;
+  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+  const currentStudents = refundRequests ? refundRequests.slice(indexOfFirstStudent, indexOfLastStudent) : [];
+
+
+  // Change page
+  const paginate = pageNumber => setCurrentPage(pageNumber);
+
+  // Total pages
+  const pageNumbers = [];
+  if (refundRequests && refundRequests.length > 0) {
+    refundRequests.forEach((student, index) => {
+      const pageNumber = index + 1;
+      pageNumbers.push(pageNumber);
+    });
+  }
+
   // Update key state when component mounts
   useEffect(() => {
     setKey(sessionStorage.getItem("admkey") || '');
@@ -165,7 +186,7 @@ const AdminViewRefundRequests = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {refundRequests.map((value, index) => {
+                      {currentStudents.map((value, index) => {
                         return <tr key={index}>
                           <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.studName}
@@ -233,7 +254,27 @@ const AdminViewRefundRequests = () => {
           </div>
         </div>
       )}
-
+      <div className="flex justify-center mt-8">
+        <nav>
+          <ul className="flex list-style-none">
+            {currentPage > 1 && (
+              <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                Previous
+              </li>
+            )}
+            {pageNumbers.map(number => (
+              <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                {number}
+              </li>
+            ))}
+            {currentPage < pageNumbers.length && (
+              <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                Next
+              </li>
+            )}
+          </ul>
+        </nav>
+      </div>
     </div>
   );
 };
