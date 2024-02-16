@@ -120,7 +120,7 @@ const AdminSearchTrainer = () => {
 
                     //start
                     <div>
-                        <Navbar /><br />
+                        <br />
                         <strong>List of Trainers</strong>
                         <br /><br />
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">

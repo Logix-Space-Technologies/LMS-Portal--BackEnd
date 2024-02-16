@@ -143,7 +143,7 @@ const AdminSearchCollege = () => {
                 ) : (updateField ? (
                     //start
                     <div>
-                        <Navbar /><br />
+                        <br />
                         <strong>List of Colleges</strong>
                         <br /><br />
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
