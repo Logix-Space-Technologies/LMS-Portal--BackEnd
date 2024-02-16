@@ -17,7 +17,7 @@ const AdminSearchBatch = () => {
     const [updateField, setUpdateField] = useState([])
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [collegesPerPage] = useState(1); // Number of students per page
+    const [collegesPerPage] = useState(10); // Number of students per page
 
     const [isLoading, setIsLoading] = useState(true)
 
@@ -128,7 +128,7 @@ const AdminSearchBatch = () => {
                 ) : (updateField ? (
                     //start
                     <div>
-                        <strong>List of Batches</strong>
+                        <br />
                         <br /><br />
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -138,10 +138,9 @@ const AdminSearchBatch = () => {
                                         <th scope="col" className="px-6 py-3">College Name</th>
                                         <th scope="col" className="px-6 py-3">Batch Name</th>
                                         <th scope="col" className="px-6 py-3">Batch Description</th>
-                                        <th scope="col" className="px-6 py-3">Registration Start</th>
-                                        <th scope="col" className="px-6 py-3">Registration End</th>
+                                        <th scope="col" className="px-6 py-3">Registration Start Date</th>
+                                        <th scope="col" className="px-6 py-3">Registration End Date</th>
                                         <th scope="col" className="px-6 py-3">Batch Amount</th>
-                                        <th scope="col" className="px-6 py-3"></th>
                                         <th scope="col" className="px-6 py-3"></th>
                                         <th scope="col" className="px-6 py-3"></th>
                                     </tr>
@@ -154,9 +153,9 @@ const AdminSearchBatch = () => {
                                             <td className="px-6 py-4">{value.collegeName}</td> {/* Corrected closing tag */}
                                             <td className="px-6 py-4">{value.batchName}</td>
                                             <td className="px-6 py-4">{value.batchDesc}</td>
-                                            <td className="px-6 py-4">{value.email}</td>
-                                            <td className="px-6 py-4">{new Date(value.regStartDate).toLocaleDateString()}</td>
-                                            <td className="px-6 py-4">{new Date(value.regEndDate).toLocaleDateString()}</td>
+                                            <td className="px-6 py-4">{value.regStartDate}</td>
+                                            <td className="px-6 py-4">{value.regEndDate}</td>
+                                            <td className="px-6 py-4">{value.batchAmount}</td>
                                             <td className="p-4 whitespace-nowrap">
                                                 <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
                                             </td>
