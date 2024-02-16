@@ -128,7 +128,6 @@ const AdminSearchBatch = () => {
                 ) : (updateField ? (
                     //start
                     <div>
-                        <Navbar /><br />
                         <strong>List of Batches</strong>
                         <br /><br />
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
