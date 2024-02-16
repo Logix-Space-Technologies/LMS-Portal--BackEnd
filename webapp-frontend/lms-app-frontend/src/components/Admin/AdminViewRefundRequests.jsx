@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
 import '../../config/config'
-import { Link } from 'react-router-dom';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 
@@ -11,14 +10,24 @@ const AdminViewRefundRequests = () => {
   const [key, setKey] = useState('');
   const [errors, setErrors] = useState({});
   const [reject, setReject] = useState({})
+  const [approve, setApprove] = useState({})
+
   const [inputField, setInputField] = useState({
     "admStaffId": "",
+    "adminRemarks": "",
+    "refundId": ""
+  });
+  const [approveField, setApproveField] = useState({
+    "admStaffId": "",
+    "refundAmnt": "",
+    "transactionNo": "",
     "adminRemarks": "",
     "refundId": ""
   });
 
   const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/rejectRefund"
+  const apiUrl3 = global.config.urls.api.server + "/api/lms/admStaffRefundApproval"
 
   const getData = () => {
     let currentKey = sessionStorage.getItem("admkey");
@@ -50,20 +59,27 @@ const AdminViewRefundRequests = () => {
       })
   };
 
-  const handleClick = (id) => {
-    sessionStorage.setItem("refundId", id)
-  }
-
   const inputHandler = (event) => {
     setErrors({}); // Clear previous errors
     setInputField({ ...inputField, [event.target.name]: event.target.value });
   };
 
+  const approveHandler = (event) => {
+    setErrors({}); // Clear previous errors
+    setApproveField({ ...approveField, [event.target.name]: event.target.value });
+  };
+
   const validateForm = (data) => {
     let errors = {};
 
-    if (!data.adminRemarks.trim()) {
+    if (!data.adminRemarks) {
       errors.adminRemarks = 'Remark is required';
+    }
+    if (!data.refundAmnt) {
+      errors.refundAmnt = 'Amount is required';
+    }
+    if (!data.transactionNo) {
+      errors.transactionNo = 'Transaction No. is required';
     }
     return errors;
   }
@@ -78,7 +94,7 @@ const AdminViewRefundRequests = () => {
         token = sessionStorage.getItem("admstaffLogintoken");
         setKey(currentKey); // Update the state if needed
       }
-      let axiosConfig = {
+      let axiosConfig2 = {
         headers: {
           'content-type': 'application/json;charset=UTF-8',
           "Access-Control-Allow-Origin": "*",
@@ -92,7 +108,7 @@ const AdminViewRefundRequests = () => {
         "adminRemarks": inputField.adminRemarks
       }
       console.log(data2)
-      axios.post(apiUrl2, data2, axiosConfig).then(
+      axios.post(apiUrl2, data2, axiosConfig2).then(
         (response) => {
           if (response.data.status === "Refund Request Cancelled.") {
             alert("Refund Request Rejected")
@@ -108,10 +124,59 @@ const AdminViewRefundRequests = () => {
     }
   }
 
+  const approveRefund = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
+    const validationErrors = validateForm(approveField)
+    if (Object.keys(validationErrors).length === 0) {
+      let axiosConfig3 = {
+        headers: {
+          'content-type': 'application/json;charset=UTF-8',
+          "Access-Control-Allow-Origin": "*",
+          "token": token,
+          "key": currentKey
+        }
+      }
+      let data3 = {
+        "refundId": approve,
+        "admStaffId": sessionStorage.getItem("admstaffId"),
+        "adminRemarks": approveField.adminRemarks,
+        "transactionNo": approveField.transactionNo,
+        "refundAmnt": approveField.refundAmnt
+      }
+      console.log(data3)
+      axios.post(apiUrl3, data3, axiosConfig3).then(
+        (response) => {
+          if (response.data.status === "success") {
+            alert("Refund Request Approved Successfully")
+            window.location.reload() // Refresh the data
+            setApproveField({
+              adminRemarks: "",
+              refundAmnt: "",
+              transactionNo: ""
+            });
+          } else {
+            alert(response.data.status);
+          }
+        }
+      )
+    }
+  }
+
   const readValue = (id) => {
     setReject(id)
     console.log(id)
   };
+
+  const approveValue = (id) => {
+    setApprove(id)
+    console.log(id)
+  }
 
   // Update key state when component mounts
   useEffect(() => {
@@ -185,7 +250,7 @@ const AdminViewRefundRequests = () => {
                           {key !== 'lmsapp' && (
                             <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                               {/* <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Approve Refund</Link> */}
-                              <button onClick={() => handleClick(value.id)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Approve Refund</button>
+                              <button onClick={() => approveValue(value.refundId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal2" data-bs-whatever="@mdo">Approve Refund</button>
                             </td>
                           )}
                           {key !== 'lmsapp' && (
@@ -225,6 +290,46 @@ const AdminViewRefundRequests = () => {
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                   <button data-bs-dismiss="modal" onClick={() => rejectRefund()} type="button" className="btn btn-primary">
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {key !== 'lmsapp' && (
+        <div className="flex justify-end">
+          <div className="modal fade" id="exampleModal2" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h1 className="modal-title fs-5" id="exampleModalLabel">Approve Refund</h1>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                </div>
+                <div className="modal-body">
+                  <form>
+                    <div className="mb-3">
+                      <label htmlFor="message-text" className="col-form-label">Refund Amount<span className="text-danger">*</span></label>
+                      <textarea name="refundAmnt" className="form-control" value={approveField.refundAmnt} onChange={approveHandler} />
+                      {errors.refundAmnt && <span style={{ color: 'red' }} className="error">{errors.refundAmnt}</span>}
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="message-text" className="col-form-label">Transaction No<span className="text-danger">*</span></label>
+                      <textarea name="transactionNo" className="form-control" value={approveField.transactionNo} onChange={approveHandler} />
+                      {errors.transactionNo && <span style={{ color: 'red' }} className="error">{errors.transactionNo}</span>}
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="message-text" className="col-form-label">Remarks<span className="text-danger">*</span></label>
+                      <textarea name="adminRemarks" className="form-control" value={approveField.adminRemarks} onChange={approveHandler} />
+                      {errors.adminRemarks && <span style={{ color: 'red' }} className="error">{errors.adminRemarks}</span>}
+                    </div>
+                  </form>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button data-bs-dismiss="modal" onClick={() => approveRefund()} type="button" className="btn btn-primary">
                     Submit
                   </button>
                 </div>
