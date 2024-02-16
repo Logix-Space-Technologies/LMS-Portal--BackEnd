@@ -179,13 +179,19 @@ const AdminSearchBatch = () => {
                     <nav>
                         <ul className="flex list-style-none">
                             {currentPage > 1 && (
-                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Previous</li>
+                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Previous
+                                </li>
                             )}
-                            {Array.from({ length: Math.ceil(updateField.length / collegesPerPage) }, (_, i) => (
-                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>{i + 1}</li>
+                            {pageNumbers.map(number => (
+                                <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                    {number}
+                                </li>
                             ))}
-                            {currentPage < Math.ceil(updateField.length / collegesPerPage) && (
-                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Next</li>
+                            {currentPage < pageNumbers.length && (
+                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Next
+                                </li>
                             )}
                         </ul>
                     </nav>
