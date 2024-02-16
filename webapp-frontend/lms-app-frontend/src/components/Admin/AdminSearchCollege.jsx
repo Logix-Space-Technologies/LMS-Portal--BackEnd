@@ -200,7 +200,6 @@ const AdminSearchCollege = () => {
 
                                 </tbody>
                             </table>
-                            {/* Pagination */}
                         </div>
                     </div>
                     //end
