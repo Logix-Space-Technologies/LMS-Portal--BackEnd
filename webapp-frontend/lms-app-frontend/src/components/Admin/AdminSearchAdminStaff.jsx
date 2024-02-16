@@ -68,7 +68,7 @@ const AdminSearchAdminStaff = () => {
             (response) => {
                 setUpdateField(response.data.data);
                 setIsLoading(false);
-                setSearchExecuted(true); 
+                setSearchExecuted(true);
                 console.log(response.data.data);
                 setInputField({ "adminStaffSearchQuery": "" });
             }
@@ -94,6 +94,7 @@ const AdminSearchAdminStaff = () => {
                         <input onChange={inputHandler} type="text" className="form-control" name="adminStaffSearchQuery" value={inputField.adminStaffSearchQuery} />
                         <br></br>
                         <button onClick={readValue} className="btn btn-warning">Search</button>
+                        <br /><br />
                     </div>
                 </div>
                 {!isLoading && currentItems.length > 0 ? (
@@ -144,11 +145,11 @@ const AdminSearchAdminStaff = () => {
                             </nav>
                         </div>
                     </div>
-                ) : (searchExecuted && !currentItems ? ( // Check if search executed but no tasks found
-                <div className="alert alert-info" role="alert">
-                    No Admin Staffs found.
-                </div>
-            ) : null)}
+                ) : (!isLoading && searchExecuted && currentItems.length === 0 ? (
+                    <div className="alert alert-info" role="alert">
+                        No Admin Staffs found.
+                    </div>
+                ) : null)}
             </div>
         </div>
     );
