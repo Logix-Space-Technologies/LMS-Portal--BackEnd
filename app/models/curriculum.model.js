@@ -86,7 +86,7 @@ Curriculum.curriculumView = (batchId, result) => {
                 return result("Batch not found", null);
             }
 
-            db.query("SELECT b.batchName, c.* FROM curriculum c JOIN batches b ON c.batchId = b.id WHERE c.deleteStatus = 0 AND c.isActive = 1",
+            db.query("SELECT b.batchName, c.* FROM curriculum c JOIN batches b ON c.batchId = b.id WHERE c.deleteStatus = 0 AND c.isActive = 1 AND c.batchId = ?",[batchId],
                 (curriculumErr, curriculumRes) => {
                     if (curriculumErr) {
                         console.log("error: ", curriculumErr);

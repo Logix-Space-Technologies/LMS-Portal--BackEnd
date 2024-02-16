@@ -13,7 +13,8 @@ const AdminViewAllCurriculum = () => {
     const apiLink2 = global.config.urls.api.server + "/api/lms/deletecurriculum"
 
     const getData = () => {
-        let data = { "batchId": sessionStorage.getItem("batchId") }
+        let data2 = { "batchId": sessionStorage.getItem("currbatchId") }
+        console.log(data2)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -22,7 +23,7 @@ const AdminViewAllCurriculum = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         }
-        axios.post(apiUrl, data, axiosConfig).then(
+        axios.post(apiUrl, data2, axiosConfig).then(
             (response) => {
                 setCurriculumData(response.data.data)
                 console.log(response.data.data)
