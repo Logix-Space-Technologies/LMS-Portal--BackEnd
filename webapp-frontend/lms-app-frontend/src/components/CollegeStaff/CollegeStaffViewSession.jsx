@@ -39,6 +39,10 @@ const CollegeStaffViewSession = () => {
         sessionStorage.setItem("taskviewid", id)
     }
 
+    const viewsessionId = (attendanceid) => {
+        sessionStorage.setItem("viewattendanceid", attendanceid)
+    }
+
     useEffect(() => { getData() }, []);
 
 
@@ -49,7 +53,7 @@ const CollegeStaffViewSession = () => {
                 <br />
                 <div className="flex justify-between items-center mt-8 ml-4 mb-4">
                     <h2 className="text-lg font-bold">College Staff View Session</h2>
-                    <Link to="/clgstaffviewsession" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
+                    <Link to="/collegeStaffViewBatch" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
                 </div>
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -109,7 +113,7 @@ const CollegeStaffViewSession = () => {
                                             </Link>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Link type="button" class="btn btn-primary">
+                                            <Link to="/clgstaffviewattendance" onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary">
                                                 View Attendance
                                             </Link>
                                         </td>
