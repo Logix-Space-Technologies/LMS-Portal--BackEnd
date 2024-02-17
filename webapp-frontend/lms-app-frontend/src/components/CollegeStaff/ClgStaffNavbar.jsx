@@ -39,9 +39,6 @@ const ClgStaffNavbar = () => {
                             <Link className="nav-link" to="/collegeStaffViewAllStudents">View All Students</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/clgstaffviewtask">View All Tasks</Link>
-                        </li>
-                        <li className="nav-item">
                             <Link className="nav-link" to="/clgstaffviewattendance">View Attendance List</Link>
                         </li>
                         <li className="nav-item">

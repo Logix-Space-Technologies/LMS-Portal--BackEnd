@@ -276,15 +276,16 @@ CollegeStaff.viewStudent = (collegeId, result) => {
     );
 };
 
-CollegeStaff.viewTask = (collegeId, result) => {
-    db.query("SELECT DISTINCT cs.collegeId, t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, CASE WHEN t.dueDate < CURRENT_DATE() THEN 'Past Due Date' ELSE t.dueDate END AS dueDate, t.addedDate FROM task t JOIN batches b ON t.batchId = b.id JOIN college_staff cs ON b.collegeId = cs.collegeId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.collegeId = ?;", [collegeId], (err, res) => {
+CollegeStaff.viewTask = (batchId, result) => {
+    db.query("SELECT DISTINCT t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, CASE WHEN t.dueDate < CURRENT_DATE() THEN 'Past Due Date' ELSE t.dueDate END AS dueDate, t.addedDate FROM task t JOIN batches b ON t.batchId = b.id JOIN college_staff cs ON b.collegeId = cs.collegeId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND b.id = ?;", [batchId], (err, res) => {
         if (err) {
             console.log("error: ", err)
             result(err, null)
             return
         } else {
-            console.log("Task details", res)
-            result(null, res)
+            const formattedViewTasks = res.map(tasks => ({ ...tasks, dueDate: 'Past Due Date' ? 'Past Due Date' : tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })  }))
+            console.log("Task details", formattedViewTasks)
+            result(null, formattedViewTasks)
         }
     })
 }
@@ -422,7 +423,7 @@ CollegeStaff.viewSession = (batchId, result) => {
             } else {
                 const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
                 console.log("Sessions: ", formattedViewSession)
-                result(null ,formattedViewSession)
+                result(null, formattedViewSession)
             }
         })
 }

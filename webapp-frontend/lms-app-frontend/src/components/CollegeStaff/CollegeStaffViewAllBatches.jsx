@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../config/config';
 import ClgStaffNavbar from './ClgStaffNavbar';
+import { useNavigate } from 'react-router-dom';
 
 const CollegeStaffViewBatch = () => {
   const [batches, setBatches] = useState([]);
@@ -12,6 +13,7 @@ const CollegeStaffViewBatch = () => {
   const apiUrl3 = global.config.urls.api.server + "/api/lms/generateAttendancePdf"
   const token = sessionStorage.getItem("clgstaffLogintoken");
   const collegeId = sessionStorage.getItem("clgStaffCollegeId");
+  const navigate = useNavigate()
 
 
   const fetchBatches = () => {
@@ -96,6 +98,14 @@ const CollegeStaffViewBatch = () => {
     }
   }
 
+  const batchClick = (id) => {
+
+    navigate("/clgstaffviewsession")
+    sessionStorage.setItem("clgstaffbatchId", id)
+    console.log(id)
+
+  }
+
   useEffect(() => { fetchBatches() }, []);
 
   return (
@@ -136,7 +146,7 @@ const CollegeStaffViewBatch = () => {
                               <button className='btn btn-primary' onClick={() => { attendancePdfGenerate(batch.id) }} style={{ marginLeft: '100px' }}>
                                 Download Session-Wise Attendance List PDF
                               </button>
-                              <button className="btn btn-primary" style={{ marginLeft: '100px' }}>
+                              <button onClick={() => batchClick(batch.id)} className="btn btn-primary" style={{ marginLeft: '100px' }}>
                                 View Session
                               </button>
                             </div>

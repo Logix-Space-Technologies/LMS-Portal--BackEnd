@@ -25,7 +25,6 @@ const CollegeStaffViewAttendance = () => {
         axios.post(apiUrl, data, axiosConfig).then((response) => {
             setClgStaffViewAttendance(response.data.data);
             console.log(response.data.data);
-            console.log("first")
         });
     };
 

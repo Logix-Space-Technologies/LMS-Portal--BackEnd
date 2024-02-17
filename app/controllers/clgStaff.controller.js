@@ -580,8 +580,8 @@ exports.clgStaffViewTask = (request, response) => {
   const clgStaffViewTaskToken = request.headers.token
   jwt.verify(clgStaffViewTaskToken, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
-      const collegeId = request.body.collegeId
-      CollegeStaff.viewTask(collegeId, (err, data) => {
+      const batchId = request.body.batchId
+      CollegeStaff.viewTask(batchId, (err, data) => {
         if (err) {
           response.json({ "status": err })
         }
