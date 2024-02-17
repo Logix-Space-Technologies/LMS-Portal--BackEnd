@@ -113,7 +113,7 @@ const CollegeStaffViewBatch = () => {
                     </div>
                     <div className="col-6 text-end">
                       <button className='btn btn-primary' onClick={pdfGenerate}>
-                        Download PDF
+                        Download Batch-Wise Student List PDF
                       </button>
                     </div>
                   </div>
@@ -133,8 +133,11 @@ const CollegeStaffViewBatch = () => {
                               <p className="card-text">Description: {batch.batchDesc}</p>
                               <p className="card-text">Amount: {batch.batchAmount}</p>
                               <p className="card-text">Added Date: {batch.addedDate}</p><br />
-                              <button className='btn btn-primary' onClick={() => { attendancePdfGenerate(batch.id) }}>
-                                Download Attendance List PDF
+                              <button className='btn btn-primary' onClick={() => { attendancePdfGenerate(batch.id) }} style={{ marginLeft: '100px' }}>
+                                Download Session-Wise Attendance List PDF
+                              </button>
+                              <button className="btn btn-primary" style={{ marginLeft: '100px' }}>
+                                View Session
                               </button>
                             </div>
                           </div>

@@ -216,8 +216,9 @@ CollegeStaff.viewBatch = (collegeId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Batch Details: ", res);
-                result(null, res);
+                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: batches.addedDate ? batches.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null }));
+                console.log("Batch Details: ", formattedBatches);
+                result(null, formattedBatches);
             }
         }
     );
@@ -408,6 +409,21 @@ CollegeStaff.viewOneClgStaff = (id, result) => {
             }
             console.log("ClgStaffs: ", res);
             result(null, res);
+        })
+}
+
+CollegeStaff.viewSession = (batchId, result) => {
+    db.query("SELECT DISTINCT b. id AS batchId, s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink FROM sessiondetails s JOIN batches b ON b.id = s.batchId LEFT JOIN college_staff cs ON cs.collegeId = b.collegeId   WHERE s.deleteStatus = 0 AND s.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;", batchId,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                console.log("Sessions: ", formattedViewSession)
+                result(null ,formattedViewSession)
+            }
         })
 }
 
