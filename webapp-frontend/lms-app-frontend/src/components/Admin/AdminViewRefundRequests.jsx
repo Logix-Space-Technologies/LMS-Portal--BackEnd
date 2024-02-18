@@ -87,8 +87,18 @@ const AdminViewRefundRequests = () => {
     return errors;
   }
 
+  const validateForm2 = (data) => {
+    let errors = {};
+
+    if (!data.adminRemarks) {
+      errors.adminRemarks = 'Remark is required';
+    }
+
+    return errors;
+  }
+
   const rejectRefund = () => {
-    const validationErrors = validateForm(inputField)
+    const validationErrors = validateForm2(inputField)
     if (Object.keys(validationErrors).length === 0) {
       let currentKey = sessionStorage.getItem("admkey");
       let token = sessionStorage.getItem("admtoken");
@@ -193,7 +203,7 @@ const AdminViewRefundRequests = () => {
       pageNumbers.push(pageNumber);
     });
   }
-  
+
   const approveValue = (id) => {
     setApprove(id)
     console.log(id)
@@ -299,7 +309,7 @@ const AdminViewRefundRequests = () => {
                             </td>
                           )}
                         </tr>
-                      }) : <td colSpan="7" className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                      }) : <td colSpan="10" className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                         No Refund Requests Found !!!
                       </td>}
                     </tbody>
