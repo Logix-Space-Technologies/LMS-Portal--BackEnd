@@ -574,7 +574,7 @@ exports.collegeStaffViewStudent = (request, response) => {
         }
       });
     } else {
-      response.json({ "status": "Unauthorized User!!" });
+      return response.json({ "status": "Unauthorized User!!" });
     }
   });
 };

@@ -28,11 +28,19 @@ const CollegeStaffViewBatch = () => {
 
     axios.post(apiUrl, { "collegeId": collegeId }, axiosConfig)
       .then(response => {
-        if (response.data.status === "success") {
+        if (response.data.data) {
           setBatches(response.data.data);
-          console.log(response.data)
         } else {
-          console.log(response.data.status);
+          if (!response.data.data) {
+            //no data found
+          } else {
+            if (response.data.status === "Unauthorized User!!") {
+              sessionStorage.clear()
+              navigate("/clgStafflogin")
+            } else {
+              alert(response.data.status)
+            }
+          }
         }
       })
       .catch(error => {
@@ -62,7 +70,16 @@ const CollegeStaffViewBatch = () => {
         window.open(URL.createObjectURL(pdfBlob), '_blank');
         window.location.reload();
       } else {
-        alert(response.data.status);
+        if (!response.data) {
+          alert("No Data Found!!")
+        } else {
+          if (response.data.status === "Unauthorized User!!") {
+            sessionStorage.clear()
+            navigate("/clgStafflogin")
+          } else {
+            alert(response.data.status);
+          }
+        }
       }
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -90,7 +107,16 @@ const CollegeStaffViewBatch = () => {
         window.open(URL.createObjectURL(pdfBlob), '_blank');
         window.location.reload();
       } else {
-        alert(response.data.status);
+        if (!response.data) {
+          alert("No Data Found !!")
+        } else {
+          if (response.data.status === "Unauthorized User!!") {
+            sessionStorage.clear()
+            navigate("/clgStafflogin")
+          } else {
+            alert(response.data.status);
+          }
+        }
       }
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -108,7 +134,7 @@ const CollegeStaffViewBatch = () => {
   const studentClick = (id) => {
 
     navigate("/collegeStaffViewAllStudents")
-    sessionStorage.setItem("clgstaffviewstudId", id)
+    sessionStorage.setItem("clgstaffviewbatchId", id)
     console.log(id)
 
   }
@@ -156,7 +182,7 @@ const CollegeStaffViewBatch = () => {
                               <button onClick={() => batchClick(batch.id)} className="btn btn-primary" style={{ marginLeft: '80px' }}>
                                 View Session
                               </button>
-                              <button className="btn btn-primary" onClick={()=> studentClick(batch.id)} style={{ marginLeft: '80px' }}>
+                              <button className="btn btn-primary" onClick={() => studentClick(batch.id)} style={{ marginLeft: '80px' }}>
                                 View All Students
                               </button>
                             </div>

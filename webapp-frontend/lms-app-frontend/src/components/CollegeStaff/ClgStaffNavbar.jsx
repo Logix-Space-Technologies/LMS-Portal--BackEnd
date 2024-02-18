@@ -32,6 +32,9 @@ const ClgStaffNavbar = () => {
                             <Link className="nav-link" to="/collegeStaffViewBatch">View All Batches</Link>
                         </li>
                         <li className="nav-item">
+                            <Link className="nav-link" to="/collegeStaffDashboard">Dashboard</Link>
+                        </li>
+                        <li className="nav-item">
                             <Link to="/clgStafflogin" onClick={logOut} className="dropdown-item" style={{textAlignLast:"end"}}>Log Out</Link> 
                         </li>
                     </ul>

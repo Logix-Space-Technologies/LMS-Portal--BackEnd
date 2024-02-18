@@ -261,7 +261,7 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
 
 CollegeStaff.viewStudent = (batchId, result) => {
     db.query(
-        "SELECT DISTINCT c.collegeName, b.batchName, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilepic, s.aadharNo, s.membership_no FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON b.id =s.batchId WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND b.id = ? ORDER BY b.batchName",
+        "SELECT DISTINCT c.collegeName, b.batchName, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.membership_no FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON b.id = s.batchId WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 AND b.id = ? ORDER BY b.batchName, s.membership_no DESC",
         [batchId],
         (err, res) => {
             if (err) {
