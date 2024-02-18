@@ -210,7 +210,7 @@ Refund.approveRefund = (refundAmnt, admStaffId, transactionNo, adminRemarks, ref
                     return;
                 }
 
-                result("Refund approved successfully.", null);
+                result(null, null);
             }
         );
     });
