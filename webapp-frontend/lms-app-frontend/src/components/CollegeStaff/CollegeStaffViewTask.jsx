@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const CollegeStaffViewTask = () => {
     const [taskData, setTaskData] = useState([])
 
     const apiurl = global.config.urls.api.server + "/api/lms/clgstaffviewtask"
+
+    const navigate = useNavigate()
 
     const getData = () => {
         let data = { "sessionId": sessionStorage.getItem("viewattendanceid") }
@@ -20,8 +22,20 @@ const CollegeStaffViewTask = () => {
         }
         axios.post(apiurl, data, axiosConfig).then(
             (response) => {
-                setTaskData(response.data.data)
-                console.log(response.data)
+                if (response.data.data) {
+                    setTaskData(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        sessionStorage.clear()
+                        navigate("/clgStafflogin")
+                    } else {
+                        if (!response.data.data) {
+                            //No Data Found
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
@@ -62,14 +76,13 @@ const CollegeStaffViewTask = () => {
                                             <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 Due Date
                                             </th>
-
                                             <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
 
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {taskData ? taskData.map(
+                                        {taskData.length > 0 ? taskData.map(
                                             (value, index) => {
                                                 return <tr>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">

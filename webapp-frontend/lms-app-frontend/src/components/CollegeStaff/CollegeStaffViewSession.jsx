@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const CollegeStaffViewSession = () => {
     const [sessionData, setSessionData] = useState([])
     const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/ClgStaffViewSession";
 
@@ -23,9 +25,21 @@ const CollegeStaffViewSession = () => {
         };
 
         axios.post(apiUrl, data, axiosConfig).then((response) => {
-            setSessionData(response.data.data);
-            console.log(response.data.data);
-            setLoading(false)
+            if (response.data.data) {
+                setSessionData(response.data.data);
+                setLoading(false)
+            } else {
+                if (response.data.status === "Unauthorized access!!") {
+                    sessionStorage.clear()
+                    navigate("/clgStafflogin")
+                } else {
+                    if (!response.data.data) {
+                        //No Data Found !!!
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
+            }
         });
     };
 
@@ -81,7 +95,7 @@ const CollegeStaffViewSession = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {sessionData && sessionData.map((value, index) => {
+                            {sessionData ? sessionData.map((value, index) => {
                                 return (
                                     <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                                         <td className="px-6 py-4">
@@ -115,7 +129,9 @@ const CollegeStaffViewSession = () => {
                                     </tr>
 
                                 );
-                            })}
+                            }) : (<td colSpan="8" className="px-6 py-4">
+                                    No Sessions Found !!!
+                            </td>)}
                         </tbody>
                     </table>
                 </div>

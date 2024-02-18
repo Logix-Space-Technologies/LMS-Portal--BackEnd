@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const CollegeStaffViewAttendance = () => {
     const [clgStaffViewAttendance, setClgStaffViewAttendance] = useState([]);
 
     const apiUrl = global.config.urls.api.server + '/api/lms/colgstaffviewattendance';
 
+    const navigate = useNavigate()
+
     const getData = () => {
         const data = { "sessionId": sessionStorage.getItem("viewattendanceid") };
-        console.log(data)
         const axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -20,11 +21,23 @@ const CollegeStaffViewAttendance = () => {
 
             },
         };
-        console.log(axiosConfig)
-
         axios.post(apiUrl, data, axiosConfig).then((response) => {
-            setClgStaffViewAttendance(response.data.data);
-            console.log(response.data.data);
+            if (response.data.data) {
+                setClgStaffViewAttendance(response.data.data);
+            } else {
+
+                if (response.data.status === "Unauthorized User!!") {
+                    sessionStorage.clear()
+                    navigate("/clgStafflogin")
+                } else {
+                    if (!response.data.data) {
+                        //no data found
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
+            }
+
         });
     };
 
@@ -58,7 +71,7 @@ const CollegeStaffViewAttendance = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {clgStaffViewAttendance && clgStaffViewAttendance.map((value, index) => {
+                            {clgStaffViewAttendance ? (clgStaffViewAttendance.map((value, index) => {
                                 const isPresent = value.attendence_status.toLowerCase() === 'present';
                                 const buttonClassName = isPresent ? 'bg-green-500/20 text-green-700' : 'bg-red-500/20 text-red-700';
 
@@ -87,7 +100,11 @@ const CollegeStaffViewAttendance = () => {
                                         </td>
                                     </tr>
                                 );
-                            })}
+                            })) : (
+                                <td colSpan="8" className="px-6 py-4">
+                                    No Attendance Record Found !!!
+                                </td>
+                            )}
                         </tbody>
                     </table>
                 </div>

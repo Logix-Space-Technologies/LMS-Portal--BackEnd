@@ -31,12 +31,12 @@ const CollegeStaffViewBatch = () => {
         if (response.data.data) {
           setBatches(response.data.data);
         } else {
-          if (!response.data.data) {
-            //no data found
+          if (response.data.status === "Unauthorized User!!") {
+            sessionStorage.clear()
+            navigate("/clgStafflogin")
           } else {
-            if (response.data.status === "Unauthorized User!!") {
-              sessionStorage.clear()
-              navigate("/clgStafflogin")
+            if (!response.data.data) {
+              //no data found
             } else {
               alert(response.data.status)
             }
@@ -70,16 +70,18 @@ const CollegeStaffViewBatch = () => {
         window.open(URL.createObjectURL(pdfBlob), '_blank');
         window.location.reload();
       } else {
-        if (!response.data) {
-          alert("No Data Found!!")
+
+        if (response.data.status === "Unauthorized User!!") {
+          sessionStorage.clear()
+          navigate("/clgStafflogin")
         } else {
-          if (response.data.status === "Unauthorized User!!") {
-            sessionStorage.clear()
-            navigate("/clgStafflogin")
+          if (!response.data) {
+            alert("No Data Found!!")
           } else {
             alert(response.data.status);
           }
         }
+
       }
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -107,12 +109,13 @@ const CollegeStaffViewBatch = () => {
         window.open(URL.createObjectURL(pdfBlob), '_blank');
         window.location.reload();
       } else {
-        if (!response.data) {
-          alert("No Data Found !!")
+
+        if (response.data.status === "Unauthorized User!!") {
+          sessionStorage.clear()
+          navigate("/clgStafflogin")
         } else {
-          if (response.data.status === "Unauthorized User!!") {
-            sessionStorage.clear()
-            navigate("/clgStafflogin")
+          if (!response.data) {
+            alert("No Data Found !!")
           } else {
             alert(response.data.status);
           }
