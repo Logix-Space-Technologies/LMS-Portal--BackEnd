@@ -283,7 +283,7 @@ CollegeStaff.viewTask = (sessionId, result) => {
             result(err, null)
             return
         } else {
-            const formattedViewTasks = res.map(tasks => ({ ...tasks, dueDate: 'Past Due Date' ? 'Past Due Date' : tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })  }))
+            const formattedViewTasks = res.map(tasks => ({ ...tasks, dueDate: 'Past Due Date' ? 'Past Due Date' : tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
             console.log("Task details", formattedViewTasks)
             result(null, formattedViewTasks)
         }
@@ -347,8 +347,9 @@ CollegeStaff.collegeStaffSearchBatch = (searchTerm, collegeId, result) => {
                 result(err, null)
                 return
             } else {
-                console.log("Batches : ", res)
-                result(null, res)
+                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: batches.addedDate ? batches.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null }));
+                console.log("Batches : ", formattedBatches)
+                result(null, formattedBatches)
             }
         })
 }

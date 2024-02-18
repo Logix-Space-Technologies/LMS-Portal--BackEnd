@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useState } from 'react'
 import '../../config/config'
 import ClgStaffNavbar from './ClgStaffNavbar'
+import { useNavigate } from 'react-router-dom'
 
 const CollegeStaffSearchBatch = () => {
     const [inputField, setInputField] = useState(
@@ -16,6 +17,8 @@ const CollegeStaffSearchBatch = () => {
     )
 
     const [isLoading, setIsLoading] = useState(true)
+
+    const navigate = useNavigate()
 
     const apiLink = global.config.urls.api.server + "/api/lms/clgStaffSearchBatch"
 
@@ -45,8 +48,9 @@ const CollegeStaffSearchBatch = () => {
                         "clgStaffBatchSearchQuery": ""
                     })
                 } else {
-                    if (response.data.status === "") {
-                        
+                    if (response.data.status === "Unauthorized User!!") {
+                        sessionStorage.clear()
+                        navigate("/clgStafflogin")
                     } else {
                         if (!response.data.data) {
                             // no data found
@@ -144,10 +148,10 @@ const CollegeStaffSearchBatch = () => {
                                                             <div className="text-left">{value.batchAmount}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{new Date(value.regStartDate).toLocaleDateString()}</div>
+                                                            <div className="text-left">{value.regStartDate}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{new Date(value.regEndDate).toLocaleDateString()}</div>
+                                                            <div className="text-left">{value.regEndDate}</div>
                                                         </td>
                                                     </tr>
                                                 )

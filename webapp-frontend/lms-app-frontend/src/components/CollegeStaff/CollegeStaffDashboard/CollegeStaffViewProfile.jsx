@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import '../../../config/config'
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const CollegeStaffViewProfile = () => {
     const [colgStaffData, setColgStaffData] = useState({});
 
     const apiURL = global.config.urls.api.server + "/api/lms/profileViewByCollegeStaff";
+
+    const navigate = useNavigate()
 
     const logOut = () => {
         sessionStorage.clear()

@@ -283,8 +283,9 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Student found: ", res);
-                result(null, res);
+                const formattedViewStudent = res.map(student => ({ ...student, addedDate: student.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                console.log("Student found: ", formattedViewStudent);
+                result(null, formattedViewStudent);
                 return;
             }
         }
