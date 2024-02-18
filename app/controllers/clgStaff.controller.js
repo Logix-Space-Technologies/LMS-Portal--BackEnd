@@ -519,9 +519,13 @@ exports.collegeStaffChangePassword = (request, response) => {
 
   // Verify the JWT token
   jwt.verify(token, "lmsappclgstaff", (err, decoded) => {
-    if (err || !decoded) {
-      response.json({ "status": "Unauthorized User!!" });
+    if (err) {
+      response.json({ "status": err });
       return;
+    }
+
+    if (!decoded) {
+      return response.json({ "status": "Unauthorized User!!" })
     }
 
     // Validate old and new passwords
@@ -761,7 +765,7 @@ exports.viewSessionsByCollegeStaff = (request, response) => {
       CollegeStaff.viewSession(batchId, (err, data) => {
         if (err) {
           return response.json({ "status": err });
-        } 
+        }
         if (!data) {
           return response.json({ "status": "No Sessions Found!!" });
         } else {

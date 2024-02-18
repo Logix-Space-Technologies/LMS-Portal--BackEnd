@@ -4,11 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 const ClgStaffNavbar = () => {
 
     const logOut = () => {
-        sessionStorage.removeItem("clgstaffkey");
-        sessionStorage.removeItem("clgStaffId");
-        sessionStorage.removeItem("clgStaffEmail");
-        sessionStorage.removeItem("clgstaffLogintoken");
-        sessionStorage.removeItem("clgStaffCollegeId");
+        sessionStorage.clear()
     }
   return (
     <div>

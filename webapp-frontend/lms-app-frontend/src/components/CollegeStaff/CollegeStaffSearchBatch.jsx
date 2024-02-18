@@ -37,21 +37,32 @@ const CollegeStaffSearchBatch = () => {
 
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                console.log(response.data)
-                setInputField({
-                    "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
-                    "clgStaffBatchSearchQuery": ""
-                })
+                if (response.data.data) {
+                    setUpdateField(response.data.data)
+                    setIsLoading(false)
+                    setInputField({
+                        "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+                        "clgStaffBatchSearchQuery": ""
+                    })
+                } else {
+                    if (response.data.status === "") {
+                        
+                    } else {
+                        if (!response.data.data) {
+                            // no data found
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
 
         )
 
     }
-  return (
-    <div>
-        <ClgStaffNavbar/>
+    return (
+        <div>
+            <ClgStaffNavbar />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -153,7 +164,7 @@ const CollegeStaffSearchBatch = () => {
                 ))}
             </div>
         </div>
-  )
+    )
 }
 
 export default CollegeStaffSearchBatch
