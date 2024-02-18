@@ -2,16 +2,19 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
 import ClgStaffNavbar from './ClgStaffNavbar'
+import { useNavigate } from 'react-router-dom'
 
 const CollegeStaffStudentVerify = () => {
 
     const [studentData, setStudentData] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
-    const [studentsPerPage] = useState(2); // Number of students per page
+    const [studentsPerPage] = useState(10); // Number of students per page
 
 
     const apiUrl = global.config.urls.api.server + "/api/lms/unverifiedStudents"
     const apiUrl2 = global.config.urls.api.server + "/api/lms/studentverificationbyCollegeStaff"
+
+    const navigate = useNavigate()
 
     const getData = () => {
         let data = { "collegeId": sessionStorage.getItem("clgStaffCollegeId") }
@@ -25,9 +28,20 @@ const CollegeStaffStudentVerify = () => {
         }
         axios.post(apiUrl, data, axiosConfig).then(
             (Response) => {
-                console.log(axiosConfig)
-                setStudentData(Response.data.data)
-                console.log(Response.data)
+                if (Response.data.data) {
+                    setStudentData(Response.data.data)
+                } else {
+                    if (Response.data.status === "Unauthorized User!!") {
+                        sessionStorage.clear()
+                        navigate("/clgStafflogin")
+                    } else {
+                        if (!Response.data.data) {
+                            //no data found
+                        } else {
+                            alert(Response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
@@ -46,9 +60,14 @@ const CollegeStaffStudentVerify = () => {
             (response) => {
                 if (response.data.status === "Success") {
                     alert("Student verified successfully!!")
-                    window.location.reload()
+                    getData()
                 } else {
-                    alert(response.data.status)
+                    if (response.data.status === "Unauthorized User!!!") {
+                        sessionStorage.clear()
+                        navigate("/clgStafflogin")
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -112,13 +131,19 @@ const CollegeStaffStudentVerify = () => {
                                 Aadhar No
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Batch Id
+                                Batch Name
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Membership No.
                             </th>
                             <th scope="col" className="px-6 py-3">
-
+                                Date Of Registartion
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Validity
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                
                             </th>
                         </tr>
                     </thead>
@@ -153,10 +178,16 @@ const CollegeStaffStudentVerify = () => {
                                     {value.aadharNo}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {value.batchId}
+                                    {value.batchName}
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.membership_no}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.addedDate}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.validity}
                                 </td>
                                 <td className="px-6 py-4">
                                     <button onClick={() => handleClick(value.id)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Verify</button>

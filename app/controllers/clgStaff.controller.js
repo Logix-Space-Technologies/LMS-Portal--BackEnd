@@ -621,7 +621,7 @@ exports.studentVerificationByCollegeStaff = (req, res) => {
 
   jwt.verify(token, "lmsappclgstaff", (jwtErr, decoded) => {
     if (jwtErr) {
-      return res.json({ "status": "JWT verification failed" });
+      return res.json({ "status": "Unauthorized User!!!" });
     }
 
     CollegeStaff.verifyStudent(collegeId, studentId, (err, result) => {
