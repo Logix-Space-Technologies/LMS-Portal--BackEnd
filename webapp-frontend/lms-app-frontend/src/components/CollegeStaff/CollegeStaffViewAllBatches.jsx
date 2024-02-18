@@ -105,6 +105,13 @@ const CollegeStaffViewBatch = () => {
     console.log(id)
 
   }
+  const studentClick = (id) => {
+
+    navigate("/collegeStaffViewAllStudents")
+    sessionStorage.setItem("clgstaffviewstudId", id)
+    console.log(id)
+
+  }
 
   useEffect(() => { fetchBatches() }, []);
 
@@ -143,11 +150,14 @@ const CollegeStaffViewBatch = () => {
                               <p className="card-text">Description: {batch.batchDesc}</p>
                               <p className="card-text">Amount: {batch.batchAmount}</p>
                               <p className="card-text">Added Date: {batch.addedDate}</p><br />
-                              <button className='btn btn-primary' onClick={() => { attendancePdfGenerate(batch.id) }} style={{ marginLeft: '100px' }}>
+                              <button className='btn btn-primary' onClick={() => { attendancePdfGenerate(batch.id) }} style={{ marginLeft: '40px' }}>
                                 Download Session-Wise Attendance List PDF
                               </button>
-                              <button onClick={() => batchClick(batch.id)} className="btn btn-primary" style={{ marginLeft: '100px' }}>
+                              <button onClick={() => batchClick(batch.id)} className="btn btn-primary" style={{ marginLeft: '80px' }}>
                                 View Session
+                              </button>
+                              <button className="btn btn-primary" onClick={()=> studentClick(batch.id)} style={{ marginLeft: '80px' }}>
+                                View All Students
                               </button>
                             </div>
                           </div>

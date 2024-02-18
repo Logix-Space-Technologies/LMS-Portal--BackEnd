@@ -558,8 +558,8 @@ exports.collegeStaffViewStudent = (request, response) => {
   const collegeStaffViewStudent = request.headers.token;
   jwt.verify(collegeStaffViewStudent, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
-      const collegeId = request.body.collegeId;
-      CollegeStaff.viewStudent(collegeId, (err, data) => {
+      const batchId = request.body.batchId;
+      CollegeStaff.viewStudent(batchId, (err, data) => {
         if (err) {
           response.json({ "status": err });
         }
@@ -580,8 +580,8 @@ exports.clgStaffViewTask = (request, response) => {
   const clgStaffViewTaskToken = request.headers.token
   jwt.verify(clgStaffViewTaskToken, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
-      const batchId = request.body.batchId
-      CollegeStaff.viewTask(batchId, (err, data) => {
+      const sessionId = request.body.sessionId
+      CollegeStaff.viewTask(sessionId, (err, data) => {
         if (err) {
           response.json({ "status": err })
         }

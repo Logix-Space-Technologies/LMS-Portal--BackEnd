@@ -65,8 +65,9 @@ Attendence.collegeStaffViewAttendance = (sessionId, result) => {
             result(err, null);
             return;
         }
-        console.log("attendance:", res);
-        result(null, res);
+        const formattedViewAttendance = res.map(attendance => ({ ...attendance, date: attendance.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })  }))
+        console.log("attendance:", formattedViewAttendance);
+        result(null, formattedViewAttendance);
     });
 };
 

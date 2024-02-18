@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config';
 import axios from 'axios';
-import ClgStaffNavbar from './ClgStaffNavbar';
 import { Link } from 'react-router-dom';
 
 const CollegeStaffViewSession = () => {
@@ -33,10 +32,6 @@ const CollegeStaffViewSession = () => {
     function formatTime(timeString) {
         const options = { hour: '2-digit', minute: '2-digit', hour12: true };
         return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
-    }
-
-    const viewTaskId = (id) => {
-        sessionStorage.setItem("taskviewid", id)
     }
 
     const viewsessionId = (attendanceid) => {
@@ -108,7 +103,7 @@ const CollegeStaffViewSession = () => {
                                             {value.venueORlink}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Link to="/clgstaffviewtask" onClick={() => viewTaskId(value.batchId)} type="button" class="btn btn-primary">
+                                            <Link to="/clgstaffviewtask" onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary">
                                                 View Tasks
                                             </Link>
                                         </td>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import axios from 'axios';
-import ClgStaffNavbar from './ClgStaffNavbar';
 import { Link } from 'react-router-dom';
 
 const CollegeStaffViewAttendance = () => {
@@ -32,7 +31,7 @@ const CollegeStaffViewAttendance = () => {
     useEffect(() => { getData() }, []);
     return (
         <div>
-            <div className="flex justify-between items-center mt-8 ml-4 mb-4 bg-white">
+            <div className="flex justify-between items-center mt-8 ml-4 mb-4">
                 <h2 className="text-lg font-bold">College Staff View Attendance</h2>
                 <Link to="/clgstaffviewsession" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
             </div>
@@ -70,7 +69,7 @@ const CollegeStaffViewAttendance = () => {
                                             <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">{value.sessionName}</p>
                                         </td>
                                         <td className="p-4 border-b border-blue-gray-50">
-                                            <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">{new Date(value.date).toLocaleDateString()}</p>
+                                            <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">{value.date}</p>
                                         </td>
                                         <td className="p-4 border-b border-blue-gray-50">
                                             <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">{value.membership_no}</p>

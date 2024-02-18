@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../config/config';
-import ClgStaffNavbar from './ClgStaffNavbar';
+import { Link } from 'react-router-dom';
 
 const CollegeStaffViewAllStudents = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [studentsPerPage] = useState(2); // Number of students per page
+  const [studentsPerPage] = useState(10); // Number of students per page
 
   const apiUrl = global.config.urls.api.server + "/api/lms/collegeStaffViewStudent";
   const token = sessionStorage.getItem("clgstaffLogintoken");
-  const collegeId = sessionStorage.getItem("clgStaffCollegeId");
+  const batchId = sessionStorage.getItem("clgstaffviewstudId");
 
   useEffect(() => {
-    if (!token || !collegeId) {
+    if (!token || !batchId) {
       console.error("Token or College ID is missing.");
     } else {
       fetchStudents();
     }
-  }, [token, collegeId]);
+  }, [token, batchId]);
 
   const fetchStudents = () => {
     let axiosConfig = {
@@ -31,7 +31,7 @@ const CollegeStaffViewAllStudents = () => {
       }
     };
 
-    axios.post(apiUrl, { "collegeId": collegeId }, axiosConfig)
+    axios.post(apiUrl, { "batchId": batchId }, axiosConfig)
       .then(response => {
         console.log("Response from Backend:", response.data);
 
@@ -69,10 +69,10 @@ const CollegeStaffViewAllStudents = () => {
 
   return (
     <div>
-      <ClgStaffNavbar />
       <br /><br />
-      <div className="flex justify-between items-center mt-16 ml-16 mb-16">
-        <h2 className="text-lg font-bold">College Staff View Student</h2>
+      <div className="flex justify-between items-center mt-8 ml-4 mb-4">
+        <h2 className="text-lg font-bold">College Staff View All Students</h2>
+        <Link to="/collegeStaffViewBatch" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config';
 import axios from 'axios';
-import ClgStaffNavbar from './ClgStaffNavbar';
 import { Link } from 'react-router-dom';
 
 const CollegeStaffViewTask = () => {
@@ -10,7 +9,7 @@ const CollegeStaffViewTask = () => {
     const apiurl = global.config.urls.api.server + "/api/lms/clgstaffviewtask"
 
     const getData = () => {
-        let data = { "batchId": sessionStorage.getItem("taskviewid") }
+        let data = { "sessionId": sessionStorage.getItem("viewattendanceid") }
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -27,8 +26,6 @@ const CollegeStaffViewTask = () => {
         )
     }
 
-    // Determine if any task has a dueDate not equal to "Past Due Date"
-    const hasFutureDueDate = taskData.some(task => task.dueDate !== "Past Due Date");
 
     useEffect(() => { getData() }, [])
     return (
@@ -48,7 +45,7 @@ const CollegeStaffViewTask = () => {
                                     <thead>
                                         <tr className="text-center bg-primary">
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                Batch ID
+                                                Session Name
                                             </th>
                                             <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 Title
@@ -65,19 +62,18 @@ const CollegeStaffViewTask = () => {
                                             <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 Due Date
                                             </th>
-                                            {hasFutureDueDate && (
-                                                <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
 
-                                                </th>
-                                            )}
+                                            <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {taskData.map(
+                                        {taskData ? taskData.map(
                                             (value, index) => {
                                                 return <tr>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.batchId}
+                                                        {value.sessionName}
                                                     </td>
                                                     <td className="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.taskTitle}
@@ -96,6 +92,11 @@ const CollegeStaffViewTask = () => {
                                                             <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                                 {value.dueDate}
                                                             </td>
+                                                            <td class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                                <a target='_blank' href={value.taskFileUpload} class="inline-block px-6 py-2.5 border rounded-md border-primary text-primary hover:bg-primary hover:text-white font-medium">
+                                                                    View Material
+                                                                </a>
+                                                            </td>
                                                         </>
                                                     )}
                                                     {value.dueDate !== "Past Due Date" && (
@@ -112,6 +113,12 @@ const CollegeStaffViewTask = () => {
                                                     )}
                                                 </tr>
                                             }
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="7" className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                    No Tasks Found !!!
+                                                </td>
+                                            </tr>
                                         )}
                                     </tbody>
                                 </table>
