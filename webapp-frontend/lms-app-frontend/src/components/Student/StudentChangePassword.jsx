@@ -39,12 +39,7 @@ const StudentChangePassword = () => {
                     if (Response.data.status === "success") {
                         alert("Password Changed Successfully");
                         navigate("/studentLogin");
-                        sessionStorage.removeItem("studentkey");
-                        sessionStorage.removeItem("studentId");
-                        sessionStorage.removeItem("studemail");
-                        sessionStorage.removeItem("studBatchId");
-                        sessionStorage.removeItem("studLoginToken");
-                        sessionStorage.removeItem("subtaskId");
+                        sessionStorage.clear()
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.oldPassword) {
                             alert(Response.data.data.oldPassword);
@@ -57,11 +52,7 @@ const StudentChangePassword = () => {
                                 } else {
                                     if (Response.data.status === "Unauthorized User!!") {
                                         navigate("/studentLogin")
-                                        sessionStorage.removeItem("studentkey");
-                                        sessionStorage.removeItem("studentId");
-                                        sessionStorage.removeItem("studemail");
-                                        sessionStorage.removeItem("studBatchId");
-                                        sessionStorage.removeItem("studLoginToken");
+                                        sessionStorage.clear()
                                     } else {
                                         alert(Response.data.status)
                                     }

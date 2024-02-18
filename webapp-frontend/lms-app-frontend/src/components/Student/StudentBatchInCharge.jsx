@@ -26,12 +26,7 @@ const StudentBatchInCharge = () => {
             } else {
                 if (response.data.status === "Invalid or expired token.") {
                     navigate("/studentLogin")
-                    sessionStorage.removeItem("studentkey");
-                    sessionStorage.removeItem("studentId");
-                    sessionStorage.removeItem("studemail");
-                    sessionStorage.removeItem("studBatchId");
-                    sessionStorage.removeItem("studLoginToken");
-                    sessionStorage.removeItem("subtaskId");
+                    sessionStorage.clear()
                 } else {
                     alert(response.data.status)
                 }

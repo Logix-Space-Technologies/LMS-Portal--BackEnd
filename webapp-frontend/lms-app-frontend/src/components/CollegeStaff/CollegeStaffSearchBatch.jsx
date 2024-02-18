@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useState } from 'react'
 import '../../config/config'
 import ClgStaffNavbar from './ClgStaffNavbar'
+import { useNavigate } from 'react-router-dom'
 
 const CollegeStaffSearchBatch = () => {
     const [inputField, setInputField] = useState(
@@ -16,6 +17,8 @@ const CollegeStaffSearchBatch = () => {
     )
 
     const [isLoading, setIsLoading] = useState(true)
+
+    const navigate = useNavigate()
 
     const apiLink = global.config.urls.api.server + "/api/lms/clgStaffSearchBatch"
 
@@ -37,21 +40,33 @@ const CollegeStaffSearchBatch = () => {
 
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                console.log(response.data)
-                setInputField({
-                    "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
-                    "clgStaffBatchSearchQuery": ""
-                })
+                if (response.data.data) {
+                    setUpdateField(response.data.data)
+                    setIsLoading(false)
+                    setInputField({
+                        "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+                        "clgStaffBatchSearchQuery": ""
+                    })
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        sessionStorage.clear()
+                        navigate("/clgStafflogin")
+                    } else {
+                        if (!response.data.data) {
+                            // no data found
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
 
         )
 
     }
-  return (
-    <div>
-        <ClgStaffNavbar/>
+    return (
+        <div>
+            <ClgStaffNavbar />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -133,10 +148,10 @@ const CollegeStaffSearchBatch = () => {
                                                             <div className="text-left">{value.batchAmount}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{new Date(value.regStartDate).toLocaleDateString()}</div>
+                                                            <div className="text-left">{value.regStartDate}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{new Date(value.regEndDate).toLocaleDateString()}</div>
+                                                            <div className="text-left">{value.regEndDate}</div>
                                                         </td>
                                                     </tr>
                                                 )
@@ -153,7 +168,7 @@ const CollegeStaffSearchBatch = () => {
                 ))}
             </div>
         </div>
-  )
+    )
 }
 
 export default CollegeStaffSearchBatch

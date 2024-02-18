@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useState } from 'react'
 import ClgStaffNavbar from './ClgStaffNavbar'
 import '../../config/config'
+import { useNavigate } from 'react-router-dom'
 
 const CollegeStaffSearchTask = () => {
 
@@ -15,6 +16,8 @@ const CollegeStaffSearchTask = () => {
     const [updateField, setUpdateField] = useState([])
 
     const [isLoading, setIsLoading] = useState(true)
+
+    const navigate = useNavigate()
 
     const apiLink = global.config.urls.api.server + "/api/lms/collegeStaffSearchTasks"
 
@@ -34,20 +37,32 @@ const CollegeStaffSearchTask = () => {
         };
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                console.log(response.data.data)
-                setInputField({
-                    "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
-                    "taskQuery": ""
-                })
+                if (response.data.data) {
+                    setUpdateField(response.data.data)
+                    setIsLoading(false)
+                    setInputField({
+                        "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+                        "taskQuery": ""
+                    })
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        sessionStorage.clear()
+                        navigate("/clgStafflogin")
+                    } else {
+                        if (!response.data.data) {
+                            //no data found
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
 
     return (
         <div>
-            <ClgStaffNavbar/>
+            <ClgStaffNavbar />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -129,7 +144,7 @@ const CollegeStaffSearchTask = () => {
                                                             <div className="text-left">{value.totalScore}</div>
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{new Date(value.dueDate).toLocaleDateString()}</div>
+                                                            <div className="text-left">{value.dueDate}</div>
                                                         </td>
                                                     </tr>
                                                 )

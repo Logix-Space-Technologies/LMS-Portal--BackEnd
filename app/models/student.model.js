@@ -283,8 +283,9 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Student found: ", res);
-                result(null, res);
+                const formattedViewStudent = res.map(student => ({ ...student, addedDate: student.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                console.log("Student found: ", formattedViewStudent);
+                result(null, formattedViewStudent);
                 return;
             }
         }
@@ -521,7 +522,7 @@ Student.updateStudentProfile = (student, result) => {
 }
 
 Student.viewUnverifiedStudents = (collegeId, result) => {
-    db.query("SELECT * FROM student WHERE deleteStatus = 0 AND isVerified = 0 AND isActive=1 AND emailVerified = 1 AND collegeId = ?",
+    db.query("SELECT b.batchName, s.studProfilePic, s.studName, s.studDept, s.course, s.admNo, s.rollNo, s.studEmail, s.studPhNo, s.aadharNo, s.membership_no, s.addedDate, s.validity FROM student s JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus = 0 AND s.isVerified = 0 AND s.isActive=1 AND s.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive =1 AND s.collegeId = ? ORDER BY b.batchName, s.addedDate DESC",
         [collegeId],
 
         (err, res) => {
@@ -533,9 +534,9 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
                 console.log("No unverified students found.");
                 return result("No unverified students found.", null);
             }
-
-            console.log("Unverified students: ", res);
-            result(null, res);
+            const formattedViewUnverifiedStudents = res.map(students => ({ ...students, validity: students.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: students.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}));
+            console.log("Unverified students: ", formattedViewUnverifiedStudents);
+            result(null, formattedViewUnverifiedStudents);
         });
 }
 
