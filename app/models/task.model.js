@@ -203,8 +203,9 @@ Tasks.collegeStaffSearchTasks = (searchKey, collegeId, result) => {
                 result(err, null)
                 return
             } else {
-                console.log("Tasks: ", res);
-                result(null, res)
+                const formattedViewTask = res.map(tasks => ({ ...tasks, addedDate: tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                console.log("Tasks: ", formattedViewTask);
+                result(null, formattedViewTask)
             }
         })
 }

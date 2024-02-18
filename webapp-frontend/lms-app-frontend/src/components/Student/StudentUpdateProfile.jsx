@@ -100,12 +100,7 @@ const StudentUpdateProfile = () => {
                 } else {
                     if (Response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
-                        sessionStorage.removeItem("studentkey");
-                        sessionStorage.removeItem("studentId");
-                        sessionStorage.removeItem("studemail");
-                        sessionStorage.removeItem("studBatchId");
-                        sessionStorage.removeItem("studLoginToken");
-                        sessionStorage.removeItem("subtaskId");
+                        sessionStorage.clear()
                     } else {
                         alert(Response.data.status)
                     }
@@ -133,12 +128,7 @@ const StudentUpdateProfile = () => {
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
-                        sessionStorage.removeItem("studentkey");
-                        sessionStorage.removeItem("studentId");
-                        sessionStorage.removeItem("studemail");
-                        sessionStorage.removeItem("studBatchId");
-                        sessionStorage.removeItem("studLoginToken");
-                        sessionStorage.removeItem("subtaskId");
+                        sessionStorage.clear()
                     } else {
                         alert(response.data.status)
                     }

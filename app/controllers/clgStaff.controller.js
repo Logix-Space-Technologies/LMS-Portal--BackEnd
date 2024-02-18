@@ -196,18 +196,18 @@ exports.clgStaffCreate = (request, response) => {
               if (err) {
                 return response.json({ "status": err });
               } else {
-                var collegeName=""
+                var collegeName = ""
                 //send email
                 db.query('SELECT collegeName FROM college WHERE id=?', [clgstaff.collegeId], (err, result) => {
                   if (err) {
                     console.log(err)
                   } else {
-                  collegeName = result[0].collegeName
-                  const collegeStaffName = clgstaff.collegeStaffName
-                  const collegeStaffEmail = clgstaff.email
-                  const collegeStaffEmailContent = mailContents.collegeStaffHtmlContent(collegeStaffName,collegeName)
-                  const collegeStaffTextContent=mailContents.collegeStaffTextContent(collegeStaffName,collegeName)
-                  mail.sendEmail(collegeStaffEmail, 'Registration Successful!', collegeStaffEmailContent,collegeStaffTextContent);
+                    collegeName = result[0].collegeName
+                    const collegeStaffName = clgstaff.collegeStaffName
+                    const collegeStaffEmail = clgstaff.email
+                    const collegeStaffEmailContent = mailContents.collegeStaffHtmlContent(collegeStaffName, collegeName)
+                    const collegeStaffTextContent = mailContents.collegeStaffTextContent(collegeStaffName, collegeName)
+                    mail.sendEmail(collegeStaffEmail, 'Registration Successful!', collegeStaffEmailContent, collegeStaffTextContent);
                   }
                 })
                 return response.json({ "status": "success", "data": data });
@@ -510,7 +510,7 @@ exports.searchStudentByCollegeId = (req, res) => {
 
 
 exports.collegeStaffChangePassword = (request, response) => {
-  const { email, oldPassword, newPassword} = request.body;
+  const { email, oldPassword, newPassword } = request.body;
   const token = request.headers.token
   // Check if email is provided
   if (!email) {
@@ -519,9 +519,13 @@ exports.collegeStaffChangePassword = (request, response) => {
 
   // Verify the JWT token
   jwt.verify(token, "lmsappclgstaff", (err, decoded) => {
-    if (err || !decoded) {
-      response.json({ "status": "Unauthorized User!!" });
+    if (err) {
+      response.json({ "status": err });
       return;
+    }
+
+    if (!decoded) {
+      return response.json({ "status": "Unauthorized User!!" })
     }
 
     // Validate old and new passwords
@@ -558,8 +562,8 @@ exports.collegeStaffViewStudent = (request, response) => {
   const collegeStaffViewStudent = request.headers.token;
   jwt.verify(collegeStaffViewStudent, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
-      const collegeId = request.body.collegeId;
-      CollegeStaff.viewStudent(collegeId, (err, data) => {
+      const batchId = request.body.batchId;
+      CollegeStaff.viewStudent(batchId, (err, data) => {
         if (err) {
           response.json({ "status": err });
         }
@@ -570,7 +574,7 @@ exports.collegeStaffViewStudent = (request, response) => {
         }
       });
     } else {
-      response.json({ "status": "Unauthorized User!!" });
+      return response.json({ "status": "Unauthorized User!!" });
     }
   });
 };
@@ -580,8 +584,8 @@ exports.clgStaffViewTask = (request, response) => {
   const clgStaffViewTaskToken = request.headers.token
   jwt.verify(clgStaffViewTaskToken, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
-      const collegeId = request.body.collegeId
-      CollegeStaff.viewTask(collegeId, (err, data) => {
+      const sessionId = request.body.sessionId
+      CollegeStaff.viewTask(sessionId, (err, data) => {
         if (err) {
           response.json({ "status": err })
         }
@@ -600,7 +604,7 @@ exports.clgStaffViewTask = (request, response) => {
 
 
 exports.studentVerificationByCollegeStaff = (req, res) => {
-  const { collegeId, studentId} = req.body;
+  const { collegeId, studentId } = req.body;
   const token = req.headers.token
 
   if (!collegeId) {
@@ -617,7 +621,7 @@ exports.studentVerificationByCollegeStaff = (req, res) => {
 
   jwt.verify(token, "lmsappclgstaff", (jwtErr, decoded) => {
     if (jwtErr) {
-      return res.json({ "status": "JWT verification failed" });
+      return res.json({ "status": "Unauthorized User!!!" });
     }
 
     CollegeStaff.verifyStudent(collegeId, studentId, (err, result) => {
@@ -731,23 +735,46 @@ exports.viewCollegeStaffOfStudent = (request, response) => {
 exports.viewOneClgStaff = (request, response) => {
   const clgStaffToken = request.headers.token;
   const key = request.headers.key; //give respective keys of admin and adminstaff
-  const clgStaffId = request.body.id; 
+  const clgStaffId = request.body.id;
   console.log(clgStaffId)
 
   jwt.verify(clgStaffToken, key, (err, decoded) => {
-      if (decoded) {
-        CollegeStaff.viewOneClgStaff(clgStaffId, (err, data) => {
-              if (err) {
-                  return response.json({ "status": err });
-              }
-              if (!data) {
-                  return response.json({ "status": "No College Staffs are currently active" });
-              } else {
-                  return response.json({ "status": "success", "ClgStaffs": data });
-              }
-          });
-      } else {
-          return response.json({ "status": "Unauthorized access!!" });
-      }
+    if (decoded) {
+      CollegeStaff.viewOneClgStaff(clgStaffId, (err, data) => {
+        if (err) {
+          return response.json({ "status": err });
+        }
+        if (!data) {
+          return response.json({ "status": "No College Staffs are currently active" });
+        } else {
+          return response.json({ "status": "success", "ClgStaffs": data });
+        }
+      });
+    } else {
+      return response.json({ "status": "Unauthorized access!!" });
+    }
   });
 };
+
+exports.viewSessionsByCollegeStaff = (request, response) => {
+  const clgStaffToken = request.headers.token;
+  const batchId = request.body.batchId;
+
+  jwt.verify(clgStaffToken, "lmsappclgstaff", (err, decoded) => {
+    if (decoded) {
+      CollegeStaff.viewSession(batchId, (err, data) => {
+        if (err) {
+          return response.json({ "status": err });
+        }
+        if (!data) {
+          return response.json({ "status": "No Sessions Found!!" });
+        } else {
+          return response.json({ "status": "success", "data": data });
+        }
+      })
+    } else {
+      return response.json({ "status": "Unauthorized access!!" });
+    }
+  })
+
+}

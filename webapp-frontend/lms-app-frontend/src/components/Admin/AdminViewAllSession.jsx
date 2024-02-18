@@ -30,9 +30,11 @@ const AdminViewAllSession = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [sessionsPerPage] = useState(10); // Number of sessions per page
     const navigate = useNavigate();
+    const [updateField, setUpdateField] = useState([]);
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession";
+    const deleteApiLink = global.config.urls.api.server + "/api/lms/deleteSessions";
 
     const getData = () => {
         let axiosConfig = {
@@ -69,6 +71,31 @@ const AdminViewAllSession = () => {
                 }
             }
         );
+    };
+
+    const deleteSession = (sessionId) => {
+        let axiosConfig = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        };
+
+        axios.post(deleteApiLink, { id: sessionId }, axiosConfig)
+            .then(response => {
+                if (response.data.status === "success") {
+                    alert("Session Deleted!!")
+                    setUpdateField(updateField.filter(session => session.id !== sessionId));
+                    window.location.reload()
+                } else {
+                    console.error("Error deleting session:", response.data.status);
+                }
+            })
+            .catch(error => {
+                console.error("Error during API call:", error);
+            });
     };
 
     const isSessionToday = (date) => {
@@ -173,6 +200,13 @@ const AdminViewAllSession = () => {
                                     {value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
                                             Update Session
+                                        </button>
+                                    )}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.cancelStatus === "ACTIVE" && (
+                                        <button onClick={() => deleteSession(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
+                                            Delete Session
                                         </button>
                                     )}
                                 </td>

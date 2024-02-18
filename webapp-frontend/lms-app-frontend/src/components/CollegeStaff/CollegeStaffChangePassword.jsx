@@ -20,8 +20,6 @@ const CollegeStaffChangePassword = () => {
     }
 
     const readNewValue = () =>{
-        console.log(updateField)
-
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -38,11 +36,7 @@ const CollegeStaffChangePassword = () => {
                     if (response.data.status === "success") {
                         alert("Password Changed Successfully");
                         navigate("/clgStafflogin");
-                        sessionStorage.removeItem("clgstaffkey");
-                        sessionStorage.removeItem("clgStaffId");
-                        sessionStorage.removeItem("clgStaffEmail");
-                        sessionStorage.removeItem("clgstaffLogintoken");
-                        sessionStorage.removeItem("clgStaffCollegeId");
+                        sessionStorage.clear()
                     } else {
                         if (response.data.status === "Validation failed" && response.data.data.oldPassword) {
                             alert(response.data.data.oldPassword);
@@ -50,7 +44,12 @@ const CollegeStaffChangePassword = () => {
                             if (response.data.status === "Validation failed" && response.data.data.newPassword) {
                                 alert(response.data.data.newPassword);
                             } else {
-                                alert(response.data.status)
+                                if (response.data.status === "Unauthorized User!!") {
+                                    sessionStorage.clear()
+                                    navigate("/clgStafflogin")
+                                } else {
+                                    alert(response.data.status)
+                                }
                             }
                         }
                     }
