@@ -145,12 +145,12 @@ const AdminViewAllSession = () => {
 
     return (
         <div>
-            <Navbar/>
+            <Navbar />
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
                 <strong>View All Sessions</strong>
-                
+
                 <div></div>
             </div>
             <br /><br />
@@ -194,15 +194,17 @@ const AdminViewAllSession = () => {
                                 <td className="px-6 py-4">{value.cancelStatus}</td>
                                 <td className="px-6 py-4">
                                     {isSessionToday(value.date) && value.cancelStatus === "ACTIVE" && (
-                                        <button onClick={() => handleShowQRCode(value.attendenceCode)} className="btn btn-primary">
+                                        <button onClick={() => handleShowQRCode(value.attendenceCode)} className="btn btn-primary" style={{ whiteSpace: 'nowrap' }}>
                                             Show QR
                                         </button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
-                                        View Tasks
-                                    </button>
+                                    {value.cancelStatus === "ACTIVE" && (
+                                        <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                            View Tasks
+                                        </button>
+                                    )}
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.cancelStatus === "ACTIVE" && (
@@ -228,38 +230,41 @@ const AdminViewAllSession = () => {
                             </tr>
                         )) : (
                             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td colSpan="15" className="px-6 py-4" style={{textAlign: "center"}}>
-                                   No Sessions Found !!!
+                                <td colSpan="15" className="px-6 py-4" style={{ textAlign: "center" }}>
+                                    No Sessions Found !!!
                                 </td>
                             </tr>
                         )}
                     </tbody>
                 </table>
-                {/* Pagination */}
-                {currentSessions.length > 0 && (
-                    <div className="flex justify-center mt-8">
-                        <nav>
-                            <ul className="flex list-style-none">
-                                {currentPage > 1 && (
-                                    <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                        Previous
-                                    </li>
-                                )}
-                                {Array.from({ length: Math.ceil(sessionData.length / sessionsPerPage) }, (_, i) => (
-                                    <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                                        {i + 1}
-                                    </li>
-                                ))}
-                                {currentPage < Math.ceil(sessionData.length / sessionsPerPage) && (
-                                    <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                        Next
-                                    </li>
-                                )}
-                            </ul>
-                        </nav>
-                    </div>
-                )}
             </div>
+
+            {/* Pagination */}
+            {currentSessions.length > 0 && (
+                <div className="flex justify-center mt-8">
+                    <nav>
+                        <ul className="flex list-style-none">
+                            {currentPage > 1 && (
+                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Previous
+                                </li>
+                            )}
+                            {Array.from({ length: Math.ceil(sessionData.length / sessionsPerPage) }, (_, i) => (
+                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                    {i + 1}
+                                </li>
+                            ))}
+                            {currentPage < Math.ceil(sessionData.length / sessionsPerPage) && (
+                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Next
+                                </li>
+                            )}
+                        </ul>
+                    </nav>
+                </div>
+            )}
+
+
             {/* QR Code Modal */}
             {showQRModal && qrCodeAttendance && (
                 <QRCodeModal qrCodeAttendance={qrCodeAttendance} onClose={handleCloseQRModal} />

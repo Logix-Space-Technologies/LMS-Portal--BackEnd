@@ -49,7 +49,7 @@ const AdminViewAllStud = () => {
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
                 <strong>View All Students</strong>
-                
+
                 <div></div>
             </div>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -136,37 +136,37 @@ const AdminViewAllStud = () => {
                             }
                         ) : (
                             <tr>
-                                <td colSpan="11" className="px-6 py-4" style={{textAlign: "center"}}>
+                                <td colSpan="11" className="px-6 py-4" style={{ textAlign: "center" }}>
                                     No Students Found !!!
                                 </td>
                             </tr>
                         )}
                     </tbody>
                 </table>
-                {currentStudents.length > 0 && (
-                    <div className="flex justify-center mt-8">
-                        <nav>
-                            <ul className="flex list-style-none">
-                                {currentPage > 1 && (
-                                    <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                        Previous
-                                    </li>
-                                )}
-                                {Array.from({ length: Math.ceil(studData.length / studentsPerPage) }, (_, i) => (
-                                    <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                                        {i + 1}
-                                    </li>
-                                ))}
-                                {currentPage < Math.ceil(studData.length / studentsPerPage) && (
-                                    <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                        Next
-                                    </li>
-                                )}
-                            </ul>
-                        </nav>
-                    </div>
-                )}
             </div>
+            {currentStudents.length > 0 && (
+                <div className="flex justify-center mt-8">
+                    <nav>
+                        <ul className="flex list-style-none">
+                            {currentPage > 1 && (
+                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Previous
+                                </li>
+                            )}
+                            {Array.from({ length: Math.ceil(studData.length / studentsPerPage) }, (_, i) => (
+                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                    {i + 1}
+                                </li>
+                            ))}
+                            {currentPage < Math.ceil(studData.length / studentsPerPage) && (
+                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Next
+                                </li>
+                            )}
+                        </ul>
+                    </nav>
+                </div>
+            )}
         </div>
     );
 };

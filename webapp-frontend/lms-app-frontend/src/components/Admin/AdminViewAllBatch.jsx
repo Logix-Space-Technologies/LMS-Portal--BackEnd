@@ -123,13 +123,13 @@ const AdminViewAllBatch = () => {
                                 <td className="px-6 py-4">{value.batchAmount}</td>
                                 <td className="px-6 py-4">{new Date(value.addedDate).toLocaleDateString()}</td>
                                 <td className="px-6 py-4">
-                                    <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="btn bg-blue-500 text-white">View Sessions</Link>
+                                    <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Sessions</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/adminviewallstudents" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="btn bg-blue-500 text-white">View Students</Link>
+                                    <Link to="/adminviewallstudents" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Students</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id)} className="btn bg-blue-500 text-white">View Curriculum</Link>
+                                    <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Curriculum</Link>
                                 </td>
                                 <td className="px-6 py-4">
                                     <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success">Update</button>
@@ -140,29 +140,29 @@ const AdminViewAllBatch = () => {
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan="13" className="px-6 py-4" style={{textAlign: "center"}}>
+                                <td colSpan="13" className="px-6 py-4" style={{ textAlign: "center" }}>
                                     No Batches Found !!!
                                 </td>
                             </tr>
                         )}
                     </tbody>
                 </table>
-                {/* Pagination */}
-                <div className="flex justify-center mt-8">
-                    <nav>
-                        <ul className="flex list-style-none">
-                            {currentPage > 1 && (
-                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Previous</li>
-                            )}
-                            {Array.from({ length: Math.ceil(batchData.length / batchesPerPage) }, (_, i) => (
-                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>{i + 1}</li>
-                            ))}
-                            {currentPage < Math.ceil(batchData.length / batchesPerPage) && (
-                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Next</li>
-                            )}
-                        </ul>
-                    </nav>
-                </div>
+            </div>
+            {/* Pagination */}
+            <div className="flex justify-center mt-8">
+                <nav>
+                    <ul className="flex list-style-none">
+                        {currentPage > 1 && (
+                            <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Previous</li>
+                        )}
+                        {Array.from({ length: Math.ceil(batchData.length / batchesPerPage) }, (_, i) => (
+                            <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>{i + 1}</li>
+                        ))}
+                        {currentPage < Math.ceil(batchData.length / batchesPerPage) && (
+                            <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Next</li>
+                        )}
+                    </ul>
+                </nav>
             </div>
         </div>
     );

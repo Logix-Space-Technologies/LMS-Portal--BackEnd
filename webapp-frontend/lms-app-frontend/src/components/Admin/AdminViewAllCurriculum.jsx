@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import Navbar from './Navbar'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const AdminViewAllCurriculum = () => {
     const [curriculumData, setCurriculumData] = useState([])
@@ -88,9 +88,6 @@ const AdminViewAllCurriculum = () => {
                                 Id
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Batch Id
-                            </th>
-                            <th scope="col" className="px-6 py-3">
                                 Curriculum Title
                             </th>
                             <th scope="col" className="px-6 py-3">
@@ -128,9 +125,6 @@ const AdminViewAllCurriculum = () => {
                                             {value.id}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {value.batchId}
-                                        </td>
-                                        <td className="px-6 py-4">
                                             {value.curriculumTitle}
                                         </td>
                                         <td className="px-6 py-4">
@@ -146,7 +140,7 @@ const AdminViewAllCurriculum = () => {
                                             {value.updatedBy}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <a target="_blank" href={value.curriculumFileLink} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Curriculum</a>
+                                            <Link target="_blank" to={value.curriculumFileLink} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Curriculum</Link>
                                         </td>
                                         <td className="p-4 whitespace-nowrap">
                                             <button onClick={() => handleClick(value.id)} className="btn btn-danger">Delete</button>
