@@ -23,18 +23,22 @@ const CollegeStaffHeader = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setColgStaffData(response.data.data);
-                console.log(response.data.data);
+                if (response.data.data) {
+                    setColgStaffData(response.data.data);
+                } else {
+                    if (response.data.status === "Unauthorized Access !!!") {
+                        logOut()
+                        navigate("/clgStafflogin")
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }
 
     const logOut = () => {
-        sessionStorage.removeItem("clgstaffkey");
-        sessionStorage.removeItem("clgStaffId");
-        sessionStorage.removeItem("clgStaffEmail");
-        sessionStorage.removeItem("clgstaffLogintoken");
-        sessionStorage.removeItem("clgStaffCollegeId");
+        sessionStorage.clear()
     }
 
     useEffect(() => { getData() }, [])

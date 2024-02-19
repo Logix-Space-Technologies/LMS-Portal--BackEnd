@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar';
 import axios from 'axios';
 import '../../config/config'
 import { Link } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminAddTrainer = () => {
 
@@ -17,6 +18,8 @@ const AdminAddTrainer = () => {
     const [file, setFile] = useState(null)
 
     const [fileType, setFileType] = useState("");
+
+    const [key, setKey] = useState('');
 
     const fileUploadHandler = (event) => {
         setErrors({});
@@ -42,6 +45,13 @@ const AdminAddTrainer = () => {
     };
 
     const readValue = (e) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         e.preventDefault();
         const validationErrors = validateForm(inputField);
         console.log(validationErrors)
@@ -50,8 +60,8 @@ const AdminAddTrainer = () => {
                 headers: {
                     'content-type': 'multipart/form-data',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("admtoken"),
-                    "key": sessionStorage.getItem("admkey")
+                    "token": token,
+                    "key": currentKey
                 }
             }
             console.log(axiosConfig3)
@@ -158,9 +168,11 @@ const AdminAddTrainer = () => {
         return errors;
     }
 
+    useEffect(() => { setKey(sessionStorage.getItem("admkey") || '') }, []);
+
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">
@@ -179,7 +191,7 @@ const AdminAddTrainer = () => {
                                             </Link>
                                             <br />
                                             <br />
-                                            <h3>Admin Add Trainer</h3>
+                                            <h3>Add Trainer</h3>
                                         </div>
                                     </div>
                                 </div>

@@ -62,12 +62,7 @@ const RefundRequestForm = () => {
                             alert("Failed to create refund request.");
                         } else if (response.data.status === "Unauthorized User!!") {
                             navigate("/studentLogin")
-                            sessionStorage.removeItem("studentkey");
-                            sessionStorage.removeItem("studentId");
-                            sessionStorage.removeItem("studemail");
-                            sessionStorage.removeItem("studBatchId");
-                            sessionStorage.removeItem("studLoginToken");
-                            sessionStorage.removeItem("subtaskId");
+                            sessionStorage.clear()
                         }
                         setInputField((prevInputField) => ({
                             ...prevInputField,

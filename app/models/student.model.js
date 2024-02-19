@@ -283,8 +283,9 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Student found: ", res);
-                result(null, res);
+                const formattedViewStudent = res.map(student => ({ ...student, addedDate: student.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                console.log("Student found: ", formattedViewStudent);
+                result(null, formattedViewStudent);
                 return;
             }
         }
@@ -521,7 +522,7 @@ Student.updateStudentProfile = (student, result) => {
 }
 
 Student.viewUnverifiedStudents = (collegeId, result) => {
-    db.query("SELECT * FROM student WHERE deleteStatus = 0 AND isVerified = 0 AND isActive=1 AND emailVerified = 1 AND collegeId = ?",
+    db.query("SELECT b.batchName, s.studProfilePic, s.studName, s.studDept, s.course, s.admNo, s.rollNo, s.studEmail, s.studPhNo, s.aadharNo, s.membership_no, s.addedDate, s.validity FROM student s JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus = 0 AND s.isVerified = 0 AND s.isActive=1 AND s.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive =1 AND s.collegeId = ? ORDER BY b.batchName, s.addedDate DESC",
         [collegeId],
 
         (err, res) => {
@@ -533,15 +534,16 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
                 console.log("No unverified students found.");
                 return result("No unverified students found.", null);
             }
-
-            console.log("Unverified students: ", res);
-            result(null, res);
+            const formattedViewUnverifiedStudents = res.map(students => ({ ...students, validity: students.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: students.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}));
+            console.log("Unverified students: ", formattedViewUnverifiedStudents);
+            result(null, formattedViewUnverifiedStudents);
         });
 }
 
 // View All Students By Admin
-Student.viewAllStudentByAdmin = (result) => {
-    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity",
+Student.viewAllStudentByAdmin = (batchId, result) => {
+    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND s.batchId = ? ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity",
+    [batchId],
         (err, response) => {
             if (err) {
                 console.log("Error : ", err)

@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import '../../config/config'
 import { Link } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminAddBatch = () => {
     const [inputField, setInputField] = useState({
@@ -17,16 +18,25 @@ const AdminAddBatch = () => {
     const [errors, setErrors] = useState({});
     const [outputField, setOutputField] = useState([]);
 
+    const [key, setKey] = useState('');
+
     const apiUrl = global.config.urls.api.server + '/api/lms/viewallcolleges';
     const apiUrl2 = global.config.urls.api.server + '/api/lms/addBatches';
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'multipart/form-data',
                 'Access-Control-Allow-Origin': '*',
-                token: sessionStorage.getItem('admtoken'),
-                key: sessionStorage.getItem('admkey')
+                token: token,
+                key: currentKey
             }
         };
 
@@ -42,6 +52,13 @@ const AdminAddBatch = () => {
     };
 
     const readValue = (e) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         e.preventDefault();
         console.log('Handle submit function called');
         const validationErrors = validateForm(inputField);
@@ -51,8 +68,8 @@ const AdminAddBatch = () => {
                 headers: {
                     'content-type': 'application/json;charset=UTF-8',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("admtoken"),
-                    "key": sessionStorage.getItem("admkey")
+                    "token": token,
+                    "key": currentKey
                 }
             }
             console.log(axiosConfig2)
@@ -101,15 +118,15 @@ const AdminAddBatch = () => {
                                 }
                             }
                         }
-                    } 
+                    }
                 }
             }
-        )
+            )
+        }
+        else {
+            setErrors(validationErrors);
+        }
     }
-    else {
-        setErrors(validationErrors);
-    }
-}
 
     const validateForm = (data) => {
         let errors = {};
@@ -131,7 +148,7 @@ const AdminAddBatch = () => {
         }
         if (!data.regEndDate.trim()) {
             errors.regEndDate = 'Date is required';
-        }else if (new Date(data.regEndDate) <= new Date(data.regStartDate)) {
+        } else if (new Date(data.regEndDate) <= new Date(data.regStartDate)) {
             errors.regEndDate = 'End date must be greater than start date';
         }
 
@@ -143,9 +160,14 @@ const AdminAddBatch = () => {
     }, []);
 
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">
@@ -164,7 +186,7 @@ const AdminAddBatch = () => {
                                             </Link>
                                             <br />
                                             <br />
-                                            <h3>Admin Add Batch</h3>
+                                            <h3>Add Batch</h3>
                                         </div>
                                     </div>
                                 </div>

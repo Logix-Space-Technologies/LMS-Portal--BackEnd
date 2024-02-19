@@ -208,8 +208,6 @@ router.post('/cancelSession', SessionsController.cancelSession);
 
 router.post('/curriculumview', curriculumController.currView)
 
-router.post('/viewallcurriculum', curriculumController.viewAllCurriculum)
-
 router.post('/deletecurriculum', curriculumController.curriculumDelete)
 
 router.post('/updatecurriculum', curriculumController.updateCurriculum)
@@ -256,11 +254,11 @@ router.post('/AdmViewAllMaterial', AdminStaffController.AdmViewAllMaterial)
 
 router.post('/AdmViewOneMaterial', AdminStaffController.viewOneMaterial)
 
-router.post('/viewOneclg',CollegeController.viewOneClgDetail)
+router.post('/viewOneclg', CollegeController.viewOneClgDetail)
 
 router.post('/AdmViewOneSession', SessionsController.viewOneSession)
 
-
+router.post('/ClgStaffViewSession', ClgStaffController.viewSessionsByCollegeStaff)
 
 
 module.exports = router

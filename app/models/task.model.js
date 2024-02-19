@@ -7,6 +7,7 @@ const { response } = require('express')
 const Tasks = function (tasks) {
     this.id = tasks.id
     this.batchId = tasks.batchId;
+    this.sessionId = tasks.sessionId;
     this.taskTitle = tasks.taskTitle;
     this.taskDesc = tasks.taskDesc;
     this.taskType = tasks.taskType;
@@ -162,8 +163,9 @@ Tasks.updateTask = (updatedTask, result) => {
 };
 
 
-Tasks.taskView = (result) => {
-    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND b.deleteStatus = 0 AND b.isActive = 1", (err, res) => {
+Tasks.taskView = (sessionId, result) => {
+    db.query("SELECT b.batchName, t.* FROM task t JOIN sessiondetails s ON t.sessionId = s.id LEFT JOIN batches b ON t.batchId = b.id AND s.batchId = b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND t.sessionId = ?",
+    [sessionId], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)
@@ -203,8 +205,9 @@ Tasks.collegeStaffSearchTasks = (searchKey, collegeId, result) => {
                 result(err, null)
                 return
             } else {
-                console.log("Tasks: ", res);
-                result(null, res)
+                const formattedViewTask = res.map(tasks => ({ ...tasks, addedDate: tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                console.log("Tasks: ", formattedViewTask);
+                result(null, formattedViewTask)
             }
         })
 }

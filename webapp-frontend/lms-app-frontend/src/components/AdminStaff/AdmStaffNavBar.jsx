@@ -21,7 +21,7 @@ const AdmStaffNavBar = () => {
                                 <Link className="nav-link active" aria-current="page" to="/addcollege">Add College</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link active" aria-current="page" to="/admstaffdashboard">Admin Staff Dashboard</Link>
+                                <Link className="nav-link active" aria-current="page" to="/admstaffdashboard">Dashboard</Link>
                             </li>
                             <li className="nav-item">
                                 <Link className="nav-link active" aria-current="page" to="/AdminStaffViewAllMaterial">View All Materials</Link>
@@ -31,6 +31,24 @@ const AdmStaffNavBar = () => {
                             </li>
                             <li>
                                 <Link className="nav-link active" aria-current="page" to="/adminStaffAddmaterials">Add Materials</Link>
+                            </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/adminAddcurriculum">Add Curriculum</Link>
+                            </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/addcollegestaff">Add College Staff</Link>
+                            </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/adminaddbatch">Add Batch</Link>
+                            </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/adminaddsession">Add Session</Link>
+                            </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/adminAddtask">Add Task</Link>
+                            </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/adminAddtrainer">Add Trainer</Link>
                             </li>
                             <li>
                                 <Link className="nav-link active" aria-current="page" to="/AdminViewRefundRequests">View Refunds</Link>

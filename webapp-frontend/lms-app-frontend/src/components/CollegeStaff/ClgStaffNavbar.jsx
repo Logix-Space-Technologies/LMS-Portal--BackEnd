@@ -4,11 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 const ClgStaffNavbar = () => {
 
     const logOut = () => {
-        sessionStorage.removeItem("clgstaffkey");
-        sessionStorage.removeItem("clgStaffId");
-        sessionStorage.removeItem("clgStaffEmail");
-        sessionStorage.removeItem("clgstaffLogintoken");
-        sessionStorage.removeItem("clgStaffCollegeId");
+        sessionStorage.clear()
     }
   return (
     <div>
@@ -36,16 +32,10 @@ const ClgStaffNavbar = () => {
                             <Link className="nav-link" to="/collegeStaffViewBatch">View All Batches</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/collegeStaffViewAllStudents">View All Students</Link>
+                            <Link className="nav-link" to="/collegeStaffDashboard">Dashboard</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/clgstaffviewtask">View All Tasks</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/clgstaffviewattendance">View Attendance List</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to="/clgStafflogin" onClick={logOut} className="dropdown-item">Log Out</Link> 
+                            <Link to="/clgStafflogin" onClick={logOut} className="dropdown-item" style={{textAlignLast:"end"}}>Log Out</Link> 
                         </li>
                     </ul>
                 </div>

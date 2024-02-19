@@ -335,7 +335,8 @@ exports.taskView = (request, response) => {
     key = request.headers.key
     jwt.verify(taskToken, key, (err, decoded) => {
         if (decoded) {
-            Tasks.taskView((err, data) => {
+            const sessionId = request.body.sessionId
+            Tasks.taskView(sessionId, (err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 }
@@ -399,7 +400,7 @@ exports.collegeStaffSearchTasks = (request, response) => {
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };

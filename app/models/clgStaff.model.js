@@ -216,8 +216,9 @@ CollegeStaff.viewBatch = (collegeId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Batch Details: ", res);
-                result(null, res);
+                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: batches.addedDate ? batches.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null }));
+                console.log("Batch Details: ", formattedBatches);
+                result(null, formattedBatches);
             }
         }
     );
@@ -258,10 +259,10 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
 
 //College Staff to view Student
 
-CollegeStaff.viewStudent = (collegeId, result) => {
+CollegeStaff.viewStudent = (batchId, result) => {
     db.query(
-        "SELECT DISTINCT c.collegeName, b.batchName, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilepic, s.aadharNo, s.membership_no FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON b.id =s.batchId WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND cs.collegeId = ? ORDER BY b.batchName",
-        [collegeId],
+        "SELECT DISTINCT c.collegeName, b.batchName, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.membership_no FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON b.id = s.batchId WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 AND b.id = ? ORDER BY b.batchName, s.membership_no DESC",
+        [batchId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -275,15 +276,16 @@ CollegeStaff.viewStudent = (collegeId, result) => {
     );
 };
 
-CollegeStaff.viewTask = (collegeId, result) => {
-    db.query("SELECT DISTINCT cs.collegeId, t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, CASE WHEN t.dueDate < CURRENT_DATE() THEN 'Past Due Date' ELSE t.dueDate END AS dueDate, t.addedDate FROM task t JOIN batches b ON t.batchId = b.id JOIN college_staff cs ON b.collegeId = cs.collegeId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.collegeId = ?;", [collegeId], (err, res) => {
+CollegeStaff.viewTask = (sessionId, result) => {
+    db.query("SELECT DISTINCT s.sessionName, t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, CASE WHEN t.dueDate < CURRENT_DATE() THEN 'Past Due Date' ELSE t.dueDate END AS dueDate, t.addedDate FROM task t LEFT JOIN sessiondetails s ON s.id = t.sessionId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.id = ?", [sessionId], (err, res) => {
         if (err) {
             console.log("error: ", err)
             result(err, null)
             return
         } else {
-            console.log("Task details", res)
-            result(null, res)
+            const formattedViewTasks = res.map(tasks => ({ ...tasks, dueDate: 'Past Due Date' ? 'Past Due Date' : tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+            console.log("Task details", formattedViewTasks)
+            result(null, formattedViewTasks)
         }
     })
 }
@@ -345,8 +347,9 @@ CollegeStaff.collegeStaffSearchBatch = (searchTerm, collegeId, result) => {
                 result(err, null)
                 return
             } else {
-                console.log("Batches : ", res)
-                result(null, res)
+                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: batches.addedDate ? batches.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null }));
+                console.log("Batches : ", formattedBatches)
+                result(null, formattedBatches)
             }
         })
 }
@@ -408,6 +411,21 @@ CollegeStaff.viewOneClgStaff = (id, result) => {
             }
             console.log("ClgStaffs: ", res);
             result(null, res);
+        })
+}
+
+CollegeStaff.viewSession = (batchId, result) => {
+    db.query("SELECT DISTINCT b. id AS batchId, s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink FROM sessiondetails s JOIN batches b ON b.id = s.batchId LEFT JOIN college_staff cs ON cs.collegeId = b.collegeId   WHERE s.deleteStatus = 0 AND s.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;", batchId,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                console.log("Sessions: ", formattedViewSession)
+                result(null, formattedViewSession)
+            }
         })
 }
 

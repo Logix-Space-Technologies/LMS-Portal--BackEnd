@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Refund = require("../models/refund.model");
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
+const Validator = require("../config/data.validate");
 
 exports.createRefundRequest = (request, response) => {
     refundtoken = request.headers.token;
@@ -15,7 +16,7 @@ exports.createRefundRequest = (request, response) => {
                 if (err) {
                     console.log(err);
                     if (err === "A refund request already exists for the student.") {
-                        response.json({ "status":"A refund request already exists for the student." });
+                        response.json({ "status": "A refund request already exists for the student." });
                     } else if (err === "No payment history found for the student.") {
                         response.json({ "status": "No payment history found for the student." });
                     } else {
@@ -73,11 +74,28 @@ exports.getRefundStatus = (request, response) => {
 
 
 exports.approveRefundRequest = (request, response) => {
-    const {refundAmnt, transactionNo, adminRemarks, admStaffId, refundId} = request.body;
+    const { approvedAmnt, transactionNo, adminRemarks, admStaffId, refundId } = request.body;
     const refundtoken = request.headers.token;
     jwt.verify(refundtoken, "lmsappadmstaff", (err, decoded) => {
         if (decoded) {
-            Refund.approveRefund(refundAmnt, admStaffId, transactionNo, adminRemarks, refundId, (err, data) => {
+            const validationErrors = {};
+            if (Validator.isEmpty(adminRemarks).isValid) {
+                validationErrors.adminRemarks = Validator.isEmpty(adminRemarks).message;
+            }
+            if (Validator.isEmpty(transactionNo).isValid) {
+                validationErrors.transactionNo = Validator.isEmpty(transactionNo).message;
+            }
+            if (Validator.isEmpty(approvedAmnt).isValid) {
+                validationErrors.approvedAmnt = Validator.isEmpty(approvedAmnt).message;
+            }
+            if (!Validator.isValidAmount(approvedAmnt).isValid) {
+                validationErrors.approvedAmnt = Validator.isValidAmount(approvedAmnt).message;
+            }
+            // If validation fails
+            if (Object.keys(validationErrors).length > 0) {
+                return response.json({ "status": "Validation failed", "data": validationErrors });
+            }
+            Refund.approveRefund(approvedAmnt, admStaffId, transactionNo, adminRemarks, refundId, (err, data) => {
                 if (err) {
                     console.log(err);
                     response.json({ "status": err });
@@ -94,17 +112,25 @@ exports.approveRefundRequest = (request, response) => {
 
 //Admin Staff Reject Refund
 exports.rejectRefundRequest = (request, response) => {
-    const {admStaffId, adminRemarks, refundId} = request.body
+    const { admStaffId, adminRemarks, refundId } = request.body
     const rejectRefundToken = request.headers.token
     jwt.verify(rejectRefundToken, "lmsappadmstaff", (err, decoded) => {
         if (decoded) {
+            const validationErrors = {};
+            if (Validator.isEmpty(adminRemarks).isValid) {
+                validationErrors.adminRemarks = Validator.isEmpty(adminRemarks).message;
+            }
+            // If validation fails
+            if (Object.keys(validationErrors).length > 0) {
+                return response.json({ "status": "Validation failed", "data": validationErrors });
+            }
             Refund.rejectRefund(admStaffId, adminRemarks, refundId, (err, data) => {
                 if (err) {
                     console.log(err);
                     response.json({ "status": err })
                 } else {
                     console.log("Refund Request Cancelled.");
-                    response.json({ "status": "Refund Request Cancelled."});
+                    response.json({ "status": "Refund Request Cancelled." });
                 }
             })
         } else {
@@ -134,8 +160,8 @@ exports.getSuccessfulRefunds = (request, response) => {
 };
 
 //cancel refund request
-exports.cancelRefundRequest= (request, response) => {
-    const {refundId} = request.body;
+exports.cancelRefundRequest = (request, response) => {
+    const { refundId } = request.body;
     refundtoken = request.headers.token;
     jwt.verify(refundtoken, "lmsappstud", (err, decoded) => {
         if (decoded) {
@@ -145,7 +171,7 @@ exports.cancelRefundRequest= (request, response) => {
                     response.json({ "status": err });
                 } else {
                     console.log("Refund request successfully cancelled");
-                    response.json({ "status": "success"});
+                    response.json({ "status": "success" });
                 }
             });
         } else {

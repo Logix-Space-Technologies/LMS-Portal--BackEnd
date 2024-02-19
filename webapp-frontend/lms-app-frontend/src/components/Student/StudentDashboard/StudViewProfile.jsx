@@ -10,12 +10,7 @@ const StudViewProfile = () => {
     const navigate = useNavigate()
 
     const logOut = () => {
-        sessionStorage.removeItem("studentkey");
-        sessionStorage.removeItem("studentId");
-        sessionStorage.removeItem("studemail");
-        sessionStorage.removeItem("studBatchId");
-        sessionStorage.removeItem("studLoginToken");
-        sessionStorage.removeItem("subtaskId");
+        sessionStorage.clear()
     }
 
     const navRefund = () => {

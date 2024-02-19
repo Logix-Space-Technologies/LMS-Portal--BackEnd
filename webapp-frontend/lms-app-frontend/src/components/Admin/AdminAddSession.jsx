@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import '../../config/config'
 import { Link } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminAddSession = () => {
 
@@ -26,18 +27,27 @@ const AdminAddSession = () => {
 
     const [trainers, setTrainers] = useState([])
 
+    const [key, setKey] = useState('');
+
     const apiUrl = global.config.urls.api.server + "/api/lms/createsession";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/viewallcolleges";
     const batchUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
     const trainerUrl = global.config.urls.api.server + "/api/lms/viewAllTrainer";
 
     const getTrainer = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'multipart/form-data',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem('admtoken'),
-                "key": sessionStorage.getItem('admkey')
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(trainerUrl, {}, axiosConfig).then(
@@ -49,12 +59,19 @@ const AdminAddSession = () => {
     }
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'multipart/form-data',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem('admtoken'),
-                "key": sessionStorage.getItem('admkey')
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrl2, {}, axiosConfig).then(
@@ -66,12 +83,19 @@ const AdminAddSession = () => {
     }
 
     const getBatches = (collegeId) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem('admtoken'),
-                "key": sessionStorage.getItem('admkey')
+                "token": token,
+                "key": currentKey
             }
         };
         console.log(collegeId)
@@ -94,6 +118,13 @@ const AdminAddSession = () => {
     };
 
     const readValue = (e) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         e.preventDefault();
         console.log('Handle submit function called');
         const validationErrors = validateForm(inputField);
@@ -103,8 +134,8 @@ const AdminAddSession = () => {
                 headers: {
                     'content-type': 'application/json;charset=UTF-8',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("admtoken"),
-                    "key": sessionStorage.getItem("admkey")
+                    "token": token,
+                    "key": currentKey
                 }
             }
             console.log(axiosConfig3)
@@ -218,9 +249,11 @@ const AdminAddSession = () => {
     }, [])
 
 
+    useEffect(() => { setKey(sessionStorage.getItem("admkey") || '') }, []);
+
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">
@@ -239,7 +272,7 @@ const AdminAddSession = () => {
                                             </Link>
                                             <br />
                                             <br />
-                                            <h3>Admin Add Session</h3>
+                                            <h3>Add Session</h3>
                                         </div>
                                     </div>
                                 </div>

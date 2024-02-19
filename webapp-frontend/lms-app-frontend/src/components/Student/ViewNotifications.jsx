@@ -34,12 +34,7 @@ const NotificationView = () => {
         } else {
           if (response.data.status === "Unauthorized User") {
             navigate("/studentLogin")
-            sessionStorage.removeItem("studentkey");
-            sessionStorage.removeItem("studentId");
-            sessionStorage.removeItem("studemail");
-            sessionStorage.removeItem("studBatchId");
-            sessionStorage.removeItem("studLoginToken");
-            sessionStorage.removeItem("subtaskId");
+            sessionStorage.clear()
           } else {
             if (!response.data.data) {
               console.log(response.data.status)

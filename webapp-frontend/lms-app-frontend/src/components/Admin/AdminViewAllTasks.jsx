@@ -17,6 +17,7 @@ const AdminViewAllTasks = () => {
 
 
     const getData = () => {
+        let data = { "sessionId": sessionStorage.getItem("viewtaskId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -25,7 +26,7 @@ const AdminViewAllTasks = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-        axios.post(apiUrl, {}, axiosConfig).then(
+        axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 setTaskData(response.data.data);
                 console.log(response.data.data);
@@ -68,13 +69,19 @@ const AdminViewAllTasks = () => {
         navigate("/AdminUpdateTask");
     };
 
-useEffect(() => { getData() }, []);
+    useEffect(() => { getData() }, []);
 
 
     return (
         <div>
             <Navbar /><br />
-            <strong>Admin View All Tasks</strong>
+            <div className="flex justify-between items-center mx-4 my-4">
+                <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+                <strong>View All Tasks</strong>
+
+                <div></div>
+            </div>
             <br /><br />
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -82,13 +89,13 @@ useEffect(() => { getData() }, []);
                         <tr>
                             <th scope="col" className="px-6 py-3">Batch Name</th>
                             <th scope="col" className="px-6 py-3">Id</th>
-                            <th scope="col" className="px-6 py-3">Batch Id</th>
                             <th scope="col" className="px-6 py-3">Task Title</th>
                             <th scope="col" className="px-6 py-3">Task Description</th>
                             <th scope="col" className="px-6 py-3">Task Type</th>
                             <th scope="col" className="px-6 py-3">Total Score</th>
                             <th scope="col" className="px-6 py-3">Due Date</th>
                             <th scope="col" className="px-6 py-3">Added Date</th>
+                            <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                         </tr>
@@ -100,7 +107,6 @@ useEffect(() => { getData() }, []);
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <td className="px-6 py-4">{value.batchName}</td>
                                         <td className="px-6 py-4">{value.id}</td>
-                                        <td className="px-6 py-4">{value.batchId}</td>
                                         <td className="px-6 py-4">{value.taskTitle}</td>
                                         <td className="px-6 py-4">{value.taskDesc}</td>
                                         <td className="px-6 py-4">{value.taskType}</td>
@@ -128,7 +134,10 @@ useEffect(() => { getData() }, []);
                         )}
                     </tbody>
                 </table>
-                {/* Pagination */}
+
+            </div>
+            {/* Pagination */}
+            {currentTasks.length > 0 && (
                 <div className="flex justify-center mt-8">
                     <nav>
                         <ul className="flex list-style-none">
@@ -150,7 +159,7 @@ useEffect(() => { getData() }, []);
                         </ul>
                     </nav>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

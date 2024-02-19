@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
 import ClgStaffNavbar from './ClgStaffNavbar'
+import { useNavigate } from 'react-router-dom'
 
 const CollegeStaffSearchStudent = () => {
     const [inputField, setInputField] = useState(
@@ -10,6 +11,8 @@ const CollegeStaffSearchStudent = () => {
             "searchQuery": ""
         }
     )
+
+    const navigate = useNavigate()
 
     const [updateField, setUpdateField] = useState(
         []
@@ -37,13 +40,25 @@ const CollegeStaffSearchStudent = () => {
 
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                console.log(response.data.data)
-                setInputField({
-                    "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
-                    "searchQuery": ""
-                })
+                if (response.data.data) {
+                    setUpdateField(response.data.data)
+                    setIsLoading(false)
+                    setInputField({
+                        "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+                        "searchQuery": ""
+                    })
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        sessionStorage.clear()
+                        navigate("/clgStafflogin")
+                    } else {
+                        if (!response.data.data) {
+                            // no data found
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
 
         )
@@ -52,7 +67,7 @@ const CollegeStaffSearchStudent = () => {
 
     return (
         <div>
-            <ClgStaffNavbar/>
+            <ClgStaffNavbar />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">

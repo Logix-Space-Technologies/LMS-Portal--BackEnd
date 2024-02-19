@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../config/config';
 import ClgStaffNavbar from './ClgStaffNavbar';
+import { useNavigate } from 'react-router-dom';
 
 const CollegeStaffViewBatch = () => {
   const [batches, setBatches] = useState([]);
@@ -12,6 +13,7 @@ const CollegeStaffViewBatch = () => {
   const apiUrl3 = global.config.urls.api.server + "/api/lms/generateAttendancePdf"
   const token = sessionStorage.getItem("clgstaffLogintoken");
   const collegeId = sessionStorage.getItem("clgStaffCollegeId");
+  const navigate = useNavigate()
 
 
   const fetchBatches = () => {
@@ -26,11 +28,19 @@ const CollegeStaffViewBatch = () => {
 
     axios.post(apiUrl, { "collegeId": collegeId }, axiosConfig)
       .then(response => {
-        if (response.data.status === "success") {
+        if (response.data.data) {
           setBatches(response.data.data);
-          console.log(response.data)
         } else {
-          console.log(response.data.status);
+          if (response.data.status === "Unauthorized User!!") {
+            sessionStorage.clear()
+            navigate("/clgStafflogin")
+          } else {
+            if (!response.data.data) {
+              //no data found
+            } else {
+              alert(response.data.status)
+            }
+          }
         }
       })
       .catch(error => {
@@ -60,7 +70,18 @@ const CollegeStaffViewBatch = () => {
         window.open(URL.createObjectURL(pdfBlob), '_blank');
         window.location.reload();
       } else {
-        alert(response.data.status);
+
+        if (response.data.status === "Unauthorized User!!") {
+          sessionStorage.clear()
+          navigate("/clgStafflogin")
+        } else {
+          if (!response.data) {
+            alert("No Data Found!!")
+          } else {
+            alert(response.data.status);
+          }
+        }
+
       }
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -88,12 +109,37 @@ const CollegeStaffViewBatch = () => {
         window.open(URL.createObjectURL(pdfBlob), '_blank');
         window.location.reload();
       } else {
-        alert(response.data.status);
+
+        if (response.data.status === "Unauthorized User!!") {
+          sessionStorage.clear()
+          navigate("/clgStafflogin")
+        } else {
+          if (!response.data) {
+            alert("No Data Found !!")
+          } else {
+            alert(response.data.status);
+          }
+        }
       }
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('Error generating PDF.');
     }
+  }
+
+  const batchClick = (id) => {
+
+    navigate("/clgstaffviewsession")
+    sessionStorage.setItem("clgstaffbatchId", id)
+    console.log(id)
+
+  }
+  const studentClick = (id) => {
+
+    navigate("/collegeStaffViewAllStudents")
+    sessionStorage.setItem("clgstaffviewbatchId", id)
+    console.log(id)
+
   }
 
   useEffect(() => { fetchBatches() }, []);
@@ -113,7 +159,7 @@ const CollegeStaffViewBatch = () => {
                     </div>
                     <div className="col-6 text-end">
                       <button className='btn btn-primary' onClick={pdfGenerate}>
-                        Download PDF
+                        Download Batch-Wise Student List PDF
                       </button>
                     </div>
                   </div>
@@ -133,8 +179,14 @@ const CollegeStaffViewBatch = () => {
                               <p className="card-text">Description: {batch.batchDesc}</p>
                               <p className="card-text">Amount: {batch.batchAmount}</p>
                               <p className="card-text">Added Date: {batch.addedDate}</p><br />
-                              <button className='btn btn-primary' onClick={() => { attendancePdfGenerate(batch.id) }}>
-                                Download Attendance List PDF
+                              <button className='btn btn-primary' onClick={() => { attendancePdfGenerate(batch.id) }} style={{ marginLeft: '40px' }}>
+                                Download Session-Wise Attendance List PDF
+                              </button>
+                              <button onClick={() => batchClick(batch.id)} className="btn btn-primary" style={{ marginLeft: '80px' }}>
+                                View Session
+                              </button>
+                              <button className="btn btn-primary" onClick={() => studentClick(batch.id)} style={{ marginLeft: '80px' }}>
+                                View All Students
                               </button>
                             </div>
                           </div>

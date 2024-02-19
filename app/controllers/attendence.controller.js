@@ -58,10 +58,10 @@ exports.markAttendance = (request, response) => {
 exports.collegeStaffViewAttendance = (request, response) => {
     const attendanceToken = request.headers.token;
     const key = request.headers.key;
-    const collegeId = request.body.collegeId;
+    const sessionId = request.body.sessionId;
     jwt.verify(attendanceToken, key, (err, decoded) => {
         if (decoded) {
-            Attendence.collegeStaffViewAttendance(collegeId, (err, data) => {
+            Attendence.collegeStaffViewAttendance(sessionId, (err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 }

@@ -481,7 +481,8 @@ exports.viewAllStudsByAdmin = (request, response) => {
     key = request.headers.key
     jwt.verify(viewAllStudentByAdminToken, key, (err, decoded) => {
         if (decoded) {
-            Student.viewAllStudentByAdmin((err, data) => {
+            const batchId = request.body.batchId
+            Student.viewAllStudentByAdmin(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err })
                 } else {
