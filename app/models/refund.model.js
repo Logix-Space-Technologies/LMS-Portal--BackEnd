@@ -109,7 +109,7 @@ Refund.createRefundRequest = (newRefund, result) => {
 
 Refund.getRefundRequests = (result) => {
     db.query(
-        "SELECT r.id AS refundId, s.studName, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, CASE WHEN r.refundApprovalStatus = 1 THEN 'Amount Refunded' ELSE 'Under Progress' END AS refundApprovalStatus, CASE WHEN r.AmountReceivedStatus = 1 THEN 'Amount Received by Student' ELSE 'Not Yet Received' END AS AmountReceivedStatus, r.approvedAmnt FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.cancelStatus = 0 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 ORDER BY r.requestedDate DESC;",
+        "SELECT r.id AS refundId, s.studName, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, CASE WHEN r.refundApprovalStatus = 1 THEN 'Amount Refunded' ELSE 'Under Progress' END AS refundApprovalStatus, CASE WHEN r.AmountReceivedStatus = 1 THEN 'Amount Received' ELSE 'Not Yet Received' END AS AmountReceivedStatus, r.approvedAmnt FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.cancelStatus = 0 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 ORDER BY r.requestedDate DESC;",
         (err, res) => {
             if (err) {
                 console.error("Error retrieving refund requests:", err);
@@ -178,7 +178,7 @@ Refund.viewRefundStatus = (studId, result) => {
 };
 
 //admin staff refund approval
-Refund.approveRefund = (refundAmnt, admStaffId, transactionNo, adminRemarks, refundId, result) => {
+Refund.approveRefund = (approvedAmnt, admStaffId, transactionNo, adminRemarks, refundId, result) => {
     // Check if the refund ID exists in the refund table
     db.query("SELECT * FROM refund WHERE id = ? AND cancelStatus = 0 AND refundApprovalStatus = 0 ", [refundId], (refundErr, refundRes) => {
         if (refundErr) {
@@ -196,7 +196,7 @@ Refund.approveRefund = (refundAmnt, admStaffId, transactionNo, adminRemarks, ref
         // Continue to approve refund if refund ID exists
         db.query(
             "UPDATE refund SET refundApprovalStatus = 1, approvedAmnt = ?, transactionNo = ?, adminRemarks = ?, refundStatus = 1, refundInitiatedDate=CURRENT_DATE(), admStaffId=? WHERE id = ?",
-            [refundAmnt, transactionNo, adminRemarks, admStaffId, refundId],
+            [approvedAmnt, transactionNo, adminRemarks, admStaffId, refundId],
             (err, res) => {
                 if (err) {
                     console.error("Error approving refund:", err);

@@ -19,7 +19,7 @@ const AdminViewRefundRequests = () => {
   });
   const [approveField, setApproveField] = useState({
     "admStaffId": "",
-    "refundAmnt": "",
+    "approvedAmnt": "",
     "transactionNo": "",
     "adminRemarks": "",
     "refundId": ""
@@ -78,8 +78,8 @@ const AdminViewRefundRequests = () => {
     if (!data.adminRemarks) {
       errors.adminRemarks = 'Remark is required';
     }
-    if (!data.refundAmnt) {
-      errors.refundAmnt = 'Amount is required';
+    if (!data.approvedAmnt) {
+      errors.approvedAmnt = 'Amount is required';
     }
     if (!data.transactionNo) {
       errors.transactionNo = 'Transaction No. is required';
@@ -125,7 +125,7 @@ const AdminViewRefundRequests = () => {
         (response) => {
           if (response.data.status === "Refund Request Cancelled.") {
             alert("Refund Request Rejected")
-            window.location.reload() // Refresh the data
+            window.location.reload()
             setInputField({
               adminRemarks: ""
             });
@@ -134,6 +134,8 @@ const AdminViewRefundRequests = () => {
           }
         }
       )
+    } else {
+      setErrors(validationErrors);
     }
   }
 
@@ -160,24 +162,38 @@ const AdminViewRefundRequests = () => {
         "admStaffId": sessionStorage.getItem("admstaffId"),
         "adminRemarks": approveField.adminRemarks,
         "transactionNo": approveField.transactionNo,
-        "refundAmnt": approveField.refundAmnt
+        "approvedAmnt": approveField.approvedAmnt
       }
       console.log(data3)
       axios.post(apiUrl3, data3, axiosConfig3).then(
         (response) => {
           if (response.data.status === "success") {
             alert("Refund Request Approved Successfully")
-            window.location.reload() // Refresh the data
+            window.location.reload()
             setApproveField({
               adminRemarks: "",
               refundAmnt: "",
               transactionNo: ""
             });
           } else {
-            alert(response.data.status);
+            if (response.data.status === "Validation failed" && response.data.data.adminRemarks) {
+              alert(response.data.data.adminRemarks)
+            } else {
+              if (response.data.status === "Validation failed" && response.data.data.transactionNo) {
+                alert(response.data.data.transactionNo)
+              } else {
+                if (response.data.status === "Validation failed" && response.data.data.approvedAmnt) {
+                  alert(response.data.data.approvedAmnt)
+                } else {
+                  alert(response.data.status)
+                }
+              }
+            }
           }
         }
       )
+    } else {
+      setErrors(validationErrors);
     }
   }
 
@@ -267,6 +283,7 @@ const AdminViewRefundRequests = () => {
 
                           </th>
                         )}
+
                       </tr>
                     </thead>
                     <tbody>
@@ -296,13 +313,13 @@ const AdminViewRefundRequests = () => {
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.AmountReceivedStatus}
                           </td>
-                          {key !== 'lmsapp' && (
+                          {key !== 'lmsapp' && value.refundApprovalStatus !== "Amount Refunded" && (
                             <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                               {/* <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Approve Refund</Link> */}
                               <button onClick={() => approveValue(value.refundId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal2" data-bs-whatever="@mdo" disabled={value.refundApprovalStatus === "Amount Refunded"}>Approve Refund</button>
                             </td>
                           )}
-                          {key !== 'lmsapp' && (
+                          {key !== 'lmsapp' && value.refundApprovalStatus !== "Amount Refunded" && (
                             <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                               {/* <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Reject Refund</Link> */}
                               <button type="button" onClick={() => readValue(value.refundId)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" disabled={value.refundApprovalStatus === "Amount Refunded"}>Reject Refund</button>
@@ -341,7 +358,7 @@ const AdminViewRefundRequests = () => {
                 </div>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button data-bs-dismiss="modal" onClick={() => rejectRefund()} type="button" className="btn btn-primary">
+                  <button onClick={() => rejectRefund()} type="button" className="btn btn-primary">
                     Submit
                   </button>
                 </div>
@@ -387,8 +404,8 @@ const AdminViewRefundRequests = () => {
                   <form>
                     <div className="mb-3">
                       <label htmlFor="message-text" className="col-form-label">Refund Amount<span className="text-danger">*</span></label>
-                      <textarea name="refundAmnt" className="form-control" value={approveField.refundAmnt} onChange={approveHandler} />
-                      {errors.refundAmnt && <span style={{ color: 'red' }} className="error">{errors.refundAmnt}</span>}
+                      <textarea name="approvedAmnt" className="form-control" value={approveField.approvedAmnt} onChange={approveHandler} />
+                      {errors.approvedAmnt && <span style={{ color: 'red' }} className="error">{errors.approvedAmnt}</span>}
                     </div>
                     <div className="mb-3">
                       <label htmlFor="message-text" className="col-form-label">Transaction No<span className="text-danger">*</span></label>
@@ -404,7 +421,7 @@ const AdminViewRefundRequests = () => {
                 </div>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button data-bs-dismiss="modal" onClick={() => approveRefund()} type="button" className="btn btn-primary">
+                  <button onClick={() => approveRefund()} type="button" className="btn btn-primary">
                     Submit
                   </button>
                 </div>

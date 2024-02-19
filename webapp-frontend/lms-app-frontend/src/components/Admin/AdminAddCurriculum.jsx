@@ -143,7 +143,7 @@ const AdminAddCurriculum = () => {
                                 if (response.data.status === "Validation failed" && response.data.data.curriculumDesc) {
                                     alert(response.data.data.curriculumDesc)
                                 } else {
-                                    alert(response.status)
+                                    alert(response.data.status)
                                 }
                             }
                         }
