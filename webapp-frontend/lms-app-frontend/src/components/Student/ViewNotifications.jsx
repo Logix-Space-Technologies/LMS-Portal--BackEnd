@@ -58,20 +58,18 @@ const NotificationView = () => {
       {loading ? (
         <p>Loading...</p>
       ) : notifications.length > 0 ? (
-        notifications.map((value, index) => (
-          <div key={index} className="my-6"> {/* Reduced margin */}
-            <div className="lg:w-2/5 sm:w-3/5 w-11/12 bg-gray-100 dark:bg-gray-800 rounded-xl mx-auto border p-10 shadow-sm">
-              <div className="inline-flex items-center justify-between w-full">
-                <h3 className="font-bold text-xl sm:text-2xl text-gray-800 dark:text-white">Notifications</h3><br /><br />
-              </div>
-              {/* Apply inline CSS here for the message container */}
-              <div className="mt-2 px-6 py-4 bg-white rounded-lg shadow w-full" style={{ maxHeight: '200px', overflowY: 'auto', wordWrap: 'break-word' }}>
+        <div className="my-6">
+          <div className="lg:w-2/5 sm:w-3/5 w-11/12 bg-gray-100 dark:bg-gray-800 rounded-xl mx-auto border p-10 shadow-sm">
+            <h3 className="font-bold text-xl sm:text-2xl text-gray-800 dark:text-white mb-4">Notifications</h3>
+            {notifications.map((value, index) => (
+              <div key={index} className="mt-2 px-6 py-4 bg-white rounded-lg shadow w-full" style={{ maxHeight: '200px', overflowY: 'auto', wordWrap: 'break-word' }}>
                 <div className="inline-flex items-center justify-between w-full">
                   <div className="inline-flex items-center">
                     <img src="https://cdn-icons-png.flaticon.com/512/893/893257.png" alt="Messages Icon" className="w-6 h-6 mr-3" />
                     <div>
                       <h3 className="font-bold text-base text-gray-800">{value.title}</h3>
                       <p className="text-xs text-gray-500">Team Link Ur Codes</p>
+                      <p className="text-xs text-gray-500">Send By: {value.senderName}</p>
                     </div>
                   </div>
                   <p className="text-xs text-gray-500">
@@ -82,9 +80,9 @@ const NotificationView = () => {
                   {value.message}
                 </p>
               </div>
-            </div>
+            ))}
           </div>
-        ))
+        </div>
       ) : (
         <p className="text-center mt-10">No Notifications!!!</p>
       )}

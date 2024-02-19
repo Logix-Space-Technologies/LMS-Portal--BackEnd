@@ -877,13 +877,7 @@ Student.studentNotificationView = (studId, result) => {
                         return;
                     }
                     db.query(
-                        "SELECT message, sendBy, title, addedDate, sendDateTime, " +
-                        "CASE " +
-                        "WHEN TIMESTAMPDIFF(MINUTE, sendDateTime, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, sendDateTime, NOW()), ' minute', IF(TIMESTAMPDIFF(MINUTE, sendDateTime, NOW()) = 1, '', 's'), ' ago') " +
-                        "WHEN TIMESTAMPDIFF(HOUR, sendDateTime, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, sendDateTime, NOW()), ' hour', IF(TIMESTAMPDIFF(HOUR, sendDateTime, NOW()) = 1, '', 's'), ' ago') " +
-                        "ELSE CONCAT(TIMESTAMPDIFF(DAY, sendDateTime, NOW()), ' day', IF(TIMESTAMPDIFF(DAY, sendDateTime, NOW()) = 1, '', 's'), ' ago') " +
-                        "END AS formattedDateTime " +
-                        "FROM notifications WHERE batchId = ? ORDER BY sendDateTime DESC",
+                        "SELECT notifications.message, notifications.sendBy, notifications.title, notifications.addedDate, notifications.sendDateTime, CASE WHEN TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()), ' minute', IF(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) = 1, '', 's'), ' ago') WHEN TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()), ' hour', IF(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) = 1, '', 's'), ' ago') ELSE CONCAT(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()), ' day', IF(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()) = 1, '', 's'), ' ago') END AS formattedDateTime, CASE WHEN notifications.sendBy = 0 THEN 'admin' ELSE coalesce(admin_staff.AdStaffName, 'Unknown') END AS senderName FROM notifications LEFT JOIN admin_staff ON notifications.sendBy = admin_staff.id WHERE notifications.batchId = 1 ORDER BY notifications.sendDateTime DESC;",
                         [batchId],
                         (err, notificationsRes) => {
                             if (err) {
