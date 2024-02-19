@@ -272,7 +272,7 @@ const AdminAddSession = () => {
                                             </Link>
                                             <br />
                                             <br />
-                                            <h3>Admin Add Session</h3>
+                                            <h3>Add Session</h3>
                                         </div>
                                     </div>
                                 </div>

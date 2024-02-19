@@ -21,7 +21,7 @@ const AdmStaffNavBar = () => {
                                 <Link className="nav-link active" aria-current="page" to="/addcollege">Add College</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link active" aria-current="page" to="/admstaffdashboard">Admin Staff Dashboard</Link>
+                                <Link className="nav-link active" aria-current="page" to="/admstaffdashboard">Dashboard</Link>
                             </li>
                             <li className="nav-item">
                                 <Link className="nav-link active" aria-current="page" to="/AdminStaffViewAllMaterial">View All Materials</Link>
@@ -43,6 +43,9 @@ const AdmStaffNavBar = () => {
                             </li>
                             <li>
                                 <Link className="nav-link active" aria-current="page" to="/adminaddsession">Add Session</Link>
+                            </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/adminAddtask">Add Task</Link>
                             </li>
                             <li>
                                 <Link className="nav-link active" aria-current="page" to="/AdminViewRefundRequests">View Refunds</Link>

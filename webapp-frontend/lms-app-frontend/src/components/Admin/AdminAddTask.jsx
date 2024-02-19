@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import '../../config/config'
 import { Link } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminAddTask = () => {
 
@@ -49,17 +50,26 @@ const AdminAddTask = () => {
 
     const [batches, setBatches] = useState([])
 
+    const [key, setKey] = useState('');
+
     const apiUrl = global.config.urls.api.server + "/api/lms/addtask";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/viewallcolleges";
     const batchUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem('admtoken'),
-                "key": sessionStorage.getItem('admkey')
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrl2, {}, axiosConfig).then(
@@ -71,12 +81,19 @@ const AdminAddTask = () => {
     }
 
     const getBatches = (collegeId) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem('admtoken'),
-                "key": sessionStorage.getItem('admkey')
+                "token": token,
+                "key": currentKey
             }
         };
         console.log(collegeId)
@@ -98,6 +115,13 @@ const AdminAddTask = () => {
     };
 
     const readValue = (e) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         if (!file) {
             setFileValidationMessage("Please upload a file.");
             return;
@@ -113,8 +137,8 @@ const AdminAddTask = () => {
                 headers: {
                     'content-type': 'multipart/form-data',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("admtoken"),
-                    "key": sessionStorage.getItem("admkey")
+                    "token": token,
+                    "key": currentKey
                 }
             }
             console.log(axiosConfig3)
@@ -216,9 +240,11 @@ const AdminAddTask = () => {
 
     useEffect(() => {getData()}, [])
 
+    useEffect(() => { setKey(sessionStorage.getItem("admkey") || '') }, []);
+
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">
@@ -337,7 +363,7 @@ const AdminAddTask = () => {
                                         />
                                         {errors.totalScore && (<span style={{ color: 'red' }} className="error">{errors.totalScore}</span>)}
                                     </div>
-                                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                         <label htmlFor="dueDate" className="form-label">
                                             Due Date <span className="text-danger">*</span>
                                         </label>
