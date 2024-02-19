@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import '../../config/config';
 import axios from 'axios';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminSendNotification = () => {
     const initialNotificationData = {
@@ -110,7 +111,6 @@ const AdminSendNotification = () => {
 
         try {
             const response = await axios.post(apiUrl, data, axiosConfig);
-            console.log(notificationData)
             if (response.data.status === 'Success') {
                 alert(response.data.message)
                 // Reset the text fields to their initial empty state
@@ -181,8 +181,10 @@ const AdminSendNotification = () => {
 
     return (
         <div style={styles.container}>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            <br />
             <h2>Send Notification</h2>
+            <br />
             <div style={styles.card}>
                 <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                     <label htmlFor="collegeId" className="form-label">

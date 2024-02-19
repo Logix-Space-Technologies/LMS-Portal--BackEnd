@@ -51,6 +51,9 @@ const AdmStaffNavBar = () => {
                                 <Link className="nav-link active" aria-current="page" to="/adminAddtrainer">Add Trainer</Link>
                             </li>
                             <li>
+                                <Link className="nav-link active" aria-current="page" to="/AdminSendNotification">Send Notifications</Link>
+                            </li>
+                            <li>
                                 <Link className="nav-link active" aria-current="page" to="/AdminViewRefundRequests">View Refunds</Link>
                             </li>
                             <li className="nav-item dropdown">
