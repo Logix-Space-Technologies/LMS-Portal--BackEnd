@@ -10,6 +10,7 @@ const AdminAddTask = () => {
     const [inputField, setInputField] = useState({
         "collegeId": "",
         "batchId": "",
+        "sessionId": "",
         "taskTitle": "",
         "taskDesc": "",
         "taskType": "",
@@ -50,11 +51,14 @@ const AdminAddTask = () => {
 
     const [batches, setBatches] = useState([])
 
+    const [sessions, setSessions] = useState([])
+
     const [key, setKey] = useState('');
 
     const apiUrl = global.config.urls.api.server + "/api/lms/addtask";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/viewallcolleges";
     const batchUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
+    const apiUrl3 = global.config.urls.api.server + "/api/lms/viewSessions";
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -103,11 +107,42 @@ const AdminAddTask = () => {
         })
     }
 
+    const getSessions = (batchId) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let axiosConfig3 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                'Access-Control-Allow-Origin': '*',
+                "token": token,
+                "key": currentKey
+            }
+        };
+        axios.post(apiUrl3, { batchId }, axiosConfig3).then((response) => {
+            setSessions(response.data.Sessions || []);
+            console.log(response.data);
+        });
+    };
+
+    const viewBatches = (collegeId) => {
+        getBatches(collegeId);
+        setSessions([]); // Clear sessions when viewing batches
+    };
+
+    const viewSessions = (batchId) => {
+        getSessions(batchId);
+    };
+
     const handleCollegeChange = (event) => {
         const selectedCollegeId = event.target.value;
-        setInputField(prevState => ({ ...prevState, collegeId: selectedCollegeId }))
-        getBatches(selectedCollegeId);
-    }
+        setInputField((prevState) => ({ ...prevState, collegeId: selectedCollegeId }));
+        viewBatches(selectedCollegeId);
+    };
 
     const inputHandler = (event) => {
         setErrors({})
@@ -144,6 +179,7 @@ const AdminAddTask = () => {
             console.log(axiosConfig3)
             let data = {
                 "batchId": inputField.batchId,
+                "sessionId": inputField.sessionId,
                 "taskTitle": inputField.taskTitle,
                 "taskDesc": inputField.taskDesc,
                 "taskType": inputField.taskType,
@@ -159,6 +195,7 @@ const AdminAddTask = () => {
                     setInputField({
                         collegeId: '',
                         batchId: '',
+                        sessionId: '',
                         taskTitle: '',
                         taskDesc: '',
                         taskType: '',
@@ -188,10 +225,10 @@ const AdminAddTask = () => {
                                             if (response.data.status === "Validation failed" && response.data.data.date) {
                                                 alert(response.data.data.date)
                                             } else {
-                                                if (response.status === "400" && response.data.status) {
-                                                    alert(response.data.status)
+                                                if (response.data.status === "Validation failed" && response.data.data.sessionId) {
+                                                    alert(response.data.data.sessionId)
                                                 } else {
-                                                    alert(response.data.status)
+                                                    alert(response.data.status) 
                                                 }
                                             }
                                         }
@@ -216,6 +253,9 @@ const AdminAddTask = () => {
         }
         if (!data.collegeId.trim()) {
             errors.collegeId = 'College Name is required';
+        }
+        if (!data.sessionId.trim()) {
+            errors.sessionId = 'Session Name is required';
         }
         if (!data.taskTitle.trim()) {
             errors.taskTitle = 'Task Title is required';
@@ -298,7 +338,11 @@ const AdminAddTask = () => {
                                             id="batchId"
                                             className="form-control"
                                             value={inputField.batchId}
-                                            onChange={inputHandler}>
+                                            onChange={(e) => {
+                                                inputHandler(e);
+                                                viewSessions(e.target.value); // Call viewSessions when batch is selected
+                                            }}
+                                        >
                                             <option value="">Select</option>
                                             {batches.data && batches.data.map((value) => {
                                                 return <option value={value.id}> {value.batchName} </option>;
@@ -306,7 +350,25 @@ const AdminAddTask = () => {
                                         </select>
                                         {errors.batchId && (<span style={{ color: 'red' }} className="error">{errors.batchId}</span>)}
                                     </div>
-                                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                        <label htmlFor="session" className="form-label">
+                                            Session Name <span className="text-danger">*</span>
+                                        </label>
+                                        <select
+                                            name="sessionId"
+                                            id="sessionId"
+                                            className="form-control"
+                                            value={inputField.sessionId}
+                                            onChange={inputHandler}
+                                        >
+                                            <option value="">Select</option>
+                                            {sessions.map((value) => {
+                                                return <option value={value.id}> {value.sessionName} </option>;
+                                            })}
+                                        </select>
+                                        {errors.sessionId && (<span style={{ color: 'red' }} className="error">{errors.sessionId}</span>)}
+                                    </div>
+                                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                         <label htmlFor="taskTitle" className="form-label">
                                             Task Title <span className="text-danger">*</span>
                                         </label>
@@ -413,4 +475,4 @@ const AdminAddTask = () => {
     )
 }
 
-export default AdminAddTask
+export default AdminAddTask;
