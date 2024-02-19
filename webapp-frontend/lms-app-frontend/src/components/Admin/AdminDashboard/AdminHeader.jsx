@@ -52,7 +52,7 @@ const AdminHeader = () => {
                                     <span className="d-none d-lg-inline-flex">Admin</span>
                                 </Link>
                                 <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                                    <Link to="#" className="dropdown-item">Change Password</Link>
+                                    <Link to="/adminchangepassword" className="dropdown-item">Change Password</Link>
                                     <Link to="/" onClick={logout} className="dropdown-item">Log Out</Link>
                                 </div>
                             </div>

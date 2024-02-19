@@ -36,7 +36,9 @@ const AdminViewAllSession = () => {
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deleteSessions";
 
+
     const getData = () => {
+        let data = { "batchId": sessionStorage.getItem("batchId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -45,7 +47,7 @@ const AdminViewAllSession = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-        axios.post(apiUrl, {}, axiosConfig).then(
+        axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 setSessionData(response.data.Sessions);
             }
@@ -143,8 +145,13 @@ const AdminViewAllSession = () => {
 
     return (
         <div>
-            <Navbar /><br />
-            <strong>Admin View All Session</strong>
+            <div className="flex justify-between items-center mx-4 my-4">
+                <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+                <strong>View All Sessions</strong>
+                
+                <div></div>
+            </div>
             <br /><br />
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -168,7 +175,7 @@ const AdminViewAllSession = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentSessions.map((value, index) => (
+                        {currentSessions.length > 0 ? currentSessions.map((value, index) => (
                             <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                     <div className="ps-3">
@@ -218,31 +225,39 @@ const AdminViewAllSession = () => {
                                     )}
                                 </td>
                             </tr>
-                        ))}
+                        )) : (
+                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td colSpan="15" className="px-6 py-4" style={{textAlign: "center"}}>
+                                   No Sessions Found !!!
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
                 {/* Pagination */}
-                <div className="flex justify-center mt-8">
-                    <nav>
-                        <ul className="flex list-style-none">
-                            {currentPage > 1 && (
-                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                    Previous
-                                </li>
-                            )}
-                            {Array.from({ length: Math.ceil(sessionData.length / sessionsPerPage) }, (_, i) => (
-                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                                    {i + 1}
-                                </li>
-                            ))}
-                            {currentPage < Math.ceil(sessionData.length / sessionsPerPage) && (
-                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                    Next
-                                </li>
-                            )}
-                        </ul>
-                    </nav>
-                </div>
+                {currentSessions.length > 0 && (
+                    <div className="flex justify-center mt-8">
+                        <nav>
+                            <ul className="flex list-style-none">
+                                {currentPage > 1 && (
+                                    <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                        Previous
+                                    </li>
+                                )}
+                                {Array.from({ length: Math.ceil(sessionData.length / sessionsPerPage) }, (_, i) => (
+                                    <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                        {i + 1}
+                                    </li>
+                                ))}
+                                {currentPage < Math.ceil(sessionData.length / sessionsPerPage) && (
+                                    <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                        Next
+                                    </li>
+                                )}
+                            </ul>
+                        </nav>
+                    </div>
+                )}
             </div>
             {/* QR Code Modal */}
             {showQRModal && qrCodeAttendance && (

@@ -63,6 +63,11 @@ const AdminViewAllBatch = () => {
         navigate("/adminupdatebatch");
     };
 
+    const batchClick = (id) => {
+        let data = id;
+        sessionStorage.setItem("batchId", data);
+    }
+
     // Logic for displaying current batches
     const indexOfLastBatch = currentPage * batchesPerPage;
     const indexOfFirstBatch = indexOfLastBatch - batchesPerPage;
@@ -79,8 +84,8 @@ const AdminViewAllBatch = () => {
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
-                <strong>Admin View All Batches</strong>
-                
+                <strong>View All Batches</strong>
+
                 <div></div>
             </div>
             <br />
@@ -118,19 +123,19 @@ const AdminViewAllBatch = () => {
                                 <td className="px-6 py-4">{value.batchAmount}</td>
                                 <td className="px-6 py-4">{new Date(value.addedDate).toLocaleDateString()}</td>
                                 <td className="px-6 py-4">
-                                    <Link to="#" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Sessions</Link>
+                                    <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="btn bg-blue-500 text-white">View Sessions</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="#" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Students</Link>
+                                    <Link to="#" style={{ whiteSpace: 'nowrap' }} className="btn bg-blue-500 text-white">View Students</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/adminviewallcurriculum" onClick={() => viewAllCurr(value.id)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Curriculum</Link>
+                                    <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id)} className="btn bg-blue-500 text-white">View Curriculum</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
+                                    <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success">Update</button>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
+                                    <button onClick={() => deleteClick(value.id)} className="btn btn-danger">Delete</button>
                                 </td>
                             </tr>
                         ))}
