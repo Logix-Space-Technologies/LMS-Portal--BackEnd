@@ -42,12 +42,19 @@ const AdminAddCurriculum = () => {
     const batchUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem('admtoken'),
-                "key": sessionStorage.getItem('admkey')
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrl2, {}, axiosConfig).then(
@@ -59,12 +66,19 @@ const AdminAddCurriculum = () => {
     }
 
     const getBatches = (collegeId) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem('admtoken'),
-                "key": sessionStorage.getItem('admkey')
+                "token": token,
+                "key": currentKey
             }
         };
         console.log(collegeId)
@@ -106,8 +120,8 @@ const AdminAddCurriculum = () => {
                 headers: {
                     'content-type': 'multipart/form-data',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("admtoken"),
-                    "key": sessionStorage.getItem("admkey")
+                    "token": token,
+                    "key": currentKey
                 }
             }
             console.log(axiosConfig3)
