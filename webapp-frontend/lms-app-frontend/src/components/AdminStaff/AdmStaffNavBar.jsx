@@ -48,6 +48,9 @@ const AdmStaffNavBar = () => {
                                 <Link className="nav-link active" aria-current="page" to="/adminAddtask">Add Task</Link>
                             </li>
                             <li>
+                                <Link className="nav-link active" aria-current="page" to="/adminAddtrainer">Add Trainer</Link>
+                            </li>
+                            <li>
                                 <Link className="nav-link active" aria-current="page" to="/AdminViewRefundRequests">View Refunds</Link>
                             </li>
                             <li className="nav-item dropdown">
