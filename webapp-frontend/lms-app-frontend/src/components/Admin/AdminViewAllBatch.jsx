@@ -9,10 +9,11 @@ const AdminViewAllBatch = () => {
     const [batchesPerPage] = useState(10); // Number of batches per page
     const navigate = useNavigate();
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/viewAllBatches";
+    const apiUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch";
 
     const getData = () => {
+        let data = { "collegeId": sessionStorage.getItem("clgId")}
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -21,7 +22,7 @@ const AdminViewAllBatch = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-        axios.post(apiUrl, {}, axiosConfig).then(
+        axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 setBatchData(response.data.data);
                 console.log(response.data.data);
