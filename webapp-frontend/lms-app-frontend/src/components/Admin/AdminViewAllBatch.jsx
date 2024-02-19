@@ -13,7 +13,7 @@ const AdminViewAllBatch = () => {
     const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch";
 
     const getData = () => {
-        let data = { "collegeId": sessionStorage.getItem("clgId")}
+        let data = { "collegeId": sessionStorage.getItem("clgId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -76,7 +76,14 @@ const AdminViewAllBatch = () => {
     return (
         <div>
             <Navbar /><br />
-            <strong>Admin View All Batches</strong>
+            <div className="flex justify-between items-center mx-4 my-4">
+                <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+                <strong>Admin View All Batches</strong>
+                
+                <div></div>
+            </div>
+            <br />
             <br /><br />
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
