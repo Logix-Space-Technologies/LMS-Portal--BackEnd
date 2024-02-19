@@ -94,7 +94,13 @@ const AdminViewAllCollege = () => {
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
-            <strong>View All College</strong>
+            <br />
+            <div className="flex justify-between items-center mx-4 my-4">
+
+                <strong>View All Colleges</strong>
+
+                <div></div>
+            </div>
             <br /><br />
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
