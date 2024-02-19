@@ -36,6 +36,9 @@ const AdmStaffNavBar = () => {
                                 <Link className="nav-link active" aria-current="page" to="/adminAddcurriculum">Add Curriculum</Link>
                             </li>
                             <li>
+                                <Link className="nav-link active" aria-current="page" to="/addcollegestaff">Add College Staff</Link>
+                            </li>
+                            <li>
                                 <Link className="nav-link active" aria-current="page" to="/AdminViewRefundRequests">View Refunds</Link>
                             </li>
                             <li className="nav-item dropdown">
