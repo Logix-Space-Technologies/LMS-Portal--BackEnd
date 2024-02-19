@@ -9,10 +9,11 @@ const AdminViewAllBatch = () => {
     const [batchesPerPage] = useState(10); // Number of batches per page
     const navigate = useNavigate();
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/viewAllBatches";
+    const apiUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch";
 
     const getData = () => {
+        let data = { "collegeId": sessionStorage.getItem("clgId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -21,7 +22,7 @@ const AdminViewAllBatch = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-        axios.post(apiUrl, {}, axiosConfig).then(
+        axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 setBatchData(response.data.data);
                 console.log(response.data.data);
@@ -62,6 +63,11 @@ const AdminViewAllBatch = () => {
         navigate("/adminupdatebatch");
     };
 
+    const batchClick = (id) => {
+        let data = id;
+        sessionStorage.setItem("viewbatchId", data);
+    }
+
     // Logic for displaying current batches
     const indexOfLastBatch = currentPage * batchesPerPage;
     const indexOfFirstBatch = indexOfLastBatch - batchesPerPage;
@@ -75,7 +81,14 @@ const AdminViewAllBatch = () => {
     return (
         <div>
             <Navbar /><br />
-            <strong>Admin View All Batches</strong>
+            <div className="flex justify-between items-center mx-4 my-4">
+                <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+                <strong>View All Batches</strong>
+
+                <div></div>
+            </div>
+            <br />
             <br /><br />
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -93,11 +106,13 @@ const AdminViewAllBatch = () => {
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
                         </tr>
                     </thead>
                     <tbody>
                         {/* Table rows */}
-                        {currentBatches.map((value, index) => (
+                        {currentBatches.length > 0 ? currentBatches.map((value, index) => (
                             <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td className="px-6 py-4">{value.id}</td>
                                 <td className="px-6 py-4">{value.collegeName}</td>
@@ -108,34 +123,46 @@ const AdminViewAllBatch = () => {
                                 <td className="px-6 py-4">{value.batchAmount}</td>
                                 <td className="px-6 py-4">{new Date(value.addedDate).toLocaleDateString()}</td>
                                 <td className="px-6 py-4">
-                                    <Link to="/adminviewallcurriculum" onClick={() => viewAllCurr(value.id)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Curriculum</Link>
+                                    <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Sessions</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
+                                    <Link to="/adminviewallstudents" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Students</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-2 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
+                                    <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Curriculum</Link>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success">Update</button>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <button onClick={() => deleteClick(value.id)} className="btn btn-danger">Delete</button>
                                 </td>
                             </tr>
-                        ))}
+                        )) : (
+                            <tr>
+                                <td colSpan="13" className="px-6 py-4" style={{ textAlign: "center" }}>
+                                    No Batches Found !!!
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
-                {/* Pagination */}
-                <div className="flex justify-center mt-8">
-                    <nav>
-                        <ul className="flex list-style-none">
-                            {currentPage > 1 && (
-                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Previous</li>
-                            )}
-                            {Array.from({ length: Math.ceil(batchData.length / batchesPerPage) }, (_, i) => (
-                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>{i + 1}</li>
-                            ))}
-                            {currentPage < Math.ceil(batchData.length / batchesPerPage) && (
-                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Next</li>
-                            )}
-                        </ul>
-                    </nav>
-                </div>
+            </div>
+            {/* Pagination */}
+            <div className="flex justify-center mt-8">
+                <nav>
+                    <ul className="flex list-style-none">
+                        {currentPage > 1 && (
+                            <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Previous</li>
+                        )}
+                        {Array.from({ length: Math.ceil(batchData.length / batchesPerPage) }, (_, i) => (
+                            <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>{i + 1}</li>
+                        ))}
+                        {currentPage < Math.ceil(batchData.length / batchesPerPage) && (
+                            <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Next</li>
+                        )}
+                    </ul>
+                </nav>
             </div>
         </div>
     );

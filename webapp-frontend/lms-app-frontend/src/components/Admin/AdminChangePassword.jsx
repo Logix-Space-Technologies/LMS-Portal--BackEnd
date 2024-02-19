@@ -61,7 +61,6 @@ const AdminChangePassword = () => {
     }
     return (
         <div>
-            <Navbar />
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
@@ -96,7 +95,7 @@ const AdminChangePassword = () => {
                                             </div>
                                             <br></br>
                                             <div class="mb-3">
-                                                <Link class="btn btn-danger" to="#">Back</Link>
+                                                <Link class="btn btn-danger" to="/admdashboard">Back</Link>
                                             </div>
                                         </ul>
                                     </div>

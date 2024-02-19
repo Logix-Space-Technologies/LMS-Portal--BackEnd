@@ -223,7 +223,7 @@ const AdminStaffAddMaterials = () => {
                                             </Link>
                                             <br />
                                             <br />
-                                            <h3>AdminStaff Add Material</h3>
+                                            <h3>Add Material</h3>
                                         </div>
                                     </div>
                                 </div>

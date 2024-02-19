@@ -161,7 +161,7 @@ Batches.updateBatch = (updatedBatch, result) => {
 
 
 Batches.adminBatchView = (collegeId, result) => {
-    db.query("SELECT b. * FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND b.collegeId = ?", collegeId, (err, res) => {
+    db.query("SELECT c.collegeName, b. * FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND b.collegeId = ?", collegeId, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)

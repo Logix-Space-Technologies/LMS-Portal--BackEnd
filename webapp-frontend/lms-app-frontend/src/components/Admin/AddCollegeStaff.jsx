@@ -3,6 +3,7 @@ import '../../config/config'
 import axios from 'axios'
 import Navbar from './Navbar'
 import { Link } from 'react-router-dom'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AddCollegeStaff = () => {
 
@@ -20,6 +21,8 @@ const AddCollegeStaff = () => {
 
   const [file, setFile] = useState(null)
 
+  const [key, setKey] = useState('');
+
   const fileUploadHandler = (event) => {
     setFile(event.target.files[0])
   }
@@ -33,12 +36,19 @@ const AddCollegeStaff = () => {
 
 
   const getData = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
     let axiosConfig = {
       headers: {
         'content-type': 'multipart/form-data',
         "Access-Control-Allow-Origin": "*",
-        "token": sessionStorage.getItem("admtoken"),
-        "key": sessionStorage.getItem("admkey")
+        "token": token,
+        "key": currentKey
       }
     };
     axios.post(apiUrl2, {}, axiosConfig).then(
@@ -59,6 +69,13 @@ const AddCollegeStaff = () => {
 
 
   const readValue = (e) => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
     console.log(inputField)
     e.preventDefault();
     console.log('Handle submit function called');
@@ -69,8 +86,8 @@ const AddCollegeStaff = () => {
         headers: {
           'content-type': 'multipart/form-data',
           "Access-Control-Allow-Origin": "*",
-          "token": sessionStorage.getItem("admtoken"),
-          "key": sessionStorage.getItem("admkey")
+          "token": token,
+          "key": currentKey
         }
       };
       let data = {
@@ -230,10 +247,14 @@ const AddCollegeStaff = () => {
 
   useEffect(() => { getData() }, [])
 
+  // Update key state when component mounts
+  useEffect(() => {
+    setKey(sessionStorage.getItem("admkey") || '');
+  }, []);
 
   return (
     <div>
-      <Navbar />
+      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
       <div className="container">
         <div class="bg-light py-3 py-md-5">
           <div class="container">

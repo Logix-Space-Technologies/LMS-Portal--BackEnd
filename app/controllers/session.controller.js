@@ -73,7 +73,7 @@ exports.createSession = (request, response) => {
             if (Object.keys(validationErrors).length > 0) {
                 return response.json({ "status": "Validation failed", "data": validationErrors })
             }
-            
+
             const newSession = new Session({
                 batchId: request.body.batchId,
                 sessionName: request.body.sessionName,
@@ -107,8 +107,8 @@ exports.createSession = (request, response) => {
                                 })
                                 const studentName = element.studName
                                 const studentEmail = element.studEmail
-                                const sessionTime=formatTime(newSession.time)
-                                const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, request.body.date,sessionTime, newSession.venueORlink);
+                                const sessionTime = formatTime(newSession.time)
+                                const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, request.body.date, sessionTime, newSession.venueORlink);
                                 const upcomingSessionTextContent = mailContents.upcomingSessionTextContent(studentName, newSession.sessionName, request.body.date, newSession.time, newSession.venueORlink);
                                 mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 if (key == "lmsapp") {
@@ -226,7 +226,8 @@ exports.viewSessions = (request, response) => {
     //add the appropriate key
     jwt.verify(sessionToken, key, (err, decoded) => {
         if (decoded) {
-            Session.viewSessions((err, data) => {
+            const batchId = request.body.batchId
+            Session.viewSessions(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
@@ -249,7 +250,7 @@ exports.viewUpcomingSessions = (request, response) => {
     //add the appropriate key
     jwt.verify(sessionToken, "lmsappstud", (err, decoded) => {
         if (decoded) {
-            Session.viewUpcomingSessions(batchId,(err, data) => {
+            Session.viewUpcomingSessions(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
@@ -352,7 +353,7 @@ exports.cancelSession = (request, response) => {
                     const sessionDate = sessionres[0].date.toLocaleDateString();
 
                     const sessiontime = formatTime(sessionres[0].time);
-                    
+
                     Student.searchStudentByBatch(batchId, (err, res) => {
                         if (err) {
                             return response.json({ "status": err });
@@ -384,7 +385,7 @@ exports.isSessionHappeningToday = (request, response) => {
                 if (data.length === 0) {
                     return response.json({ "status": false });
                 } else {
-                    return response.json({ "status": true , "data": data});
+                    return response.json({ "status": true, "data": data });
                 }
             });
 
