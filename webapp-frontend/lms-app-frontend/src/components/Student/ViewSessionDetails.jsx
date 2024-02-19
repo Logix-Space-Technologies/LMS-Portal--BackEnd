@@ -111,7 +111,7 @@ const SessionView = () => {
     <div>
       <StudNavBar />
       <br />
-      <h1 style={{ marginLeft: '20px', textAlign:'center' }}>View All Sessions</h1>
+      <h1 style={{ marginLeft: '20px', textAlign: 'center' }}>View All Sessions</h1>
       <br />
       {loading ? (
         <div className="col-12 text-center">Loading...</div>
@@ -134,7 +134,9 @@ const SessionView = () => {
                   <p className="text-sm text-gray-600 mt-1">Date: {session.date}</p>
                   <p className="text-sm text-gray-600">Time: {formatTime(session.time)}</p>
                   <p className="text-sm text-gray-600">Type: {session.type}</p>
-
+                  {!session.venueORlink.includes("meet.google.com") && (
+                    <p className="text-sm text-gray-600">Venue: {session.venueORlink}</p>
+                  )}
                   <div className="flex gap-4 mt-4">
                     {session.venueORlink.includes("meet.google.com") && (
                       <a href={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</a>
