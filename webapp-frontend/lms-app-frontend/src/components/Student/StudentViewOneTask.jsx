@@ -36,13 +36,7 @@ const StudentViewOneTask = () => {
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
-                        sessionStorage.removeItem("studentkey");
-                        sessionStorage.removeItem("studentId");
-                        sessionStorage.removeItem("studemail");
-                        sessionStorage.removeItem("studBatchId");
-                        sessionStorage.removeItem("studLoginToken");
-                        sessionStorage.removeItem("subtaskId");
-                        sessionStorage.removeItem("SessionId")
+                        sessionStorage.clear()
                     } else {
                         alert(response.data.status)
                     }
@@ -109,12 +103,7 @@ const StudentViewOneTask = () => {
                         } else {
                             if (response.data.status === "Unauthorized Access!!") {
                                 navigate("/studentLogin")
-                                sessionStorage.removeItem("studentkey");
-                                sessionStorage.removeItem("studentId");
-                                sessionStorage.removeItem("studemail");
-                                sessionStorage.removeItem("studBatchId");
-                                sessionStorage.removeItem("studLoginToken");
-                                sessionStorage.removeItem("subtaskId");
+                                sessionStorage.clear()
                             } else {
                                 alert(response.data.status);
                             }

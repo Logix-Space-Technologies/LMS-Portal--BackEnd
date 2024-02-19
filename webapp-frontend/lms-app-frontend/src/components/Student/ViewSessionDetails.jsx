@@ -34,12 +34,7 @@ const SessionView = () => {
         } else {
           if (response.data.status === "Unauthorized access!!") {
             navigate("/studentLogin")
-            sessionStorage.removeItem("studentkey");
-            sessionStorage.removeItem("studentId");
-            sessionStorage.removeItem("studemail");
-            sessionStorage.removeItem("studBatchId");
-            sessionStorage.removeItem("studLoginToken");
-            sessionStorage.removeItem("subtaskId");
+            sessionStorage.clear()
           } else {
             alert(response.data.status);
           }

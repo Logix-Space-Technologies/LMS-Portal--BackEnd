@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react'
-import Navbar from './Navbar'
-import '../../config/config'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import Navbar from './Navbar';
+import '../../config/config';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AdminViewAllTrainers = () => {
-    const [trainerData, setTrainerData] = useState([])
-
-    const apiUrl = global.config.urls.api.server + "/api/lms/viewAllTrainer"
+    const [trainerData, setTrainerData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [trainersPerPage] = useState(10); // Number of trainers per page
     const navigate = useNavigate();
 
-    const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteTrainer"
+    const apiUrl = global.config.urls.api.server + "/api/lms/viewAllTrainer";
+    const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteTrainer";
 
     const getData = () => {
         let axiosConfig = {
@@ -20,17 +21,25 @@ const AdminViewAllTrainers = () => {
                 "token": sessionStorage.getItem("admtoken"),
                 "key": sessionStorage.getItem("admkey")
             }
-        }
+        };
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
-                setTrainerData(response.data.Trainers)
-                console.log(response.data.Trainers)
+                setTrainerData(response.data.Trainers);
+                console.log(response.data.Trainers);
             }
-        )
-    }
+        );
+    };
+
+    // Logic for displaying current trainers
+    const indexOfLastTrainer = currentPage * trainersPerPage;
+    const indexOfFirstTrainer = indexOfLastTrainer - trainersPerPage;
+    const currentTrainers = trainerData ? trainerData.slice(indexOfFirstTrainer, indexOfLastTrainer) : [];
+
+    // Change page
+    const paginate = pageNumber => setCurrentPage(pageNumber);
 
     const handleClick = (id) => {
-        let data = { "id": id }
+        let data = { "id": id };
         let axiosConfigTwo = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -38,28 +47,28 @@ const AdminViewAllTrainers = () => {
                 "token": sessionStorage.getItem("admtoken"),
                 "key": sessionStorage.getItem("admkey")
             }
-        }
+        };
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "success") {
                     // Reload the page after deleting trainer
                     window.location.reload();
                 } else {
-                    alert(response.data.status)
+                    alert(response.data.status);
                 }
             }
-        )
+        );
 
-    }
+    };
 
     const UpdateClick = (id) => {
-        let data = id
-        sessionStorage.setItem("trainerId", data)
-        navigate("/AdminUpdateTrainer")
+        let data = id;
+        sessionStorage.setItem("trainerId", data);
+        navigate("/AdminUpdateTrainer");
 
-    }
+    };
 
-    useEffect(() => { getData() }, [])
+    useEffect(() => { getData() }, []);
     return (
         <div>
             <Navbar /><br />
@@ -87,9 +96,9 @@ const AdminViewAllTrainers = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {trainerData ? (trainerData.map(
+                        {currentTrainers.map(
                             (value, index) => {
-                                return <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                         <img className="w-10 h-10 rounded-full" src={value.profilePicture} alt="" />
                                         <div className="ps-3">
@@ -111,27 +120,35 @@ const AdminViewAllTrainers = () => {
                                     </td>
                                 </tr>
                             }
-                        )) : <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <td className="px-6 py-4">
-
-                            </td>
-                            <td className="px-6 py-4">
-                                No Trainers Found !!
-                            </td>
-                            <td className="px-6 py-4">
-
-                            </td>
-                            <td className="px-6 py-4">
-
-                            </td>
-                        </tr>}
+                        )}
                     </tbody>
                 </table>
+                <div className="flex justify-center mt-8">
+                    <nav>
+                        <ul className="flex list-style-none">
+                            {currentPage > 1 && (
+                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Previous
+                                </li>
+                            )}
+                            {Array.from({ length: Math.ceil(trainerData.length / trainersPerPage) }, (_, i) => (
+                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                    {i + 1}
+                                </li>
+                            ))}
+                            {currentPage < Math.ceil(trainerData.length / trainersPerPage) && (
+                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Next
+                                </li>
+                            )}
+                        </ul>
+                    </nav>
+                </div>
             </div>
 
 
         </div>
-    )
-}
+    );
+};
 
-export default AdminViewAllTrainers
+export default AdminViewAllTrainers;

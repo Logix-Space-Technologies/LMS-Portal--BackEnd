@@ -104,7 +104,30 @@ const AdminUpdateCurriculum = () => {
                 }
 
             }
-        )
+        ).catch(error => {
+            if (error.response) {
+                // Extract the status code from the response
+                const statusCode = error.response.status;
+
+                if (statusCode === 400) {
+                    console.log("Status 400:", error.response.data);
+                    alert(error.response.data.status)
+                    // Additional logic for status 400
+                } else if (statusCode === 500) {
+                    console.log("Status 500:", error.response.data);
+                    alert(error.response.data.status)
+                    // Additional logic for status 500
+                } else {
+                    console.log(error.response.data);
+                    alert(error.response.data.status)
+                }
+            } else if (error.request) {
+                console.log(error.request);
+            } else {
+                console.log('Error', error.message);
+            }
+            console.log(error.config);
+        })
     }
     
 

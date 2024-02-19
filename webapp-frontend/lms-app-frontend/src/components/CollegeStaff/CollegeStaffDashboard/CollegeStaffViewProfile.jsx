@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import '../../../config/config'
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const CollegeStaffViewProfile = () => {
     const [colgStaffData, setColgStaffData] = useState({});
+
     const apiURL = global.config.urls.api.server + "/api/lms/profileViewByCollegeStaff";
+
+    const navigate = useNavigate()
+
+    const logOut = () => {
+        sessionStorage.clear()
+    }
+
     const getData = () => {
         let data = { "id": sessionStorage.getItem("clgStaffId") };
         console.log(data)
@@ -18,8 +27,16 @@ const CollegeStaffViewProfile = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setColgStaffData(response.data.data);
-                console.log(response.data.data);
+                if (response.data.data) {
+                    setColgStaffData(response.data.data);
+                } else {
+                    if (response.data.status === "Unauthorized Access !!!") {
+                        logOut()
+                        navigate("/clgStafflogin")
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }

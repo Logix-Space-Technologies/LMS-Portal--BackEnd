@@ -34,7 +34,7 @@ const StudentLogin = () => {
         }
         axios.post(apiUrl, inputField).then(
             (Response) => {
-                if (Response.data.status === "Success") {
+                if (Response.data.status === "Success" && Response.data.data.refundReqStatus !== "Refund Request Active") {
                     let studtoken = Response.data.token;
                     let studId = Response.data.data.id;
                     let studemail = Response.data.data.studEmail;
@@ -50,6 +50,21 @@ const StudentLogin = () => {
                     navigate("/studdashboard")
 
 
+                } else if (Response.data.status === "Success" && Response.data.data.refundReqStatus === "Refund Request Active") {
+                    let studtoken = Response.data.token;
+                    let studId = Response.data.data.id;
+                    let studemail = Response.data.data.studEmail;
+                    let batchId = Response.data.data.batchId;
+                    let refundreqstatus = Response.data.data.refundReqStatus;
+                    let key = "lmsappstud"
+                    sessionStorage.setItem("studentkey", key);
+                    sessionStorage.setItem("studentId", studId);
+                    sessionStorage.setItem("studemail", studemail);
+                    sessionStorage.setItem("studBatchId", batchId);
+                    sessionStorage.setItem("studLoginToken", studtoken);
+                    sessionStorage.setItem("refundreqstatus",refundreqstatus);
+
+                    navigate("/studViewRefundReq")
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)

@@ -127,6 +127,10 @@ const AdminUpdateBatch = () => {
         )
     }
 
+    const handleBack = () => {
+        navigate(-1); // Navigate back to the previous page
+    };
+
     useEffect(() => {
         const formattedStartDate = formatDate(updateField.regStartDate);
         const formattedEndDate = formatDate(updateField.regEndDate);
@@ -204,7 +208,7 @@ const AdminUpdateBatch = () => {
                                             </div>
                                             <br></br>
                                             <div className="mb-3">
-                                                <a class="btn btn-danger" href="/adminviewalltrainers">Back</a>
+                                                <button className="btn btn-danger" onClick={handleBack}>Back</button>
                                             </div>
                                         </ul>
 

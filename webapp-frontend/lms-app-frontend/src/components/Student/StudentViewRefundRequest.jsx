@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import StudNavBar from './StudNavBar'
 import '../../config/config'
 
@@ -9,6 +9,7 @@ const StudentViewRefundRequest = () => {
     const [studentViewRefundReqData, setStudentViewRefundReqData] = useState([])
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
+    let currentRefundStatus = sessionStorage.getItem("refundreqstatus")
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewRefundStatus"
     const apiUrl1 = global.config.urls.api.server + "/api/lms/cancelRefundRequest"
@@ -31,12 +32,7 @@ const StudentViewRefundRequest = () => {
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
-                        sessionStorage.removeItem("studentkey");
-                        sessionStorage.removeItem("studentId");
-                        sessionStorage.removeItem("studemail");
-                        sessionStorage.removeItem("studBatchId");
-                        sessionStorage.removeItem("studLoginToken");
-                        sessionStorage.removeItem("subtaskId");
+                        sessionStorage.clear()
                     } else {
                         if (response.data.status === "No refund requests found.") {
                             console.log(response.data.status)
@@ -68,16 +64,12 @@ const StudentViewRefundRequest = () => {
             (response) => {
                 if (response.data.status === "success") {
                     alert("Your Refund Request Has Being Successfully Cancelled!!")
-                    window.location.reload();
+                    navigate("/studentLogin")
+                    sessionStorage.clear()
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
-                        sessionStorage.removeItem("studentkey");
-                        sessionStorage.removeItem("studentId");
-                        sessionStorage.removeItem("studemail");
-                        sessionStorage.removeItem("studBatchId");
-                        sessionStorage.removeItem("studLoginToken");
-                        sessionStorage.removeItem("subtaskId");
+                        sessionStorage.clear()
                     } else {
                         alert(response.data.status)
                     }
@@ -104,12 +96,7 @@ const StudentViewRefundRequest = () => {
                 } else {
                     if (response.data.status === 'Unauthorized User!!') {
                         navigate("/studentLogin")
-                        sessionStorage.removeItem("studentkey");
-                        sessionStorage.removeItem("studentId");
-                        sessionStorage.removeItem("studemail");
-                        sessionStorage.removeItem("studBatchId");
-                        sessionStorage.removeItem("studLoginToken");
-                        sessionStorage.removeItem("subtaskId");
+                        sessionStorage.clear()
                     } else {
                         alert(response.data.status)
                     }
@@ -118,19 +105,24 @@ const StudentViewRefundRequest = () => {
         )
     }
 
+    const handleClick = () => {
+      sessionStorage.clear()
+    }
+
     useEffect(() => { getData() }, [])
 
     return (
         <div>
-            <StudNavBar />
+            {currentRefundStatus !== "Refund Request Active" ? <StudNavBar /> : null}
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">
                         <div className="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
                             <div className="bg-white p-4 p-md-5 rounded shadow-sm">
                                 <div className="row gy-3 gy-md-4 overflow-hidden">
-                                    <div className="col-12">
-                                        <h2 className="text-3xl font-semibold mb-4">Refund Request</h2>
+                                    <div className="flex justify-between items-center mt-8 ml-4 mb-4">
+                                        <h2 className="text-lg font-bold">Student View Refund Request</h2>
+                                        {currentRefundStatus === "Refund Request Active" ? <Link to="/studentLogin" onClick={handleClick} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Log Out</Link> : null}
                                     </div>
                                     {loading ? (
                                         <div className="col-12 text-center">
