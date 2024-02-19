@@ -74,7 +74,7 @@ exports.createTask = (request, response) => {
             // Remove the file from local storage
             fs.unlinkSync(file.path);
 
-            const { batchId, taskTitle, taskDesc, taskType, totalScore } = request.body
+            const { batchId, taskTitle, taskDesc, taskType, totalScore,sessionId } = request.body
             const dueDate = request.body.dueDate
 
             const taskToken = request.headers.token
@@ -87,6 +87,9 @@ exports.createTask = (request, response) => {
 
                     if (Validator.isEmpty(batchId).isValid) {
                         validationErrors.value = Validator.isEmpty(batchId).message;
+                    }
+                    if (Validator.isEmpty(sessionId).isValid) {
+                        validationErrors.sessionId = Validator.isEmpty(sessionId).message;
                     }
                     if (!Validator.isValidAmount(batchId).isValid) {
                         validationErrors.amount = Validator.isValidAmount(batchId).message; //validation for batch id
@@ -134,6 +137,7 @@ exports.createTask = (request, response) => {
                         taskType: taskType,
                         taskFileUpload: fileUrl,
                         totalScore: totalScore,
+                        sessionId: sessionId,
                         dueDate: dueDate.split('/').reverse().join('-')
                     });
 
