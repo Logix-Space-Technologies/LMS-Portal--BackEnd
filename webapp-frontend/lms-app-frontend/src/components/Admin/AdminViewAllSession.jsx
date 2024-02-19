@@ -163,6 +163,8 @@ const AdminViewAllSession = () => {
                             <th scope="col" className="px-6 py-3">Attendence Code</th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -188,6 +190,11 @@ const AdminViewAllSession = () => {
                                             Show QR
                                         </button>
                                     )}
+                                </td>
+                                <td className="px-6 py-4">
+                                    <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                        View Tasks
+                                    </button>
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.cancelStatus === "ACTIVE" && (

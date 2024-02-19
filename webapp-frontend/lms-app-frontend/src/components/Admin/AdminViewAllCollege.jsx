@@ -124,6 +124,9 @@ const AdminViewAllCollege = () => {
                             <th scope="col" className="px-6 py-3">
 
                             </th>
+                            <th scope="col" className="px-6 py-3">
+
+                            </th>
                             {key === 'lmsapp' && (
                                 <th scope="col" className="px-6 py-3">
 
@@ -158,6 +161,9 @@ const AdminViewAllCollege = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.collegeMobileNumber}
+                                </td>
+                                <td className="px-6 py-4">
+                                <Link to="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Batches</Link>
                                 </td>
                                 <td className="px-6 py-4">
                                     <Link to="/adminUpdateclg" onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update College</Link>

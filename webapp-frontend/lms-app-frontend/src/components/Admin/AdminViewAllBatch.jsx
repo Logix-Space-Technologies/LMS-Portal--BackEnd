@@ -93,6 +93,8 @@ const AdminViewAllBatch = () => {
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -107,6 +109,12 @@ const AdminViewAllBatch = () => {
                                 <td className="px-6 py-4">{value.batchDesc}</td>
                                 <td className="px-6 py-4">{value.batchAmount}</td>
                                 <td className="px-6 py-4">{new Date(value.addedDate).toLocaleDateString()}</td>
+                                <td className="px-6 py-4">
+                                    <Link to="#" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Sessions</Link>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <Link to="#" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Students</Link>
+                                </td>
                                 <td className="px-6 py-4">
                                     <Link to="/adminviewallcurriculum" onClick={() => viewAllCurr(value.id)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Curriculum</Link>
                                 </td>
