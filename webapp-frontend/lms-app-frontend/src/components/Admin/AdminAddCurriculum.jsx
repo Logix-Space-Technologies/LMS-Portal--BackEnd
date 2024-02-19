@@ -239,7 +239,7 @@ const AdminAddCurriculum = () => {
                                             </a>
                                             <br />
                                             <br />
-                                            <h3>Admin Add Currirculum</h3>
+                                            <h3>Add Currirculum</h3>
                                         </div>
                                     </div>
                                 </div>
