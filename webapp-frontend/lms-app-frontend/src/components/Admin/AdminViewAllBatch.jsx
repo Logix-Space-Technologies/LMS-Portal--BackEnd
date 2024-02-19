@@ -65,7 +65,7 @@ const AdminViewAllBatch = () => {
 
     const batchClick = (id) => {
         let data = id;
-        sessionStorage.setItem("batchId", data);
+        sessionStorage.setItem("viewbatchId", data);
     }
 
     // Logic for displaying current batches
@@ -112,7 +112,7 @@ const AdminViewAllBatch = () => {
                     </thead>
                     <tbody>
                         {/* Table rows */}
-                        {currentBatches.map((value, index) => (
+                        {currentBatches.length > 0 ? currentBatches.map((value, index) => (
                             <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td className="px-6 py-4">{value.id}</td>
                                 <td className="px-6 py-4">{value.collegeName}</td>
@@ -126,7 +126,7 @@ const AdminViewAllBatch = () => {
                                     <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="btn bg-blue-500 text-white">View Sessions</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="#" style={{ whiteSpace: 'nowrap' }} className="btn bg-blue-500 text-white">View Students</Link>
+                                    <Link to="/adminviewallstudents" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="btn bg-blue-500 text-white">View Students</Link>
                                 </td>
                                 <td className="px-6 py-4">
                                     <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id)} className="btn bg-blue-500 text-white">View Curriculum</Link>
@@ -138,7 +138,13 @@ const AdminViewAllBatch = () => {
                                     <button onClick={() => deleteClick(value.id)} className="btn btn-danger">Delete</button>
                                 </td>
                             </tr>
-                        ))}
+                        )) : (
+                            <tr>
+                                <td colSpan="13" className="px-6 py-4" style={{textAlign: "center"}}>
+                                    No Batches Found !!!
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
                 {/* Pagination */}

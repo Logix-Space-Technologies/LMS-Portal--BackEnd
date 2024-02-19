@@ -38,7 +38,7 @@ const AdminViewAllSession = () => {
 
 
     const getData = () => {
-        let data = { "batchId": sessionStorage.getItem("batchId") }
+        let data = { "batchId": sessionStorage.getItem("viewbatchId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',

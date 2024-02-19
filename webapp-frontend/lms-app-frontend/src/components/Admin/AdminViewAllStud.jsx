@@ -2,15 +2,19 @@ import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import axios from 'axios';
 import Navbar from './Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const AdminViewAllStud = () => {
     const [studData, setStudData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [studentsPerPage] = useState(10); // Number of students per page
 
+    const navigate = useNavigate()
+
     const apiUrl = global.config.urls.api.server + "/api/lms/viewAllStudByAdmin";
 
     const getData = () => {
+        let data = { "batchId": sessionStorage.getItem("viewbatchId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -19,7 +23,7 @@ const AdminViewAllStud = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-        axios.post(apiUrl, {}, axiosConfig).then(
+        axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 setStudData(response.data.data);
                 console.log(response.data.data);
@@ -41,7 +45,13 @@ const AdminViewAllStud = () => {
         <div>
             <Navbar />
             <br />
-            <strong>Admin View All Students</strong><br /><br />
+            <div className="flex justify-between items-center mx-4 my-4">
+                <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+                <strong>View All Students</strong>
+                
+                <div></div>
+            </div>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -82,7 +92,7 @@ const AdminViewAllStud = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentStudents.map(
+                        {currentStudents.length > 0 ? currentStudents.map(
                             (value, index) => {
                                 return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
@@ -124,30 +134,38 @@ const AdminViewAllStud = () => {
                                     </td>
                                 </tr>
                             }
+                        ) : (
+                            <tr>
+                                <td colSpan="11" className="px-6 py-4" style={{textAlign: "center"}}>
+                                    No Students Found !!!
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
-                <div className="flex justify-center mt-8">
-                    <nav>
-                        <ul className="flex list-style-none">
-                            {currentPage > 1 && (
-                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                    Previous
-                                </li>
-                            )}
-                            {Array.from({ length: Math.ceil(studData.length / studentsPerPage) }, (_, i) => (
-                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                                    {i + 1}
-                                </li>
-                            ))}
-                            {currentPage < Math.ceil(studData.length / studentsPerPage) && (
-                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                    Next
-                                </li>
-                            )}
-                        </ul>
-                    </nav>
-                </div>
+                {currentStudents.length > 0 && (
+                    <div className="flex justify-center mt-8">
+                        <nav>
+                            <ul className="flex list-style-none">
+                                {currentPage > 1 && (
+                                    <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                        Previous
+                                    </li>
+                                )}
+                                {Array.from({ length: Math.ceil(studData.length / studentsPerPage) }, (_, i) => (
+                                    <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                        {i + 1}
+                                    </li>
+                                ))}
+                                {currentPage < Math.ceil(studData.length / studentsPerPage) && (
+                                    <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                        Next
+                                    </li>
+                                )}
+                            </ul>
+                        </nav>
+                    </div>
+                )}
             </div>
         </div>
     );
