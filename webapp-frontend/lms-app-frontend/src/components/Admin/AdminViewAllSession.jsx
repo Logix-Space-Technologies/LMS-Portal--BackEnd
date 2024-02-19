@@ -133,6 +133,11 @@ const AdminViewAllSession = () => {
         navigate("/AdminUpdateSession")
     }
 
+    const sessionClick = (id) => {
+        sessionStorage.setItem("viewtaskId", id)
+        navigate("/AdminViewAllTasks")
+    }
+
     // Logic for displaying current sessions
     const indexOfLastSession = currentPage * sessionsPerPage;
     const indexOfFirstSession = indexOfLastSession - sessionsPerPage;
@@ -201,7 +206,7 @@ const AdminViewAllSession = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.cancelStatus === "ACTIVE" && (
-                                        <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                        <button onClick={()=> sessionClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                             View Tasks
                                         </button>
                                     )}
