@@ -108,6 +108,8 @@ const AdminSearchAdminStaff = () => {
                                         <th>Address</th>
                                         <th>Aadhar No</th>
                                         <th>Email</th>
+                                        <th></th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
