@@ -62,7 +62,7 @@ const NotificationView = () => {
           <div className="lg:w-2/5 sm:w-3/5 w-11/12 bg-gray-100 dark:bg-gray-800 rounded-xl mx-auto border p-10 shadow-sm">
             <h3 className="font-bold text-xl sm:text-2xl text-gray-800 dark:text-white mb-4">Notifications</h3>
             {notifications.map((value, index) => (
-              <div key={index} className="mt-2 px-6 py-4 bg-white rounded-lg shadow w-full" style={{ maxHeight: '800px', overflowY: 'auto', wordWrap: 'break-word' }}>
+              <div key={index} className="mt-2 px-6 py-4 bg-white rounded-lg shadow w-full" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
                 <div className="inline-flex items-center justify-between w-full">
                   <div className="inline-flex items-center">
                     <img src="https://cdn-icons-png.flaticon.com/512/893/893257.png" alt="Messages Icon" className="w-6 h-6 mr-3" />

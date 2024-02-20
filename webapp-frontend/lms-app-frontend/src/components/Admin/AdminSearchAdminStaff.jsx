@@ -89,9 +89,10 @@ const AdminSearchAdminStaff = () => {
             <div className="container">
                 <div className="row">
                     <div className="col col-12">
+                        <br />
                         <h1>Search Admin Staff</h1>
-                        <label htmlFor="" className="form-label">Admin Staff Name/Phone No/Address/Aadhar No/Email</label>
-                        <input onChange={inputHandler} type="text" className="form-control" name="adminStaffSearchQuery" value={inputField.adminStaffSearchQuery} />
+                        <br />
+                        <input onChange={inputHandler} type="text" className="form-control" name="adminStaffSearchQuery" value={inputField.adminStaffSearchQuery} placeholder='Search By Admin Staff Name/Phone No/Address/Aadhar No/Email' />
                         <br></br>
                         <button onClick={readValue} className="btn btn-warning">Search</button>
                         <br /><br />
@@ -131,7 +132,7 @@ const AdminSearchAdminStaff = () => {
                                 </tbody>
                             </table>
                         </div>
-                        <div className="col-12">
+                        <div className="col-12 d-flex justify-content-center">
                             <nav>
                                 <ul className="flex list-style-none">
                                     {currentPage > 1 && (

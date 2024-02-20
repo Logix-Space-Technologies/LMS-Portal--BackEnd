@@ -112,14 +112,14 @@ const AdminSearchCurriculum = () => {
     return (
         <div>
             <Navbar /><br />
-            <strong style={{ paddingLeft: '30px'}}>Search Curriculum</strong>
+            <strong style={{ paddingLeft: '30px' }}>Search Curriculum</strong>
 
             <div className="flex justify-between items-center mx-4 my-4">
                 <div className="container">
                     <div className="row g-3">
                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                             <label htmlFor="" className="form-label"></label>
-                            <input onChange={inputHandler} type="text" className="form-control" name="CurriculumSearchQuery" value={inputField.CurriculumSearchQuery} />
+                            <input onChange={inputHandler} type="text" className="form-control" name="CurriculumSearchQuery" value={inputField.CurriculumSearchQuery} placeholder='Search By Title/Description/Batch Name/College Name' />
                         </div>
                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                             <button onClick={readValue} className="btn btn-warning">Search</button>
@@ -156,13 +156,10 @@ const AdminSearchCurriculum = () => {
                                     File Link
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-    
+
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-    
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-    
+
                                 </th>
                             </tr>
                         </thead>
@@ -186,7 +183,7 @@ const AdminSearchCurriculum = () => {
                                             {value.addedBy}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {value.curriculumFileLink}
+                                            <Link target="_blank" to={value.curriculumFileLink} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>
                                         </td>
                                         <td className="p-4 whitespace-nowrap">
                                             <button onClick={() => handleClick(value.id)} className="btn btn-danger">Delete</button>
@@ -226,7 +223,7 @@ const AdminSearchCurriculum = () => {
             </div>
         </div>
     );
-    
+
 }
 
 export default AdminSearchCurriculum
