@@ -24,10 +24,8 @@ const AddAdminStaff = () => {
 
 
     const handleSubmit = (e) => {
-        console.log(inputField);
         e.preventDefault();
         const validationErrors = validateForm(inputField);
-        console.log(validationErrors);
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig = {
                 headers: {
@@ -45,11 +43,10 @@ const AddAdminStaff = () => {
                 Email: inputField.Email,
                 Password: inputField.Password,
             };
-            console.log(data);
             axios.post(apiUrl, data, axiosConfig).then(
                 (response) => {
                     if (response.data.status === 'success') {
-                        alert(response.data.status);
+                        alert("AdminStaff Added Successfully.");
                         setInputField({
                             AdStaffName: "",
                             PhNo: "",
@@ -91,8 +88,6 @@ const AddAdminStaff = () => {
         }
         if (!data.PhNo.trim()) {
             errors.PhNo = 'Mobile number is required';
-        } else if (!/^\+91[6-9]\d{9}$|^\+91\s?[6-9]\d{9}$|^[6-9]\d{9}$/.test(data.PhNo)) {
-            errors.PhNo = 'Invalid Mobile Number Format';
         }
 
         if (!data.Address.trim()) {
@@ -100,18 +95,12 @@ const AddAdminStaff = () => {
         }
         if (!data.AadharNo.trim()) {
             errors.AadharNo = 'Aadhar Number is required';
-        } else if (!/^\d{12}$/.test(data.AadharNo)) {
-            errors.AadharNo = 'Invalid AadharNo Format';
         }
         if (!data.Email.trim()) {
             errors.Email = 'Email is required';
-        } else if (!/^[a-z0-9._!#$%&'*+/=?^_`{|}~-]+@[a-z]+(\.[a-z]+)+$/.test(data.Email)) {
-            errors.Email = 'Invalid Email address Format';
         }
         if (!data.Password.trim()) {
             errors.Password = 'Password is required';
-        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(data.Password)) {
-            errors.Password = 'Invalid Password Format';
         }
         return errors;
     };
@@ -159,7 +148,7 @@ const AddAdminStaff = () => {
                                         <input onChange={inputHandler} type="text" class="form-control" name="Email" value={inputField.Email} id="Email" />
                                         {errors.Email && <span style={{ color: 'red' }} className="error">{errors.Email}</span>}
                                     </div>
-                                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                    <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                         <label for="" class="form-label">Password</label>
                                         <input onChange={inputHandler} type="password" class="form-control" name="Password" value={inputField.Password} id="Password" />
                                         {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}

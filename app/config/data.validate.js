@@ -24,7 +24,7 @@ function isValidPhoneNumber(phoneNumber) {
         };
     }
     return {
-        isValid: /^\d{4,5}\s?\d{6,7}$/.test(phoneNumber),
+        isValid: /^(\(?\d{2,4}\)?[\s-]?)?\d{6,8}$/.test(phoneNumber),
         message: "Invalid Phone Number"
     };
 }

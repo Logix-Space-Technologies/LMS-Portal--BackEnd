@@ -139,10 +139,10 @@ exports.clgStaffCreate = (request, response) => {
             validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
           }
           if (Validator.isEmpty(request.body.department).isValid) {
-            validationErrors.name = Validator.isEmpty(request.body.department).message;
+            validationErrors.dept = Validator.isEmpty(request.body.department).message;
           }
           if (!Validator.isValidName(request.body.department).isValid) {
-            validationErrors.name = Validator.isValidName(request.body.department).message
+            validationErrors.dept = Validator.isValidName(request.body.department).message
           }
           if (Validator.isEmpty(request.body.password).isValid) {
             validationErrors.password = Validator.isEmpty(request.body.password).message;
