@@ -97,7 +97,6 @@ const StudentUpdateSubmittedTask = () => {
             <section className="bg-white dark:bg-gray-900">
                 <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
                     <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">Update Submitted Task</h2>
-                    <form action="#">
                         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
                             <div className="sm:col-span-2">
                                 <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">GitHub Link</label>
@@ -111,7 +110,6 @@ const StudentUpdateSubmittedTask = () => {
                         </div>
                         <br />
                         <button onClick={updateSubmittedTask} className="btn btn-primary">Update</button>
-                    </form>
                 </div>
             </section>
 
