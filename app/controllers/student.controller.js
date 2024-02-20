@@ -769,6 +769,8 @@ exports.generateBatchWiseAttendanceList = (request, response) => {
             Student.generateBatchWiseAttendanceList(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
+                } else if (data.length === 0) { // Check if data is empty
+                    return response.json({ "status": "No data found" }); // Return status if no data is available
                 } else {
                     generateAttendancePDF(data, (pdfPath, pdfError) => {
                         if (pdfError) {
