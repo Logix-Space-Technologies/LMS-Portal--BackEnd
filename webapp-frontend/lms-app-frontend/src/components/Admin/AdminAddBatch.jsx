@@ -42,7 +42,6 @@ const AdminAddBatch = () => {
 
         axios.post(apiUrl, {}, axiosConfig).then((response) => {
             setOutputField(response.data.data);
-            console.log(response.data.data);
         });
     };
 
@@ -60,9 +59,7 @@ const AdminAddBatch = () => {
             setKey(currentKey); // Update the state if needed
         }
         e.preventDefault();
-        console.log('Handle submit function called');
         const validationErrors = validateForm(inputField);
-        console.log(validationErrors)
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig2 = {
                 headers: {
@@ -72,7 +69,6 @@ const AdminAddBatch = () => {
                     "key": currentKey
                 }
             }
-            console.log(axiosConfig2)
             let data = {
                 collegeId: inputField.collegeId,
                 batchName: inputField.batchName,
@@ -81,7 +77,6 @@ const AdminAddBatch = () => {
                 batchDesc: inputField.batchDesc,
                 batchAmount: inputField.batchAmount
             };
-            console.log(data)
             axios.post(apiUrl2, data, axiosConfig2).then((response) => {
                 if (response.data.status === 'success') {
                     alert('Batch Added Successfully !!');
@@ -132,7 +127,7 @@ const AdminAddBatch = () => {
         let errors = {};
 
         if (!data.collegeId.trim()) {
-            errors.collegeId = 'College Id is required';
+            errors.collegeId = 'College Name is required';
         }
         if (!data.batchName.trim()) {
             errors.batchName = 'Name is required';
@@ -277,7 +272,7 @@ const AdminAddBatch = () => {
                                     </div>
                                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                         <label htmlFor="batchDesc" className="form-label">
-                                            Batch Description
+                                            Batch Description <span className="text-danger">*</span>
                                         </label>
                                         <textarea
                                             className="form-control"

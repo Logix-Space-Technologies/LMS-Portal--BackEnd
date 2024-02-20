@@ -20,10 +20,21 @@ const AddCollege = () => {
 
   const [file, setFile] = useState(null)
   const [key, setKey] = useState('');
+  const [fileType, setFileType] = useState("");
 
 
   const fileUploadHandler = (event) => {
-    setFile(event.target.files[0])
+    setErrors({});
+    const uploadedFile = event.target.files[0];
+    if (uploadedFile) {
+      setErrors({});
+      setFile(uploadedFile);
+      const extension = uploadedFile.name.split('.').pop().toLowerCase();
+      setFileType(extension);
+    } else {
+      setFile(null);
+      setFileType("");
+    }
   }
 
   const [errors, setErrors] = useState({})
@@ -31,6 +42,7 @@ const AddCollege = () => {
   const apiUrl = global.config.urls.api.server + "/api/lms/addCollege"
 
   const inputHandler = (event) => {
+    setErrors({})
     setInputField({ ...inputField, [event.target.name]: event.target.value });
   }
 
@@ -66,9 +78,18 @@ const AddCollege = () => {
       axios.post(apiUrl, data, axiosConfig).then(
         (response) => {
           if (response.data.status === "success") {
-            alert(response.data.status)
-            setInputField({ "collegeName": "", "collegeCode": "", "collegeAddress": "", "website": "", "email": "", "collegePhNo": "", "collegeMobileNumber": "" })
-            setFile(null)
+            alert("College Details Added Successfully.")
+            setInputField({
+              collegeName: '',
+              collegeCode: '',
+              collegeAddress: '',
+              website: '',
+              email: '',
+              collegePhNo: '',
+              collegeMobileNumber: '',
+              collegeImage: ''
+            })
+            window.location.reload()
           } else {
             if (response.data.status === "Validation failed" && response.data.data.name) {
               alert(response.data.data.name)
@@ -92,6 +113,7 @@ const AddCollege = () => {
                           alert(response.data.data.code)
                         } else {
                           alert(response.data.status)
+                          console.log(response.data.status)
                         }
                       }
                     }
@@ -116,11 +138,12 @@ const AddCollege = () => {
             alert(error.response.data.status)
           }
         } else if (error.request) {
-          console.log(error.request);
+          alert(error.request);
+        } else if (error.message) {
+          alert('Error', error.message);
         } else {
-          console.log('Error', error.message);
+          alert(error.config);
         }
-        console.log(error.config);
       })
     } else {
       setErrors(validationErrors);
@@ -141,22 +164,16 @@ const AddCollege = () => {
     }
     if (!data.website.trim()) {
       errors.website = 'Website is required';
-    } else if (!/^www\.[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/.test(data.website)) {
-      errors.website = 'Invalid Website Format';
     }
     if (!data.email.trim()) {
       errors.email = 'Email is required';
-    } else if (!/^[a-z0-9._!#$%&'*+/=?^_`{|}~-]+@[a-z]+(\.[a-z]+)+$/.test(data.email)) {
-      errors.email = 'Invalid Email address Format';
     }
     if (!data.collegeMobileNumber.trim()) {
       errors.collegeMobileNumber = 'Mobile Number is required';
-    } else if (!/^\+91[6-9]\d{9}$|^\+91\s?[6-9]\d{9}$|^[6-9]\d{9}$/.test(data.collegeMobileNumber)) {
-      errors.collegeMobileNumber = 'Invalid Mobile Number Format';
     }
-    // if (!data.collegeImage) {
-    //   errors.collegeImage = 'College Image Field is required';
-    // }
+    if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+      errors.file = "File must be in jpg/jpeg/png/webp/heif format";
+    }
     return errors;
   };
 
@@ -164,6 +181,7 @@ const AddCollege = () => {
   useEffect(() => {
     setKey(sessionStorage.getItem("admkey") || '');
   }, []);
+
   return (
     <div>
       {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
@@ -223,7 +241,7 @@ const AddCollege = () => {
                       College Image <span className="text-danger">*</span>
                     </label>
                     <input type="file" className="form-control" name="collegeImage" id="collegeImage" accept="image/*" onChange={fileUploadHandler} />
-                    {errors.collegeImage && <span style={{ color: 'red' }} className="error">{errors.collegeImage}</span>}
+                    {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
                   </div>
                   <div className="col-12">
                     <div className="d-grid">

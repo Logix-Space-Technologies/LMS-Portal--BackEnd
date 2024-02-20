@@ -23,8 +23,20 @@ const AddCollegeStaff = () => {
 
   const [key, setKey] = useState('');
 
+  const [fileType, setFileType] = useState("");
+
   const fileUploadHandler = (event) => {
-    setFile(event.target.files[0])
+    setErrors({});
+    const uploadedFile = event.target.files[0];
+    if (uploadedFile) {
+      setErrors({});
+      setFile(uploadedFile);
+      const extension = uploadedFile.name.split('.').pop().toLowerCase();
+      setFileType(extension);
+    } else {
+      setFile(null);
+      setFileType("");
+    }
   }
 
 
@@ -76,9 +88,7 @@ const AddCollegeStaff = () => {
       token = sessionStorage.getItem("admstaffLogintoken");
       setKey(currentKey); // Update the state if needed
     }
-    console.log(inputField)
     e.preventDefault();
-    console.log('Handle submit function called');
     const validationErrors = validateForm(inputField);
     console.log(validationErrors);
     if (Object.keys(validationErrors).length === 0) {
@@ -102,32 +112,26 @@ const AddCollegeStaff = () => {
         "confirmpassword": inputField.confirmpassword,
         "profilePic": file
       }
-      console.log(data)
-
-      if (file) {
-        data.profilePic = file;
-      }
       axios.post(apiUrl, data, axiosConfig).then(
         (response) => {
-          console.log(inputField)
-          console.log(file)
           if (response.data.status === "success") {
             alert("College Staff Added Successfully !!")
             setInputField({
-              "collegeId": "",
-              "collegeStaffName": "",
-              "department": "",
-              "clgStaffAddress": "",
-              "email": "",
-              "phNo": "",
-              "aadharNo": "",
-              "password": "",
-              "confirmpassword": ""
+              collegeId: '',
+              collegeStaffName: '',
+              department: '',
+              clgStaffAddress: '',
+              email: '',
+              phNo: '',
+              aadharNo: '',
+              password: '',
+              confirmpassword: '',
+              profilePic: ''
             })
-            setFile(null)
+            window.location.reload()
           } else {
-            if (response.data.status === "Validation failed" && response.data.data.profile) {
-              alert(response.data.data.profile)
+            if (response.data.status === "Validation failed" && response.data.data.dept) {
+              alert(response.data.data.dept)
             } else {
               if (response.data.status === "Validation failed" && response.data.data.name) {
                 alert(response.data.data.name)
@@ -135,23 +139,19 @@ const AddCollegeStaff = () => {
                 if (response.data.status === "Validation failed" && response.data.data.address) {
                   alert(response.data.data.address)
                 } else {
-                  if (response.data.status === "Validation failed" && response.data.data.department) {
-                    alert(response.data.data.department)
+                  if (response.data.status === "Validation failed" && response.data.data.email) {
+                    alert(response.data.data.email)
                   } else {
-                    if (response.data.status === "Validation failed" && response.data.data.email) {
-                      alert(response.data.data.email)
+                    if (response.data.status === "Validation failed" && response.data.data.mobile) {
+                      alert(response.data.data.mobile)
                     } else {
-                      if (response.data.status === "Validation failed" && response.data.data.phone) {
-                        alert(response.data.data.phone)
+                      if (response.data.status === "Validation failed" && response.data.data.aadharnumber) {
+                        alert(response.data.data.aadharnumber)
                       } else {
-                        if (response.data.status === "Validation failed" && response.data.data.aadharNo) {
-                          alert(response.data.data.aadharNo)
+                        if (response.data.status === "Validation failed" && response.data.data.password) {
+                          alert(response.data.data.password)
                         } else {
-                          if (response.data.status === "Validation failed" && response.data.data.password) {
-                            alert(response.data.data.password)
-                          } else {
-                            alert(response.data.status)
-                          }
+                          alert(response.data.status)
                         }
                       }
                     }
@@ -197,7 +197,7 @@ const AddCollegeStaff = () => {
     }
 
     if (!data.collegeId.trim()) {
-      errors.collegeId = 'College Id is required';
+      errors.collegeId = 'College Name is required';
     }
     if (!data.department.trim()) {
       errors.department = 'Department is required';
@@ -209,32 +209,24 @@ const AddCollegeStaff = () => {
       errors.confirmpassword = 'Confirm password is required';
 
     }
-    if (!file) {
-      errors.profilePic = 'Profile Image is required';
+    if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+      errors.file = "File must be in jpg/jpeg/png/webp/heif format";
     }
     if (!data.phNo.trim()) {
       errors.phNo = 'Phone No is required';
-    } else if (!/^\+91[6-9]\d{9}$|^\+91\s?[6-9]\d{9}$|^[6-9]\d{9}$/.test(data.phNo)) {
-      errors.phNo = 'Invalid phone number';
     }
 
     if (!data.aadharNo.trim()) {
       errors.aadharNo = 'Aadhar No is required';
-    } else if (!/^\d{12}$/.test(data.aadharNo)) {
-      errors.aadharNo = 'Invalid Aadhar number';
     }
 
 
     if (!data.email.trim()) {
       errors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(data.email)) {
-      errors.email = 'Invalid email address';
     }
 
     if (!data.password.trim()) {
       errors.password = 'Password is required';
-    } else if (data.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
     }
 
     if (data.confirmpassword !== data.password) {
@@ -283,18 +275,18 @@ const AddCollegeStaff = () => {
                       {errors.collegeId && <span style={{ color: 'red' }} className="error">{errors.collegeId}</span>}
                     </div>
                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                      <label for="collegeStaffName" class="form-label">College Staff Name <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" name="collegeStaffName" onChange={inputHandler} value={inputField.collegeStaffName} id="collegeStaffName" />
-                      {errors.collegeStaffName && <span style={{ color: 'red' }} className="error">{errors.collegeStaffName}</span>}
-                    </div>
-                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                       <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
                       <input type="text" class="form-control" name="department" id="department" onChange={inputHandler} value={inputField.department} />
                       {errors.department && <span style={{ color: 'red' }} className="error">{errors.department}</span>}
                     </div>
-                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                    <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                      <label for="collegeStaffName" class="form-label">College Staff Name <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="collegeStaffName" onChange={inputHandler} value={inputField.collegeStaffName} id="collegeStaffName" />
+                      {errors.collegeStaffName && <span style={{ color: 'red' }} className="error">{errors.collegeStaffName}</span>}
+                    </div>
+                    <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                       <label for="clgStaffAddress" class="form-label">Address <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" name="clgStaffAddress" id="clgStaffAddress" onChange={inputHandler} value={inputField.clgStaffAddress} />
+                      <textarea onChange={inputHandler} name="clgStaffAddress" id="clgStaffAddress" cols="30" rows="5" className="input form-control" value={inputField.clgStaffAddress} ></textarea>
                       {errors.clgStaffAddress && <span style={{ color: 'red' }} className="error">{errors.clgStaffAddress}</span>}
                     </div>
                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
@@ -303,7 +295,7 @@ const AddCollegeStaff = () => {
                       {errors.email && <span style={{ color: 'red' }} className="error">{errors.email}</span>}
                     </div>
                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                      <label for="PhNo" class="form-label">Phone No <span class="text-danger">*</span></label>
+                      <label for="PhNo" class="form-label">Mobile No <span class="text-danger">*</span></label>
                       <input type="text" class="form-control" required="" name="phNo" id="phNo" onChange={inputHandler} value={inputField.phNo} />
                       {errors.phNo && <span style={{ color: 'red' }} className="error">{errors.phNo}</span>}
                     </div>
@@ -312,7 +304,7 @@ const AddCollegeStaff = () => {
                         Profile Image <span className="text-danger">*</span>
                       </label>
                       <input type="file" className="form-control" name="profilePic" id="profilePic" accept="image/*" onChange={fileUploadHandler} />
-                      {errors.profilePic && <span style={{ color: 'red' }} className="error">{errors.profilePic}</span>}
+                      {errors.file && <span style={{ color: 'red' }} className="error">{errors.file}</span>}
                     </div>
                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                       <label for="aadharNo" class="form-label">AadharNo <span class="text-danger">*</span></label>

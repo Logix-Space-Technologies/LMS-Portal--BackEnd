@@ -19,9 +19,7 @@ exports.batchCreate = (request, response) => {
             if (!Validator.isValidAmount(request.body.collegeId).isValid) {
                 validationErrors.collegeid = Validator.isValidAmount(request.body.collegeId).message; //validation for college id
             }
-            if (!Validator.isValidName(request.body.batchName).isValid) {
-                validationErrors.name = Validator.isValidName(request.body.batchName).message
-            }
+        
             if (Validator.isEmpty(request.body.batchName).isValid) {
                 validationErrors.name = Validator.isEmpty(request.body.batchName).message
             }
@@ -183,10 +181,6 @@ exports.batchUpdate = (request, response) => {
 
             const validationErrors = {};
 
-
-            if (!Validator.isValidName(batchName).isValid) {
-                validationErrors.batchName = Validator.isValidName(batchName).message;
-            }
 
             if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
                 validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
