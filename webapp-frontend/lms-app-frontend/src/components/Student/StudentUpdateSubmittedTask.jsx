@@ -42,13 +42,7 @@ const StudentUpdateSubmittedTask = () => {
                         navigate("/studentLogin")
                         sessionStorage.clear()
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.gitLink) {
-                            alert(response.data.data.gitLink)
-                        } else if (response.data.status === "Validation failed" && response.data.data.Remarks) {
-                            alert(response.data.data.Remarks)
-                        } else {
-                            alert(response.data.status)
-                        }
+                        alert(response.data.status)
                     }
                 }
             }
@@ -82,7 +76,13 @@ const StudentUpdateSubmittedTask = () => {
                         navigate("/studentLogin")
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status)
+                        if (response.data.status === "Validation failed" && response.data.data.gitLink) {
+                            alert(response.data.data.gitLink)
+                        } else if (response.data.status === "Validation failed" && response.data.data.Remarks) {
+                            alert(response.data.data.Remarks)
+                        } else {
+                            alert(response.data.status)
+                        }
                     }
                 }
             }
