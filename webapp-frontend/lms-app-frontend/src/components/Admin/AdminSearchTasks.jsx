@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../../config/config'
 import Navbar from './Navbar';
 
@@ -34,6 +34,7 @@ const AdminSearchTasks = () => {
         axios.post(apiUrl, inputField, axiosConfig)
             .then(response => {
                 setTasks(response.data.data);
+                setInputField({ taskQuery: "" })
                 setIsLoading(false);
                 setSearchExecuted(true); // Set the flag to indicate search executed
             })
@@ -102,20 +103,30 @@ const AdminSearchTasks = () => {
                         <table className="table table-hover">
                             <thead className="table-light">
                                 <tr>
+                                    <th>Batch Name</th>
                                     <th>ID</th>
                                     <th>Title</th>
                                     <th>Description</th>
                                     <th>Type</th>
+                                    <th>Due Date</th>
+                                    <th>Total Score</th>
+                                    <th></th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {tasks.map(task => (
                                     <tr key={task.id}>
+                                        <td>{task.batchName}</td>
                                         <td>{task.id}</td>
                                         <td>{task.taskTitle}</td>
                                         <td>{task.taskDesc}</td>
                                         <td>{task.taskType}</td>
+                                        <td>{task.dueDate}</td>
+                                        <td>{task.totalScore}</td>
+                                        <td>
+                                            <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white btn-sm me-2">View File</Link>
+                                        </td>
                                         <td>
                                             <button onClick={() => handleUpdateClick(task.id)} className="btn btn-primary btn-sm me-2">Update</button>
                                             <button onClick={() => deleteTask(task.id)} className="btn btn-danger btn-sm">Delete</button>
@@ -126,10 +137,10 @@ const AdminSearchTasks = () => {
                         </table>
                     </div>
                 ) : (searchExecuted && !tasks ? ( // Check if search executed but no tasks found
-                <div className="alert alert-info" role="alert">
-                    No tasks found.
-                </div>
-            ) : null))}
+                    <div className="alert alert-info" role="alert">
+                        No tasks found.
+                    </div>
+                ) : null))}
             </div>
         </div>
     );
