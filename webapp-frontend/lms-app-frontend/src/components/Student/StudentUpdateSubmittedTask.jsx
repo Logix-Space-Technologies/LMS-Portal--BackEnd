@@ -97,19 +97,24 @@ const StudentUpdateSubmittedTask = () => {
             <section className="bg-white dark:bg-gray-900">
                 <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
                     <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">Update Submitted Task</h2>
-                        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-                            <div className="sm:col-span-2">
-                                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">GitHub Link</label>
-                                <input type="text" name="gitLink" value={updateSubTaskField.gitLink} onChange={updateSubTaskHandler} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type GitHub Link" required />
-                            </div>
-                            <div className="sm:col-span-2">
-                                <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Remarks</label>
-                                <textarea name="remarks" value={updateSubTaskField.remarks} onChange={updateSubTaskHandler} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type Remarks" required></textarea>
-
-                            </div>
+                    <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                        <div className="sm:col-span-2">
+                            <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">GitHub Link</label>
+                            <input type="text" name="gitLink" value={updateSubTaskField.gitLink} onChange={updateSubTaskHandler} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type GitHub Link" required />
                         </div>
-                        <br />
+                        <div className="sm:col-span-2">
+                            <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Remarks</label>
+                            <textarea name="remarks" value={updateSubTaskField.remarks} onChange={updateSubTaskHandler} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type Remarks" required></textarea>
+
+                        </div>
+                    </div>
+                    <br />
+                    <div className="flex justify-start gap-4">
                         <button onClick={updateSubmittedTask} className="btn btn-primary">Update</button>
+                        {/* <!-- Adding a back button with some spacing --> */}
+                        <button onClick={()=> navigate(-1)} className="btn btn-secondary">Back</button>
+                    </div>
+
                 </div>
             </section>
 
