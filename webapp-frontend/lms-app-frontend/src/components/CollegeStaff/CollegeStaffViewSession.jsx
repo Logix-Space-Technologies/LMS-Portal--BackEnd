@@ -87,6 +87,9 @@ const CollegeStaffViewSession = () => {
                                     Venue Or Link
                                 </th>
                                 <th scope="col" className="px-6 py-3">
+                                    Status
+                                </th>
+                                <th scope="col" className="px-6 py-3">
 
                                 </th>
                                 <th scope="col" className="px-6 py-3">
@@ -117,20 +120,27 @@ const CollegeStaffViewSession = () => {
                                             {value.venueORlink}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Link to="/clgstaffviewtask" onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary">
-                                                View Tasks
-                                            </Link>
+                                            {value.cancelStatus}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Link to="/clgstaffviewattendance" onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary">
-                                                View Attendance
-                                            </Link>
+                                            {value.cancelStatus === "ACTIVE" && (
+                                                <Link to="/clgstaffviewtask" onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary">
+                                                    View Tasks
+                                                </Link>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {value.cancelStatus === "ACTIVE" && (
+                                                <Link to="/clgstaffviewattendance" onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary">
+                                                    View Attendance
+                                                </Link>
+                                            )}
                                         </td>
                                     </tr>
 
                                 );
-                            }) : (<td colSpan="8" className="px-6 py-4">
-                                    No Sessions Found !!!
+                            }) : (<td colSpan="8" className="px-6 py-4" style={{textAlign: "center"}}>
+                                No Sessions Found !!!
                             </td>)}
                         </tbody>
                     </table>
