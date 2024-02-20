@@ -123,13 +123,13 @@ const AdminViewAllBatch = () => {
                                 <td className="px-6 py-4">{value.batchAmount}</td>
                                 <td className="px-6 py-4">{new Date(value.addedDate).toLocaleDateString()}</td>
                                 <td className="px-6 py-4">
-                                    <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Sessions</Link>
+                                    <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Sessions</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/adminviewallstudents" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Students</Link>
+                                    <Link to="/adminviewallstudents" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Students</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Curriculum</Link>
+                                    <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id)} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>
                                 </td>
                                 <td className="px-6 py-4">
                                     <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success">Update</button>
