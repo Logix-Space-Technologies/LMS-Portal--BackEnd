@@ -32,6 +32,7 @@ const StudentViewTasks = () => {
             (response) => {
                 if (response.data.data) {
                     setStudViewTaskData(response.data.data);
+                    console.log(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
@@ -151,41 +152,20 @@ const StudentViewTasks = () => {
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Due Date:</strong> {task.dueDate}
                                             </p>
-                                            {task.subDate < task.dueDate && task.updatedDate === null && (
-                                                <>
-
-                                                    <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {task.subDate}
-                                                    </p>
-
-                                                </>
+                                            {task.updatedDate && (
+                                                <p className="text-gray-700 mb-2">
+                                                    <strong>Submission Date:</strong> {task.updatedDate}
+                                                </p>
                                             )}
-                                            {task.subDate < task.dueDate && task.updatedDate != null && (
-                                                <>
-
-                                                    <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {task.subDate}
-                                                    </p>
-
-                                                </>
+                                            {!task.updatedDate && task.subDate > task.dueDate && (
+                                                <p className="text-gray-700 mb-2">
+                                                    <strong>Submission Date:</strong> {task.lateSubDate}
+                                                </p>
                                             )}
-                                            {task.subDate > task.dueDate && task.updatedDate === null && (
-                                                <>
-
-                                                    <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {task.lateSubDate}
-                                                    </p>
-
-                                                </>
-                                            )}
-                                            {task.subDate > task.dueDate && task.updatedDate != null && (
-                                                <>
-
-                                                    <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {task.updatedDate}
-                                                    </p>
-
-                                                </>
+                                            {!task.updatedDate && task.subDate <= task.dueDate && (
+                                                <p className="text-gray-700 mb-2">
+                                                    <strong>Submission Date:</strong> {task.subDate}
+                                                </p>
                                             )}
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Evaluator Remarks:</strong> {task.evaluatorRemarks}
@@ -223,41 +203,20 @@ const StudentViewTasks = () => {
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Due Date:</strong> {task.dueDate}
                                             </p>
-                                            {task.subDate < task.dueDate && task.updatedDate === null && (
-                                                <>
-
-                                                    <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {task.subDate}
-                                                    </p>
-
-                                                </>
+                                            {task.updatedDate && (
+                                                <p className="text-gray-700 mb-2">
+                                                    <strong>Submission Date:</strong> {task.updatedDate}
+                                                </p>
                                             )}
-                                            {task.subDate < task.dueDate && task.updatedDate != null && (
-                                                <>
-
-                                                    <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {task.subDate}
-                                                    </p>
-
-                                                </>
+                                            {!task.updatedDate && task.subDate > task.dueDate && (
+                                                <p className="text-gray-700 mb-2">
+                                                    <strong>Submission Date:</strong> {task.lateSubDate}
+                                                </p>
                                             )}
-                                            {task.subDate > task.dueDate && task.updatedDate === null && (
-                                                <>
-
-                                                    <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {task.lateSubDate}
-                                                    </p>
-
-                                                </>
-                                            )}
-                                            {task.subDate > task.dueDate && task.updatedDate != null && (
-                                                <>
-
-                                                    <p className="text-gray-700 mb-2">
-                                                        <strong>Submission Date :</strong> {task.updatedDate}
-                                                    </p>
-
-                                                </>
+                                            {!task.updatedDate && task.subDate <= task.dueDate && (
+                                                <p className="text-gray-700 mb-2">
+                                                    <strong>Submission Date:</strong> {task.subDate}
+                                                </p>
                                             )}
                                             <p className="text-gray-700 mb-2">
                                                 <p><strong>Submission Status: </strong>Submitted</p>
