@@ -940,9 +940,18 @@ function generateSessionAttendancePDF(data, callback) {
     });
     doc.text('\n');
 
-    // Include sessionName after the main heading
+    // Include batch name after the main heading
+    const batchName = data.length > 0 ? data[0].batchName : ''; // Assuming batchName is available in the data
+    doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name:   ${batchName}`, {
+        align: 'center',
+        underline: true,
+        margin: { bottom: 10 },
+    });
+    doc.text('\n');
+
+    // Include sessionName after the batch name
     const sessionName = data.length > 0 ? data[0].sessionName : ''; // Assuming sessionName is available in the data
-    doc.font('Helvetica-Bold').fontSize(13).text(`Session Name:   ${sessionName}`, {
+    doc.font('Helvetica-Bold').fontSize(10).text(`Session Name:   ${sessionName}`, {
         align: 'center',
         underline: true,
         margin: { bottom: 10 },
