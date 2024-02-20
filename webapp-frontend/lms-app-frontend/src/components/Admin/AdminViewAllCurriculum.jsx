@@ -6,6 +6,8 @@ import { Link, useNavigate } from 'react-router-dom'
 
 const AdminViewAllCurriculum = () => {
     const [curriculumData, setCurriculumData] = useState([])
+    const [currentPage, setCurrentPage] = useState(1);
+    const [curriculumPerPage] = useState(10); // Number of students per page
 
     const apiUrl = global.config.urls.api.server + "/api/lms/curriculumview"
     const navigate = useNavigate()
@@ -64,6 +66,24 @@ const AdminViewAllCurriculum = () => {
 
     }
 
+    // Logic for displaying current students
+    const indexOfLastStudent = currentPage * curriculumPerPage;
+    const indexOfFirstStudent = indexOfLastStudent - curriculumPerPage;
+    const currentCurriculum = curriculumData ? curriculumData.slice(indexOfFirstStudent, indexOfLastStudent) : [];
+
+
+    // Change page
+    const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    // Total pages
+    const pageNumbers = [];
+    if (curriculumData && curriculumData.length > 0) {
+        curriculumData.forEach((student, index) => {
+            const pageNumber = index + 1;
+            pageNumbers.push(pageNumber);
+        });
+    }
+
     useEffect(() => { getData() }, [])
     return (
         <div>
@@ -72,7 +92,7 @@ const AdminViewAllCurriculum = () => {
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
                 <strong>View All Curriculum</strong>
-                
+
                 <div></div>
             </div>
             <br /><br />
@@ -114,8 +134,8 @@ const AdminViewAllCurriculum = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {curriculumData && curriculumData.length > 0 ? (
-                            curriculumData.map((value, index) => {
+                        {currentCurriculum && currentCurriculum.length > 0 ? (
+                            currentCurriculum.map((value, index) => {
                                 return (
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <td className="px-6 py-4">
@@ -161,8 +181,29 @@ const AdminViewAllCurriculum = () => {
                     </tbody>
                 </table>
             </div>
+            <div className="flex justify-center mt-8">
+                <nav>
+                    <ul className="flex list-style-none">
+                        {currentPage > 1 && (
+                            <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                Previous
+                            </li>
+                        )}
+                        {pageNumbers.map(number => (
+                            <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                {number}
+                            </li>
+                        ))}
+                        {currentPage < pageNumbers.length && (
+                            <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                Next
+                            </li>
+                        )}
+                    </ul>
+                </nav>
+            </div>
         </div>
     );
-                        }
+}
 
-    export default AdminViewAllCurriculum
+export default AdminViewAllCurriculum
