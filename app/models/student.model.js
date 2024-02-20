@@ -534,7 +534,7 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
                 console.log("No unverified students found.");
                 return result("No unverified students found.", null);
             }
-            const formattedViewUnverifiedStudents = res.map(students => ({ ...students, validity: students.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: students.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}));
+            const formattedViewUnverifiedStudents = res.map(students => ({ ...students, validity: students.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: students.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }));
             console.log("Unverified students: ", formattedViewUnverifiedStudents);
             result(null, formattedViewUnverifiedStudents);
         });
@@ -543,7 +543,7 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
 // View All Students By Admin
 Student.viewAllStudentByAdmin = (batchId, result) => {
     db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND s.batchId = ? ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity",
-    [batchId],
+        [batchId],
         (err, response) => {
             if (err) {
                 console.log("Error : ", err)
@@ -849,8 +849,20 @@ Student.generateBatchWiseAttendanceList = (batchId, result) => {
     })
 }
 
+Session.generateSessionAttendanceList = (sessionId, result) => {
+    let query = "SELECT b.batchName, st.sessionName, s.studName, c.collegeName, s.admNo, s.studDept, s.course, s.membership_no, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendanceStatus, st.date AS attendanceDate, s.addedDate FROM sessiondetails st JOIN attendence a ON st.id = a.sessionId JOIN student s ON s.id = a.studId JOIN batches b ON b.id = s.batchId JOIN college c ON s.collegeId = c.id WHERE s.isActive = 1 AND b.isActive = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 AND s.deleteStatus = 0 AND b.deleteStatus = 0 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= s.addedDate AND st.id = ? ORDER BY c.collegeName, b.id, s.id, a.sessionId;"
 
-
+    db.query(query, [sessionId], (err, response) => {
+        if (err) {
+            console.log("Error executing the query:", err);
+            result(err, null);
+        } else {
+            const formattedSessionAttendanceList = response.map(attendances => ({ ...attendances, attendanceDate: attendances.attendanceDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: attendances.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+            console.log("Query results:", formattedSessionAttendanceList);
+            result(null, formattedSessionAttendanceList);
+        }
+    })
+}
 
 Student.studentNotificationView = (studId, result) => {
     db.query("SELECT * FROM student WHERE id = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1 AND isVerified = 1 AND isPaid = 1", [studId], (err, studentRes) => {
