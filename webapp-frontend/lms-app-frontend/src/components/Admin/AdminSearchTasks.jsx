@@ -12,6 +12,8 @@ const AdminSearchTasks = () => {
     const [searchExecuted, setSearchExecuted] = useState(false); // New state variable
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [tasksPerPage] = useState(10); // Number of tasks per page
 
     const apiUrl = global.config.urls.api.server + '/api/lms/searchTasks'
     const deleteUrl = global.config.urls.api.server + '/api/lms/deleteTask'
@@ -71,6 +73,13 @@ const AdminSearchTasks = () => {
         navigate("/AdminUpdateTask");
     };
 
+    // Logic for displaying current tasks
+    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+    const currentTasks = tasks ? tasks.slice(indexOfFirstTask, indexOfLastTask) : [];
+
+    // Change page
+    const paginate = pageNumber => setCurrentPage(pageNumber);
     return (
         <div>
             <Navbar />
@@ -142,6 +151,30 @@ const AdminSearchTasks = () => {
                     </div>
                 ) : null))}
             </div>
+            {/* Pagination */}
+            {currentTasks.length > 0 && (
+                <div className="flex justify-center mt-8">
+                    <nav>
+                        <ul className="flex list-style-none">
+                            {currentPage > 1 && (
+                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Previous
+                                </li>
+                            )}
+                            {Array.from({ length: Math.ceil(tasks.length / tasksPerPage) }, (_, i) => (
+                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                    {i + 1}
+                                </li>
+                            ))}
+                            {currentPage < Math.ceil(tasks.length / tasksPerPage) && (
+                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Next
+                                </li>
+                            )}
+                        </ul>
+                    </nav>
+                </div>
+            )}
         </div>
     );
 };
