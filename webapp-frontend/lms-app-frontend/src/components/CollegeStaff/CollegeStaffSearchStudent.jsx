@@ -146,16 +146,13 @@ const CollegeStaffSearchStudent = () => {
                                             Aadhar No
                                         </th>
                                         <th scope="col" className="px-6 py-3">
-                                            Batch Id
+                                            Batch Name
                                         </th>
                                         <th scope="col" className="px-6 py-3">
                                             Membership No.
                                         </th>
                                         <th scope="col" className="px-6 py-3">
                                             Expiry
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-
                                         </th>
                                     </tr>
                                 </thead>
@@ -201,7 +198,7 @@ const CollegeStaffSearchStudent = () => {
                                                     {value.aadharNo}
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    {value.batchId}
+                                                    {value.batchName}
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     {value.membership_no}
