@@ -68,6 +68,7 @@ const StudentRegistration = () => {
 
 
   const inputHandler = (event) => {
+    setErrors({})
     setInputField({ ...inputField, [event.target.name]: event.target.value });
   };
 
