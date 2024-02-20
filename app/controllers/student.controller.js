@@ -951,7 +951,7 @@ function generateSessionAttendancePDF(data, callback) {
     doc.text('\n');
 
     // Group data by session
-    const groupedData = groupAttendanceBySession(data);
+    const groupedData = groupAttendanceBySessionStudent(data);
 
     // Add content to the PDF using grouped data
     for (const sessionName in groupedData) {
@@ -996,7 +996,7 @@ function generateSessionAttendancePDF(data, callback) {
     });
 }
 
-function groupAttendanceBySession(data) {
+function groupAttendanceBySessionStudent(data) {
     const groupedData = {};
     data.forEach(item => {
         if (!groupedData[item.sessionName]) {
