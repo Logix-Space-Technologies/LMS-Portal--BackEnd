@@ -113,13 +113,14 @@ const AdminSearchTasks = () => {
                             <thead className="table-light">
                                 <tr>
                                     <th>Batch Name</th>
+                                    <th>Session Name</th>
                                     <th>ID</th>
                                     <th>Title</th>
                                     <th>Description</th>
                                     <th>Type</th>
                                     <th>Due Date</th>
                                     <th>Total Score</th>
-                                    <th></th>
+                                    <th>File Link</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -127,6 +128,7 @@ const AdminSearchTasks = () => {
                                 {tasks.map(task => (
                                     <tr key={task.id}>
                                         <td>{task.batchName}</td>
+                                        <td>{task.sessionName}</td>
                                         <td>{task.id}</td>
                                         <td>{task.taskTitle}</td>
                                         <td>{task.taskDesc}</td>
