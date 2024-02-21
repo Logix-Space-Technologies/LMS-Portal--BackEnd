@@ -66,7 +66,7 @@ const AdmStaffNavBar = () => {
                                     <li><Link className="dropdown-item" to="/adminSearchClg">Search Colleges</Link></li>
                                     <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
                                     <li><Link className="dropdown-item" to="/adminSearchTrainers">Search Trainers</Link></li>
-
+                                    <li><Link className="dropdown-item" to="/adminviewallclgstaff">View All College Staff</Link></li>
                                 </ul>
                                 
                             </li>

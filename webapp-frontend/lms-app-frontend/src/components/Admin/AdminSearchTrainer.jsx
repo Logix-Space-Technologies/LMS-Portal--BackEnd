@@ -20,7 +20,7 @@ const AdminSearchTrainer = () => {
     const navigate = useNavigate()
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [TrainerPerPage] = useState(1); // Number of students per page
+    const [TrainerPerPage] = useState(10); // Number of students per page
 
     const [isLoading, setIsLoading] = useState(true)
 
@@ -158,8 +158,12 @@ const AdminSearchTrainer = () => {
                                         <th scope="col" className="px-6 py-3">Email</th>
                                         <th scope="col" className="px-6 py-3">Contact No.</th>
                                         <th scope="col" className="px-6 py-3"></th>
-                                        <th scope="col" className="px-6 py-3"></th>
-                                        <th scope="col" className="px-6 py-3"></th>
+                                        {key === "lmsapp" && (
+                                            <th scope="col" className="px-6 py-3"></th>
+                                        )}
+                                        {key === "lmsapp" && (
+                                            <th scope="col" className="px-6 py-3"></th>
+                                        )}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -187,9 +191,11 @@ const AdminSearchTrainer = () => {
                                             <td className="p-4 whitespace-nowrap">
                                                 <button onClick={() => UpdateClick(value.id)} className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
                                             </td>
-                                            <td className="p-4 whitespace-nowrap">
-                                                <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
-                                            </td>
+                                            {key === "lmsapp" && (
+                                                <td className="p-4 whitespace-nowrap">
+                                                    <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
 
