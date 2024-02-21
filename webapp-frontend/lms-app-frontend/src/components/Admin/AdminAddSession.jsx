@@ -53,7 +53,6 @@ const AdminAddSession = () => {
         axios.post(trainerUrl, {}, axiosConfig).then(
             (response) => {
                 setTrainers(response.data.Trainers)
-                console.log(response.data)
             }
         )
     }
@@ -77,7 +76,6 @@ const AdminAddSession = () => {
         axios.post(apiUrl2, {}, axiosConfig).then(
             (response) => {
                 setOutputField(response.data.data)
-                console.log(response.data.data)
             }
         )
     }
@@ -98,10 +96,8 @@ const AdminAddSession = () => {
                 "key": currentKey
             }
         };
-        console.log(collegeId)
         axios.post(batchUrl, { collegeId }, axiosConfig2).then((response) => {
             setBatches(response.data)
-            console.log(response.data)
         })
     }
 
@@ -126,9 +122,7 @@ const AdminAddSession = () => {
             setKey(currentKey); // Update the state if needed
         }
         e.preventDefault();
-        console.log('Handle submit function called');
         const validationErrors = validateForm(inputField);
-        console.log(validationErrors)
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig3 = {
                 headers: {
@@ -138,7 +132,6 @@ const AdminAddSession = () => {
                     "key": currentKey
                 }
             }
-            console.log(axiosConfig3)
             let data = {
                 batchId: inputField.batchId,
                 sessionName: inputField.sessionName,
@@ -149,7 +142,6 @@ const AdminAddSession = () => {
                 venueORlink: inputField.venueORlink,
                 trainerId: inputField.trainerId
             }
-            console.log(data)
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
                 if (response.data.status === 'success') {
                     alert('Session Added Successfully !!');
@@ -210,16 +202,16 @@ const AdminAddSession = () => {
         let errors = {};
 
         if (!data.batchId.trim()) {
-            errors.batchId = 'Batch Id is required';
+            errors.batchId = 'Batch Name is required';
         }
         if (!data.collegeId.trim()) {
-            errors.collegeId = 'College Id is required';
+            errors.collegeId = 'College Name is required';
         }
         if (!data.sessionName.trim()) {
             errors.sessionName = 'Session name is required';
         }
         if (!data.remarks.trim()) {
-            errors.remarks = 'Remarks is required';
+            errors.remarks = 'Remark is required';
         }
         if (!data.date.trim()) {
             errors.date = 'Date is required';
@@ -231,7 +223,7 @@ const AdminAddSession = () => {
             errors.venueORlink = 'Venue or Link is required';
         }
         if (!data.trainerId.trim()) {
-            errors.trainerId = 'Trainer Id is required';
+            errors.trainerId = 'Trainer Name is required';
         }
         if (!data.time.trim()) {
             errors.time = 'Time is required';
@@ -408,7 +400,7 @@ const AdminAddSession = () => {
                                     </div>
                                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                         <label htmlFor="remarks" className="form-label">
-                                            Remarks
+                                            Remarks <span className="text-danger">*</span>
                                         </label>
                                         <textarea
                                             className="form-control"

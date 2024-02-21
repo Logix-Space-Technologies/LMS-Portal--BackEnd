@@ -60,7 +60,6 @@ const AdminAddCurriculum = () => {
         axios.post(apiUrl2, {}, axiosConfig).then(
             (response) => {
                 setOutputField(response.data.data)
-                console.log(response.data.data)
             }
         )
     }
@@ -81,10 +80,8 @@ const AdminAddCurriculum = () => {
                 "key": currentKey
             }
         };
-        console.log(collegeId)
         axios.post(batchUrl, { collegeId }, axiosConfig2).then((response) => {
             setBatches(response.data)
-            console.log(response.data)
         })
     }
 
@@ -124,7 +121,6 @@ const AdminAddCurriculum = () => {
                     "key": currentKey
                 }
             }
-            console.log(axiosConfig3)
             let data = {
                 "batchId": inputField.batchId,
                 "curriculumTitle": inputField.curriculumTitle,
@@ -132,9 +128,7 @@ const AdminAddCurriculum = () => {
                 "curriculumFileLink": file,
                 "addedBy": addedBy
             }
-            console.log(data)
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
-                console.log(response.data.status)
                 if (response.data.status === 'success') {
                     alert('Curriculum Added Successfully !!');
                     setInputField({
@@ -178,16 +172,19 @@ const AdminAddCurriculum = () => {
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
-                        console.log(error.response.data);
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
                     console.log(error.request);
-                } else {
+                    alert(error.request);
+                } else if (error.message) {
                     console.log('Error', error.message);
+                    alert('Error', error.message);
+                } else {
+                    alert(error.config);
+                    console.log(error.config);
                 }
-                console.log(error.config);
-            });
+            })
         } else {
             setErrors(validationErrors);
         }
