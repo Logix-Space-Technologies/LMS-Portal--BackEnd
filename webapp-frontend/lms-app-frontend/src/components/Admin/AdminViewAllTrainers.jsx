@@ -97,6 +97,9 @@ const AdminViewAllTrainers = () => {
                                 Phone Number
                             </th>
                             <th scope="col" className="px-6 py-3">
+                                Email
+                            </th>
+                            <th scope="col" className="px-6 py-3">
 
                             </th>
                             {key === "lmsapp" && (
@@ -122,6 +125,9 @@ const AdminViewAllTrainers = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.phoneNumber}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {value.email}
                                     </td>
                                     {key === "lmsapp" && (
                                         <td className="px-6 py-4">
