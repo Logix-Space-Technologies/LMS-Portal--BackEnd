@@ -78,6 +78,11 @@ const AdminViewAllTrainers = () => {
     };
 
     useEffect(() => { getData() }, []);
+    
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
