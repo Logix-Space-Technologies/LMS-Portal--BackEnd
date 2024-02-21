@@ -372,7 +372,7 @@ Student.findByEmail = (Email, result) => {
 
 
 Tasks.studentTaskView = (studId, result) => {
-    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, asf.AdStaffName AS 'evaluatorName', st.score, st.lateSubDate,st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 ORDER BY t.addeddate DESC", [studId],
+    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, sd.sessionName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, asf.AdStaffName AS 'evaluatorName', st.score, st.lateSubDate,st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id LEFT JOIN sessiondetails sd ON t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 ORDER BY t.addeddate DESC", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -542,7 +542,7 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
 
 // View All Students By Admin
 Student.viewAllStudentByAdmin = (batchId, result) => {
-    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND s.batchId = ? ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity",
+    db.query("SELECT c.collegeName, b.batchName,s.id, s.batchId ,s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity, CASE WHEN cm.studentId IS NOT NULL THEN TRUE ELSE FALSE END AS communityManager FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id LEFT JOIN communitymanagers cm ON s.id = cm.studentId WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND s.batchId = ? ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity  ",
         [batchId],
         (err, response) => {
             if (err) {
@@ -554,8 +554,10 @@ Student.viewAllStudentByAdmin = (batchId, result) => {
                 console.log("Data Not Found")
                 return result("Data Not Found", null)
             }
-            console.log("College : ", response)
-            result(null, response)
+            const formattedStudent = response.map(student => ({ ...student, validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); // Formats the date as 'YYYY-MM-DD'
+
+            console.log("College : ", formattedStudent)
+            result(null, formattedStudent)
 
         })
 }
@@ -971,7 +973,7 @@ Payment.viewStudentTransactions = (studId, result) => {
 };
 
 Session.studViewNextSessionDate = (batchId, result) => {
-    db.query("SELECT date, time, sessionName FROM sessiondetails WHERE batchId = ? AND (date > CURRENT_DATE OR (date = CURRENT_DATE AND time >= CURRENT_TIME)) ORDER BY date, time DESC LIMIT 1;", [batchId],
+    db.query("SELECT date, time, sessionName FROM sessiondetails WHERE batchId = ? AND cancelStatus = 0 AND (date > CURRENT_DATE OR (date = CURRENT_DATE AND time >= CURRENT_TIME)) ORDER BY date, time DESC LIMIT 1;", [batchId],
         (err, res) => {
             if (err) {
                 console.log("error", err)
@@ -1001,7 +1003,7 @@ SubmitTask.studentUpdateSubmittedTask = (updateSubTask, result) => {
             }
 
             // Update the submitted task
-            db.query("UPDATE `submit_task` SET `gitLink` = ?, `remarks` = ? WHERE `id` = ?",
+            db.query("UPDATE `submit_task` SET `gitLink` = ?, `remarks` = ?, `updatedDate` = CURRENT_DATE() WHERE `id` = ?",
                 [updateSubTask.gitLink, updateSubTask.remarks, updateSubTask.id],
                 (err, res) => {
                     if (err) {
