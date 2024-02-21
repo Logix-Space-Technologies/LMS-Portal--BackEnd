@@ -53,7 +53,7 @@ const AdminSearchTrainer = () => {
             (response) => {
                 setUpdateField(response.data.data)
                 setIsLoading(false)
-                console.log(response.data.data)
+                console.log(response.data)
                 setInputField(
                     {
                         "TrainerSearchQuery": ""
@@ -140,73 +140,70 @@ const AdminSearchTrainer = () => {
                     <div className="col-12 text-center">
                         <p></p>
                     </div>
+                ) : (updateField ? (
+
+                    //start
+                    <div>
+                        <br />
+                        <strong>List of Trainers</strong>
+                        <br /><br />
+                        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                {/* Table headers */}
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3"></th>
+                                        <th scope="col" className="px-6 py-3">Trainer Name</th>
+                                        <th scope="col" className="px-6 py-3">About</th>
+                                        <th scope="col" className="px-6 py-3">Email</th>
+                                        <th scope="col" className="px-6 py-3">Contact No.</th>
+                                        <th scope="col" className="px-6 py-3"></th>
+                                        <th scope="col" className="px-6 py-3"></th>
+                                        <th scope="col" className="px-6 py-3"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {/* Table rows */}
+                                    {/* Table rows */}
+                                    {currentTrainers.map((value, index) => (
+                                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                            <td className="p-4 whitespace-nowrap">
+                                                <div className="flex items-center">
+                                                    <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
+                                                        <img
+                                                            className="rounded mx-auto d-block"
+                                                            src={value.profilePicture}
+                                                            width="150px"
+                                                            height="140px"
+                                                            alt=""
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">{value.trainerName}</td> {/* Corrected closing tag */}
+                                            <td className="px-6 py-4">{value.about}</td>
+                                            <td className="px-6 py-4">{value.email}</td>
+                                            <td className="px-6 py-4">{value.phoneNumber}</td>
+                                            <td className="p-4 whitespace-nowrap">
+                                                <button onClick={() => UpdateClick(value.id)} className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
+                                            </td>
+                                            <td className="p-4 whitespace-nowrap">
+                                                <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    //end
+
                 ) : (
-                    <>
-                        {updateField ? (
 
-                            //start
-                            <div>
-                                <br />
-                                <strong>List of Trainers</strong>
-                                <br /><br />
-                                <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                        {/* Table headers */}
-                                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                            <tr>
-                                                <th scope="col" className="px-6 py-3"></th>
-                                                <th scope="col" className="px-6 py-3">Trainer Name</th>
-                                                <th scope="col" className="px-6 py-3">About</th>
-                                                <th scope="col" className="px-6 py-3">Email</th>
-                                                <th scope="col" className="px-6 py-3">Contact No.</th>
-                                                <th scope="col" className="px-6 py-3"></th>
-                                                <th scope="col" className="px-6 py-3"></th>
-                                                <th scope="col" className="px-6 py-3"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {/* Table rows */}
-                                            {/* Table rows */}
-                                            {currentTrainers.map((value, index) => (
-                                                <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                                    <td className="p-4 whitespace-nowrap">
-                                                        <div className="flex items-center">
-                                                            <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
-                                                                <img
-                                                                    className="rounded mx-auto d-block"
-                                                                    src={value.profilePicture}
-                                                                    width="150px"
-                                                                    height="140px"
-                                                                    alt=""
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4">{value.trainerName}</td> {/* Corrected closing tag */}
-                                                    <td className="px-6 py-4">{value.about}</td>
-                                                    <td className="px-6 py-4">{value.email}</td>
-                                                    <td className="px-6 py-4">{value.phoneNumber}</td>
-                                                    <td className="p-4 whitespace-nowrap">
-                                                        <button onClick={() => UpdateClick(value.id)} className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
-                                                    </td>
-                                                    <td className="p-4 whitespace-nowrap">
-                                                        <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                    <div className="col-12 text-center">No Trainers Found!!</div>
 
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            //end
-
-                        ) : (
-
-                            <div className="col-12 text-center">No Trainers Found!!</div>
-
-                        )}
-                    </>
+                )
                 )}
 
                 {currentTrainers.length > 0 && (
