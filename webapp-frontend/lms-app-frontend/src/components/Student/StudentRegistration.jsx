@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
+import { Link } from 'react-router-dom'
 
 const StudentRegistration = () => {
 
@@ -48,7 +49,7 @@ const StudentRegistration = () => {
       }
     )
   }
- 
+
 
   // Add a new function to fetch batches based on the selected college
   const getBatches = (collegeId) => {
@@ -107,7 +108,7 @@ const StudentRegistration = () => {
             "studPhNo": inputField.studPhNo,
             "aadharNo": inputField.aadharNo,
             "password": inputField.password,
-            "studProfilePic": file,  
+            "studProfilePic": file,
             "rpPaymentId": PaymentId,
             "rpOrderId": orderId,
             "rpAmount": 2000
@@ -484,6 +485,10 @@ const StudentRegistration = () => {
                     Register
                   </button>
                 </div>
+              </div>
+              <br />
+              <div className="row gy-3 gy-md-4 overflow-hidden">
+                <p style={{textAlign: "center"}}>Already have an account? <Link to="/studentLogin">Sign In</Link></p>
               </div>
             </div>
           </div>
