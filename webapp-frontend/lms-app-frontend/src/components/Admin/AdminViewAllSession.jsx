@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const QRCodeModal = ({ qrCodeAttendance, onClose }) => {
     return (
@@ -31,6 +32,7 @@ const AdminViewAllSession = () => {
     const [sessionsPerPage] = useState(10); // Number of sessions per page
     const navigate = useNavigate();
     const [updateField, setUpdateField] = useState([]);
+    const [key, setKey] = useState('')
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession";
@@ -38,13 +40,20 @@ const AdminViewAllSession = () => {
 
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "batchId": sessionStorage.getItem("viewbatchId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrl, data, axiosConfig).then(
@@ -55,13 +64,20 @@ const AdminViewAllSession = () => {
     };
 
     const handleClick = (id) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "id": id };
         let axiosConfigTwo = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
@@ -148,9 +164,14 @@ const AdminViewAllSession = () => {
 
     useEffect(() => { getData() }, []);
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
@@ -206,7 +227,7 @@ const AdminViewAllSession = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.cancelStatus === "ACTIVE" && (
-                                        <button onClick={()=> sessionClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                        <button onClick={() => sessionClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                             View Tasks
                                         </button>
                                     )}
@@ -226,7 +247,7 @@ const AdminViewAllSession = () => {
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {value.cancelStatus === "ACTIVE" && (
+                                    {key === "lmsapp" && value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => deleteSession(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
                                             Delete Session
                                         </button>
