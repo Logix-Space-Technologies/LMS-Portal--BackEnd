@@ -138,6 +138,9 @@ const StudentViewTasks = () => {
                                             <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
                                             <p className="text-gray-500 mb-4">{task.taskDesc}</p>
                                             <p className="text-gray-700 mb-2">
+                                                <strong>Session Name:</strong> {task.sessionName}
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
                                                 <strong>Task Type:</strong> {task.taskType}
                                             </p>
                                             <p className="text-gray-700 mb-2">
@@ -192,6 +195,9 @@ const StudentViewTasks = () => {
                                             <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
                                             <p className="text-gray-500 mb-4">{task.taskDesc}</p>
                                             <p className="text-gray-700 mb-2">
+                                                <strong>Session Name:</strong> {task.sessionName}
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
                                                 <strong>Task Type:</strong> {task.taskType}
                                             </p>
                                             <p className="text-gray-700 mb-2">
@@ -239,6 +245,9 @@ const StudentViewTasks = () => {
                                         <>
                                             <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
                                             <p className="text-gray-500 mb-4">{task.taskDesc}</p>
+                                            <p className="text-gray-700 mb-2">
+                                                <strong>Session Name:</strong> {task.sessionName}
+                                            </p>
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Task Type:</strong> {task.taskType}
                                             </p>
