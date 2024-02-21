@@ -90,10 +90,8 @@ const StudentRegistration = () => {
 
 
         handler: function (response) {
-          console.log('Payment success:', response)
 
           const PaymentId = response.razorpay_payment_id
-          alert("Amount Paid " + PaymentId)
 
 
           // Call Registration API and pass the details to the server
