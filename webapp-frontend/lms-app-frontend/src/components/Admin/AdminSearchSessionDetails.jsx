@@ -10,7 +10,7 @@ const AdminSearchSessionDetails = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [SessionPerPage] = useState(2); // Number of sessions per page
+    const [SessionPerPage] = useState(10); // Number of sessions per page
     const [isSearchPerformed, setIsSearchPerformed] = useState(false);
     const [key, setKey] = useState('')
 
