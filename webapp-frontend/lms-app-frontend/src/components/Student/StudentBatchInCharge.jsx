@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import axios from 'axios';
 import StudNavBar from './StudNavBar';
+import { useNavigate } from 'react-router-dom';
 
 const StudentBatchInCharge = () => {
     const [staffData, setStaffData] = useState({});
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + '/api/lms/viewCollegeStaffofStudent';
 
@@ -19,10 +21,15 @@ const StudentBatchInCharge = () => {
             },
         };
         axios.post(apiUrl, data, axiosConfig).then((response) => {
-            if (response.data.status === 'success') {
+            if (response.data.data) {
                 setStaffData(response.data.data);
             } else {
-                alert(response.data.status);
+                if (response.data.status === "Invalid or expired token.") {
+                    navigate("/studentLogin")
+                    sessionStorage.clear()
+                } else {
+                    alert(response.data.status)
+                }
             }
         });
     };

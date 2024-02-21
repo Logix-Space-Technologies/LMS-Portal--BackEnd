@@ -1,5 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import '../../config/config'
+import { Link, useNavigate } from 'react-router-dom'
 
 const StudentRegistration = () => {
 
@@ -18,18 +20,20 @@ const StudentRegistration = () => {
     "confirmpassword": ""
   })
 
+  const navigate = useNavigate()
+
+  const [errors, setErrors] = useState({})
 
   const [file, setFile] = useState(null)
 
   const fileUploadHandler = (event) => {
+    setErrors({})
     setFile(event.target.files[0])
   }
 
   // let [batchAmount,setbatchAmount]=useState()
 
   const [outputField, setOutputField] = useState([])
-
-  const [errors, setErrors] = useState({})
 
   const [batches, setBatches] = useState([])
 
@@ -47,7 +51,7 @@ const StudentRegistration = () => {
       }
     )
   }
- 
+
 
   // Add a new function to fetch batches based on the selected college
   const getBatches = (collegeId) => {
@@ -67,6 +71,7 @@ const StudentRegistration = () => {
 
 
   const inputHandler = (event) => {
+    setErrors({})
     setInputField({ ...inputField, [event.target.name]: event.target.value });
   };
 
@@ -88,10 +93,8 @@ const StudentRegistration = () => {
 
 
         handler: function (response) {
-          console.log('Payment success:', response)
 
           const PaymentId = response.razorpay_payment_id
-          alert("Amount Paid " + PaymentId)
 
 
           // Call Registration API and pass the details to the server
@@ -107,7 +110,7 @@ const StudentRegistration = () => {
             "studPhNo": inputField.studPhNo,
             "aadharNo": inputField.aadharNo,
             "password": inputField.password,
-            "studProfilePic": file,  
+            "studProfilePic": file,
             "rpPaymentId": PaymentId,
             "rpOrderId": orderId,
             "rpAmount": 2000
@@ -123,7 +126,7 @@ const StudentRegistration = () => {
             (response) => {
               if (response.data.status === "success") {
                 alert("User Registered Successfully !!!")
-
+                navigate("/studentLogin")
                 setInputField({ "collegeId": "", "batchId": "", "studName": "", "admNo": "", "rollNo": "", "studDept": "", "course": "", "studEmail": "", "studPhNo": "", "studProfilePic": "", "aadharNo": "", "password": "", "confirmpassword": "" })
               } else {
                 if (response.data.status === "Validation failed" && response.data.data.college) {
@@ -484,6 +487,10 @@ const StudentRegistration = () => {
                     Register
                   </button>
                 </div>
+              </div>
+              <br />
+              <div className="row gy-3 gy-md-4 overflow-hidden">
+                <p style={{textAlign: "center"}}>Already have an account? <Link to="/studentLogin">Sign In</Link></p>
               </div>
             </div>
           </div>

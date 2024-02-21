@@ -80,46 +80,46 @@ exports.createStudent = (req, res) => {
             if (Validator.isEmpty(collegeId).isValid) {
                 validationErrors.collegeId = Validator.isEmpty(collegeId).message;
             }
-            if (Validator.isEmpty(batchId).isValid) {
+            else if (Validator.isEmpty(batchId).isValid) {
                 validationErrors.batchId = Validator.isEmpty(batchId).message;
             }
-            if (Validator.isEmpty(studName).isValid) {
+            else if (Validator.isEmpty(studName).isValid) {
                 validationErrors.studName = Validator.isEmpty(studName).message;
             }
-            if (!Validator.isValidName(studName).isValid) {
+            else if (!Validator.isValidName(studName).isValid) {
                 validationErrors.studName = Validator.isValidName(studName).message;
             }
-            if (Validator.isEmpty(admNo).isValid) {
+            else if (Validator.isEmpty(admNo).isValid) {
                 validationErrors.admNo = Validator.isEmpty(admNo).message;
             }
-            if (Validator.isEmpty(rollNo).isValid) {
+            else if (Validator.isEmpty(rollNo).isValid) {
                 validationErrors.rollNo = Validator.isEmpty(rollNo).message;
             }
-            if (Validator.isEmpty(studDept).isValid) {
+            else if (Validator.isEmpty(studDept).isValid) {
                 validationErrors.studDept = Validator.isEmpty(studDept).message;
             }
-            if (Validator.isEmpty(course).isValid) {
+            else if (Validator.isEmpty(course).isValid) {
                 validationErrors.course = Validator.isEmpty(course).message;
             }
-            if (Validator.isEmpty(aadharNo).isValid) {
+            else if (Validator.isEmpty(aadharNo).isValid) {
                 validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
             }
-            if (!Validator.isValidAadharNumber(aadharNo).isValid) {
+            else if (!Validator.isValidAadharNumber(aadharNo).isValid) {
                 validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
             }
-            if (Validator.isEmpty(studEmail).isValid) {
+            else if (Validator.isEmpty(studEmail).isValid) {
                 validationErrors.studEmail = Validator.isEmpty(studEmail).message;
             }
-            if (!Validator.isValidEmail(studEmail).isValid) {
+            else if (!Validator.isValidEmail(studEmail).isValid) {
                 validationErrors.studEmail = Validator.isValidEmail(studEmail).message;
             }
-            if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+            else if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
                 validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
             }
-            if (!Validator.isValidPassword(password).isValid) {
+            else if (!Validator.isValidPassword(password).isValid) {
                 validationErrors.password = Validator.isValidPassword(password).message;
             }
-            if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+            else if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
                 validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
             }
             // If validation fails
@@ -236,6 +236,29 @@ exports.studentTaskView = (request, response) => {
     jwt.verify(studTaskToken, "lmsappstud", (err, decoded) => {
         if (decoded) {
             Tasks.studentTaskView(studId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        response.json({ "status": "No tasks found!" });
+                    } else {
+                        response.json({ "status": "success", "data": data });
+                    }
+                }
+            })
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+
+exports.studentSessionRelatedTaskView = (request, response) => {
+    const studId = request.body.id
+    const sessionId = request.body.sessionId
+    const studTaskToken = request.headers.token
+    jwt.verify(studTaskToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Tasks.studentSessionRelatedTaskView(studId, sessionId, (err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 } else {
@@ -458,7 +481,8 @@ exports.viewAllStudsByAdmin = (request, response) => {
     key = request.headers.key
     jwt.verify(viewAllStudentByAdminToken, key, (err, decoded) => {
         if (decoded) {
-            Student.viewAllStudentByAdmin((err, data) => {
+            const batchId = request.body.batchId
+            Student.viewAllStudentByAdmin(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err })
                 } else {
@@ -643,6 +667,7 @@ exports.generateListOfBatchWiseStudents = (request, response) => {
     });
 }
 
+// Generate Batch-Wise Student List BY College Staff
 function generatePDF(data, callback) {
     const pdfPath = 'pdfFolder/batch_wise_students_list.pdf';
     const doc = new PDFDocument();
@@ -729,6 +754,276 @@ function groupDataByBatch(data) {
 
     return groupedData;
 }
+
+
+
+
+
+//Generate Attendance List PDF By College Staff
+exports.generateBatchWiseAttendanceList = (request, response) => {
+    const token = request.headers.token;
+    const key = request.headers.key;
+    const batchId = request.body.batchId;
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Student.generateBatchWiseAttendanceList(batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else if (data.length === 0) { // Check if data is empty
+                    return response.json({ "status": "No data found" }); // Return status if no data is available
+                } else {
+                    generateAttendancePDF(data, (pdfPath, pdfError) => {
+                        if (pdfError) {
+                            return response.json({ "status": pdfError });
+                        }
+                        response.setHeader('Content-Type', 'application/pdf');
+                        response.setHeader('Content-Disposition', 'attachment; filename=batch_wise_attendance_list.pdf');
+                        fs.createReadStream(pdfPath).pipe(response);
+                    });
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+
+}
+
+function generateAttendancePDF(data, callback) {
+    const pdfPath = 'pdfFolder/batch_wise_attendance_list.pdf';
+    const doc = new PDFDocument();
+    const stream = fs.createWriteStream(pdfPath);
+
+    doc.pipe(stream);
+    const imageLogo = 'app/assets/logo.png';
+    const logoImage = doc.openImage(imageLogo);
+    const imageScale = 0.3;
+    doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
+    // Add main heading
+    doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise Attendance List Of Students', {
+        align: 'center',
+        underline: true,
+        margin: { top: 30, bottom: 30 },
+    });
+    doc.text('\n');
+
+    // Include batchName after the main heading
+    const batchName = data.length > 0 ? data[0].batchName : ''; // Assuming batchName is available in the data
+    doc.font('Helvetica-Bold').fontSize(13).text(`Batch Name:   ${batchName}`, {
+        align: 'center',
+        underline: true,
+        margin: { bottom: 10 },
+    });
+
+    doc.text('\n');
+
+
+    // Group data by session
+    const groupedData = groupAttendanceBySession(data);
+
+    // Add content to the PDF using grouped data
+    for (const sessionName in groupedData) {
+        if (groupedData.hasOwnProperty(sessionName)) {
+            // Batch heading
+            doc.font('Helvetica-Bold').fontSize(12).text(`Session Name: ${sessionName}`, {
+                align: 'center',
+                underline: false,
+            }).font('Helvetica').fontSize(9);
+            doc.text('\n');
+
+            const students = groupedData[sessionName];
+
+            // Create table headers
+            const tableHeaders = [
+                { label: 'Date', padding: 4 },
+                { label: 'Membership No.', padding: -10 },
+                { label: 'Admission No', padding: -5 },
+                { label: 'Student Name', padding: 0 },
+                { label: 'Department', padding: 10 },
+                { label: 'Course', padding: 15 },
+                { label: 'Attendance Status', padding: -6 }
+            ];
+            const tableData = students.map(student => [student.attendanceDate, student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
+
+            const tableWidth = 100;
+            // Draw the table
+            doc.table({
+                headers: tableHeaders,
+                rows: tableData,
+                widths: new Array(tableHeaders.length).fill(tableWidth),
+                align: ['left', 'left', 'left', 'left', 'left', 'left', 'left', 'left', 'left', 'left'],
+            });
+
+            doc.moveDown(); // Add a newline between sessions
+        }
+    }
+    // Add the generated date and time
+    const generatedDate = new Date();
+    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString() + ' ' + generatedDate.toLocaleTimeString(), {
+        align: 'center',
+    });
+
+    doc.end();
+
+
+    stream.on('finish', () => {
+        callback(pdfPath);
+    });
+}
+
+
+function groupAttendanceBySession(data) {
+    // Group data by session name using a JavaScript object
+    const groupedData = {};
+
+    data.forEach(student => {
+        const sessionName = student.sessionName;
+        if (!groupedData[sessionName]) {
+            groupedData[sessionName] = [];
+        }
+        groupedData[sessionName].push(student);
+    });
+
+    return groupedData;
+}
+
+
+
+
+
+
+// Generate Session Wise Attendance List By College Staff
+exports.generateSessionWiseAttendanceList = (request, response) => {
+    const token = request.headers.token;
+    const key = request.headers.key;
+    // Use sessionId instead of batchId
+    const sessionId = request.body.sessionId;
+    jwt.verify(token, key, (err, decoded) => {
+        if (err) {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+        if (decoded) {
+            // Call the updated function with sessionId
+            Session.generateSessionAttendanceList(sessionId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else if (data.length === 0) { // Check if data is empty
+                    return response.json({ "status": "No data found" }); // Return status if no data is available
+                } else {
+                    generateSessionAttendancePDF(data, (pdfPath, pdfError) => {
+                        if (pdfError) {
+                            return response.json({ "status": pdfError });
+                        }
+                        response.setHeader('Content-Type', 'application/pdf');
+                        response.setHeader('Content-Disposition', 'attachment; filename=session_wise_attendance_list.pdf'); // Changed filename to be session-wise
+                        fs.createReadStream(pdfPath).pipe(response);
+                    });
+                }
+            });
+        }
+    });
+};
+
+function generateSessionAttendancePDF(data, callback) {
+    const pdfPath = 'pdfFolder/session_wise_attendance_list.pdf';
+    const doc = new PDFDocument();
+    const stream = fs.createWriteStream(pdfPath);
+
+    doc.pipe(stream);
+    const imageLogo = 'app/assets/logo.png';
+    const logoImage = doc.openImage(imageLogo);
+    const imageScale = 0.3;
+    doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
+    // Add main heading
+    doc.font('Helvetica-Bold').fontSize(14).text('Session-Wise Attendance List Of Students', {
+        align: 'center',
+        underline: true,
+        margin: { top: 30, bottom: 30 },
+    });
+    doc.text('\n');
+
+    // Include batch name after the main heading
+    const batchName = data.length > 0 ? data[0].batchName : ''; // Assuming batchName is available in the data
+    doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name:   ${batchName}`, {
+        align: 'center',
+        underline: true,
+        margin: { bottom: 10 },
+    });
+    doc.text('\n');
+
+    // Include sessionName after the batch name
+    const sessionName = data.length > 0 ? data[0].sessionName : ''; // Assuming sessionName is available in the data
+    doc.font('Helvetica-Bold').fontSize(10).text(`Session Name:   ${sessionName}`, {
+        align: 'center',
+        underline: true,
+        margin: { bottom: 10 },
+    });
+
+    doc.text('\n');
+
+    // Group data by session
+    const groupedData = groupAttendanceBySessionStudent(data);
+
+    // Add content to the PDF using grouped data
+    for (const sessionName in groupedData) {
+        if (groupedData.hasOwnProperty(sessionName)) {
+
+            const students = groupedData[sessionName];
+
+            // Create table headers
+            const tableHeaders = [
+                { label: 'Date', padding: 4 },
+                { label: 'Membership No.', padding: -10 },
+                { label: 'Admission No', padding: -5 },
+                { label: 'Student Name', padding: 0 },
+                { label: 'Department', padding: 10 },
+                { label: 'Course', padding: 15 },
+                { label: 'Attendance Status', padding: -6 }
+            ];
+            const tableData = students.map(student => [student.attendanceDate, student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
+
+            const tableWidth = 100;
+            // Draw the table
+            doc.table({
+                headers: tableHeaders,
+                rows: tableData,
+                widths: new Array(tableHeaders.length).fill(tableWidth),
+                align: ['left', 'left', 'left', 'left', 'left', 'left', 'left'],
+            });
+
+            doc.moveDown(); // Add a newline between sessions
+        }
+    }
+    // Add the generated date and time
+    const generatedDate = new Date();
+    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString() + ' ' + generatedDate.toLocaleTimeString(), {
+        align: 'center',
+    });
+
+    doc.end();
+
+    stream.on('finish', () => {
+        callback(pdfPath);
+    });
+}
+
+function groupAttendanceBySessionStudent(data) {
+    const groupedData = {};
+    data.forEach(item => {
+        if (!groupedData[item.sessionName]) {
+            groupedData[item.sessionName] = [];
+        }
+        groupedData[item.sessionName].push(item);
+    });
+    return groupedData;
+}
+
+
+
+
+
+
+
 
 
 exports.studentNotificationView = (request, response) => {

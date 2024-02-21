@@ -1,210 +1,184 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 import '../../config/config'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
-import Navbar from './Navbar'
+import Navbar from './Navbar';
 
 const AdminSearchTasks = () => {
-
-
     const [inputField, setInputField] = useState({
-        "taskQuery": ""
-    })
+        taskQuery: ""
+    });
+    const [tasks, setTasks] = useState([]);
+    const [searchExecuted, setSearchExecuted] = useState(false); // New state variable
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [tasksPerPage] = useState(10); // Number of tasks per page
 
-    const [updateField, setUpdateField] = useState([])
-
-    const [isLoading, setIsLoading] = useState(true)
-
-    const navigate = useNavigate()
-
-    const apiUrl = global.config.urls.api.server + "/api/lms/searchTasks"
-    const apiUrl2 = global.config.urls.api.server + "/api/lms/deleteTask"
+    const apiUrl = global.config.urls.api.server + '/api/lms/searchTasks'
+    const deleteUrl = global.config.urls.api.server + '/api/lms/deleteTask'
 
     const inputHandler = (event) => {
-        setInputField({ ...inputField, [event.target.name]: event.target.value })
-    }
+        const { name, value } = event.target;
+        setInputField({ ...inputField, [name]: value });
+    };
 
-    const readValue = () => {
-        let axiosConfig = {
+    const searchTasks = () => {
+        setIsLoading(true);
+        const axiosConfig = {
             headers: {
-                'content-type': 'application/json;charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
                 "token": sessionStorage.getItem("admtoken"),
                 "key": sessionStorage.getItem("admkey")
             }
-        }
-        axios.post(apiUrl, inputField, axiosConfig).then(
-            (response) => {
-                console.log(inputField)
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                console.log(response.data)
-                setInputField({
-                    "taskQuery": ""
-                })
-            }
-        )
-    }
+        };
+        axios.post(apiUrl, inputField, axiosConfig)
+            .then(response => {
+                setTasks(response.data.data);
+                setInputField({ taskQuery: "" })
+                setIsLoading(false);
+                setSearchExecuted(true); // Set the flag to indicate search executed
+            })
+            .catch(error => {
+                console.error("Search failed:", error);
+                setIsLoading(false);
+            });
+    };
 
-    const handleClick = (id) => {
-        let data = { "id": id }
-        let axiosConfig2 = {
+    const deleteTask = (id) => {
+        const axiosConfig = {
             headers: {
-                'content-type': 'application/json;charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
                 "token": sessionStorage.getItem("admtoken"),
                 "key": sessionStorage.getItem("admkey")
             }
-        }
+        };
+        axios.post(deleteUrl, { id }, axiosConfig)
+            .then(() => {
+                alert("Task deleted successfully");
+                searchTasks(); // Refresh the list after deletion
+            })
+            .catch(error => {
+                console.error("Delete failed:", error);
+            })
+            .finally(() => setIsLoading(false));
+    };
 
-        axios.post(apiUrl2, data, axiosConfig2).then(
-            (response) => {
-                console.log(data)
-                console.log(axiosConfig2)
-                if (response.data.status === "Task Deleted.") {
-                    alert("Task deleted!!")
-                    // Reload the page after clicking OK in the alert
-                    window.location.reload();
-                } else {
-                    alert(response.data.status)
-                }
-            }
-        )
-    }
+    const handleUpdateClick = (taskId) => {
+        // Store task ID in sessionStorage to use in the update page
+        sessionStorage.setItem("taskId", taskId);
+        // Navigate to the update task page
+        navigate("/AdminUpdateTask");
+    };
 
+    // Logic for displaying current tasks
+    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+    const currentTasks = tasks ? tasks.slice(indexOfFirstTask, indexOfLastTask) : [];
 
+    // Change page
+    const paginate = pageNumber => setCurrentPage(pageNumber);
     return (
         <div>
-            <Navbar/>
-        <div>
-            <div className="container">
-                <div className="row">
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                        <div className="row g-3">
-                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <h1>Search Task</h1>
-                            </div>
-                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <label htmlFor="" className="form-label">Task Title/Task Description/Task Type/Batch Name</label>
-                                <input onChange={inputHandler} value={inputField.taskQuery} type="text" className="form-control" name="taskQuery" />
-                            </div>
-                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <button onClick={readValue} className="btn btn-warning">Search</button>
-                            </div>
+            <Navbar />
+            <div className="container py-5">
+                <h1 className="mb-4 text-center">Admin Search Tasks</h1>
+                <div className="row mb-3">
+                    <div className="col">
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Search by title, description, or type..."
+                                value={inputField.taskQuery}
+                                onChange={inputHandler}
+                                name="taskQuery"
+                            />
+                            <button className="btn btn-outline-secondary" type="button" onClick={searchTasks}>Search</button>
                         </div>
+                        <br />
                     </div>
                 </div>
-                {isLoading ? (<div className="col-12 text-center">
-                    <p></p>
-                </div>) :
-                    (updateField ? (
-                        <div className="row g-3">
-                            <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-sm border border-gray-200">
-                                <header className="px-5 py-4 border-b border-gray-100">
-                                    <h2 className="font-semibold text-2xl text-gray-800">Task Details</h2>
-                                </header>
-                                <div className="p-3">
-                                    <div className="overflow-x-auto">
-                                        <table className="table-auto w-full">
-                                            <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
-                                                <tr>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-left">Id</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-left">Batch Name</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-left">Batch Id</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-center">Task Title</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-center">Task Description</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-center">Task Type</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-center">Task File</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-center">Total Score</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-center">Due Date</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-center">Added Date</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-center">Updated Date</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-center"></div>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="text-sm divide-y divide-gray-100">
-                                                {updateField.map(
-                                                    (value, index) => {
-                                                        return <tr key={index}>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="flex items-center">
-                                                                    <div className="font-medium text-gray-800">{value.id}</div>
-                                                                </div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{value.batchName}</div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{value.batchId}</div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{value.taskTitle}</div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{value.taskDesc}</div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{value.taskType}</div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{value.taskFileUpload}</div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{value.totalScore}</div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{new Date(value.dueDate).toLocaleDateString()}</div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{new Date(value.addedDate).toLocaleDateString()}</div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{new Date(value.updatedDate).toLocaleDateString()}</div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <button onClick={() => handleClick(value.id)} className="btn btn-danger">Delete</button>
-                                                            </td>
-                                                        </tr>
-                                                    }
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
+                {isLoading ? (
+                    <div className="text-center">
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Loading...</span>
                         </div>
-                    ) : (
-                        <div className="col-12 text-center">No Tasks Found!!</div>
-                    ))}
+                    </div>
+                ) : (searchExecuted && tasks ? (
+                    <div className="table-responsive">
+                        <table className="table table-hover">
+                            <thead className="table-light">
+                                <tr>
+                                    <th>Batch Name</th>
+                                    <th>Session Name</th>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Type</th>
+                                    <th>Due Date</th>
+                                    <th>Total Score</th>
+                                    <th>File Link</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tasks.map(task => (
+                                    <tr key={task.id}>
+                                        <td>{task.batchName}</td>
+                                        <td>{task.sessionName}</td>
+                                        <td>{task.id}</td>
+                                        <td>{task.taskTitle}</td>
+                                        <td>{task.taskDesc}</td>
+                                        <td>{task.taskType}</td>
+                                        <td>{task.dueDate}</td>
+                                        <td>{task.totalScore}</td>
+                                        <td>
+                                            <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white btn-sm me-2">View File</Link>
+                                        </td>
+                                        <td>
+                                            <button onClick={() => handleUpdateClick(task.id)} className="btn btn-primary btn-sm me-2">Update</button>
+                                            <button onClick={() => deleteTask(task.id)} className="btn btn-danger btn-sm">Delete</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (searchExecuted && !tasks ? ( // Check if search executed but no tasks found
+                    <div className="alert alert-info" role="alert">
+                        No tasks found.
+                    </div>
+                ) : null))}
             </div>
+            {/* Pagination */}
+            {currentTasks.length > 0 && (
+                <div className="flex justify-center mt-8">
+                    <nav>
+                        <ul className="flex list-style-none">
+                            {currentPage > 1 && (
+                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Previous
+                                </li>
+                            )}
+                            {Array.from({ length: Math.ceil(tasks.length / tasksPerPage) }, (_, i) => (
+                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                    {i + 1}
+                                </li>
+                            ))}
+                            {currentPage < Math.ceil(tasks.length / tasksPerPage) && (
+                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Next
+                                </li>
+                            )}
+                        </ul>
+                    </nav>
+                </div>
+            )}
         </div>
-        </div>
+    );
+};
 
-    )
-}
-
-export default AdminSearchTasks
+export default AdminSearchTasks;

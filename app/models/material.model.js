@@ -11,12 +11,13 @@ const Material = function (material) {
     this.materialDesc = material.materialDesc
     this.uploadFile = material.uploadFile
     this.remarks = material.remarks
+    this.materialType = material.materialType
 
 };
 
 
 Material.materialCreate = (newMaterial, result) => {
-    db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [newMaterial.batchId], (err, batchRes) => {
+    db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1 ORDER BY addedDate DESC", [newMaterial.batchId], (err, batchRes) => {
         if (err) {
             console.error("Error checking existing batch: ", err);
             result(err, null);
@@ -33,7 +34,7 @@ Material.materialCreate = (newMaterial, result) => {
                     console.error("Error checking existing material: ", err);
                     result(err, null);
                     return;
-                } 
+                }
                 if (res.length > 0) {
                     console.log("Material already exists.");
                     result("Material Title already exists.", null);
@@ -102,8 +103,9 @@ Material.updateMaterial = (materialUpdate, result) => {
                         return;
                     } else {
                         // Update material details
-                        db.query("UPDATE materials SET fileName = ?, materialDesc = ?, uploadFile = ?, remarks = ?, batchId = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-                            [materialUpdate.fileName, materialUpdate.materialDesc, materialUpdate.uploadFile, materialUpdate.remarks, materialUpdate.batchId, materialUpdate.id],
+                        // Update material details
+                        db.query("UPDATE materials SET fileName = ?, materialDesc = ?, uploadFile = ?, remarks = ?, batchId = ?, materialType = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
+                            [materialUpdate.fileName, materialUpdate.materialDesc, materialUpdate.uploadFile, materialUpdate.remarks, materialUpdate.batchId, materialUpdate.materialType, materialUpdate.id],
                             (err, res) => {
                                 if (err) {
                                     console.error("Error updating material: ", err);
@@ -113,6 +115,7 @@ Material.updateMaterial = (materialUpdate, result) => {
                                 console.log("Updated Material Details: ", { id: materialUpdate.id, ...materialUpdate });
                                 result(null, { id: materialUpdate.id, ...materialUpdate });
                             });
+
                     }
                 });
         }

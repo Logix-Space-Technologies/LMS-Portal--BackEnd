@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
 import Navbar from './Navbar'
+import { Link } from 'react-router-dom'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AddCollegeStaff = () => {
 
@@ -19,8 +21,22 @@ const AddCollegeStaff = () => {
 
   const [file, setFile] = useState(null)
 
+  const [key, setKey] = useState('');
+
+  const [fileType, setFileType] = useState("");
+
   const fileUploadHandler = (event) => {
-    setFile(event.target.files[0])
+    setErrors({});
+    const uploadedFile = event.target.files[0];
+    if (uploadedFile) {
+      setErrors({});
+      setFile(uploadedFile);
+      const extension = uploadedFile.name.split('.').pop().toLowerCase();
+      setFileType(extension);
+    } else {
+      setFile(null);
+      setFileType("");
+    }
   }
 
 
@@ -32,12 +48,19 @@ const AddCollegeStaff = () => {
 
 
   const getData = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
     let axiosConfig = {
       headers: {
         'content-type': 'multipart/form-data',
         "Access-Control-Allow-Origin": "*",
-        "token": sessionStorage.getItem("admtoken"),
-        "key": sessionStorage.getItem("admkey")
+        "token": token,
+        "key": currentKey
       }
     };
     axios.post(apiUrl2, {}, axiosConfig).then(
@@ -52,14 +75,20 @@ const AddCollegeStaff = () => {
 
 
   const inputHandler = (event) => {
+    setErrors({})
     setInputField({ ...inputField, [event.target.name]: event.target.value })
   };
 
 
   const readValue = (e) => {
-    console.log(inputField)
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
     e.preventDefault();
-    console.log('Handle submit function called');
     const validationErrors = validateForm(inputField);
     console.log(validationErrors);
     if (Object.keys(validationErrors).length === 0) {
@@ -67,8 +96,8 @@ const AddCollegeStaff = () => {
         headers: {
           'content-type': 'multipart/form-data',
           "Access-Control-Allow-Origin": "*",
-          "token": sessionStorage.getItem("admtoken"),
-          "key": sessionStorage.getItem("admkey")
+          "token": token,
+          "key": currentKey
         }
       };
       let data = {
@@ -83,32 +112,26 @@ const AddCollegeStaff = () => {
         "confirmpassword": inputField.confirmpassword,
         "profilePic": file
       }
-      console.log(data)
-
-      if (file) {
-        data.profilePic = file;
-      }
       axios.post(apiUrl, data, axiosConfig).then(
         (response) => {
-          console.log(inputField)
-          console.log(file)
           if (response.data.status === "success") {
             alert("College Staff Added Successfully !!")
             setInputField({
-              "collegeId": "",
-              "collegeStaffName": "",
-              "department": "",
-              "clgStaffAddress": "",
-              "email": "",
-              "phNo": "",
-              "aadharNo": "",
-              "password": "",
-              "confirmpassword": ""
+              collegeId: '',
+              collegeStaffName: '',
+              department: '',
+              clgStaffAddress: '',
+              email: '',
+              phNo: '',
+              aadharNo: '',
+              password: '',
+              confirmpassword: '',
+              profilePic: ''
             })
-            setFile(null)
+            window.location.reload()
           } else {
-            if (response.data.status === "Validation failed" && response.data.data.profile) {
-              alert(response.data.data.profile)
+            if (response.data.status === "Validation failed" && response.data.data.dept) {
+              alert(response.data.data.dept)
             } else {
               if (response.data.status === "Validation failed" && response.data.data.name) {
                 alert(response.data.data.name)
@@ -116,23 +139,19 @@ const AddCollegeStaff = () => {
                 if (response.data.status === "Validation failed" && response.data.data.address) {
                   alert(response.data.data.address)
                 } else {
-                  if (response.data.status === "Validation failed" && response.data.data.department) {
-                    alert(response.data.data.department)
+                  if (response.data.status === "Validation failed" && response.data.data.email) {
+                    alert(response.data.data.email)
                   } else {
-                    if (response.data.status === "Validation failed" && response.data.data.email) {
-                      alert(response.data.data.email)
+                    if (response.data.status === "Validation failed" && response.data.data.mobile) {
+                      alert(response.data.data.mobile)
                     } else {
-                      if (response.data.status === "Validation failed" && response.data.data.phone) {
-                        alert(response.data.data.phone)
+                      if (response.data.status === "Validation failed" && response.data.data.aadharnumber) {
+                        alert(response.data.data.aadharnumber)
                       } else {
-                        if (response.data.status === "Validation failed" && response.data.data.aadharNo) {
-                          alert(response.data.data.aadharNo)
+                        if (response.data.status === "Validation failed" && response.data.data.password) {
+                          alert(response.data.data.password)
                         } else {
-                          if (response.data.status === "Validation failed" && response.data.data.password) {
-                            alert(response.data.data.password)
-                          } else {
-                            alert(response.data.status)
-                          }
+                          alert(response.data.status)
                         }
                       }
                     }
@@ -142,7 +161,27 @@ const AddCollegeStaff = () => {
             }
           }
         }
-      )
+      ).catch(error => {
+        if (error.response) {
+          // Extract the status code from the response
+          const statusCode = error.response.status;
+
+          if (statusCode === 400) {
+            alert(error.response.data.status)
+            // Additional logic for status 400
+          } else if (statusCode === 500) {
+            alert(error.response.data.status)
+            // Additional logic for status 500
+          } else {
+            alert(error.response.data.status)
+          }
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log('Error', error.message);
+        }
+        console.log(error.config);
+      })
     } else {
       setErrors(validationErrors);
     }
@@ -158,7 +197,7 @@ const AddCollegeStaff = () => {
     }
 
     if (!data.collegeId.trim()) {
-      errors.collegeId = 'College Id is required';
+      errors.collegeId = 'College Name is required';
     }
     if (!data.department.trim()) {
       errors.department = 'Department is required';
@@ -170,32 +209,24 @@ const AddCollegeStaff = () => {
       errors.confirmpassword = 'Confirm password is required';
 
     }
-    if (!file) {
-      errors.profilePic = 'Profile Image is required';
+    if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+      errors.file = "File must be in jpg/jpeg/png/webp/heif format";
     }
     if (!data.phNo.trim()) {
       errors.phNo = 'Phone No is required';
-    } else if (!/^\+91[6-9]\d{9}$|^\+91\s?[6-9]\d{9}$|^[6-9]\d{9}$/.test(data.phNo)) {
-      errors.phNo = 'Invalid phone number';
     }
 
     if (!data.aadharNo.trim()) {
       errors.aadharNo = 'Aadhar No is required';
-    } else if (!/^\d{12}$/.test(data.aadharNo)) {
-      errors.aadharNo = 'Invalid Aadhar number';
     }
 
 
     if (!data.email.trim()) {
       errors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(data.email)) {
-      errors.email = 'Invalid email address';
     }
 
     if (!data.password.trim()) {
       errors.password = 'Password is required';
-    } else if (data.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
     }
 
     if (data.confirmpassword !== data.password) {
@@ -208,10 +239,14 @@ const AddCollegeStaff = () => {
 
   useEffect(() => { getData() }, [])
 
+  // Update key state when component mounts
+  useEffect(() => {
+    setKey(sessionStorage.getItem("admkey") || '');
+  }, []);
 
   return (
     <div>
-      <Navbar />
+      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
       <div className="container">
         <div class="bg-light py-3 py-md-5">
           <div class="container">
@@ -221,9 +256,9 @@ const AddCollegeStaff = () => {
                   <div class="row">
                     <div class="col-12">
                       <div class="text-center mb-5">
-                        <a href="#!">
+                        <Link to="#!">
                           <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
-                        </a><br /><br />
+                        </Link><br /><br />
                         <h3>Add College Staff</h3>
                       </div>
                     </div>
@@ -240,18 +275,18 @@ const AddCollegeStaff = () => {
                       {errors.collegeId && <span style={{ color: 'red' }} className="error">{errors.collegeId}</span>}
                     </div>
                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                      <label for="collegeStaffName" class="form-label">College Staff Name <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" name="collegeStaffName" onChange={inputHandler} value={inputField.collegeStaffName} id="collegeStaffName" />
-                      {errors.collegeStaffName && <span style={{ color: 'red' }} className="error">{errors.collegeStaffName}</span>}
-                    </div>
-                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                       <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
                       <input type="text" class="form-control" name="department" id="department" onChange={inputHandler} value={inputField.department} />
                       {errors.department && <span style={{ color: 'red' }} className="error">{errors.department}</span>}
                     </div>
-                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                    <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                      <label for="collegeStaffName" class="form-label">College Staff Name <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="collegeStaffName" onChange={inputHandler} value={inputField.collegeStaffName} id="collegeStaffName" />
+                      {errors.collegeStaffName && <span style={{ color: 'red' }} className="error">{errors.collegeStaffName}</span>}
+                    </div>
+                    <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                       <label for="clgStaffAddress" class="form-label">Address <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" name="clgStaffAddress" id="clgStaffAddress" onChange={inputHandler} value={inputField.clgStaffAddress} />
+                      <textarea onChange={inputHandler} name="clgStaffAddress" id="clgStaffAddress" cols="30" rows="5" className="input form-control" value={inputField.clgStaffAddress} ></textarea>
                       {errors.clgStaffAddress && <span style={{ color: 'red' }} className="error">{errors.clgStaffAddress}</span>}
                     </div>
                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
@@ -260,7 +295,7 @@ const AddCollegeStaff = () => {
                       {errors.email && <span style={{ color: 'red' }} className="error">{errors.email}</span>}
                     </div>
                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                      <label for="PhNo" class="form-label">Phone No <span class="text-danger">*</span></label>
+                      <label for="PhNo" class="form-label">Mobile No <span class="text-danger">*</span></label>
                       <input type="text" class="form-control" required="" name="phNo" id="phNo" onChange={inputHandler} value={inputField.phNo} />
                       {errors.phNo && <span style={{ color: 'red' }} className="error">{errors.phNo}</span>}
                     </div>
@@ -269,7 +304,7 @@ const AddCollegeStaff = () => {
                         Profile Image <span className="text-danger">*</span>
                       </label>
                       <input type="file" className="form-control" name="profilePic" id="profilePic" accept="image/*" onChange={fileUploadHandler} />
-                      {errors.profilePic && <span style={{ color: 'red' }} className="error">{errors.profilePic}</span>}
+                      {errors.file && <span style={{ color: 'red' }} className="error">{errors.file}</span>}
                     </div>
                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                       <label for="aadharNo" class="form-label">AadharNo <span class="text-danger">*</span></label>

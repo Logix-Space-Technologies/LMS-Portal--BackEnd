@@ -1,10 +1,11 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
-import StudNavBar from './StudNavBar'
+import { Link, useNavigate } from 'react-router-dom'
 
 const StudentViewTransaction = () => {
     const [transactionData, setTransactionData] = useState([])
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studentViewTransaction"
 
@@ -20,8 +21,16 @@ const StudentViewTransaction = () => {
         }
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-                setTransactionData(response.data.data)
-                console.log(response.data.data)
+                if (response.data.data) {
+                    setTransactionData(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized User") {
+                        navigate("/studentLogin")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }
@@ -29,14 +38,19 @@ const StudentViewTransaction = () => {
     useEffect(() => { getData() }, [])
     return (
         <div>
-            <StudNavBar/>
-            {/* ====== Table Section Start */}
+            {/* ====== Table Section Starts */}
             <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
-                            <h1>Student View Transaction Details</h1>
-                            <br />
+                            <div className="flex justify-between items-center mb-3">
+                                <div>
+                                    <h1>Student View Transaction Details</h1>
+                                </div>
+                                <div>
+                                    <Link className="btn btn-danger" to="/studdashboard">Back</Link>
+                                </div>
+                            </div>
                             <div className="max-w-full overflow-x-auto">
                                 <table className="w-full table-auto">
                                     <thead>

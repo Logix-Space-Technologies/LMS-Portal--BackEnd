@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../config/config'
 import StudNavBar from './StudNavBar';
+import { Link, useNavigate } from 'react-router-dom';
 
 const SessionView = () => {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchSessions();
@@ -29,9 +31,13 @@ const SessionView = () => {
       .then(response => {
         if (response.data.status === "success") {
           setSessions(response.data.data);
-          console.log(response.data.data)
         } else {
-          console.log(response.data.status);
+          if (response.data.status === "Unauthorized access!!") {
+            navigate("/studentLogin")
+            sessionStorage.clear()
+          } else {
+            alert(response.data.status);
+          }
         }
       })
       .catch(error => {
@@ -47,47 +53,122 @@ const SessionView = () => {
     return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
   }
 
+  function getSessionStatusColor(sessionDate, sessionTime) {
+    // Split the date into parts
+    const dateParts = sessionDate.split('/');
+
+    // Reformat the date from dd/mm/yyyy to yyyy-mm-dd
+    const formattedDate = `${dateParts[2]}-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}`;
+
+    // Convert the 12-hour time to 24-hour time
+    const timeParts = sessionTime.match(/(\d+):(\d+) (\w+)/);
+    let hours = parseInt(timeParts[1], 10);
+    const minutes = timeParts[2];
+    const ampm = timeParts[3];
+
+    if (ampm === 'PM' && hours < 12) {
+      hours += 12;
+    } else if (ampm === 'AM' && hours === 12) {
+      hours = 0;
+    }
+
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes}`;
+
+    // Combine the reformatted date with the reformatted time
+    const sessionDateTime = new Date(`${formattedDate}T${formattedTime}`);
+
+    const now = new Date();
+    if (sessionDateTime > now) {
+      return '#28a745'; // Green color for upcoming sessions
+    } else {
+      return '#dc3545'; // Red color for past sessions
+    }
+  }
+
+  const sessionClick = (id) => {
+    sessionStorage.setItem("SessionId", id);
+  }
+
+  // Function to determine if the session date is current or past (enabling attendance)
+  const isSessionAccessible = (sessionDate) => {
+    const [day, month, year] = sessionDate.split('/');
+    const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+    // Convert session date to a Date object
+    const sessionDateTime = new Date(formattedDate);
+
+    // Get the current date
+    const now = new Date();
+
+    // Check if the session date is on or after the current date
+    return now >= sessionDateTime;
+  };
+
+
+
   return (
 
     <div>
       <StudNavBar />
-      <div className="bg-light py-3 py-md-5">
-        <div className="container">
-          <div className="row justify-content-md-center">
-            <div className="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
-              <div className="bg-white p-4 p-md-5 rounded shadow-sm">
-                <div className="row gy-3 gy-md-4 overflow-hidden">
-                  <div className="col-12">
-                    <h3>Session Details</h3>
+      <br />
+      <h1 style={{ marginLeft: '20px', textAlign: 'center' }}>View All Sessions</h1>
+      <br />
+      {loading ? (
+        <div className="col-12 text-center">Loading...</div>
+      ) : (
+        sessions.length === 0 ? (
+          <div className="col-12 text-center">No sessions found!</div>
+        ) : (
+          sessions.map((session, index) => (
+            <div class="max-w-2xl mx-auto">
+              <div key={index} className="flex mb-6">
+                <div className="w-2 rounded-l-xl" style={{ backgroundColor: getSessionStatusColor(session.date, formatTime(session.time)) }}></div>
+                <div className="flex-grow bg-white rounded-r-xl shadow-lg p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg text-blue-600 font-semibold">{session.sessionName}</h2>
+                    <button className="text-blue-600 text-sm">
+                      <span>...</span>
+                    </button>
                   </div>
-                  {loading ? (
-                    <div className="col-12 text-center">Loading...</div>
-                  ) : (
-                    sessions.length === 0 ? (
-                      <div className="col-12 text-center">No sessions found!</div>
-                    ) : (
-                      sessions.map((session, index) => (
-                        <div key={index} className="col-12">
-                          <div className="card">
-                            <div className="card-body">
-                              <h5 className="card-title">{session.sessionName}</h5>
-                              <p className="card-text">Date: {session.date}</p>
-                              <p className="card-text">Time: {formatTime(session.time)}</p>
-                              <p className="card-text">Type: {session.type}</p>
-                              <p className="card-text">Remarks: {session.remarks}</p>
-                              <p className="card-text">Venue/Link: {session.venueORlink}</p>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )
+                  <p className="text-sm text-gray-600">{session.remarks}</p>
+                  <p className="text-sm text-gray-600 mt-1">Date: {session.date}</p>
+                  <p className="text-sm text-gray-600">Time: {formatTime(session.time)}</p>
+                  <p className="text-sm text-gray-600">Type: {session.type}</p>
+                  {!session.venueORlink.includes("meet.google.com") && (
+                    <p className="text-sm text-gray-600">Venue: {session.venueORlink}</p>
                   )}
+                  <div className="flex gap-4 mt-4">
+                    {session.venueORlink.includes("meet.google.com") && (
+                      <a href={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</a>
+                    )}
+                    {isSessionAccessible(session.date) ? (
+                      <>
+                        <Link to="/studentviewattendance" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Attendance
+                        </Link>
+                        <Link to="/studviewtasksessionwise" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Tasks
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Attendance (Unavailable)
+                        </Link>
+                        <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Tasks (Unavailable)
+                        </Link>
+                      </>
+                    )}
+
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          ))
+        )
+      )}
+
     </div>
   );
 };

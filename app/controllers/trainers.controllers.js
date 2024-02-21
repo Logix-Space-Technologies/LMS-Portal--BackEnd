@@ -99,7 +99,7 @@ exports.createTrainer = (request, response) => {
                         validationErrors.phoneNumber = "Please enter your phone number";
                     }
                     if (!Validator.isValidName(request.body.trainerName).isValid) {
-                        validationErrors.trainerName = "Please enter a valid name";
+                        validationErrors.trainerName = Validator.isValidName(request.body.trainerName).message;
                     }
                     if (!Validator.isValidEmail(request.body.email).isValid) {
                         validationErrors.email = "Please enter a valid email";
@@ -108,7 +108,7 @@ exports.createTrainer = (request, response) => {
                         validationErrors.phoneNumber = "Please enter a valid phone number";
                     }
                     if (!Validator.isValidPassword(request.body.password).isValid) {
-                        validationErrors.password = "Please enter a valid password";
+                        validationErrors.password = Validator.isValidPassword(request.body.password).message;
                     }
 
                     if (Object.keys(validationErrors).length > 0) {

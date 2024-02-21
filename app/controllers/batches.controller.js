@@ -19,9 +19,7 @@ exports.batchCreate = (request, response) => {
             if (!Validator.isValidAmount(request.body.collegeId).isValid) {
                 validationErrors.collegeid = Validator.isValidAmount(request.body.collegeId).message; //validation for college id
             }
-            if (!Validator.isValidName(request.body.batchName).isValid) {
-                validationErrors.name = Validator.isValidName(request.body.batchName).message
-            }
+        
             if (Validator.isEmpty(request.body.batchName).isValid) {
                 validationErrors.name = Validator.isEmpty(request.body.batchName).message
             }
@@ -137,7 +135,7 @@ exports.batchView = (request, response) => {
 
 
 exports.searchBatch = (request, response) => {
-    const batchQuery = request.headers.batchQuery;
+    const batchQuery = request.body.batchQuery;//changed
     const batchToken = request.headers.token;
     //key for respective token
     key = request.headers.key;
@@ -184,16 +182,12 @@ exports.batchUpdate = (request, response) => {
             const validationErrors = {};
 
 
-            if (!Validator.isValidName(batchName).isValid) {
-                validationErrors.batchName = Validator.isValidName(batchName).message;
-            }
-
             if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
                 validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
             }
-            if (!Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).isValid) {
-                validationErrors.regenddate = Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).message
-            }
+            // if (!Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).isValid) {
+            //     validationErrors.regEndDate = Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).message
+            // }
 
             if (!Validator.isDateGreaterThanToday(regEndDate).isValid) {
                 validationErrors.regEndDate = Validator.isDateGreaterThanToday(regEndDate).message;
@@ -215,8 +209,8 @@ exports.batchUpdate = (request, response) => {
                 id: id,
                 collegeId: collegeId,
                 batchName: batchName,
-                regStartDate: regStartDate.split('/').reverse().join('-'),
-                regEndDate: regEndDate.split('/').reverse().join('-'),
+                regStartDate: regStartDate,
+                regEndDate: regEndDate,
                 batchDesc: batchDesc,
                 batchAmount: batchAmount
             });
@@ -265,4 +259,28 @@ exports.batchViewAdmin = (request, response) => {
         }
     });
 }
+
+
+exports.viewOneBatch = (request, response) => {
+    const batchToken = request.headers.token;
+    const key = request.headers.key; //give respective keys of admin and adminstaff
+    const batchId = request.body.id; 
+
+    jwt.verify(batchToken, key, (err, decoded) => {
+        if (decoded) {
+            Batches.viewOneBatch(batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (!data || data.length === 0) {
+                    return response.json({ "status": "No batches are currently active" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
 

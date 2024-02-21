@@ -58,10 +58,10 @@ exports.markAttendance = (request, response) => {
 exports.collegeStaffViewAttendance = (request, response) => {
     const attendanceToken = request.headers.token;
     const key = request.headers.key;
-    const collegeId = request.body.collegeId;
+    const sessionId = request.body.sessionId;
     jwt.verify(attendanceToken, key, (err, decoded) => {
         if (decoded) {
-            Attendence.collegeStaffViewAttendance(collegeId, (err, data) => {
+            Attendence.collegeStaffViewAttendance(sessionId, (err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 }
@@ -83,6 +83,28 @@ exports.studentViewAttendance = (request, response) => {
     jwt.verify(attendanceToken, "lmsappstud", (err, decoded) => {
         if (decoded) {
             Attendence.studentViewAttendance(studId, (err, data) => {
+                if (err) {
+                    response.json({ "status": err });
+                }
+                if (data.length == 0) {
+                    response.json({ "status": "No attendance records found!" });
+                } else {
+                    response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
+
+exports.studentViewSessionWiseAttendance = (request, response) => {
+    const attendanceToken = request.headers.token;
+    const studId = request.body.studId;
+    const sessionId = request.body.sessionId;
+    jwt.verify(attendanceToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Attendence.studentViewSessionWiseAttendance(studId,sessionId, (err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 }

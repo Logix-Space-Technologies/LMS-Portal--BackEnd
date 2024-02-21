@@ -29,17 +29,8 @@ const storage = multer.diskStorage({
         cb(null, file.fieldname + '-' + uniqueSuffix + ext);
     }
 });
-const upload = multer({
-    storage: storage, limits: { fileSize: 2 * 1024 * 1024 },
-    fileFilter: (req, file, cb) => {
-        // Allow only PDF and DOCX files
-        if (file.mimetype === 'application/pdf' || file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-            cb(null, true);
-        } else {
-            cb(new Error('Only PDF and DOCX files are allowed!'), false);
-        }
-    }
-});
+const upload = multer({ storage: storage });
+
 exports.createMaterial = (request, response) => {
 
     const uploadFile = upload.single('uploadFile')
@@ -70,7 +61,7 @@ exports.createMaterial = (request, response) => {
             // Remove the file from local storage
             fs.unlinkSync(file.path);
 
-            const { batchId, fileName, materialDesc, remarks } = request.body
+            const { batchId, fileName, materialDesc, remarks, materialType } = request.body
             const materialToken = request.headers.token
 
             jwt.verify(materialToken, "lmsappadmstaff", (err, decoded) => {
@@ -80,10 +71,21 @@ exports.createMaterial = (request, response) => {
                     if (!Validator.isValidAmount(batchId).isValid) {
                         validationErrors.batchId = Validator.isValidAmount(batchId).message;
                     }
-                    if (!Validator.isValidName(fileName).isValid) {
-                        validationErrors.fileName = Validator.isValidName(fileName).message;
+                    if (Validator.isEmpty(batchId).isValid) {
+                        validationErrors.batchId = Validator.isEmpty(batchId).message;
                     }
-
+                    if (Validator.isEmpty(fileName).isValid) {
+                        validationErrors.fileName = Validator.isEmpty(fileName).message;
+                    }
+                    if (Validator.isEmpty(materialDesc).isValid) {
+                        validationErrors.materialDesc = Validator.isEmpty(materialDesc).message;
+                    }
+                    if (Validator.isEmpty(remarks).isValid) {
+                        validationErrors.remarks = Validator.isEmpty(remarks).message;
+                    }
+                    if (Validator.isEmpty(materialType).isValid) {
+                        validationErrors.materialType = Validator.isEmpty(materialType).message;
+                    }                    
                     if (!Validator.isValidAddress(materialDesc).isValid) {
                         validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
                     }
@@ -102,6 +104,7 @@ exports.createMaterial = (request, response) => {
                         fileName: fileName,
                         materialDesc: materialDesc,
                         remarks: remarks,
+                        materialType: materialType,
                         uploadFile: fileUrl
                     })
 
@@ -178,7 +181,7 @@ exports.updateMaterial = (request, response) => {
             // Remove the file from local storage
             fs.unlinkSync(file.path);
             const materialUpdateToken = request.headers.token
-            const { batchId, fileName, materialDesc, remarks } = request.body
+            const { id, batchId, fileName, materialDesc, remarks, materialType } = request.body
 
             jwt.verify(materialUpdateToken, "lmsappadmstaff", (err, decoded) => {
                 if (decoded) {
@@ -188,10 +191,21 @@ exports.updateMaterial = (request, response) => {
                     if (!Validator.isValidAmount(batchId).isValid) {
                         validationErrors.batchId = Validator.isValidAmount(batchId).message;
                     }
-                    if (!Validator.isValidName(fileName).isValid) {
-                        validationErrors.fileName = Validator.isValidName(fileName).message;
+                    if (Validator.isEmpty(batchId).isValid) {
+                        validationErrors.batchId = Validator.isEmpty(batchId).message;
                     }
-
+                    if (Validator.isEmpty(fileName).isValid) {
+                        validationErrors.fileName = Validator.isEmpty(fileName).message;
+                    }
+                    if (Validator.isEmpty(materialDesc).isValid) {
+                        validationErrors.materialDesc = Validator.isEmpty(materialDesc).message;
+                    }
+                    if (Validator.isEmpty(remarks).isValid) {
+                        validationErrors.remarks = Validator.isEmpty(remarks).message;
+                    }
+                    if (Validator.isEmpty(materialType).isValid) {
+                        validationErrors.materialType = Validator.isEmpty(materialType).message;
+                    }                    
                     if (!Validator.isValidAddress(materialDesc).isValid) {
                         validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
                     }
@@ -207,11 +221,12 @@ exports.updateMaterial = (request, response) => {
 
 
                     const mtrlUpdate = new Material({
-                        'id': request.body.id,
+                        id: id,
                         batchId: batchId,
                         fileName: fileName,
                         materialDesc: materialDesc,
                         remarks: remarks,
+                        materialType: materialType,
                         uploadFile: fileUrl
 
                     })

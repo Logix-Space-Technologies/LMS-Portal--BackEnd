@@ -188,9 +188,9 @@ Session.updateSession = (sessionUpdate, result) => {
         })
 }
 
-Session.viewSessions = (result) => {
-    const query = "SELECT id, batchId, sessionName, date, time, type, remarks, venueORlink, trainerId, attendenceCode, addedDate, updatedDate FROM sessiondetails WHERE isActive = 1 AND deleteStatus = 0";
-    db.query(query, (err, res) => {
+Session.viewSessions = (batchId, result) => {
+    const query = "SELECT s.id, s.batchId, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, t.trainerName, s.attendenceCode, s.addedDate, s.updatedDate, CASE WHEN cancelStatus = 0 THEN 'ACTIVE' WHEN cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN trainersinfo t ON s.trainerId = t.id WHERE s.isActive = 1 AND s.deleteStatus = 0 AND s.batchId = ?";
+    db.query(query, [batchId], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -205,7 +205,7 @@ Session.viewSessions = (result) => {
 }
 
 Session.viewUpcomingSessions = (batchId, result) => {
-    const query = "SELECT sd.id, sd.batchId, sd.sessionName, sd.date, sd.time, sd.type, sd.remarks, sd.venueORlink, t.trainerName, sd.addedDate, sd.updatedDate FROM sessiondetails sd JOIN trainersinfo t ON sd.trainerId = t.id WHERE sd.isActive = 1 AND sd.deleteStatus = 0 AND sd.cancelStatus = 0 AND (sd.date > CURRENT_DATE OR (sd.date = CURRENT_DATE AND sd.time >= CURRENT_TIME)) AND sd.batchId = ?;";
+    const query = "SELECT sd.id, sd.batchId, sd.sessionName, sd.date, sd.time, sd.type, sd.remarks, sd.venueORlink, t.trainerName, sd.addedDate, sd.updatedDate FROM sessiondetails sd JOIN trainersinfo t ON sd.trainerId = t.id WHERE sd.isActive = 1 AND sd.deleteStatus = 0 AND sd.cancelStatus = 0 AND (sd.date > CURRENT_DATE OR (sd.date = CURRENT_DATE AND sd.time >= CURRENT_TIME)) AND sd.batchId = ? ORDER BY sd.date DESC;";
     db.query(query, [batchId], (err, res) => {
         if (err) {
             console.log("error: ", err);
@@ -318,6 +318,35 @@ Session.fetchAttendenceCode = (attendenceCode, result) => {
             }
         })
 }
+
+Session.CheckIsTodaySessionAvailable = (result) => {
+    db.query("SELECT * FROM sessiondetails WHERE cancelStatus = 0 AND deleteStatus = 0 AND isActive = 1 AND date = CURRENT_DATE()", (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                return
+            }
+            if (res.length === 0) {
+                console.log("Session Not Found")
+                result("Session Not Found", null)
+                return
+            }
+            result(null, res)
+        })
+}
+
+Session.viewOneSession = (sessionId, result) => {
+    db.query("SELECT id,sessionName,date,time,type,remarks,venueORlink,trainerId FROM sessiondetails WHERE id = ? AND isActive = 1 AND deleteStatus = 0", sessionId,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("data: ", res);
+            result(null, res);
+        });
+};
 
 
 module.exports = Session

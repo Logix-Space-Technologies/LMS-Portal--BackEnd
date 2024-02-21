@@ -2,7 +2,6 @@ const db = require('../models/db');
 
 const Submit_task = function (submit_task) {
     this.id = submit_task.id;
-    this.task_id = submit_task.task_id;
     this.adminstaffId = submit_task.adminstaffId;
     this.evaluatorRemarks = submit_task.evaluatorRemarks;
     this.score = submit_task.score;

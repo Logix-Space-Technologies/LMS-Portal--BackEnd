@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const AdminUpdateTrainer = () => {
@@ -18,6 +18,7 @@ const AdminUpdateTrainer = () => {
     const apiURL = global.config.urls.api.server + "/api/lms/adminviewonetrainer";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/updateTrainer";
     const navigate = useNavigate()
+    const [key, setKey] = useState('');
 
     const updateHandler = (event) => {
         setUpdateField({ ...updateField, [event.target.name]: event.target.value })
@@ -29,13 +30,20 @@ const AdminUpdateTrainer = () => {
     }
 
     const readNewValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         console.log(updateField)
         let axiosConfig = {
             headers: {
                 'content-type': 'multipart/form-data',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         let data = {
@@ -74,17 +82,47 @@ const AdminUpdateTrainer = () => {
                 }
 
             }
-        )
+        ).catch(error => {
+            if (error.response) {
+                // Extract the status code from the response
+                const statusCode = error.response.status;
+
+                if (statusCode === 400) {
+                    console.log("Status 400:", error.response.data);
+                    alert(error.response.data.status)
+                    // Additional logic for status 400
+                } else if (statusCode === 500) {
+                    console.log("Status 500:", error.response.data);
+                    alert(error.response.data.status)
+                    // Additional logic for status 500
+                } else {
+                    console.log(error.response.data);
+                    alert(error.response.data.status)
+                }
+            } else if (error.request) {
+                console.log(error.request);
+            } else {
+                console.log('Error', error.message);
+            }
+            console.log(error.config);
+        })
     }
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "id": sessionStorage.getItem("trainerId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         axios.post(apiURL, data, axiosConfig).then(
@@ -98,6 +136,10 @@ const AdminUpdateTrainer = () => {
 
     useEffect(() => { getData() }, [])
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div className="container">
             <div className="row">
@@ -124,7 +166,7 @@ const AdminUpdateTrainer = () => {
                                             <label htmlFor="" className="form-label">Id</label>
                                             <input type="text" className="form-control" name="id" value={updateField.id} disabled />
                                         </div>
-                                
+
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label htmlFor="" className="form-label">Trainer Name</label>
                                             <input onChange={updateHandler} type="text" className="form-control" name="trainerName" value={updateField.trainerName} />
@@ -137,8 +179,8 @@ const AdminUpdateTrainer = () => {
                                             <label htmlFor="" className="form-label">Phone No:</label>
                                             <input onChange={updateHandler} type="text" className="form-control" name="phoneNumber" value={updateField.phoneNumber} />
                                         </div>
-                                        
-                                        
+
+
                                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                             <label for="studProfilePic" className="form-label">
                                                 Profile Picture <span className="text-danger">*</span>
@@ -151,15 +193,15 @@ const AdminUpdateTrainer = () => {
                                         </div>
                                         <br></br>
                                         <div class="mb-3">
-                                            <a class="btn btn-danger" href="/adminviewalltrainers">Back</a>
+                                        <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
                                         </div>
                                     </ul>
 
                                     <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                        <li><a href="#!"><i className="ti-twitter-alt" /></a></li>
-                                        <li><a href="#!"><i className="ti-facebook" /></a></li>
-                                        <li><a href="#!"><i className="ti-pinterest" /></a></li>
-                                        <li><a href="#!"><i className="ti-instagram" /></a></li>
+                                        <li><Link to="#!"><i className="ti-twitter-alt" /></Link></li>
+                                        <li><Link to="#!"><i className="ti-facebook" /></Link></li>
+                                        <li><Link to="#!"><i className="ti-pinterest" /></Link></li>
+                                        <li><Link to="#!"><i className="ti-instagram" /></Link></li>
                                     </ul>
                                 </div>
                             </div>

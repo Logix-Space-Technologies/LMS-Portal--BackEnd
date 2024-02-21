@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AdminLogin from './components/Admin/AdminLogin';
@@ -61,7 +60,44 @@ import AdminAddSession from './components/Admin/AdminAddSession';
 import AdminSearchCollege from './components/Admin/AdminSearchCollege';
 import AdminUpdateTrainer from './components/Admin/AdminUpdateTrainer';
 import AdminViewAllCollege from './components/Admin/AdminViewAllCollege';
+import AdminViewAllCurriculum from './components/Admin/AdminViewAllCurriculum';
 import AdminViewRefundRequests from './components/Admin/AdminViewRefundRequests';
+import AdminUpdateCollegeStaff from './components/Admin/AdminUpdateCollegeStaff';
+import AdminUpdateCurriculum from './components/Admin/AdminUpdateCurriculum';
+import AdminSearchBatch from './components/Admin/AdminSearchBatch';
+import AdminViewStudentLog from './components/Admin/AdminViewStudentLog';
+import ClgStaffNavbar from './components/CollegeStaff/ClgStaffNavbar';
+import AdminAddTask from './components/Admin/AdminAddTask';
+import AdminSearchSessionDetails from './components/Admin/AdminSearchSessionDetails';
+import AdminViewAllSession from './components/Admin/AdminViewAllSession';
+import AdminSearchCollegeStaff from './components/Admin/AdminSearchCollegeStaff';
+import AdminViewAllAdminStaff from './components/Admin/AdminViewAllAdmStaff';
+import AdmStaffNavBar from './components/AdminStaff/AdmStaffNavBar';
+import AdminSendNotification from './components/Admin/AdminSendNotifications';
+import AdminUpdateTask from './components/Admin/AdminUpdateTask';
+import AdminStaffFooter from './components/AdminStaff/AdminStaffDashboard/AdminStaffFooter';
+import AdminStaffSideBar from './components/AdminStaff/AdminStaffDashboard/AdminStaffSideBar';
+import AdminStaffHeader from './components/AdminStaff/AdminStaffDashboard/AdminStaffHeader';
+import AdmStaffDashBoard from './components/AdminStaff/AdminStaffDashboard/AdmStaffDashBoard';
+import AdmStaffViewProfile from './components/AdminStaff/AdminStaffDashboard/AdmStaffViewProfile';
+import AdminViewAllTasks from './components/Admin/AdminViewAllTasks';
+import AdminSearchTrainer from './components/Admin/AdminSearchTrainer';
+import StudentUpdateSubmittedTask from './components/Student/StudentUpdateSubmittedTask';
+import AdminUpdateBatch from './components/Admin/AdminUpdateBatch';
+import AdminUpdateAdminStaff from './components/Admin/AdminUpdateAdminStaff';
+import AdminStaffChangePassword from './components/AdminStaff/AdminStaffChangePassword';
+import AdminStaffViewAllMaterial from './components/AdminStaff/AdminStaffViewAllMaterial';
+import AdminStaffUpdateMaterial from './components/AdminStaff/AdminStaffUpdateMaterial';
+import AdminAddCurriculum from './components/Admin/AdminAddCurriculum';
+import AdminAddTrainer from './components/Admin/AdminAddTrainer';
+import AdminStaffViewSubmittedTask from './components/AdminStaff/AdminStaffViewSubmittedTask';
+import AdminViewLog from './components/Admin/AdminViewLog';
+import AdminViewSuccessfulRefunds from './components/Admin/AdminViewSuccessfulRefunds';
+import AdminUpdateCollege from './components/Admin/AdminUpdateCollege';
+import StudentViewOneTask from './components/Student/StudentViewOneTask';
+import AdminUpdateSession from './components/Admin/AdminUpdateSession';
+import AdminStaffAddMaterials from './components/AdminStaff/AdminStaffAddMaterials';
+import CollegeStaffViewSession from './components/CollegeStaff/CollegeStaffViewSession';
 
 
 
@@ -101,7 +137,31 @@ function App() {
           <Route path='/adminSearchClg' element={<AdminSearchCollege/>}/>
           <Route path='/AdminUpdateTrainer' element={<AdminUpdateTrainer/>}/>
           <Route path='/adminviewallcollege' element={<AdminViewAllCollege/>}/>
+          <Route path='/adminviewallcurriculum' element={<AdminViewAllCurriculum/>}/>
           <Route path='/AdminViewRefundRequests' element={<AdminViewRefundRequests/>}/>
+          <Route path='/adminupdatecollegestaff' element={<AdminUpdateCollegeStaff/>}/>
+          <Route path='/AdminUpdateCurriculum' element={<AdminUpdateCurriculum/>}/>
+          <Route path='/adminSearchBatch' element={<AdminSearchBatch/>}/>
+          <Route path='/AdminViewStudentLog' element={<AdminViewStudentLog/>}/>
+          <Route path='/adminAddtask' element={<AdminAddTask/>}/>
+          <Route path='/AdminSearchSessionDetails' element={<AdminSearchSessionDetails/>}/>
+          <Route path='/AdminViewAllSession' element={<AdminViewAllSession/>}/>
+          <Route path='/AdminSearchCollegeStaff' element={<AdminSearchCollegeStaff/>}/>
+          <Route path='/AdminViewAllAdminStaff' element={<AdminViewAllAdminStaff/>}/>
+          <Route path='/AdminSendNotification' element={<AdminSendNotification/>}/>
+          <Route path='/AdminUpdateTask' element={<AdminUpdateTask/>}/>
+          <Route path='/AdminViewAllTasks' element={<AdminViewAllTasks/>}/>
+          <Route path='/adminSearchTrainers' element={<AdminSearchTrainer/>}/>
+          <Route path='/adminupdatebatch' element={<AdminUpdateBatch/>}/>
+          <Route path='/adminupdateadminstaff' element={<AdminUpdateAdminStaff/>}/>
+          <Route path='/adminAddcurriculum' element={<AdminAddCurriculum/>}/>
+          <Route path='/adminAddtrainer' element={<AdminAddTrainer/>}/>
+          <Route path='/adminViewlog' element={<AdminViewLog/>}/>
+          <Route path='/adminViewSuccessfulrefunds' element={<AdminViewSuccessfulRefunds/>}/>
+          <Route path='/adminUpdateclg' element={<AdminUpdateCollege/>}/>
+          <Route path='/AdminUpdateSession' element={<AdminUpdateSession/>}/>
+
+
 
 
 
@@ -110,6 +170,20 @@ function App() {
           {/* ADMINSTAFF */}
           {/* ================================================================================================================= */}
           <Route path='/admstafflogin' element={<AdminStaffLogin />} />
+          <Route path='/admstaffnavbar' element={<AdmStaffNavBar/>}/>
+          <Route path='/admstafffooter' element={<AdminStaffFooter/>}/>
+          <Route path='/admstaffsidebar' element={<AdminStaffSideBar/>}/>
+          <Route path='/admstaffheader' element={<AdminStaffHeader/>}/>
+          <Route path='/admstaffdashboard' element={<AdmStaffDashBoard/>}/>
+          <Route path='/admstaffviewprofile' element={<AdmStaffViewProfile/>}/>
+          <Route path='/AdminStaffChangePassword' element={<AdminStaffChangePassword/>}/>
+          <Route path='/AdminStaffViewAllMaterial' element={<AdminStaffViewAllMaterial/>}/>
+          <Route path='/AdminStaffUpdateMaterial' element={<AdminStaffUpdateMaterial/>}/>
+          <Route path='/adminstaffviewsubmittedtask' element={<AdminStaffViewSubmittedTask/>}/>
+          <Route path='/adminStaffAddmaterials' element={<AdminStaffAddMaterials/>}/>
+          
+
+
 
 
 
@@ -130,6 +204,8 @@ function App() {
           <Route path='/colgstaffsearchbatch' element={<CollegeStaffSearchBatch />} />
           <Route path='/clgstaffviewtask' element={<CollegeStaffViewTask/>}/>
           <Route path='/clgStaffSearchTask' element={<CollegeStaffSearchTask/>}/>
+          <Route path='/clgstaffnavbar' element={<ClgStaffNavbar/>}/>
+          <Route path='/clgstaffviewsession' element={<CollegeStaffViewSession/>}/>
 
 
 
@@ -157,6 +233,8 @@ function App() {
           <Route path='/studentviewtransaction' element={<StudentViewTransaction />} />
           <Route path='/studViewUpcomingSession' element={<StudentViewUpcomingSession />} />
           <Route path='/studnavbar' element={<StudNavBar/>}/>
+          <Route path='/studupdatesubtask' element={<StudentUpdateSubmittedTask/>}/>
+          <Route path='/studviewtasksessionwise' element={<StudentViewOneTask/>}/>
 
 
 

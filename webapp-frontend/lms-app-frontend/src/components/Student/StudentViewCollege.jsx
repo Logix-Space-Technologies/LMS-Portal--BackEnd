@@ -2,9 +2,11 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import StudNavBar from './StudNavBar'
+import { useNavigate } from 'react-router-dom'
 
 const StudentViewCollege = () => {
     const [collegeData, setCollegeData] = useState([])
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewCollegeStudent"
     const getData = () => {
@@ -22,7 +24,12 @@ const StudentViewCollege = () => {
                 if (response.data.status === "College Found") {
                     setCollegeData(response.data.data)
                 } else {
-                    alert(response.data.status)
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -31,7 +38,7 @@ const StudentViewCollege = () => {
     useEffect(() => { getData() }, [])
     return (
         <div>
-            <StudNavBar/>
+            <StudNavBar />
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">

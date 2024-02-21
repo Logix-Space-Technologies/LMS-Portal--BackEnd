@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import '../../config/config'
+import { Link } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminAddBatch = () => {
     const [inputField, setInputField] = useState({
@@ -16,22 +18,30 @@ const AdminAddBatch = () => {
     const [errors, setErrors] = useState({});
     const [outputField, setOutputField] = useState([]);
 
+    const [key, setKey] = useState('');
+
     const apiUrl = global.config.urls.api.server + '/api/lms/viewallcolleges';
     const apiUrl2 = global.config.urls.api.server + '/api/lms/addBatches';
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'multipart/form-data',
                 'Access-Control-Allow-Origin': '*',
-                token: sessionStorage.getItem('admtoken'),
-                key: sessionStorage.getItem('admkey')
+                token: token,
+                key: currentKey
             }
         };
 
         axios.post(apiUrl, {}, axiosConfig).then((response) => {
             setOutputField(response.data.data);
-            console.log(response.data.data);
         });
     };
 
@@ -41,20 +51,24 @@ const AdminAddBatch = () => {
     };
 
     const readValue = (e) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         e.preventDefault();
-        console.log('Handle submit function called');
         const validationErrors = validateForm(inputField);
-        console.log(validationErrors)
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig2 = {
                 headers: {
                     'content-type': 'application/json;charset=UTF-8',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("admtoken"),
-                    "key": sessionStorage.getItem("admkey")
+                    "token": token,
+                    "key": currentKey
                 }
             }
-            console.log(axiosConfig2)
             let data = {
                 collegeId: inputField.collegeId,
                 batchName: inputField.batchName,
@@ -63,7 +77,6 @@ const AdminAddBatch = () => {
                 batchDesc: inputField.batchDesc,
                 batchAmount: inputField.batchAmount
             };
-            console.log(data)
             axios.post(apiUrl2, data, axiosConfig2).then((response) => {
                 if (response.data.status === 'success') {
                     alert('Batch Added Successfully !!');
@@ -100,21 +113,21 @@ const AdminAddBatch = () => {
                                 }
                             }
                         }
-                    } 
+                    }
                 }
             }
-        )
+            )
+        }
+        else {
+            setErrors(validationErrors);
+        }
     }
-    else {
-        setErrors(validationErrors);
-    }
-}
 
     const validateForm = (data) => {
         let errors = {};
 
         if (!data.collegeId.trim()) {
-            errors.collegeId = 'College Id is required';
+            errors.collegeId = 'College Name is required';
         }
         if (!data.batchName.trim()) {
             errors.batchName = 'Name is required';
@@ -130,7 +143,7 @@ const AdminAddBatch = () => {
         }
         if (!data.regEndDate.trim()) {
             errors.regEndDate = 'Date is required';
-        }else if (new Date(data.regEndDate) <= new Date(data.regStartDate)) {
+        } else if (new Date(data.regEndDate) <= new Date(data.regStartDate)) {
             errors.regEndDate = 'End date must be greater than start date';
         }
 
@@ -142,9 +155,14 @@ const AdminAddBatch = () => {
     }, []);
 
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">
@@ -153,17 +171,17 @@ const AdminAddBatch = () => {
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="text-center mb-5">
-                                            <a href="#!">
+                                            <Link to="#!">
                                                 <img
                                                     src="https://www.linkurcodes.com/images/logo.png"
                                                     alt=""
                                                     width="175"
                                                     height="57"
                                                 />
-                                            </a>
+                                            </Link>
                                             <br />
                                             <br />
-                                            <h3>Admin Add Batch</h3>
+                                            <h3>Add Batch</h3>
                                         </div>
                                     </div>
                                 </div>
@@ -254,7 +272,7 @@ const AdminAddBatch = () => {
                                     </div>
                                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                         <label htmlFor="batchDesc" className="form-label">
-                                            Batch Description
+                                            Batch Description <span className="text-danger">*</span>
                                         </label>
                                         <textarea
                                             className="form-control"

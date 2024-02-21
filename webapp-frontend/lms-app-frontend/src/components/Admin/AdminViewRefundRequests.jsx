@@ -2,30 +2,233 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
 import '../../config/config'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 
 const AdminViewRefundRequests = () => {
   const [refundRequests, setRefundRequests] = useState([]);
-const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
+  const [key, setKey] = useState('');
+  const [errors, setErrors] = useState({});
+  const [reject, setReject] = useState({})
+  const [approve, setApprove] = useState({})
+
+  const [inputField, setInputField] = useState({
+    "admStaffId": "",
+    "adminRemarks": "",
+    "refundId": ""
+  });
+  const [approveField, setApproveField] = useState({
+    "admStaffId": "",
+    "approvedAmnt": "",
+    "transactionNo": "",
+    "adminRemarks": "",
+    "refundId": ""
+  });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [studentsPerPage] = useState(2); // Number of students per page
+
+  const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
+  const apiUrl2 = global.config.urls.api.server + "/api/lms/rejectRefund"
+  const apiUrl3 = global.config.urls.api.server + "/api/lms/admStaffRefundApproval"
+
   const getData = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
     let axiosConfig = {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*",
+        "token": token,
+        "key": currentKey
+      }
+    }
+    axios.post(apiUrl, {}, axiosConfig)
+      .then((response) => {
+        if (response.data.status === "success") {
+          setRefundRequests(response.data.data);
+        } else {
+          if (!response.data.data) {
+            console.log("No Refund Requests Found!!")
+          } else {
+            alert(response.data.status)
+          }
+        }
+      })
+  };
+
+  const inputHandler = (event) => {
+    setErrors({}); // Clear previous errors
+    setInputField({ ...inputField, [event.target.name]: event.target.value });
+  };
+
+  const approveHandler = (event) => {
+    setErrors({}); // Clear previous errors
+    setApproveField({ ...approveField, [event.target.name]: event.target.value });
+  };
+
+  const validateForm = (data) => {
+    let errors = {};
+
+    if (!data.adminRemarks) {
+      errors.adminRemarks = 'Remark is required';
+    }
+    if (!data.approvedAmnt) {
+      errors.approvedAmnt = 'Amount is required';
+    }
+    if (!data.transactionNo) {
+      errors.transactionNo = 'Transaction No. is required';
+    }
+    return errors;
+  }
+
+  const validateForm2 = (data) => {
+    let errors = {};
+
+    if (!data.adminRemarks) {
+      errors.adminRemarks = 'Remark is required';
+    }
+
+    return errors;
+  }
+
+  const rejectRefund = () => {
+    const validationErrors = validateForm2(inputField)
+    if (Object.keys(validationErrors).length === 0) {
+      let currentKey = sessionStorage.getItem("admkey");
+      let token = sessionStorage.getItem("admtoken");
+      if (currentKey !== 'lmsapp') {
+        currentKey = sessionStorage.getItem("admstaffkey");
+        token = sessionStorage.getItem("admstaffLogintoken");
+        setKey(currentKey); // Update the state if needed
+      }
+      let axiosConfig2 = {
         headers: {
           'content-type': 'application/json;charset=UTF-8',
           "Access-Control-Allow-Origin": "*",
-          "token": sessionStorage.getItem("admtoken"),
-          "key": sessionStorage.getItem("admkey")
+          "token": token,
+          "key": currentKey
         }
       }
+      let data2 = {
+        "refundId": reject,
+        "admStaffId": sessionStorage.getItem("admstaffId"),
+        "adminRemarks": inputField.adminRemarks
+      }
+      console.log(data2)
+      axios.post(apiUrl2, data2, axiosConfig2).then(
+        (response) => {
+          if (response.data.status === "Refund Request Cancelled.") {
+            alert("Refund Request Rejected")
+            window.location.reload()
+            setInputField({
+              adminRemarks: ""
+            });
+          } else {
+            alert(response.data.status);
+          }
+        }
+      )
+    } else {
+      setErrors(validationErrors);
+    }
+  }
 
-    axios.post(apiUrl, {}, axiosConfig)
-      .then((response) => {
-        setRefundRequests(response.data.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error('Error retrieving refund requests:', error);
-      });
+  const approveRefund = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
+    const validationErrors = validateForm(approveField)
+    if (Object.keys(validationErrors).length === 0) {
+      let axiosConfig3 = {
+        headers: {
+          'content-type': 'application/json;charset=UTF-8',
+          "Access-Control-Allow-Origin": "*",
+          "token": token,
+          "key": currentKey
+        }
+      }
+      let data3 = {
+        "refundId": approve,
+        "admStaffId": sessionStorage.getItem("admstaffId"),
+        "adminRemarks": approveField.adminRemarks,
+        "transactionNo": approveField.transactionNo,
+        "approvedAmnt": approveField.approvedAmnt
+      }
+      console.log(data3)
+      axios.post(apiUrl3, data3, axiosConfig3).then(
+        (response) => {
+          if (response.data.status === "success") {
+            alert("Refund Request Approved Successfully")
+            window.location.reload()
+            setApproveField({
+              adminRemarks: "",
+              refundAmnt: "",
+              transactionNo: ""
+            });
+          } else {
+            if (response.data.status === "Validation failed" && response.data.data.adminRemarks) {
+              alert(response.data.data.adminRemarks)
+            } else {
+              if (response.data.status === "Validation failed" && response.data.data.transactionNo) {
+                alert(response.data.data.transactionNo)
+              } else {
+                if (response.data.status === "Validation failed" && response.data.data.approvedAmnt) {
+                  alert(response.data.data.approvedAmnt)
+                } else {
+                  alert(response.data.status)
+                }
+              }
+            }
+          }
+        }
+      )
+    } else {
+      setErrors(validationErrors);
+    }
+  }
+
+  const readValue = (id) => {
+    setReject(id)
+    console.log(id)
   };
+
+  // Logic for displaying current students
+  const indexOfLastStudent = currentPage * studentsPerPage;
+  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+  const currentStudents = refundRequests ? refundRequests.slice(indexOfFirstStudent, indexOfLastStudent) : [];
+
+
+  // Change page
+  const paginate = pageNumber => setCurrentPage(pageNumber);
+
+  // Total pages
+  const pageNumbers = [];
+  if (refundRequests && refundRequests.length > 0) {
+    refundRequests.forEach((student, index) => {
+      const pageNumber = index + 1;
+      pageNumbers.push(pageNumber);
+    });
+  }
+
+  const approveValue = (id) => {
+    setApprove(id)
+    console.log(id)
+  }
+
+  // Update key state when component mounts
+  useEffect(() => {
+    setKey(sessionStorage.getItem("admkey") || '');
+  }, []);
 
   useEffect(() => {
     getData();
@@ -33,7 +236,7 @@ const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
 
   return (
     <div>
-      <Navbar />
+      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
       <div>
         {/* ====== Table Section Start */}
         <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
@@ -61,11 +264,31 @@ const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                           Refund Amount
                         </th>
+                        <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                          Approved Amount
+                        </th>
+                        <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                          Refund Status
+                        </th>
+                        <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                          Amount Received Status
+                        </th>
+                        {key !== 'lmsapp' && (
+                          <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+
+                          </th>
+                        )}
+                        {key !== 'lmsapp' && (
+                          <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+
+                          </th>
+                        )}
+
                       </tr>
                     </thead>
                     <tbody>
-                      {refundRequests.map((value, index) => (
-                        <tr key={index}>
+                      {refundRequests.length > 0 ? refundRequests.map((value, index) => {
+                        return <tr key={index}>
                           <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.studName}
                           </td>
@@ -73,7 +296,7 @@ const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
                             {value.collegeName}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                            {new Date(value.requestedDate).toLocaleDateString()}
+                            {value.requestedDate}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.reason}
@@ -81,8 +304,31 @@ const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.refundAmnt}
                           </td>
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {value.approvedAmnt}
+                          </td>
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {value.refundApprovalStatus}
+                          </td>
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {value.AmountReceivedStatus}
+                          </td>
+                          {key !== 'lmsapp' && value.refundApprovalStatus !== "Amount Refunded" && (
+                            <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                              {/* <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Approve Refund</Link> */}
+                              <button onClick={() => approveValue(value.refundId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal2" data-bs-whatever="@mdo" disabled={value.refundApprovalStatus === "Amount Refunded"}>Approve Refund</button>
+                            </td>
+                          )}
+                          {key !== 'lmsapp' && value.refundApprovalStatus !== "Amount Refunded" && (
+                            <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                              {/* <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Reject Refund</Link> */}
+                              <button type="button" onClick={() => readValue(value.refundId)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" disabled={value.refundApprovalStatus === "Amount Refunded"}>Reject Refund</button>
+                            </td>
+                          )}
                         </tr>
-                      ))}
+                      }) : <td colSpan="10" className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                        No Refund Requests Found !!!
+                      </td>}
                     </tbody>
                   </table>
                 </div>
@@ -91,8 +337,102 @@ const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
           </div>
         </section>
       </div>
+
+      {key !== 'lmsapp' && (
+        <div className="flex justify-end">
+          <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h1 className="modal-title fs-5" id="exampleModalLabel">Reject Refund</h1>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                </div>
+                <div className="modal-body">
+                  <form>
+                    <div className="mb-3">
+                      <label htmlFor="message-text" className="col-form-label">Remarks<span className="text-danger">*</span></label>
+                      <textarea name="adminRemarks" className="form-control" value={inputField.adminRemarks} onChange={inputHandler} />
+                      {errors.adminRemarks && <span style={{ color: 'red' }} className="error">{errors.adminRemarks}</span>}
+                    </div>
+                  </form>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button onClick={() => rejectRefund()} type="button" className="btn btn-primary">
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-center mt-8">
+        <nav>
+          <ul className="flex list-style-none">
+            {currentPage > 1 && (
+              <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                Previous
+              </li>
+            )}
+            {pageNumbers.map(number => (
+              <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                {number}
+              </li>
+            ))}
+            {currentPage < pageNumbers.length && (
+              <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                Next
+              </li>
+            )}
+          </ul>
+        </nav>
+      </div>
+
+
+      {key !== 'lmsapp' && (
+        <div className="flex justify-end">
+          <div className="modal fade" id="exampleModal2" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h1 className="modal-title fs-5" id="exampleModalLabel">Approve Refund</h1>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                </div>
+                <div className="modal-body">
+                  <form>
+                    <div className="mb-3">
+                      <label htmlFor="message-text" className="col-form-label">Refund Amount<span className="text-danger">*</span></label>
+                      <textarea name="approvedAmnt" className="form-control" value={approveField.approvedAmnt} onChange={approveHandler} />
+                      {errors.approvedAmnt && <span style={{ color: 'red' }} className="error">{errors.approvedAmnt}</span>}
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="message-text" className="col-form-label">Transaction No<span className="text-danger">*</span></label>
+                      <textarea name="transactionNo" className="form-control" value={approveField.transactionNo} onChange={approveHandler} />
+                      {errors.transactionNo && <span style={{ color: 'red' }} className="error">{errors.transactionNo}</span>}
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="message-text" className="col-form-label">Remarks<span className="text-danger">*</span></label>
+                      <textarea name="adminRemarks" className="form-control" value={approveField.adminRemarks} onChange={approveHandler} />
+                      {errors.adminRemarks && <span style={{ color: 'red' }} className="error">{errors.adminRemarks}</span>}
+                    </div>
+                  </form>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button onClick={() => approveRefund()} type="button" className="btn btn-primary">
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
 
 export default AdminViewRefundRequests;

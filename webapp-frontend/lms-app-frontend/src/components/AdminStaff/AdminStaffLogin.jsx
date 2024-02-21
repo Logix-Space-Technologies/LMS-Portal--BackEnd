@@ -11,7 +11,7 @@ const AdminStaffLogin = () => {
     const [errors, setErrors] = useState({});
 
     const apiUrl = global.config.urls.api.server + "/api/lms/AdminStaffLogin"
-    // const navigate=useNavigate()
+    const navigate=useNavigate()
 
     const inputHandler = (event) => {
         setErrors({}); // Clear previous errors
@@ -35,9 +35,15 @@ const AdminStaffLogin = () => {
                 if (Response.data.status === "Success") {
                     let admstafftoken = Response.data.token
                     let admstaffkey = "lmsappadmstaff"
+                    let Email = Response.data.data.Email;
+                    let admstaffId = Response.data.data.id
+                    let AdStaffName = Response.data.data.AdStaffName
+                    sessionStorage.setItem("admstaffId",admstaffId)
                     sessionStorage.setItem("admstaffLogintoken", admstafftoken)
+                    sessionStorage.setItem("Email", Email)
                     sessionStorage.setItem("admstaffkey", admstaffkey)
-                    alert(Response.data.status)
+                    sessionStorage.setItem("AdStaffName", AdStaffName)
+                    navigate("/admstaffdashboard")
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)
@@ -54,32 +60,30 @@ const AdminStaffLogin = () => {
 
     }
     return (
-        <div class="container">
-            <div class="row justify-content-center align-items-center min-vh-100">
-                <div class="col col-12 col-sm-8 col-md-12 col-lg-8">
-                    <div class="text-center mb-4">
-                        <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" class="img-fluid" />
+        <div className="container">
+            <div className="row justify-content-center align-items-center min-vh-100">
+                <div className="col col-12 col-sm-8 col-md-12 col-lg-8">
+                    <div className="text-center mb-4">
+                        <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" className="img-fluid" />
                     </div>
                     <br></br>
-                    <div class="card text-center shadow p-3 mb-5 bg-white rounded">
-                        <div class="card-header bg-info-subtle mb-3">
+                    <div className="card text-center shadow p-3 mb-5 bg-white rounded">
+                        <div className="card-header bg-info-subtle mb-3">
                             <h2>Admin Staff Login</h2>
                         </div>
-                        <div class="card-body ">
-                            <form>
-                                <div class="mb-3 text-start">
-                                    <label for="" class="form-label">Email</label>
-                                    <input type="text" name="Email" value={inputField.Email} onChange={inputHandler} class="form-control" />
+                        <div className="card-body ">
+                                <div className="mb-3 text-start">
+                                    <label htmlFor="" className="form-label">Email</label>
+                                    <input type="text" name="Email" value={inputField.Email} onChange={inputHandler} className="form-control" />
                                     {errors.Email && <span style={{ color: 'red' }} className="error">{errors.Email}</span>}
                                 </div>
-                                <div class="mb-3 text-start">
-                                    <label for="" class="form-label">Password</label>
-                                    <input type="password" name="Password" value={inputField.Password} onChange={inputHandler} class="form-control" />
+                                <div className="mb-3 text-start">
+                                    <label htmlFor="" className="form-label">Password</label>
+                                    <input type="password" name="Password" value={inputField.Password} onChange={inputHandler} className="form-control" />
                                     {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
                                 </div>
-                            </form>
-                            <div class="mb-3">
-                                <button type="button" onClick={readValue} class="btn btn-success btn-lg">Login</button>
+                            <div className="mb-3">
+                                <button type="button" onClick={readValue} className="btn btn-success btn-lg">Login</button>
                             </div>
                             <div>
                                 <Link to='/clgStafflogin'>College Staff Login</Link>
@@ -92,7 +96,7 @@ const AdminStaffLogin = () => {
                             </div>
                         </div>
 
-                        <div class="card-footer text-muted">
+                        <div className="card-footer text-muted">
                             &copy; 2024 Link Ur Codes. All rights reserved.
                         </div>
 

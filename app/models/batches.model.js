@@ -80,7 +80,7 @@ Batches.batchDelete = (batchId, result) => {
 
 
 Batches.batchView = (result) => {
-    db.query("SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus=0 AND b.isActive= 1;", (err, res) => {
+    db.query("SELECT c.collegeName, b.*, cu.curriculumFileLink FROM batches b JOIN college c ON b.collegeId = c.id LEFT JOIN curriculum cu ON cu.batchId = b.id WHERE b.deleteStatus=0 AND b.isActive= 1;", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)
@@ -96,7 +96,7 @@ Batches.batchView = (result) => {
 Batches.searchBatch = (search, result) => {
     const searchTerm = '%' + search + '%';
     db.query(
-        "SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND (b.batchName LIKE ? OR c.collegeName LIKE ? OR b.batchDesc LIKE ?)",
+        "SELECT c.collegeName, b.batchName, b.batchDesc, b.regStartDate, b.regEndDate, b.batchAmount FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND (b.batchName LIKE ? OR c.collegeName LIKE ? OR b.batchDesc LIKE ?)",
         [searchTerm, searchTerm, searchTerm],
         (err, res) => {
             if (err) {
@@ -104,8 +104,10 @@ Batches.searchBatch = (search, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Batches: ", res);
-                result(null, res);
+                // Format the date for each session
+                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}));
+                console.log("Batches: ", formattedBatches);
+                result(null, formattedBatches);
             }
         }
     );
@@ -159,7 +161,7 @@ Batches.updateBatch = (updatedBatch, result) => {
 
 
 Batches.adminBatchView = (collegeId, result) => {
-    db.query("SELECT b. * FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND b.collegeId = ?", collegeId, (err, res) => {
+    db.query("SELECT c.collegeName, b. * FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND b.collegeId = ?", collegeId, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)
@@ -169,6 +171,20 @@ Batches.adminBatchView = (collegeId, result) => {
             result(null, res)
         }
     })
+}
+
+
+Batches.viewOneBatch = (batchId, result) => {
+    db.query("SELECT id, collegeId, batchName, regStartDate, regEndDate, batchDesc, batchAmount FROM batches WHERE id = ? AND isActive = 1 AND deleteStatus = 0", batchId,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("data: ", res);
+            result(null, res);
+        })
 }
 
 

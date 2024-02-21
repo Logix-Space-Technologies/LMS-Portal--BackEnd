@@ -1,8 +1,7 @@
-//RefundRequest.jsx
-
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import StudNavBar from './StudNavBar';
+import '../../config/config'
+import { Link, useNavigate } from 'react-router-dom';
 
 const RefundRequestForm = () => {
     const [inputField, setInputField] = useState({
@@ -11,6 +10,8 @@ const RefundRequestForm = () => {
     });
 
     const [errors, setErrors] = useState({});
+
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/refundRequest";
     useEffect(() => {
@@ -46,6 +47,7 @@ const RefundRequestForm = () => {
                 (response) => {
                     if (response.data.status === 'success') {
                         alert('Refund request successfully created');
+                        navigate("/studdashboard")
                         setInputField((prevInputField) => ({
                             ...prevInputField,
                             reason: "",
@@ -58,6 +60,9 @@ const RefundRequestForm = () => {
                             alert("No payment history found for the student.");
                         } else if (response.data.status === "Failed to create refund request.") {
                             alert("Failed to create refund request.");
+                        } else if (response.data.status === "Unauthorized User!!") {
+                            navigate("/studentLogin")
+                            sessionStorage.clear()
                         }
                         setInputField((prevInputField) => ({
                             ...prevInputField,
@@ -89,7 +94,6 @@ const RefundRequestForm = () => {
 
     return (
         <div>
-            <StudNavBar/>
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">
@@ -101,19 +105,21 @@ const RefundRequestForm = () => {
                                             <a href="#!">
                                                 <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
                                             </a><br /><br />
-                                            <h3>Refund request</h3>
+                                            <div className="flex justify-between items-center mb-3">
+                                                <div className="flex-grow text-center">
+                                                    <h1>Refund Request</h1>
+                                                </div>
+                                                <div>
+                                                    <Link className="btn btn-danger" to="/studdashboard">Back</Link>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="row gy-3 gy-md-4 overflow-hidden">
-                                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                        <label htmlFor="studId" className="form-label">Student id<span className="text-danger">*</span></label>
-                                        <input onChange={handleChange} type="text" className="form-control" name="studId" value={inputField.studId} id="studId" readOnly />
-                                    </div>
-
-                                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                         <label htmlFor="reason" className="form-label">Reason <span className="text-danger">*</span></label>
-                                        <input onChange={handleChange} type="text" className="form-control" name="reason" value={inputField.reason} id="reason" />
+                                        <textarea name="reason" onChange={handleChange} value={inputField.reason} id="reason" cols="30" rows="10" className="form-control"></textarea>
                                         {errors.reason && <div className="text-danger">{errors.reason}</div>}
                                     </div>
 

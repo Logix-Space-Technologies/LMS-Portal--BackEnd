@@ -73,7 +73,7 @@ exports.createSession = (request, response) => {
             if (Object.keys(validationErrors).length > 0) {
                 return response.json({ "status": "Validation failed", "data": validationErrors })
             }
-            
+
             const newSession = new Session({
                 batchId: request.body.batchId,
                 sessionName: request.body.sessionName,
@@ -107,8 +107,8 @@ exports.createSession = (request, response) => {
                                 })
                                 const studentName = element.studName
                                 const studentEmail = element.studEmail
-                                const sessionTime=formatTime(newSession.time)
-                                const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, request.body.date,sessionTime, newSession.venueORlink);
+                                const sessionTime = formatTime(newSession.time)
+                                const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, request.body.date, sessionTime, newSession.venueORlink);
                                 const upcomingSessionTextContent = mailContents.upcomingSessionTextContent(studentName, newSession.sessionName, request.body.date, newSession.time, newSession.venueORlink);
                                 mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 if (key == "lmsapp") {
@@ -146,7 +146,7 @@ exports.sessionUpdate = (request, response) => {
     jwt.verify(sessionUpdateToken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
-
+            console.log(request.body.date)
             if (Validator.isEmpty(request.body.sessionName).isValid) {
                 validationErrors.sessionName = Validator.isEmpty(request.body.sessionName).message;
             }
@@ -226,7 +226,8 @@ exports.viewSessions = (request, response) => {
     //add the appropriate key
     jwt.verify(sessionToken, key, (err, decoded) => {
         if (decoded) {
-            Session.viewSessions((err, data) => {
+            const batchId = request.body.batchId
+            Session.viewSessions(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
@@ -249,7 +250,7 @@ exports.viewUpcomingSessions = (request, response) => {
     //add the appropriate key
     jwt.verify(sessionToken, "lmsappstud", (err, decoded) => {
         if (decoded) {
-            Session.viewUpcomingSessions(batchId,(err, data) => {
+            Session.viewUpcomingSessions(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 }
@@ -352,7 +353,7 @@ exports.cancelSession = (request, response) => {
                     const sessionDate = sessionres[0].date.toLocaleDateString();
 
                     const sessiontime = formatTime(sessionres[0].time);
-                    
+
                     Student.searchStudentByBatch(batchId, (err, res) => {
                         if (err) {
                             return response.json({ "status": err });
@@ -372,6 +373,51 @@ exports.cancelSession = (request, response) => {
         });
     });
 };
+
+exports.isSessionHappeningToday = (request, response) => {
+    const sessionToken = request.headers.token;
+    jwt.verify(sessionToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Session.CheckIsTodaySessionAvailable((err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": false });
+                } else {
+                    return response.json({ "status": true, "data": data });
+                }
+            });
+
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+}
+
+exports.viewOneSession = (request, response) => {
+    const sessionToken = request.headers.token;
+    const key = request.headers.key; // Provide the respective keys for admin and admin staff
+    const sessionId = request.body.id; // Assuming the session ID is provided in the request body
+
+    jwt.verify(sessionToken, key, (err, decoded) => {
+        if (decoded) {
+            Session.viewOneSession(sessionId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (!data || data.length === 0) {
+                    return response.json({ "status": "No session found with the provided ID" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
+
 
 
 

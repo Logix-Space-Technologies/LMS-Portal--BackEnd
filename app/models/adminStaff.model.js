@@ -69,7 +69,7 @@ AdminStaff.create = (newAdminStaff, result) => {
 
 
 AdminStaff.getAlladmstaff = async (result) => {
-    let query = "SELECT id, AdStaffName, PhNo, Address, AadharNo, Email, emailVerified, addedDate, updatedDate, deleteStatus, isActive, pwdUpdateStatus FROM admin_staff WHERE deleteStatus = 0 AND isActive = 1;";
+    let query = "SELECT id, AdStaffName, PhNo, Address, AadharNo, Email, addedDate, updatedDate FROM admin_staff WHERE deleteStatus = 0 AND isActive = 1;";
     db.query(query, (err, res) => {
         if (err) {
             console.log("error: ", err);
@@ -201,39 +201,43 @@ AdminStaff.findByEmail = (email, result) => {
 
 // Admin-Staff Change Password
 AdminStaff.asChangePassword = (adsf, result) => {
-    // Retrieve the hashed old password from the database
-    const getAstaffPasswordQuery = "SELECT Password FROM admin_staff WHERE BINARY Email = ? AND deleteStatus = 0 AND isActive = 1"
+    // Query to retrieve the hashed old password from the database
+    const getAstaffPasswordQuery = "SELECT Password FROM admin_staff WHERE BINARY Email = ? AND deleteStatus = 0 AND isActive = 1";
+
     db.query(getAstaffPasswordQuery, [adsf.Email], (getAstaffPasswordErr, getAstaffPasswordRes) => {
         if (getAstaffPasswordErr) {
-            console.log("Error : ", getAstaffPasswordErr)
-            result(getAstaffPasswordErr, null)
+            console.error("Error retrieving old password:", getAstaffPasswordErr);
+            result("Error retrieving old password", null);
             return;
         }
+
         if (getAstaffPasswordRes.length > 0) {
             const hashedOldPassword = getAstaffPasswordRes[0].Password;
 
             // Compare the hashed old password with the provided old password
             if (bcrypt.compareSync(adsf.oldAdSfPassword, hashedOldPassword)) {
-                const updateAstaffPasswordQuery = "UPDATE admin_staff SET Password = ?, updateStatus = 1, pwdUpdateStatus = 1, updatedDate = CURRENT_DATE() WHERE Email = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1"
-                const hashedNewPassword = bcrypt.hashSync(adsf.newAdSfPassword, 10)
+                // Hash the new password
+                const hashedNewPassword = bcrypt.hashSync(adsf.newAdSfPassword, 10);
+
+                // Query to update the password
+                const updateAstaffPasswordQuery = "UPDATE admin_staff SET Password = ?, updateStatus = 1, pwdUpdateStatus = 1, updatedDate = CURRENT_DATE() WHERE Email = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1";
 
                 db.query(updateAstaffPasswordQuery, [hashedNewPassword, adsf.Email], (updateErr) => {
                     if (updateErr) {
-                        console.log("Error : ", updateErr)
-                        result(updateErr, null)
+                        console.error("Error updating password:", updateErr);
+                        result("Error updating password", null);
                         return;
-                    } else {
-                        result(null, { "status": "Password Updated Successfully." })
                     }
-                })
+                    result(null, null);
+                });
             } else {
-                result(null, { "status": "Incorrect Old Password!!!" })
+                result("Incorrect old password", null);
             }
         } else {
-            result(null, { "status": "Admin Staff Not Found!!!" })
+            result("Admin staff not found", null);
         }
-    })
-}
+    });
+};
 
 
 AdminStaff.searchCollegesByAdminStaff = (search, result) => {
@@ -275,7 +279,7 @@ AdminStaff.viewAdminStaffProfile = (id, result) => {
 
 // View Submitted Tasks By AdminStaff
 AdminStaff.viewSubmittedTask = (result) => {
-    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, t.taskTitle, t.dueDate, st.gitLink, st.remarks, st.subDate, st.evalDate, st.lateSubDate, st.evaluatorRemarks, st.score FROM submit_task st JOIN task t ON st.taskId = t.id JOIN student s ON st.studId = s.id JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.validity > CURRENT_DATE() AND s.isVerified = 1 AND s.isActive = 1 AND s.emailVerified = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1",
+    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, t.id, t.taskTitle, t.dueDate, st.id AS 'submitTaskId', st.gitLink, st.remarks, st.subDate, st.evalDate, st.lateSubDate, st.evaluatorRemarks, st.score FROM submit_task st JOIN task t ON st.taskId = t.id JOIN student s ON st.studId = s.id JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.validity > CURRENT_DATE() AND s.isVerified = 1 AND s.isActive = 1 AND s.emailVerified = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND st.isEvaluated = 0",
         (err, res) => {
             if (err) {
                 console.log("Error Viewing Submitted Tasks : ", err)
@@ -292,5 +296,47 @@ AdminStaff.viewSubmittedTask = (result) => {
         })
 }
 
+
+AdminStaff.viewOneAdminStaff = (id, result) => {
+    db.query("SELECT id, AdStaffName, Address, AadharNo, PhNo FROM admin_staff WHERE id = ? AND  isActive = 1 AND deleteStatus = 0", id,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("Trainer: ", res);
+            result(null, res);
+        })
+}
+
+AdminStaff.AdmViewAllMaterial = async (result) => {
+    let query = "SELECT id,fileName,materialDesc,uploadFile,remarks,addedDate,materialType FROM materials WHERE deleteStatus = 0 AND isActive = 1";
+    db.query(query, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        } else {
+            const formattedMaterials = res.map(materials => ({ ...materials, addedDate: materials.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })})); // Formats the date as 'YYYY-MM-DD'
+            console.log("Materials: ", formattedMaterials);
+            result(null, formattedMaterials);
+
+        }
+    });
+}
+
+AdminStaff.viewOneMaterial = (materialId, result) => {
+    db.query("SELECT fileName,batchId,materialDesc,uploadFile,remarks,addedDate,materialType FROM materials WHERE deleteStatus = 0 AND isActive = 1 AND id = ?", materialId,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("Material: ", res);
+            result(null, res);
+        })
+}
 
 module.exports = AdminStaff

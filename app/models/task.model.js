@@ -7,6 +7,7 @@ const { response } = require('express')
 const Tasks = function (tasks) {
     this.id = tasks.id
     this.batchId = tasks.batchId;
+    this.sessionId = tasks.sessionId;
     this.taskTitle = tasks.taskTitle;
     this.taskDesc = tasks.taskDesc;
     this.taskType = tasks.taskType;
@@ -162,15 +163,17 @@ Tasks.updateTask = (updatedTask, result) => {
 };
 
 
-Tasks.taskView = (result) => {
-    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND b.deleteStatus = 0 AND b.isActive = 1", (err, res) => {
+Tasks.taskView = (sessionId, result) => {
+    db.query("SELECT b.batchName, t.* FROM task t JOIN sessiondetails s ON t.sessionId = s.id LEFT JOIN batches b ON t.batchId = b.id AND s.batchId = b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND t.sessionId = ?",
+    [sessionId], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null)
             return
         } else {
-            console.log("Tasks: ", res);
-            result(null, res)
+            const formattedTasks = res.map(Tasks => ({ ...Tasks, addedDate: Tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), dueDate: Tasks.dueDate ? Tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null})); // Formats the date as 'YYYY-MM-DD'
+            console.log("Tasks: ", formattedTasks);
+            result(null, formattedTasks)
         }
     })
 }
@@ -178,16 +181,17 @@ Tasks.taskView = (result) => {
 
 
 Tasks.searchTasks = (searchString, result) => {
-    db.query("SELECT b.batchName, t.* FROM task t JOIN batches b ON t.batchId=b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ?  OR t.taskType LIKE ? OR b.batchName LIKE ?)",
-        [`%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`],
+    db.query("SELECT b.batchName, s.sessionName, t.id, t.taskTitle, t.batchId, t.sessionId, t.taskDesc, t.taskType, t.dueDate, t.totalScore, t.taskFileUpload FROM task t JOIN batches b ON t.batchId=b.id LEFT JOIN sessiondetails s ON t.sessionId = s.id WHERE t.deleteStatus=0 AND t.isActive=1 AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ? OR t.taskType LIKE ? OR b.batchName LIKE ? OR s.sessionName LIKE ?)",
+        [`%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
                 result(err, null)
                 return
             } else {
-                console.log("Tasks: ", res);
-                result(null, res)
+                const formattedSearchTasks = res.map(tasks => ({ ...tasks, dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}));
+                console.log("Tasks: ", formattedSearchTasks);
+                result(null, formattedSearchTasks)
             }
         })
 }
@@ -202,13 +206,27 @@ Tasks.collegeStaffSearchTasks = (searchKey, collegeId, result) => {
                 result(err, null)
                 return
             } else {
-                console.log("Tasks: ", res);
-                result(null, res)
+                const formattedViewTask = res.map(tasks => ({ ...tasks, addedDate: tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                console.log("Tasks: ", formattedViewTask);
+                result(null, formattedViewTask)
             }
         })
 }
 
 
+Tasks.findById = (id, result) => {
+    db.query("SELECT batchId,taskTitle,dueDate,taskType,totalScore,taskDesc,taskFileUpload FROM task WHERE id =?  AND deleteStatus = 0 AND isActive = 1", [id], (err, res) => {
+        if (err) {
+            result(err, null);
+            return;
+        }
+        if (res.length) {
+            result(null, res[0]);
+        } else {
+            result({ kind: "not_found" }, null);
+        }
+    });
+};
 
 
 

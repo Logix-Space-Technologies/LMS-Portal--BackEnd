@@ -74,7 +74,7 @@ exports.createTask = (request, response) => {
             // Remove the file from local storage
             fs.unlinkSync(file.path);
 
-            const { batchId, taskTitle, taskDesc, taskType, totalScore } = request.body
+            const { batchId, taskTitle, taskDesc, taskType, totalScore,sessionId } = request.body
             const dueDate = request.body.dueDate
 
             const taskToken = request.headers.token
@@ -87,6 +87,9 @@ exports.createTask = (request, response) => {
 
                     if (Validator.isEmpty(batchId).isValid) {
                         validationErrors.value = Validator.isEmpty(batchId).message;
+                    }
+                    if (Validator.isEmpty(sessionId).isValid) {
+                        validationErrors.sessionId = Validator.isEmpty(sessionId).message;
                     }
                     if (!Validator.isValidAmount(batchId).isValid) {
                         validationErrors.amount = Validator.isValidAmount(batchId).message; //validation for batch id
@@ -134,6 +137,7 @@ exports.createTask = (request, response) => {
                         taskType: taskType,
                         taskFileUpload: fileUrl,
                         totalScore: totalScore,
+                        sessionId: sessionId,
                         dueDate: dueDate.split('/').reverse().join('-')
                     });
 
@@ -252,23 +256,25 @@ exports.taskUpdate = (request, response) => {
                     if (Validator.isEmpty(batchId).isValid) {
                         validationErrors.value = Validator.isEmpty(batchId).message;
                     }
-                    if (!Validator.isValidAmount(batchId).isValid) {
-                        validationErrors.amount = Validator.isValidAmount(batchId).message; //validation for batch id
+                    if (Validator.isEmpty(taskTitle).isValid) {
+                        validationErrors.name = Validator.isEmpty(taskTitle).message;
                     }
-                    if (!Validator.isValidName(taskTitle).isValid) {
-                        validationErrors.name = Validator.isValidName(taskTitle).message;
-                    }
-
+                    if (Validator.isEmpty(taskDesc).isValid) {
+                        validationErrors.desc = Validator.isEmpty(taskDesc).message;
+                    } 
                     if (!Validator.isValidAddress(taskDesc).isValid) {
-                        validationErrors.address = Validator.isValidAddress(taskDesc).message; //validation for task description.
+                        validationErrors.desc = Validator.isValidAddress(taskDesc).message; //validation for task description.
                     }
 
-                    if (!Validator.isValidName(taskType).isValid) {
-                        validationErrors.name = Validator.isValidName(taskType).message; //validation for task type
+                    if (Validator.isEmpty(taskType).isValid) {
+                        validationErrors.type = Validator.isEmpty(taskType).message; //validation for task type
                     }
 
                     if (!Validator.isValidAmount(totalScore).isValid) {
-                        validationErrors.amount = Validator.isValidAmount(totalScore).message; //validation for total score
+                        validationErrors.score = Validator.isValidAmount(totalScore).message; //validation for total score
+                    }
+                    if (Validator.isEmpty(totalScore).isValid) {
+                        validationErrors.score = Validator.isEmpty(totalScore).message; //validation for task type
                     }
 
                     if (!Validator.isValidDate(dueDate).isValid) {
@@ -306,17 +312,17 @@ exports.taskUpdate = (request, response) => {
                             if (err.kind === "not_found") {
                                 return response.json({ "status": "Task with provided Id is not found." });
                             } else {
-                                return response.json({ "status": err });
+                                return response.status(422).json({ "status": err });
                             }
                         } else {
                             if(key=="lmsapp"){
                                 logAdminStaff(0,"Admin Updated Task")
                             }
-                            return response.json({ "status": "success", "data": data });
+                            return response.status(200).json({ "status": "success", "data": data });
                         }
                     });
                 } else {
-                    return response.json({ "status": "Unauthorized access!!" });
+                    return response.status(403).json({ "status": "Unauthorized access!!" });
                 }
             });
 
@@ -333,7 +339,8 @@ exports.taskView = (request, response) => {
     key = request.headers.key
     jwt.verify(taskToken, key, (err, decoded) => {
         if (decoded) {
-            Tasks.taskView((err, data) => {
+            const sessionId = request.body.sessionId
+            Tasks.taskView(sessionId, (err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 }
@@ -397,7 +404,34 @@ exports.collegeStaffSearchTasks = (request, response) => {
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
+    });
+};
+
+
+
+
+exports.viewOneTask = (request, response) => {
+    const token = request.headers.token;
+    const key = request.headers.key;
+    const id = request.body.id;
+
+    jwt.verify(token, key, (err, decoded) => {
+        if (err || !decoded) {
+            return response.status(401).json({ "status": "Unauthorized: Invalid or missing token" });
+        }
+
+        Tasks.findById(id, (err, data) => {
+            if (err) {
+                if (err.kind === "not_found") {
+                    response.status(404).json({ "status": "Task not found" });
+                } else {
+                    response.status(500).json({ "status": "Error retrieving task" });
+                }
+            } else {
+                response.json({ "status": "success", "data": data });
+            }
+        });
     });
 };

@@ -109,7 +109,7 @@ Refund.createRefundRequest = (newRefund, result) => {
 
 Refund.getRefundRequests = (result) => {
     db.query(
-        "SELECT student.studName, college.collegeName, refund.studId, refund.requestedDate, refund.reason, refund.refundAmnt FROM refund JOIN student ON refund.studId = student.id JOIN college ON student.collegeId = college.id WHERE refund.cancelStatus = 0 AND student.deleteStatus = 0 AND student.isActive = 1 AND student.isVerified = 1 ORDER BY refund.requestedDate DESC",
+        "SELECT r.id AS refundId, s.studName, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, CASE WHEN r.refundApprovalStatus = 1 THEN 'Amount Refunded' ELSE 'Under Progress' END AS refundApprovalStatus, CASE WHEN r.AmountReceivedStatus = 1 THEN 'Amount Received' ELSE 'Not Yet Received' END AS AmountReceivedStatus, r.approvedAmnt FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.cancelStatus = 0 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 ORDER BY r.requestedDate DESC;",
         (err, res) => {
             if (err) {
                 console.error("Error retrieving refund requests:", err);
@@ -118,12 +118,14 @@ Refund.getRefundRequests = (result) => {
             }
             if (res.length === 0) {
                 console.log("No refund requests found");
-                result("No refund requests found.",null );
+                result("No refund requests found.", null);
                 return;
             }
-
+            // Format the date for each session
+            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate ? refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
             // Return all refund requests
-            result(null, res);
+            console.log(formattedRefunds)
+            result(null, formattedRefunds);
         }
     );
 };
@@ -176,7 +178,7 @@ Refund.viewRefundStatus = (studId, result) => {
 };
 
 //admin staff refund approval
-Refund.approveRefund = (refundAmnt, admStaffId, transactionNo, adminRemarks, refundId, result) => {
+Refund.approveRefund = (approvedAmnt, admStaffId, transactionNo, adminRemarks, refundId, result) => {
     // Check if the refund ID exists in the refund table
     db.query("SELECT * FROM refund WHERE id = ? AND cancelStatus = 0 AND refundApprovalStatus = 0 ", [refundId], (refundErr, refundRes) => {
         if (refundErr) {
@@ -194,7 +196,7 @@ Refund.approveRefund = (refundAmnt, admStaffId, transactionNo, adminRemarks, ref
         // Continue to approve refund if refund ID exists
         db.query(
             "UPDATE refund SET refundApprovalStatus = 1, approvedAmnt = ?, transactionNo = ?, adminRemarks = ?, refundStatus = 1, refundInitiatedDate=CURRENT_DATE(), admStaffId=? WHERE id = ?",
-            [refundAmnt, transactionNo, adminRemarks, admStaffId, refundId],
+            [approvedAmnt, transactionNo, adminRemarks, admStaffId, refundId],
             (err, res) => {
                 if (err) {
                     console.error("Error approving refund:", err);
@@ -208,7 +210,7 @@ Refund.approveRefund = (refundAmnt, admStaffId, transactionNo, adminRemarks, ref
                     return;
                 }
 
-                result("Refund approved successfully.", null);
+                result(null, null);
             }
         );
     });
@@ -248,7 +250,7 @@ Refund.cancelRefundRequest = (refundId, result) => {
                     return;
                 }
 
-                result("Refund cancelled successfully.", null);
+                result(null, null);
             }
         );
     });
@@ -270,13 +272,13 @@ Refund.rejectRefund = (admStaffId, adminRemarks, refundId, result) => {
                 result("Refund Request Not Found.", null)
                 return
             }
-            result("Refund Rejected.", null)
+            result(null, null)
         })
 }
 
 Refund.getSuccessfulRefunds = (result) => {
     db.query(
-        "SELECT s.studName, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, r.approvedAmnt, r.transactionNo FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.refundApprovalStatus=1",
+        "SELECT s.studName, s.membership_no, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, r.refundInitiatedDate, r.approvedAmnt, r.transactionNo FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.refundApprovalStatus = 1 AND r.cancelStatus = 0",
         (err, res) => {
             if (err) {
                 console.error("Error retrieving successful refunds:", err);

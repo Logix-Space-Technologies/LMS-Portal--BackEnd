@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-
 import '../../config/config'
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -35,7 +34,7 @@ const StudentLogin = () => {
         }
         axios.post(apiUrl, inputField).then(
             (Response) => {
-                if (Response.data.status === "Success") {
+                if (Response.data.status === "Success" && Response.data.data.refundReqStatus !== "Refund Request Active") {
                     let studtoken = Response.data.token;
                     let studId = Response.data.data.id;
                     let studemail = Response.data.data.studEmail;
@@ -51,6 +50,21 @@ const StudentLogin = () => {
                     navigate("/studdashboard")
 
 
+                } else if (Response.data.status === "Success" && Response.data.data.refundReqStatus === "Refund Request Active") {
+                    let studtoken = Response.data.token;
+                    let studId = Response.data.data.id;
+                    let studemail = Response.data.data.studEmail;
+                    let batchId = Response.data.data.batchId;
+                    let refundreqstatus = Response.data.data.refundReqStatus;
+                    let key = "lmsappstud"
+                    sessionStorage.setItem("studentkey", key);
+                    sessionStorage.setItem("studentId", studId);
+                    sessionStorage.setItem("studemail", studemail);
+                    sessionStorage.setItem("studBatchId", batchId);
+                    sessionStorage.setItem("studLoginToken", studtoken);
+                    sessionStorage.setItem("refundreqstatus",refundreqstatus);
+
+                    navigate("/studViewRefundReq")
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)
@@ -112,7 +126,7 @@ const StudentLogin = () => {
                                 <button type="button" onClick={readValue} className="btn btn-success btn-lg">Login</button>
                             </div>
                             <div className="mb-3">
-                                <p className="lead ">Don't have an account? <a href="/studentregistration">Register here</a></p>
+                                <p className="lead ">Don't have an account? <Link to="/studentregistration">Register here</Link></p>
                             </div>
                             <div className="mb-3">
                                 <Link to='/'>Admin Login</Link>

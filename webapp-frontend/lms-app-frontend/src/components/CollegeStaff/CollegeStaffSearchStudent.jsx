@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
+import ClgStaffNavbar from './ClgStaffNavbar'
+import { useNavigate } from 'react-router-dom'
 
 const CollegeStaffSearchStudent = () => {
     const [inputField, setInputField] = useState(
@@ -10,9 +12,14 @@ const CollegeStaffSearchStudent = () => {
         }
     )
 
+    const navigate = useNavigate()
+
     const [updateField, setUpdateField] = useState(
         []
     )
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [studentPerPage] = useState(10); // Number of students per page
 
     const [isLoading, setIsLoading] = useState(true)
 
@@ -36,21 +43,52 @@ const CollegeStaffSearchStudent = () => {
 
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                console.log(response.data.data)
-                setInputField({
-                    "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
-                    "searchQuery": ""
-                })
+                if (response.data.data) {
+                    setUpdateField(response.data.data)
+                    setIsLoading(false)
+                    setInputField({
+                        "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+                        "searchQuery": ""
+                    })
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        sessionStorage.clear()
+                        navigate("/clgStafflogin")
+                    } else {
+                        if (!response.data.data) {
+                            // no data found
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
 
         )
 
     }
 
+    // Logic for displaying current students
+    const indexOfLastStudent = currentPage * studentPerPage;
+    const indexOfFirstStudent = indexOfLastStudent - studentPerPage;
+    const currentStudents = updateField ? updateField.slice(indexOfFirstStudent, indexOfLastStudent) : [];
+
+
+    // Change page
+    const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    // Total pages
+    const pageNumbers = [];
+    if (updateField && updateField.length > 0) {
+        updateField.forEach((student, index) => {
+            const pageNumber = index + 1;
+            pageNumbers.push(pageNumber);
+        });
+    }
+
     return (
         <div>
+            <ClgStaffNavbar />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -63,125 +101,147 @@ const CollegeStaffSearchStudent = () => {
                                 <input onChange={inputHandler} type="text" className="form-control" name="searchQuery" value={inputField.searchQuery} />
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <button onClick={readValue} className="btn btn-warning">Search</button>
+                                <button onClick={readValue} className="btn btn-warning">Search</button><br /><br />
                             </div>
                         </div>
                     </div>
                 </div>
-                {isLoading ? (<div className="col-12 text-center">
-                    <p></p>
-                </div>) : (updateField ? (
-                    <div className="row g-3">
-                        <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-sm border border-gray-200">
-                            <header className="px-5 py-4 border-b border-gray-100">
-                                <h2 className="font-semibold text-2xl text-gray-800">List of Students</h2>
-                            </header>
-                            <div className="p-3">
-                                <div className="overflow-x-auto">
-                                    <table className="table-auto w-full">
-                                        <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
-                                            <tr>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Name</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Department</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Course</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Admission No.</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Roll No.</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Email</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Phone</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Aadhar No</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Batch Id</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Membership No.</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Expiry</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center"></div>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-sm divide-y divide-gray-100">
-                                            {updateField.map(
-                                                (value, index) => (
-                                                    <tr key={index}>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="flex items-center">
-                                                                <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
-                                                                    <img
-                                                                        className="w-18 h-14 flex-shrink-0 mr-2 sm:mr-3"
-                                                                        src={value.studProfilePic}
-                                                                        width="60px"
-                                                                        height="64px"
-                                                                        alt=""
-                                                                    />
-                                                                </div>
-                                                                <div className="font-medium text-gray-800">{value.studName}</div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.studDept}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.course}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.admNo}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.rollNo}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.studEmail}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.studPhNo}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.aadharNo}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.batchId}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.membership_no}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.validity}</div>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                {isLoading ? (
+                    <div className="col-12 text-center">
+                        <p></p>
                     </div>
-
+                ) : (updateField ? (
+                    // start
+                    <>
+                        <strong style={{ paddingLeft: '30px' }}>Student Details</strong><br /><br /><br />
+                        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                    <th scope="col" className="px-6 py-3">
+                                            
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Name
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Department
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Course
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Admission No.
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Roll No.
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Email
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Phone
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Aadhar No
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Batch Name
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Membership No.
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Expiry
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentStudents.map(
+                                        (value, index) => (
+                                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                <td className="p-4 whitespace-nowrap">
+                                                    <div className="flex items-center">
+                                                        <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
+                                                            <img
+                                                                className="w-18 h-14 flex-shrink-0 mr-2 sm:mr-3"
+                                                                src={value.studProfilePic}
+                                                                width="60px"
+                                                                height="64px"
+                                                                alt=""
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                {value.studName}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.studDept}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.course}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.admNo}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.rollNo}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.studEmail}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.studPhNo}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.aadharNo}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.batchName}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.membership_no}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.validity}
+                                                </td>
+                                            </tr>
+                                        )
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
+                    // end
                 ) : (
                     <div className="col-12 text-center">No Students Found!!</div>
                 ))}
+
+                <div className="flex justify-center mt-8">
+                    <nav>
+                        <ul className="flex list-style-none">
+                            {currentPage > 1 && (
+                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Previous
+                                </li>
+                            )}
+                            {pageNumbers.map(number => (
+                                <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                    {number}
+                                </li>
+                            ))}
+                            {currentPage < pageNumbers.length && (
+                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Next
+                                </li>
+                            )}
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
+
     )
 }
 

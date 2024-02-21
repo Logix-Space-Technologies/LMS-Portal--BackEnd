@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import '../../config/config'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const StudentChangePassword = () => {
@@ -39,10 +39,7 @@ const StudentChangePassword = () => {
                     if (Response.data.status === "success") {
                         alert("Password Changed Successfully");
                         navigate("/studentLogin");
-                        sessionStorage.removeItem("studentkey");
-                        sessionStorage.removeItem("studentId");
-                        sessionStorage.removeItem("studemail");
-                        sessionStorage.removeItem("studLoginToken");
+                        sessionStorage.clear()
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.oldPassword) {
                             alert(Response.data.data.oldPassword);
@@ -53,7 +50,12 @@ const StudentChangePassword = () => {
                                 if (Response.data.status === "Old password and new password cannot be same.") {
                                     alert(Response.data.status)
                                 } else {
-                                    alert(Response.data.status)
+                                    if (Response.data.status === "Unauthorized User!!") {
+                                        navigate("/studentLogin")
+                                        sessionStorage.clear()
+                                    } else {
+                                        alert(Response.data.status)
+                                    }
                                 }
                             }
                         }
@@ -88,11 +90,11 @@ const StudentChangePassword = () => {
                                         </div>
                                         <br></br>
                                         <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
-                                            <button onClick={readNewValue} className="btn btn-warning">Update</button>
+                                            <Link onClick={readNewValue} className="btn btn-warning">Update</Link>
                                         </div>
                                         <br></br>
                                         <div class="mb-3">
-                                            <a class="btn btn-danger" href="/studdashboard">Back</a>
+                                            <Link class="btn btn-danger" to="/studdashboard">Back</Link>
                                         </div>
                                     </ul>
                                 </div>

@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import '../../../config/config'
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const CollegeStaffViewProfile = () => {
     const [colgStaffData, setColgStaffData] = useState({});
+
     const apiURL = global.config.urls.api.server + "/api/lms/profileViewByCollegeStaff";
+
+    const navigate = useNavigate()
+
+    const logOut = () => {
+        sessionStorage.clear()
+    }
+
     const getData = () => {
         let data = { "id": sessionStorage.getItem("clgStaffId") };
         console.log(data)
@@ -18,8 +27,16 @@ const CollegeStaffViewProfile = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setColgStaffData(response.data.data);
-                console.log(response.data.data);
+                if (response.data.data) {
+                    setColgStaffData(response.data.data);
+                } else {
+                    if (response.data.status === "Unauthorized Access !!!") {
+                        logOut()
+                        navigate("/clgStafflogin")
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }
@@ -44,7 +61,6 @@ const CollegeStaffViewProfile = () => {
                                     <br></br>
                                 </div>
                                 <ul className="list-unstyled mb-1-9">
-                                    <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">College ID: {colgStaffData.collegeId}</span></li>
                                     <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">College Name: {colgStaffData.collegeName}</span></li>
                                     <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Department: {colgStaffData.department}</span></li>
                                     <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Email: {colgStaffData.email}</span></li>

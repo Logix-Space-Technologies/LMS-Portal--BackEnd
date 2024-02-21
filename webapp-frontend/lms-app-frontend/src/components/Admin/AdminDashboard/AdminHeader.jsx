@@ -1,15 +1,28 @@
 import React from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
 const AdminHeader = () => {
+    const navigate = useNavigate()
+    const logout = () => {
+        sessionStorage.removeItem("adminId")
+        sessionStorage.removeItem("admkey")
+        sessionStorage.removeItem("admtoken")
+        sessionStorage.removeItem("userName")
+        sessionStorage.removeItem("trainerId")
+        sessionStorage.removeItem("curriculumId")
+        sessionStorage.removeItem("clgStaffId")
+        sessionStorage.removeItem("batchId")
+
+    }
   return (
     <div>
         <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-                        <a href="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
+                        <Link to="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
                             <h2 className="text-primary mb-0">
                                 <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
-                        </a>
+                        </Link>
                         <div className="navbar-nav align-items-center ms-auto">
-                            <div className="nav-item dropdown">
+                            {/* <div className="nav-item dropdown">
                                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                     <i className="fa fa-bell me-lg-2" />
                                     <span className="d-none d-lg-inline-flex">Notification</span>
@@ -32,15 +45,15 @@ const AdminHeader = () => {
                                     <hr className="dropdown-divider" />
                                     <a href="#" className="dropdown-item text-center">See all notifications</a>
                                 </div>
-                            </div>
+                            </div> */}
                             <div className="nav-item dropdown">
-                                <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                     <img className="rounded-circle me-lg-2" src="https://www.pngmart.com/files/22/User-Avatar-Profile-PNG-Isolated-Transparent-HD-Photo.png" alt style={{ width: 40, height: 40 }} />
                                     <span className="d-none d-lg-inline-flex">Admin</span>
-                                </a>
+                                </Link>
                                 <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                                    <a href="#" className="dropdown-item">Change Password</a>
-                                    <a href="/" className="dropdown-item">Log Out</a>
+                                    <Link to="/adminchangepassword" className="dropdown-item">Change Password</Link>
+                                    <Link to="/" onClick={logout} className="dropdown-item">Log Out</Link>
                                 </div>
                             </div>
                         </div>

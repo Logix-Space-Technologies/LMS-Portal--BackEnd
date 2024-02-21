@@ -86,15 +86,16 @@ Curriculum.curriculumView = (batchId, result) => {
                 return result("Batch not found", null);
             }
 
-            db.query("SELECT b.batchName, c.* FROM curriculum c JOIN batches b ON c.batchId = b.id WHERE c.deleteStatus = 0 AND c.isActive = 1",
+            db.query("SELECT b.batchName, c.id, c.curriculumTitle, c.curriculumDesc, c.addedDate, c.curriculumFileLink, COALESCE(asf.AdStaffName, CASE WHEN c.addedBy = 0 THEN 'Admin' ELSE c.addedBy END) AS addedBy, COALESCE(usf.AdStaffName, CASE WHEN c.updatedBy = 0 THEN 'Admin' ELSE c.updatedBy END) AS updatedBy FROM curriculum c JOIN batches b ON c.batchId = b.id LEFT JOIN admin_staff asf ON c.addedBy = asf.id AND c.addedBy != 0 AND asf.AdStaffName IS NOT NULL LEFT JOIN admin_staff usf ON c.updatedBy = usf.id AND c.updatedBy != 0 AND usf.AdStaffName IS NOT NULL WHERE c.deleteStatus = 0 AND c.isActive = 1 AND c.batchId = ?",[batchId],
                 (curriculumErr, curriculumRes) => {
                     if (curriculumErr) {
                         console.log("error: ", curriculumErr);
                         result(curriculumErr, null)
                         return
                     } else {
-                        console.log("success:", curriculumRes)
-                        result(null, curriculumRes);
+                        const formattedCurriculums = curriculumRes.map(curriculum => ({ ...curriculum, addedDate: curriculum.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: curriculum.updatedDate ? curriculum.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null})); // Formats the date as 'YYYY-MM-DD'
+                        console.log("success:", formattedCurriculums)
+                        result(null, formattedCurriculums);
                     }
                 })
         })
@@ -157,6 +158,20 @@ Curriculum.curriculumUpdate = (updCurriculum, result) => {
         });
     });
 };
+
+
+Curriculum.viewOneCurriculum  = (id, result) => {
+    db.query("SELECT id,curriculumTitle,batchId,curriculumDesc,curriculumFileLink FROM curriculum WHERE deleteStatus = 0 AND isActive = 1 AND id = ?", id,
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            console.log("curriculum: ", res);
+            result(null, res);
+        })
+}
 
 
 

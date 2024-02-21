@@ -1,18 +1,19 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const AdminSideBar = () => {
   return (
     <div className="sidebar pe-4 pb-3">
                 <nav className="navbar bg-light navbar-light">
-                    <a href="/admdashboard" className="navbar-brand mx-4 mb-3">
+                    <Link to="/admdashboard" className="navbar-brand mx-4 mb-3">
                         <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
-                    </a>
+                    </Link>
                     <div className="navbar-nav w-100">
-                        <a href="/admdashboard" className="nav-item nav-link active"><i className="fa fa-tachometer-alt me-2" />Dashboard</a>
+                        <Link to="/admdashboard" className="nav-item nav-link active"><i className="fa fa-tachometer-alt me-2" />Dashboard</Link>
                         <div className="nav-item dropdown">
-                            <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i className="fa fa-laptop me-2" />Features</a>
+                            <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i className="fa fa-laptop me-2" />Features</Link>
                             <div className="dropdown-menu bg-transparent border-0">
-                                <a href="/addAdminStaff" className="dropdown-item">Add Admin Staff</a>
+                                <Link to="/addAdminStaff" className="dropdown-item">Add Admin Staff</Link>
                             </div>
                         </div>
                     </div>

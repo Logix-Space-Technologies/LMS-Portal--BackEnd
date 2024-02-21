@@ -1,5 +1,8 @@
 import axios from 'axios'
 import React, { useState } from 'react'
+import ClgStaffNavbar from './ClgStaffNavbar'
+import '../../config/config'
+import { Link, useNavigate } from 'react-router-dom'
 
 const CollegeStaffSearchTask = () => {
 
@@ -10,9 +13,14 @@ const CollegeStaffSearchTask = () => {
         }
     )
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [tasksPerPage] = useState(10); // Number of students per page
+
     const [updateField, setUpdateField] = useState([])
 
     const [isLoading, setIsLoading] = useState(true)
+
+    const navigate = useNavigate()
 
     const apiLink = global.config.urls.api.server + "/api/lms/collegeStaffSearchTasks"
 
@@ -32,19 +40,50 @@ const CollegeStaffSearchTask = () => {
         };
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                console.log(response.data.data)
-                setInputField({
-                    "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
-                    "taskQuery": ""
-                })
+                if (response.data.data) {
+                    setUpdateField(response.data.data)
+                    setIsLoading(false)
+                    setInputField({
+                        "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+                        "taskQuery": ""
+                    })
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        sessionStorage.clear()
+                        navigate("/clgStafflogin")
+                    } else {
+                        if (!response.data.data) {
+                            //no data found
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
 
+    // Logic for displaying current students
+    const indexOfLastStudent = currentPage * tasksPerPage;
+    const indexOfFirstStudent = indexOfLastStudent - tasksPerPage;
+    const currentTasks = updateField ? updateField.slice(indexOfFirstStudent, indexOfLastStudent) : [];
+
+
+    // Change page
+    const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    // Total pages
+    const pageNumbers = [];
+    if (updateField && updateField.length > 0) {
+        updateField.forEach((student, index) => {
+            const pageNumber = index + 1;
+            pageNumbers.push(pageNumber);
+        });
+    }
+
     return (
         <div>
+            <ClgStaffNavbar />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -67,80 +106,94 @@ const CollegeStaffSearchTask = () => {
                         <p></p>
                     </div>
                 ) : (updateField ? (
-                    <div className="row g-3">
-                        <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-sm border border-gray-200">
-                            <header className="px-5 py-4 border-b border-gray-100">
-                                <h2 className="font-semibold text-2xl text-gray-800">List of Tasks</h2>
-                            </header>
-                            <div className="p-3">
-                                <div className="overflow-x-auto">
-                                    <table className="table-auto w-full">
-                                        <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
-                                            <tr>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Batch Name</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Task Title</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Task Description</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Task Type</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Task Material</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Total Score</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Due Date</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center"></div>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-sm divide-y divide-gray-100">
-                                            {updateField.map(
-                                                (value, index) => (
-                                                    <tr key={index}>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.batchName}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.taskTitle}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.taskDesc}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.taskType}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <a target="_blank" href={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 shadow rounded-md hover:bg-blue-500">View Material</a>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.totalScore}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{new Date(value.dueDate).toLocaleDateString()}</div>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <>
+                        <header className="px-5 py-4 border-b border-gray-100">
+                            <h2 className="font-semibold text-2xl text-gray-800">List of Tasks</h2>
+                        </header>
 
+                        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3">
+                                            Batch Name
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Task Title
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Task Description
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Task Type
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Task Material
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Total Score
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Due Date
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentTasks.map(
+                                        (value, index) => (
+                                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                <td className="p-4 whitespace-nowrap">
+                                                    {value.batchName}
+                                                </td>
+                                                <td className="p-4 whitespace-nowrap">
+                                                    {value.taskTitle}
+                                                </td>
+                                                <td className="p-4 whitespace-nowrap">
+                                                    {value.taskDesc}
+                                                </td>
+                                                <td className="p-4 whitespace-nowrap">
+                                                    {value.taskType}
+                                                </td>
+                                                <td className="p-4 whitespace-nowrap">
+                                                    <Link target="_blank" href={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 shadow rounded-md hover:bg-blue-500">View Material</Link>
+                                                </td>
+                                                <td className="p-4 whitespace-nowrap">
+                                                    {value.totalScore}
+                                                </td>
+                                                <td className="p-4 whitespace-nowrap">
+                                                    {value.dueDate}
+                                                </td>
+                                            </tr>
+                                        )
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
                 ) : (
                     <div className="col-12 text-center">No Tasks Found!!</div>
                 ))}
+                <div className="flex justify-center mt-8">
+                    <nav>
+                        <ul className="flex list-style-none">
+                            {currentPage > 1 && (
+                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Previous
+                                </li>
+                            )}
+                            {pageNumbers.map(number => (
+                                <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                    {number}
+                                </li>
+                            ))}
+                            {currentPage < pageNumbers.length && (
+                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Next
+                                </li>
+                            )}
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div >
     )

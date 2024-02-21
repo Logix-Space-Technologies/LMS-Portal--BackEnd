@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 
 const StudentUpdateProfile = () => {
     const [studData, setStudData] = useState([])
     const [file, setFile] = useState("")
+    const [fileValidationMessage, setFileValidationMessage] = useState('');
     const [updateField, setUpdateField] = useState(
         {
             "id": sessionStorage.getItem("studentId"),
@@ -29,11 +30,37 @@ const StudentUpdateProfile = () => {
     }
 
     const fileUploadHandler = (event) => {
-        setFile(event.target.files[0]);
-        setUpdateField({ ...updateField, studProfilePic: event.target.files[0] });
-    }
+        setFileValidationMessage({})
+        const file = event.target.files[0];
+        if (file) {
+            const isSizeValid = file.size <= 2097152; // 2MB in bytes
+            const isTypeValid = /image\/(jpg|jpeg|png|webp|heif)$/.test(file.type);
+
+            if (isSizeValid && isTypeValid) {
+                setFile(file);
+                setFileValidationMessage('');
+            } else {
+                if (!isSizeValid) {
+                    setFileValidationMessage('File size should be less than 2MB.');
+                }
+                if (!isTypeValid) {
+                    setFileValidationMessage('Invalid file type. Only image files (jpeg, png, jpg, gif, bmp, tiff) are allowed.');
+                }
+            }
+        } else {
+            setFileValidationMessage("Please upload a file.");
+        }
+    };
+
 
     const readNewValue = () => {
+        if (!file) {
+            setFileValidationMessage("Please upload a file.");
+            return;
+        }
+        if (fileValidationMessage) {
+            return;
+        }
         console.log(updateField)
         let axiosConfig = {
             headers: {
@@ -69,9 +96,14 @@ const StudentUpdateProfile = () => {
                         "studProfilePic": ""
                     })
                     alert("Profile Updated Successfully")
-                    navigate("/studprofile")
+                    navigate("/studdashboard")
                 } else {
-                    alert(Response.data.status)
+                    if (Response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.clear()
+                    } else {
+                        alert(Response.data.status)
+                    }
                 }
 
             }
@@ -90,8 +122,17 @@ const StudentUpdateProfile = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setStudData(response.data.data[0])
-                setUpdateField(response.data.data[0])
+                if (response.data.data) {
+                    setStudData(response.data.data[0])
+                    setUpdateField(response.data.data[0])
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/studentLogin")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }
@@ -159,14 +200,15 @@ const StudentUpdateProfile = () => {
                                                 Profile Picture <span className="text-danger">*</span>
                                             </label>
                                             <input onChange={fileUploadHandler} type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" />
+                                            {fileValidationMessage && <div className="text-danger">{fileValidationMessage}</div>}
                                         </div>
                                         <br></br>
                                         <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
-                                            <button onClick={readNewValue} className="btn btn-warning">Update</button>
+                                            <Link onClick={readNewValue} className="btn btn-warning">Update</Link>
                                         </div>
                                         <br></br>
                                         <div class="mb-3">
-                                            <a class="btn btn-danger" href="/studdashboard">Back</a>
+                                            <Link class="btn btn-danger" to="/studdashboard">Back</Link>
                                         </div>
                                     </ul>
 

@@ -1,6 +1,8 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import '../../config/config'
+import ClgStaffNavbar from './ClgStaffNavbar'
+import { useNavigate } from 'react-router-dom'
 
 const CollegeStaffSearchBatch = () => {
     const [inputField, setInputField] = useState(
@@ -10,11 +12,16 @@ const CollegeStaffSearchBatch = () => {
         }
     )
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [batchPerPage] = useState(10); // Number of students per page
+
     const [updateField, setUpdateField] = useState(
         []
     )
 
     const [isLoading, setIsLoading] = useState(true)
+
+    const navigate = useNavigate()
 
     const apiLink = global.config.urls.api.server + "/api/lms/clgStaffSearchBatch"
 
@@ -36,20 +43,51 @@ const CollegeStaffSearchBatch = () => {
 
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                console.log(response.data.data)
-                setInputField({
-                    "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
-                    "clgStaffBatchSearchQuery": ""
-                })
+                if (response.data.data) {
+                    setUpdateField(response.data.data)
+                    setIsLoading(false)
+                    setInputField({
+                        "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+                        "clgStaffBatchSearchQuery": ""
+                    })
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        sessionStorage.clear()
+                        navigate("/clgStafflogin")
+                    } else {
+                        if (!response.data.data) {
+                            // no data found
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
 
         )
 
     }
-  return (
-    <div>
+
+    // Logic for displaying current students
+    const indexOfLastStudent = currentPage * batchPerPage;
+    const indexOfFirstStudent = indexOfLastStudent - batchPerPage;
+    const currentBatch = updateField ? updateField.slice(indexOfFirstStudent, indexOfLastStudent) : [];
+
+
+    // Change page
+    const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    // Total pages
+    const pageNumbers = [];
+    if (updateField && updateField.length > 0) {
+        updateField.forEach((student, index) => {
+            const pageNumber = index + 1;
+            pageNumbers.push(pageNumber);
+        });
+    }
+    return (
+        <div>
+            <ClgStaffNavbar />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -62,96 +100,100 @@ const CollegeStaffSearchBatch = () => {
                                 <input onChange={inputHandler} type="text" className="form-control" name="clgStaffBatchSearchQuery" value={inputField.clgStaffBatchSearchQuery} />
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <button onClick={readValue} className="btn btn-warning">Search</button>
+                                <button onClick={readValue} className="btn btn-warning">Search</button><br /><br />
                             </div>
                         </div>
                     </div>
                 </div>
-                {isLoading ? (<div className="col-12 text-center">
-                    <p></p>
-                </div>) : (updateField ? (
-                    <div className="row g-3">
-                        <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-sm border border-gray-200">
-                            <header className="px-5 py-4 border-b border-gray-100">
-                                <h2 className="font-semibold text-2xl text-gray-800">List of Batches</h2>
-                            </header>
-                            <div className="p-3">
-                                <div className="overflow-x-auto">
-                                    <table className="table-auto w-full">
-                                        <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
-                                            <tr>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">College Name</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Batch Name</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Batch Description</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Batch Amount</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Registration Start Date</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Registration End Date</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center"></div>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-sm divide-y divide-gray-100">
-                                            {updateField.map(
-                                                (value, index) => (
-                                                    <tr key={index}>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="flex items-center">
-                                                                {/* <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
-                                                                    <img
-                                                                        className="w-18 h-14 flex-shrink-0 mr-2 sm:mr-3"
-                                                                        src={value.studProfilePic}
-                                                                        width="60px"
-                                                                        height="64px"
-                                                                        alt=""
-                                                                    />
-                                                                </div> */}
-                                                                <div className="font-medium text-gray-800">{value.batchName}</div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.collegeName}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.batchDesc}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.batchAmount}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{new Date(value.regStartDate).toLocaleDateString()}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{new Date(value.regEndDate).toLocaleDateString()}</div>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                {isLoading ? (
+                    <div className="col-12 text-center">
+                        <p></p>
                     </div>
-
+                ) : (updateField ? (
+                    <>
+                        <strong style={{ paddingLeft: '30px' }}>Batch Details</strong><br /><br /><br />
+                        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3">
+                                            College Name
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Batch Name
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Batch Description
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Batch Amount
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Registration Start Date
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Registration End Date
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentBatch.map(
+                                        (value, index) => (
+                                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                <td className="px-6 py-4">
+                                                    {value.collegeName}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.batchName}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.batchDesc}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.batchAmount}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.regStartDate}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {value.regEndDate}
+                                                </td>
+                                            </tr>
+                                        )
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
                 ) : (
                     <div className="col-12 text-center">No Batch Found!!</div>
                 ))}
+
+                <div className="flex justify-center mt-8">
+                    <nav>
+                        <ul className="flex list-style-none">
+                            {currentPage > 1 && (
+                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Previous
+                                </li>
+                            )}
+                            {pageNumbers.map(number => (
+                                <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                    {number}
+                                </li>
+                            ))}
+                            {currentPage < pageNumbers.length && (
+                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Next
+                                </li>
+                            )}
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
-  )
+    );
+
 }
 
 export default CollegeStaffSearchBatch
