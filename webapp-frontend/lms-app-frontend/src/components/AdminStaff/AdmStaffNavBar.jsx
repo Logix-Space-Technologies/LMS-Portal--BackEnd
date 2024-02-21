@@ -57,12 +57,6 @@ const AdmStaffNavBar = () => {
                                 <Link className="nav-link active" aria-current="page" to="/AdminViewRefundRequests">View Refunds</Link>
                             </li>
                             <li>
-                                <Link className="nav-link active" aria-current="page" to="/AdminViewAllSession">View Session</Link>
-                            </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/AdminUpdateSession">Update Session</Link>
-                            </li>
-                            <li>
                                 <Link className="nav-link active" aria-current="page" to="/AdminSearchSessionDetails">Search Session</Link>
                             </li>
                             <li className="nav-item dropdown">
