@@ -971,7 +971,7 @@ Payment.viewStudentTransactions = (studId, result) => {
 };
 
 Session.studViewNextSessionDate = (batchId, result) => {
-    db.query("SELECT date, time, sessionName FROM sessiondetails WHERE batchId = ? AND (date > CURRENT_DATE OR (date = CURRENT_DATE AND time >= CURRENT_TIME)) ORDER BY date, time DESC LIMIT 1;", [batchId],
+    db.query("SELECT date, time, sessionName FROM sessiondetails WHERE batchId = ? AND cancelStatus = 0 AND (date > CURRENT_DATE OR (date = CURRENT_DATE AND time >= CURRENT_TIME)) ORDER BY date, time DESC LIMIT 1;", [batchId],
         (err, res) => {
             if (err) {
                 console.log("error", err)
