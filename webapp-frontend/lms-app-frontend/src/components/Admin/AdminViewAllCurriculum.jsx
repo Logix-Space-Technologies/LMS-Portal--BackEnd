@@ -3,6 +3,7 @@ import '../../config/config'
 import Navbar from './Navbar'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminViewAllCurriculum = () => {
     const [curriculumData, setCurriculumData] = useState([])
@@ -11,18 +12,26 @@ const AdminViewAllCurriculum = () => {
 
     const apiUrl = global.config.urls.api.server + "/api/lms/curriculumview"
     const navigate = useNavigate()
+    const [key, setKey] = useState('')
 
     const apiLink2 = global.config.urls.api.server + "/api/lms/deletecurriculum"
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data2 = { "batchId": sessionStorage.getItem("currbatchId") }
         console.log(data2)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         axios.post(apiUrl, data2, axiosConfig).then(
@@ -34,13 +43,20 @@ const AdminViewAllCurriculum = () => {
     }
 
     const handleClick = (id) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "id": id }
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
 
@@ -85,9 +101,14 @@ const AdminViewAllCurriculum = () => {
     }
 
     useEffect(() => { getData() }, [])
+
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div>
-            <Navbar /><br />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />} <br />
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
@@ -163,7 +184,9 @@ const AdminViewAllCurriculum = () => {
                                             <Link target="_blank" to={value.curriculumFileLink} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Curriculum</Link>
                                         </td>
                                         <td className="p-4 whitespace-nowrap">
+                                        {key === "lmsapp" && (
                                             <button onClick={() => handleClick(value.id)} className="btn btn-danger">Delete</button>
+                                        )}
                                         </td>
                                         <td className="px-6 py-4">
                                             <a onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Curriculum</a>
