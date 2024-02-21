@@ -522,7 +522,7 @@ Student.updateStudentProfile = (student, result) => {
 }
 
 Student.viewUnverifiedStudents = (collegeId, result) => {
-    db.query("SELECT b.batchName, s.studProfilePic, s.studName, s.studDept, s.course, s.admNo, s.rollNo, s.studEmail, s.studPhNo, s.aadharNo, s.membership_no, s.addedDate, s.validity FROM student s JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus = 0 AND s.isVerified = 0 AND s.isActive=1 AND s.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive =1 AND s.collegeId = ? ORDER BY b.batchName, s.addedDate DESC",
+    db.query("SELECT b.batchName, s.id, s.studProfilePic, s.studName, s.studDept, s.course, s.admNo, s.rollNo, s.studEmail, s.studPhNo, s.aadharNo, s.membership_no, s.addedDate, s.validity FROM student s JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus = 0 AND s.isVerified = 0 AND s.isActive=1 AND s.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive =1 AND s.collegeId = ? ORDER BY b.batchName, s.addedDate DESC",
         [collegeId],
 
         (err, res) => {
@@ -542,7 +542,7 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
 
 // View All Students By Admin
 Student.viewAllStudentByAdmin = (batchId, result) => {
-    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND s.batchId = ? ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity",
+    db.query("SELECT c.collegeName, b.batchName,s.id, s.batchId ,s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity, CASE WHEN cm.studentId IS NOT NULL THEN TRUE ELSE FALSE END AS communityManager FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id LEFT JOIN communitymanagers cm ON s.id = cm.studentId WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND s.batchId = ? ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity  ",
         [batchId],
         (err, response) => {
             if (err) {
@@ -554,8 +554,10 @@ Student.viewAllStudentByAdmin = (batchId, result) => {
                 console.log("Data Not Found")
                 return result("Data Not Found", null)
             }
-            console.log("College : ", response)
-            result(null, response)
+            const formattedStudent = response.map(student => ({ ...student, validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); // Formats the date as 'YYYY-MM-DD'
+
+            console.log("College : ", formattedStudent)
+            result(null, formattedStudent)
 
         })
 }

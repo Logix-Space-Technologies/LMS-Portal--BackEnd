@@ -18,6 +18,7 @@ const TrainerController = require("../controllers/trainers.controllers")
 const NotificationController = require("../controllers/notifications.controller")
 const curriculumController = require("../controllers/curriculum.controller")
 const AttendenceController = require("../controllers/attendence.controller")
+const CommunityManagerController = require("../controllers/communityManager.controller")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -261,6 +262,8 @@ router.post('/AdmViewOneSession', SessionsController.viewOneSession)
 router.post('/ClgStaffViewSession', ClgStaffController.viewSessionsByCollegeStaff)
 
 router.post('/GenerateSessionWiseAttendancePdf',StudentController.generateSessionWiseAttendanceList)
+
+router.post('/createCommunityManager', CommunityManagerController.createCommunityManager)
 
 
 module.exports = router
