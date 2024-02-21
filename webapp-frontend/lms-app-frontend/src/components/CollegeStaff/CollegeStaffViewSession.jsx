@@ -10,6 +10,7 @@ const CollegeStaffViewSession = () => {
     const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/ClgStaffViewSession";
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/GenerateSessionWiseAttendancePdf";
 
     const getData = () => {
         const data = { "batchId": sessionStorage.getItem("clgstaffbatchId") };
@@ -42,6 +43,48 @@ const CollegeStaffViewSession = () => {
             }
         });
     };
+
+    const attendancePdfGenerate = async (id) => {
+        try {
+            const data = { "sessionId": id }
+            const axiosConfig2 = {
+                headers: {
+                    "Content-Type": "application/json",
+                    "token": sessionStorage.getItem("clgstaffLogintoken"),
+                    "key": sessionStorage.getItem("clgstaffkey")
+                },
+                responseType: 'blob', // Set responseType to 'blob' for PDF
+            };
+
+            const response = await axios.post(apiUrl2, data, axiosConfig2);
+
+            if (response.data) {
+                // Use window.open directly with response.data
+                const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+                window.open(URL.createObjectURL(pdfBlob), '_blank');
+                window.location.reload();
+            } else {
+
+                if (response.data.status === "Unauthorized User!!") {
+                    sessionStorage.clear()
+                    navigate("/clgStafflogin")
+                } else {
+                    if (!response.data) {
+                        alert("No Data Found !!")
+                    } else {
+                        alert(response.data.status);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('Error generating PDF.');
+        }
+    }
+
+
+
+
 
     function formatTime(timeString) {
         const options = { hour: '2-digit', minute: '2-digit', hour12: true };
@@ -87,6 +130,12 @@ const CollegeStaffViewSession = () => {
                                     Venue Or Link
                                 </th>
                                 <th scope="col" className="px-6 py-3">
+                                    Status
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+
+                                </th>
+                                <th scope="col" className="px-6 py-3">
 
                                 </th>
                                 <th scope="col" className="px-6 py-3">
@@ -117,20 +166,34 @@ const CollegeStaffViewSession = () => {
                                             {value.venueORlink}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Link to="/clgstaffviewtask" onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary">
-                                                View Tasks
-                                            </Link>
+                                            {value.cancelStatus}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Link to="/clgstaffviewattendance" onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary">
-                                                View Attendance
-                                            </Link>
+                                            {value.cancelStatus === "ACTIVE" && (
+                                                <button className="btn btn-primary" onClick={()=> attendancePdfGenerate(value.id)}>
+                                                    Download Attendance List PDF
+                                                </button>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {value.cancelStatus === "ACTIVE" && (
+                                                <Link to="/clgstaffviewattendance" onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary">
+                                                    View Attendance List
+                                                </Link>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {value.cancelStatus === "ACTIVE" && (
+                                                <Link to="/clgstaffviewtask" onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary">
+                                                    View Tasks
+                                                </Link>
+                                            )}
                                         </td>
                                     </tr>
 
                                 );
-                            }) : (<td colSpan="8" className="px-6 py-4">
-                                    No Sessions Found !!!
+                            }) : (<td colSpan="8" className="px-6 py-4" style={{ textAlign: "center" }}>
+                                No Sessions Found !!!
                             </td>)}
                         </tbody>
                     </table>

@@ -260,5 +260,7 @@ router.post('/AdmViewOneSession', SessionsController.viewOneSession)
 
 router.post('/ClgStaffViewSession', ClgStaffController.viewSessionsByCollegeStaff)
 
+router.post('/GenerateSessionWiseAttendancePdf',StudentController.generateSessionWiseAttendanceList)
+
 
 module.exports = router

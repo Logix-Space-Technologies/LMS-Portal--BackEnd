@@ -2,8 +2,11 @@ import axios from 'axios'
 import '../../config/config'
 import React, { useState } from 'react'
 import Navbar from './Navbar'
+import { Link, useNavigate } from 'react-router-dom'
 
 const AdminSearchCurriculum = () => {
+
+    const navigate = new useNavigate()
 
     const [inputField, setInputField] = useState(
         {
@@ -16,6 +19,8 @@ const AdminSearchCurriculum = () => {
     )
 
     const [isLoading, setIsLoading] = useState(true)
+    const [currentPage, setCurrentPage] = useState(1);
+    const [curriculumPerPage] = useState(10); // Number of students per page
 
     const apiLink = global.config.urls.api.server + "/api/lms/searchCurriculum"
     const apiLink2 = global.config.urls.api.server + "/api/lms/deletecurriculum"
@@ -77,109 +82,148 @@ const AdminSearchCurriculum = () => {
         )
     }
 
+    // Logic for displaying current students
+    const indexOfLastStudent = currentPage * curriculumPerPage;
+    const indexOfFirstStudent = indexOfLastStudent - curriculumPerPage;
+    const currentCurriculum = updateField ? updateField.slice(indexOfFirstStudent, indexOfLastStudent) : [];
+
+
+    // Change page
+    const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    // Total pages
+    const pageNumbers = [];
+    if (updateField && updateField.length > 0) {
+        updateField.forEach((student, index) => {
+            const pageNumber = index + 1;
+            pageNumbers.push(pageNumber);
+        });
+    }
+
+    const UpdateClick = (id) => {
+        let data = id
+        sessionStorage.setItem("curriculumId", data)
+        navigate("/AdminUpdateCurriculum")
+
+    }
+
 
 
     return (
         <div>
-            <Navbar/>
-        <div>
-            <div className="container">
-                <div className="row">
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                        <div className="row g-3">
-                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <h1>Search Curriculum</h1>
-                            </div>
-                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <label htmlFor="" className="form-label"></label>
-                                <input onChange={inputHandler} type="text" className="form-control" name="CurriculumSearchQuery" value={inputField.CurriculumSearchQuery} />
-                            </div>
-                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <button onClick={readValue} className="btn btn-warning">Search</button>
-                            </div>
+            <Navbar /><br />
+            <strong style={{ paddingLeft: '30px' }}>Search Curriculum</strong>
+
+            <div className="flex justify-between items-center mx-4 my-4">
+                <div className="container">
+                    <div className="row g-3">
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            <label htmlFor="" className="form-label"></label>
+                            <input onChange={inputHandler} type="text" className="form-control" name="CurriculumSearchQuery" value={inputField.CurriculumSearchQuery} placeholder='Search By Title/Description/Batch Name/College Name' />
+                        </div>
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            <button onClick={readValue} className="btn btn-warning">Search</button>
                         </div>
                     </div>
                 </div>
-                {isLoading ? (<div className="col-12 text-center">
+            </div>
+            <br /><br />
+            {isLoading ? (
+                <div className="col-12 text-center">
                     <p></p>
-                </div>) : (updateField ? (
-                    <div className="row g-3">
-                        <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-sm border border-gray-200">
-                            <header className="px-5 py-4 border-b border-gray-100">
-                                <h2 className="font-semibold text-2xl text-gray-800">Curriculum Details</h2>
-                            </header>
-                            <div className="p-3">
-                                <div className="overflow-x-auto">
-                                    <table className="table-auto w-full">
-                                        <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
-                                            <tr>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Id</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Batch Id</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-left">Curriculum Title</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Curriculum Description</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">Added By</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center">File Link</div>
-                                                </th>
-                                                <th className="p-4 whitespace-nowrap">
-                                                    <div className="font-semibold text-center"></div>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-sm divide-y divide-gray-100">
-                                            {updateField.map(
-                                                (value, index) => (
-                                                    <tr key={index}>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="flex items-center">
-                                                                <div className="font-medium text-gray-800">{value.id}</div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.batchId}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.curriculumTitle}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.curriculumDesc}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.addedBy}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            <div className="text-left">{value.curriculumFileLink}</div>
-                                                        </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                           <button onClick={()=> handleClick(value.id)} className="btn btn-danger">Delete</button>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+            ) : (updateField ? (
+                <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" className="px-6 py-3">
+                                    Id
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Batch Id
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Curriculum Title
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Curriculum Description
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Added By
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    File Link
+                                </th>
+                                <th scope="col" className="px-6 py-3">
 
-                ) : (
-                    <div className="col-12 text-center">No Curriculum Found!!</div>
-                ))}
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentCurriculum.map(
+                                (value, index) => (
+                                    <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <td className="px-6 py-4">
+                                            {value.id}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {value.batchId}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {value.curriculumTitle}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {value.curriculumDesc}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {value.addedBy}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <Link target="_blank" to={value.curriculumFileLink} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>
+                                        </td>
+                                        <td className="p-4 whitespace-nowrap">
+                                            <button onClick={() => handleClick(value.id)} className="btn btn-danger">Delete</button>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <Link onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500">Update Curriculum</Link>
+                                        </td>
+                                    </tr>
+                                )
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <div className="col-12 text-center">No Curriculum Found!!</div>
+            ))}
+            <div className="flex justify-center mt-8">
+                <nav>
+                    <ul className="flex list-style-none">
+                        {currentPage > 1 && (
+                            <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                Previous
+                            </li>
+                        )}
+                        {pageNumbers.map(number => (
+                            <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                {number}
+                            </li>
+                        ))}
+                        {currentPage < pageNumbers.length && (
+                            <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                Next
+                            </li>
+                        )}
+                    </ul>
+                </nav>
             </div>
         </div>
-        </div>
-    )
+    );
+
 }
 
 export default AdminSearchCurriculum

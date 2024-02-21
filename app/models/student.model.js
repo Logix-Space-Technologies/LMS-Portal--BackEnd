@@ -275,7 +275,7 @@ Student.create = (newStudent, result) => {
 Student.searchStudentByCollege = (searchKey, collegeId, result) => {
     const searchTerm = '%' + searchKey + '%';
     db.query(
-        "SELECT c.collegeName, s.batchId, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.validity FROM student s JOIN college c ON s.collegeId = c.id WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.isPaid = 1 AND s.emailVerified = 1 AND s.collegeId = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND s.validity > CURRENT_DATE AND (s.studName LIKE ? OR s.rollNo LIKE ? OR s.studDept LIKE ? OR s.course LIKE ? OR s.admNo LIKE ? )",
+        "SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.validity FROM student s JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.isPaid = 1 AND s.emailVerified = 1 AND s.collegeId = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND s.validity > CURRENT_DATE AND (s.studName LIKE ? OR s.rollNo LIKE ? OR s.studDept LIKE ? OR s.course LIKE ? OR s.admNo LIKE ? )",
         [collegeId, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm],
         (err, res) => {
             if (err) {
@@ -522,7 +522,7 @@ Student.updateStudentProfile = (student, result) => {
 }
 
 Student.viewUnverifiedStudents = (collegeId, result) => {
-    db.query("SELECT b.batchName, s.studProfilePic, s.studName, s.studDept, s.course, s.admNo, s.rollNo, s.studEmail, s.studPhNo, s.aadharNo, s.membership_no, s.addedDate, s.validity FROM student s JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus = 0 AND s.isVerified = 0 AND s.isActive=1 AND s.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive =1 AND s.collegeId = ? ORDER BY b.batchName, s.addedDate DESC",
+    db.query("SELECT b.batchName, s.id, s.studProfilePic, s.studName, s.studDept, s.course, s.admNo, s.rollNo, s.studEmail, s.studPhNo, s.aadharNo, s.membership_no, s.addedDate, s.validity FROM student s JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus = 0 AND s.isVerified = 0 AND s.isActive=1 AND s.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive =1 AND s.collegeId = ? ORDER BY b.batchName, s.addedDate DESC",
         [collegeId],
 
         (err, res) => {
@@ -534,7 +534,7 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
                 console.log("No unverified students found.");
                 return result("No unverified students found.", null);
             }
-            const formattedViewUnverifiedStudents = res.map(students => ({ ...students, validity: students.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: students.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}));
+            const formattedViewUnverifiedStudents = res.map(students => ({ ...students, validity: students.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: students.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }));
             console.log("Unverified students: ", formattedViewUnverifiedStudents);
             result(null, formattedViewUnverifiedStudents);
         });
@@ -543,7 +543,7 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
 // View All Students By Admin
 Student.viewAllStudentByAdmin = (batchId, result) => {
     db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND s.batchId = ? ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity",
-    [batchId],
+        [batchId],
         (err, response) => {
             if (err) {
                 console.log("Error : ", err)
@@ -849,8 +849,20 @@ Student.generateBatchWiseAttendanceList = (batchId, result) => {
     })
 }
 
+Session.generateSessionAttendanceList = (sessionId, result) => {
+    let query = "SELECT b.batchName, st.sessionName, s.studName, c.collegeName, s.admNo, s.studDept, s.course, s.membership_no, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendanceStatus, st.date AS attendanceDate, s.addedDate FROM sessiondetails st JOIN attendence a ON st.id = a.sessionId JOIN student s ON s.id = a.studId JOIN batches b ON b.id = s.batchId JOIN college c ON s.collegeId = c.id WHERE s.isActive = 1 AND b.isActive = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 AND s.deleteStatus = 0 AND b.deleteStatus = 0 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= s.addedDate AND st.id = ? ORDER BY c.collegeName, b.id, s.id, a.sessionId;"
 
-
+    db.query(query, [sessionId], (err, response) => {
+        if (err) {
+            console.log("Error executing the query:", err);
+            result(err, null);
+        } else {
+            const formattedSessionAttendanceList = response.map(attendances => ({ ...attendances, attendanceDate: attendances.attendanceDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: attendances.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+            console.log("Query results:", formattedSessionAttendanceList);
+            result(null, formattedSessionAttendanceList);
+        }
+    })
+}
 
 Student.studentNotificationView = (studId, result) => {
     db.query("SELECT * FROM student WHERE id = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1 AND isVerified = 1 AND isPaid = 1", [studId], (err, studentRes) => {
@@ -877,7 +889,7 @@ Student.studentNotificationView = (studId, result) => {
                         return;
                     }
                     db.query(
-                        "SELECT notifications.message, notifications.sendBy, notifications.title, notifications.addedDate, notifications.sendDateTime, CASE WHEN TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()), ' minute', IF(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) = 1, '', 's'), ' ago') WHEN TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()), ' hour', IF(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) = 1, '', 's'), ' ago') ELSE CONCAT(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()), ' day', IF(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()) = 1, '', 's'), ' ago') END AS formattedDateTime, CASE WHEN notifications.sendBy = 0 THEN 'Admin' ELSE coalesce(admin_staff.AdStaffName, 'Unknown') END AS senderName FROM notifications LEFT JOIN admin_staff ON notifications.sendBy = admin_staff.id WHERE notifications.batchId = 1 ORDER BY notifications.sendDateTime DESC;",
+                        "SELECT notifications.message, notifications.sendBy, notifications.title, notifications.addedDate, notifications.sendDateTime, CASE WHEN TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()), ' minute', IF(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) = 1, '', 's'), ' ago') WHEN TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()), ' hour', IF(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) = 1, '', 's'), ' ago') ELSE CONCAT(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()), ' day', IF(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()) = 1, '', 's'), ' ago') END AS formattedDateTime, CASE WHEN notifications.sendBy = 0 THEN 'Admin' ELSE coalesce(admin_staff.AdStaffName, 'Unknown') END AS senderName FROM notifications LEFT JOIN admin_staff ON notifications.sendBy = admin_staff.id WHERE notifications.batchId = ? AND notifications.sendDateTime >= DATE_SUB(NOW(), INTERVAL 14 DAY) ORDER BY notifications.sendDateTime DESC;",
                         [batchId],
                         (err, notificationsRes) => {
                             if (err) {
@@ -903,7 +915,7 @@ Student.studentNotificationView = (studId, result) => {
 
 Student.viewSession = (batchId, result) => {
     db.query(
-        "SELECT DISTINCT s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink FROM sessiondetails s JOIN student st ON s.batchId = st.batchId WHERE s.deleteStatus = 0 AND s.isActive = 1 AND st.deleteStatus = 0 AND st.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;",
+        "SELECT DISTINCT s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink FROM sessiondetails s JOIN student st ON s.batchId = st.batchId WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND st.deleteStatus = 0 AND st.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;",
         [batchId],
         (err, res) => {
             if (err) {
