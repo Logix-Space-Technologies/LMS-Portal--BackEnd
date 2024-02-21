@@ -22,17 +22,18 @@ const StudentRegistration = () => {
 
   const navigate = useNavigate()
 
+  const [errors, setErrors] = useState({})
+
   const [file, setFile] = useState(null)
 
   const fileUploadHandler = (event) => {
+    setErrors({})
     setFile(event.target.files[0])
   }
 
   // let [batchAmount,setbatchAmount]=useState()
 
   const [outputField, setOutputField] = useState([])
-
-  const [errors, setErrors] = useState({})
 
   const [batches, setBatches] = useState([])
 
