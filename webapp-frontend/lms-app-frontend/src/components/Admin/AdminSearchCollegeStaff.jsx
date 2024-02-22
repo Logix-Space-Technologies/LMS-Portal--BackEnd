@@ -1,7 +1,8 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import '../../config/config';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminSearchCollegeStaff = () => {
     const [inputField, setInputField] = useState({
@@ -16,6 +17,8 @@ const AdminSearchCollegeStaff = () => {
 
     const [searchPerformed, setSearchPerformed] = useState(false); // Added state to track search
 
+    const [key, setKey] = useState('');
+
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchCollegeStaff";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deletecolgstaff";
 
@@ -24,14 +27,21 @@ const AdminSearchCollegeStaff = () => {
     };
 
     const searchCollegeStaff = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         setIsLoading(true);
 
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
 
@@ -80,9 +90,13 @@ const AdminSearchCollegeStaff = () => {
         });
     }
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="col-12 col-md-8 text-center">
@@ -97,7 +111,7 @@ const AdminSearchCollegeStaff = () => {
                 {searchPerformed && !isLoading && collegeStaff && collegeStaff.length > 0 && (
                     <div>
                         <strong>College Staff Details</strong>
-                                    <br /><br />
+                        <br /><br />
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
