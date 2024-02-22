@@ -1076,9 +1076,9 @@ exports.studViewSession = (request, response) => {
 
 
 exports.studRegViewBatchAmount = (request, response) => {
-    const collegeId = request.body.collegeId;
+    // const collegeId = request.body.collegeId;
     const batchId = request.body.batchId;
-    Student.viewBatchAmount(collegeId, batchId, (err, data) => {
+    Student.viewBatchAmount(batchId, (err, data) => {
         if (err) {
             response.json({ "status": err });
         }
