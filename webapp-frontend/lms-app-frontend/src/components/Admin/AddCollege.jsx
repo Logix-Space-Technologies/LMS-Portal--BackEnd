@@ -3,6 +3,7 @@ import '../../config/config'
 import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
+import { Link, useNavigate } from 'react-router-dom'
 
 const AddCollege = () => {
 
@@ -21,7 +22,7 @@ const AddCollege = () => {
   const [file, setFile] = useState(null)
   const [key, setKey] = useState('');
   const [fileType, setFileType] = useState("");
-
+  const navigate = useNavigate()
 
   const fileUploadHandler = (event) => {
     setErrors({});
@@ -89,7 +90,6 @@ const AddCollege = () => {
               collegeMobileNumber: '',
               collegeImage: ''
             })
-            window.location.reload()
           } else {
             if (response.data.status === "Validation failed" && response.data.data.name) {
               alert(response.data.data.name)
@@ -198,9 +198,9 @@ const AddCollege = () => {
                 <div className="row">
                   <div className="col-12">
                     <div className="text-center mb-5">
-                      <a href="#!">
+                      <Link to="#!">
                         <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
-                      </a><br /><br />
+                      </Link><br /><br />
                       <h3>Add College Details</h3>
                     </div>
                   </div>

@@ -16,7 +16,7 @@ const AddCollegeStaff = () => {
     "phNo": "",
     "aadharNo": "",
     "password": "",
-    "confirmpassword": "",
+    "confirmpassword": ""
   })
 
   const [file, setFile] = useState(null)
@@ -90,7 +90,6 @@ const AddCollegeStaff = () => {
     }
     e.preventDefault();
     const validationErrors = validateForm(inputField);
-    console.log(validationErrors);
     if (Object.keys(validationErrors).length === 0) {
       let axiosConfig = {
         headers: {
@@ -128,7 +127,6 @@ const AddCollegeStaff = () => {
               confirmpassword: '',
               profilePic: ''
             })
-            window.location.reload()
           } else {
             if (response.data.status === "Validation failed" && response.data.data.dept) {
               alert(response.data.data.dept)
@@ -213,7 +211,6 @@ const AddCollegeStaff = () => {
     }
     if (!data.confirmpassword) {
       errors.confirmpassword = 'Confirm password is required';
-
     }
     if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
       errors.file = "File must be in jpg/jpeg/png/webp/heif format";
@@ -236,8 +233,6 @@ const AddCollegeStaff = () => {
     }
 
     if (data.confirmpassword !== data.password) {
-      console.log(data.password)
-      console.log(data.confirmpassword)
       errors.confirmpassword = 'Passwords do not match';
     }
     return errors;

@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import '../../config/config'
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Navbar from './Navbar';
 
 const AdminChangePassword = () => {
     const [updateField, setUpdateField] = useState({
@@ -21,7 +20,6 @@ const AdminChangePassword = () => {
     }
 
     const readNewValue = () => {
-        console.log(updateField)
 
         let axiosConfig = {
             headers: {

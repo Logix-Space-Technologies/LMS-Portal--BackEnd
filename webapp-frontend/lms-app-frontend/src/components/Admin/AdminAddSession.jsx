@@ -133,14 +133,14 @@ const AdminAddSession = () => {
                 }
             }
             let data = {
-                batchId: inputField.batchId,
-                sessionName: inputField.sessionName,
-                date: inputField.date,
-                time: inputField.time,
-                type: inputField.type,
-                remarks: inputField.remarks,
-                venueORlink: inputField.venueORlink,
-                trainerId: inputField.trainerId
+                "batchId": inputField.batchId,
+                "sessionName": inputField.sessionName,
+                "date": inputField.date,
+                "time": inputField.time,
+                "type": inputField.type,
+                "remarks": inputField.remarks,
+                "venueORlink": inputField.venueORlink,
+                "trainerId": inputField.trainerId
             }
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
                 if (response.data.status === 'success') {
@@ -390,11 +390,11 @@ const AdminAddSession = () => {
                                             className="form-control"
                                         >
                                             <option value="">Select</option>
-                                            {trainers.map((trainer) => (
-                                                <option key={trainer.id} value={trainer.id}>
+                                            {trainers.map((trainer) => {
+                                                return <option key={trainer.id} value={trainer.id}>
                                                     {trainer.trainerName}
                                                 </option>
-                                            ))}
+                                            })}
                                         </select>
                                         {errors.trainerId && (<span style={{ color: 'red' }} className="error">{errors.trainerId}</span>)}
                                     </div>
