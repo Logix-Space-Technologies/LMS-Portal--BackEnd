@@ -129,7 +129,6 @@ const AdminSearchTasks = () => {
                                 <tr>
                                     <th>Batch Name</th>
                                     <th>Session Name</th>
-                                    <th>ID</th>
                                     <th>Title</th>
                                     <th>Description</th>
                                     <th>Type</th>
@@ -144,7 +143,6 @@ const AdminSearchTasks = () => {
                                     <tr key={task.id}>
                                         <td>{task.batchName}</td>
                                         <td>{task.sessionName}</td>
-                                        <td>{task.id}</td>
                                         <td>{task.taskTitle}</td>
                                         <td>{task.taskDesc}</td>
                                         <td>{task.taskType}</td>
