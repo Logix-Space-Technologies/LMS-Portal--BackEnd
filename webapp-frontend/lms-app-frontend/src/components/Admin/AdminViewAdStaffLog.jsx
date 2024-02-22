@@ -51,12 +51,6 @@ const AdminViewAdStaffLog = () => {
                                     <table className="w-full table-auto">
                                         <thead>
                                             <tr className="text-center bg-primary">
-                                                <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                    Id
-                                                </th>
-                                                <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                    AdminStaff Id
-                                                </th>
                                                 <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                     AdminStaff Name
                                                 </th>
@@ -72,12 +66,6 @@ const AdminViewAdStaffLog = () => {
                                             {currentLogs.map(
                                                 (value, index) => {
                                                     return <tr key={index}>
-                                                        <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                            {value.id}
-                                                        </td>
-                                                        <td className="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                            {value.AdmStaffId}
-                                                        </td>
                                                         <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                             {value.AdStaffName}
                                                         </td>
