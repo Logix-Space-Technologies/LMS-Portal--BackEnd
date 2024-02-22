@@ -31,7 +31,7 @@ const StudentRegistration = () => {
     setFile(event.target.files[0])
   }
 
-  // let [batchAmount,setbatchAmount]=useState()
+  let [batchAmount,setbatchAmount]=useState(0)
 
   const [outputField, setOutputField] = useState([])
 
@@ -40,7 +40,7 @@ const StudentRegistration = () => {
   const apiUrl = global.config.urls.api.server + "/api/lms/studreg"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/studentregviewcollege"
   const batchUrl = global.config.urls.api.server + "/api/lms/studregviewbatch";
-  // const batchAmountUrl = global.config.urls.api.server + "/api/lms/studregviewbatchamount"
+  const batchAmountUrl = global.config.urls.api.server + "/api/lms/studregviewbatchamount"
 
 
   const getData = () => {
@@ -58,8 +58,24 @@ const StudentRegistration = () => {
     console.log(collegeId)
     axios.post(batchUrl, { collegeId }).then((response) => {
       setBatches(response.data);
+      console.log(response.data)
     });
   };
+
+  const getBatchAmount = (batchId) =>{
+    console.log(batchId)
+    axios.post(batchAmountUrl, {batchId}).then(
+      (response) =>{
+        console.log(response.data)
+         if (response.data.status === "success") {
+           setbatchAmount(response.data.data)
+           console.log(response.data.data)
+         } else {
+           console.log("Error in fetching batch amount.")
+         }
+      }
+    )
+  }
 
 
   // Call getBatches whenever the college selection changes
@@ -68,6 +84,13 @@ const StudentRegistration = () => {
     setInputField(prevState => ({ ...prevState, collegeId: selectedCollegeId }));
     getBatches(selectedCollegeId);
   };
+
+  const handleBatchChange = (e) =>{
+    const selectedBatchId = e.target.value;
+    console.log(selectedBatchId)
+    setInputField(prevState => ({ ...prevState, batchId: selectedBatchId }));
+    getBatchAmount(selectedBatchId)
+  }
 
 
   const inputHandler = (event) => {
@@ -82,10 +105,11 @@ const StudentRegistration = () => {
     document.body.appendChild(script)
 
     script.onload = () => {
+      console.log(batchAmount)
       //initialize razorpay
       const rzp = new window.Razorpay({
         key: 'rzp_test_ZqcybzHd1QkWg8',
-        amount: 2000 * 100,
+        amount: batchAmount * 100,
         name: 'Logix Space Technologies Pvt Ltd',
         description: 'Link Ur Codes Payment',
         // image: <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" class="img-fluid" />,
@@ -319,7 +343,7 @@ const StudentRegistration = () => {
                     id="batchId"
                     className="form-control"
                     value={inputField.batchId}
-                    onChange={inputHandler}>
+                    onChange={handleBatchChange}>
                     <option value="">Select</option>
                     {batches.data && batches.data.map((value) => {
                       return <option key={value.id} value={value.id}> {value.batchName} </option>;

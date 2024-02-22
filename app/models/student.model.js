@@ -934,10 +934,10 @@ Student.viewSession = (batchId, result) => {
 };
 
 
-Student.viewBatchAmount = (collegeId, batchId, result) => {
+Student.viewBatchAmount = (batchId, result) => {
     db.query(
-        "SELECT b.batchAmount FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.id = ? AND b.id = ?",
-        [collegeId, batchId],
+        "SELECT b.batchAmount FROM batches b JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND b.id = ?",
+        [batchId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -945,7 +945,7 @@ Student.viewBatchAmount = (collegeId, batchId, result) => {
                 return;
             } else {
                 console.log("Batch Details: ", res);
-                result(null, res);
+                result(null, res[0].batchAmount);
             }
         }
     );
