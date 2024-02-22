@@ -27,9 +27,6 @@ const AdmStaffNavBar = () => {
                                 <Link className="nav-link active" aria-current="page" to="/AdminStaffViewAllMaterial">View All Materials</Link>
                             </li>
                             <li>
-                                <Link className="nav-link active" aria-current="page" to="/AdminStaffChangePassword">Change Password</Link>
-                            </li>
-                            <li>
                                 <Link className="nav-link active" aria-current="page" to="/adminStaffAddmaterials">Add Materials</Link>
                             </li>
                             <li>

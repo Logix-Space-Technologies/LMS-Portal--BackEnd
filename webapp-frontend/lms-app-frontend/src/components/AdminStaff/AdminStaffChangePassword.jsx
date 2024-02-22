@@ -90,7 +90,7 @@ const AdminStaffChangePassword = () => {
                                             </div>
                                             <br></br>
                                             <div className="mb-3">
-                                                <Link className="btn btn-danger" to="#">Back</Link>
+                                                <Link className="btn btn-danger" to="/admstaffdashboard">Back</Link>
                                             </div>
                                         </ul>
                                     </div>
