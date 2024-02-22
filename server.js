@@ -19,7 +19,7 @@ const corsOptions = {
   optionsSuccessStatus: 200, // For legacy browser support
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
-  allowedHeaders: "Content-Type,Authorization",
+  allowedHeaders: "Content-Type,Authorization,access-control-allow-origin", // Add 'access-control-allow-origin'
 };
 
 app.use(express.json());
