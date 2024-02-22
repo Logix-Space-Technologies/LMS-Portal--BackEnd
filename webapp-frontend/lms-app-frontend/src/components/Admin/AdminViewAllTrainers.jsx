@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import '../../config/config';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminViewAllTrainers = () => {
@@ -11,6 +11,7 @@ const AdminViewAllTrainers = () => {
     const [trainersPerPage] = useState(10); // Number of trainers per page
     const navigate = useNavigate();
     const [key, setKey] = useState('');
+    const [deleteTrainer, setDeleteTrainer] = useState({})
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewAllTrainer";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteTrainer";
@@ -47,8 +48,8 @@ const AdminViewAllTrainers = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
-    const handleClick = (id) => {
-        let data = { "id": id };
+    const handleClick = () => {
+        let data = { "id": deleteTrainer };
         let axiosConfigTwo = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -75,6 +76,11 @@ const AdminViewAllTrainers = () => {
         sessionStorage.setItem("trainerId", data);
         navigate("/AdminUpdateTrainer");
 
+    };
+
+    const readValue = (id) => {
+        setDeleteTrainer(id)
+        console.log(id)
     };
 
     useEffect(() => { getData() }, []);
@@ -136,11 +142,11 @@ const AdminViewAllTrainers = () => {
                                     </td>
                                     {key === "lmsapp" && (
                                         <td className="px-6 py-4">
-                                            <a onClick={() => { handleClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete Trainer</a>
+                                            <Link onClick={()=> {readValue(value.id)}}  className="font-medium text-blue-600 dark:text-blue-500 hover:underline" data-bs-toggle="modal" data-bs-target="#exampleModal">Delete Trainer</Link>
                                         </td>
                                     )}
                                     <td className="px-6 py-4">
-                                        <a onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Trainer</a>
+                                        <Link onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Trainer</Link>
                                     </td>
                                 </tr>
                             }
@@ -148,6 +154,25 @@ const AdminViewAllTrainers = () => {
                     </tbody>
                 </table>
 
+            </div>
+            <div className="row">
+                <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to delete this college?</h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div className="modal-body">
+                                <p>This action cannot be undone.</p>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No, cancel</button>
+                                <button onClick={() => { handleClick() }} type="button" className="btn btn-danger" data-bs-dismiss="modal">Yes, I'm sure</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div className="flex justify-center mt-8">
                 <nav>
