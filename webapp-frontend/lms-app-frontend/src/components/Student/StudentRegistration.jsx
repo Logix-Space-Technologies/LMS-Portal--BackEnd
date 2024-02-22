@@ -31,11 +31,12 @@ const StudentRegistration = () => {
     setFile(event.target.files[0])
   }
 
-  let [batchAmount,setbatchAmount]=useState(0)
+  let [batchAmount, setbatchAmount] = useState(0)
 
   const [outputField, setOutputField] = useState([])
 
   const [batches, setBatches] = useState([])
+
 
   const apiUrl = global.config.urls.api.server + "/api/lms/studreg"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/studentregviewcollege"
@@ -44,7 +45,13 @@ const StudentRegistration = () => {
 
 
   const getData = () => {
-    axios.post(apiUrl2).then(
+    let axiosConfig = {
+      headers: {
+        'content-type': 'multipart/form-data',
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
+    axios.post(apiUrl2, axiosConfig).then(
       (response) => {
         setOutputField(response.data.data)
         console.log(response.data.data)
@@ -55,24 +62,36 @@ const StudentRegistration = () => {
 
   // Add a new function to fetch batches based on the selected college
   const getBatches = (collegeId) => {
-    console.log(collegeId)
+    let axiosConfig = {
+      headers: {
+        'content-type': 'multipart/form-data',
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
+    console.log(collegeId, axiosConfig)
     axios.post(batchUrl, { collegeId }).then((response) => {
       setBatches(response.data);
       console.log(response.data)
     });
   };
 
-  const getBatchAmount = (batchId) =>{
-    console.log(batchId)
-    axios.post(batchAmountUrl, {batchId}).then(
-      (response) =>{
+  const getBatchAmount = (batchId) => {
+    let axiosConfig = {
+      headers: {
+        'content-type': 'multipart/form-data',
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
+    console.log(batchId, axiosConfig)
+    axios.post(batchAmountUrl, { batchId }).then(
+      (response) => {
         console.log(response.data)
-         if (response.data.status === "success") {
-           setbatchAmount(response.data.data)
-           console.log(response.data.data)
-         } else {
-           console.log("Error in fetching batch amount.")
-         }
+        if (response.data.status === "success") {
+          setbatchAmount(response.data.data)
+          console.log(response.data.data)
+        } else {
+          console.log("Error in fetching batch amount.")
+        }
       }
     )
   }
@@ -85,7 +104,7 @@ const StudentRegistration = () => {
     getBatches(selectedCollegeId);
   };
 
-  const handleBatchChange = (e) =>{
+  const handleBatchChange = (e) => {
     const selectedBatchId = e.target.value;
     console.log(selectedBatchId)
     setInputField(prevState => ({ ...prevState, batchId: selectedBatchId }));
@@ -293,6 +312,7 @@ const StudentRegistration = () => {
   };
 
   useEffect(() => { getData() }, [])
+
 
   return (
     <div className="bg-light py-3 py-md-5">
@@ -503,18 +523,18 @@ const StudentRegistration = () => {
                   </div>
                   {errors.confirmpassword && <span style={{ color: 'red' }} className="error">{errors.confirmpassword}</span>}
                 </div>
-                <div className="col-12">
-                  <button
-                    type="submit"
-                    className="btn btn-primary w-100 py-3"
-                    onClick={handleSubmit}>
-                    Register
-                  </button>
+                <div className="col-12">    
+                    <button
+                      type="submit"
+                      className="btn btn-primary w-100 py-3"
+                      onClick={handleSubmit}>
+                      Register
+                    </button>
                 </div>
               </div>
               <br />
               <div className="row gy-3 gy-md-4 overflow-hidden">
-                <p style={{textAlign: "center"}}>Already have an account? <Link to="/studentLogin">Sign In</Link></p>
+                <p style={{ textAlign: "center" }}>Already have an account? <Link to="/studentLogin">Sign In</Link></p>
               </div>
             </div>
           </div>
