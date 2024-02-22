@@ -84,7 +84,7 @@ function isValidAmount(amount) {
 
 function isValidAddress(address) {
     return {
-        isValid: !address || address.length <= 100,
+        isValid: !address || address.length <= 2000,
         message: "Address cannot be empty and should not exceed 100 characters"
     };
 }
@@ -92,15 +92,20 @@ function isValidAddress(address) {
 function isValidWebsite(website) {
     if (website === null || website === "") {
         return {
-            isValid: true,
+            isValid: false,
+            message: "Website cannot be null or empty"
         };
     }
 
+    const regex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}.*$/;
+    const isValid = regex.test(website);
+
     return {
-        isValid: /^www\.[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/.test(website),
-        message: "Website must be in the format www.example.com"
+        isValid: isValid,
+        message: isValid ? "" : "Website must be in a valid format (e.g., www.example.com, http://example.com)"
     };
 }
+
 
 
 function isValidEmail(email) {
