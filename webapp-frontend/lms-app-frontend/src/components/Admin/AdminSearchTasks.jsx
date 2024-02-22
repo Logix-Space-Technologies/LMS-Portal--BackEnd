@@ -15,6 +15,7 @@ const AdminSearchTasks = () => {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of tasks per page
+    const [key, setKey] = useState('');
 
 
     const apiUrl = global.config.urls.api.server + '/api/lms/searchTasks'
