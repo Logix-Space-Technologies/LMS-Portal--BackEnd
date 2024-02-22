@@ -55,7 +55,6 @@ const AdminStaffChangePassword = () => {
     }
     return (
         <div>
-            <AdmStaffNavBar/>
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
