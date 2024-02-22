@@ -29,6 +29,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 app.use("/api/lms", adminRoutes);
+app.options("/api/lms/studreg", cors(corsOptions));
 
 
 
