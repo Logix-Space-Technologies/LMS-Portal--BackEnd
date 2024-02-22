@@ -3,11 +3,13 @@ import '../../config/config'
 import Navbar from './Navbar'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminViewAllTasks = () => {
     const [taskData, setTaskData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of tasks per page
+    const [key, setKey] = useState('');
 
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewtasks"
@@ -17,13 +19,20 @@ const AdminViewAllTasks = () => {
 
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "sessionId": sessionStorage.getItem("viewtaskId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrl, data, axiosConfig).then(
@@ -71,10 +80,13 @@ const AdminViewAllTasks = () => {
 
     useEffect(() => { getData() }, []);
 
-
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div>
-            <Navbar /><br />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
@@ -119,9 +131,11 @@ const AdminViewAllTasks = () => {
                                         <td className="px-6 py-4">
                                             <button onClick={() => handleUpdateClick(value.id)} className="btn btn-primary btn-sm me-2">Update</button>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <button onClick={() => deleteTask(value.id)} className="btn btn-danger btn-sm">Delete</button>
-                                        </td>
+                                        {key === "lmsapp" && (
+                                            <td className="px-6 py-4">
+                                                <button onClick={() => deleteTask(value.id)} className="btn btn-danger btn-sm">Delete</button>
+                                            </td>
+                                        )}
                                     </tr>
                                 );
                             })

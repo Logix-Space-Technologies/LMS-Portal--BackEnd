@@ -84,31 +84,50 @@ function isValidAmount(amount) {
 
 function isValidAddress(address) {
     return {
-        isValid: !address || address.length <= 100,
-        message: "Address cannot be empty and should not exceed 100 characters"
+        isValid: !address || address.length <= 2000,
+        message: "Address cannot be empty and should not exceed 2000 characters"
     };
 }
 
 function isValidWebsite(website) {
     if (website === null || website === "") {
         return {
-            isValid: true,
+            isValid: false,
+            message: "Website cannot be null or empty"
         };
     }
 
+    const regex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}.*$/;
+    const isValid = regex.test(website);
+
     return {
-        isValid: /^www\.[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/.test(website),
-        message: "Website must be in the format www.example.com"
+        isValid: isValid,
+        message: isValid ? "" : "Website must be in a valid format (e.g., www.example.com, http://example.com)"
     };
 }
+
 
 
 function isValidEmail(email) {
+    // Initial check for null or empty string
+    if (email === null || email === "") {
+        return {
+            isValid: false,
+            message: "Email cannot be null or empty."
+        };
+    }
+
+    // Regex for email validation (more inclusive, allowing uppercase characters and numbers in the domain part)
+    const regex = /^[a-zA-Z0-9._!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
+    const isValid = regex.test(email);
+
+    // Return the validation result with a message
     return {
-        isValid: /^[a-z0-9._!#$%&'*+/=?^_`{|}~-]+@[a-z]+(\.[a-z]+)+$/.test(email),
-        message: "Email cannot be empty or Invalid Email! "
+        isValid: isValid,
+        message: isValid ? "" : "Invalid Email! Please enter a valid email address."
     };
 }
+
 
 function isValidPassword(password) {
     return {

@@ -54,7 +54,6 @@ const AdminAddTrainer = () => {
         }
         e.preventDefault();
         const validationErrors = validateForm(inputField);
-        console.log(validationErrors)
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig3 = {
                 headers: {
@@ -64,7 +63,6 @@ const AdminAddTrainer = () => {
                     "key": currentKey
                 }
             }
-            console.log(axiosConfig3)
             let data = {
                 "trainerName": inputField.trainerName,
                 "about": inputField.about,
@@ -73,9 +71,7 @@ const AdminAddTrainer = () => {
                 "phoneNumber": inputField.phoneNumber,
                 "profilePicture": file
             }
-            console.log(data)
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
-                console.log(response.data.status)
                 if (response.data.status === 'success') {
                     alert('Trainer Added Successfully !!');
                     setInputField({
@@ -129,16 +125,19 @@ const AdminAddTrainer = () => {
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
-                        console.log(error.response.data);
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
                     console.log(error.request);
-                } else {
+                    alert(error.request);
+                } else if (error.message) {
                     console.log('Error', error.message);
+                    alert('Error', error.message);
+                } else {
+                    alert(error.config);
+                    console.log(error.config);
                 }
-                console.log(error.config);
-            });
+            })
         } else {
             setErrors(validationErrors);
         }
