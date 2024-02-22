@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../config/config'
 import Navbar from './Navbar';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminSearchTasks = () => {
     const [inputField, setInputField] = useState({
@@ -15,6 +16,7 @@ const AdminSearchTasks = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of tasks per page
 
+
     const apiUrl = global.config.urls.api.server + '/api/lms/searchTasks'
     const deleteUrl = global.config.urls.api.server + '/api/lms/deleteTask'
 
@@ -24,13 +26,20 @@ const AdminSearchTasks = () => {
     };
 
     const searchTasks = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         setIsLoading(true);
         const axiosConfig = {
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrl, inputField, axiosConfig)
@@ -80,9 +89,14 @@ const AdminSearchTasks = () => {
 
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />} <br />
             <div className="container py-5">
                 <h1 className="mb-4 text-center">Admin Search Tasks</h1>
                 <div className="row mb-3">
@@ -140,7 +154,9 @@ const AdminSearchTasks = () => {
                                         </td>
                                         <td>
                                             <button onClick={() => handleUpdateClick(task.id)} className="btn btn-primary btn-sm me-2">Update</button>
-                                            <button onClick={() => deleteTask(task.id)} className="btn btn-danger btn-sm">Delete</button>
+                                            {key === "lmsapp" && (
+                                                <button onClick={() => deleteTask(task.id)} className="btn btn-danger btn-sm">Delete</button>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}
