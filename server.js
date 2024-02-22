@@ -7,6 +7,8 @@ const mysql = require('mysql2')
 const adminRoutes = require("./app/routes/lms.routes");
 const app = express();
 
+
+
 const allowedOrigins = ['https://lms.linkurcodes.com', 'http://localhost:3000','http://localhost:64561'];
 
 const corsOptions = {
