@@ -7,7 +7,7 @@ const adminRoutes = require("./app/routes/lms.routes");
 const app = express();
 const PORT = 3030;
 
-const allowedOrigins = ['https://lms.linkurcodes.com', 'http://localhost:3000', 'http://localhost:64561'];
+const allowedOrigins = ['*'];
 
 const corsOptions = {
   origin: function (origin, callback) {
