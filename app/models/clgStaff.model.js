@@ -162,7 +162,7 @@ CollegeStaff.getAll = async (result) => {
             console.log("College staff: ", response)
             result(null, response)
         }
-    })
+    })  
 }
 
 

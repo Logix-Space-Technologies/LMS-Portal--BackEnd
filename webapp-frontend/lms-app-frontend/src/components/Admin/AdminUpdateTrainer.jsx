@@ -18,6 +18,7 @@ const AdminUpdateTrainer = () => {
     const apiURL = global.config.urls.api.server + "/api/lms/adminviewonetrainer";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/updateTrainer";
     const navigate = useNavigate()
+    const [key, setKey] = useState('');
 
     const updateHandler = (event) => {
         setUpdateField({ ...updateField, [event.target.name]: event.target.value })
@@ -29,13 +30,20 @@ const AdminUpdateTrainer = () => {
     }
 
     const readNewValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         console.log(updateField)
         let axiosConfig = {
             headers: {
                 'content-type': 'multipart/form-data',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         let data = {
@@ -101,13 +109,20 @@ const AdminUpdateTrainer = () => {
     }
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "id": sessionStorage.getItem("trainerId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         axios.post(apiURL, data, axiosConfig).then(
@@ -121,6 +136,10 @@ const AdminUpdateTrainer = () => {
 
     useEffect(() => { getData() }, [])
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div className="container">
             <div className="row">
@@ -174,7 +193,7 @@ const AdminUpdateTrainer = () => {
                                         </div>
                                         <br></br>
                                         <div class="mb-3">
-                                            <a class="btn btn-danger" href="/adminviewalltrainers">Back</a>
+                                        <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
                                         </div>
                                     </ul>
 

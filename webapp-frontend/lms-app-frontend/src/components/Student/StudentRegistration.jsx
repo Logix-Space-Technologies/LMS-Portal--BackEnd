@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
+import { Link, useNavigate } from 'react-router-dom'
 
 const StudentRegistration = () => {
 
@@ -19,25 +20,27 @@ const StudentRegistration = () => {
     "confirmpassword": ""
   })
 
+  const navigate = useNavigate()
+
+  const [errors, setErrors] = useState({})
 
   const [file, setFile] = useState(null)
 
   const fileUploadHandler = (event) => {
+    setErrors({})
     setFile(event.target.files[0])
   }
 
-  // let [batchAmount,setbatchAmount]=useState()
+  let [batchAmount,setbatchAmount]=useState(0)
 
   const [outputField, setOutputField] = useState([])
-
-  const [errors, setErrors] = useState({})
 
   const [batches, setBatches] = useState([])
 
   const apiUrl = global.config.urls.api.server + "/api/lms/studreg"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/studentregviewcollege"
   const batchUrl = global.config.urls.api.server + "/api/lms/studregviewbatch";
-  // const batchAmountUrl = global.config.urls.api.server + "/api/lms/studregviewbatchamount"
+  const batchAmountUrl = global.config.urls.api.server + "/api/lms/studregviewbatchamount"
 
 
   const getData = () => {
@@ -48,15 +51,31 @@ const StudentRegistration = () => {
       }
     )
   }
- 
+
 
   // Add a new function to fetch batches based on the selected college
   const getBatches = (collegeId) => {
     console.log(collegeId)
     axios.post(batchUrl, { collegeId }).then((response) => {
       setBatches(response.data);
+      console.log(response.data)
     });
   };
+
+  const getBatchAmount = (batchId) =>{
+    console.log(batchId)
+    axios.post(batchAmountUrl, {batchId}).then(
+      (response) =>{
+        console.log(response.data)
+         if (response.data.status === "success") {
+           setbatchAmount(response.data.data)
+           console.log(response.data.data)
+         } else {
+           console.log("Error in fetching batch amount.")
+         }
+      }
+    )
+  }
 
 
   // Call getBatches whenever the college selection changes
@@ -65,6 +84,13 @@ const StudentRegistration = () => {
     setInputField(prevState => ({ ...prevState, collegeId: selectedCollegeId }));
     getBatches(selectedCollegeId);
   };
+
+  const handleBatchChange = (e) =>{
+    const selectedBatchId = e.target.value;
+    console.log(selectedBatchId)
+    setInputField(prevState => ({ ...prevState, batchId: selectedBatchId }));
+    getBatchAmount(selectedBatchId)
+  }
 
 
   const inputHandler = (event) => {
@@ -79,10 +105,11 @@ const StudentRegistration = () => {
     document.body.appendChild(script)
 
     script.onload = () => {
+      console.log(batchAmount)
       //initialize razorpay
       const rzp = new window.Razorpay({
         key: 'rzp_test_ZqcybzHd1QkWg8',
-        amount: 2000 * 100,
+        amount: batchAmount * 100,
         name: 'Logix Space Technologies Pvt Ltd',
         description: 'Link Ur Codes Payment',
         // image: <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" class="img-fluid" />,
@@ -90,10 +117,8 @@ const StudentRegistration = () => {
 
 
         handler: function (response) {
-          console.log('Payment success:', response)
 
           const PaymentId = response.razorpay_payment_id
-          alert("Amount Paid " + PaymentId)
 
 
           // Call Registration API and pass the details to the server
@@ -109,7 +134,7 @@ const StudentRegistration = () => {
             "studPhNo": inputField.studPhNo,
             "aadharNo": inputField.aadharNo,
             "password": inputField.password,
-            "studProfilePic": file,  
+            "studProfilePic": file,
             "rpPaymentId": PaymentId,
             "rpOrderId": orderId,
             "rpAmount": 2000
@@ -125,7 +150,7 @@ const StudentRegistration = () => {
             (response) => {
               if (response.data.status === "success") {
                 alert("User Registered Successfully !!!")
-
+                navigate("/studentLogin")
                 setInputField({ "collegeId": "", "batchId": "", "studName": "", "admNo": "", "rollNo": "", "studDept": "", "course": "", "studEmail": "", "studPhNo": "", "studProfilePic": "", "aadharNo": "", "password": "", "confirmpassword": "" })
               } else {
                 if (response.data.status === "Validation failed" && response.data.data.college) {
@@ -318,7 +343,7 @@ const StudentRegistration = () => {
                     id="batchId"
                     className="form-control"
                     value={inputField.batchId}
-                    onChange={inputHandler}>
+                    onChange={handleBatchChange}>
                     <option value="">Select</option>
                     {batches.data && batches.data.map((value) => {
                       return <option key={value.id} value={value.id}> {value.batchName} </option>;
@@ -486,6 +511,10 @@ const StudentRegistration = () => {
                     Register
                   </button>
                 </div>
+              </div>
+              <br />
+              <div className="row gy-3 gy-md-4 overflow-hidden">
+                <p style={{textAlign: "center"}}>Already have an account? <Link to="/studentLogin">Sign In</Link></p>
               </div>
             </div>
           </div>

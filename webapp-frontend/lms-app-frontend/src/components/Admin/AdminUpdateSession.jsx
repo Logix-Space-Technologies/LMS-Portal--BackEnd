@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../config/config';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import Navbar from './Navbar';
 
 const AdminUpdateSession = () => {
   const [sessionData, setSessionData] = useState([]);
@@ -18,19 +20,27 @@ const AdminUpdateSession = () => {
   const apiURL = global.config.urls.api.server + '/api/lms/AdmViewOneSession';
   const apiUrl2 = global.config.urls.api.server + '/api/lms/updateSession';
   const navigate = useNavigate();
+  const [key, setKey] = useState('')
 
   const updateHandler = (event) => {
     setUpdateField({ ...updateField, [event.target.name]: event.target.value })
-}
+  }
 
   const readNewValue = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
     console.log(updateField);
     let axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
         'Access-Control-Allow-Origin': '*',
-        "token": sessionStorage.getItem('admtoken'),
-        "key": sessionStorage.getItem('admkey'),
+        "token": token,
+        "key": currentKey,
       }
     }
     let data = {
@@ -57,7 +67,7 @@ const AdminUpdateSession = () => {
         });
         alert('Session Updated Successfully');
         navigate('/AdminViewAllSession');
-      }else {
+      } else {
         if (Response.data.status === "Validation failed" && Response.data.data.sessionName) {
           alert(Response.data.data.sessionName)
         } else {
@@ -92,13 +102,20 @@ const AdminUpdateSession = () => {
   };
 
   const getData = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
     let data = { "id": sessionStorage.getItem('sessionId') };
     let axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
         'Access-Control-Allow-Origin': '*',
-        "token": sessionStorage.getItem('admtoken'),
-        "key": sessionStorage.getItem('admkey'),
+        "token": token,
+        "key": currentKey,
       }
     }
     axios.post(apiURL, data, axiosConfig).then((response) => {
@@ -117,8 +134,14 @@ const AdminUpdateSession = () => {
     getData();
   }, []);
 
+  // Update key state when component mounts
+  useEffect(() => {
+    setKey(sessionStorage.getItem("admkey") || '');
+  }, []);
+
   return (
     <div className="container">
+      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
       <div className="row">
         <div className="col-lg-12 mb-4 mb-sm-5">
           <br></br>
@@ -236,9 +259,7 @@ const AdminUpdateSession = () => {
                     </div>
                     <br></br>
                     <div class="mb-3">
-                      <a class="btn btn-danger" href="/AdminViewAllSession">
-                        Back
-                      </a>
+                      <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
                     </div>
                   </ul>
 

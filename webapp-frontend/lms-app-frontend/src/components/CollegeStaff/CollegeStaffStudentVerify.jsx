@@ -60,7 +60,7 @@ const CollegeStaffStudentVerify = () => {
             (response) => {
                 if (response.data.status === "Success") {
                     alert("Student verified successfully!!")
-                    getData()
+                    window.location.reload()
                 } else {
                     if (response.data.status === "Unauthorized User!!!") {
                         sessionStorage.clear()
@@ -196,7 +196,7 @@ const CollegeStaffStudentVerify = () => {
                         ))}
                         {currentStudents.length === 0 && (
                             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td colSpan="11" className="px-6 py-4" style={{textAlign: 'center'}}>
+                                <td colSpan="13" className="px-6 py-4" style={{textAlign: 'center'}}>
                                     No Students Found !!
                                 </td>
                             </tr>

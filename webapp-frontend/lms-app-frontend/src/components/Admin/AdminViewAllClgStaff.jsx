@@ -2,21 +2,31 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminViewAllClgStaff = () => {
   const [clgStaffData, setClgStaffData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [clgStaffPerPage] = useState(10); // Number of college staff per page
   const navigate = useNavigate();
+  const [key, setKey] = useState('');
+
   const apiUrl = global.config.urls.api.server + "/api/lms/viewallcollegestaff";
 
   const getData = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
     let axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
         "Access-Control-Allow-Origin": "*",
-        "token": sessionStorage.getItem("admtoken"),
-        "key": sessionStorage.getItem("admkey"),
+        "token": token,
+        "key": currentKey,
       },
     };
 
@@ -72,16 +82,21 @@ const AdminViewAllClgStaff = () => {
     getData();
   }, []);
 
+  // Update key state when component mounts
+  useEffect(() => {
+    setKey(sessionStorage.getItem("admkey") || '');
+  }, []);
+
   return (
     <div>
-      <Navbar />
+      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
       <section className="bg-gray-100 min-h-screen p-4">
         <div className="container mx-auto">
           <h1 className="text-3xl font-semibold text-gray-800 mb-6">College Staff List</h1>
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile Pic</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">College Name</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
@@ -91,14 +106,16 @@ const AdminViewAllClgStaff = () => {
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone No.</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aadhar No.</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email Verified</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                {key === "lmsapp" && (
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                )}
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {currentClgStaff.map((value, index) => (
                 <tr key={index}>
-                  <td><img className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3" src={value.profilePic} alt=""/></td>
+                  <td><img className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3" src={value.profilePic} alt="" /></td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.collegeName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.collegeStaffName}</td>
@@ -108,9 +125,11 @@ const AdminViewAllClgStaff = () => {
                   <td className="px-6 py-4 whitespace-nowrap">{value.phNo}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.aadharNo}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.emailVerificationStatus}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full" onClick={() => handleDeleteClick(value.id)}>Delete</button>
-                  </td>
+                  {key === "lmsapp" && (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full" onClick={() => handleDeleteClick(value.id)}>Delete</button>
+                    </td>
+                  )}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onClick={() => updateClick(value.id)}>Update</button>
                   </td>

@@ -56,6 +56,9 @@ const AdmStaffNavBar = () => {
                             <li>
                                 <Link className="nav-link active" aria-current="page" to="/AdminViewRefundRequests">View Refunds</Link>
                             </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/AdminSearchSessionDetails">Search Session</Link>
+                            </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Functionalities
@@ -64,6 +67,9 @@ const AdmStaffNavBar = () => {
                                     <li><Link className="dropdown-item" to="/adminviewallcollege">View All College</Link></li>
                                     <li><Link className="dropdown-item" to="/adminstaffviewsubmittedtask">View Submitted Task</Link></li>
                                     <li><Link className="dropdown-item" to="/adminSearchClg">Search Colleges</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminSearchTrainers">Search Trainers</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminviewallclgstaff">View All College Staff</Link></li>
                                 </ul>
                                 
                             </li>

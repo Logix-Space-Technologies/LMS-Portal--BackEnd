@@ -80,46 +80,46 @@ exports.createStudent = (req, res) => {
             if (Validator.isEmpty(collegeId).isValid) {
                 validationErrors.collegeId = Validator.isEmpty(collegeId).message;
             }
-            if (Validator.isEmpty(batchId).isValid) {
+            else if (Validator.isEmpty(batchId).isValid) {
                 validationErrors.batchId = Validator.isEmpty(batchId).message;
             }
-            if (Validator.isEmpty(studName).isValid) {
+            else if (Validator.isEmpty(studName).isValid) {
                 validationErrors.studName = Validator.isEmpty(studName).message;
             }
-            if (!Validator.isValidName(studName).isValid) {
+            else if (!Validator.isValidName(studName).isValid) {
                 validationErrors.studName = Validator.isValidName(studName).message;
             }
-            if (Validator.isEmpty(admNo).isValid) {
+            else if (Validator.isEmpty(admNo).isValid) {
                 validationErrors.admNo = Validator.isEmpty(admNo).message;
             }
-            if (Validator.isEmpty(rollNo).isValid) {
+            else if (Validator.isEmpty(rollNo).isValid) {
                 validationErrors.rollNo = Validator.isEmpty(rollNo).message;
             }
-            if (Validator.isEmpty(studDept).isValid) {
+            else if (Validator.isEmpty(studDept).isValid) {
                 validationErrors.studDept = Validator.isEmpty(studDept).message;
             }
-            if (Validator.isEmpty(course).isValid) {
+            else if (Validator.isEmpty(course).isValid) {
                 validationErrors.course = Validator.isEmpty(course).message;
             }
-            if (Validator.isEmpty(aadharNo).isValid) {
+            else if (Validator.isEmpty(aadharNo).isValid) {
                 validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
             }
-            if (!Validator.isValidAadharNumber(aadharNo).isValid) {
+            else if (!Validator.isValidAadharNumber(aadharNo).isValid) {
                 validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
             }
-            if (Validator.isEmpty(studEmail).isValid) {
+            else if (Validator.isEmpty(studEmail).isValid) {
                 validationErrors.studEmail = Validator.isEmpty(studEmail).message;
             }
-            if (!Validator.isValidEmail(studEmail).isValid) {
+            else if (!Validator.isValidEmail(studEmail).isValid) {
                 validationErrors.studEmail = Validator.isValidEmail(studEmail).message;
             }
-            if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+            else if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
                 validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
             }
-            if (!Validator.isValidPassword(password).isValid) {
+            else if (!Validator.isValidPassword(password).isValid) {
                 validationErrors.password = Validator.isValidPassword(password).message;
             }
-            if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+            else if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
                 validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
             }
             // If validation fails
@@ -1076,9 +1076,9 @@ exports.studViewSession = (request, response) => {
 
 
 exports.studRegViewBatchAmount = (request, response) => {
-    const collegeId = request.body.collegeId;
+    // const collegeId = request.body.collegeId;
     const batchId = request.body.batchId;
-    Student.viewBatchAmount(collegeId, batchId, (err, data) => {
+    Student.viewBatchAmount(batchId, (err, data) => {
         if (err) {
             response.json({ "status": err });
         }

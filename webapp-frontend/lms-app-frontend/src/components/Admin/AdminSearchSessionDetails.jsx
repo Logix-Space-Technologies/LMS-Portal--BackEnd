@@ -1,7 +1,8 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import '../../config/config';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminSearchSessionDetails = () => {
     const [inputField, setInputField] = useState({ "SessionSearchQuery": "" });
@@ -9,8 +10,9 @@ const AdminSearchSessionDetails = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [SessionPerPage] = useState(2); // Number of sessions per page
+    const [SessionPerPage] = useState(10); // Number of sessions per page
     const [isSearchPerformed, setIsSearchPerformed] = useState(false);
+    const [key, setKey] = useState('')
 
     // Assign the API links as searchApiLink and deleteApiLink
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchSession";
@@ -21,13 +23,20 @@ const AdminSearchSessionDetails = () => {
     };
 
     const readValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         setIsLoading(true);
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
 
@@ -79,9 +88,14 @@ const AdminSearchSessionDetails = () => {
         });
     }
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="container">
                 <div className="row">
                     <div className="col col-12">
@@ -143,8 +157,10 @@ const AdminSearchSessionDetails = () => {
                                                         <td className="px-6 py-4">{value.addedDate}</td>
                                                         <td className="px-6 py-4">{value.updatedDate}</td>
                                                         <td className="p-4 whitespace-nowrap">
+                                                             {key === "lmsapp" && (
                                                             <button onClick={() => deleteSession(value.id)} className="btn btn-danger mt-3">Delete</button>
-                                                        </td>
+                                                             )}
+                                                            </td>
                                                         <td className="p-4 whitespace-nowrap">
 
                                                         </td>
