@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import '../../config/config';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import { useNavigate } from 'react-router-dom';
 
 const AdminSearchCollegeStaff = () => {
     const [inputField, setInputField] = useState({
@@ -11,6 +12,8 @@ const AdminSearchCollegeStaff = () => {
 
     const [collegeStaff, setCollegeStaff] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const navigate = useNavigate()
 
     const [currentPage, setCurrentPage] = useState(1);
     const [staffPerPage] = useState(1); // Number of staff per page
@@ -73,6 +76,12 @@ const AdminSearchCollegeStaff = () => {
             });
     };
 
+    const updateClick = (id) => {
+        let data = id;
+        sessionStorage.setItem("clgStaffId", data);
+        navigate("/adminupdatecollegestaff");
+    };
+
     // Logic for displaying current staff
     const indexOfLastStaff = currentPage * staffPerPage;
     const indexOfFirstStaff = indexOfLastStaff - staffPerPage;
@@ -132,6 +141,9 @@ const AdminSearchCollegeStaff = () => {
                                             <td className="px-6 py-4">{staff.phNo}</td>
                                             <td className="px-6 py-4">{staff.department}</td>
                                             <td className="px-6 py-4">{staff.collegeName}</td>
+                                            <td className="p-4 whitespace-nowrap">
+                                                <button className="btn btn-primary mt-3" onClick={() => updateClick(staff.id)}>Update</button>
+                                            </td>
                                             <td className="p-4 whitespace-nowrap">
                                                 <button className="btn btn-danger mt-3" onClick={() => deleteStaff(staff.id)}>Delete</button>
                                             </td>

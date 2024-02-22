@@ -258,7 +258,7 @@ const AdminUpdateCollegeStaff = () => {
                                         </div>
                                         <br></br>
                                         <div class="mb-3">
-                                            <a class="btn btn-danger" href="/adminviewallclgstaff">Back</a>
+                                            <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
                                         </div>
                                     </ul>
 
