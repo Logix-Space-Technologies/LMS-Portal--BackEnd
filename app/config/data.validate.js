@@ -117,8 +117,8 @@ function isValidEmail(email) {
         };
     }
 
-    // Regex for email validation 
-    const regex = /^[a-z0-9._!#$%&'*+/=?^_`{|}~-]+@[a-z]+(\.[a-z]+)+$/;
+    // Regex for email validation (more inclusive, allowing uppercase characters and numbers in the domain part)
+    const regex = /^[a-zA-Z0-9._!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
     const isValid = regex.test(email);
 
     // Return the validation result with a message
