@@ -1,8 +1,9 @@
 import axios from 'axios'
 import '../../config/config'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import { Link, useNavigate } from 'react-router-dom'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminSearchCurriculum = () => {
 
@@ -18,6 +19,7 @@ const AdminSearchCurriculum = () => {
         []
     )
 
+    const [key, setKey] = useState('');
     const [isLoading, setIsLoading] = useState(true)
     const [currentPage, setCurrentPage] = useState(1);
     const [curriculumPerPage] = useState(10); // Number of students per page
@@ -30,13 +32,20 @@ const AdminSearchCurriculum = () => {
     }
 
     const readValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         console.log(inputField)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
         console.log(axiosConfig)
@@ -108,10 +117,14 @@ const AdminSearchCurriculum = () => {
     }
 
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
 
     return (
         <div>
-            <Navbar /><br />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
             <strong style={{ paddingLeft: '30px' }}>Search Curriculum</strong>
 
             <div className="flex justify-between items-center mx-4 my-4">
@@ -155,9 +168,11 @@ const AdminSearchCurriculum = () => {
                                 <th scope="col" className="px-6 py-3">
                                     File Link
                                 </th>
-                                <th scope="col" className="px-6 py-3">
+                                {key === "lmsapp" && (
+                                    <th scope="col" className="px-6 py-3">
 
-                                </th>
+                                    </th>
+                                )}
                                 <th scope="col" className="px-6 py-3">
 
                                 </th>
@@ -185,11 +200,13 @@ const AdminSearchCurriculum = () => {
                                         <td className="px-6 py-4">
                                             <Link target="_blank" to={value.curriculumFileLink} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>
                                         </td>
-                                        <td className="p-4 whitespace-nowrap">
-                                            <button onClick={() => handleClick(value.id)} className="btn btn-danger">Delete</button>
-                                        </td>
+                                        {key === "lmsapp" && (
+                                            <td className="p-4 whitespace-nowrap">
+                                                <button onClick={() => handleClick(value.id)} className="btn btn-danger">Delete</button>
+                                            </td>
+                                        )}
                                         <td className="px-6 py-4">
-                                            <Link onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500">Update Curriculum</Link>
+                                            <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500">Update Curriculum</button>
                                         </td>
                                     </tr>
                                 )
