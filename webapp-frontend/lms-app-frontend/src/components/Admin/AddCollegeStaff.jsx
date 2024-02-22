@@ -167,9 +167,11 @@ const AddCollegeStaff = () => {
           const statusCode = error.response.status;
 
           if (statusCode === 400) {
+            console.log("Status 400:", error.response.data);
             alert(error.response.data.status)
             // Additional logic for status 400
           } else if (statusCode === 500) {
+            console.log("Status 500:", error.response.data);
             alert(error.response.data.status)
             // Additional logic for status 500
           } else {
@@ -177,10 +179,14 @@ const AddCollegeStaff = () => {
           }
         } else if (error.request) {
           console.log(error.request);
-        } else {
+          alert(error.request);
+        } else if (error.message) {
           console.log('Error', error.message);
+          alert('Error', error.message);
+        } else {
+          alert(error.config);
+          console.log(error.config);
         }
-        console.log(error.config);
       })
     } else {
       setErrors(validationErrors);
