@@ -7,9 +7,10 @@ const adminRoutes = require("./app/routes/lms.routes");
 const app = express();
 const PORT = 3030;
 
-const allowedOrigins = ['*'];
+const allowedOrigins = ['https://lms.linkurcodes.com'];
 
-const corsOptions = {
+// CORS middleware
+app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
@@ -18,17 +19,11 @@ const corsOptions = {
     }
   },
   optionsSuccessStatus: 200, // For legacy browser support
-};
-
-// Enable CORS for all routes
-app.use(cors(corsOptions));
+}));
 
 // Parse JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// CORS preflight request handling for specific route
-app.options("/api/lms/studreg", cors(corsOptions));
 
 // API routes
 app.use("/api/lms", adminRoutes);
