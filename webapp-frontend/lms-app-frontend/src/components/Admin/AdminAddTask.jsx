@@ -20,30 +20,21 @@ const AdminAddTask = () => {
 
     const [file, setFile] = useState(null)
 
-    const [fileValidationMessage, setFileValidationMessage] = useState('');
+    const [fileType, setFileType] = useState("");
 
     const fileUploadHandler = (event) => {
-        setFileValidationMessage({})
-        const file = event.target.files[0];
-        if (file) {
-            const isSizeValid = file.size <= 2097152; // 2MB in bytes
-            const isTypeValid = file.type === "application/pdf";
-    
-            if (isSizeValid && isTypeValid) {
-                setFile(file);
-                setFileValidationMessage('');
-            } else {
-                if (!isSizeValid) {
-                    setFileValidationMessage('File size should be less than 2MB.');
-                }
-                if (!isTypeValid) {
-                    setFileValidationMessage('Invalid file type. Only PDFs are allowed.');
-                }
-            }
+        setErrors({});
+        const uploadedFile = event.target.files[0];
+        if (uploadedFile) {
+            setErrors({});
+            setFile(uploadedFile);
+            const extension = uploadedFile.name.split('.').pop().toLowerCase();
+            setFileType(extension);
         } else {
-            setFileValidationMessage("Please upload a file.");
+            setFile(null);
+            setFileType("");
         }
-    };
+    }
 
     const [outputField, setOutputField] = useState([])
 
@@ -79,7 +70,6 @@ const AdminAddTask = () => {
         axios.post(apiUrl2, {}, axiosConfig).then(
             (response) => {
                 setOutputField(response.data.data)
-                console.log(response.data.data)
             }
         )
     }
@@ -100,10 +90,8 @@ const AdminAddTask = () => {
                 "key": currentKey
             }
         };
-        console.log(collegeId)
         axios.post(batchUrl, { collegeId }, axiosConfig2).then((response) => {
             setBatches(response.data)
-            console.log(response.data)
         })
     }
 
@@ -125,7 +113,6 @@ const AdminAddTask = () => {
         };
         axios.post(apiUrl3, { batchId }, axiosConfig3).then((response) => {
             setSessions(response.data.Sessions || []);
-            console.log(response.data);
         });
     };
 
@@ -157,16 +144,8 @@ const AdminAddTask = () => {
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        if (!file) {
-            setFileValidationMessage("Please upload a file.");
-            return;
-        }
-        if (fileValidationMessage) {
-            return;
-        }
         e.preventDefault();
         const validationErrors = validateForm(inputField);
-        console.log(validationErrors)
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig3 = {
                 headers: {
@@ -176,7 +155,6 @@ const AdminAddTask = () => {
                     "key": currentKey
                 }
             }
-            console.log(axiosConfig3)
             let data = {
                 "batchId": inputField.batchId,
                 "sessionId": inputField.sessionId,
@@ -185,11 +163,9 @@ const AdminAddTask = () => {
                 "taskType": inputField.taskType,
                 "totalScore": inputField.totalScore,
                 "dueDate": inputField.dueDate,
-                "taskFileUpload" : file
+                "taskFileUpload": file
             }
-            console.log(data)
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
-                console.log(response.data.status)
                 if (response.data.status === 'success') {
                     alert('Task Added Successfully !!');
                     setInputField({
@@ -204,33 +180,25 @@ const AdminAddTask = () => {
                         taskFileUpload: ''
                     })
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.amount) {
-                        alert(response.data.data.amount)
+                    if (response.data.status === "Validation failed" && response.data.data.batchId) {
+                        alert(response.data.data.batchId)
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.name) {
-                            alert(response.data.data.name)
+                        if (response.data.status === "Validation failed" && response.data.data.taskTitle) {
+                            alert(response.data.data.taskTitle)
                         } else {
-                            if (response.data.status === "Validation failed" && response.data.data.address) {
-                                alert(response.data.data.address)
+                            if (response.data.status === "Validation failed" && response.data.data.taskDesc) {
+                                alert(response.data.data.taskDesc)
                             } else {
-                                if (response.data.status === "Validation failed" && response.data.data.name) {
-                                    alert(response.data.data.name)
+                                if (response.data.status === "Validation failed" && response.data.data.taskType) {
+                                    alert(response.data.data.taskType)
                                 } else {
                                     if (response.data.status === "Validation failed" && response.data.data.totalScore) {
                                         alert(response.data.data.totalScore)
                                     } else {
-                                        if (response.data.status === "Validation failed" && response.data.data.date) {
-                                            alert(response.data.data.date)
+                                        if (response.data.status === "Validation failed" && response.data.data.dueDate) {
+                                            alert(response.data.data.dueDate)
                                         } else {
-                                            if (response.data.status === "Validation failed" && response.data.data.date) {
-                                                alert(response.data.data.date)
-                                            } else {
-                                                if (response.data.status === "Validation failed" && response.data.data.sessionId) {
-                                                    alert(response.data.data.sessionId)
-                                                } else {
-                                                    alert(response.data.status) 
-                                                }
-                                            }
+                                            alert(response.data.status)
                                         }
                                     }
                                 }
@@ -239,7 +207,33 @@ const AdminAddTask = () => {
                     }
                 }
             }
-            )
+            ).catch(error => {
+                if (error.response) {
+                    // Extract the status code from the response
+                    const statusCode = error.response.status;
+
+                    if (statusCode === 400) {
+                        console.log("Status 400:", error.response.data);
+                        alert(error.response.data.status)
+                        // Additional logic for status 400
+                    } else if (statusCode === 500) {
+                        console.log("Status 500:", error.response.data);
+                        alert(error.response.data.status)
+                        // Additional logic for status 500
+                    } else {
+                        alert(error.response.data.status)
+                    }
+                } else if (error.request) {
+                    console.log(error.request);
+                    alert(error.request);
+                } else if (error.message) {
+                    console.log('Error', error.message);
+                    alert('Error', error.message);
+                } else {
+                    alert(error.config);
+                    console.log(error.config);
+                }
+            })
         } else {
             setErrors(validationErrors);
         }
@@ -269,16 +263,16 @@ const AdminAddTask = () => {
         if (!data.totalScore.trim()) {
             errors.totalScore = 'Total Score is required';
         }
-        // if (!data.taskFileUpload) {
-        //     errors.taskFileUpload = 'File Upload is required';
-        // }
         if (!data.dueDate.trim()) {
             errors.dueDate = 'Due Date is required';
+        }
+        if (fileType !== "pdf" && fileType !== "docx") {
+            errors.file = "File must be in PDF or DOCX format";
         }
         return errors;
     }
 
-    useEffect(() => {getData()}, [])
+    useEffect(() => { getData() }, [])
 
     useEffect(() => { setKey(sessionStorage.getItem("admkey") || '') }, []);
 
@@ -444,7 +438,7 @@ const AdminAddTask = () => {
                                             Task File <span className="text-danger">*</span>
                                         </label>
                                         <input type="file" className="form-control" name="taskFileUpload" id="taskFileUpload" onChange={fileUploadHandler} />
-                                        {fileValidationMessage && <div className="text-danger">{fileValidationMessage}</div>}
+                                        {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
                                     </div>
                                     <div className="col-12">
                                         <div className="d-grid">

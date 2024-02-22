@@ -96,7 +96,7 @@ exports.createTrainer = (request, response) => {
                         validationErrors.password = "Please enter your password";
                     }
                     if (Validator.isEmpty(request.body.phoneNumber).isValid) {
-                        validationErrors.phoneNumber = "Please enter your phone number";
+                        validationErrors.phoneNumber = "Please enter your mobile number";
                     }
                     if (!Validator.isValidName(request.body.trainerName).isValid) {
                         validationErrors.trainerName = Validator.isValidName(request.body.trainerName).message;
@@ -105,7 +105,7 @@ exports.createTrainer = (request, response) => {
                         validationErrors.email = "Please enter a valid email";
                     }
                     if (!Validator.isValidMobileNumber(request.body.phoneNumber).isValid) {
-                        validationErrors.phoneNumber = "Please enter a valid phone number";
+                        validationErrors.phoneNumber = "Please enter a valid mobile number";
                     }
                     if (!Validator.isValidPassword(request.body.password).isValid) {
                         validationErrors.password = Validator.isValidPassword(request.body.password).message;
