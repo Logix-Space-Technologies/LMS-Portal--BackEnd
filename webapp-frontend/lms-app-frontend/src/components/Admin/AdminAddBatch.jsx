@@ -7,12 +7,12 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminAddBatch = () => {
     const [inputField, setInputField] = useState({
-        collegeId: '',
-        batchName: '',
-        regStartDate: '',
-        regEndDate: '',
-        batchDesc: '',
-        batchAmount: ''
+        "collegeId": '',
+        "batchName": '',
+        "regStartDate": '',
+        "regEndDate": '',
+        "batchDesc": '',
+        "batchAmount": ''
     });
 
     const [errors, setErrors] = useState({});
@@ -70,12 +70,12 @@ const AdminAddBatch = () => {
                 }
             }
             let data = {
-                collegeId: inputField.collegeId,
-                batchName: inputField.batchName,
-                regStartDate: inputField.regStartDate,
-                regEndDate: inputField.regEndDate,
-                batchDesc: inputField.batchDesc,
-                batchAmount: inputField.batchAmount
+                "collegeId": inputField.collegeId,
+                "batchName": inputField.batchName,
+                "regStartDate": inputField.regStartDate,
+                "regEndDate": inputField.regEndDate,
+                "batchDesc": inputField.batchDesc,
+                "batchAmount": inputField.batchAmount
             };
             axios.post(apiUrl2, data, axiosConfig2).then((response) => {
                 if (response.data.status === 'success') {

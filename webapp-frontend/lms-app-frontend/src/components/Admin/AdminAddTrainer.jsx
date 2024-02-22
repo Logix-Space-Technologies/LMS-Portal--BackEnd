@@ -12,7 +12,8 @@ const AdminAddTrainer = () => {
         "about": "",
         "email": "",
         "password": "",
-        "phoneNumber": ""
+        "phoneNumber": "",
+        "confirmpassword": ""
     })
 
     const [file, setFile] = useState(null)
@@ -69,7 +70,8 @@ const AdminAddTrainer = () => {
                 "email": inputField.email,
                 "password": inputField.password,
                 "phoneNumber": inputField.phoneNumber,
-                "profilePicture": file
+                "profilePicture": file,
+                "confirmpassword": inputField.confirmpassword
             }
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
                 if (response.data.status === 'success') {
@@ -80,9 +82,9 @@ const AdminAddTrainer = () => {
                         email: '',
                         password: '',
                         phoneNumber: '',
+                        confirmpassword: '',
                         profilePicture: ''
                     })
-                    window.location.reload()
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.trainerName) {
                         alert(response.data.data.trainerName)
@@ -163,6 +165,12 @@ const AdminAddTrainer = () => {
         }
         if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
             errors.file = "File must be in jpg/jpeg/png/webp/heif format";
+        }
+        if (!data.confirmpassword) {
+            errors.confirmpassword = 'Confirm password is required';
+        }
+        if (data.confirmpassword !== data.password) {
+            errors.confirmpassword = 'Passwords do not match';
         }
         return errors;
     }
@@ -259,7 +267,7 @@ const AdminAddTrainer = () => {
                                         <input type="file" className="form-control" name="profilePicture" id="profilePicture" onChange={fileUploadHandler} />
                                         {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
                                     </div>
-                                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                         <label htmlFor="password" className="form-label">
                                             Password <span className="text-danger">*</span>
                                         </label>
@@ -272,6 +280,13 @@ const AdminAddTrainer = () => {
                                             onChange={inputHandler}
                                         />
                                         {errors.password && (<span style={{ color: 'red' }} className="error">{errors.password}</span>)}
+                                    </div>
+                                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                        <label for="password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
+                                        </div>
+                                        {errors.confirmpassword && <span style={{ color: 'red' }} className="error">{errors.confirmpassword}</span>}
                                     </div>
                                     <div className="col-12">
                                         <div className="d-grid">
