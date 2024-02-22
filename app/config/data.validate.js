@@ -85,7 +85,7 @@ function isValidAmount(amount) {
 function isValidAddress(address) {
     return {
         isValid: !address || address.length <= 2000,
-        message: "Address cannot be empty and should not exceed 100 characters"
+        message: "Address cannot be empty and should not exceed 2000 characters"
     };
 }
 
@@ -109,11 +109,25 @@ function isValidWebsite(website) {
 
 
 function isValidEmail(email) {
+    // Initial check for null or empty string
+    if (email === null || email === "") {
+        return {
+            isValid: false,
+            message: "Email cannot be null or empty."
+        };
+    }
+
+    // Regex for email validation 
+    const regex = /^[a-z0-9._!#$%&'*+/=?^_`{|}~-]+@[a-z]+(\.[a-z]+)+$/;
+    const isValid = regex.test(email);
+
+    // Return the validation result with a message
     return {
-        isValid: /^[a-z0-9._!#$%&'*+/=?^_`{|}~-]+@[a-z]+(\.[a-z]+)+$/.test(email),
-        message: "Email cannot be empty or Invalid Email! "
+        isValid: isValid,
+        message: isValid ? "" : "Invalid Email! Please enter a valid email address."
     };
 }
+
 
 function isValidPassword(password) {
     return {
