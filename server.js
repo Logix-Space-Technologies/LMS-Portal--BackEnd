@@ -27,11 +27,11 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// API routes
-app.use("/api/lms", adminRoutes);
-
 // CORS preflight request handling for specific route
 app.options("/api/lms/studreg", cors(corsOptions));
+
+// API routes
+app.use("/api/lms", adminRoutes);
 
 // Error handling for CORS issues
 app.use((err, req, res, next) => {
