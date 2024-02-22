@@ -59,6 +59,9 @@ const AdmStaffNavBar = () => {
                             <li>
                                 <Link className="nav-link active" aria-current="page" to="/AdminSearchSessionDetails">Search Session</Link>
                             </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/adminSearchBatch">Search Batch</Link>
+                            </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Functionalities

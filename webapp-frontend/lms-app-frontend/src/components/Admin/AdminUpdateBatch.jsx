@@ -123,6 +123,7 @@ const AdminUpdateBatch = () => {
         // }
 
         let data = { "id": sessionStorage.getItem("batchId") }
+        console.log(data)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -156,6 +157,10 @@ const AdminUpdateBatch = () => {
     useEffect(() => { getData() }, [])
 
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <>
             <div className="container">

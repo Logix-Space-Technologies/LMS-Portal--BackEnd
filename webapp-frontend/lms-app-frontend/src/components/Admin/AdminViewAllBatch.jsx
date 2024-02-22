@@ -121,7 +121,9 @@ const AdminViewAllBatch = () => {
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
-                            <th scope="col" className="px-6 py-3"></th>
+                            {key === "lmsapp" && (
+                                <th scope="col" className="px-6 py-3"></th>
+                            )}
                         </tr>
                     </thead>
                     <tbody>
@@ -148,9 +150,11 @@ const AdminViewAllBatch = () => {
                                 <td className="px-6 py-4">
                                     <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success">Update</button>
                                 </td>
-                                <td className="px-6 py-4">
-                                    <button onClick={() => deleteClick(value.id)} className="btn btn-danger">Delete</button>
-                                </td>
+                                {key === "lmsapp" && (
+                                    <td className="px-6 py-4">
+                                        <button onClick={() => deleteClick(value.id)} className="btn btn-danger">Delete</button>
+                                    </td>
+                                )}
                             </tr>
                         )) : (
                             <tr>
