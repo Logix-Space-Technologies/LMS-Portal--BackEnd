@@ -131,6 +131,9 @@ const AdminSearchCollegeStaff = () => {
                                         <th scope="col" className="px-6 py-3">Department</th>
                                         <th scope="col" className="px-6 py-3">College Name</th>
                                         <th scope="col" className="px-6 py-3"></th>
+                                        {key === "lmsapp" && (
+                                            <th scope="col" className="px-6 py-3"></th>
+                                        )}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -144,9 +147,11 @@ const AdminSearchCollegeStaff = () => {
                                             <td className="p-4 whitespace-nowrap">
                                                 <button className="btn btn-primary mt-3" onClick={() => updateClick(staff.id)}>Update</button>
                                             </td>
-                                            <td className="p-4 whitespace-nowrap">
-                                                <button className="btn btn-danger mt-3" onClick={() => deleteStaff(staff.id)}>Delete</button>
-                                            </td>
+                                            {key === "lmsapp" && (
+                                                <td className="p-4 whitespace-nowrap">
+                                                    <button className="btn btn-danger mt-3" onClick={() => deleteStaff(staff.id)}>Delete</button>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>
