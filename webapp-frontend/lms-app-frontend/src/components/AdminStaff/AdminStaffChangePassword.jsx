@@ -55,7 +55,6 @@ const AdminStaffChangePassword = () => {
     }
     return (
         <div>
-            <AdmStaffNavBar/>
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
@@ -90,7 +89,7 @@ const AdminStaffChangePassword = () => {
                                             </div>
                                             <br></br>
                                             <div className="mb-3">
-                                                <Link className="btn btn-danger" to="#">Back</Link>
+                                                <Link className="btn btn-danger" to="/admstaffdashboard">Back</Link>
                                             </div>
                                         </ul>
                                     </div>

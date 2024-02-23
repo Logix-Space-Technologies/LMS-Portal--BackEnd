@@ -20,7 +20,6 @@ const AdminCountView = () => {
         axios.post(apiUrl, {}, axiosConfig).then(
             (Response) => {
                 setCollegeData(Response.data.data)
-                console.log(Response.data.data)
             }
         )
     }

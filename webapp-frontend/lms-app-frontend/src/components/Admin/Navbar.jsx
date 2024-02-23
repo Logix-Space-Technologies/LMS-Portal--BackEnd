@@ -24,73 +24,57 @@ const Navbar = () => {
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
                         <li className="nav-item">
-                            <Link className="nav-link active" aria-current="page" to="/addAdminStaff">Add Admin Staff</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/addcollege">Add College</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/addcollegestaff">Add College Staff</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/adminsearchadminstaff">Search Admin Staff</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/adminsearchcurriculum">Search Curriculum</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/adminsearchtask">Search Tasks</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/adminaddbatch">Add Batch</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/adminviewadstafflog">View AdStaffLog</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/adminaddsession">Add Session</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/adminviewallclgstaff">View College Staff</Link>
-                        </li>
-                        <li className="nav-item">
                             <Link className="nav-link" to="/admdashboard">Admin Dashboard</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/adminSearchClg">Search College</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/adminSearchBatch">Search Batches</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/adminAddtask">Add Task</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/adminSearchTrainers">Search Trainers</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/adminAddcurriculum">Add Curriculum</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/adminAddtrainer">Add Trainers</Link>
+                            <Link className="nav-link" to="/AdminSendNotification">Send notifications</Link>
                         </li>
                         <li className="nav-item dropdown">
                             <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Functionalities
+                                Add
+                            </Link>
+                            <ul className="dropdown-menu">
+                                <li><Link className="dropdown-item" to="/addAdminStaff">Add Admin Staff</Link></li>
+                                <li><Link className="dropdown-item" to="/addcollege">Add College</Link></li>
+                                <li><Link className="dropdown-item" to="/addcollegestaff">Add College Staff</Link></li>
+                                <li><Link className="dropdown-item" to="/adminaddbatch">Add Batch</Link></li>
+                                <li><Link className="dropdown-item" to="/adminaddsession">Add Session</Link></li>
+                                <li><Link className="dropdown-item" to="/adminAddtask">Add Task</Link></li>
+                                <li><Link className="dropdown-item" to="/adminAddcurriculum">Add Curriculum</Link></li>
+                                <li><Link className="dropdown-item" to="/adminAddtrainer">Add Trainers</Link></li>
+                            </ul>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                View
                             </Link>
                             <ul className="dropdown-menu">
                                 <li><Link className="dropdown-item" to="/adminviewallcollege">View All College</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
-                                <li><Link className="dropdown-item" to="/adminsearchstudent">Search Student</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewCollegeStaffLog">View College Staff Log</Link></li>
                                 <li><Link className="dropdown-item" to="/AdminViewRefundRequests">View Refund Requests</Link></li>
                                 <li><Link className="dropdown-item" to="/AdminViewStudentLog">View student log</Link></li>
-                                <li><Link className="dropdown-item" to="/AdminSearchSessionDetails">Search session details</Link></li>
-                                <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search college staffs</Link></li>
                                 <li><Link className="dropdown-item" to="/AdminViewAllAdminStaff">View admin staffs</Link></li>
-                                <li><Link className="dropdown-item" to="/AdminSendNotification">Send notifications</Link></li>
                                 <li><Link className="dropdown-item" to="/adminViewlog">View Admin Logs</Link></li>
                                 <li><Link className="dropdown-item" to="/adminViewSuccessfulrefunds">View Successful Refunds</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewadstafflog">View AdStaffLog</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewallclgstaff">View College Staff</Link></li>
+                            </ul>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Search
+                            </Link>
+                            <ul className="dropdown-menu">
+                                <li><Link className="dropdown-item" to="/adminsearchadminstaff">Search Admin Staff</Link></li>
+                                <li><Link className="dropdown-item" to="/adminsearchcurriculum">Search Curriculum</Link></li>
+                                <li><Link className="dropdown-item" to="/adminsearchtask">Search Tasks</Link></li>
+                                <li><Link className="dropdown-item" to="/adminSearchClg">Search College</Link></li>
+                                <li><Link className="dropdown-item" to="/adminSearchBatch">Search Batches</Link></li>
+                                <li><Link className="dropdown-item" to="/adminSearchTrainers">Search Trainers</Link></li>
+                                <li><Link className="dropdown-item" to="/adminsearchstudent">Search Student</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminSearchSessionDetails">Search session details</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search college staffs</Link></li>
                             </ul>
                         </li>
                         <li className="nav-item">

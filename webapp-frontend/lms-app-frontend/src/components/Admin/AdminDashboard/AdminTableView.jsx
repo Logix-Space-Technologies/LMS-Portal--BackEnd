@@ -45,12 +45,12 @@ const AdminTableView = () => {
                             </thead>
                             <tbody>
                                 {batchData.map(
-                                    (value, index) => (
-                                        <tr key={index}>
+                                    (value, index) => {
+                                        return <tr key={index}>
                                             <td>{value.collegeName}</td>
                                             <td>{value.numberOfBatches}</td>
                                         </tr>
-                                    ))}
+                                    })}
                             </tbody>
                         </table>
                     </div>
@@ -71,12 +71,12 @@ const AdminTableView = () => {
                             </thead>
                             <tbody>
                                 {studData.map(
-                                    (value, index) => (
-                                        <tr key={index}>
+                                    (value, index) => {
+                                        return <tr key={index}>
                                             <td>{value.collegeName}</td>
                                             <td>{value.noofstudents}</td>
                                         </tr>
-                                    ))}
+                                    })}
                             </tbody>
                         </table>
                     </div>

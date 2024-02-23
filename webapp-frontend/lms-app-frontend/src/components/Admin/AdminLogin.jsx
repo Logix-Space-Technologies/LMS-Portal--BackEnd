@@ -5,7 +5,10 @@ import '../../config/config'
 
 const AdminLogin = () => {
     const [inputField, setInputField] = useState(
-        { userName: "", Password: "" }
+        {
+            "userName": "",
+            "Password": ""
+        }
     )
 
     const [errors, setErrors] = useState({});
@@ -25,7 +28,7 @@ const AdminLogin = () => {
         }
         if (!inputField.Password.trim()) {
             newErrors.Password = "Password is required!";
-        } 
+        }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
@@ -95,10 +98,6 @@ const AdminLogin = () => {
                             <div>
                                 <Link to='/studentLogin'>Student Login</Link>
                             </div>
-
-                            {/* <div class="mb-3">
-                                <p class="lead ">Don't have an account? <a href="/register">Register here</a></p>
-                            </div> */}
                         </div>
 
                         <div class="card-footer text-muted">

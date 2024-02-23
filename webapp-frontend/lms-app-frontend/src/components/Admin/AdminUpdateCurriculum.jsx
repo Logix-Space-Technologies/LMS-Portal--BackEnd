@@ -21,6 +21,7 @@ const AdminUpdateCurriculum = () => {
     const apiURL = global.config.urls.api.server + "/api/lms/viewOneCurriculum";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/updatecurriculum";
     const navigate = useNavigate()
+    const [key, setKey] = useState('');
 
     const updateHandler = (event) => {
         setUpdateField({ ...updateField, [event.target.name]: event.target.value })
@@ -32,7 +33,7 @@ const AdminUpdateCurriculum = () => {
         if (file) {
             const isSizeValid = file.size <= 2097152; // 2MB in bytes
             const isTypeValid = file.type === "application/pdf";
-    
+
             if (isSizeValid && isTypeValid) {
                 setFile(file);
                 setFileValidationMessage('');
@@ -48,9 +49,16 @@ const AdminUpdateCurriculum = () => {
             setFileValidationMessage("Please upload a file.");
         }
     };
-    
+
 
     const readNewValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         if (!file) {
             setFileValidationMessage("Please upload a file.");
             return;
@@ -63,8 +71,8 @@ const AdminUpdateCurriculum = () => {
             headers: {
                 'content-type': 'multipart/form-data',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         let data = {
@@ -129,16 +137,23 @@ const AdminUpdateCurriculum = () => {
             console.log(error.config);
         })
     }
-    
+
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "id": sessionStorage.getItem("curriculumId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         axios.post(apiURL, data, axiosConfig).then(
@@ -152,12 +167,14 @@ const AdminUpdateCurriculum = () => {
 
     useEffect(() => { getData() }, [])
 
-    return (
-        <div><Navbar />
-            <div className="container">
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
 
-                <br />
-                <strong>Admin Update Curriculum</strong><br /><br />
+    return (
+        <div>
+            <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
                         <br></br>
@@ -196,15 +213,15 @@ const AdminUpdateCurriculum = () => {
                                             </div>
                                             <br></br>
                                             <div class="mb-3">
-                                                <a class="btn btn-danger" href="/adminviewallcurriculum">Back</a>
+                                                <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
                                             </div>
                                         </ul>
 
                                         <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                        <li><Link to="#!"><i className="ti-twitter-alt" /></Link></li>
-                                        <li><Link to="#!"><i className="ti-facebook" /></Link></li>
-                                        <li><Link to="#!"><i className="ti-pinterest" /></Link></li>
-                                        <li><Link to="#!"><i className="ti-instagram" /></Link></li>
+                                            <li><Link to="#!"><i className="ti-twitter-alt" /></Link></li>
+                                            <li><Link to="#!"><i className="ti-facebook" /></Link></li>
+                                            <li><Link to="#!"><i className="ti-pinterest" /></Link></li>
+                                            <li><Link to="#!"><i className="ti-instagram" /></Link></li>
                                         </ul>
                                     </div>
                                 </div>
