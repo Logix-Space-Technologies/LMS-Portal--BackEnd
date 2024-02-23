@@ -88,6 +88,11 @@ const AdminSearchSessionDetails = () => {
         });
     }
 
+    function formatTime(timeString) {
+        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+        return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
+    }
+
     // Update key state when component mounts
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
@@ -105,7 +110,7 @@ const AdminSearchSessionDetails = () => {
                             </div>
                             <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
                                 <div className="input-group mb-3"> {/* Use an input group */}
-                                    <input onChange={inputHandler} type="text" className="form-control" name="SessionSearchQuery" value={inputField.SessionSearchQuery} />
+                                    <input onChange={inputHandler} type="text" className="form-control" name="SessionSearchQuery" value={inputField.SessionSearchQuery} placeholder='Batch Name/College Name/Trainer Name' />
                                     <button onClick={readValue} className="btn btn-warning ms-2">Search</button>
                                 </div>
                             </div>
@@ -127,16 +132,14 @@ const AdminSearchSessionDetails = () => {
                                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                                 <tr>
                                                     <th scope="col" className="px-6 py-3">Session Name</th>
-                                                    <th scope="col" className="px-6 py-3">ID</th>
                                                     <th scope="col" className="px-6 py-3">Date</th>
                                                     <th scope="col" className="px-6 py-3">Time</th>
                                                     <th scope="col" className="px-6 py-3">Type</th>
                                                     <th scope="col" className="px-6 py-3">Remarks</th>
                                                     <th scope="col" className="px-6 py-3">Venue/Link</th>
-                                                    <th scope="col" className="px-6 py-3">Trainer ID</th>
+                                                    <th scope="col" className="px-6 py-3">Trainer Name</th>
                                                     <th scope="col" className="px-6 py-3">Attendance Code</th>
-                                                    <th scope="col" className="px-6 py-3">Added Date</th>
-                                                    <th scope="col" className="px-6 py-3">Updated Date</th>
+                                                    <th scope="col" className="px-6 py-3">Cancel Status</th>
                                                     <th scope="col" className="px-6 py-3"></th>
                                                     <th scope="col" className="px-6 py-3"></th>
                                                 </tr>
@@ -146,21 +149,19 @@ const AdminSearchSessionDetails = () => {
                                                 {currentSession.map((value) => (
                                                     <tr key={value.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                                         <td className="px-6 py-4">{value.sessionName}</td>
-                                                        <td className="px-6 py-4">{value.id}</td>
                                                         <td className="px-6 py-4">{value.date}</td>
-                                                        <td className="px-6 py-4">{value.time}</td>
+                                                        <td className="px-6 py-4">{formatTime(value.time)}</td>
                                                         <td className="px-6 py-4">{value.type}</td>
                                                         <td className="px-6 py-4">{value.remarks}</td>
                                                         <td className="px-6 py-4">{value.venueORlink}</td>
-                                                        <td className="px-6 py-4">{value.trainerId}</td>
+                                                        <td className="px-6 py-4">{value.trainerName}</td>
                                                         <td className="px-6 py-4">{value.attendenceCode}</td>
-                                                        <td className="px-6 py-4">{value.addedDate}</td>
-                                                        <td className="px-6 py-4">{value.updatedDate}</td>
+                                                        <td className="px-6 py-4">{value.cancelStatus}</td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                             {key === "lmsapp" && (
-                                                            <button onClick={() => deleteSession(value.id)} className="btn btn-danger mt-3">Delete</button>
-                                                             )}
-                                                            </td>
+                                                            {key === "lmsapp" && (
+                                                                <button onClick={() => deleteSession(value.id)} className="btn btn-danger mt-3">Delete</button>
+                                                            )}
+                                                        </td>
                                                         <td className="p-4 whitespace-nowrap">
 
                                                         </td>
