@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import '../../config/config';
 
 const AdminViewAllClgStaff = () => {
   const [clgStaffData, setClgStaffData] = useState([]);

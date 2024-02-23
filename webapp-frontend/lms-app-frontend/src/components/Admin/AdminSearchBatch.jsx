@@ -1,38 +1,32 @@
-import React, { useEffect, useState } from 'react'
-import Navbar from './Navbar'
-import axios from 'axios'
-import '../../config/config'
-import { useNavigate } from 'react-router-dom'
-import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import Navbar from './Navbar';
+import '../../config/config';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminSearchBatch = () => {
-
-    const navigate = useNavigate()
-
-    const [inputField, setInputField] = useState(
-        {
-            "batchQuery": ""
-        }
-    )
-
+    const [inputField, setInputField] = useState({
+        batchQuery: ""
+    });
+    const [batches, setBatches] = useState([]);
+    const [searchExecuted, setSearchExecuted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [deleteId, setDeleteId] = useState(null);
+    const [batchesPerPage] = useState(10); // Number of batches per page
     const [key, setKey] = useState('');
 
-    const [updateField, setUpdateField] = useState([])
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const [collegesPerPage] = useState(10); // Number of students per page
-
-    const [isLoading, setIsLoading] = useState(true)
-
-    const apiUrl = global.config.urls.api.server + "/api/lms/searchBatch"
-
-    const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch"
+    const apiUrl = global.config.urls.api.server + '/api/lms/searchBatch';
+    const deleteUrl = global.config.urls.api.server + '/api/lms/deleteBatch';
 
     const inputHandler = (event) => {
-        setInputField({ ...inputField, [event.target.name]: event.target.value })
-    }
+        const { name, value } = event.target;
+        setInputField({ ...inputField, [name]: value });
+    };
 
-    const readValue = () => {
+    const searchBatches = () => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
         if (currentKey !== 'lmsapp') {
@@ -40,76 +34,66 @@ const AdminSearchBatch = () => {
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        console.log(inputField)
-        let axiosConfig = {
+        setIsLoading(true);
+        const axiosConfig = {
             headers: {
-                'content-type': 'application/json;charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
                 "token": token,
                 "key": currentKey
             }
-        }
-        axios.post(apiUrl, inputField, axiosConfig).then(
-            (response) => {
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                console.log(response.data.data)
-                setInputField(
-                    {
-                        "batchQuery": ""
-                    }
-                )
-            }
-        )
-    }
+        };
+        axios.post(apiUrl, inputField, axiosConfig)
+            .then(response => {
+                setBatches(response.data.data);
+                setInputField({ batchQuery: "" })
+                setIsLoading(false);
+                setSearchExecuted(true);
+            })
+            .catch(error => {
+                console.error("Search failed:", error);
+                setIsLoading(false);
+            });
+    };
 
-    const deleteClick = (id) => {
-        let deletedata = { "id": id }
-        let axiosConfig2 = {
+    const deleteBatch = (id) => {
+        const axiosConfig = {
             headers: {
-                'content-type': 'application/json;charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
                 "token": sessionStorage.getItem("admtoken"),
                 "key": sessionStorage.getItem("admkey")
             }
-        }
-        axios.post(apiUrl2, deletedata, axiosConfig2).then(
-            (response) => {
-                console.log(deletedata)
-                if (response.data.status === "Batch Deleted.") {
-                    alert("Batch Deleted Successfully!!")
-                    window.location.reload();
-                } else {
-                    alert(response.data.status)
-                }
-            }
-        )
-    }
+        };
+        axios.post(deleteUrl, { id }, axiosConfig)
+            .then(() => {
+                alert("Batch deleted successfully");
+                searchBatches();
+            })
+            .catch(error => {
+                console.error("Delete failed:", error);
+            })
+            .finally(() => setIsLoading(false));
+    };
 
-    // Logic for displaying current students
-    const indexOfLastStudent = currentPage * collegesPerPage;
-    const indexOfFirstStudent = indexOfLastStudent - collegesPerPage;
-    const currentBatches = updateField ? updateField.slice(indexOfFirstStudent, indexOfLastStudent) : [];
+    const handleUpdateClick = (batchId) => {
+        sessionStorage.setItem("batchId", batchId);
+        navigate("/adminupdatebatch");
+    };
 
+    const handleClick = (id) => {
+        setDeleteId(id);
+    };
 
-    // Change page
+    const handleDeleteClick = () => {
+        deleteBatch(deleteId);
+    };
+
+    const indexOfLastBatch = currentPage * batchesPerPage;
+    const indexOfFirstBatch = indexOfLastBatch - batchesPerPage;
+    const currentBatches = batches ? batches.slice(indexOfFirstBatch, indexOfLastBatch) : [];
+
     const paginate = pageNumber => setCurrentPage(pageNumber);
-
-    // Total pages
-    const pageNumbers = [];
-    if (updateField && updateField.length > 0) {
-        updateField.forEach((student, index) => {
-            const pageNumber = index + 1;
-            pageNumbers.push(pageNumber);
-        });
-    }
-
-    const UpdateClick = (id) => {
-        let data = id
-        sessionStorage.setItem("batchId", data)
-        navigate("/adminupdatebatch")
-
-    }
 
     // Update key state when component mounts
     useEffect(() => {
@@ -118,83 +102,77 @@ const AdminSearchBatch = () => {
 
     return (
         <div>
-            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
-            <div className="container">
-                <div className="row">
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                        <div className="row g-3">
-                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <h1>Search Batches</h1>
-                            </div>
-                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} placeholder='Batch Name/College Name/Batch Description' />
-                            </div>
-                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <button onClick={readValue} className="btn btn-warning">Search</button>
-                            </div>
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />} <br />
+            <div className="container py-5">
+                <h1 className="mb-4 text-center">Admin Search Batches</h1>
+                <div className="row mb-3">
+                    <div className="col">
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Search by batch name, college name, or description..."
+                                value={inputField.batchQuery}
+                                onChange={inputHandler}
+                                name="batchQuery"
+                            />
                         </div>
+                        <br></br>
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            <button onClick={searchBatches} className="btn btn-warning">Search</button>
+                        </div>
+                        <br />
                     </div>
                 </div>
                 {isLoading ? (
-                    <div className="col-12 text-center">
-                        <p></p>
-                    </div>
-                ) : (updateField ? (
-                    //start
-                    <div>
-                        <br />
-                        <br /><br />
-                        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                {/* Table headers */}
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
-                                        <th scope="col" className="px-6 py-3">S/N</th>
-                                        <th scope="col" className="px-6 py-3">College Name</th>
-                                        <th scope="col" className="px-6 py-3">Batch Name</th>
-                                        <th scope="col" className="px-6 py-3">Batch Description</th>
-                                        <th scope="col" className="px-6 py-3">Registration Start Date</th>
-                                        <th scope="col" className="px-6 py-3">Registration End Date</th>
-                                        <th scope="col" className="px-6 py-3">Batch Amount</th>
-                                        <th scope="col" className="px-6 py-3"></th>
-                                        {key === "lmsapp" && (
-                                            <th scope="col" className="px-6 py-3"></th>
-                                        )}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {/* Table rows */}
-                                    {/* Table rows */}
-                                    {currentBatches.map((value, index) => (
-                                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td className="px-6 py-4">{index+1}</td>
-                                            <td className="px-6 py-4">{value.collegeName}</td> {/* Corrected closing tag */}
-                                            <td className="px-6 py-4">{value.batchName}</td>
-                                            <td className="px-6 py-4">{value.batchDesc}</td>
-                                            <td className="px-6 py-4">{value.regStartDate}</td>
-                                            <td className="px-6 py-4">{value.regEndDate}</td>
-                                            <td className="px-6 py-4">{value.batchAmount}</td>
-                                            <td className="p-4 whitespace-nowrap">
-                                                <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
-                                            </td>
-                                            {key === "lmsapp" && (
-                                                <td className="p-4 whitespace-nowrap">
-                                                    <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
-                                                </td>
-                                            )}
-                                        </tr>
-                                    ))}
-
-                                </tbody>
-                            </table>
+                    <div className="text-center">
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Loading...</span>
                         </div>
                     </div>
-                    //end
-
-                ) : (
-                    <div className="col-12 text-center">No Batches Found!!</div>
-                ))}
-
+                ) : (searchExecuted && batches ? (
+                    <div className="table-responsive">
+                        <table className="table table-hover">
+                            <thead className="table-light">
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>College Name</th>
+                                    <th>Batch Name</th>
+                                    <th>Batch Description</th>
+                                    <th>Registration Start Date</th>
+                                    <th>Registration End Date</th>
+                                    <th>Batch Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {currentBatches.map((batch, index) => (
+                                    <tr key={batch.id}>
+                                        <td>{index + 1}</td>
+                                        <td>{batch.collegeName}</td>
+                                        <td>{batch.batchName}</td>
+                                        <td>{batch.batchDesc}</td>
+                                        <td>{batch.regStartDate}</td>
+                                        <td>{batch.regEndDate}</td>
+                                        <td>{batch.batchAmount}</td>
+                                        <td>
+                                            <button onClick={() => handleUpdateClick(batch.id)} className="btn btn-primary btn-sm me-2">Update</button>
+                                            {key === "lmsapp" && (
+                                                <button type="button" className="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" onClick={() => handleClick(batch.id)}>Delete</button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (searchExecuted && !batches ? (
+                    <div className="alert alert-info" role="alert">
+                        No batches found.
+                    </div>
+                ) : null))}
+            </div>
+            {currentBatches.length > 0 && (
                 <div className="flex justify-center mt-8">
                     <nav>
                         <ul className="flex list-style-none">
@@ -203,12 +181,12 @@ const AdminSearchBatch = () => {
                                     Previous
                                 </li>
                             )}
-                            {pageNumbers.map(number => (
-                                <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                                    {number}
+                            {Array.from({ length: Math.ceil(batches.length / batchesPerPage) }, (_, i) => (
+                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                    {i + 1}
                                 </li>
                             ))}
-                            {currentPage < pageNumbers.length && (
+                            {currentPage < Math.ceil(batches.length / batchesPerPage) && (
                                 <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
                                     Next
                                 </li>
@@ -216,9 +194,26 @@ const AdminSearchBatch = () => {
                         </ul>
                     </nav>
                 </div>
+            )}
+            <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            Are you sure you want to delete this batch?
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleDeleteClick}>Delete</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div >
-    )
-}
+        </div>
+    );
+};
 
-export default AdminSearchBatch
+export default AdminSearchBatch;
