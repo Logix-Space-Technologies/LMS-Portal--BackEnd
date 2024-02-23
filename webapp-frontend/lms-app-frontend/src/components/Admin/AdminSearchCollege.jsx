@@ -127,8 +127,7 @@ const AdminSearchCollege = () => {
                                 <h1>Search College</h1>
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <label htmlFor="" className="form-label">College Name/College Address/Website/Email/College Contact Number</label>
-                                <input onChange={inputHandler} type="text" className="form-control" name="collegeSearchQuery" value={inputField.collegeSearchQuery} />
+                                <input onChange={inputHandler} type="text" className="form-control" name="collegeSearchQuery" value={inputField.collegeSearchQuery} placeholder='College Name/College Address/Website/Email/College Contact Number' />
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                 <button onClick={readValue} className="btn btn-warning">Search</button>
@@ -151,6 +150,7 @@ const AdminSearchCollege = () => {
                                 {/* Table headers */}
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
+                                        <th scope="col" className="px-6 py-3">S/N</th>
                                         <th scope="col" className="px-6 py-3"></th>
                                         <th scope="col" className="px-6 py-3">College Name</th>
                                         <th scope="col" className="px-6 py-3">College Address</th>
@@ -168,6 +168,7 @@ const AdminSearchCollege = () => {
                                     {/* Table rows */}
                                     {currentColleges.map((value, index) => (
                                         <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                            <td className="px-6 py-4">{index+1}</td>
                                             <td className="p-4 whitespace-nowrap">
                                                 <div className="flex items-center">
                                                     <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">

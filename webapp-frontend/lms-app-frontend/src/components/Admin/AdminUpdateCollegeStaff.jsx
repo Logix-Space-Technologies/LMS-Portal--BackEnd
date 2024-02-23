@@ -6,6 +6,7 @@ import '../../config/config'
 const AdminUpdateCollegeStaff = () => {
 
     const [clgStaffData, setClgStaffData] = useState([])
+    const [key, setKey] = useState('');
     const [file, setFile] = useState("")
     const [fileValidationMessage, setFileValidationMessage] = useState('');
     const [updateField, setUpdateField] = useState({
@@ -52,6 +53,13 @@ const AdminUpdateCollegeStaff = () => {
     };
 
     const readNewValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         if (!file) {
             setFileValidationMessage("Please upload an image.");
             return;
@@ -64,8 +72,8 @@ const AdminUpdateCollegeStaff = () => {
             headers: {
                 'content-type': 'multipart/form-data',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         let data = {
@@ -155,13 +163,20 @@ const AdminUpdateCollegeStaff = () => {
     }
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "id": sessionStorage.getItem("clgStaffId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         axios.post(apiUrl2, data, axiosConfig).then(
@@ -177,6 +192,10 @@ const AdminUpdateCollegeStaff = () => {
         getData()
     }, [])
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div className="container">
             <div className="row">
@@ -239,7 +258,7 @@ const AdminUpdateCollegeStaff = () => {
                                         </div>
                                         <br></br>
                                         <div class="mb-3">
-                                            <a class="btn btn-danger" href="/adminviewallclgstaff">Back</a>
+                                            <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
                                         </div>
                                     </ul>
 

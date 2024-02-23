@@ -1,6 +1,7 @@
 const db = require("../models/db");
 const { response, request } = require("express")
 const bcrypt = require("bcrypt")
+const crypto = require("crypto")
 
 const { StudentLog, logStudent } = require("../models/studentLog.model");
 
@@ -542,7 +543,7 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
 
 // View All Students By Admin
 Student.viewAllStudentByAdmin = (batchId, result) => {
-    db.query("SELECT c.collegeName, b.batchName,s.id, s.batchId ,s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity, CASE WHEN cm.studentId IS NOT NULL THEN TRUE ELSE FALSE END AS communityManager FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id LEFT JOIN communitymanagers cm ON s.id = cm.studentId WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND s.batchId = ? ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity  ",
+    db.query("SELECT cm.id AS commManagerId, c.collegeName, b.batchName,s.id, s.batchId ,s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity, CASE WHEN cm.studentId IS NOT NULL AND cm.deleteStatus = 0 AND cm.isActive = 1 THEN TRUE ELSE FALSE END AS communityManager FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id LEFT JOIN communitymanagers cm ON s.id = cm.studentId WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND s.batchId = ? ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity",
         [batchId],
         (err, response) => {
             if (err) {
@@ -944,12 +945,20 @@ Student.viewBatchAmount = (batchId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Batch Details: ", res);
-                result(null, res[0].batchAmount);
+                if (res.length === 0) {
+                    // No batch found with the specified batchId
+                    console.log("Batch not found");
+                    result(null, null);
+                } else {
+                    // Batch found, return the batch amount
+                    console.log("Batch Details: ", res);
+                    result(null, res[0].batchAmount);
+                }
             }
         }
     );
 };
+
 
 Payment.viewStudentTransactions = (studId, result) => {
     db.query(
@@ -1040,6 +1049,56 @@ SubmitTask.studentviewsubmittedtask = (id, result) => {
 }
 
 
+// Function to generate and hash OTP
+Student.generateAndHashOTP = (studEmail, result) => {
+    // Generate a 6-digit numeric OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const saltRounds = 10;
+    const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
+
+    // Insert the hashed OTP into the `student_otp` table
+    const query = "INSERT INTO student_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+    db.query(query, [studEmail, hashedOTP], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            return result(null, otp); // Return the plain OTP for email sending
+        }
+    });
+};
+
+
+// Function to verify OTP
+Student.verifyOTP = (studEmail, otp, result) => {
+    const query = "SELECT otp, createdAt FROM student_otp WHERE email = ?";
+    db.query(query, [studEmail], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            if (res.length > 0) {
+                const studotp = res[0].otp;
+                const createdAt = res[0].createdAt;
+                // Check if OTP is expired
+                const expiryDuration = 10 *60 * 1000; // 10 minute in milliseconds
+                const otpCreatedAt = new Date(createdAt).getTime();
+                const currentTime = new Date().getTime();
+                if (currentTime - otpCreatedAt > expiryDuration) {
+                    return result("OTP expired", null);
+                }
+                
+                // If OTP not expired, proceed to compare
+                const isMatch = bcrypt.compareSync(otp,studotp);
+                if (isMatch) {
+                    return result(null, true);
+                } else {
+                    return result(null, false);
+                }
+            } else {
+                return result("OTP not found or expired", null);
+            }
+        }
+    });
+};
 
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 

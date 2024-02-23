@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import axios from 'axios'
 import '../../config/config'
 import { useNavigate } from 'react-router-dom'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminSearchBatch = () => {
 
@@ -13,6 +14,8 @@ const AdminSearchBatch = () => {
             "batchQuery": ""
         }
     )
+
+    const [key, setKey] = useState('');
 
     const [updateField, setUpdateField] = useState([])
 
@@ -30,13 +33,20 @@ const AdminSearchBatch = () => {
     }
 
     const readValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         console.log(inputField)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         axios.post(apiUrl, inputField, axiosConfig).then(
@@ -101,9 +111,14 @@ const AdminSearchBatch = () => {
 
     }
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
     return (
         <div>
-            <Navbar /><br />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -112,8 +127,7 @@ const AdminSearchBatch = () => {
                                 <h1>Search Batches</h1>
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <label htmlFor="" className="form-label">Batch Name/College Name/Batch Description</label>
-                                <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} />
+                                <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} placeholder='Batch Name/College Name/Batch Description' />
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                 <button onClick={readValue} className="btn btn-warning">Search</button>
@@ -135,6 +149,7 @@ const AdminSearchBatch = () => {
                                 {/* Table headers */}
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
+                                        <th scope="col" className="px-6 py-3">S/N</th>
                                         <th scope="col" className="px-6 py-3">College Name</th>
                                         <th scope="col" className="px-6 py-3">Batch Name</th>
                                         <th scope="col" className="px-6 py-3">Batch Description</th>
@@ -142,7 +157,9 @@ const AdminSearchBatch = () => {
                                         <th scope="col" className="px-6 py-3">Registration End Date</th>
                                         <th scope="col" className="px-6 py-3">Batch Amount</th>
                                         <th scope="col" className="px-6 py-3"></th>
-                                        <th scope="col" className="px-6 py-3"></th>
+                                        {key === "lmsapp" && (
+                                            <th scope="col" className="px-6 py-3"></th>
+                                        )}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -150,6 +167,7 @@ const AdminSearchBatch = () => {
                                     {/* Table rows */}
                                     {currentBatches.map((value, index) => (
                                         <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                            <td className="px-6 py-4">{index+1}</td>
                                             <td className="px-6 py-4">{value.collegeName}</td> {/* Corrected closing tag */}
                                             <td className="px-6 py-4">{value.batchName}</td>
                                             <td className="px-6 py-4">{value.batchDesc}</td>
@@ -159,9 +177,11 @@ const AdminSearchBatch = () => {
                                             <td className="p-4 whitespace-nowrap">
                                                 <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Update</button>
                                             </td>
-                                            <td className="p-4 whitespace-nowrap">
-                                                <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
-                                            </td>
+                                            {key === "lmsapp" && (
+                                                <td className="p-4 whitespace-nowrap">
+                                                    <button onClick={() => deleteClick(value.id)} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
 

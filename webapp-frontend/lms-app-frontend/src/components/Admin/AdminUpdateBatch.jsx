@@ -18,6 +18,8 @@ const AdminUpdateBatch = () => {
         "batchAmount": ""
     })
 
+    const [key, setKey] = useState('');
+
     const apiURL = global.config.urls.api.server + "/api/lms/viewonebatch";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/updateBatch";
 
@@ -28,12 +30,19 @@ const AdminUpdateBatch = () => {
     }
 
     const readNewValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
         let data = {
@@ -88,6 +97,13 @@ const AdminUpdateBatch = () => {
     }
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         // let newErrors = {};
         // if (!updateField.regStartDate || !updateField.regStartDate.trim()) {
         //     newErrors.regStartDate = "Registration start date is required!";
@@ -107,12 +123,13 @@ const AdminUpdateBatch = () => {
         // }
 
         let data = { "id": sessionStorage.getItem("batchId") }
+        console.log(data)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
 
@@ -140,9 +157,12 @@ const AdminUpdateBatch = () => {
     useEffect(() => { getData() }, [])
 
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <>
-            <Navbar />
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">

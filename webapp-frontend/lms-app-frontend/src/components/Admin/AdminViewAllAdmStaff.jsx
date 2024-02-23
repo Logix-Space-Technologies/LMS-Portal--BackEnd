@@ -8,6 +8,7 @@ const AdminViewAllAdminStaff = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [adminStaffPerPage] = useState(10); // Number of admin staff per page
   const navigate = useNavigate();
+  const [deleteClgStaff, setDeleteClgStaff] = useState({})
   const apiUrl = global.config.urls.api.server + "/api/lms/viewalladmstaff";
 
   const getData = () => {
@@ -29,7 +30,8 @@ const AdminViewAllAdminStaff = () => {
       });
   };
 
-  const handleDeleteClick = (id) => {
+  const handleDeleteClick = () => {
+    let id = deleteClgStaff
     const deleteUrl = global.config.urls.api.server + "/api/lms/deleteadmstaff";
     const axiosConfig = {
       headers: {
@@ -38,10 +40,10 @@ const AdminViewAllAdminStaff = () => {
         "token": sessionStorage.getItem("admtoken"),
       },
     };
-
     axios.post(deleteUrl, { id }, axiosConfig)
       .then((response) => {
         if (response.data.status === "Admin Staff Deleted.") {
+          alert("Admin staff deleted!")
           // Refresh the data after deletion
           getData();
         } else {
@@ -68,6 +70,11 @@ const AdminViewAllAdminStaff = () => {
     navigate("/adminupdateadminstaff")
   }
 
+  const readValue = (id) => {
+    setDeleteClgStaff(id)
+    console.log(id)
+  };
+
   useEffect(() => {
     getData();
   }, []);
@@ -81,7 +88,7 @@ const AdminViewAllAdminStaff = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone No.</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
@@ -93,9 +100,9 @@ const AdminViewAllAdminStaff = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentAdminStaff.map((value, index) => (
+              {currentAdminStaff.length > 0 ? currentAdminStaff.map((value, index) => (
                 <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap">{value.id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{index+1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.AdStaffName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.PhNo}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.Address}</td>
@@ -103,15 +110,40 @@ const AdminViewAllAdminStaff = () => {
                   <td className="px-6 py-4 whitespace-nowrap">{value.Email}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.addedDate}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full" onClick={() => handleDeleteClick(value.id)}>Delete</button>
+                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"  data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => { readValue(value.id) }}>Delete</button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onClick={() => updateClick(value.id)}>Update</button>
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  <td colSpan="15" className="px-6 py-4" style={{ textAlign: "center" }}>
+                    No Admin Staff Found !!!
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
+          <div className="row">
+            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to delete this college?</h5>
+                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div className="modal-body">
+                    <p>This action cannot be undone.</p>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No, cancel</button>
+                    <button onClick={() => handleDeleteClick()} type="button" className="btn btn-danger" data-bs-dismiss="modal">Yes, I'm sure</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           {/* Pagination */}
           <div className="flex justify-center mt-8">
             <nav>
@@ -135,3 +167,6 @@ const AdminViewAllAdminStaff = () => {
 };
 
 export default AdminViewAllAdminStaff
+
+
+

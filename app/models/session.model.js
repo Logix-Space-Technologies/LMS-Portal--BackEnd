@@ -250,7 +250,7 @@ Session.deleteSession = (sessionId, result) => {
 // Code for Searching the Session
 Session.searchSession = (search, result) => {
     const searchTerm = '%' + search + '%'
-    db.query("SELECT s.id, s.batchId, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, s.trainerId, s.attendenceCode, s.addedDate, s.updatedDate FROM sessiondetails s JOIN batches b ON s.batchId = b.id JOIN trainersinfo t ON s.trainerId = t.id JOIN college c ON b.collegeId = c.id WHERE s.isActive = 1 AND s.deleteStatus = 0  AND c.isActive = 1 AND c.deleteStatus = 0 AND  (b.batchName LIKE ? OR c.collegeName LIKE  ? OR t.trainerName LIKE ? )",
+    db.query("SELECT c.collegeName, s.id, b.batchName, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, t.trainerName, s.attendenceCode, CASE WHEN cancelStatus = 0 THEN 'ACTIVE' WHEN cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN batches b ON s.batchId = b.id JOIN trainersinfo t ON s.trainerId = t.id JOIN college c ON b.collegeId = c.id WHERE s.isActive = 1 AND s.deleteStatus = 0  AND c.isActive = 1 AND c.deleteStatus = 0 AND  (b.batchName LIKE ? OR c.collegeName LIKE  ? OR t.trainerName LIKE ? )",
         [searchTerm, searchTerm, searchTerm],
         (err, res) => {
             if (err) {
@@ -258,8 +258,10 @@ Session.searchSession = (search, result) => {
                 result(err, null)
                 result
             } else {
-                console.log("Session  Details : ", res)
-                result(null, res)
+                // Format the date for each session
+                const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }));
+                console.log("Session  Details : ", formattedSessions)
+                result(null, formattedSessions)
             }
         })
 }
@@ -321,18 +323,18 @@ Session.fetchAttendenceCode = (attendenceCode, result) => {
 
 Session.CheckIsTodaySessionAvailable = (result) => {
     db.query("SELECT * FROM sessiondetails WHERE cancelStatus = 0 AND deleteStatus = 0 AND isActive = 1 AND date = CURRENT_DATE()", (err, res) => {
-            if (err) {
-                console.log("Error : ", err)
-                result(err, null)
-                return
-            }
-            if (res.length === 0) {
-                console.log("Session Not Found")
-                result("Session Not Found", null)
-                return
-            }
-            result(null, res)
-        })
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            return
+        }
+        if (res.length === 0) {
+            console.log("Session Not Found")
+            result("Session Not Found", null)
+            return
+        }
+        result(null, res)
+    })
 }
 
 Session.viewOneSession = (sessionId, result) => {
