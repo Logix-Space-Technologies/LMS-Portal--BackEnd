@@ -10,6 +10,8 @@ const AdminViewAllClgStaff = () => {
   const [clgStaffPerPage] = useState(10); // Number of college staff per page
   const navigate = useNavigate();
   const [key, setKey] = useState('');
+  const [deleteId, setDeleteId] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const apiUrl = global.config.urls.api.server + "/api/lms/viewallcollegestaff";
 
@@ -40,6 +42,11 @@ const AdminViewAllClgStaff = () => {
   };
 
   const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setShowConfirmation(true);
+  };
+
+  const confirmDelete = () => {
     const deleteUrl = global.config.urls.api.server + "/api/lms/deletecolgstaff";
     const axiosConfig = {
       headers: {
@@ -49,7 +56,7 @@ const AdminViewAllClgStaff = () => {
       },
     };
 
-    axios.post(deleteUrl, { id }, axiosConfig)
+    axios.post(deleteUrl, { id: deleteId }, axiosConfig)
       .then((response) => {
         if (response.data.status === "Deleted successfully") {
           // Refresh the data after deletion
@@ -62,6 +69,8 @@ const AdminViewAllClgStaff = () => {
       .catch((err) => {
         console.error("Error deleting college staff. Please try again later.");
       });
+
+    setShowConfirmation(false);
   };
 
   // Logic for displaying current college staff
@@ -98,8 +107,8 @@ const AdminViewAllClgStaff = () => {
               <tr>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">College Name</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">College Name</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
@@ -117,8 +126,8 @@ const AdminViewAllClgStaff = () => {
                 <tr key={index}>
                   <td><img className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3" src={value.profilePic} alt="" /></td>
                   <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{value.collegeName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.collegeStaffName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{value.collegeName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.department}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.clgStaffAddress}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.email}</td>
@@ -153,6 +162,18 @@ const AdminViewAllClgStaff = () => {
               </ul>
             </nav>
           </div>
+          {/* Delete Confirmation */}
+          {showConfirmation && (
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+              <div className="bg-white p-8 rounded-lg shadow-lg">
+                <p className="text-lg font-semibold text-gray-800">Are you sure you want to delete this college staff?</p>
+                <div className="flex justify-end mt-4">
+                  <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full mr-4" onClick={confirmDelete}>Delete</button>
+                  <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-full" onClick={() => setShowConfirmation(false)}>Cancel</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </div>
