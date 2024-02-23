@@ -1,6 +1,7 @@
 const db = require("../models/db");
 const { response, request } = require("express")
 const bcrypt = require("bcrypt")
+const crypto = require("crypto")
 
 const { StudentLog, logStudent } = require("../models/studentLog.model");
 
@@ -1048,6 +1049,56 @@ SubmitTask.studentviewsubmittedtask = (id, result) => {
 }
 
 
+// Function to generate and hash OTP
+Student.generateAndHashOTP = (studEmail, result) => {
+    // Generate a 6-digit numeric OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const saltRounds = 10;
+    const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
+
+    // Insert the hashed OTP into the `student_otp` table
+    const query = "INSERT INTO student_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+    db.query(query, [studEmail, hashedOTP], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            return result(null, otp); // Return the plain OTP for email sending
+        }
+    });
+};
+
+
+// Function to verify OTP
+Student.verifyOTP = (studEmail, otp, result) => {
+    const query = "SELECT otp, createdAt FROM student_otp WHERE email = ?";
+    db.query(query, [studEmail], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            if (res.length > 0) {
+                const studotp = res[0].otp;
+                const createdAt = res[0].createdAt;
+                // Check if OTP is expired
+                const expiryDuration = 10 *60 * 1000; // 10 minute in milliseconds
+                const otpCreatedAt = new Date(createdAt).getTime();
+                const currentTime = new Date().getTime();
+                if (currentTime - otpCreatedAt > expiryDuration) {
+                    return result("OTP expired", null);
+                }
+                
+                // If OTP not expired, proceed to compare
+                const isMatch = bcrypt.compareSync(otp,studotp);
+                if (isMatch) {
+                    return result(null, true);
+                } else {
+                    return result(null, false);
+                }
+            } else {
+                return result("OTP not found or expired", null);
+            }
+        }
+    });
+};
 
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 
