@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import '../../config/config';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import { useNavigate } from 'react-router-dom';
 
 const AdminSearchSessionDetails = () => {
     const [inputField, setInputField] = useState({ "SessionSearchQuery": "" });
@@ -13,6 +14,7 @@ const AdminSearchSessionDetails = () => {
     const [SessionPerPage] = useState(10); // Number of sessions per page
     const [isSearchPerformed, setIsSearchPerformed] = useState(false);
     const [key, setKey] = useState('')
+    const navigate = useNavigate()
 
     // Assign the API links as searchApiLink and deleteApiLink
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchSession";
@@ -169,7 +171,7 @@ const AdminSearchSessionDetails = () => {
                                                             )}
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <button onClick={() => UpdateClick(value.id)} className="btn btn-primary">Update</button>
+                                                            <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Update</button>
                                                         </td>
                                                     </tr>
                                                 ))}
