@@ -127,8 +127,7 @@ const AdminSearchBatch = () => {
                                 <h1>Search Batches</h1>
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <label htmlFor="" className="form-label">Batch Name/College Name/Batch Description</label>
-                                <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} />
+                                <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} placeholder='Batch Name/College Name/Batch Description'/>
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                 <button onClick={readValue} className="btn btn-warning">Search</button>
