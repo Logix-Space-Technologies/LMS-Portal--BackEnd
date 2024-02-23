@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import '../../config/config';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AdminSearchSessionDetails = () => {
     const [inputField, setInputField] = useState({ "SessionSearchQuery": "" });
@@ -161,7 +161,12 @@ const AdminSearchSessionDetails = () => {
                                                         <td className="px-6 py-4">{formatTime(value.time)}</td>
                                                         <td className="px-6 py-4">{value.type}</td>
                                                         <td className="px-6 py-4">{value.remarks}</td>
-                                                        <td className="px-6 py-4">{value.venueORlink}</td>
+                                                        {!value.venueORlink.includes("meet.google.com") && (
+                                                            <td className="px-6 py-4">{value.venueORlink}</td>
+                                                        )}
+                                                        {value.venueORlink.includes("meet.google.com") && (
+                                                            <td className="px-6 py-4"><Link to={value.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</Link></td>
+                                                        )}
                                                         <td className="px-6 py-4">{value.trainerName}</td>
                                                         <td className="px-6 py-4">{value.attendenceCode}</td>
                                                         <td className="px-6 py-4">{value.cancelStatus}</td>
