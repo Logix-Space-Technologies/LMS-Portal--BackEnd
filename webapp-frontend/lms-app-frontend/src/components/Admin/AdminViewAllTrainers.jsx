@@ -84,7 +84,7 @@ const AdminViewAllTrainers = () => {
     };
 
     useEffect(() => { getData() }, []);
-    
+
     // Update key state when component mounts
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
@@ -121,35 +121,40 @@ const AdminViewAllTrainers = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentTrainers.map(
-                            (value, index) => {
-                                return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <img className="w-10 h-10 rounded-full" src={value.profilePicture} alt="" />
-                                        <div className="ps-3">
-                                            <div className="text-base font-semibold">{value.trainerName}</div>
-                                            <div className="font-normal text-gray-500">{value.email}</div>
-                                        </div>
-                                    </th>
+                        {currentTrainers.length > 0 ? currentTrainers.map((value, index) => {
+                            return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                                    <img className="w-10 h-10 rounded-full" src={value.profilePicture} alt="" />
+                                    <div className="ps-3">
+                                        <div className="text-base font-semibold">{value.trainerName}</div>
+                                        <div className="font-normal text-gray-500">{value.email}</div>
+                                    </div>
+                                </th>
+                                <td className="px-6 py-4">
+                                    {value.about}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.phoneNumber}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.email}
+                                </td>
+                                {key === "lmsapp" && (
                                     <td className="px-6 py-4">
-                                        {value.about}
+                                        <Link onClick={() => { readValue(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" data-bs-toggle="modal" data-bs-target="#exampleModal">Delete Trainer</Link>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        {value.phoneNumber}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {value.email}
-                                    </td>
-                                    {key === "lmsapp" && (
-                                        <td className="px-6 py-4">
-                                            <Link onClick={()=> {readValue(value.id)}}  className="font-medium text-blue-600 dark:text-blue-500 hover:underline" data-bs-toggle="modal" data-bs-target="#exampleModal">Delete Trainer</Link>
-                                        </td>
-                                    )}
-                                    <td className="px-6 py-4">
-                                        <Link onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Trainer</Link>
-                                    </td>
-                                </tr>
-                            }
+                                )}
+                                <td className="px-6 py-4">
+                                    <Link onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Trainer</Link>
+                                </td>
+                            </tr>
+                        }
+                        ) : (
+                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td colSpan="15" className="px-6 py-4" style={{ textAlign: "center" }}>
+                                    No Trainers Found !!!
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
@@ -174,28 +179,29 @@ const AdminViewAllTrainers = () => {
                     </div>
                 </div>
             </div>
-            <div className="flex justify-center mt-8">
-                <nav>
-                    <ul className="flex list-style-none">
-                        {currentPage > 1 && (
-                            <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                Previous
-                            </li>
-                        )}
-                        {Array.from({ length: Math.ceil(trainerData.length / trainersPerPage) }, (_, i) => (
-                            <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                                {i + 1}
-                            </li>
-                        ))}
-                        {currentPage < Math.ceil(trainerData.length / trainersPerPage) && (
-                            <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                Next
-                            </li>
-                        )}
-                    </ul>
-                </nav>
-            </div>
-
+            {currentTrainers.length > 0 && (
+                <div className="flex justify-center mt-8">
+                    <nav>
+                        <ul className="flex list-style-none">
+                            {currentPage > 1 && (
+                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Previous
+                                </li>
+                            )}
+                            {Array.from({ length: Math.ceil(trainerData.length / trainersPerPage) }, (_, i) => (
+                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                    {i + 1}
+                                </li>
+                            ))}
+                            {currentPage < Math.ceil(trainerData.length / trainersPerPage) && (
+                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                                    Next
+                                </li>
+                            )}
+                        </ul>
+                    </nav>
+                </div>
+            )}
         </div>
     );
 };

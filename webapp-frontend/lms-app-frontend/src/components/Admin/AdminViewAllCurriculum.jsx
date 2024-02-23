@@ -83,9 +83,9 @@ const AdminViewAllCurriculum = () => {
     }
 
     // Logic for displaying current students
-    const indexOfLastStudent = currentPage * curriculumPerPage;
-    const indexOfFirstStudent = indexOfLastStudent - curriculumPerPage;
-    const currentCurriculum = curriculumData ? curriculumData.slice(indexOfFirstStudent, indexOfLastStudent) : [];
+    const indexOfLastCurriculum = currentPage * curriculumPerPage;
+    const indexOfFirstCurriculum = indexOfLastCurriculum - curriculumPerPage;
+    const currentCurriculum = curriculumData ? curriculumData.slice(indexOfFirstCurriculum, indexOfLastCurriculum) : [];
 
 
     // Change page
