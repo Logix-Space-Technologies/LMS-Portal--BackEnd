@@ -10,6 +10,7 @@ const AdminViewAllCollege = () => {
     const [key, setKey] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [collegesPerPage] = useState(10); // Number of colleges per page
+    const [deleteCollege, setDeleteCollege] = useState({})
 
     const navigate = useNavigate()
 
@@ -41,8 +42,8 @@ const AdminViewAllCollege = () => {
         )
     }
 
-    const handleClick = (id) => {
-        let data = { "id": id }
+    const handleClick = () => {
+        let data = { "id": deleteCollege }
         let axiosConfigTwo = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -55,8 +56,7 @@ const AdminViewAllCollege = () => {
             (response) => {
                 if (response.data.status === "College deleted.") {
                     alert("College Deleted Successfully!!!")
-                    // Reload the page after deleting college
-                    window.location.reload();
+                    getData();
                 } else {
                     alert(response.data.status)
                 }
@@ -68,6 +68,11 @@ const AdminViewAllCollege = () => {
         let data = id
         sessionStorage.setItem("clgId", data)
     }
+
+    const readValue = (id) => {
+        setDeleteCollege(id)
+        console.log(id)
+    };
 
     // Logic for displaying current colleges
     const indexOfLastCollege = currentPage * collegesPerPage;
@@ -170,11 +175,12 @@ const AdminViewAllCollege = () => {
                                 </td>
                                 {key === 'lmsapp' && (
                                     <td className="px-6 py-4">
-                                        <Link onClick={() => { handleClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete College</Link>
+                                        <Link onClick={()=> {readValue(value.id)}} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" data-bs-toggle="modal" data-bs-target="#exampleModal">Delete College</Link>
                                     </td>
                                 )}
                             </tr>
                         ))}
+
                         {currentColleges.length === 0 && (
                             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td colSpan="8" className="px-6 py-4" style={{ textAlign: 'center' }}>
@@ -185,6 +191,26 @@ const AdminViewAllCollege = () => {
                     </tbody>
                 </table>
             </div>
+            <div className="row">
+                <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to delete this college?</h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div className="modal-body">
+                                <p>This action cannot be undone.</p>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No, cancel</button>
+                                <button onClick={() => { handleClick() }} type="button" className="btn btn-danger" data-bs-dismiss="modal">Yes, I'm sure</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div className="flex justify-center mt-8">
                 <nav>
                     <ul className="flex list-style-none">
@@ -206,7 +232,8 @@ const AdminViewAllCollege = () => {
                     </ul>
                 </nav>
             </div>
-        </div>
+        </div >
+
     )
 }
 
