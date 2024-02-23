@@ -1,5 +1,3 @@
-const { content } = require("pdfkit/js/page");
-
 function upcomingSessionContent(studName, sessionName, date, time, venueORlink) {
     content = `<!DOCTYPE html>
     <html>
