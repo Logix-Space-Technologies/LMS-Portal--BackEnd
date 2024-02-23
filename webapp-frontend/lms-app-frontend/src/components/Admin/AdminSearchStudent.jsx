@@ -59,8 +59,7 @@ const AdminSearchStudent = () => {
                                 <h1>Search Student</h1>
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <label htmlFor="" className="form-label">Student Name/Phone No/Address/Aadhar No/Email</label>
-                                <input onChange={inputHandler} type="text" className="form-control" name="studentSearchQuery" value={inputField.studentSearchQuery} />
+                                <input onChange={inputHandler} type="text" className="form-control" name="studentSearchQuery" value={inputField.studentSearchQuery} placeholder='Student Name/Phone No/Address/Aadhar No/Email' />
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                 <button onClick={readValue} className="btn btn-warning">Search</button>
