@@ -1056,15 +1056,9 @@ Student.generateAndHashOTP = (studEmail, result) => {
     const saltRounds = 10;
     const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
 
-    // Insert the hashed OTP into the `student_otp` table
-    const query = "INSERT INTO student_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
-    db.query(query, [studEmail, hashedOTP], (err, res) => {
-        if (err) {
-            return result(err, null);
-        } else {
-            return result(null, otp); // Return the plain OTP for email sending
-        }
-    });
+    db.query("SELECT * FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1",
+    [studEmail])
+
 };
 
 
