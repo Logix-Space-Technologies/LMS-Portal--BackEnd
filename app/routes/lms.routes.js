@@ -265,5 +265,6 @@ router.post('/GenerateSessionWiseAttendancePdf',StudentController.generateSessio
 
 router.post('/createCommunityManager', CommunityManagerController.createCommunityManager)
 
+router.post('/deleteCommunityManager', CommunityManagerController.deleteCommunityManager)
 
 module.exports = router

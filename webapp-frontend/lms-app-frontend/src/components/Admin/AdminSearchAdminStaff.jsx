@@ -15,6 +15,7 @@ const AdminSearchAdminStaff = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10); // Number of items per page
+    const [deleteId, setDeleteId] = useState(null);
 
     const apiLink = global.config.urls.api.server + "/api/lms/searchAdminStaff";
 
@@ -22,7 +23,7 @@ const AdminSearchAdminStaff = () => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
 
-    const handleDeleteClick = (id) => {
+    const handleDeleteClick = () => {
         const deleteUrl = global.config.urls.api.server + "/api/lms/deleteadmstaff";
         const axiosConfig = {
             headers: {
@@ -32,7 +33,7 @@ const AdminSearchAdminStaff = () => {
             },
         };
 
-        axios.post(deleteUrl, { id }, axiosConfig)
+        axios.post(deleteUrl, { id: deleteId }, axiosConfig)
             .then((response) => {
                 if (response.data.status === "Admin Staff Deleted.") {
                     // Refresh the data after deletion
@@ -48,10 +49,9 @@ const AdminSearchAdminStaff = () => {
     };
 
     const updateClick = (id) => {
-        let data = id;
-        sessionStorage.setItem("admStaffId", data)
-        navigate("/adminupdateadminstaff")
-    }
+        sessionStorage.setItem("admStaffId", id);
+        navigate("/adminupdateadminstaff");
+    };
 
     const readValue = () => {
         setIsLoading(true);
@@ -104,6 +104,7 @@ const AdminSearchAdminStaff = () => {
                             <table className="table">
                                 <thead>
                                     <tr>
+                                        <th>S/N</th>
                                         <th>Name</th>
                                         <th>Phone No</th>
                                         <th>Address</th>
@@ -116,13 +117,16 @@ const AdminSearchAdminStaff = () => {
                                 <tbody>
                                     {currentItems.map((value, index) => (
                                         <tr key={index}>
+                                            <td>{index + 1}</td>
                                             <td>{value.AdStaffName}</td>
                                             <td>{value.PhNo}</td>
                                             <td>{value.Address}</td>
                                             <td>{value.AadharNo}</td>
                                             <td>{value.Email}</td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full" onClick={() => handleDeleteClick(value.id)}>Delete</button>
+                                                <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => setDeleteId(value.id)}>
+                                                    Delete
+                                                </button>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onClick={() => updateClick(value.id)}>Update</button>
@@ -153,6 +157,23 @@ const AdminSearchAdminStaff = () => {
                         No Admin Staffs found.
                     </div>
                 ) : null)}
+            </div>
+            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">Are you sure you want Delete Admin Staff</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <p>This action cannot be undone.</p>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No, cancel</button>
+                            <button onClick={handleDeleteClick} type="button" className="btn btn-danger" data-bs-dismiss="modal">Yes, I'm sure</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

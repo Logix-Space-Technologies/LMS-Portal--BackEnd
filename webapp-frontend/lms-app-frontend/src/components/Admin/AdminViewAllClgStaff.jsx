@@ -97,6 +97,7 @@ const AdminViewAllClgStaff = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">College Name</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
@@ -115,6 +116,7 @@ const AdminViewAllClgStaff = () => {
               {currentClgStaff.map((value, index) => (
                 <tr key={index}>
                   <td><img className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3" src={value.profilePic} alt="" /></td>
+                  <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.collegeName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.collegeStaffName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.department}</td>
