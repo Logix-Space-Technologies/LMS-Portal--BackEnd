@@ -127,7 +127,7 @@ const AdminSearchBatch = () => {
                                 <h1>Search Batches</h1>
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} placeholder='Batch Name/College Name/Batch Description'/>
+                                <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} placeholder='Batch Name/College Name/Batch Description' />
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                 <button onClick={readValue} className="btn btn-warning">Search</button>
@@ -149,6 +149,7 @@ const AdminSearchBatch = () => {
                                 {/* Table headers */}
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
+                                        <th scope="col" className="px-6 py-3">S/N</th>
                                         <th scope="col" className="px-6 py-3">College Name</th>
                                         <th scope="col" className="px-6 py-3">Batch Name</th>
                                         <th scope="col" className="px-6 py-3">Batch Description</th>
@@ -166,6 +167,7 @@ const AdminSearchBatch = () => {
                                     {/* Table rows */}
                                     {currentBatches.map((value, index) => (
                                         <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                            <td className="px-6 py-4">{index+1}</td>
                                             <td className="px-6 py-4">{value.collegeName}</td> {/* Corrected closing tag */}
                                             <td className="px-6 py-4">{value.batchName}</td>
                                             <td className="px-6 py-4">{value.batchDesc}</td>
