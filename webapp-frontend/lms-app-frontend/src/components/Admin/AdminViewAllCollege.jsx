@@ -112,6 +112,9 @@ const AdminViewAllCollege = () => {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">
+                                S/N
+                            </th>
+                            <th scope="col" className="px-6 py-3">
 
                             </th>
                             <th scope="col" className="px-6 py-3">
@@ -145,6 +148,9 @@ const AdminViewAllCollege = () => {
                     <tbody>
                         {currentColleges.map((value, index) => (
                             <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td className="px-6 py-4">
+                                    {index + 1}
+                                </td>
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                     <img className="w-10 h-10 rounded-full" src={value.collegeImage} alt="" />
                                     <div className="ps-3">
@@ -175,7 +181,7 @@ const AdminViewAllCollege = () => {
                                 </td>
                                 {key === 'lmsapp' && (
                                     <td className="px-6 py-4">
-                                        <Link onClick={()=> {readValue(value.id)}} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" data-bs-toggle="modal" data-bs-target="#exampleModal">Delete College</Link>
+                                        <Link onClick={() => { readValue(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" data-bs-toggle="modal" data-bs-target="#exampleModal">Delete College</Link>
                                     </td>
                                 )}
                             </tr>

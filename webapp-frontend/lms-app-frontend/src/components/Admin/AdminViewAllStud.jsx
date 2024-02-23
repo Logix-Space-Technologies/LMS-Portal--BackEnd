@@ -44,29 +44,29 @@ const AdminViewAllStud = () => {
 
     // Assign Community Manager
     const assignCommunityManager = (id, batchId) => {
-        let data = { "studentId": id, "batchId": batchId }
+        let data = {"studentId": id, "batchId": batchId }; // Ensure this matches your expected backend format
+        console.log(data)
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": sessionStorage.getItem("admtoken"), // Your token storage method might need to match your backend expectations
+                "key": sessionStorage.getItem("admkey") // Ensure your backend is expecting this key in the header
             }
         };
+    
         axios.post(apiUrl2, data, axiosConfig2).then(
             (response) => {
                 if (response.data.status === "success") {
-                    // Refresh the student data after assigning a community manager
-                    alert(`Assigned to Community Manager`);
-                    getData()
+                    // Assuming "Assigned to Community Manager" is a message you want to display
+                    alert("Assigned to Community Manager");
+                    getData(); // Ensure getData() is defined and fetches the latest data
+                } else if (response.data.status === "Validation failed") {
+                    // Handle validation errors
+                    alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
                 } else {
-                    if (response.data.status === "Validation failed") {
-                        alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
-                    } else if (response.data.status === "Community Manager already exists for the batch") {
-                        alert(response.data.status);
-                    } else {
-                        alert(response.data.status)
-                    }
+                    // Handle other errors
+                    alert(response.data.status);
                 }
             }
         ).catch(error => {
@@ -100,7 +100,7 @@ const AdminViewAllStud = () => {
             alert("An error occurred while removing the community manager. Please try again.");
         });
     };
-    
+
 
 
 
@@ -122,12 +122,12 @@ const AdminViewAllStud = () => {
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            
+
                             <th scope="col" className="px-6 py-3">
                                 S/N
                             </th>
                             <th scope="col" className="px-9 py-3">
-                                
+
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Name
@@ -226,7 +226,7 @@ const AdminViewAllStud = () => {
                                             <button onClick={() => assignCommunityManager(value.id, value.batchId)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Assign Community Manager</button>
                                         )}
                                         {value.communityManager === 1 && (
-                                            <button onClick={() =>{ removeCommunityManager(value.commManagerId)}} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Remove Community Manager</button>
+                                            <button onClick={() => { removeCommunityManager(value.commManagerId) }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Remove Community Manager</button>
                                         )}
                                     </td>
                                 </tr>
