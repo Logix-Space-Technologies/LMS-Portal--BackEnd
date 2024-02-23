@@ -47,8 +47,8 @@ const RefundRequestForm = () => {
                 (response) => {
                     if (response.data.status === 'success') {
                         alert('Refund request successfully created');
-                        sessionStorage.clear()
                         navigate("/studentLogin")
+                        sessionStorage.clear()
                         setInputField((prevInputField) => ({
                             ...prevInputField,
                             reason: "",
