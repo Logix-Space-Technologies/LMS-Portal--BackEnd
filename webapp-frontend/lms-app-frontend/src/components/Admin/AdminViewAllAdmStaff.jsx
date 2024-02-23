@@ -81,7 +81,6 @@ const AdminViewAllAdminStaff = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone No.</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
@@ -95,7 +94,6 @@ const AdminViewAllAdminStaff = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {currentAdminStaff.map((value, index) => (
                 <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap">{value.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.AdStaffName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.PhNo}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.Address}</td>

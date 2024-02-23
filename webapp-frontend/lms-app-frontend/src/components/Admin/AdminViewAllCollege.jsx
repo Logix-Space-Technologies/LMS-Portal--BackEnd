@@ -110,9 +110,6 @@ const AdminViewAllCollege = () => {
 
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Id
-                            </th>
-                            <th scope="col" className="px-6 py-3">
                                 College Code
                             </th>
                             <th scope="col" className="px-6 py-3">
@@ -150,9 +147,6 @@ const AdminViewAllCollege = () => {
                                         <div className="font-normal text-gray-500">{value.email}</div>
                                     </div>
                                 </th>
-                                <td className="px-6 py-4">
-                                    {value.id}
-                                </td>
                                 <td className="px-6 py-4">
                                     {value.collegeCode}
                                 </td>

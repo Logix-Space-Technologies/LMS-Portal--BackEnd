@@ -139,7 +139,7 @@ const SessionView = () => {
                   )}
                   <div className="flex gap-4 mt-4">
                     {session.venueORlink.includes("meet.google.com") && (
-                      <a href={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</a>
+                      <Link to={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</Link>
                     )}
                     {isSessionAccessible(session.date) ? (
                       <>
