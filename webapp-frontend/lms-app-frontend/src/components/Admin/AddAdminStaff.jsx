@@ -2,15 +2,17 @@ import axios from 'axios';
 import '../../config/config';
 import React, { useState } from 'react';
 import Navbar from './Navbar';
+import { Link } from 'react-router-dom';
 
 const AddAdminStaff = () => {
     const [inputField, setInputField] = useState({
-        AdStaffName: '',
-        PhNo: '',
-        Address: '',
-        AadharNo: '',
-        Email: '',
-        Password: '',
+        "AdStaffName": "",
+        "PhNo": "",
+        "Address": "",
+        "AadharNo": "",
+        "Email": "",
+        "Password": "",
+        "confirmpassword": "",
     });
 
     const [errors, setErrors] = useState({});
@@ -18,6 +20,7 @@ const AddAdminStaff = () => {
     const apiUrl = global.config.urls.api.server + '/api/lms/addAdminStaff';
 
     const inputHandler = (event) => {
+        setErrors({})
         setInputField({ ...inputField, [event.target.name]: event.target.value });
 
     };
@@ -36,12 +39,13 @@ const AddAdminStaff = () => {
                 }
             }
             let data = {
-                AdStaffName: inputField.AdStaffName,
-                PhNo: inputField.PhNo,
-                Address: inputField.Address,
-                AadharNo: inputField.AadharNo,
-                Email: inputField.Email,
-                Password: inputField.Password,
+                "AdStaffName": inputField.AdStaffName,
+                "PhNo": inputField.PhNo,
+                "Address": inputField.Address,
+                "AadharNo": inputField.AadharNo,
+                "Email": inputField.Email,
+                "Password": inputField.Password,
+                "confirmpassword": inputField.confirmpassword
             };
             axios.post(apiUrl, data, axiosConfig).then(
                 (response) => {
@@ -54,8 +58,8 @@ const AddAdminStaff = () => {
                             AadharNo: "",
                             Email: "",
                             Password: "",
+                            confirmpassword: ""
                         });
-                        setErrors({});
                     } else {
                         if (response.data.status === 'Validation failed' && response.data.data.name) {
                             alert(response.data.data.name);
@@ -102,6 +106,12 @@ const AddAdminStaff = () => {
         if (!data.Password.trim()) {
             errors.Password = 'Password is required';
         }
+        if (!data.confirmpassword) {
+            errors.confirmpassword = 'Confirm password is required';
+        }
+        if (data.confirmpassword !== data.Password) {
+            errors.confirmpassword = 'Passwords do not match';
+        }
         return errors;
     };
     return (
@@ -115,9 +125,9 @@ const AddAdminStaff = () => {
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="text-center mb-5">
-                                            <a href="#!">
+                                            <Link to="#!">
                                                 <img src="https://www.linkurcodes.com/images/logo.png" alt="" width="175" height="57" />
-                                            </a><br /><br />
+                                            </Link><br /><br />
                                             <h3>Add Admin Staff Details</h3>
                                         </div>
                                     </div>
@@ -148,10 +158,17 @@ const AddAdminStaff = () => {
                                         <input onChange={inputHandler} type="text" class="form-control" name="Email" value={inputField.Email} id="Email" />
                                         {errors.Email && <span style={{ color: 'red' }} className="error">{errors.Email}</span>}
                                     </div>
-                                    <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                         <label for="" class="form-label">Password</label>
                                         <input onChange={inputHandler} type="password" class="form-control" name="Password" value={inputField.Password} id="Password" />
                                         {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
+                                    </div>
+                                    <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                        <label for="password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
+                                        </div>
+                                        {errors.confirmpassword && <span style={{ color: 'red' }} className="error">{errors.confirmpassword}</span>}
                                     </div>
                                     <div class="col-12">
                                         <div class="d-grid">

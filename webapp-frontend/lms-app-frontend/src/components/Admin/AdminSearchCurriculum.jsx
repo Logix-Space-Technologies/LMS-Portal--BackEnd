@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import Navbar from './Navbar';
-import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios'
+import '../../config/config'
+import React, { useEffect, useState } from 'react'
+import Navbar from './Navbar'
+import { Link, useNavigate } from 'react-router-dom'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminSearchCurriculum = () => {
-    const navigate = useNavigate();
-    const [inputField, setInputField] = useState({
-        "CurriculumSearchQuery": ""
-    });
-    const [updateField, setUpdateField] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+
+    const navigate = new useNavigate()
+
+    const [inputField, setInputField] = useState(
+        {
+            "CurriculumSearchQuery": ""
+        }
+    )
+
+    const [updateField, setUpdateField] = useState(
+        []
+    )
+
+    const [key, setKey] = useState('');
+    const [isLoading, setIsLoading] = useState(true)
     const [currentPage, setCurrentPage] = useState(1);
     const [curriculumPerPage] = useState(10); // Number of curriculum per page
     const [deleteId, setDeleteId] = useState(null);
@@ -22,12 +33,20 @@ const AdminSearchCurriculum = () => {
 
     const readValue = () => {
         setIsLoading(true);
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        console.log(inputField)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
 
@@ -94,10 +113,15 @@ const AdminSearchCurriculum = () => {
         sessionStorage.setItem("curriculumId", id);
         navigate("/AdminUpdateCurriculum");
     };
+  
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
 
     return (
         <div>
-            <Navbar /><br />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
             <strong style={{ paddingLeft: '30px' }}>Search Curriculum</strong>
 
             <div className="flex justify-between items-center mx-4 my-4">
@@ -127,10 +151,7 @@ const AdminSearchCurriculum = () => {
                                     S/N
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    Id
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Batch Id
+                                    Batch Name
                                 </th>
                                 <th scope="col" className="px-6 py-3">
                                     Curriculum Title
@@ -144,9 +165,11 @@ const AdminSearchCurriculum = () => {
                                 <th scope="col" className="px-6 py-3">
                                     File Link
                                 </th>
-                                <th scope="col" className="px-6 py-3">
+                                {key === "lmsapp" && (
+                                    <th scope="col" className="px-6 py-3">
 
-                                </th>
+                                    </th>
+                                )}
                                 <th scope="col" className="px-6 py-3">
 
                                 </th>
@@ -159,11 +182,8 @@ const AdminSearchCurriculum = () => {
                                         <td className="px-6 py-4">
                                             {index + 1}
                                         </td>
-                                        <td className="px-6 py-4">
-                                            {value.id}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.batchId}
+                                        <td className="px-6 py-4">                                    
+                                            {value.batchName}
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.curriculumTitle}
@@ -176,14 +196,16 @@ const AdminSearchCurriculum = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <Link target="_blank" to={value.curriculumFileLink} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>
-                                        </td>
-                                        <td className="p-4 whitespace-nowrap">
+                                        </td>                                        
+                                        {key === "lmsapp" && (
+                                            <td className="p-4 whitespace-nowrap">
                                             <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" onClick={() => handleClick(value.id)}>
                                                 Delete
                                             </button>
                                         </td>
+                                        )}
                                         <td className="px-6 py-4">
-                                            <Link onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500">Update Curriculum</Link>
+                                            <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500">Update Curriculum</button>
                                         </td>
                                     </tr>
                                 )

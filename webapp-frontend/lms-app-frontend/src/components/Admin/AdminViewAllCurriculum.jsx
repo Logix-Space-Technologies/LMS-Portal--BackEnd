@@ -83,9 +83,9 @@ const AdminViewAllCurriculum = () => {
     }
 
     // Logic for displaying current students
-    const indexOfLastStudent = currentPage * curriculumPerPage;
-    const indexOfFirstStudent = indexOfLastStudent - curriculumPerPage;
-    const currentCurriculum = curriculumData ? curriculumData.slice(indexOfFirstStudent, indexOfLastStudent) : [];
+    const indexOfLastCurriculum = currentPage * curriculumPerPage;
+    const indexOfFirstCurriculum = indexOfLastCurriculum - curriculumPerPage;
+    const currentCurriculum = curriculumData ? curriculumData.slice(indexOfFirstCurriculum, indexOfLastCurriculum) : [];
 
 
     // Change page
@@ -124,10 +124,6 @@ const AdminViewAllCurriculum = () => {
                             <th scope="col" className="px-6 py-3">
                                 Batch Name
                             </th>
-
-                            <th scope="col" className="px-6 py-3">
-                                Id
-                            </th>
                             <th scope="col" className="px-6 py-3">
                                 Curriculum Title
                             </th>
@@ -161,9 +157,6 @@ const AdminViewAllCurriculum = () => {
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <td className="px-6 py-4">
                                             {value.batchName}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.id}
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.curriculumTitle}

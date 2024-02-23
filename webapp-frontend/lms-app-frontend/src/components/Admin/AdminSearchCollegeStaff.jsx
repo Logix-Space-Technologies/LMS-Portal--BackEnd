@@ -1,7 +1,9 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import '../../config/config';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import { useNavigate } from 'react-router-dom';
 
 const AdminSearchCollegeStaff = () => {
     const [inputField, setInputField] = useState({
@@ -11,10 +13,14 @@ const AdminSearchCollegeStaff = () => {
     const [collegeStaff, setCollegeStaff] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    const navigate = useNavigate()
+
     const [currentPage, setCurrentPage] = useState(1);
     const [staffPerPage] = useState(1); // Number of staff per page
 
     const [searchPerformed, setSearchPerformed] = useState(false); // Added state to track search
+
+    const [key, setKey] = useState('');
 
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchCollegeStaff";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deletecolgstaff";
@@ -24,14 +30,21 @@ const AdminSearchCollegeStaff = () => {
     };
 
     const searchCollegeStaff = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         setIsLoading(true);
 
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
 
@@ -63,6 +76,12 @@ const AdminSearchCollegeStaff = () => {
             });
     };
 
+    const updateClick = (id) => {
+        let data = id;
+        sessionStorage.setItem("clgStaffId", data);
+        navigate("/adminupdatecollegestaff");
+    };
+
     // Logic for displaying current staff
     const indexOfLastStaff = currentPage * staffPerPage;
     const indexOfFirstStaff = indexOfLastStaff - staffPerPage;
@@ -80,9 +99,13 @@ const AdminSearchCollegeStaff = () => {
         });
     }
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="col-12 col-md-8 text-center">
@@ -97,17 +120,20 @@ const AdminSearchCollegeStaff = () => {
                 {searchPerformed && !isLoading && collegeStaff && collegeStaff.length > 0 && (
                     <div>
                         <strong>College Staff Details</strong>
-                                    <br /><br />
+                        <br /><br />
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3">Staff Name</th>
+                                        <th scope="col" className="px-6 py-3">Name</th>
                                         <th scope="col" className="px-6 py-3">Email</th>
                                         <th scope="col" className="px-6 py-3">Phone Number</th>
                                         <th scope="col" className="px-6 py-3">Department</th>
                                         <th scope="col" className="px-6 py-3">College Name</th>
                                         <th scope="col" className="px-6 py-3"></th>
+                                        {key === "lmsapp" && (
+                                            <th scope="col" className="px-6 py-3"></th>
+                                        )}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -119,8 +145,13 @@ const AdminSearchCollegeStaff = () => {
                                             <td className="px-6 py-4">{staff.department}</td>
                                             <td className="px-6 py-4">{staff.collegeName}</td>
                                             <td className="p-4 whitespace-nowrap">
-                                                <button className="btn btn-danger mt-3" onClick={() => deleteStaff(staff.id)}>Delete</button>
+                                                <button className="btn btn-primary mt-3" onClick={() => updateClick(staff.id)}>Update</button>
                                             </td>
+                                            {key === "lmsapp" && (
+                                                <td className="p-4 whitespace-nowrap">
+                                                    <button className="btn btn-danger mt-3" onClick={() => deleteStaff(staff.id)}>Delete</button>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>

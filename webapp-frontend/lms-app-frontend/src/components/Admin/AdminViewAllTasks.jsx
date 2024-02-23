@@ -100,7 +100,6 @@ const AdminViewAllTasks = () => {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">Batch Name</th>
-                            <th scope="col" className="px-6 py-3">Id</th>
                             <th scope="col" className="px-6 py-3">Task Title</th>
                             <th scope="col" className="px-6 py-3">Task Description</th>
                             <th scope="col" className="px-6 py-3">Task Type</th>
@@ -109,7 +108,9 @@ const AdminViewAllTasks = () => {
                             <th scope="col" className="px-6 py-3">Added Date</th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
-                            <th scope="col" className="px-6 py-3"></th>
+                            {key === "lmsapp" && (
+                                <th scope="col" className="px-6 py-3"></th>
+                            )}
                         </tr>
                     </thead>
                     <tbody>
@@ -118,7 +119,6 @@ const AdminViewAllTasks = () => {
                                 return (
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <td className="px-6 py-4">{value.batchName}</td>
-                                        <td className="px-6 py-4">{value.id}</td>
                                         <td className="px-6 py-4">{value.taskTitle}</td>
                                         <td className="px-6 py-4">{value.taskDesc}</td>
                                         <td className="px-6 py-4">{value.taskType}</td>

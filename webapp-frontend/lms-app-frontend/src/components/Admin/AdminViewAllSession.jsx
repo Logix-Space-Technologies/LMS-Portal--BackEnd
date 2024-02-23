@@ -185,8 +185,6 @@ const AdminViewAllSession = () => {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">Name</th>
-                            <th scope="col" className="px-6 py-3">Id</th>
-                            <th scope="col" className="px-6 py-3">BatchId</th>
                             <th scope="col" className="px-6 py-3">Date</th>
                             <th scope="col" className="px-6 py-3">Time</th>
                             <th scope="col" className="px-6 py-3">Type</th>
@@ -209,8 +207,6 @@ const AdminViewAllSession = () => {
                                         <div className="text-base font-semibold">{value.sessionName}</div>
                                     </div>
                                 </th>
-                                <td className="px-6 py-4">{value.id}</td>
-                                <td className="px-6 py-4">{value.batchId}</td>
                                 <td className="px-6 py-4">{value.date}</td>
                                 <td className="px-6 py-4">{formatTime(value.time)}</td>
                                 <td className="px-6 py-4">{value.type}</td>

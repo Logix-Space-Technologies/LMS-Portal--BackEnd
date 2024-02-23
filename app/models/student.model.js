@@ -944,12 +944,20 @@ Student.viewBatchAmount = (batchId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Batch Details: ", res);
-                result(null, res[0].batchAmount);
+                if (res.length === 0) {
+                    // No batch found with the specified batchId
+                    console.log("Batch not found");
+                    result(null, null);
+                } else {
+                    // Batch found, return the batch amount
+                    console.log("Batch Details: ", res);
+                    result(null, res[0].batchAmount);
+                }
             }
         }
     );
 };
+
 
 Payment.viewStudentTransactions = (studId, result) => {
     db.query(

@@ -1076,19 +1076,20 @@ exports.studViewSession = (request, response) => {
 
 
 exports.studRegViewBatchAmount = (request, response) => {
-    // const collegeId = request.body.collegeId;
     const batchId = request.body.batchId;
     Student.viewBatchAmount(batchId, (err, data) => {
         if (err) {
             response.json({ "status": err });
-        }
-        if (data.length === 0) {
-            response.json({ "status": "No Batch found!" });
         } else {
-            response.json({ "status": "success", "data": data });
+            if (data === null) {
+                // No batch found with the specified batchId
+                response.json({ "status": "No Batch found!" });
+            } else {
+                // Batch found, return the batch amount
+                response.json({ "status": "success", "data": data });
+            }
         }
     });
-
 };
 
 exports.studentViewPaymentTransactions = (request, response) => {

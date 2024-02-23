@@ -27,9 +27,6 @@ const AdmStaffNavBar = () => {
                                 <Link className="nav-link active" aria-current="page" to="/AdminStaffViewAllMaterial">View All Materials</Link>
                             </li>
                             <li>
-                                <Link className="nav-link active" aria-current="page" to="/AdminStaffChangePassword">Change Password</Link>
-                            </li>
-                            <li>
                                 <Link className="nav-link active" aria-current="page" to="/adminStaffAddmaterials">Add Materials</Link>
                             </li>
                             <li>
@@ -59,6 +56,15 @@ const AdmStaffNavBar = () => {
                             <li>
                                 <Link className="nav-link active" aria-current="page" to="/AdminSearchSessionDetails">Search Session</Link>
                             </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/adminSearchBatch">Search Batch</Link>
+                            </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/adminsearchtask">Search Tasks</Link>
+                            </li>
+                            <li>
+                                <Link className="nav-link active" aria-current="page" to="/adminsearchcurriculum">Search Curriculum</Link>
+                            </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Functionalities
@@ -70,6 +76,7 @@ const AdmStaffNavBar = () => {
                                     <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
                                     <li><Link className="dropdown-item" to="/adminSearchTrainers">Search Trainers</Link></li>
                                     <li><Link className="dropdown-item" to="/adminviewallclgstaff">View All College Staff</Link></li>
+                                    <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search College Staff</Link></li>
                                 </ul>
                                 
                             </li>

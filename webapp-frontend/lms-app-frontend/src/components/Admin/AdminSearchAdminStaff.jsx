@@ -105,7 +105,7 @@ const AdminSearchAdminStaff = () => {
                                 <thead>
                                     <tr>
                                         <th>S/N</th>
-                                        <th>Admin Staff Name</th>
+                                        <th>Name</th>
                                         <th>Phone No</th>
                                         <th>Address</th>
                                         <th>Aadhar No</th>
