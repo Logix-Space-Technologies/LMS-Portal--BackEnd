@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import '../../config/config';
 
 const QRCodeModal = ({ qrCodeAttendance, onClose }) => {
     return (
