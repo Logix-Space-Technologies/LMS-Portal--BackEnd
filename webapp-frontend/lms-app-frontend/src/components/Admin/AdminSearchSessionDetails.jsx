@@ -93,6 +93,12 @@ const AdminSearchSessionDetails = () => {
         return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
     }
 
+    const UpdateClick = (id) => {
+        let data = id
+        sessionStorage.setItem("sessionId", data)
+        navigate("/AdminUpdateSession")
+    }
+
     // Update key state when component mounts
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
@@ -163,7 +169,7 @@ const AdminSearchSessionDetails = () => {
                                                             )}
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-
+                                                            <button onClick={() => UpdateClick(value.id)} className="btn btn-primary">Update</button>
                                                         </td>
                                                     </tr>
                                                 ))}
