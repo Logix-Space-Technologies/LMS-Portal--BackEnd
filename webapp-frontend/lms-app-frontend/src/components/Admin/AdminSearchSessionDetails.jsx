@@ -139,6 +139,7 @@ const AdminSearchSessionDetails = () => {
                                             {/* Table headers */}
                                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                                 <tr>
+                                                    <th scope="col" className="px-6 py-3">S/N</th>
                                                     <th scope="col" className="px-6 py-3">College</th>
                                                     <th scope="col" className="px-6 py-3">Batch</th>
                                                     <th scope="col" className="px-6 py-3">Session Name</th>
@@ -156,8 +157,9 @@ const AdminSearchSessionDetails = () => {
                                             </thead>
                                             <tbody>
                                                 {/* Table rows */}
-                                                {currentSession.map((value) => (
+                                                {currentSession.map((value,index) => (
                                                     <tr key={value.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                        <td className="px-6 py-4">{index+1}</td>
                                                         <td className="px-6 py-4">{value.collegeName}</td>
                                                         <td className="px-6 py-4">{value.batchName}</td>
                                                         <td className="px-6 py-4">{value.sessionName}</td>
@@ -169,7 +171,7 @@ const AdminSearchSessionDetails = () => {
                                                             <td className="px-6 py-4">{value.venueORlink}</td>
                                                         )}
                                                         {value.venueORlink.includes("meet.google.com") && (
-                                                            <td className="px-6 py-4"><Link to={value.venueORlink} target='_blank' rel='noopener noreferrer' className="btn btn-primary mt-3" style={{whiteSpace: "nowrap"}}>Meeting Link</Link></td>
+                                                            <td className="px-6 py-4"><Link to={value.venueORlink} target='_blank' rel='noopener noreferrer' className="btn btn-primary mt-3" style={{ whiteSpace: "nowrap" }}>Meeting Link</Link></td>
                                                         )}
                                                         <td className="px-6 py-4">{value.trainerName}</td>
                                                         <td className="px-6 py-4">{value.attendenceCode}</td>
