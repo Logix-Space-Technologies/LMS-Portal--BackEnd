@@ -45,3 +45,24 @@ exports.createCommunityManager = (request, response) => {
         });
     });
 };
+
+
+exports.deleteCommunityManager = (request, response) => {
+    const id = request.body.id; // Assuming the managerId is passed in the request body
+    const communityManagerToken = request.headers.token;
+    const key = request.headers.key;
+
+    // Checking token validation
+    jwt.verify(communityManagerToken, key, (tokenError, decoded) => {
+        if (tokenError) {
+            return response.json({ "status": "Unauthorized User !!! " });
+        }
+        CommunityManager.delete(id, (deleteError, data) => {
+            if (deleteError) {
+                return response.json({ "status": deleteError });
+            } else {
+                return response.json({ "status": "success" });
+            }
+        });
+    });
+};

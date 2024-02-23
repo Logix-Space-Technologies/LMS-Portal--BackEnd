@@ -9,11 +9,12 @@ const AdminSearchTasks = () => {
         taskQuery: ""
     });
     const [tasks, setTasks] = useState([]);
-    const [searchExecuted, setSearchExecuted] = useState(false); // New state variable
+    const [searchExecuted, setSearchExecuted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
-    const [tasksPerPage] = useState(10); // Number of tasks per page
+    const [tasksPerPage] = useState(10);
+    const [deleteId, setDeleteId] = useState(null);
 
     const apiUrl = global.config.urls.api.server + '/api/lms/searchTasks'
     const deleteUrl = global.config.urls.api.server + '/api/lms/deleteTask'
@@ -38,7 +39,7 @@ const AdminSearchTasks = () => {
                 setTasks(response.data.data);
                 setInputField({ taskQuery: "" })
                 setIsLoading(false);
-                setSearchExecuted(true); // Set the flag to indicate search executed
+                setSearchExecuted(true);
             })
             .catch(error => {
                 console.error("Search failed:", error);
@@ -58,7 +59,7 @@ const AdminSearchTasks = () => {
         axios.post(deleteUrl, { id }, axiosConfig)
             .then(() => {
                 alert("Task deleted successfully");
-                searchTasks(); // Refresh the list after deletion
+                searchTasks();
             })
             .catch(error => {
                 console.error("Delete failed:", error);
@@ -67,19 +68,24 @@ const AdminSearchTasks = () => {
     };
 
     const handleUpdateClick = (taskId) => {
-        // Store task ID in sessionStorage to use in the update page
         sessionStorage.setItem("taskId", taskId);
-        // Navigate to the update task page
         navigate("/AdminUpdateTask");
     };
 
-    // Logic for displaying current tasks
+    const handleClick = (id) => {
+        setDeleteId(id);
+    };
+
+    const handleDeleteClick = () => {
+        deleteTask(deleteId);
+    };
+
     const indexOfLastTask = currentPage * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
     const currentTasks = tasks ? tasks.slice(indexOfFirstTask, indexOfLastTask) : [];
 
-    // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
+
     return (
         <div>
             <Navbar />
@@ -96,7 +102,10 @@ const AdminSearchTasks = () => {
                                 onChange={inputHandler}
                                 name="taskQuery"
                             />
-                            <button className="btn btn-outline-secondary" type="button" onClick={searchTasks}>Search</button>
+                        </div>
+                        <br></br>
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            <button onClick={searchTasks} className="btn btn-warning">Search</button>
                         </div>
                         <br />
                     </div>
@@ -112,6 +121,7 @@ const AdminSearchTasks = () => {
                         <table className="table table-hover">
                             <thead className="table-light">
                                 <tr>
+                                    <th>S/N</th>
                                     <th>Batch Name</th>
                                     <th>Session Name</th>
                                     <th>ID</th>
@@ -125,8 +135,9 @@ const AdminSearchTasks = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {tasks.map(task => (
+                                {currentTasks.map((task, index) => (
                                     <tr key={task.id}>
+                                        <td>{index + 1}</td>
                                         <td>{task.batchName}</td>
                                         <td>{task.sessionName}</td>
                                         <td>{task.id}</td>
@@ -140,20 +151,19 @@ const AdminSearchTasks = () => {
                                         </td>
                                         <td>
                                             <button onClick={() => handleUpdateClick(task.id)} className="btn btn-primary btn-sm me-2">Update</button>
-                                            <button onClick={() => deleteTask(task.id)} className="btn btn-danger btn-sm">Delete</button>
+                                            <button type="button" className="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" onClick={() => handleClick(task.id)}>Delete</button>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
-                ) : (searchExecuted && !tasks ? ( // Check if search executed but no tasks found
+                ) : (searchExecuted && !tasks ? (
                     <div className="alert alert-info" role="alert">
                         No tasks found.
                     </div>
                 ) : null))}
             </div>
-            {/* Pagination */}
             {currentTasks.length > 0 && (
                 <div className="flex justify-center mt-8">
                     <nav>
@@ -177,6 +187,23 @@ const AdminSearchTasks = () => {
                     </nav>
                 </div>
             )}
+            <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            Are you sure you want to delete this task?
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleDeleteClick}>Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
