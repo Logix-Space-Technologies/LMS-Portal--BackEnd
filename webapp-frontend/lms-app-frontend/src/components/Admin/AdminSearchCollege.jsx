@@ -22,7 +22,7 @@ const AdminSearchCollege = () => {
     const [isLoading, setIsLoading] = useState(true)
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [studentsPerPage] = useState(1); // Number of students per page
+    const [studentsPerPage] = useState(10); // Number of students per page
 
     const apiUrl = global.config.urls.api.server + "/api/lms/searchCollege"
 
@@ -150,8 +150,8 @@ const AdminSearchCollege = () => {
                                 {/* Table headers */}
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3">S/N</th>
                                         <th scope="col" className="px-6 py-3"></th>
+                                        <th scope="col" className="px-6 py-3">S/N</th>
                                         <th scope="col" className="px-6 py-3">College Name</th>
                                         <th scope="col" className="px-6 py-3">College Address</th>
                                         <th scope="col" className="px-6 py-3">Website</th>
