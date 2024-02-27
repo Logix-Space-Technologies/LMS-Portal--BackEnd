@@ -1,18 +1,9 @@
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const AdminHeader = () => {
-    const navigate = useNavigate()
     const logout = () => {
-        sessionStorage.removeItem("adminId")
-        sessionStorage.removeItem("admkey")
-        sessionStorage.removeItem("admtoken")
-        sessionStorage.removeItem("userName")
-        sessionStorage.removeItem("trainerId")
-        sessionStorage.removeItem("curriculumId")
-        sessionStorage.removeItem("clgStaffId")
-        sessionStorage.removeItem("batchId")
-
+        sessionStorage.clear()
     }
     return (
         <div>
