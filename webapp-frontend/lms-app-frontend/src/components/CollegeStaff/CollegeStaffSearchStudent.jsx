@@ -53,7 +53,8 @@ const CollegeStaffSearchStudent = () => {
                         navigate("/clgStafflogin")
                     } else {
                         if (!response.data.data) {
-                            // no data found
+                            setUpdateField([]); // Ensure the updateField is set to an empty array
+                            setIsLoading(false);
                         } else {
                             alert(response.data.status)
                         }
@@ -104,7 +105,7 @@ const CollegeStaffSearchStudent = () => {
                     <div className="col-12 text-center">
                         <p></p>
                     </div>
-                ) : (updateField ? (
+                ) : (updateField && updateField.length > 0 ? (
                     // start
                     <>
                         <strong style={{ paddingLeft: '30px' }}>Student Details</strong><br /><br /><br />
