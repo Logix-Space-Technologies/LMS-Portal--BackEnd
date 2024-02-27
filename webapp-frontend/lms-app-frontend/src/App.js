@@ -98,6 +98,7 @@ import StudentViewOneTask from './components/Student/StudentViewOneTask';
 import AdminUpdateSession from './components/Admin/AdminUpdateSession';
 import AdminStaffAddMaterials from './components/AdminStaff/AdminStaffAddMaterials';
 import CollegeStaffViewSession from './components/CollegeStaff/CollegeStaffViewSession';
+import StudentViewCommunityManager from './components/Student/StudentViewCommunityManager';
 
 
 
@@ -235,6 +236,7 @@ function App() {
           <Route path='/studnavbar' element={<StudNavBar/>}/>
           <Route path='/studupdatesubtask' element={<StudentUpdateSubmittedTask/>}/>
           <Route path='/studviewtasksessionwise' element={<StudentViewOneTask/>}/>
+          <Route path='/studviewCommunityManager' element={<StudentViewCommunityManager/>}/>
 
 
 
