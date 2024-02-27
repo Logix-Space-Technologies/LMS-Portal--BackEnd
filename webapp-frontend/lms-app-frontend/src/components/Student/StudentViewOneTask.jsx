@@ -43,7 +43,7 @@ const StudentViewOneTask = () => {
                     }
                 }
             }
-        ).catch(error => console.error("Error sending OTP:", error));
+        ).catch(error => console.error("Error:", error));
     };
 
     const updateSubTask = (id) => {
