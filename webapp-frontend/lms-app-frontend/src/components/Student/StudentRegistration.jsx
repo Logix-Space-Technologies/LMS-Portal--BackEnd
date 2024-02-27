@@ -294,9 +294,15 @@ const StudentRegistration = () => {
           loadRazorpayScript()
           setUpdateField({ "otp": "" })
         } else {
-          alert(response.data.status)
-          setUpdateField({ "otp": "" })
-          setShowModal(false); // Reset showModal state
+          if (response.data.status === "Invalid OTP") {
+            alert("Invalid OTP")
+            setUpdateField({ "otp": "" })
+            setShowModal(true);
+          } else {
+            alert(response.data.status)
+            setUpdateField({ "otp": "" })
+            setShowModal(false); // Reset showModal state
+          }
         }
       }
     )
