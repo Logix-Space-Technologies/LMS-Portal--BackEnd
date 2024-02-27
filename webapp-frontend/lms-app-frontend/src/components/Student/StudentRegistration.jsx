@@ -167,7 +167,6 @@ const StudentRegistration = () => {
           let axiosConfig = {
             headers: {
               'content-type': 'multipart/form-data',
-              "Access-Control-Allow-Origin": "*"
             }
           };
           console.log(data)
