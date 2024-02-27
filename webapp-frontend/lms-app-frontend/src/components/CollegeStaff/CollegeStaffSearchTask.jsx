@@ -29,7 +29,6 @@ const CollegeStaffSearchTask = () => {
     }
 
     const readValue = () => {
-        console.log(inputField)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -92,8 +91,7 @@ const CollegeStaffSearchTask = () => {
                                 <h1>Search Task</h1>
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <label htmlFor="" className="form-label">Task Name/Task Description/Task Type/Batch Name</label>
-                                <input onChange={inputHandler} type="text" className="form-control" name="taskQuery" value={inputField.taskQuery} />
+                                <input onChange={inputHandler} type="text" placeholder='Task Name/Task Description/Task Type/Batch Name' className="form-control" name="taskQuery" value={inputField.taskQuery} />
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                 <button onClick={readValue} className="btn btn-warning">Search</button>
@@ -140,8 +138,8 @@ const CollegeStaffSearchTask = () => {
                                 </thead>
                                 <tbody>
                                     {currentTasks.map(
-                                        (value, index) => (
-                                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        (value, index) => {
+                                            return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                                 <td className="p-4 whitespace-nowrap">
                                                     {value.batchName}
                                                 </td>
@@ -164,8 +162,7 @@ const CollegeStaffSearchTask = () => {
                                                     {value.dueDate}
                                                 </td>
                                             </tr>
-                                        )
-                                    )}
+                                        })}
                                 </tbody>
                             </table>
                         </div>

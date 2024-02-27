@@ -42,6 +42,7 @@ const CollegeStaffViewTask = () => {
 
 
     useEffect(() => { getData() }, [])
+    
     return (
         <div>
             {/* ====== Table Section Start */}
@@ -84,7 +85,7 @@ const CollegeStaffViewTask = () => {
                                     <tbody>
                                         {taskData.length > 0 ? taskData.map(
                                             (value, index) => {
-                                                return <tr>
+                                                return <tr key={index}>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.sessionName}
                                                     </td>
