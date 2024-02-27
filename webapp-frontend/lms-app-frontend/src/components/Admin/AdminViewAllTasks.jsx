@@ -10,13 +10,13 @@ const AdminViewAllTasks = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of tasks per page
     const [key, setKey] = useState('');
-
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [deleteId, setDeleteId] = useState(null);
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewtasks"
     const deleteUrl = global.config.urls.api.server + '/api/lms/deleteTask'
 
     const navigate = useNavigate()
-
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -72,10 +72,20 @@ const AdminViewAllTasks = () => {
     };
 
     const handleUpdateClick = (taskId) => {
-        // Store task ID in sessionStorage to use in the update page
         sessionStorage.setItem("taskId", taskId);
-        // Navigate to the update task page
         navigate("/AdminUpdateTask");
+    };
+
+    const confirmDelete = () => {
+        if (deleteId) {
+            deleteTask(deleteId);
+            setShowConfirmation(false);
+        }
+    };
+
+    const handleDeleteClick = (taskId) => {
+        setDeleteId(taskId);
+        setShowConfirmation(true);
     };
 
     useEffect(() => { getData() }, []);
@@ -84,6 +94,7 @@ const AdminViewAllTasks = () => {
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
@@ -99,6 +110,7 @@ const AdminViewAllTasks = () => {
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
+                            <th scope="col" className="px-6 py-3">S/N</th>
                             <th scope="col" className="px-6 py-3">Batch Name</th>
                             <th scope="col" className="px-6 py-3">Task Title</th>
                             <th scope="col" className="px-6 py-3">Task Description</th>
@@ -118,6 +130,7 @@ const AdminViewAllTasks = () => {
                             currentTasks.map((value, index) => {
                                 return (
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <td className="px-6 py-4">{index+1}</td>
                                         <td className="px-6 py-4">{value.batchName}</td>
                                         <td className="px-6 py-4">{value.taskTitle}</td>
                                         <td className="px-6 py-4">{value.taskDesc}</td>
@@ -133,7 +146,7 @@ const AdminViewAllTasks = () => {
                                         </td>
                                         {key === "lmsapp" && (
                                             <td className="px-6 py-4">
-                                                <button onClick={() => deleteTask(value.id)} className="btn btn-danger btn-sm">Delete</button>
+                                                <button onClick={() => handleDeleteClick(value.id)} className="btn btn-danger btn-sm">Delete</button>
                                             </td>
                                         )}
                                     </tr>
@@ -172,6 +185,23 @@ const AdminViewAllTasks = () => {
                             )}
                         </ul>
                     </nav>
+                </div>
+            )}
+            {/* Delete Confirmation Modal */}
+            {showConfirmation && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50">
+                    <div className="bg-white p-8 rounded-lg shadow-lg">
+                        <div className="text-center mb-4">
+                            <h2 className="text-xl font-semibold">Delete Confirmation</h2>
+                        </div>
+                        <div className="text-center mb-4">
+                            Are you sure you want to delete this task?
+                        </div>
+                        <div className="flex justify-center">
+                            <button onClick={confirmDelete} className="btn btn-primary">Confirm Delete</button>
+                            <button onClick={() => setShowConfirmation(false)} className="btn btn-danger">Cancel</button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

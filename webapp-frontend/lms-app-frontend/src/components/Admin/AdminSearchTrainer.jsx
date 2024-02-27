@@ -23,6 +23,8 @@ const AdminSearchTrainer = () => {
     const [TrainerPerPage] = useState(10); // Number of students per page
 
     const [isLoading, setIsLoading] = useState(true)
+    const [deleteId, setDeleteId] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const apiUrl = global.config.urls.api.server + "/api/lms/searchTrainer"
 
@@ -72,27 +74,37 @@ const AdminSearchTrainer = () => {
 
     //Delete Function
     const deleteClick = (id) => {
-        let deletedata = { "id": id }
-        let axiosConfig2 = {
+        setDeleteId(id);
+        setShowDeleteModal(true);
+    };
+
+    const handleDeleteConfirm = () => {
+
+        const deletedata = { id: deleteId };
+        const axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
-                "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                'Access-Control-Allow-Origin': '*',
+                token: sessionStorage.getItem('admtoken'),
+                key: sessionStorage.getItem('admkey')
             }
-        }
-        axios.post(apiUrl2, deletedata, axiosConfig2).then(
-            (response) => {
-                console.log(deletedata)
-                if (response.data.status === "success") {
-                    alert("Trainer Deleted Successfully!!")
-                    window.location.reload();
-                } else {
-                    alert(response.data.status)
-                }
+        };
+        axios.post(apiUrl2, deletedata, axiosConfig2).then((response) => {
+            if (response.data.status === 'success') {
+                alert('Trainer Deleted Successfully!!');
+                window.location.reload();
+            } else {
+                alert(response.data.status);
             }
-        )
-    }
+        });
+
+        setShowDeleteModal(false);
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteId(null);
+        setShowDeleteModal(false);
+    };
 
     // Logic for displaying current students
     const indexOfLastStudent = currentPage * TrainerPerPage;
@@ -161,17 +173,13 @@ const AdminSearchTrainer = () => {
                                         {key === "lmsapp" && (
                                             <th scope="col" className="px-6 py-3"></th>
                                         )}
-                                        {key === "lmsapp" && (
-                                            <th scope="col" className="px-6 py-3"></th>
-                                        )}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {/* Table rows */}
-                                    {/* Table rows */}
                                     {currentTrainers.map((value, index) => (
                                         <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td className="px-6 py-4">{index+1}</td>
+                                            <td className="px-6 py-4">{index + 1}</td>
                                             <td className="p-4 whitespace-nowrap">
                                                 <div className="flex items-center">
                                                     <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
@@ -230,6 +238,25 @@ const AdminSearchTrainer = () => {
                         </nav>
                     </div>
                 )}
+            </div>
+
+            {/* Delete Confirmation Modal */}
+            <div className={`modal ${showDeleteModal ? 'show' : ''}`} style={{ display: showDeleteModal ? 'block' : 'none' }}>
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">Delete Confirmation</h5>
+                            <button type="button" className="btn-close" onClick={handleDeleteCancel}></button>
+                        </div>
+                        <div className="modal-body">
+                            Are you sure you want to delete this trainer?
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" onClick={handleDeleteCancel}>Cancel</button>
+                            <button type="button" className="btn btn-danger" onClick={handleDeleteConfirm}>Delete</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )

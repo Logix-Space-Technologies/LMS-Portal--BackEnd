@@ -87,16 +87,7 @@ const AdminSearchStudent = () => {
                                                         <div className="font-semibold text-left">Student Name</div>
                                                     </th>
                                                     <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-left">Id</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
                                                         <div className="font-semibold text-left">College Name</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-center">College Id</div>
-                                                    </th>
-                                                    <th className="p-4 whitespace-nowrap">
-                                                        <div className="font-semibold text-center">Batch Id</div>
                                                     </th>
                                                     <th className="p-4 whitespace-nowrap">
                                                         <div className="font-semibold text-center">Admission No</div>
@@ -148,18 +139,8 @@ const AdminSearchStudent = () => {
                                                                     <div className="font-medium text-gray-800">{value.studName}</div>
                                                                 </div>
                                                             </td>
-
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{value.id}</div>
-                                                            </td>
                                                             <td className="p-4 whitespace-nowrap">
                                                                 <div className="text-left">{value.collegeName}</div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{value.collegeId}</div>
-                                                            </td>
-                                                            <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{value.batchId}</div>
                                                             </td>
                                                             <td className="p-4 whitespace-nowrap">
                                                                 <div className="text-left">{value.admNo}</div>

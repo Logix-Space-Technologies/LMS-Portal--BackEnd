@@ -106,6 +106,22 @@ const AdminSearchSessionDetails = () => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
 
+    // Delete confirmation modal
+    const [deleteId, setDeleteId] = useState(null);
+
+    const handleDeleteClick = (sessionId) => {
+        setDeleteId(sessionId);
+    };
+
+    const handleDeleteConfirm = () => {
+        deleteSession(deleteId);
+        setDeleteId(null);
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteId(null);
+    };
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
@@ -178,7 +194,7 @@ const AdminSearchSessionDetails = () => {
                                                         <td className="px-6 py-4">{value.cancelStatus}</td>
                                                         <td className="p-4 whitespace-nowrap">
                                                             {key === "lmsapp" && (
-                                                                <button onClick={() => deleteSession(value.id)} className="btn btn-danger mt-3">Delete</button>
+                                                                <button onClick={() => handleDeleteClick(value.id)} className="btn btn-danger mt-3">Delete</button>
                                                             )}
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
@@ -218,6 +234,25 @@ const AdminSearchSessionDetails = () => {
                         </div>
                     </div>
                 )}
+            </div>
+
+            {/* Delete Confirmation Modal */}
+            <div className={`modal ${deleteId !== null ? 'show' : ''}`} style={{ display: deleteId !== null ? 'block' : 'none' }}>
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">Delete Confirmation</h5>
+                            <button type="button" className="btn-close" onClick={handleDeleteCancel}></button>
+                        </div>
+                        <div className="modal-body">
+                            Are you sure you want to delete this session?
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" onClick={handleDeleteCancel}>Cancel</button>
+                            <button type="button" className="btn btn-danger" onClick={handleDeleteConfirm}>Delete</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
