@@ -28,6 +28,7 @@ const StudentViewOneTask = () => {
                 "key": sessionStorage.getItem("studentkey")
             }
         };
+        console.log(axiosConfig)
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
@@ -42,7 +43,7 @@ const StudentViewOneTask = () => {
                     }
                 }
             }
-        );
+        ).catch(error => console.error("Error sending OTP:", error));
     };
 
     const updateSubTask = (id) => {
