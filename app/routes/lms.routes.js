@@ -273,4 +273,6 @@ router.post('/studregotpverify',StudentController.verifyOtp)
 
 router.post('/viewCommunityManager', StudentController.viewCommunityManagers)
 
+router.post('/clgstaffviewnotification', BatchesController.clgstaffNotificationView)
+
 module.exports = router

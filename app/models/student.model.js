@@ -1056,9 +1056,100 @@ Student.generateAndHashOTP = (studEmail, result) => {
     const saltRounds = 10;
     const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
 
-    db.query("SELECT * FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1",
-    [studEmail])
-
+    db.query("SELECT admNo FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1",
+        [studEmail], (err, res) => {
+            if (err) {
+                console.error("Error while checking uniqueness: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    console.log("Admission No already exists");
+                    result("Admission No already exists", null);
+                    return;
+                } else {
+                    db.query("SELECT rollNo FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1",
+                        [studEmail],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while checking uniqueness: ", err);
+                                result(err, null);
+                                return;
+                            } else {
+                                if (res.length > 0) {
+                                    console.log("Roll No already exists");
+                                    result("Roll No already exists", null);
+                                    return;
+                                } else {
+                                    db.query("SELECT aadharNo FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1",
+                                        [studEmail], (err, res) => {
+                                            if (err) {
+                                                console.error("Error while checking uniqueness: ", err);
+                                                result(err, null);
+                                                return;
+                                            } else {
+                                                if (res.length > 0) {
+                                                    console.log("Aadhar No already exists");
+                                                    result("Aadhar No already exists", null);
+                                                    return;
+                                                } else {
+                                                    db.query("SELECT studEmail FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1",
+                                                        [studEmail], (err, res) => {
+                                                            if (err) {
+                                                                console.error("Error while checking uniqueness: ", err);
+                                                                result(err, null);
+                                                                return;
+                                                            } else {
+                                                                if (res.length > 0) {
+                                                                    console.log("Email already exists");
+                                                                    result("Email already exists", null);
+                                                                    return;
+                                                                } else {
+                                                                    db.query("SELECT * FROM student_otp WHERE email = ?", [studEmail], (err, res) => {
+                                                                        if (err) {
+                                                                            console.error("Error while checking OTP existence: ", err);
+                                                                            result(err, null);
+                                                                            return;
+                                                                        } else {
+                                                                            if (res.length > 0) {
+                                                                                // Email exists, so update the OTP
+                                                                                const updateQuery = "UPDATE student_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                                                                                db.query(updateQuery, [hashedOTP, studEmail], (err, res) => {
+                                                                                    if (err) {
+                                                                                        console.error("Error while updating OTP: ", err);
+                                                                                        result(err, null);
+                                                                                    } else {
+                                                                                        console.log("OTP updated successfully");
+                                                                                        result(null, otp); // Return the plain OTP for email sending
+                                                                                    }
+                                                                                });
+                                                                            } else {
+                                                                                // Email does not exist, insert new OTP
+                                                                                const insertQuery = "INSERT INTO student_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+                                                                                db.query(insertQuery, [studEmail, hashedOTP], (err, res) => {
+                                                                                    if (err) {
+                                                                                        console.error("Error while inserting OTP: ", err);
+                                                                                        result(err, null);
+                                                                                    } else {
+                                                                                        console.log("OTP inserted successfully");
+                                                                                        result(null, otp); // Return the plain OTP for email sending
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }
+                                                        });
+                                                }
+                                            }
+                                        });
+                                }
+                            }
+                        });
+                }
+            }
+        });
 };
 
 
@@ -1073,15 +1164,15 @@ Student.verifyOTP = (studEmail, otp, result) => {
                 const studotp = res[0].otp;
                 const createdAt = res[0].createdAt;
                 // Check if OTP is expired
-                const expiryDuration = 10 *60 * 1000; // 10 minute in milliseconds
+                const expiryDuration = 10 * 60 * 1000; // 10 minute in milliseconds
                 const otpCreatedAt = new Date(createdAt).getTime();
                 const currentTime = new Date().getTime();
                 if (currentTime - otpCreatedAt > expiryDuration) {
                     return result("OTP expired", null);
                 }
-                
+
                 // If OTP not expired, proceed to compare
-                const isMatch = bcrypt.compareSync(otp,studotp);
+                const isMatch = bcrypt.compareSync(otp, studotp);
                 if (isMatch) {
                     return result(null, true);
                 } else {
