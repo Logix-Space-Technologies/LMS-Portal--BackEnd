@@ -203,7 +203,7 @@ const StudentViewOneTask = () => {
                                             </p>
                                             <td>
                                                 <div className="flex justify-start" >
-                                                    <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
+                                                    <Link target="_blank" rel='noreferrer' to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
                                             </td>
@@ -269,7 +269,7 @@ const StudentViewOneTask = () => {
                                             </p>
                                             <td>
                                                 <div className="flex justify-start" >
-                                                    <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
+                                                    <Link target="_blank" rel='noreferrer' to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
                                             </td>
@@ -299,7 +299,7 @@ const StudentViewOneTask = () => {
                                             </p><br /><br />
                                             <td>
                                                 <div className="flex justify-start" >
-                                                    <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
+                                                    <Link target="_blank" rel='noreferrer' to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
                                             </td>
