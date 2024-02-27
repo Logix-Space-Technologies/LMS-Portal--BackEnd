@@ -60,7 +60,7 @@ const AdminViewLog = () => {
                             currentLogs.map((value, index) => {
                                 return (
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td className="px-6 py-4">{index+1}</td>
+                                        <td className="px-6 py-4">{index + 1}</td>
                                         <td className="px-6 py-4">Admin</td>
                                         <td className="px-6 py-4">{value.Action}</td>
                                         <td className="px-6 py-4">{new Date(value.DateTime).toLocaleDateString()}</td>
@@ -76,22 +76,22 @@ const AdminViewLog = () => {
                 </table>
                 {/* Pagination */}
                 <div className="flex flex-col items-center">
-                <span className="text-sm text-gray-700 dark:text-gray-400">
-                    Showing <span className="font-semibold text-gray-900 dark:text-white">{indexOfFirstLog + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{indexOfLastLog > AdminLogData.length ? AdminLogData.length : indexOfLastLog}</span> of <span className="font-semibold text-gray-900 dark:text-white">{AdminLogData.length}</span> Entries
-                </span>
-                <div className="inline-flex mt-2 xs:mt-0">
-                    {currentPage > 1 && (
-                        <button onClick={() => paginate(currentPage - 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                            Prev
-                        </button>
-                    )}
-                    {currentPage < totalPages && (
-                        <button onClick={() => paginate(currentPage + 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                            Next
-                        </button>
-                    )}
+                    <span className="text-sm text-gray-700 dark:text-gray-400">
+                        Showing <span className="font-semibold text-gray-900 dark:text-white">{indexOfFirstLog + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{indexOfLastLog > AdminLogData.length ? AdminLogData.length : indexOfLastLog}</span> of <span className="font-semibold text-gray-900 dark:text-white">{AdminLogData.length}</span> Entries
+                    </span>
+                    <div className="inline-flex mt-2 xs:mt-0">
+                        {currentPage > 1 && (
+                            <button onClick={() => paginate(currentPage - 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                Prev
+                            </button>
+                        )}
+                        {currentPage < totalPages && (
+                            <button onClick={() => paginate(currentPage + 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                Next
+                            </button>
+                        )}
+                    </div>
                 </div>
-            </div>
             </div>
         </div>
     );

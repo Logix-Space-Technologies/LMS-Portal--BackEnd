@@ -39,9 +39,6 @@ const StudNavBar = () => {
                                 <Link className="nav-link" to='/studdashboard'>Student Dashboard</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/studViewRefundReq">View Refund Request</Link>
-                            </li>
-                            <li className="nav-item">
                                 <Link className="nav-link" to="/studMaterialView">View Materials</Link>
                             </li>
                             <li className="nav-item">
