@@ -12,7 +12,6 @@ const CollegeStaffHeader = () => {
 
     const getData = () => {
         let data = { "id": sessionStorage.getItem("clgStaffId") };
-        console.log(data)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -50,30 +49,6 @@ const CollegeStaffHeader = () => {
                         <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
                 </Link>
                 <div className="navbar-nav align-items-center ms-auto">
-                    {/* <div className="nav-item dropdown">
-                                <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                                    <i className="fa fa-bell me-lg-2" />
-                                    <span className="d-none d-lg-inline-flex">Notification</span>
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                                    <a href="#" className="dropdown-item">
-                                        <h6 className="fw-normal mb-0">Profile updated</h6>
-                                        <small>15 minutes ago</small>
-                                    </a>
-                                    <hr className="dropdown-divider" />
-                                    <a href="#" className="dropdown-item">
-                                        <h6 className="fw-normal mb-0">New user added</h6>
-                                        <small>15 minutes ago</small>
-                                    </a>
-                                    <hr className="dropdown-divider" />
-                                    <a href="#" className="dropdown-item">
-                                        <h6 className="fw-normal mb-0">Password changed</h6>
-                                        <small>15 minutes ago</small>
-                                    </a>
-                                    <hr className="dropdown-divider" />
-                                    <a href="#" className="dropdown-item text-center">See all notifications</a>
-                                </div>
-                            </div> */}
                     <div className="nav-item dropdown">
                         <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <img className="rounded-circle me-lg-2" src={colgStaffData.profilePic} alt style={{ width: 40, height: 40 }} />
@@ -86,7 +61,6 @@ const CollegeStaffHeader = () => {
                     </div>
                 </div>
             </nav>
-
         </div>
     )
 }
