@@ -39,11 +39,43 @@ const StudentRegistration = () => {
 
   const [amount, setAmount] = useState('')
 
+  const [updateField, setUpdateField] = useState({
+    "otp": ""
+  })
+  
+
   const apiUrl = global.config.urls.api.server + "/api/lms/studreg"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/studentregviewcollege"
   const batchUrl = global.config.urls.api.server + "/api/lms/studregviewbatch";
   const batchAmountUrl = global.config.urls.api.server + "/api/lms/studregviewbatchamount"
+  const sendOtpUrl = global.config.urls.api.server + "/api/lms/studregotpmailsend"
+  const verifyOtpUrl = global.config.urls.api.server + "/api/lms/studregotpverify"
 
+
+  const sendOtp = async (e) => {
+    let data = { "studEmail": inputField.studEmail }
+    let axiosConfig = {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
+    e.preventDefault();
+    const validationErrors = validateForm(inputField);
+    if (Object.keys(validationErrors).length === 0) {
+      axios.post(sendOtpUrl, data, axiosConfig).then(
+        (response) => {
+          if (response.data.status === "OTP sent to email.") {
+            alert("OTP Send To Your Email")
+          } else {
+            alert(response.data.status)
+          }
+        }
+      )
+    } else {
+      setErrors(validationErrors);
+    }
+  }
 
   const getData = () => {
     let axiosConfig = {
@@ -121,6 +153,11 @@ const StudentRegistration = () => {
   const inputHandler = (event) => {
     setErrors({})
     setInputField({ ...inputField, [event.target.name]: event.target.value });
+  };
+
+  const updateHandler = (event) => {
+    setErrors({})
+    setUpdateField({ ...updateField, [event.target.name]: event.target.value });
   };
 
   const loadRazorpayScript = async () => {
@@ -238,14 +275,26 @@ const StudentRegistration = () => {
   }
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validateForm(inputField);
-    if (Object.keys(validationErrors).length === 0) {
-      loadRazorpayScript();
-    } else {
-      setErrors(validationErrors);
-    }
+  const handleSubmit = () => {
+    let data = { "studEmail": inputField.studEmail, "otp": updateField.otp };
+    console.log(data)
+    let axiosConfig = {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
+    axios.post(verifyOtpUrl, data, axiosConfig).then(
+      (response) => {
+        if (response.data.status === "OTP verified successfully") {
+          loadRazorpayScript()
+          setUpdateField({"otp": ""})
+        } else {
+          alert(response.data.status)
+          setUpdateField({"otp": ""})
+        }
+      }
+    )
   };
 
 
@@ -534,14 +583,40 @@ const StudentRegistration = () => {
                 </div>
                 <div className="col-12">
                   {amount === batchAmount && (
-                    <button
-                      type="submit"
-                      className="btn btn-primary w-100 py-3"
-                      onClick={handleSubmit}>
-                      Register
-                    </button>
+                    // <button
+                    //   type="submit"
+                    //   className="btn btn-primary w-100 py-3"
+                    //   onClick={sendOtp}>
+                    //   Register
+                    // </button>
+                    <button type="submit" onClick={sendOtp} className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Register</button>
                   )}
                 </div>
+              </div>
+              <div>
+                <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div className="modal-dialog">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <h1 className="modal-title fs-5" id="exampleModalLabel">Verify Email</h1>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                      </div>
+                      <div className="modal-body">
+                        <>
+                          <div className="mb-3">
+                            <label htmlFor="message-text" className="col-form-label">OTP:</label>
+                            <input type="text" onChange={updateHandler} value={updateField.otp} name="otp" className="form-control" id="message-text" defaultValue={""} />
+                          </div>
+                        </>
+                      </div>
+                      <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleSubmit}>Submit</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
               <br />
               <div className="row gy-3 gy-md-4 overflow-hidden">
