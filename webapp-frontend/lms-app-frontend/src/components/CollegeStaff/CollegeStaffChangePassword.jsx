@@ -13,13 +13,11 @@ const CollegeStaffChangePassword = () => {
     const apiurl = global.config.urls.api.server + "/api/lms/collegeStaffChangePassword";
     const navigate = useNavigate();
 
-
-
     const updateHandler = (event) => {
         setUpdateField({ ...updateField, [event.target.name]: event.target.value });
     }
 
-    const readNewValue = () =>{
+    const readNewValue = () => {
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -28,8 +26,8 @@ const CollegeStaffChangePassword = () => {
             }
         };
 
-        axios.post(apiurl,updateField,axiosConfig).then(
-            (response)=>{
+        axios.post(apiurl, updateField, axiosConfig).then(
+            (response) => {
                 if (updateField.oldPassword === updateField.newPassword) {
                     alert("Old password and New password cannot be same.")
                 } else {

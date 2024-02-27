@@ -28,6 +28,7 @@ const StudentViewOneTask = () => {
                 "key": sessionStorage.getItem("studentkey")
             }
         };
+        console.log(axiosConfig)
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
@@ -42,7 +43,7 @@ const StudentViewOneTask = () => {
                     }
                 }
             }
-        );
+        ).catch(error => console.error("Error:", error));
     };
 
     const updateSubTask = (id) => {
@@ -202,7 +203,7 @@ const StudentViewOneTask = () => {
                                             </p>
                                             <td>
                                                 <div className="flex justify-start" >
-                                                    <a target="_blank" href={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
+                                                    <Link target="_blank" rel='noreferrer' to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
                                             </td>
@@ -268,7 +269,7 @@ const StudentViewOneTask = () => {
                                             </p>
                                             <td>
                                                 <div className="flex justify-start" >
-                                                    <a target="_blank" href={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
+                                                    <Link target="_blank" rel='noreferrer' to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
                                             </td>
@@ -298,7 +299,7 @@ const StudentViewOneTask = () => {
                                             </p><br /><br />
                                             <td>
                                                 <div className="flex justify-start" >
-                                                    <a target="_blank" href={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
+                                                    <Link target="_blank" rel='noreferrer' to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
                                             </td>

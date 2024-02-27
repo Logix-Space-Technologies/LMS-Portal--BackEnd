@@ -14,9 +14,7 @@ const CollegeStaffSearchStudent = () => {
 
     const navigate = useNavigate()
 
-    const [updateField, setUpdateField] = useState(
-        []
-    )
+    const [updateField, setUpdateField] = useState([])
 
     const [currentPage, setCurrentPage] = useState(1);
     const [studentPerPage] = useState(10); // Number of students per page
@@ -30,7 +28,6 @@ const CollegeStaffSearchStudent = () => {
     }
 
     const readValue = () => {
-        console.log(inputField)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -63,9 +60,7 @@ const CollegeStaffSearchStudent = () => {
                     }
                 }
             }
-
         )
-
     }
 
     // Logic for displaying current students
@@ -97,8 +92,7 @@ const CollegeStaffSearchStudent = () => {
                                 <h1>Search Student</h1>
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <label htmlFor="" className="form-label">Student Name/Course/Department/Roll No/Admission No</label>
-                                <input onChange={inputHandler} type="text" className="form-control" name="searchQuery" value={inputField.searchQuery} />
+                                <input onChange={inputHandler} type="text" placeholder='Student Name/Course/Department/Roll No/Admission No' className="form-control" name="searchQuery" value={inputField.searchQuery} />
                             </div>
                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                 <button onClick={readValue} className="btn btn-warning">Search</button><br /><br />
@@ -118,8 +112,8 @@ const CollegeStaffSearchStudent = () => {
                             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
-                                    <th scope="col" className="px-6 py-3">
-                                            
+                                        <th scope="col" className="px-6 py-3">
+
                                         </th>
                                         <th scope="col" className="px-6 py-3">
                                             Name
@@ -158,8 +152,8 @@ const CollegeStaffSearchStudent = () => {
                                 </thead>
                                 <tbody>
                                     {currentStudents.map(
-                                        (value, index) => (
-                                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        (value, index) => {
+                                            return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                                 <td className="p-4 whitespace-nowrap">
                                                     <div className="flex items-center">
                                                         <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
@@ -174,7 +168,7 @@ const CollegeStaffSearchStudent = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                {value.studName}
+                                                    {value.studName}
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     {value.studDept}
@@ -207,7 +201,7 @@ const CollegeStaffSearchStudent = () => {
                                                     {value.validity}
                                                 </td>
                                             </tr>
-                                        )
+                                        }
                                     )}
                                 </tbody>
                             </table>
@@ -241,7 +235,6 @@ const CollegeStaffSearchStudent = () => {
                 </div>
             </div>
         </div>
-
     )
 }
 

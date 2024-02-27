@@ -21,8 +21,10 @@ const AdminSearchCollege = () => {
 
     const [isLoading, setIsLoading] = useState(true)
 
+    const [deleteCollege, setDeleteCollege] = useState({})
+
     const [currentPage, setCurrentPage] = useState(1);
-    const [studentsPerPage] = useState(1); // Number of students per page
+    const [studentsPerPage] = useState(10); // Number of students per page
 
     const apiUrl = global.config.urls.api.server + "/api/lms/searchCollege"
 
@@ -64,8 +66,8 @@ const AdminSearchCollege = () => {
         )
     }
 
-    const handleClick = (id) => {
-        let data = { "id": id }
+    const handleClick = () => {
+        let data = { "id": deleteCollege }
         let axiosConfigTwo = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -86,6 +88,11 @@ const AdminSearchCollege = () => {
             }
         )
     }
+
+    const readValue2 = (id) => {
+        setDeleteCollege(id)
+        console.log(id)
+    };
 
     const UpdateClick = (id) => {
         let data = id
@@ -150,8 +157,8 @@ const AdminSearchCollege = () => {
                                 {/* Table headers */}
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3">S/N</th>
                                         <th scope="col" className="px-6 py-3"></th>
+                                        <th scope="col" className="px-6 py-3">S/N</th>
                                         <th scope="col" className="px-6 py-3">College Name</th>
                                         <th scope="col" className="px-6 py-3">College Address</th>
                                         <th scope="col" className="px-6 py-3">Website</th>
@@ -168,7 +175,7 @@ const AdminSearchCollege = () => {
                                     {/* Table rows */}
                                     {currentColleges.map((value, index) => (
                                         <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td className="px-6 py-4">{index+1}</td>
+                                            <td className="px-6 py-4">{index + 1}</td>
                                             <td className="p-4 whitespace-nowrap">
                                                 <div className="flex items-center">
                                                     <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
@@ -193,7 +200,7 @@ const AdminSearchCollege = () => {
                                             </td>
                                             {key === 'lmsapp' && (
                                                 <td className="p-4 whitespace-nowrap">
-                                                    <button onClick={() => { handleClick(value.id) }} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg">Delete</button>
+                                                    <button onClick={() => { readValue2(value.id) }} className="btn btn-danger p-3 font-medium text-white-600 hover:text-blue-500 shadow-lg" data-bs-toggle="modal" data-bs-target="#exampleModal">Delete</button>
                                                 </td>
                                             )}
                                         </tr>
@@ -201,6 +208,25 @@ const AdminSearchCollege = () => {
 
                                 </tbody>
                             </table>
+                        </div>
+                        <div className="row">
+                            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div className="modal-dialog modal-dialog-centered">
+                                    <div className="modal-content">
+                                        <div className="modal-header">
+                                            <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to delete this college?</h5>
+                                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div className="modal-body">
+                                            <p>This action cannot be undone.</p>
+                                        </div>
+                                        <div className="modal-footer">
+                                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No, cancel</button>
+                                            <button onClick={() => { handleClick() }} type="button" className="btn btn-danger" data-bs-dismiss="modal">Yes, I'm sure</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     //end

@@ -892,7 +892,7 @@ Student.studentNotificationView = (studId, result) => {
                         return;
                     }
                     db.query(
-                        "SELECT notifications.message, notifications.sendBy, notifications.title, notifications.addedDate, notifications.sendDateTime, CASE WHEN TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()), ' minute', IF(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) = 1, '', 's'), ' ago') WHEN TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()), ' hour', IF(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) = 1, '', 's'), ' ago') ELSE CONCAT(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()), ' day', IF(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()) = 1, '', 's'), ' ago') END AS formattedDateTime, CASE WHEN notifications.sendBy = 0 THEN 'Admin' ELSE coalesce(admin_staff.AdStaffName, 'Unknown') END AS senderName FROM notifications LEFT JOIN admin_staff ON notifications.sendBy = admin_staff.id WHERE notifications.batchId = ? AND notifications.sendDateTime >= DATE_SUB(NOW(), INTERVAL 14 DAY) ORDER BY notifications.sendDateTime DESC;",
+                        "SELECT notifications.message, notifications.sendBy, notifications.title, notifications.addedDate, notifications.sendDateTime, CASE WHEN TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()), ' minute', IF(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) = 1, '', 's')) WHEN TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()), ' hour', IF(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) = 1, '', 's')) ELSE CONCAT(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()), ' day', IF(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()) = 1, '', 's')) END AS formattedDateTime, CASE WHEN notifications.sendBy = 0 THEN 'Admin' ELSE coalesce(admin_staff.AdStaffName, 'Unknown') END AS senderName FROM notifications LEFT JOIN admin_staff ON notifications.sendBy = admin_staff.id WHERE notifications.batchId = ? AND notifications.sendDateTime >= DATE_SUB(NOW(), INTERVAL 14 DAY) ORDER BY notifications.sendDateTime DESC;",
                         [batchId],
                         (err, notificationsRes) => {
                             if (err) {
@@ -1056,15 +1056,9 @@ Student.generateAndHashOTP = (studEmail, result) => {
     const saltRounds = 10;
     const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
 
-    // Insert the hashed OTP into the `student_otp` table
-    const query = "INSERT INTO student_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
-    db.query(query, [studEmail, hashedOTP], (err, res) => {
-        if (err) {
-            return result(err, null);
-        } else {
-            return result(null, otp); // Return the plain OTP for email sending
-        }
-    });
+    db.query("SELECT * FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1",
+    [studEmail])
+
 };
 
 
@@ -1099,6 +1093,25 @@ Student.verifyOTP = (studEmail, otp, result) => {
         }
     });
 };
+
+Student.viewCommunityMangers = (batchId, result) => {
+    db.query("SELECT cm.id AS commManagerId, s.studName,b.batchName, s.studProfilePic, s.studEmail, s.studPhNo, s.aadharNo, s.membership_no, s.addedDate, s.validity FROM student s JOIN communitymanagers cm ON s.id = cm.studentId JOIN batches b ON s.batchId=b.id WHERE s.batchId = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 AND cm.deleteStatus = 0 AND cm.isActive = 1 ORDER BY s.addedDate DESC;",
+        [batchId],
+        (err, res) => {
+            if (err) {
+                console.error("Error while fetching community managers: ", err);
+                return result(err, null);
+            }
+            if (res.length === 0) {
+                console.log("No community managers found.");
+                return result("No community managers found.", null);
+            }
+            const formattedCommunityManagers = res.map(managers => ({ ...managers, addedDate: managers.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), validity: managers.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }));
+            console.log("Community Managers: ", formattedCommunityManagers);
+            result(null, formattedCommunityManagers);
+        }
+    );
+}
 
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 
