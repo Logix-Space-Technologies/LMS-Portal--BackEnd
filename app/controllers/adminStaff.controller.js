@@ -178,12 +178,12 @@ exports.adminStaffUpdate = (request, res) => {
 
 exports.admStaffDelete = (request, response) => {
     const deleteToken = request.headers.token
-    console.log(deleteToken)
     jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             const admStfDlt = new AdminStaff({
                 'id': request.body.id
             });
+            console.log(admStfDlt)
             AdminStaff.admStaffDelete(admStfDlt, (err, data) => {
                 if (err) {
                     if (err.kind === "not_found") {

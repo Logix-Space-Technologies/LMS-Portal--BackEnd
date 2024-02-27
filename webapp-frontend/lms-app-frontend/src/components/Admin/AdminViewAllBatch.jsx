@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import '../../config/config';
 
 const AdminViewAllBatch = () => {
     const [batchData, setBatchData] = useState([]);
@@ -10,6 +11,8 @@ const AdminViewAllBatch = () => {
     const [batchesPerPage] = useState(10); // Number of batches per page
     const navigate = useNavigate();
     const [key, setKey] = useState('');
+    const [deleteId, setDeleteId] = useState(null);
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     const apiUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch";
@@ -40,7 +43,12 @@ const AdminViewAllBatch = () => {
     };
 
     const deleteClick = (id) => {
-        let deletedata = { "id": id };
+        setDeleteId(id);
+        setShowConfirmation(true);
+    };
+
+    const confirmDelete = () => {
+        let deletedata = { "id": deleteId };
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -60,6 +68,8 @@ const AdminViewAllBatch = () => {
                 }
             }
         );
+
+        setShowConfirmation(false);
     };
 
     const viewAllCurr = (id) => {
@@ -109,6 +119,7 @@ const AdminViewAllBatch = () => {
                     {/* Table headers */}
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
+                            <th scope="col" className="px-6 py-3">S/N</th>
                             <th scope="col" className="px-6 py-3">College Name</th>
                             <th scope="col" className="px-6 py-3">Batch Name</th>
                             <th scope="col" className="px-6 py-3">Reg Start Date</th>
@@ -129,6 +140,7 @@ const AdminViewAllBatch = () => {
                         {/* Table rows */}
                         {currentBatches.length > 0 ? currentBatches.map((value, index) => (
                             <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td className="px-6 py-4">{index+1}</td>
                                 <td className="px-6 py-4">{value.collegeName}</td>
                                 <td className="px-6 py-4">{value.batchName}</td>
                                 <td className="px-6 py-4">{new Date(value.regStartDate).toLocaleDateString()}</td>
@@ -180,6 +192,18 @@ const AdminViewAllBatch = () => {
                             )}
                         </ul>
                     </nav>
+                </div>
+            )}
+            {/* Delete Confirmation */}
+            {showConfirmation && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+                    <div className="bg-white p-8 rounded-lg shadow-lg">
+                        <p className="text-lg font-semibold text-gray-800">Are you sure you want to delete this batch?</p>
+                        <div className="flex justify-end mt-4">
+                            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full mr-4" onClick={confirmDelete}>Delete</button>
+                            <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-full" onClick={() => setShowConfirmation(false)}>Cancel</button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

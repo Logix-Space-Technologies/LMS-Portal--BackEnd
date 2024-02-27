@@ -68,9 +68,7 @@ const CollegeStaffViewBatch = () => {
         // Use window.open directly with response.data
         const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
         window.open(URL.createObjectURL(pdfBlob), '_blank');
-        window.location.reload();
       } else {
-
         if (response.data.status === "Unauthorized User!!") {
           sessionStorage.clear()
           navigate("/clgStafflogin")
@@ -81,7 +79,6 @@ const CollegeStaffViewBatch = () => {
             alert(response.data.status);
           }
         }
-
       }
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -107,9 +104,7 @@ const CollegeStaffViewBatch = () => {
         // Use window.open directly with response.data
         const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
         window.open(URL.createObjectURL(pdfBlob), '_blank');
-        window.location.reload();
       } else {
-
         if (response.data.status === "Unauthorized User!!") {
           sessionStorage.clear()
           navigate("/clgStafflogin")
@@ -128,18 +123,13 @@ const CollegeStaffViewBatch = () => {
   }
 
   const batchClick = (id) => {
-
     navigate("/clgstaffviewsession")
     sessionStorage.setItem("clgstaffbatchId", id)
-    console.log(id)
-
   }
-  const studentClick = (id) => {
 
+  const studentClick = (id) => {
     navigate("/collegeStaffViewAllStudents")
     sessionStorage.setItem("clgstaffviewbatchId", id)
-    console.log(id)
-
   }
 
   useEffect(() => { fetchBatches() }, []);
@@ -169,8 +159,8 @@ const CollegeStaffViewBatch = () => {
                     batches.length === 0 ? (
                       <div className="col-12 text-center">No batches found!</div>
                     ) : (
-                      batches.map((batch, index) => (
-                        <div key={index} className="col-12">
+                      batches.map((batch, index) => {
+                        return <div key={index} className="col-12">
                           <div className="card">
                             <div className="card-body">
                               <h5 className="card-title">{batch.batchName}</h5>
@@ -191,7 +181,7 @@ const CollegeStaffViewBatch = () => {
                             </div>
                           </div>
                         </div>
-                      ))
+                      })
                     )
                   )}
                 </div>

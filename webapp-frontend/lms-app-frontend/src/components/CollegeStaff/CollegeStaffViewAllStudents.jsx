@@ -27,7 +27,6 @@ const CollegeStaffViewAllStudents = () => {
       .then(response => {
         if (response.data.data) {
           setStudents(response.data.data);
-          console.log(response.data.data);
         } else {
           if (response.data.status === "Unauthorized User!!") {
             sessionStorage.clear()
@@ -94,8 +93,8 @@ const CollegeStaffViewAllStudents = () => {
             </tr>
           </thead>
           <tbody>
-            {students.map((student, index) => (
-              <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            {students.map((student, index) => {
+              return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <td className="px-6 py-4">
                   {student.studProfilePic && <img className="w-10 h-10 rounded-full" src={student.studProfilePic} alt={student.studName} />}
                 </td>
@@ -110,7 +109,7 @@ const CollegeStaffViewAllStudents = () => {
                 <td className="px-6 py-4">{student.batchName}</td>
                 <td className="px-6 py-4">{student.membership_no}</td>
               </tr>
-            ))}
+            })}
             {students.length === 0 && (
               <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <td colSpan="11" className="px-6 py-4 text-center">
@@ -142,7 +141,6 @@ const CollegeStaffViewAllStudents = () => {
           </ul>
         </nav>
       </div>
-
     </div>
   );
 };

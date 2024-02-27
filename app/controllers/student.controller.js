@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const Validator = require("../config/data.validate");
 const PDFDocument = require('pdfkit-table');
 const fs = require('fs');
+const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
@@ -1203,3 +1204,86 @@ exports.studentviewsubmittedtask = (request, response) => {
 
     })
 }
+
+// Function to handle forgot password requests
+exports.regOtpVerification = (request, response) => {
+    const studEmail = request.body.studEmail;
+
+    // Generate and hash OTP
+    Student.generateAndHashOTP(studEmail, (err, otp) => {
+        if (err) {
+            // Handle errors that occur during OTP generation and hashing
+            return response.json({ "status": err });
+        } else {
+            // Assuming sendOTPEmail is a function you have defined to handle email sending
+            // This function should ideally be asynchronous and handle its own errors
+            const mailSent = sendOTPEmail(studEmail, otp); // Hypothetical function to send email
+            if (mailSent) {
+                // Successfully sent the OTP to the user's email
+                response.json({ "status": "OTP sent to email." });
+            } else {
+                // Failed to send the email for some reason (e.g., email service down)
+                response.json({ "status": "Failed to send OTP." });
+            }
+        }
+    });
+};
+
+
+exports.verifyOtp = (req, res) => {
+    // Extract email and OTP from request body
+    const email = req.body.studEmail;
+    const otp = req.body.otp;
+
+    // Input validation (basic example)
+    if (!email || !otp) {
+        return res.json({ "status": "Email and OTP are required" });
+    }
+
+    // Call the model function to verify the OTP
+    Student.verifyOTP(email, otp, (err, result) => {
+        if (err) {
+            // If there was an error or the OTP is not valid/expired
+            return res.json({ "status": err });
+        } else {
+            if (result) {
+                // If the OTP is verified successfully
+                return res.json({ "status": "OTP verified successfully" });
+            } else {
+                // If the OTP does not match
+                return res.json({ "status": "Invalid OTP" });
+            }
+        }
+    });
+};
+
+// Function to send OTP
+function sendOTPEmail(email, otp) {
+    const otpVerificationHTMLContent = mailContents.studRegOTPVerificationHTMLContent(otp);
+    const otpVerificationTextContent = mailContents.studRegOTPVerificationTextContent(otp);
+    mail.sendEmail(email, 'OTP Verification For Student Registration', otpVerificationHTMLContent, otpVerificationTextContent)
+    return true; // Placeholder
+}
+
+exports.viewCommunityManagers = (request, response) => {
+    const token = request.headers.token;
+    const key = request.headers.key;
+    const batchId = request.body.batchId;
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Student.viewCommunityMangers(batchId,(err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        return response.json({ "status": "No Community Managers found!" });
+                    } else {
+                        return response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};

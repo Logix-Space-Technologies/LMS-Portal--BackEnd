@@ -20,14 +20,12 @@ const CollegeStaffViewAttendance = () => {
                 'Access-Control-Allow-Origin': '*',
                 "token": sessionStorage.getItem("clgstaffLogintoken"),
                 "key": sessionStorage.getItem("clgstaffkey")
-
             },
         };
         axios.post(apiUrl, data, axiosConfig).then((response) => {
             if (response.data.data) {
                 setClgStaffViewAttendance(response.data.data);
             } else {
-
                 if (response.data.status === "Unauthorized User!!") {
                     sessionStorage.clear()
                     navigate("/clgStafflogin")
@@ -39,7 +37,6 @@ const CollegeStaffViewAttendance = () => {
                     }
                 }
             }
-
         });
     };
 
@@ -62,13 +59,13 @@ const CollegeStaffViewAttendance = () => {
     }
 
     useEffect(() => { getData() }, []);
+
     return (
         <div>
             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
                 <h2 className="text-lg font-bold">College Staff View Attendance</h2>
                 <Link to="/clgstaffviewsession" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
             </div>
-
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead>
@@ -94,8 +91,6 @@ const CollegeStaffViewAttendance = () => {
                         {currentAttendances ? (currentAttendances.map((value, index) => {
                             const isPresent = value.attendence_status.toLowerCase() === 'present';
                             const buttonClassName = isPresent ? 'bg-green-500/20 text-green-700' : 'bg-red-500/20 text-red-700';
-
-                            console.log('attendence_status:', value.attendence_status);
                             return (
                                 <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <td className="p-4 whitespace-nowrap">

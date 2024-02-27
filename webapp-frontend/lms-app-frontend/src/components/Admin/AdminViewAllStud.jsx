@@ -40,10 +40,44 @@ const AdminViewAllStud = () => {
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
     const apiUrl2 = global.config.urls.api.server + "/api/lms/createCommunityManager";
+    const apiUrl3 = global.config.urls.api.server + "/api/lms/deleteCommunityManager";
 
     // Assign Community Manager
     const assignCommunityManager = (id, batchId) => {
-        let data = { "studentId": id, "batchId": batchId }
+        let data = {"studentId": id, "batchId": batchId }; // Ensure this matches your expected backend format
+        console.log(data)
+        let axiosConfig2 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"), // Your token storage method might need to match your backend expectations
+                "key": sessionStorage.getItem("admkey") // Ensure your backend is expecting this key in the header
+            }
+        };
+    
+        axios.post(apiUrl2, data, axiosConfig2).then(
+            (response) => {
+                if (response.data.status === "success") {
+                    // Assuming "Assigned to Community Manager" is a message you want to display
+                    alert("Assigned to Community Manager");
+                    getData(); // Ensure getData() is defined and fetches the latest data
+                } else if (response.data.status === "Validation failed") {
+                    // Handle validation errors
+                    alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
+                } else {
+                    // Handle other errors
+                    alert(response.data.status);
+                }
+            }
+        ).catch(error => {
+            console.error("Error assigning community manager:", error);
+            alert("An error occurred while assigning the community manager. Please try again.");
+        });
+    };
+
+    // Remove Community Manager
+    const removeCommunityManager = (id) => {
+        let data = { "id": id };
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -52,27 +86,23 @@ const AdminViewAllStud = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-        axios.post(apiUrl2, data, axiosConfig).then(
+        axios.post(apiUrl3, data, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    // Refresh the student data after assigning a community manager
-                    alert(`Assigned to Community Manager`);
-                    window.location.reload()
+                    alert(`Removed from Community Manager`);
+                    getData()
                 } else {
-                    if (response.data.status === "Validation failed") {
-                        alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
-                    } else if (response.data.status === "Community Manager already exists for the batch") {
-                        alert(response.data.status);
-                    } else {
-                        alert(response.data.status)
-                    }
+                    alert(response.data.status);
                 }
             }
         ).catch(error => {
-            console.error("Error assigning community manager:", error);
-            alert("An error occurred while assigning the community manager. Please try again.");
+            console.error("Error removing community manager:", error);
+            alert("An error occurred while removing the community manager. Please try again.");
         });
     };
+
+
+
 
 
     useEffect(() => { getData() }, []);
@@ -92,7 +122,11 @@ const AdminViewAllStud = () => {
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
+
                             <th scope="col" className="px-6 py-3">
+                                S/N
+                            </th>
+                            <th scope="col" className="px-9 py-3">
 
                             </th>
                             <th scope="col" className="px-6 py-3">
@@ -138,6 +172,9 @@ const AdminViewAllStud = () => {
                             (value, index) => {
                                 return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <td className="px-6 py-4">
+                                        {index + 1}
+                                    </td>
+                                    <td className="px-6 py-4">
                                         {value.communityManager === 1 && (
                                             <img
                                                 src="https://www.svgrepo.com/show/303204/google-account-security-2-logo.svg"
@@ -153,7 +190,6 @@ const AdminViewAllStud = () => {
                                             <div className="font-normal text-gray-500">{value.studEmail}</div>
                                         </div>
                                     </th>
-                                    
 
                                     <td className="px-6 py-4">
                                         {value.membership_no}
@@ -188,6 +224,9 @@ const AdminViewAllStud = () => {
                                     <td className="px-6 py-4">
                                         {value.communityManager === 0 && (
                                             <button onClick={() => assignCommunityManager(value.id, value.batchId)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Assign Community Manager</button>
+                                        )}
+                                        {value.communityManager === 1 && (
+                                            <button onClick={() => { removeCommunityManager(value.commManagerId) }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Remove Community Manager</button>
                                         )}
                                     </td>
                                 </tr>

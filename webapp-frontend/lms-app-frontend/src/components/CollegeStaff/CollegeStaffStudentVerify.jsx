@@ -48,7 +48,6 @@ const CollegeStaffStudentVerify = () => {
 
     const handleClick = (studentId) => {
         let data = { "collegeId": sessionStorage.getItem("clgStaffCollegeId"), "studentId": studentId }
-        console.log(data)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -60,7 +59,7 @@ const CollegeStaffStudentVerify = () => {
             (response) => {
                 if (response.data.status === "Success") {
                     alert("Student verified successfully!!")
-                    window.location.reload()
+                    getData()
                 } else {
                     if (response.data.status === "Unauthorized User!!!") {
                         sessionStorage.clear()
@@ -143,13 +142,13 @@ const CollegeStaffStudentVerify = () => {
                                 Validity
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                
+
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {currentStudents.map((value, index) => (
-                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        {currentStudents.map((value, index) => {
+                            return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                     <img className="w-10 h-10 rounded-full" src={value.studProfilePic} alt="" />
                                     <div className="ps-3">
@@ -193,10 +192,10 @@ const CollegeStaffStudentVerify = () => {
                                     <button onClick={() => handleClick(value.id)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Verify</button>
                                 </td>
                             </tr>
-                        ))}
+                        })}
                         {currentStudents.length === 0 && (
                             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td colSpan="13" className="px-6 py-4" style={{textAlign: 'center'}}>
+                                <td colSpan="13" className="px-6 py-4" style={{ textAlign: 'center' }}>
                                     No Students Found !!
                                 </td>
                             </tr>
@@ -225,11 +224,7 @@ const CollegeStaffStudentVerify = () => {
                     </ul>
                 </nav>
             </div>
-
         </div>
-
-
-
     )
 }
 

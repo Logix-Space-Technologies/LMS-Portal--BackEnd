@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import '../../config/config';
 
 const QRCodeModal = ({ qrCodeAttendance, onClose }) => {
     return (
@@ -169,6 +170,41 @@ const AdminViewAllSession = () => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
 
+    const [deleteId, setDeleteId] = useState(null);
+    const [showConfirmation, setShowConfirmation] = useState(false);
+
+    const deleteClick = (id) => {
+        setDeleteId(id);
+        setShowConfirmation(true);
+    };
+
+    const confirmDelete = () => {
+        let axiosConfig = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        };
+
+        axios.post(deleteApiLink, { id: deleteId }, axiosConfig)
+            .then(response => {
+                if (response.data.status === "success") {
+                    alert("Session Deleted!!")
+                    setUpdateField(updateField.filter(session => session.id !== deleteId));
+                    window.location.reload()
+                } else {
+                    console.error("Error deleting session:", response.data.status);
+                }
+            })
+            .catch(error => {
+                console.error("Error during API call:", error);
+            });
+
+        setShowConfirmation(false);
+    };
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
@@ -184,6 +220,7 @@ const AdminViewAllSession = () => {
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
+                            <th scope="col" className="px-6 py-3">S/N</th>
                             <th scope="col" className="px-6 py-3">Name</th>
                             <th scope="col" className="px-6 py-3">Date</th>
                             <th scope="col" className="px-6 py-3">Time</th>
@@ -202,6 +239,7 @@ const AdminViewAllSession = () => {
                     <tbody>
                         {currentSessions.length > 0 ? currentSessions.map((value, index) => (
                             <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td className="px-6 py-4">{index+1}</td>
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                     <div className="ps-3">
                                         <div className="text-base font-semibold">{value.sessionName}</div>
@@ -244,7 +282,7 @@ const AdminViewAllSession = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {key === "lmsapp" && value.cancelStatus === "ACTIVE" && (
-                                        <button onClick={() => deleteSession(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
+                                        <button onClick={() => deleteClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
                                             Delete Session
                                         </button>
                                     )}
@@ -291,8 +329,27 @@ const AdminViewAllSession = () => {
             {showQRModal && qrCodeAttendance && (
                 <QRCodeModal qrCodeAttendance={qrCodeAttendance} onClose={handleCloseQRModal} />
             )}
+
+            {/* Delete Confirmation Modal */}
+            {showConfirmation && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50">
+                    <div className="bg-white p-8 rounded-lg shadow-lg">
+                        <div className="text-center mb-4">
+                            <h2 className="text-xl font-semibold">Delete Confirmation</h2>
+                        </div>
+                        <div className="text-center mb-4">
+                            Are you sure you want to delete this session?
+                        </div>
+                        <div className="flex justify-center">
+                            <button onClick={confirmDelete} className="btn btn-primary">Confirm Delete</button>
+                            <button onClick={() => setShowConfirmation(false)} className="btn btn-danger">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
 export default AdminViewAllSession;
+

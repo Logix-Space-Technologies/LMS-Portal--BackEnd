@@ -265,5 +265,12 @@ router.post('/GenerateSessionWiseAttendancePdf',StudentController.generateSessio
 
 router.post('/createCommunityManager', CommunityManagerController.createCommunityManager)
 
+router.post('/deleteCommunityManager', CommunityManagerController.deleteCommunityManager)
+
+router.post('/studregotpmailsend',StudentController.regOtpVerification)
+
+router.post('/studregotpverify',StudentController.verifyOtp)
+
+router.post('/viewCommunityManager', StudentController.viewCommunityManagers)
 
 module.exports = router
