@@ -6,9 +6,11 @@ import '../../config/config';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminSearchBatch = () => {
+
     const [inputField, setInputField] = useState({
-        batchQuery: ""
+        "batchQuery": ""
     });
+
     const [batches, setBatches] = useState([]);
     const [searchExecuted, setSearchExecuted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -71,7 +73,7 @@ const AdminSearchBatch = () => {
                 searchBatches();
             })
             .catch(error => {
-                console.error("Delete failed:", error);
+                alert(error)
             })
             .finally(() => setIsLoading(false));
     };
@@ -135,7 +137,7 @@ const AdminSearchBatch = () => {
                         <table className="table table-hover">
                             <thead className="table-light">
                                 <tr>
-                                    <th>S/N</th>
+                                    <th>S.No.</th>
                                     <th>College Name</th>
                                     <th>Batch Name</th>
                                     <th>Batch Description</th>
@@ -146,8 +148,8 @@ const AdminSearchBatch = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentBatches.map((batch, index) => (
-                                    <tr key={batch.id}>
+                                {currentBatches.map((batch, index) => {
+                                    return <tr key={batch.id}>
                                         <td>{index + 1}</td>
                                         <td>{batch.collegeName}</td>
                                         <td>{batch.batchName}</td>
@@ -162,7 +164,7 @@ const AdminSearchBatch = () => {
                                             )}
                                         </td>
                                     </tr>
-                                ))}
+                                })}
                             </tbody>
                         </table>
                     </div>

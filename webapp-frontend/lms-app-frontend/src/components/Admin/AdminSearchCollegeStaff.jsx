@@ -6,6 +6,7 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 import { useNavigate } from 'react-router-dom';
 
 const AdminSearchCollegeStaff = () => {
+
     const [inputField, setInputField] = useState({
         searchQuery: ""
     });
@@ -53,7 +54,6 @@ const AdminSearchCollegeStaff = () => {
         axios.post(searchApiLink, { searchQuery: inputField.searchQuery }, axiosConfig)
             .then(response => {
                 setCollegeStaff(response.data.data);
-                console.log(response.data)
                 setIsLoading(false);
                 setCurrentPage(1); // Reset to the first page after the search
                 setSearchPerformed(true); // Set searchPerformed to true
@@ -69,16 +69,16 @@ const AdminSearchCollegeStaff = () => {
                 "token": sessionStorage.getItem("admtoken"),
             }
         };
-    
+
         axios.post(deleteApiLink, { id: deleteCollegeStaff }, axiosConfig)
             .then(() => {
                 alert("College Staff Deleted!");
             })
             .catch(error => {
-                console.error("Error deleting staff", error);
+                alert(error)
             });
     };
-    
+
 
     const updateClick = (id) => {
         let data = id;
@@ -88,7 +88,6 @@ const AdminSearchCollegeStaff = () => {
 
     const readValue = (id) => {
         setDeleteCollegeStaff(id)
-        console.log(id)
     };
 
     // Logic for displaying current staff
@@ -150,7 +149,7 @@ const AdminSearchCollegeStaff = () => {
                             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3">S/N</th>
+                                        <th scope="col" className="px-6 py-3">S.No.</th>
                                         <th scope="col" className="px-6 py-3">Name</th>
                                         <th scope="col" className="px-6 py-3">Email</th>
                                         <th scope="col" className="px-6 py-3">Phone Number</th>
@@ -163,8 +162,8 @@ const AdminSearchCollegeStaff = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {currentStaff.length > 0 && currentStaff.map((staff, index) => (
-                                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    {currentStaff.length > 0 && currentStaff.map((staff, index) => {
+                                        return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                             <td className="px-6 py-4">{index + 1}</td>
                                             <td className="px-6 py-4">{staff.collegeStaffName}</td>
                                             <td className="px-6 py-4">{staff.email}</td>
@@ -184,7 +183,7 @@ const AdminSearchCollegeStaff = () => {
                                                 </td>
                                             )}
                                         </tr>
-                                    ))}
+                                    })}
                                 </tbody>
                             </table>
                         </div>

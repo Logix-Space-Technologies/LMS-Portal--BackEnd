@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminAddBatch = () => {
+    
     const [inputField, setInputField] = useState({
         "collegeId": '',
         "batchName": '',

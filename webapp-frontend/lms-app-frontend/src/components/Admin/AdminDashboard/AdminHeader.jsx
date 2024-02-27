@@ -2,18 +2,13 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const AdminHeader = () => {
-    const navigate = useNavigate()
-    const logout = () => {
-        sessionStorage.removeItem("adminId")
-        sessionStorage.removeItem("admkey")
-        sessionStorage.removeItem("admtoken")
-        sessionStorage.removeItem("userName")
-        sessionStorage.removeItem("trainerId")
-        sessionStorage.removeItem("curriculumId")
-        sessionStorage.removeItem("clgStaffId")
-        sessionStorage.removeItem("batchId")
 
+    const navigate = useNavigate()
+
+    const logout = () => {
+       sessionStorage.clear()
     }
+
     return (
         <div>
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
@@ -58,7 +53,6 @@ const AdminHeader = () => {
                     </div>
                 </div>
             </nav>
-
         </div>
     )
 }
