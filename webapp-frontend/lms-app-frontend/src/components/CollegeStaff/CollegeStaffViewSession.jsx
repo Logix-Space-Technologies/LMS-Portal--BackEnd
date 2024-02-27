@@ -14,14 +14,12 @@ const CollegeStaffViewSession = () => {
 
     const getData = () => {
         const data = { "batchId": sessionStorage.getItem("clgstaffbatchId") };
-        console.log(data)
         const axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
                 "token": sessionStorage.getItem("clgstaffLogintoken"),
                 "key": sessionStorage.getItem("clgstaffkey")
-
             },
         };
 
@@ -62,9 +60,7 @@ const CollegeStaffViewSession = () => {
                 // Use window.open directly with response.data
                 const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
                 window.open(URL.createObjectURL(pdfBlob), '_blank');
-                window.location.reload();
             } else {
-
                 if (response.data.status === "Unauthorized User!!") {
                     sessionStorage.clear()
                     navigate("/clgStafflogin")
@@ -81,10 +77,6 @@ const CollegeStaffViewSession = () => {
             alert('Error generating PDF.');
         }
     }
-
-
-
-
 
     function formatTime(timeString) {
         const options = { hour: '2-digit', minute: '2-digit', hour12: true };
@@ -146,7 +138,7 @@ const CollegeStaffViewSession = () => {
                         <tbody>
                             {sessionData.length > 0 ? sessionData.map((value, index) => {
                                 return (
-                                    <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                                    <tr key={index} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                                         <td className="px-6 py-4">
                                             {value.sessionName}
                                         </td>
@@ -170,7 +162,7 @@ const CollegeStaffViewSession = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.cancelStatus === "ACTIVE" && (
-                                                <button className="btn btn-primary" onClick={()=> attendancePdfGenerate(value.id)}>
+                                                <button className="btn btn-primary" onClick={() => attendancePdfGenerate(value.id)}>
                                                     Download Attendance List PDF
                                                 </button>
                                             )}
@@ -190,7 +182,6 @@ const CollegeStaffViewSession = () => {
                                             )}
                                         </td>
                                     </tr>
-
                                 );
                             }) : (<td colSpan="8" className="px-6 py-4" style={{ textAlign: "center" }}>
                                 No Sessions Found !!!
@@ -199,7 +190,6 @@ const CollegeStaffViewSession = () => {
                     </table>
                 </div>
                 <div>
-
                 </div>
             </div>
         </div>
