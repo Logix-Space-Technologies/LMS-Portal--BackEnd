@@ -1264,3 +1264,26 @@ function sendOTPEmail(email, otp) {
     mail.sendEmail(email, 'OTP Verification For Student Registration', otpVerificationHTMLContent, otpVerificationTextContent)
     return true; // Placeholder
 }
+
+exports.viewCommunityManagers = (request, response) => {
+    const token = request.headers.token;
+    const key = request.headers.key;
+    const batchId = request.body.batchId;
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Student.viewCommunityMangers(batchId,(err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        return response.json({ "status": "No Community Managers found!" });
+                    } else {
+                        return response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+};
