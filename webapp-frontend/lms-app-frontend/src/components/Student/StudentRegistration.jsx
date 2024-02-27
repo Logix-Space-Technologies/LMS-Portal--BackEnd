@@ -296,10 +296,12 @@ const StudentRegistration = () => {
         } else {
           alert(response.data.status)
           setUpdateField({ "otp": "" })
+          setShowModal(false); // Reset showModal state
         }
       }
     )
   };
+
 
 
 
