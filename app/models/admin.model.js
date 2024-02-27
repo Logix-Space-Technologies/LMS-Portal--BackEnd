@@ -86,7 +86,7 @@ Admin.adminChangePassword = (ad, result) => {
 
 
 Admin.adminDashBoard = (result) => {
-    const query1 = "SELECT COUNT(*) AS totalColleges FROM college WHERE deleteStatus=0 AND isActive=1";
+    const query1 = "SELECT CASE WHEN COUNT(*) = 0 THEN 0 ELSE COUNT(*) END AS totalColleges FROM college WHERE deleteStatus = 0 AND isActive = 1;";
     const query2 = "SELECT COUNT(*) AS totalCollegeStaff FROM college_staff WHERE deleteStatus=0 AND isActive=1 AND emailVerified=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
     const query3 = "SELECT COUNT(*) AS totalAdminStaff FROM admin_staff WHERE deleteStatus=0 AND isActive=1 AND emailVerified=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
     const query4 = "SELECT COUNT(*) AS totalBatches FROM batches WHERE deleteStatus=0 AND isActive=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
