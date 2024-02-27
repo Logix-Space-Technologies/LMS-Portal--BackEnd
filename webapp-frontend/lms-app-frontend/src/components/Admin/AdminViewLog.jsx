@@ -58,9 +58,11 @@ const AdminViewLog = () => {
                     <tbody>
                         {currentLogs.length > 0 ? (
                             currentLogs.map((value, index) => {
+                                // Calculate the serial number based on the current page and index
+                                const serialNumber = (currentPage - 1) * logsPerPage + index + 1;
                                 return (
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td className="px-6 py-4">{index + 1}</td>
+                                        <td className="px-6 py-4">{serialNumber}</td>
                                         <td className="px-6 py-4">Admin</td>
                                         <td className="px-6 py-4">{value.Action}</td>
                                         <td className="px-6 py-4">{new Date(value.DateTime).toLocaleDateString()}</td>
