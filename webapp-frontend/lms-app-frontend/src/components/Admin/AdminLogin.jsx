@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
 
 const AdminLogin = () => {
+    
     const [inputField, setInputField] = useState(
         {
             "userName": "",
@@ -45,7 +46,6 @@ const AdminLogin = () => {
                     sessionStorage.setItem("admtoken", admtoken)
                     sessionStorage.setItem("userName", userName)
                     navigate("/admdashboard")
-
                 }
                 else {
                     if (Response.data.status === "Validation failed" && Response.data.data.username) {
@@ -61,6 +61,7 @@ const AdminLogin = () => {
             }
         )
     }
+    
     return (
         <div class="container">
             <div class="row justify-content-center align-items-center min-vh-100">

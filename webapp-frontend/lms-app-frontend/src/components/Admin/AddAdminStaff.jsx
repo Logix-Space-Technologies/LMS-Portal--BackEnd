@@ -5,6 +5,7 @@ import Navbar from './Navbar';
 import { Link } from 'react-router-dom';
 
 const AddAdminStaff = () => {
+    
     const [inputField, setInputField] = useState({
         "AdStaffName": "",
         "PhNo": "",
@@ -114,6 +115,7 @@ const AddAdminStaff = () => {
         }
         return errors;
     };
+
     return (
         <div>
             <Navbar />

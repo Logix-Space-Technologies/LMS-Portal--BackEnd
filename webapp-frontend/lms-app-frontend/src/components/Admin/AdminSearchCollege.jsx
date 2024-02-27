@@ -42,7 +42,6 @@ const AdminSearchCollege = () => {
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        console.log(inputField)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -51,12 +50,10 @@ const AdminSearchCollege = () => {
                 "key": currentKey
             }
         }
-        console.log(currentKey)
         axios.post(apiUrl, inputField, axiosConfig).then(
             (response) => {
                 setUpdateField(response.data.data)
                 setIsLoading(false)
-                console.log(response.data)
                 setInputField(
                     {
                         "collegeSearchQuery": ""
@@ -91,7 +88,6 @@ const AdminSearchCollege = () => {
 
     const readValue2 = (id) => {
         setDeleteCollege(id)
-        console.log(id)
     };
 
     const UpdateClick = (id) => {
@@ -173,8 +169,8 @@ const AdminSearchCollege = () => {
                                 <tbody>
                                     {/* Table rows */}
                                     {/* Table rows */}
-                                    {currentColleges.map((value, index) => (
-                                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    {currentColleges.map((value, index) => {
+                                        return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                             <td className="px-6 py-4">{index + 1}</td>
                                             <td className="p-4 whitespace-nowrap">
                                                 <div className="flex items-center">
@@ -204,7 +200,7 @@ const AdminSearchCollege = () => {
                                                 </td>
                                             )}
                                         </tr>
-                                    ))}
+                                    })}
 
                                 </tbody>
                             </table>

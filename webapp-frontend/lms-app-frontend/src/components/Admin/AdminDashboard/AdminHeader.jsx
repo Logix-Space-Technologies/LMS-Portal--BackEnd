@@ -2,9 +2,13 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 const AdminHeader = () => {
+
+    const navigate = useNavigate()
+
     const logout = () => {
-        sessionStorage.clear()
+       sessionStorage.clear()
     }
+
     return (
         <div>
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
@@ -49,7 +53,6 @@ const AdminHeader = () => {
                     </div>
                 </div>
             </nav>
-
         </div>
     )
 }
