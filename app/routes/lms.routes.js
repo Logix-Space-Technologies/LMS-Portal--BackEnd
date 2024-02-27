@@ -271,4 +271,6 @@ router.post('/studregotpmailsend',StudentController.regOtpVerification)
 
 router.post('/studregotpverify',StudentController.verifyOtp)
 
+router.post('/viewCommunityManager', StudentController.viewCommunityManagers)
+
 module.exports = router

@@ -1094,5 +1094,24 @@ Student.verifyOTP = (studEmail, otp, result) => {
     });
 };
 
+Student.viewCommunityMangers = (batchId, result) => {
+    db.query("SELECT cm.id AS commManagerId, s.studName,b.batchName, s.studProfilePic, s.studEmail, s.studPhNo, s.aadharNo, s.membership_no, s.addedDate, s.validity FROM student s JOIN communitymanagers cm ON s.id = cm.studentId JOIN batches b ON s.batchId=b.id WHERE s.batchId = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 AND cm.deleteStatus = 0 AND cm.isActive = 1 ORDER BY s.addedDate DESC;",
+        [batchId],
+        (err, res) => {
+            if (err) {
+                console.error("Error while fetching community managers: ", err);
+                return result(err, null);
+            }
+            if (res.length === 0) {
+                console.log("No community managers found.");
+                return result("No community managers found.", null);
+            }
+            const formattedCommunityManagers = res.map(managers => ({ ...managers, addedDate: managers.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), validity: managers.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }));
+            console.log("Community Managers: ", formattedCommunityManagers);
+            result(null, formattedCommunityManagers);
+        }
+    );
+}
+
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 
