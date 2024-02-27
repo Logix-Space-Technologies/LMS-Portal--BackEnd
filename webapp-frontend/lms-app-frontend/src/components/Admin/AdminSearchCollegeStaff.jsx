@@ -179,8 +179,6 @@ const AdminSearchCollegeStaff = () => {
 
                                                     <button className="btn btn-danger mt-3" onClick={() => { readValue(staff.id) }} data-bs-toggle="modal" data-bs-target="#exampleModal">Delete</button>
 
-                                                    <button className="btn btn-danger mt-3" onClick={() => handleDeleteClick(staff.id)}>Delete</button>
-
                                                 </td>
                                             )}
                                         </tr>
@@ -193,7 +191,7 @@ const AdminSearchCollegeStaff = () => {
                                 <div className="modal-dialog modal-dialog-centered">
                                     <div className="modal-content">
                                         <div className="modal-header">
-                                            <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to delete this college?</h5>
+                                            <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to delete this college staff?</h5>
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div className="modal-body">
@@ -231,27 +229,6 @@ const AdminSearchCollegeStaff = () => {
                     <div className="col-12 text-center">No College Staff Found!</div>
                 )}
             </div>
-
-            {/* Delete Confirmation Modal */}
-            {deleteId !== null && (
-                <div className="modal" style={{ display: 'block' }}>
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Delete Confirmation</h5>
-                                <button type="button" className="btn-close" onClick={handleDeleteCancel}></button>
-                            </div>
-                            <div className="modal-body">
-                                Are you sure you want to delete this staff member?
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={handleDeleteCancel}>Cancel</button>
-                                <button type="button" className="btn btn-danger" onClick={handleDeleteConfirm}>Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     )
 }
