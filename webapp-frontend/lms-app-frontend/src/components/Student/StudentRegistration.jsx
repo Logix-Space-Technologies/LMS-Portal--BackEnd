@@ -293,6 +293,7 @@ const StudentRegistration = () => {
         if (response.data.status === "OTP verified successfully") {
           loadRazorpayScript()
           setUpdateField({ "otp": "" })
+          setShowModal(false)
         } else {
           if (response.data.status === "Invalid OTP") {
             alert("Invalid OTP")
