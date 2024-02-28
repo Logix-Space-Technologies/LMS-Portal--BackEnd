@@ -100,6 +100,7 @@ const MaterialView = () => {
                         </tr>
                       </thead>
                       <tbody>
+                        <br />
                         {loading ? (
                           <tr>
                             <td colSpan="6" className="text-center">Loading...</td>
@@ -141,23 +142,25 @@ const MaterialView = () => {
                   </div>
                 </div>
               </div><br />
-              <div className="flex flex-col items-center">
-                <span className="text-sm text-gray-700 dark:text-gray-400">
-                  Showing <span className="font-semibold text-gray-900 dark:text-white">{indexOfFirstMaterial + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{indexOfLastMaterial > materials.length ? materials.length : indexOfLastMaterial}</span> of <span className="font-semibold text-gray-900 dark:text-white">{materials.length}</span> Entries
-                </span>
-                <div className="inline-flex mt-2 xs:mt-0">
-                  {currentPage > 1 && (
-                    <button onClick={() => paginate(currentPage - 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                      Prev
-                    </button>
-                  )}
-                  {currentPage < totalPages && (
-                    <button onClick={() => paginate(currentPage + 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                      Next
-                    </button>
-                  )}
+              {currentMaterials.length > 0 && (
+                <div className="flex flex-col items-center">
+                  <span className="text-sm text-gray-700 dark:text-gray-400">
+                    Showing <span className="font-semibold text-gray-900 dark:text-white">{indexOfFirstMaterial + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{indexOfLastMaterial > materials.length ? materials.length : indexOfLastMaterial}</span> of <span className="font-semibold text-gray-900 dark:text-white">{materials.length}</span> Entries
+                  </span>
+                  <div className="inline-flex mt-2 xs:mt-0">
+                    {currentPage > 1 && (
+                      <button onClick={() => paginate(currentPage - 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        Prev
+                      </button>
+                    )}
+                    {currentPage < totalPages && (
+                      <button onClick={() => paginate(currentPage + 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        Next
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
