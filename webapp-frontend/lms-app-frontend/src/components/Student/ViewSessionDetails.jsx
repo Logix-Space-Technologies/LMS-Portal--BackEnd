@@ -134,42 +134,46 @@ const SessionView = () => {
                   <p className="text-sm text-gray-600 mt-1">Date: {session.date}</p>
                   <p className="text-sm text-gray-600">Time: {formatTime(session.time)}</p>
                   <p className="text-sm text-gray-600">Type: {session.type}</p>
-                  {!session.venueORlink.includes("meet.google.com") && (
+                  <p className="text-sm text-gray-600">Trainer Name: {session.trainerName}</p>
+                  {!session.venueORlink.includes("meet.google.com") && !session.venueORlink.includes("zoom.us") && (
                     <p className="text-sm text-gray-600">Venue: {session.venueORlink}</p>
                   )}
                   <div className="flex gap-4 mt-4">
                     {session.venueORlink.includes("meet.google.com") && (
                       <Link to={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</Link>
                     )}
-                    {isSessionAccessible(session.date) ? (
-                      <>
-                        <Link to="/studentviewattendance" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
-                          Attendance
-                        </Link>
-                        <Link to="/studviewtasksessionwise" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
-                          Tasks
-                        </Link>
-                      </>
-                    ) : (
-                      <>
-                        <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
-                          Attendance (Unavailable)
-                        </Link>
-                        <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
-                          Tasks (Unavailable)
-                        </Link>
-                      </>
+                    {session.venueORlink.includes("zoom.us") && (
+                      <Link to={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</Link>
                     )}
+                  {isSessionAccessible(session.date) ? (
+                    <>
+                      <Link to="/studentviewattendance" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                        Attendance
+                      </Link>
+                      <Link to="/studviewtasksessionwise" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                        Tasks
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                        Attendance (Unavailable)
+                      </Link>
+                      <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                        Tasks (Unavailable)
+                      </Link>
+                    </>
+                  )}
 
-                  </div>
                 </div>
               </div>
             </div>
-          ))
+            </div>
+  ))
         )
       )}
 
-    </div>
+    </div >
   );
 };
 

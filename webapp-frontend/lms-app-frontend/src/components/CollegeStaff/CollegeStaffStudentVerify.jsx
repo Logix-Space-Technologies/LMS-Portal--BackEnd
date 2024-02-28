@@ -59,7 +59,8 @@ const CollegeStaffStudentVerify = () => {
             (response) => {
                 if (response.data.status === "Success") {
                     alert("Student verified successfully!!")
-                    getData()
+                    setStudentData(studentData.filter(student => student.id !== studentId));
+                    
                 } else {
                     if (response.data.status === "Unauthorized User!!!") {
                         sessionStorage.clear()
@@ -86,6 +87,10 @@ const CollegeStaffStudentVerify = () => {
     // Calculate total pages
     const totalPages = Math.ceil(studentData.length / studentsPerPage);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * studentsPerPage) + index + 1;
+    }
+
 
     return (
 
@@ -99,6 +104,12 @@ const CollegeStaffStudentVerify = () => {
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
+                            <th scope="col" className="px-6 py-3">
+                                
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                S/L
+                            </th>
                             <th scope="col" className="px-6 py-3">
                                 Name
                             </th>
@@ -149,6 +160,9 @@ const CollegeStaffStudentVerify = () => {
                                         <div className="text-base font-semibold">{value.studName}</div>
                                     </div>
                                 </th>
+                                <td className="px-6 py-4">
+                                    {calculateSerialNumber(index)}
+                                </td>
                                 <td className="px-6 py-4">
                                     {value.studDept}
                                 </td>
