@@ -30,8 +30,12 @@ const StudentViewCommunityManager = () => {
                         navigate("/studentLogin")
                         sessionStorage.clear()
                     } else {
-                        setcommunityManagerData([])
-                        setIsLoading(false);
+                        if (!response.data.data) {
+                            setcommunityManagerData([])
+                            setIsLoading(false);
+                        } else {
+                            alert(response.data.status)
+                        }
                     }
                 }
             }
