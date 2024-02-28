@@ -55,7 +55,7 @@ const StudentRegistration = () => {
 
 
   const sendOtp = async (e) => {
-    let data = { "studEmail": inputField.studEmail }
+    let data = { "admNo": inputField.admNo, "collegeId": inputField.collegeId, "batchId": inputField.batchId, "rollNo": inputField.rollNo, "aadharNo": inputField.aadharNo, "studEmail": inputField.studEmail }
     let axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',

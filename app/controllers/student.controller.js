@@ -1207,17 +1207,31 @@ exports.studentviewsubmittedtask = (request, response) => {
 
 // Function to handle forgot password requests
 exports.regOtpVerification = (request, response) => {
+    const admNo = request.body.admNo;
+    const collegeId = request.body.collegeId;
+    const batchId = request.body.batchId;
+    const rollNo = request.body.rollNo;
+    const aadharNo = request.body.aadharNo;
     const studEmail = request.body.studEmail;
 
+    const newStudentOtpSend = new Student({
+        collegeId: collegeId,
+        batchId: batchId,
+        admNo: admNo,
+        rollNo: rollNo,
+        studEmail: studEmail,
+        aadharNo: aadharNo
+    });
+
     // Generate and hash OTP
-    Student.generateAndHashOTP(studEmail, (err, otp) => {
+    Student.generateAndHashOTP(newStudentOtpSend, (err, otp) => {
         if (err) {
             // Handle errors that occur during OTP generation and hashing
             return response.json({ "status": err });
         } else {
             // Assuming sendOTPEmail is a function you have defined to handle email sending
             // This function should ideally be asynchronous and handle its own errors
-            const mailSent = sendOTPEmail(studEmail, otp); // Hypothetical function to send email
+            const mailSent = sendOTPEmail(newStudentOtpSend.studEmail, otp); // Hypothetical function to send email
             if (mailSent) {
                 // Successfully sent the OTP to the user's email
                 response.json({ "status": "OTP sent to email." });
