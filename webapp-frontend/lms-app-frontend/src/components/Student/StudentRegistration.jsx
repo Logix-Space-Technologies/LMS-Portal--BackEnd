@@ -291,9 +291,9 @@ const StudentRegistration = () => {
     axios.post(verifyOtpUrl, data, axiosConfig).then(
       (response) => {
         if (response.data.status === "OTP verified successfully") {
+          setShowModal(false)
           loadRazorpayScript()
           setUpdateField({ "otp": "" })
-          setShowModal(false)
         } else {
           if (response.data.status === "Invalid OTP") {
             alert("Invalid OTP")
