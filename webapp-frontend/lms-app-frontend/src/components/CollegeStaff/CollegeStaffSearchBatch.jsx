@@ -53,7 +53,8 @@ const CollegeStaffSearchBatch = () => {
                         navigate("/clgStafflogin")
                     } else {
                         if (!response.data.data) {
-                            // no data found
+                            setUpdateField([]); // Ensure the updateField is set to an empty array
+                            setIsLoading(false);
                         } else {
                             alert(response.data.status)
                         }
@@ -80,7 +81,7 @@ const CollegeStaffSearchBatch = () => {
             pageNumbers.push(pageNumber);
         });
     }
-    
+
     return (
         <div>
             <ClgStaffNavbar />
@@ -104,7 +105,7 @@ const CollegeStaffSearchBatch = () => {
                     <div className="col-12 text-center">
                         <p></p>
                     </div>
-                ) : (updateField ? (
+                ) : (updateField && updateField.length > 0 ? (
                     <>
                         <strong style={{ paddingLeft: '30px' }}>Batch Details</strong><br /><br /><br />
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -132,7 +133,7 @@ const CollegeStaffSearchBatch = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {currentBatch.map (
+                                    {currentBatch.map(
                                         (value, index) => {
                                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                                 <td className="px-6 py-4">
