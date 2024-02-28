@@ -54,7 +54,6 @@ const AdminUpdateBatch = () => {
             "batchDesc": updateField.batchDesc,
             "batchAmount": updateField.batchAmount
         }
-        console.log(data)
         axios.post(apiUrl2, data, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Updated Batch Details") {
@@ -123,7 +122,6 @@ const AdminUpdateBatch = () => {
         // }
 
         let data = { "id": sessionStorage.getItem("batchId") }
-        console.log(data)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -137,9 +135,6 @@ const AdminUpdateBatch = () => {
             (response) => {
                 setBatchData(response.data.data)
                 setUpdateField(response.data.data[0])
-                console.log(axiosConfig)
-                console.log(data)
-                console.log(response.data)
             }
         )
     }
@@ -161,6 +156,7 @@ const AdminUpdateBatch = () => {
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
+
     return (
         <>
             <div className="container">
@@ -183,8 +179,8 @@ const AdminUpdateBatch = () => {
                                         </div>
                                         <ul className="list-unstyled mb-1-9">
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                                <label htmlFor="" className="form-label">College Id</label>
-                                                <input type="text" className="form-control" name="id" value={updateField.collegeId} disabled />
+                                                {/* <label htmlFor="" className="form-label">College Id</label> */}
+                                                <input type="hidden" className="form-control" name="id" value={updateField.collegeId} disabled />
                                             </div>
 
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -231,16 +227,8 @@ const AdminUpdateBatch = () => {
                                                 <button className="btn btn-danger" onClick={handleBack}>Back</button>
                                             </div>
                                         </ul>
-
-                                        <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                            <li><Link to="#!"><i className="ti-twitter-alt" /></Link></li>
-                                            <li><Link to="#!"><i className="ti-facebook" /></Link></li>
-                                            <li><Link to="#!"><i className="ti-pinterest" /></Link></li>
-                                            <li><Link to="#!"><i className="ti-instagram" /></Link></li>
-                                        </ul>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>

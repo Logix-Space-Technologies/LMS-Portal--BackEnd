@@ -62,7 +62,7 @@ const AdminViewAllTrainers = () => {
             (response) => {
                 if (response.data.status === "success") {
                     // Reload the page after deleting trainer
-                    window.location.reload();
+                    getData()
                 } else {
                     alert(response.data.status);
                 }
@@ -151,7 +151,7 @@ const AdminViewAllTrainers = () => {
                                     </td>
                                 )}
                                 <td className="px-6 py-4">
-                                    <Link onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Trainer</Link>
+                                    <button onClick={() => UpdateClick(value.id) } className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Trainer</button>
                                 </td>
                             </tr>
                         }
@@ -171,7 +171,7 @@ const AdminViewAllTrainers = () => {
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to delete this college?</h5>
+                                <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to delete this Trainer?</h5>
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div className="modal-body">
