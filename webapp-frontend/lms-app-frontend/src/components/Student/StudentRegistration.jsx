@@ -31,6 +31,17 @@ const StudentRegistration = () => {
     setFile(event.target.files[0])
   }
 
+  // Call this function to close the modal and navigate
+  const closeAndNavigate = () => {
+    setShowModal(false); // Set showModal state to false
+
+    // Remove any leftover classes or styles that might be interfering
+    document.body.classList.remove('modal-open');
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+
+    navigate("/studentLogin"); // Navigate after modal is closed and cleaned up
+  };
+
   let [batchAmount, setbatchAmount] = useState(0)
 
   const [outputField, setOutputField] = useState([])
@@ -215,7 +226,7 @@ const StudentRegistration = () => {
             (response) => {
               if (response.data.status === "success") {
                 alert("User Registered Successfully !!!")
-                navigate("/studentLogin")
+                closeAndNavigate()
                 setInputField({ "collegeId": "", "batchId": "", "studName": "", "admNo": "", "rollNo": "", "studDept": "", "course": "", "studEmail": "", "studPhNo": "", "studProfilePic": "", "aadharNo": "", "password": "", "confirmpassword": "" })
               } else {
                 if (response.data.status === "Validation failed" && response.data.data.college) {
