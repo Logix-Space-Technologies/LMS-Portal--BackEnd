@@ -105,8 +105,9 @@ exports.createSession = (request, response) => {
                                 const studentName = element.studName
                                 const studentEmail = element.studEmail
                                 const sessionTime = formatTime(newSession.time)
-                                const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, newSession.date, sessionTime, newSession.venueORlink);
-                                const upcomingSessionTextContent = mailContents.upcomingSessionTextContent(studentName, newSession.sessionName, newSession.date, sessionTime, newSession.venueORlink);
+                                const sessionDate = newSession.date.split('-').reverse().join('/')
+                                const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                const upcomingSessionTextContent = mailContents.upcomingSessionTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                 mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 if (key == "lmsapp") {
                                     logAdminStaff(0, "Admin Created new Session")
