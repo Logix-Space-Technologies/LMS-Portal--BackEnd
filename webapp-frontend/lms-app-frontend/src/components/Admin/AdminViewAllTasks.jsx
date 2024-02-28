@@ -38,7 +38,6 @@ const AdminViewAllTasks = () => {
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 setTaskData(response.data.data);
-                console.log(response.data.data);
             }
         );
     };
@@ -64,7 +63,7 @@ const AdminViewAllTasks = () => {
         axios.post(deleteUrl, { id }, axiosConfig)
             .then(() => {
                 alert("Task deleted successfully");
-                window.location.reload()
+                getData()
             })
             .catch(error => {
                 console.error("Delete failed:", error);

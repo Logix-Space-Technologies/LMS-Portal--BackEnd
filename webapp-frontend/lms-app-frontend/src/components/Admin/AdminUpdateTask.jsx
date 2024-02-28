@@ -52,7 +52,6 @@ const AdminUpdateTask = () => {
         }
         e.preventDefault();
         const validationErrors = validateForm(updateField);
-        console.log(updateField)
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig2 = {
                 headers: {
@@ -122,9 +121,11 @@ const AdminUpdateTask = () => {
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
+                        console.log("Status 400:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
+                        console.log("Status 500:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
@@ -132,10 +133,14 @@ const AdminUpdateTask = () => {
                     }
                 } else if (error.request) {
                     console.log(error.request);
-                } else {
+                    alert(error.request);
+                } else if (error.message) {
                     console.log('Error', error.message);
+                    alert('Error', error.message);
+                } else {
+                    alert(error.config);
+                    console.log(error.config);
                 }
-                console.log(error.config);
             })
         } else {
             setErrors(validationErrors);
@@ -189,7 +194,6 @@ const AdminUpdateTask = () => {
         axios.post(apiURL, data, axiosConfig).then((response) => {
             setTaskData(response.data.data);
             setUpdateField(response.data.data);
-            console.log(response.data.data);
         });
     };
 
@@ -226,11 +230,11 @@ const AdminUpdateTask = () => {
                                 <div className="col-lg-6 px-xl-10">
                                     <ul className="list-unstyled mb-1-9">
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">
+                                            {/* <label htmlFor="" className="form-label">
                                                 Id
-                                            </label>
+                                            </label> */}
                                             <input
-                                                type="text"
+                                                type="hidden"
                                                 className="form-control"
                                                 name="id"
                                                 value={updateField.id}
@@ -238,12 +242,12 @@ const AdminUpdateTask = () => {
                                             />
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">
+                                            {/* <label htmlFor="" className="form-label">
                                                 BatchId
-                                            </label>
+                                            </label> */}
                                             <input
                                                 onChange={updateHandler}
-                                                type="text"
+                                                type="hidden"
                                                 className="form-control"
                                                 name="batchId"
                                                 value={updateField.batchId}
@@ -334,29 +338,6 @@ const AdminUpdateTask = () => {
                                                 Back
                                             </Link>
                                         </div>
-                                    </ul>
-
-                                    <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                        <li>
-                                            <a href="#!">
-                                                <i className="ti-twitter-alt" />
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#!">
-                                                <i className="ti-facebook" />
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#!">
-                                                <i className="ti-pinterest" />
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#!">
-                                                <i className="ti-instagram" />
-                                            </a>
-                                        </li>
                                     </ul>
                                 </div>
                             </div>

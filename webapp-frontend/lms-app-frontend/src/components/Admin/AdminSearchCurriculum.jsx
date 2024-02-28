@@ -77,8 +77,8 @@ const AdminSearchCurriculum = () => {
             (response) => {
                 if (response.data.status === "success") {
                     alert("Curriculum deleted!!");
-                    // Reload the page after clicking OK in the alert
-                    window.location.reload();
+                    // Remove the deleted curriculum from updateField state
+                    setUpdateField(updateField.filter(curriculum => curriculum.id !== deleteId))
                 } else {
                     alert(response.data.status);
                 }
@@ -193,7 +193,7 @@ const AdminSearchCurriculum = () => {
                                         </td>
                                         {key === "lmsapp" && (
                                             <td className="p-4 whitespace-nowrap">
-                                                <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" onClick={() => handleClick(value.id)}>
+                                                <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal3" onClick={() => handleClick(value.id)}>
                                                     Delete
                                                 </button>
                                             </td>
@@ -233,7 +233,7 @@ const AdminSearchCurriculum = () => {
             </div>
 
             {/* Delete Confirmation Modal */}
-            <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+            <div className="modal fade" id="deleteConfirmationModal3" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">

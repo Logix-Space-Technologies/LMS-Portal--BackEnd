@@ -84,7 +84,7 @@ const AdminViewAllSession = () => {
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "success") {
-                    window.location.reload();
+                    getData()
                 } else {
                     alert(response.data.status);
                 }
@@ -107,7 +107,7 @@ const AdminViewAllSession = () => {
                 if (response.data.status === "success") {
                     alert("Session Deleted!!")
                     setUpdateField(updateField.filter(session => session.id !== sessionId));
-                    window.location.reload()
+                    getData()
                 } else {
                     console.error("Error deleting session:", response.data.status);
                 }
@@ -193,7 +193,7 @@ const AdminViewAllSession = () => {
                 if (response.data.status === "success") {
                     alert("Session Deleted!!")
                     setUpdateField(updateField.filter(session => session.id !== deleteId));
-                    window.location.reload()
+                    getData()
                 } else {
                     console.error("Error deleting session:", response.data.status);
                 }
@@ -237,9 +237,9 @@ const AdminViewAllSession = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentSessions.length > 0 ? currentSessions.map((value, index) => (
-                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td className="px-6 py-4">{index+1}</td>
+                        {currentSessions.length > 0 ? currentSessions.map((value, index) => {
+                            return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td className="px-6 py-4">{index + 1}</td>
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                     <div className="ps-3">
                                         <div className="text-base font-semibold">{value.sessionName}</div>
@@ -276,7 +276,7 @@ const AdminViewAllSession = () => {
                                 <td className="px-6 py-4">
                                     {value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
-                                            Update Session
+                                            Reschedule Session
                                         </button>
                                     )}
                                 </td>
@@ -288,7 +288,7 @@ const AdminViewAllSession = () => {
                                     )}
                                 </td>
                             </tr>
-                        )) : (
+                        }) : (
                             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td colSpan="15" className="px-6 py-4" style={{ textAlign: "center" }}>
                                     No Sessions Found !!!

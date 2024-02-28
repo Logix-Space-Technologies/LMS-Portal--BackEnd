@@ -26,7 +26,6 @@ const AdminViewAllStud = () => {
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 setStudData(response.data.data);
-                console.log(response.data.data);
             }
         );
     };
@@ -45,7 +44,6 @@ const AdminViewAllStud = () => {
     // Assign Community Manager
     const assignCommunityManager = (id, batchId) => {
         let data = {"studentId": id, "batchId": batchId }; // Ensure this matches your expected backend format
-        console.log(data)
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',

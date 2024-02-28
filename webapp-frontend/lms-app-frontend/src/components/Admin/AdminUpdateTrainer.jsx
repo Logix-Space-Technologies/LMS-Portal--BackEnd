@@ -4,8 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const AdminUpdateTrainer = () => {
+
     const [trainerData, settrainerData] = useState([])
     const [file, setFile] = useState("")
+    const [errors, setErrors] = useState({})
+    const [fileType, setFileType] = useState("");
+
     const [updateField, setUpdateField] = useState(
         {
             "id": sessionStorage.getItem("trainerId"),
@@ -25,11 +29,20 @@ const AdminUpdateTrainer = () => {
     }
 
     const fileUploadHandler = (event) => {
-        setFile(event.target.files[0]);
-        setUpdateField({ ...updateField, studProfilePic: event.target.files[0] });
+        setErrors({});
+        const uploadedFile = event.target.files[0];
+        if (uploadedFile) {
+            setErrors({});
+            setFile(uploadedFile);
+            const extension = uploadedFile.name.split('.').pop().toLowerCase();
+            setFileType(extension);
+        } else {
+            setFile(null);
+            setFileType("");
+        }
     }
 
-    const readNewValue = () => {
+    const readNewValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
         if (currentKey !== 'lmsapp') {
@@ -37,75 +50,101 @@ const AdminUpdateTrainer = () => {
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        console.log(updateField)
-        let axiosConfig = {
-            headers: {
-                'content-type': 'multipart/form-data',
-                "Access-Control-Allow-Origin": "*",
-                "token": token,
-                "key": currentKey
+        e.preventDefault();
+        const validationErrors = validateForm(updateField);
+        if (Object.keys(validationErrors).length === 0) {
+            let axiosConfig = {
+                headers: {
+                    'content-type': 'multipart/form-data',
+                    "Access-Control-Allow-Origin": "*",
+                    "token": token,
+                    "key": currentKey
+                }
             }
-        }
-        let data = {
-            "id": sessionStorage.getItem("trainerId"),
-            "trainerName": updateField.trainerName,
-            "about": updateField.about,
-            "phoneNumber": updateField.phoneNumber,
-            "profilePicture": file
-        }
-        axios.post(apiUrl2, data, axiosConfig).then(
-            (Response) => {
-                if (Response.data.status === "Trainer Details Updated") {
-                    setUpdateField({
-                        "id": sessionStorage.getItem("trainerId"),
-                        "trainerName": "",
-                        "about": "",
-                        "phoneNumber": "",
-                        "profilePicture": ""
-                    })
-                    alert("Profile Updated Successfully")
-                    navigate("/adminviewalltrainers")
-                } else {
-                    if (Response.data.status === "Validation failed" && Response.data.data.trainerName) {
-                        alert(Response.data.data.trainerName)
+            let data = {
+                "id": sessionStorage.getItem("trainerId"),
+                "trainerName": updateField.trainerName,
+                "about": updateField.about,
+                "phoneNumber": updateField.phoneNumber,
+                "profilePicture": file
+            }
+            axios.post(apiUrl2, data, axiosConfig).then(
+                (Response) => {
+                    if (Response.data.status === "Trainer Details Updated") {
+                        setUpdateField({
+                            "id": sessionStorage.getItem("trainerId"),
+                            "trainerName": "",
+                            "about": "",
+                            "phoneNumber": "",
+                            "profilePicture": ""
+                        })
+                        alert("Profile Updated Successfully")
+                        navigate("/adminviewalltrainers")
                     } else {
-                        if (Response.data.status === "Validation failed" && Response.data.data.about) {
-                            alert(Response.data.data.about)
+                        if (Response.data.status === "Validation failed" && Response.data.data.trainerName) {
+                            alert(Response.data.data.trainerName)
                         } else {
-                            if (Response.data.status === "Validation failed" && Response.data.data.phoneNumber) {
-                                alert(Response.data.data.phoneNumber)
+                            if (Response.data.status === "Validation failed" && Response.data.data.about) {
+                                alert(Response.data.data.about)
                             } else {
-                                alert(Response.data.status)
+                                if (Response.data.status === "Validation failed" && Response.data.data.phoneNumber) {
+                                    alert(Response.data.data.phoneNumber)
+                                } else {
+                                    alert(Response.data.status)
+                                }
                             }
                         }
                     }
+
                 }
+            ).catch(error => {
+                if (error.response) {
+                    // Extract the status code from the response
+                    const statusCode = error.response.status;
 
-            }
-        ).catch(error => {
-            if (error.response) {
-                // Extract the status code from the response
-                const statusCode = error.response.status;
-
-                if (statusCode === 400) {
-                    console.log("Status 400:", error.response.data);
-                    alert(error.response.data.status)
-                    // Additional logic for status 400
-                } else if (statusCode === 500) {
-                    console.log("Status 500:", error.response.data);
-                    alert(error.response.data.status)
-                    // Additional logic for status 500
+                    if (statusCode === 400) {
+                        console.log("Status 400:", error.response.data);
+                        alert(error.response.data.status)
+                        // Additional logic for status 400
+                    } else if (statusCode === 500) {
+                        console.log("Status 500:", error.response.data);
+                        alert(error.response.data.status)
+                        // Additional logic for status 500
+                    } else {
+                        alert(error.response.data.status)
+                    }
+                } else if (error.request) {
+                    console.log(error.request);
+                    alert(error.request);
+                } else if (error.message) {
+                    console.log('Error', error.message);
+                    alert('Error', error.message);
                 } else {
-                    console.log(error.response.data);
-                    alert(error.response.data.status)
+                    alert(error.config);
+                    console.log(error.config);
                 }
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('Error', error.message);
-            }
-            console.log(error.config);
-        })
+            })
+        } else {
+            setErrors(validationErrors);
+        }
+    }
+
+    const validateForm = (data) => {
+        let errors = {};
+
+        if (!data.trainerName.trim()) {
+            errors.trainerName = 'Trainer Name is required';
+        }
+        if (!data.about.trim()) {
+            errors.about = 'About is required';
+        }
+        if (!data.phoneNumber.trim()) {
+            errors.phoneNumber = 'Contact Details required';
+        }
+        if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+            errors.file = "File must be in jpg/jpeg/png/webp/heif format";
+        }
+        return errors;
     }
 
     const getData = () => {
@@ -129,7 +168,6 @@ const AdminUpdateTrainer = () => {
             (response) => {
                 settrainerData(response.data.Trainers)
                 setUpdateField(response.data.Trainers[0])
-                console.log(response.data.Trainers)
             }
         )
     }
@@ -140,6 +178,7 @@ const AdminUpdateTrainer = () => {
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
+    
     return (
         <div className="container">
             <div className="row">
@@ -163,8 +202,8 @@ const AdminUpdateTrainer = () => {
                                     </div>
                                     <ul className="list-unstyled mb-1-9">
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Id</label>
-                                            <input type="text" className="form-control" name="id" value={updateField.id} disabled />
+                                            {/* <label htmlFor="" className="form-label">Id</label> */}
+                                            <input type="hidden" className="form-control" name="id" value={updateField.id} disabled />
                                         </div>
 
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -193,19 +232,11 @@ const AdminUpdateTrainer = () => {
                                         </div>
                                         <br></br>
                                         <div class="mb-3">
-                                        <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
+                                            <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
                                         </div>
-                                    </ul>
-
-                                    <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                        <li><Link to="#!"><i className="ti-twitter-alt" /></Link></li>
-                                        <li><Link to="#!"><i className="ti-facebook" /></Link></li>
-                                        <li><Link to="#!"><i className="ti-pinterest" /></Link></li>
-                                        <li><Link to="#!"><i className="ti-instagram" /></Link></li>
                                     </ul>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>

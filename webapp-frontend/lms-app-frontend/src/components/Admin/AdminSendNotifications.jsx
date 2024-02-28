@@ -5,6 +5,7 @@ import axios from 'axios';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminSendNotification = () => {
+    
     const initialNotificationData = {
         "collegeId": "",
         "batchId": "",
@@ -45,7 +46,6 @@ const AdminSendNotification = () => {
         axios.post(apiUrl2, {}, axiosConfig2).then(
             (response) => {
                 setOutputField(response.data.data)
-                console.log(response.data.data)
             }
         )
     }
@@ -66,10 +66,8 @@ const AdminSendNotification = () => {
                 "key": currentKey
             }
         };
-        console.log(collegeId)
         axios.post(batchUrl, { collegeId }, axiosConfig3).then((response) => {
             setBatches(response.data)
-            console.log(response.data)
         })
     }
 
