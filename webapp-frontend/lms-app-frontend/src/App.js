@@ -99,6 +99,7 @@ import AdminUpdateSession from './components/Admin/AdminUpdateSession';
 import AdminStaffAddMaterials from './components/AdminStaff/AdminStaffAddMaterials';
 import CollegeStaffViewSession from './components/CollegeStaff/CollegeStaffViewSession';
 import StudentViewCommunityManager from './components/Student/StudentViewCommunityManager';
+import CollegeStaffViewNotifications from './components/CollegeStaff/CollegeStaffViewNotifications';
 
 
 
@@ -207,6 +208,7 @@ function App() {
           <Route path='/clgStaffSearchTask' element={<CollegeStaffSearchTask/>}/>
           <Route path='/clgstaffnavbar' element={<ClgStaffNavbar/>}/>
           <Route path='/clgstaffviewsession' element={<CollegeStaffViewSession/>}/>
+          <Route path='/clgstaffviewNotifications' element={<CollegeStaffViewNotifications/>}/>
 
 
 
