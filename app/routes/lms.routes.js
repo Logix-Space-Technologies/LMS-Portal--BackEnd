@@ -277,4 +277,6 @@ router.post('/clgstaffviewnotification', BatchesController.clgstaffNotificationV
 
 router.post('/viewCollegeWiseAttendance',AttendenceController.collegeStaffViewCollegeWiseAttendance)
 
+router.post('/viewClgStaffCollege',ClgStaffController.viewCollegeDetails)
+
 module.exports = router

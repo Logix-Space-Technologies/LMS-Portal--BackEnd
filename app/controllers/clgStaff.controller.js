@@ -778,3 +778,26 @@ exports.viewSessionsByCollegeStaff = (request, response) => {
   })
 
 }
+
+exports.viewCollegeDetails = (request, response) => {
+  const clgStaffToken = request.headers.token;
+  const collegeStaffId = request.body.collegeStaffId;
+
+  jwt.verify(clgStaffToken, "lmsappclgstaff", (err, decoded) => {
+    if (decoded) {
+      CollegeStaff.viewCollegeDetails(collegeStaffId, (err, data) => {
+        if (err) {
+          return response.json({ "status": err });
+        }
+        if (data.length === 0) {
+          return response.json({ "status": "No College Found!!" });
+        } else {
+          return response.json({ "status": "success", "data": data });
+        }
+      })
+    } else {
+      return response.json({ "status": "Unauthorized access!!" });
+    }
+  })
+
+}
