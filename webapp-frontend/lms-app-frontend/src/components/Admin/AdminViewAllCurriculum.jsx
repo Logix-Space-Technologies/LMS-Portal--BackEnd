@@ -25,7 +25,6 @@ const AdminViewAllCurriculum = () => {
             setKey(currentKey); // Update the state if needed
         }
         let data2 = { "batchId": sessionStorage.getItem("currbatchId") }
-        console.log(data2)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -37,7 +36,6 @@ const AdminViewAllCurriculum = () => {
         axios.post(apiUrl, data2, axiosConfig).then(
             (response) => {
                 setCurriculumData(response.data.data)
-                console.log(response.data.data)
             }
         )
     }
@@ -62,12 +60,9 @@ const AdminViewAllCurriculum = () => {
 
         axios.post(apiLink2, data, axiosConfig2).then(
             (response) => {
-                console.log(data)
-                console.log(axiosConfig2)
                 if (response.data.status === "success") {
                     alert("Curriculum deleted!!")
-                    // Reload the page after clicking OK in the alert
-                    window.location.reload();
+                    getData()
                 } else {
                     alert(response.data.status)
                 }

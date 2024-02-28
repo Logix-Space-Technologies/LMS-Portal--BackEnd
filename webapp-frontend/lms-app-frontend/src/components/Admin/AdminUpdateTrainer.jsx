@@ -202,8 +202,8 @@ const AdminUpdateTrainer = () => {
                                     </div>
                                     <ul className="list-unstyled mb-1-9">
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Id</label>
-                                            <input type="text" className="form-control" name="id" value={updateField.id} disabled />
+                                            {/* <label htmlFor="" className="form-label">Id</label> */}
+                                            <input type="hidden" className="form-control" name="id" value={updateField.id} disabled />
                                         </div>
 
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">

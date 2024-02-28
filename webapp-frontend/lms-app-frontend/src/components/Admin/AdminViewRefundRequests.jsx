@@ -6,6 +6,7 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 
 const AdminViewRefundRequests = () => {
+
   const [refundRequests, setRefundRequests] = useState([]);
   const [key, setKey] = useState('');
   const [errors, setErrors] = useState({});
@@ -120,12 +121,11 @@ const AdminViewRefundRequests = () => {
         "admStaffId": sessionStorage.getItem("admstaffId"),
         "adminRemarks": inputField.adminRemarks
       }
-      console.log(data2)
       axios.post(apiUrl2, data2, axiosConfig2).then(
         (response) => {
           if (response.data.status === "Refund Request Cancelled.") {
             alert("Refund Request Rejected")
-            window.location.reload()
+            getData()
             setInputField({
               adminRemarks: ""
             });
@@ -164,12 +164,11 @@ const AdminViewRefundRequests = () => {
         "transactionNo": approveField.transactionNo,
         "approvedAmnt": approveField.approvedAmnt
       }
-      console.log(data3)
       axios.post(apiUrl3, data3, axiosConfig3).then(
         (response) => {
           if (response.data.status === "success") {
             alert("Refund Request Approved Successfully")
-            window.location.reload()
+            getData()
             setApproveField({
               adminRemarks: "",
               refundAmnt: "",
@@ -199,7 +198,6 @@ const AdminViewRefundRequests = () => {
 
   const readValue = (id) => {
     setReject(id)
-    console.log(id)
   };
 
   // Logic for displaying current students
@@ -222,7 +220,6 @@ const AdminViewRefundRequests = () => {
 
   const approveValue = (id) => {
     setApprove(id)
-    console.log(id)
   }
 
   // Update key state when component mounts

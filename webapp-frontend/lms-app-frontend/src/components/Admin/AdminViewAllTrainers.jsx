@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminViewAllTrainers = () => {
+
     const [trainerData, setTrainerData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [trainersPerPage] = useState(10); // Number of trainers per page
@@ -35,7 +36,6 @@ const AdminViewAllTrainers = () => {
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
                 setTrainerData(response.data.Trainers);
-                console.log(response.data.Trainers);
             }
         );
     };
@@ -80,7 +80,6 @@ const AdminViewAllTrainers = () => {
 
     const readValue = (id) => {
         setDeleteTrainer(id)
-        console.log(id)
     };
 
     useEffect(() => { getData() }, []);
@@ -89,6 +88,7 @@ const AdminViewAllTrainers = () => {
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
+    
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />

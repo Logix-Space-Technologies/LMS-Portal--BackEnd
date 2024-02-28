@@ -199,7 +199,7 @@ const AdminSearchSessionDetails = () => {
                                                             )}
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Update</button>
+                                                            <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Reschedule</button>
                                                         </td>
                                                     </tr>
                                                 })}
