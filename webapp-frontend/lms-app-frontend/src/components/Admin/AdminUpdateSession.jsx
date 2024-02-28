@@ -6,8 +6,9 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 import Navbar from './Navbar';
 
 const AdminUpdateSession = () => {
-  
+
   const [sessionData, setSessionData] = useState([]);
+  const [trainers, setTrainers] = useState([])
   const [updateField, setUpdateField] = useState({
     "id": sessionStorage.getItem('sessionId'),
     "sessionName": '',
@@ -20,11 +21,35 @@ const AdminUpdateSession = () => {
   });
   const apiURL = global.config.urls.api.server + '/api/lms/AdmViewOneSession';
   const apiUrl2 = global.config.urls.api.server + '/api/lms/updateSession';
+  const trainerUrl = global.config.urls.api.server + "/api/lms/viewAllTrainer";
   const navigate = useNavigate();
   const [key, setKey] = useState('')
 
   const updateHandler = (event) => {
     setUpdateField({ ...updateField, [event.target.name]: event.target.value })
+  }
+
+  const getTrainer = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
+    let axiosConfig = {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        'Access-Control-Allow-Origin': '*',
+        "token": token,
+        "key": currentKey
+      }
+    };
+    axios.post(trainerUrl, {}, axiosConfig).then(
+      (response) => {
+        setTrainers(response.data.Trainers)
+      }
+    )
   }
 
   const readNewValue = () => {
@@ -133,6 +158,10 @@ const AdminUpdateSession = () => {
     getData();
   }, []);
 
+  useEffect(() => {
+    getTrainer()
+  }, [])
+
   // Update key state when component mounts
   useEffect(() => {
     setKey(sessionStorage.getItem("admkey") || '');
@@ -240,15 +269,22 @@ const AdminUpdateSession = () => {
                     </div>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                       <label htmlFor="" className="form-label">
-                        TrainerId
+                        Trainer Name
                       </label>
-                      <input
-                        onChange={updateHandler}
-                        type="text"
-                        className="form-control"
+                      <select
                         name="trainerId"
                         value={updateField.trainerId}
-                      />
+                        onChange={updateHandler}
+                        id="trainerId"
+                        className="form-control"
+                      >
+                        <option value="">Select</option>
+                        {trainers.map((trainer) => {
+                          return <option key={trainer.id} value={trainer.id}>
+                            {trainer.trainerName}
+                          </option>
+                        })}
+                      </select>
                     </div>
                     <br></br>
                     <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
