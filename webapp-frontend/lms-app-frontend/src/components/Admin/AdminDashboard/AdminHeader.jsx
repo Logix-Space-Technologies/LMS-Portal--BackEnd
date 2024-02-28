@@ -11,7 +11,6 @@ const AdminHeader = () => {
 const handleLogoutConfirm = () => {
         logout();
     };
-    
 
     return (
         <div>
@@ -81,7 +80,6 @@ const handleLogoutConfirm = () => {
                     </div>
                 </div>
             </div>
-
         </div>
     )
 }

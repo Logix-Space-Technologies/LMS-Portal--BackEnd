@@ -42,7 +42,9 @@ const StudentRegistration = () => {
   const [updateField, setUpdateField] = useState({
     "otp": ""
   })
-  
+
+  const [showModal, setShowModal] = useState(false);
+
 
   const apiUrl = global.config.urls.api.server + "/api/lms/studreg"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/studentregviewcollege"
@@ -67,6 +69,7 @@ const StudentRegistration = () => {
         (response) => {
           if (response.data.status === "OTP sent to email.") {
             alert("OTP Send To Your Email")
+            setShowModal(true)
           } else {
             alert(response.data.status)
           }
@@ -74,6 +77,7 @@ const StudentRegistration = () => {
       )
     } else {
       setErrors(validationErrors);
+      setShowModal(false)
     }
   }
 
@@ -288,14 +292,23 @@ const StudentRegistration = () => {
       (response) => {
         if (response.data.status === "OTP verified successfully") {
           loadRazorpayScript()
-          setUpdateField({"otp": ""})
+          setUpdateField({ "otp": "" })
+          setShowModal(false)
         } else {
-          alert(response.data.status)
-          setUpdateField({"otp": ""})
+          if (response.data.status === "Invalid OTP") {
+            alert("Invalid OTP")
+            setUpdateField({ "otp": "" })
+            setShowModal(true);
+          } else {
+            alert(response.data.status)
+            setUpdateField({ "otp": "" })
+            setShowModal(false); // Reset showModal state
+          }
         }
       }
     )
   };
+
 
 
 
@@ -371,6 +384,16 @@ const StudentRegistration = () => {
   useEffect(() => {
     setAmount(batchAmount || '');
   }, []);
+
+  // Place this useEffect hook in your component
+  useEffect(() => {
+    if (showModal) {
+      new window.bootstrap.Modal(document.getElementById('exampleModal')).show();
+    } else {
+      // Optionally close the modal if needed
+    }
+  }, [showModal]);
+
 
   return (
     <div className="bg-light py-3 py-md-5">
@@ -589,33 +612,35 @@ const StudentRegistration = () => {
                     //   onClick={sendOtp}>
                     //   Register
                     // </button>
-                    <button type="submit" onClick={sendOtp} className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Register</button>
+                    <button type="button" onClick={sendOtp} className="btn btn-primary">Register</button>
                   )}
                 </div>
               </div>
               <div>
-                <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div className="modal-dialog">
-                    <div className="modal-content">
-                      <div className="modal-header">
-                        <h1 className="modal-title fs-5" id="exampleModalLabel">Verify Email</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                      </div>
-                      <div className="modal-body">
-                        <>
-                          <div className="mb-3">
-                            <label htmlFor="message-text" className="col-form-label">OTP:</label>
-                            <input type="text" onChange={updateHandler} value={updateField.otp} name="otp" className="form-control" id="message-text" defaultValue={""} />
-                          </div>
-                        </>
-                      </div>
-                      <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleSubmit}>Submit</button>
+                {showModal && (
+                  <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog">
+                      <div className="modal-content">
+                        <div className="modal-header">
+                          <h1 className="modal-title fs-5" id="exampleModalLabel">Verify Email</h1>
+                          <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                        </div>
+                        <div className="modal-body">
+                          <>
+                            <div className="mb-3">
+                              <label htmlFor="message-text" className="col-form-label">OTP:</label>
+                              <input type="text" onChange={updateHandler} value={updateField.otp} name="otp" className="form-control" id="message-text" defaultValue={""} />
+                            </div>
+                          </>
+                        </div>
+                        <div className="modal-footer">
+                          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="button" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
 
               </div>
               <br />

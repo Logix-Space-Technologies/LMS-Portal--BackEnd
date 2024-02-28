@@ -79,19 +79,13 @@ const CollegeStaffStudentVerify = () => {
 
 
     // Change page
-    const paginate = pageNumber => setCurrentPage(pageNumber);
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    // Total pages
-    const pageNumbers = [];
-    if (studentData && studentData.length > 0) {
-        studentData.forEach((student, index) => {
-            const pageNumber = index + 1;
-            pageNumbers.push(pageNumber);
-        });
-    }
+    useEffect(() => { getData(); }, []);
 
+    // Calculate total pages
+    const totalPages = Math.ceil(studentData.length / studentsPerPage);
 
-    useEffect(() => { getData() }, [])
 
     return (
 
@@ -203,26 +197,22 @@ const CollegeStaffStudentVerify = () => {
                     </tbody>
                 </table>
             </div>
-            <div className="flex justify-center mt-8">
-                <nav>
-                    <ul className="flex list-style-none">
-                        {currentPage > 1 && (
-                            <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                Previous
-                            </li>
-                        )}
-                        {pageNumbers.map(number => (
-                            <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                                {number}
-                            </li>
-                        ))}
-                        {currentPage < pageNumbers.length && (
-                            <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                Next
-                            </li>
-                        )}
-                    </ul>
-                </nav>
+            <div className="flex flex-col items-center">
+                <span className="text-sm text-gray-700 dark:text-gray-400">
+                    Showing <span className="font-semibold text-gray-900 dark:text-white">{indexOfFirstStudent + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{indexOfLastStudent > studentData.length ? studentData.length : indexOfLastStudent}</span> of <span className="font-semibold text-gray-900 dark:text-white">{studentData.length}</span> Entries
+                </span>
+                <div className="inline-flex mt-2 xs:mt-0">
+                    {currentPage > 1 && (
+                        <button onClick={() => paginate(currentPage - 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            Prev
+                        </button>
+                    )}
+                    {currentPage < totalPages && (
+                        <button onClick={() => paginate(currentPage + 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            Next
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     )

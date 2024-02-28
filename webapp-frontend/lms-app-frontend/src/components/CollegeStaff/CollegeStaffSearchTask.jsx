@@ -52,7 +52,8 @@ const CollegeStaffSearchTask = () => {
                         navigate("/clgStafflogin")
                     } else {
                         if (!response.data.data) {
-                            //no data found
+                            setUpdateField([]); // Ensure the updateField is set to an empty array
+                            setIsLoading(false);
                         } else {
                             alert(response.data.status)
                         }
@@ -103,7 +104,7 @@ const CollegeStaffSearchTask = () => {
                     <div className="col-12 text-center">
                         <p></p>
                     </div>
-                ) : (updateField ? (
+                ) : (updateField && updateField.length > 0 ? (
                     <>
                         <header className="px-5 py-4 border-b border-gray-100">
                             <h2 className="font-semibold text-2xl text-gray-800">List of Tasks</h2>

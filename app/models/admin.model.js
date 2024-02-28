@@ -86,19 +86,19 @@ Admin.adminChangePassword = (ad, result) => {
 
 
 Admin.adminDashBoard = (result) => {
-    const query1 = "SELECT COUNT(*) AS totalColleges FROM college WHERE deleteStatus=0 AND isActive=1";
-    const query2 = "SELECT COUNT(*) AS totalCollegeStaff FROM college_staff WHERE deleteStatus=0 AND isActive=1 AND emailVerified=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
-    const query3 = "SELECT COUNT(*) AS totalAdminStaff FROM admin_staff WHERE deleteStatus=0 AND isActive=1 AND emailVerified=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
-    const query4 = "SELECT COUNT(*) AS totalBatches FROM batches WHERE deleteStatus=0 AND isActive=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
-    const query5 = "SELECT COUNT(*) AS totalTasks FROM task WHERE deleteStatus=0 AND isActive=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
-    const query6 = "SELECT COUNT(*) AS totalStudents FROM student WHERE deleteStatus=0 AND isActive=1 AND emailVerified=1 AND isVerified=1 AND isPaid=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
-    const query7 = "SELECT COUNT(*) AS totalMaterials FROM materials WHERE deleteStatus=0 AND isActive=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
-    const query8 = "SELECT COUNT(*) AS totalRefunds FROM refund WHERE approvedAmnt IS NOT NULL AND cancelStatus=0 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=requestedDate";
-    const query9 = "SELECT SUM(rpAmount) AS totalAmountPaid FROM payment WHERE DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=paymentDate";
-    const query10 = "SELECT SUM(approvedAmnt) AS totalAmountRefunded FROM refund WHERE approvedAmnt IS NOT NULL AND cancelStatus=0 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=refundInitiatedDate";
-    const query11 = "SELECT c.id, c.collegeName, COUNT(b.id) AS numberOfBatches FROM college c LEFT JOIN batches b ON c.id = b.collegeId WHERE c.deleteStatus = 0 AND c.isActive = 1 GROUP BY c.id, c.collegeName";
-    const query12 = "SELECT c.id, c.collegeName, COUNT(s.id) AS numberOfStudents FROM college c LEFT JOIN student s ON c.id = s.collegeId WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 GROUP BY c.id, c.collegeName";
-    const query13 = "SELECT c.collegeName, COUNT(DISTINCT s.id) AS noofstudents, COUNT(DISTINCT t.id) AS nooftasks, COUNT(DISTINCT st.id) * 100.0 / COUNT(DISTINCT t.id) AS percentageofcompletion FROM college c JOIN student s ON c.id = s.collegeId LEFT JOIN batches b ON s.batchId = b.id LEFT JOIN submit_task st ON s.id = st.studId LEFT JOIN task t ON b.id = t.batchId GROUP BY c.collegeName";
+    const query1 = "SELECT CASE WHEN COUNT(*) = 0 THEN 0 ELSE COUNT(*) END AS totalColleges FROM college WHERE deleteStatus = 0 AND isActive = 1;";
+    const query2 = "SELECT CASE WHEN COUNT(*) > 0 THEN COUNT(*) ELSE 0 END AS totalCollegeStaff FROM college_staff WHERE deleteStatus = 0 AND isActive = 1 AND emailVerified = 1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= addedDate;"
+    const query3 = "SELECT CASE WHEN COUNT(*) > 0 THEN COUNT(*) ELSE 0 END AS totalAdminStaff FROM admin_staff WHERE deleteStatus = 0 AND isActive = 1 AND emailVerified = 1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= addedDate;    ";
+    const query4 = "SELECT CASE WHEN COUNT(*) > 0 THEN COUNT(*) ELSE 0 END AS totalBatches FROM batches WHERE deleteStatus = 0 AND isActive = 1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= addedDate;";
+    const query5 = "SELECT CASE WHEN COUNT(*) > 0 THEN COUNT(*) ELSE 0 END AS totalTasks FROM task WHERE deleteStatus=0 AND isActive=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
+    const query6 = "SELECT CASE WHEN COUNT(*) > 0 THEN COUNT(*) ELSE 0 END AS totalStudents FROM student WHERE deleteStatus=0 AND isActive=1 AND emailVerified=1 AND isVerified=1 AND isPaid=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
+    const query7 = "SELECT CASE WHEN COUNT(*) > 0 THEN COUNT(*) ELSE 0 END AS totalMaterials FROM materials WHERE deleteStatus=0 AND isActive=1 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=addedDate";
+    const query8 = "SELECT CASE WHEN COUNT(*) > 0 THEN COUNT(*) ELSE 0 END AS totalRefunds FROM refund WHERE approvedAmnt IS NOT NULL AND cancelStatus=0 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=requestedDate";
+    const query9 = "SELECT CASE WHEN SUM(rpAmount) = 0 THEN 0 ELSE SUM(rpAmount) END AS totalAmountPaid FROM payment WHERE paymentDate >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR);    ";
+    const query10 = "SELECT CASE WHEN SUM(approvedAmnt) IS NULL THEN 0 ELSE SUM(approvedAmnt) END AS totalAmountRefunded FROM refund WHERE approvedAmnt IS NOT NULL AND cancelStatus = 0 AND refundInitiatedDate >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR);    ";
+    const query11 = "SELECT c.id, c.collegeName, COALESCE(COUNT(b.id), 0) AS numberOfBatches FROM college c LEFT JOIN batches b ON c.id = b.collegeId WHERE c.deleteStatus = 0 AND c.isActive = 1 GROUP BY c.id, c.collegeName;    ";
+    const query12 = "SELECT c.id, c.collegeName, COALESCE(COUNT(s.id), 0) AS numberOfStudents FROM college c LEFT JOIN student s ON c.id = s.collegeId AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 WHERE c.deleteStatus = 0 AND c.isActive = 1 GROUP BY c.id, c.collegeName;    ";
+    const query13 = "SELECT c.collegeName, COUNT(DISTINCT s.id) AS noofstudents, COUNT(DISTINCT t.id) AS nooftasks, CASE WHEN COUNT(DISTINCT st.id) = 0 THEN 0 ELSE ROUND(COUNT(DISTINCT st.id) * 100.0 / COUNT(DISTINCT t.id), 2) END AS percentageofcompletion FROM college c JOIN student s ON c.id = s.collegeId LEFT JOIN batches b ON s.batchId = b.id LEFT JOIN submit_task st ON s.id = st.studId LEFT JOIN task t ON b.id = t.batchId GROUP BY c.collegeName;";
     const query14 = "SELECT c.collegeName, COUNT(DISTINCT s.id) AS noofstudents FROM college c LEFT JOIN student s ON c.id = s.collegeId WHERE DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=s.addedDate GROUP BY c.collegeName";
 
     db.query(query1, (err1, res1) => {

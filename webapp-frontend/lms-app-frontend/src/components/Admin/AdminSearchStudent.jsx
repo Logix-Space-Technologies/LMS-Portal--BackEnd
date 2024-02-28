@@ -4,15 +4,14 @@ import axios from 'axios'
 import Navbar from './Navbar'
 
 const AdminSearchStudent = () => {
+
     const [inputField, setInputField] = useState(
         {
             "studentSearchQuery": ""
         }
     )
 
-    const [updateField, setUpdateField] = useState(
-        []
-    )
+    const [updateField, setUpdateField] = useState([])
 
     const [isLoading, setIsLoading] = useState(true)
 
@@ -23,7 +22,6 @@ const AdminSearchStudent = () => {
     }
 
     const readValue = () => {
-        console.log(inputField)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -32,21 +30,17 @@ const AdminSearchStudent = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-
-
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
                 setUpdateField(response.data.data)
                 setIsLoading(false)
-                console.log(response.data.data)
                 setInputField({
                     "studentSearchQuery": ""
                 })
             }
-
         )
-
     }
+
     return (
         <div>
             <Navbar />
@@ -120,10 +114,10 @@ const AdminSearchStudent = () => {
                                             </thead>
                                             <tbody className="text-sm divide-y divide-gray-100">
                                                 {updateField.map(
-                                                    (value, index) => (
-                                                        <tr key={index}>
+                                                    (value, index) => {
+                                                        return <tr key={index}>
                                                             <td className="p-4 whitespace-nowrap">
-                                                                <div className="text-left">{index+1}</div>
+                                                                <div className="text-left">{index + 1}</div>
                                                             </td>
                                                             <td className="p-4 whitespace-nowrap">
                                                                 <div className="flex items-center">
@@ -167,7 +161,7 @@ const AdminSearchStudent = () => {
                                                                 <div className="text-left">{value.membership_no}</div>
                                                             </td>
                                                         </tr>
-                                                    )
+                                                    }
                                                 )}
                                             </tbody>
                                         </table>

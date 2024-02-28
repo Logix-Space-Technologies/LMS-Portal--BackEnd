@@ -42,7 +42,6 @@ const AdminSearchTrainer = () => {
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        console.log(inputField)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -55,7 +54,6 @@ const AdminSearchTrainer = () => {
             (response) => {
                 setUpdateField(response.data.data)
                 setIsLoading(false)
-                console.log(response.data)
                 setInputField(
                     {
                         "TrainerSearchQuery": ""
@@ -128,6 +126,7 @@ const AdminSearchTrainer = () => {
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
@@ -177,8 +176,8 @@ const AdminSearchTrainer = () => {
                                 </thead>
                                 <tbody>
                                     {/* Table rows */}
-                                    {currentTrainers.map((value, index) => (
-                                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    {currentTrainers.map((value, index) => {
+                                        return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                             <td className="px-6 py-4">{index + 1}</td>
                                             <td className="p-4 whitespace-nowrap">
                                                 <div className="flex items-center">
@@ -206,7 +205,7 @@ const AdminSearchTrainer = () => {
                                                 </td>
                                             )}
                                         </tr>
-                                    ))}
+                                    })}
 
                                 </tbody>
                             </table>

@@ -39,10 +39,10 @@ const StudNavBar = () => {
                                 <Link className="nav-link" to='/studdashboard'>Student Dashboard</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/studViewRefundReq">View Refund Request</Link>
+                                <Link className="nav-link" to="/studMaterialView">View Materials</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/studMaterialView">View Materials</Link>
+                                <Link className="nav-link" to="/studviewCommunityManager">View Community Manager</Link>
                             </li>
                             <li className="nav-item">
                                 <button onClick={logOut} className="btn btn-primary">Log Out</button>

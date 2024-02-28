@@ -6,9 +6,11 @@ import Navbar from './Navbar';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminSearchTasks = () => {
+
     const [inputField, setInputField] = useState({
-        taskQuery: ""
+        "taskQuery": ""
     });
+
     const [tasks, setTasks] = useState([]);
     const [searchExecuted, setSearchExecuted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -71,7 +73,7 @@ const AdminSearchTasks = () => {
                 searchTasks();
             })
             .catch(error => {
-                console.error("Delete failed:", error);
+                alert(error);
             })
             .finally(() => setIsLoading(false));
     };
@@ -100,6 +102,7 @@ const AdminSearchTasks = () => {
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />} <br />
@@ -148,8 +151,8 @@ const AdminSearchTasks = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentTasks.map((task, index) => (
-                                    <tr key={task.id}>
+                                {currentTasks.map((task, index) => {
+                                    return <tr key={task.id}>
                                         <td>{index + 1}</td>
                                         <td>{task.batchName}</td>
                                         <td>{task.sessionName}</td>
@@ -162,13 +165,13 @@ const AdminSearchTasks = () => {
                                             <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white btn-sm me-2">View File</Link>
                                         </td>
                                         <td>
-                                            <button onClick={() => handleUpdateClick(task.id)} className="btn btn-primary btn-sm me-2">Update</button>                                          
+                                            <button onClick={() => handleUpdateClick(task.id)} className="btn btn-primary btn-sm me-2">Update</button>
                                             {key === "lmsapp" && (
                                                 <button type="button" className="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" onClick={() => handleClick(task.id)}>Delete</button>
                                             )}
                                         </td>
                                     </tr>
-                                ))}
+                                })}
                             </tbody>
                         </table>
                     </div>

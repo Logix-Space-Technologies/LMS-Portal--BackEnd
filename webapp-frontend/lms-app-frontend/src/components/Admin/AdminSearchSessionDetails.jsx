@@ -6,6 +6,7 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 import { Link, useNavigate } from 'react-router-dom';
 
 const AdminSearchSessionDetails = () => {
+
     const [inputField, setInputField] = useState({ "SessionSearchQuery": "" });
     const [updateField, setUpdateField] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -173,9 +174,9 @@ const AdminSearchSessionDetails = () => {
                                             </thead>
                                             <tbody>
                                                 {/* Table rows */}
-                                                {currentSession.map((value,index) => (
-                                                    <tr key={value.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                                        <td className="px-6 py-4">{index+1}</td>
+                                                {currentSession.map((value, index) => {
+                                                    return <tr key={value.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                        <td className="px-6 py-4">{index + 1}</td>
                                                         <td className="px-6 py-4">{value.collegeName}</td>
                                                         <td className="px-6 py-4">{value.batchName}</td>
                                                         <td className="px-6 py-4">{value.sessionName}</td>
@@ -201,7 +202,7 @@ const AdminSearchSessionDetails = () => {
                                                             <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Update</button>
                                                         </td>
                                                     </tr>
-                                                ))}
+                                                })}
                                             </tbody>
                                         </table>
                                     </div>

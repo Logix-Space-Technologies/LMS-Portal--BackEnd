@@ -284,3 +284,26 @@ exports.viewOneBatch = (request, response) => {
     });
 };
 
+
+exports.clgstaffNotificationView = (request, response) => {
+    const batchId = request.body.batchId;
+    const clgStaffToken = request.headers.token;
+
+    jwt.verify(clgStaffToken, "lmsappclgstaff", (err, decoded) => {
+        if (err) {
+            return response.json({ "status": "Unauthorized User" });
+        } else {
+            Batches.ClgStaffNotificationView(batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        return response.json({ "status": "No notifications found!" });
+                    } else {
+                        return response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        }
+    });
+};

@@ -276,7 +276,7 @@ Student.create = (newStudent, result) => {
 Student.searchStudentByCollege = (searchKey, collegeId, result) => {
     const searchTerm = '%' + searchKey + '%';
     db.query(
-        "SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.validity FROM student s JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.isPaid = 1 AND s.emailVerified = 1 AND s.collegeId = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND s.validity > CURRENT_DATE AND (s.studName LIKE ? OR s.rollNo LIKE ? OR s.studDept LIKE ? OR s.course LIKE ? OR s.admNo LIKE ? )",
+        "SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.validity FROM student s JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.isPaid = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.collegeId = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND s.validity > CURRENT_DATE AND (s.studName LIKE ? OR s.rollNo LIKE ? OR s.studDept LIKE ? OR s.course LIKE ? OR s.admNo LIKE ? )",
         [collegeId, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm],
         (err, res) => {
             if (err) {
@@ -1105,13 +1105,37 @@ Student.generateAndHashOTP = (studEmail, result) => {
                                                                     result("Email already exists", null);
                                                                     return;
                                                                 } else {
-                                                                    // Insert the hashed OTP into the student_otp table
-                                                                    const query = "INSERT INTO student_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
-                                                                    db.query(query, [studEmail, hashedOTP], (err, res) => {
+                                                                    db.query("SELECT * FROM student_otp WHERE email = ?", [studEmail], (err, res) => {
                                                                         if (err) {
-                                                                            return result(err, null);
+                                                                            console.error("Error while checking OTP existence: ", err);
+                                                                            result(err, null);
+                                                                            return;
                                                                         } else {
-                                                                            return result(null, otp); // Return the plain OTP for email sending
+                                                                            if (res.length > 0) {
+                                                                                // Email exists, so update the OTP
+                                                                                const updateQuery = "UPDATE student_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                                                                                db.query(updateQuery, [hashedOTP, studEmail], (err, res) => {
+                                                                                    if (err) {
+                                                                                        console.error("Error while updating OTP: ", err);
+                                                                                        result(err, null);
+                                                                                    } else {
+                                                                                        console.log("OTP updated successfully");
+                                                                                        result(null, otp); // Return the plain OTP for email sending
+                                                                                    }
+                                                                                });
+                                                                            } else {
+                                                                                // Email does not exist, insert new OTP
+                                                                                const insertQuery = "INSERT INTO student_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+                                                                                db.query(insertQuery, [studEmail, hashedOTP], (err, res) => {
+                                                                                    if (err) {
+                                                                                        console.error("Error while inserting OTP: ", err);
+                                                                                        result(err, null);
+                                                                                    } else {
+                                                                                        console.log("OTP inserted successfully");
+                                                                                        result(null, otp); // Return the plain OTP for email sending
+                                                                                    }
+                                                                                });
+                                                                            }
                                                                         }
                                                                     });
                                                                 }
