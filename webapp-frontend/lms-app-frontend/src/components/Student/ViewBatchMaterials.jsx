@@ -27,7 +27,7 @@ const MaterialView = () => {
 
     axios.post(apiUrl, { "batchId": batchId }, axiosConfig)
       .then(response => {
-        if (response.data.status === "success") {
+        if (response.data.data) {
           setMaterials(response.data.data);
           setLoading(false);
         } else {
@@ -35,7 +35,12 @@ const MaterialView = () => {
             navigate("/studentLogin");
             sessionStorage.clear();
           } else {
-            alert(response.data.status);
+            if (!response.data.data) {
+              setMaterials([])
+              setLoading(false)
+            } else {
+              alert(response.data.status);
+            }
           }
         }
       })
