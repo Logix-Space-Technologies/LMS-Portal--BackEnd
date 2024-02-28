@@ -8,7 +8,7 @@ const AdminHeader = () => {
         sessionStorage.clear();
         navigate('/');
     };
-const handleLogoutConfirm = () => {
+    const handleLogoutConfirm = () => {
         logout();
     };
 
