@@ -48,6 +48,7 @@ const AdminSearchBatch = () => {
         axios.post(apiUrl, inputField, axiosConfig)
             .then(response => {
                 setBatches(response.data.data);
+                
                 setInputField({ batchQuery: "" })
                 setIsLoading(false);
                 setSearchExecuted(true);
