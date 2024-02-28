@@ -8,10 +8,10 @@ const AdminHeader = () => {
         sessionStorage.clear();
         navigate('/');
     };
-
-    const handleLogoutConfirm = () => {
+const handleLogoutConfirm = () => {
         logout();
     };
+    
 
     return (
         <div>
