@@ -128,11 +128,6 @@ Material.viewBatchMaterials = (batchId, result) => {
             console.error("Error viewing batch materials: ", err);
             result(err, null);
             return;
-        }
-        if (res.length === 0) {
-            console.log("No materials found for batchId: ", batchId);
-            result("No materials found for batchId: ", batchId);
-            return;
         } else {
             console.log("Batch Materials: ", res);
             result(null, res);
