@@ -55,7 +55,7 @@ const StudentRegistration = () => {
 
 
   const sendOtp = async (e) => {
-    let data = { "studEmail": inputField.studEmail }
+    let data = { "admNo": inputField.admNo, "collegeId": inputField.collegeId, "batchId": inputField.batchId, "rollNo": inputField.rollNo, "aadharNo": inputField.aadharNo, "studEmail": inputField.studEmail }
     let axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
@@ -291,9 +291,9 @@ const StudentRegistration = () => {
     axios.post(verifyOtpUrl, data, axiosConfig).then(
       (response) => {
         if (response.data.status === "OTP verified successfully") {
+          setShowModal(false)
           loadRazorpayScript()
           setUpdateField({ "otp": "" })
-          setShowModal(false)
         } else {
           if (response.data.status === "Invalid OTP") {
             alert("Invalid OTP")
