@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import AdmStaffNavBar from './AdmStaffNavBar'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
 
 
 const AdminStaffViewSubmittedTask = () => {
 
     const [errors, setErrors] = useState({});
+
+    const navigate = useNavigate()
 
     let [submittedTaskId, setSubmittedTaskId] = useState("")
 
