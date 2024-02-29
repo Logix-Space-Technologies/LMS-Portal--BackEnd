@@ -95,7 +95,6 @@ const AdminViewAllAdminStaff = () => {
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aadhar No.</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Added Date</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
               </tr>
@@ -109,7 +108,6 @@ const AdminViewAllAdminStaff = () => {
                   <td className="px-6 py-4 whitespace-nowrap">{value.Address}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.AadharNo}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.Email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{value.addedDate}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => { readValue(value.id) }}>Delete</button>
                   </td>
