@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import StudNavBar from './StudNavBar';
 import '../../config/config'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const StudentViewTasks = () => {
     const [studViewTaskData, setStudViewTaskData] = useState([]);
@@ -125,8 +125,8 @@ const StudentViewTasks = () => {
         <div>
             <StudNavBar />
             <br />
-            <h1>Student View Tasks</h1><br />
-            <section className="flex flex-col justify-center antialiased bg-gray-100 text-gray-600 min-h-screen p-4">
+            <h1 style={{marginLeft:"20px", marginBottom: "0px", textAlign:"center"}}>Student View Tasks</h1>
+            <section className="flex flex-col justify-center antialiased bg-gray-100 text-gray-600 min-h-screen p-4 pt-0 pb-0">
                 <div className="h-full">
                     {/* Cards */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -135,6 +135,7 @@ const StudentViewTasks = () => {
                                 return <div className="bg-white shadow-lg rounded-md p-4" key={index}>
                                     {task.taskStatus === "Task Submitted" && task.evaluateStatus === "Evaluated" && (
                                         <>
+                                            <span className="text-green-500 font-semibold">[Evaluated]</span>
                                             <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
                                             <p className="text-gray-500 mb-4">{task.taskDesc}</p>
                                             <p className="text-gray-700 mb-2">
@@ -162,7 +163,7 @@ const StudentViewTasks = () => {
                                             )}
                                             {!task.updatedDate && task.subDate > task.dueDate && (
                                                 <p className="text-gray-700 mb-2" style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <strong>Submission Date: </strong> {task.lateSubDate}
+                                                    <strong style={{ marginRight: '8px' }}>Submission Date: </strong> {task.lateSubDate}
                                                     <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '5px' }} />
                                                 </p>
                                             )}
@@ -177,15 +178,9 @@ const StudentViewTasks = () => {
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Evaluated By:</strong> {task.evaluatorName}
                                             </p>
-                                            <p className="text-gray-700 mb-2">
-                                                <p><strong>Submission Status: </strong>Submitted</p>
-                                            </p>
-                                            <p className="text-gray-700 mb-2">
-                                                <p><strong>Evaluation Status: </strong>Evaluated</p><br />
-                                            </p>
                                             <td>
-                                                <div className="flex justify-start" >
-                                                    <a target="_blank" href={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
+                                                <div className="flex justify-start pl-24" >
+                                                    <Link target="_blank" href={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
                                             </td>
@@ -193,6 +188,7 @@ const StudentViewTasks = () => {
                                     )}
                                     {task.taskStatus === "Task Submitted" && task.evaluateStatus === "Not Evaluated" && (
                                         <>
+                                            <span className="text-yellow-500 font-semibold">[To Be Evaluated]</span>
                                             <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
                                             <p className="text-gray-500 mb-4">{task.taskDesc}</p>
                                             <p className="text-gray-700 mb-2">
@@ -233,47 +229,45 @@ const StudentViewTasks = () => {
                                                 <p><strong>Evaluation Status: </strong>Not Evaluated</p><br />
                                             </p>
                                             <td>
-                                                <div className="flex justify-start" >
-                                                    <a target="_blank" href={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
+                                                <div className="flex justify-start pl-8" >
+                                                    <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
                                             </td>
                                             <td>
-                                                <button onClick={() => { updateSubTask(task.submitTaskId) }} className="btn btn-primary">Update</button>
+                                                <button onClick={() => { updateSubTask(task.submitTaskId) }} className="btn btn-primary" style={{marginLeft:"30px"}}>Update</button>
                                             </td>
                                         </>
                                     )}
                                     {task.taskStatus === "Task Not Submitted" && (
                                         <>
+                                            <span className="text-red-500 font-semibold">[Assigned]</span>
                                             <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
                                             <p className="text-gray-500 mb-4">{task.taskDesc}</p>
-                                            <p className="text-gray-700 mb-2">
+                                            <p className="text-gray-700 mb-3">
                                                 <strong>Session Name:</strong> {task.sessionName}
                                             </p>
-                                            <p className="text-gray-700 mb-2">
+                                            <p className="text-gray-700 mb-3">
                                                 <strong>Task Type:</strong> {task.taskType}
                                             </p>
-                                            <p className="text-gray-700 mb-2">
+                                            <p className="text-gray-700 mb-3">
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
-                                            <p className="text-gray-700 mb-2">
+                                            <p className="text-gray-700 mb-3">
                                                 <strong>Due Date:</strong> {task.dueDate}
                                             </p>
-                                            <p className="text-gray-700 mb-2">
-                                                <strong>Submission Status: </strong>Not Submitted
-                                            </p>
-                                            <p className="text-gray-700 mb-2">
+                                            <p className="text-gray-700 mb-6">
 
                                             </p><br /><br />
                                             <td>
-                                                <div className="flex justify-start" >
-                                                    <a target="_blank" href={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</a>
+                                                <div className="flex justify-start pl-4 pt-28" >
+                                                    <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
                                             </td>
                                             <td>
                                                 <div className="flex justify-end">
-                                                    <button onClick={() => readValue(task.taskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
+                                                    <button onClick={() => readValue(task.taskId)} style={{marginLeft:"20px"}} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
                                                 </div>
                                             </td>
                                         </>
