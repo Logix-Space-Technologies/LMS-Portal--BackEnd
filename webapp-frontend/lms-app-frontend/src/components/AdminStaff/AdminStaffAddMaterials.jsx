@@ -79,11 +79,9 @@ const AdminStaffAddMaterials = () => {
                 "key": sessionStorage.getItem("admstaffkey")
             }
         };
-        console.log(collegeId)
         axios.post(batchUrl, { collegeId }, axiosConfig2).then((response) => {
             if (response.data.data) {
                 setBatches(response.data)
-                console.log(response.data)
             } else {
                 if (response.data.status === "Unauthorized User!!") {
                     navigate("/admstafflogin")
@@ -109,7 +107,6 @@ const AdminStaffAddMaterials = () => {
     const readValue = (e) => {
         e.preventDefault();
         const validationErrors = validateForm(inputField);
-        console.log(validationErrors)
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig3 = {
                 headers: {
@@ -119,7 +116,6 @@ const AdminStaffAddMaterials = () => {
                     "key": sessionStorage.getItem("admstaffkey")
                 }
             }
-            console.log(axiosConfig3)
             let data = {
                 "batchId": inputField.batchId,
                 "fileName": inputField.fileName,
@@ -128,9 +124,7 @@ const AdminStaffAddMaterials = () => {
                 "materialType": inputField.materialType,
                 "uploadFile": file
             }
-            console.log(data)
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
-                console.log(response.data.status)
                 if (response.data.status === 'success') {
                     alert('Material Added Successfully !!');
                     setInputField({
@@ -185,16 +179,19 @@ const AdminStaffAddMaterials = () => {
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
-                        console.log(error.response.data);
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
                     console.log(error.request);
-                } else {
+                    alert(error.request);
+                } else if (error.message) {
                     console.log('Error', error.message);
+                    alert('Error', error.message);
+                } else {
+                    alert(error.config);
+                    console.log(error.config);
                 }
-                console.log(error.config);
-            });
+            })
         } else {
             setErrors(validationErrors);
         }

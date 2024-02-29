@@ -311,7 +311,7 @@ AdminStaff.viewOneAdminStaff = (id, result) => {
 }
 
 AdminStaff.AdmViewAllMaterial = async (result) => {
-    let query = "SELECT id,fileName,materialDesc,uploadFile,remarks,addedDate,materialType FROM materials WHERE deleteStatus = 0 AND isActive = 1";
+    let query = "SELECT c.collegeName, b.batchName, m.* FROM materials m JOIN batches b ON m.batchId = b.id JOIN college c ON c.id = b.collegeId WHERE m.deleteStatus = 0 AND m.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 ORDER BY c.collegeName, b.batchName, m.id DESC";
     db.query(query, (err, res) => {
         if (err) {
             console.log("error: ", err);
@@ -327,7 +327,7 @@ AdminStaff.AdmViewAllMaterial = async (result) => {
 }
 
 AdminStaff.viewOneMaterial = (materialId, result) => {
-    db.query("SELECT fileName,batchId,materialDesc,uploadFile,remarks,addedDate,materialType FROM materials WHERE deleteStatus = 0 AND isActive = 1 AND id = ?", materialId,
+    db.query("SELECT c.id AS collegeId, c.collegeName, m.fileName, m.batchId, m.materialDesc, m.uploadFile, m.remarks, m.addedDate, m.materialType FROM materials m JOIN batches b ON m.batchId = b.id JOIN college c ON b.collegeId = c.id WHERE m.deleteStatus = 0 AND m.isActive = 1 AND m.id = ?", materialId,
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
