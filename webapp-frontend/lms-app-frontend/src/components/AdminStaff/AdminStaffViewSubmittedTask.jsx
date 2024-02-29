@@ -158,9 +158,6 @@ const AdminStaffViewSubmittedTask = () => {
                                     Task Title
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    Task Id
-                                </th>
-                                <th scope="col" className="px-6 py-3">
                                     Due Date
                                 </th>
                                 <th scope="col" className="px-6 py-3">
@@ -205,9 +202,6 @@ const AdminStaffViewSubmittedTask = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.taskTitle}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.id}
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.dueDate}
