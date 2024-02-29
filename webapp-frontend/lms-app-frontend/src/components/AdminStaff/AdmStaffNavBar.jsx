@@ -61,7 +61,7 @@ const AdmStaffNavBar = () => {
                             </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Functionalities
+                                    View
                                 </Link>
                                 <ul className="dropdown-menu">
                                     <li><Link className="dropdown-item" to="/adminviewallcollege">View All College</Link></li>
