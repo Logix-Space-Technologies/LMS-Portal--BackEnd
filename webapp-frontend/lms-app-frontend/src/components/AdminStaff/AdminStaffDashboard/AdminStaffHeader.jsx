@@ -23,10 +23,12 @@ const AdminStaffHeader = () => {
                 if (response.data.data) {
                     setAdmStaffData(response.data.data)
                 } else {
-                    navigate("/admstafflogin")
-                    sessionStorage.removeItem("admstaffLogintoken")
-                    sessionStorage.removeItem("admstaffkey")
-                    sessionStorage.removeItem("admstaffId")
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -35,9 +37,7 @@ const AdminStaffHeader = () => {
     const navigate = useNavigate()
 
     const logOut = () => {
-        sessionStorage.removeItem("admstaffLogintoken")
-        sessionStorage.removeItem("admstaffkey")
-        sessionStorage.removeItem("admstaffId")
+        sessionStorage.clear()
         navigate('/admstafflogin');
     }
 

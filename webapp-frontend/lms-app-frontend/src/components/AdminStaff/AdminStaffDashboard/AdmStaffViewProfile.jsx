@@ -25,10 +25,12 @@ const AdmStaffViewProfile = () => {
                 if (response.data.data) {
                     setAdmStaffData(response.data.data)
                 } else {
-                    navigate("/admstafflogin")
-                    sessionStorage.removeItem("admstaffLogintoken")
-                    sessionStorage.removeItem("admstaffkey")
-                    sessionStorage.removeItem("admstaffId")
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
