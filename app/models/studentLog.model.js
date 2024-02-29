@@ -29,8 +29,9 @@ StudentLog.getAll = async(result) => {
             result(err, null)
             return
         } else {
-            console.log("Student Log : ", response)
-            result(null, response)
+            const formattedStudentLog = response.map(studentstafflog => ({ ...studentstafflog, DateTime: studentstafflog.DateTime.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}));
+            console.log("Student Log : ", formattedStudentLog)
+            result(null, formattedStudentLog)
         }
     })
 }
