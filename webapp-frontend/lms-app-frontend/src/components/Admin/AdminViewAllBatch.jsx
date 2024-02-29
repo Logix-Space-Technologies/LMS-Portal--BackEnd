@@ -125,7 +125,6 @@ const AdminViewAllBatch = () => {
                             <th scope="col" className="px-6 py-3">Reg End Date</th>
                             <th scope="col" className="px-6 py-3">Batch Description</th>
                             <th scope="col" className="px-6 py-3">Batch Amount</th>
-                            <th scope="col" className="px-6 py-3">Added Date</th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
@@ -146,7 +145,6 @@ const AdminViewAllBatch = () => {
                                 <td className="px-6 py-4">{new Date(value.regEndDate).toLocaleDateString()}</td>
                                 <td className="px-6 py-4">{value.batchDesc}</td>
                                 <td className="px-6 py-4">{value.batchAmount}</td>
-                                <td className="px-6 py-4">{new Date(value.addedDate).toLocaleDateString()}</td>
                                 <td className="px-6 py-4">
                                     <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Sessions</Link>
                                 </td>
