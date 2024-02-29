@@ -48,6 +48,11 @@ const AdminViewAllTrainers = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * trainersPerPage) + index + 1;
+    }
+
+
     const handleClick = () => {
         let data = { "id": deleteTrainer };
         let axiosConfigTwo = {
@@ -88,7 +93,7 @@ const AdminViewAllTrainers = () => {
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
-    
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
@@ -127,7 +132,7 @@ const AdminViewAllTrainers = () => {
                         {currentTrainers.length > 0 ? currentTrainers.map((value, index) => {
                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td className="px-6 py-4">
-                                    {index + 1}
+                                    {calculateSerialNumber(index)}
                                 </td>
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                     <img className="w-10 h-10 rounded-full" src={value.profilePicture} alt="" />
@@ -151,7 +156,7 @@ const AdminViewAllTrainers = () => {
                                     </td>
                                 )}
                                 <td className="px-6 py-4">
-                                    <button onClick={() => UpdateClick(value.id) } className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Trainer</button>
+                                    <button onClick={() => UpdateClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Trainer</button>
                                 </td>
                             </tr>
                         }

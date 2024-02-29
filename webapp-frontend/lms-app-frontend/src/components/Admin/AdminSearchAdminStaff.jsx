@@ -85,6 +85,10 @@ const AdminSearchAdminStaff = () => {
     // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * itemsPerPage) + index + 1;
+    }
+
     return (
         <div>
             <Navbar />
@@ -119,7 +123,7 @@ const AdminSearchAdminStaff = () => {
                                 <tbody>
                                     {currentItems.map((value, index) => {
                                         return <tr key={index}>
-                                            <td>{index + 1}</td>
+                                            <td>{calculateSerialNumber(index)}</td>
                                             <td>{value.AdStaffName}</td>
                                             <td>{value.PhNo}</td>
                                             <td>{value.Address}</td>

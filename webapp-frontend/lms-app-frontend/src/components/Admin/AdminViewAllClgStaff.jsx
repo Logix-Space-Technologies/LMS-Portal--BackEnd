@@ -83,6 +83,11 @@ const AdminViewAllClgStaff = () => {
   // Change page
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
+  const calculateSerialNumber = (index) => {
+    return ((currentPage - 1) * clgStaffPerPage) + index + 1;
+}
+
+
   const updateClick = (id) => {
     let data = id;
     sessionStorage.setItem("clgStaffId", data);
@@ -127,7 +132,7 @@ const AdminViewAllClgStaff = () => {
               {currentClgStaff.map((value, index) => {
                 return <tr key={index}>
                   <td><img className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3" src={value.profilePic} alt="" /></td>
-                  <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{calculateSerialNumber(index)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.collegeStaffName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.collegeName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.department}</td>
