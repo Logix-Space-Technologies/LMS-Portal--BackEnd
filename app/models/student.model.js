@@ -1012,7 +1012,7 @@ SubmitTask.studentUpdateSubmittedTask = (updateSubTask, result) => {
             }
 
             // Update the submitted task
-            db.query("UPDATE `submit_task` SET `gitLink` = ?, `remarks` = ?, `updatedDate` = CURRENT_DATE() WHERE `id` = ?",
+            db.query("UPDATE submit_task s JOIN task t ON t.id = s.taskId SET s.gitLink = ?, s.remarks = ?, s.lateSubDate = CASE WHEN t.dueDate < CURRENT_DATE() THEN CURRENT_DATE() ELSE s.lateSubDate END, s.updatedDate = CASE WHEN t.dueDate >= CURRENT_DATE() THEN CURRENT_DATE() ELSE s.updatedDate END WHERE s.id = ?",
                 [updateSubTask.gitLink, updateSubTask.remarks, updateSubTask.id],
                 (err, res) => {
                     if (err) {
