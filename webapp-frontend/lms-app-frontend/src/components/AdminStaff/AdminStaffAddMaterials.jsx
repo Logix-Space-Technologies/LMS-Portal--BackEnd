@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import '../../config/config'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from './AdmStaffNavBar';
 
 const AdminStaffAddMaterials = () => {
@@ -16,6 +16,8 @@ const AdminStaffAddMaterials = () => {
     })
 
     const [file, setFile] = useState(null)
+
+    const navigate = useNavigate()
 
     const [fileType, setFileType] = useState("");
 
@@ -54,7 +56,16 @@ const AdminStaffAddMaterials = () => {
         };
         axios.post(apiUrl2, {}, axiosConfig).then(
             (response) => {
-                setOutputField(response.data.data)
+                if (response.data.data) {
+                    setOutputField(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }
@@ -70,8 +81,17 @@ const AdminStaffAddMaterials = () => {
         };
         console.log(collegeId)
         axios.post(batchUrl, { collegeId }, axiosConfig2).then((response) => {
-            setBatches(response.data)
-            console.log(response.data)
+            if (response.data.data) {
+                setBatches(response.data)
+                console.log(response.data)
+            } else {
+                if (response.data.status === "Unauthorized User!!") {
+                    navigate("/admstafflogin")
+                    sessionStorage.clear()
+                } else {
+                    alert(response.data.status)
+                }
+            }
         })
     }
 
@@ -122,7 +142,6 @@ const AdminStaffAddMaterials = () => {
                         materialType: '',
                         uploadFile: ''
                     })
-                    window.location.reload()
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.batchId) {
                         alert(response.data.data.batchId)
@@ -139,7 +158,12 @@ const AdminStaffAddMaterials = () => {
                                     if (response.data.status === "Validation failed" && response.data.data.materialType) {
                                         alert(response.data.data.materialType)
                                     } else {
-                                        alert(response.data.status)
+                                        if (response.data.status === "Unauthorized User!!") {
+                                            navigate("/admstafflogin")
+                                            sessionStorage.clear()
+                                        } else {
+                                            alert(response.data.status)
+                                        }
                                     }
                                 }
                             }

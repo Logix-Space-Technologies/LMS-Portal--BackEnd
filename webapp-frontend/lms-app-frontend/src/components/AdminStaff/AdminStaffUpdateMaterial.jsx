@@ -14,7 +14,7 @@ const AdminStaffUpdateMaterial = () => {
             "id": sessionStorage.getItem("materialId"),
             "batchId": "",
             "fileName": "",
-            "materialDesc":"",
+            "materialDesc": "",
             "remarks": "",
             "materialType": "",
             "uploadFile": file
@@ -72,7 +72,7 @@ const AdminStaffUpdateMaterial = () => {
             "id": sessionStorage.getItem("materialId"),
             "batchId": updateField.batchId,
             "fileName": updateField.fileName,
-            "materialDesc":updateField.materialDesc,
+            "materialDesc": updateField.materialDesc,
             "remarks": updateField.remarks,
             "materialType": updateField.materialType,
             "uploadFile": file
@@ -84,7 +84,7 @@ const AdminStaffUpdateMaterial = () => {
                         "id": sessionStorage.getItem("materialId"),
                         "batchId": "",
                         "fileName": "",
-                        "materialDesc":"",
+                        "materialDesc": "",
                         "remarks": "",
                         "materialType": "",
                         "uploadFile": ""
@@ -107,7 +107,12 @@ const AdminStaffUpdateMaterial = () => {
                                     if (Response.data.status === "Validation failed" && Response.data.data.materialType) {
                                         alert(Response.data.data.materialType)
                                     } else {
-                                        alert(Response.data.status)
+                                        if (Response.data.status === "Unauthorized Access!!!") {
+                                            navigate("/admstafflogin")
+                                            sessionStorage.clear()
+                                        } else {
+                                            alert(Response.data.status)
+                                        }
                                     }
                                 }
                             }
@@ -131,9 +136,18 @@ const AdminStaffUpdateMaterial = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setMaterialData(response.data.Material)
-                setUpdateField(response.data.Material[0])
-                console.log(response.data.Material)
+                if (response.data.Material) {
+                    setMaterialData(response.data.Material)
+                    setUpdateField(response.data.Material[0])
+                    console.log(response.data.Material)
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }

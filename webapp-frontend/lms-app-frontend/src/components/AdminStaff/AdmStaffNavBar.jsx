@@ -4,10 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 const AdmStaffNavBar = () => {
     const navigate = useNavigate();
     const logOut = () => {
-        sessionStorage.removeItem("admstaffLogintoken")
-        sessionStorage.removeItem("admstaffkey")
-        sessionStorage.removeItem("admstaffId")
         navigate('/admstafflogin');
+        sessionStorage.clear()
     }
     const handleLogoutConfirm = () => {
         logOut();
@@ -86,16 +84,16 @@ const AdmStaffNavBar = () => {
 
                             </li>
                             <li className="nav-item">
-                            <Link to="/" className="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
-                                Log Out
-                            </Link>
+                                <button className="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutConfirmationModal">
+                                    Log Out
+                                </button>
                             </li>
                         </ul>
                     </div>
                 </div>
             </nav >
             {/* Delete Confirmation Modal */}
-            <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+            <div className="modal fade" id="logoutConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">

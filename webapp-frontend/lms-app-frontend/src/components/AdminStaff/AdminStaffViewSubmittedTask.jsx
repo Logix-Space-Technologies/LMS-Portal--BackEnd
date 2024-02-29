@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import AdmStaffNavBar from './AdmStaffNavBar'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
 
 
 const AdminStaffViewSubmittedTask = () => {
 
     const [errors, setErrors] = useState({});
+
+    const navigate = useNavigate()
 
     let [submittedTaskId, setSubmittedTaskId] = useState("")
 
@@ -33,8 +35,20 @@ const AdminStaffViewSubmittedTask = () => {
         }
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
-                setTaskData(response.data.data)
-                console.log(response.data)
+                if (response.data.data) {
+                    setTaskData(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setTaskData([])
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
@@ -76,7 +90,6 @@ const AdminStaffViewSubmittedTask = () => {
             (response) => {
                 if (response.data.status === "Task evaluated successfully") {
                     alert("Task evaluated successfully")
-                    window.location.reload() // Refresh the data
                     setInputField({
                         evaluatorRemarks: "",
                         score: ""
@@ -84,11 +97,28 @@ const AdminStaffViewSubmittedTask = () => {
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
                         alert(response.data.data.evaluatorRemarks);
+                        setInputField({
+                            evaluatorRemarks: "",
+                            score: ""
+                        });
                     } else {
                         if (response.data.status === "Validation failed" && response.data.data.score) {
                             alert(response.data.data.score);
+                            setInputField({
+                                evaluatorRemarks: "",
+                                score: ""
+                            });
                         } else {
-                            alert(response.data.status);
+                            if (response.data.status === "Unauthorized access!!") {
+                                navigate("/admstafflogin")
+                                sessionStorage.clear()
+                            } else {
+                                alert(response.data.status);
+                                setInputField({
+                                    evaluatorRemarks: "",
+                                    score: ""
+                                });
+                            }
                         }
                     }
                 }

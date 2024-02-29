@@ -43,8 +43,8 @@ const CollegeStaffChangePassword = () => {
                                 alert(response.data.data.newPassword);
                             } else {
                                 if (response.data.status === "Unauthorized User!!") {
-                                    sessionStorage.clear()
                                     navigate("/clgStafflogin")
+                                    sessionStorage.clear()
                                 } else {
                                     alert(response.data.status)
                                 }

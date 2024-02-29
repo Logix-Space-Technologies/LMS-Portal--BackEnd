@@ -236,7 +236,7 @@ exports.updateMaterial = (request, response) => {
                             if (err.kind === "not_found") {
                                 return response.json({ "status": "Material Details Not Found.." })
                             } else {
-                                response.json({ "status": err })
+                                return response.json({ "status": err })
                             }
 
                         } else {
@@ -248,7 +248,7 @@ exports.updateMaterial = (request, response) => {
 
 
                 } else {
-                    response.json({ "status": "Unauthorized Access!!!" })
+                    return response.json({ "status": "Unauthorized Access!!!" })
 
                 }
             })
