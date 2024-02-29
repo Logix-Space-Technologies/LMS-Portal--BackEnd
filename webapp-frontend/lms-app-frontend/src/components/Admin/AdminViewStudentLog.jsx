@@ -60,7 +60,7 @@ const AdminViewStudentLog = () => {
                                         <td className="px-6 py-4">{index+1}</td>
                                         <td className="px-6 py-4">{value.studName}</td>
                                         <td className="px-6 py-4">{value.Action}</td>
-                                        <td className="px-6 py-4">{new Date(value.DateTime).toLocaleDateString()}</td>
+                                        <td className="px-6 py-4">{value.DateTime}</td>
                                     </tr>
                                 );
                             })
