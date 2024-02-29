@@ -94,6 +94,11 @@ const AdminViewAllBatch = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * batchesPerPage) + index + 1;
+    }
+
+
     useEffect(() => { getData() }, []);
 
     // Update key state when component mounts
@@ -138,7 +143,7 @@ const AdminViewAllBatch = () => {
                         {/* Table rows */}
                         {currentBatches.length > 0 ? currentBatches.map((value, index) => {
                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td className="px-6 py-4">{index + 1}</td>
+                                <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                 <td className="px-6 py-4">{value.collegeName}</td>
                                 <td className="px-6 py-4">{value.batchName}</td>
                                 <td className="px-6 py-4">{new Date(value.regStartDate).toLocaleDateString()}</td>

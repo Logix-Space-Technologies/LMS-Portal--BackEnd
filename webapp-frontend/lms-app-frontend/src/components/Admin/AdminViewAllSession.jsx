@@ -147,6 +147,11 @@ const AdminViewAllSession = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * sessionsPerPage) + index + 1;
+    }
+
+
     useEffect(() => { getData() }, []);
 
     // Update key state when component mounts
@@ -223,7 +228,7 @@ const AdminViewAllSession = () => {
                     <tbody>
                         {currentSessions.length > 0 ? currentSessions.map((value, index) => {
                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td className="px-6 py-4">{index + 1}</td>
+                                <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                     <div className="ps-3">
                                         <div className="text-base font-semibold">{value.sessionName}</div>

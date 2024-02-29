@@ -114,6 +114,10 @@ const AdminSearchTrainer = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * TrainerPerPage) + index + 1;
+    }
+
     // Total pages
     const pageNumbers = [];
     if (updateField && updateField.length > 0) {
@@ -179,7 +183,7 @@ const AdminSearchTrainer = () => {
                                     {/* Table rows */}
                                     {currentTrainers.map((value, index) => {
                                         return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td className="px-6 py-4">{index + 1}</td>
+                                            <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                             <td className="p-4 whitespace-nowrap">
                                                 <div className="flex items-center">
                                                     <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">

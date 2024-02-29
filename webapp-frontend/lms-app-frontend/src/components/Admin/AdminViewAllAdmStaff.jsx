@@ -65,6 +65,11 @@ const AdminViewAllAdminStaff = () => {
   // Change page
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
+  const calculateSerialNumber = (index) => {
+    return ((currentPage - 1) * adminStaffPerPage) + index + 1;
+}
+
+
 
   const updateClick = (id) => {
     let data = id;
@@ -103,7 +108,7 @@ const AdminViewAllAdminStaff = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {currentAdminStaff.length > 0 ? currentAdminStaff.map((value, index) => {
                 return <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{calculateSerialNumber(index)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.AdStaffName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.PhNo}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.Address}</td>

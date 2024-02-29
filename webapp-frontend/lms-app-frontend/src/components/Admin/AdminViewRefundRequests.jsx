@@ -209,6 +209,10 @@ const AdminViewRefundRequests = () => {
   // Change page
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
+  const calculateSerialNumber = (index) => {
+    return ((currentPage - 1) * studentsPerPage) + index + 1;
+  }
+
   // Total pages
   const pageNumbers = [];
   if (refundRequests && refundRequests.length > 0) {
@@ -246,6 +250,9 @@ const AdminViewRefundRequests = () => {
                   <table className="w-full table-auto">
                     <thead>
                       <tr className="text-center bg-primary">
+                        <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                          S/L
+                        </th>
                         <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                           Student Name
                         </th>
@@ -286,6 +293,9 @@ const AdminViewRefundRequests = () => {
                     <tbody>
                       {refundRequests.length > 0 ? refundRequests.map((value, index) => {
                         return <tr key={index}>
+                          <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {calculateSerialNumber(index)}
+                          </td>
                           <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.studName}
                           </td>
