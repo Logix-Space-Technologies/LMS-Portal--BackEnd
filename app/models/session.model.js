@@ -338,7 +338,7 @@ Session.CheckIsTodaySessionAvailable = (result) => {
 }
 
 Session.viewOneSession = (sessionId, result) => {
-    db.query("SELECT id,sessionName,date,time,type,remarks,venueORlink,trainerId FROM sessiondetails WHERE id = ? AND isActive = 1 AND deleteStatus = 0", sessionId,
+    db.query("SELECT s.id,s.sessionName,s.date,s.time,s.type,s.remarks,s.venueORlink,s.trainerId,t.trainerName FROM sessiondetails s LEFT JOIN trainersinfo t ON s.trainerId = t.id WHERE s.id = ? AND s.isActive = 1 AND s.deleteStatus = 0", sessionId,
         (err, res) => {
             if (err) {
                 console.log("error: ", err);

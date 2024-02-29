@@ -354,16 +354,21 @@ const AdminAddSession = () => {
                                         <label htmlFor="type" className="form-label">
                                             Type <span className="text-danger">*</span>
                                         </label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
+                                        <select
+                                            className="form-select"
                                             name="type"
                                             id="type"
                                             value={inputField.type}
                                             onChange={inputHandler}
-                                        />
+                                        >
+                                            <option value="">Select Type</option>
+                                            <option value="Online">Online</option>
+                                            <option value="Offline">Offline</option>
+                                            <option value="Recorded">Recorded</option>
+                                        </select>
                                         {errors.type && (<span style={{ color: 'red' }} className="error">{errors.type}</span>)}
                                     </div>
+
                                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                         <label htmlFor="venueORlink" className="form-label">
                                             Venue or Link <span className="text-danger">*</span>

@@ -275,4 +275,8 @@ router.post('/viewCommunityManager', StudentController.viewCommunityManagers)
 
 router.post('/clgstaffviewnotification', BatchesController.clgstaffNotificationView)
 
+router.post('/viewCollegeWiseAttendance',AttendenceController.collegeStaffViewCollegeWiseAttendance)
+
+router.post('/viewClgStaffCollege',ClgStaffController.viewCollegeDetails)
+
 module.exports = router

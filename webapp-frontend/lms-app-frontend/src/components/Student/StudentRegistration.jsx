@@ -31,6 +31,17 @@ const StudentRegistration = () => {
     setFile(event.target.files[0])
   }
 
+  // Call this function to close the modal and navigate
+  const closeAndNavigate = () => {
+    setShowModal(false); // Set showModal state to false
+
+    // Remove any leftover classes or styles that might be interfering
+    document.body.classList.remove('modal-open');
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+
+    navigate("/studentLogin"); // Navigate after modal is closed and cleaned up
+  };
+
   let [batchAmount, setbatchAmount] = useState(0)
 
   const [outputField, setOutputField] = useState([])
@@ -55,7 +66,7 @@ const StudentRegistration = () => {
 
 
   const sendOtp = async (e) => {
-    let data = { "studEmail": inputField.studEmail }
+    let data = { "admNo": inputField.admNo, "collegeId": inputField.collegeId, "batchId": inputField.batchId, "rollNo": inputField.rollNo, "aadharNo": inputField.aadharNo, "studEmail": inputField.studEmail }
     let axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
@@ -215,7 +226,7 @@ const StudentRegistration = () => {
             (response) => {
               if (response.data.status === "success") {
                 alert("User Registered Successfully !!!")
-                navigate("/studentLogin")
+                closeAndNavigate()
                 setInputField({ "collegeId": "", "batchId": "", "studName": "", "admNo": "", "rollNo": "", "studDept": "", "course": "", "studEmail": "", "studPhNo": "", "studProfilePic": "", "aadharNo": "", "password": "", "confirmpassword": "" })
               } else {
                 if (response.data.status === "Validation failed" && response.data.data.college) {
@@ -291,9 +302,9 @@ const StudentRegistration = () => {
     axios.post(verifyOtpUrl, data, axiosConfig).then(
       (response) => {
         if (response.data.status === "OTP verified successfully") {
+          setShowModal(false)
           loadRazorpayScript()
           setUpdateField({ "otp": "" })
-          setShowModal(false)
         } else {
           if (response.data.status === "Invalid OTP") {
             alert("Invalid OTP")

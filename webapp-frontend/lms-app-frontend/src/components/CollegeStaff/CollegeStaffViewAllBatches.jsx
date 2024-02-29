@@ -132,6 +132,11 @@ const CollegeStaffViewBatch = () => {
     sessionStorage.setItem("clgstaffviewbatchId", id)
   }
 
+  const notificationClick = (id) => {
+    navigate("/clgstaffviewNotifications")
+    sessionStorage.setItem("clgstaffbatchId", id)
+  }
+
   useEffect(() => { fetchBatches() }, []);
 
   return (
@@ -169,14 +174,17 @@ const CollegeStaffViewBatch = () => {
                               <p className="card-text">Description: {batch.batchDesc}</p>
                               <p className="card-text">Amount: {batch.batchAmount}</p>
                               <p className="card-text">Added Date: {batch.addedDate}</p><br />
-                              <button className='btn btn-primary' onClick={() => { attendancePdfGenerate(batch.id) }} style={{ marginLeft: '40px' }}>
+                              <button className='btn btn-primary' onClick={() => { attendancePdfGenerate(batch.id) }} style={{ marginLeft: '5px' }}>
                                 Download Session-Wise Attendance List PDF
                               </button>
-                              <button onClick={() => batchClick(batch.id)} className="btn btn-primary" style={{ marginLeft: '80px' }}>
+                              <button onClick={() => batchClick(batch.id)} className="btn btn-primary" style={{ marginLeft: '20px' }}>
                                 View Session
                               </button>
-                              <button className="btn btn-primary" onClick={() => studentClick(batch.id)} style={{ marginLeft: '80px' }}>
+                              <button className="btn btn-primary" onClick={() => studentClick(batch.id)} style={{ marginLeft: '20px' }}>
                                 View All Students
+                              </button>
+                              <button className="btn btn-primary" onClick={() => notificationClick(batch.id)} style={{ marginLeft: '20px' }}>
+                                View Notifications
                               </button>
                             </div>
                           </div>
