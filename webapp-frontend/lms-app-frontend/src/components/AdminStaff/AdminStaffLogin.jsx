@@ -4,14 +4,18 @@ import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
 
 const AdminStaffLogin = () => {
+
     const [inputField, setInputField] = useState(
-        { Email: "", Password: "" }
+        {
+            "Email": "",
+            "Password": ""
+        }
     )
 
     const [errors, setErrors] = useState({});
 
     const apiUrl = global.config.urls.api.server + "/api/lms/AdminStaffLogin"
-    const navigate=useNavigate()
+    const navigate = useNavigate()
 
     const inputHandler = (event) => {
         setErrors({}); // Clear previous errors
@@ -38,7 +42,7 @@ const AdminStaffLogin = () => {
                     let Email = Response.data.data.Email;
                     let admstaffId = Response.data.data.id
                     let AdStaffName = Response.data.data.AdStaffName
-                    sessionStorage.setItem("admstaffId",admstaffId)
+                    sessionStorage.setItem("admstaffId", admstaffId)
                     sessionStorage.setItem("admstaffLogintoken", admstafftoken)
                     sessionStorage.setItem("Email", Email)
                     sessionStorage.setItem("admstaffkey", admstaffkey)
@@ -57,8 +61,8 @@ const AdminStaffLogin = () => {
                 }
             }
         )
-
     }
+
     return (
         <div className="container">
             <div className="row justify-content-center align-items-center min-vh-100">
@@ -72,16 +76,16 @@ const AdminStaffLogin = () => {
                             <h2>Admin Staff Login</h2>
                         </div>
                         <div className="card-body ">
-                                <div className="mb-3 text-start">
-                                    <label htmlFor="" className="form-label">Email</label>
-                                    <input type="text" name="Email" value={inputField.Email} onChange={inputHandler} className="form-control" />
-                                    {errors.Email && <span style={{ color: 'red' }} className="error">{errors.Email}</span>}
-                                </div>
-                                <div className="mb-3 text-start">
-                                    <label htmlFor="" className="form-label">Password</label>
-                                    <input type="password" name="Password" value={inputField.Password} onChange={inputHandler} className="form-control" />
-                                    {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
-                                </div>
+                            <div className="mb-3 text-start">
+                                <label htmlFor="" className="form-label">Email</label>
+                                <input type="text" name="Email" value={inputField.Email} onChange={inputHandler} className="form-control" />
+                                {errors.Email && <span style={{ color: 'red' }} className="error">{errors.Email}</span>}
+                            </div>
+                            <div className="mb-3 text-start">
+                                <label htmlFor="" className="form-label">Password</label>
+                                <input type="password" name="Password" value={inputField.Password} onChange={inputHandler} className="form-control" />
+                                {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
+                            </div>
                             <div className="mb-3">
                                 <button type="button" onClick={readValue} className="btn btn-success btn-lg">Login</button>
                             </div>
@@ -95,11 +99,9 @@ const AdminStaffLogin = () => {
                                 <Link to='/studentLogin'>Student Login</Link>
                             </div>
                         </div>
-
                         <div className="card-footer text-muted">
                             &copy; 2024 Link Ur Codes. All rights reserved.
                         </div>
-
                     </div>
                 </div>
             </div>

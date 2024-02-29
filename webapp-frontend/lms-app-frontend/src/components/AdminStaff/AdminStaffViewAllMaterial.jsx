@@ -5,7 +5,6 @@ import axios from 'axios'
 import AdmStaffNavBar from './AdmStaffNavBar'
 
 
-
 const AdminStaffViewAllMaterial = () => {
     const [materialData, setmaterialData] = useState([])
 
@@ -44,8 +43,6 @@ const AdminStaffViewAllMaterial = () => {
     const UpdateClick = (id) => {
         let data = id
         sessionStorage.setItem("materialId", data)
-        navigate("/AdminStaffUpdateMaterial")
-
     }
 
     useEffect(() => { getData() }, [])
@@ -60,6 +57,12 @@ const AdminStaffViewAllMaterial = () => {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">
+                                College Name
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Batch Name
+                            </th>
+                            <th scope="col" className="px-6 py-3">
                                 File Name
                             </th>
                             <th scope="col" className="px-6 py-3">
@@ -70,9 +73,6 @@ const AdminStaffViewAllMaterial = () => {
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Material Type
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Added Date
                             </th>
                             <th scope="col" className="px-6 py-3">
 
@@ -87,16 +87,17 @@ const AdminStaffViewAllMaterial = () => {
                             materialData.map((value, index) => {
                                 return (
                                     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={index}>
+                                        <td className="px-6 py-4">{value.collegeName}</td>
+                                        <td className="px-6 py-4">{value.batchName}</td>
                                         <td className="px-6 py-4">{value.fileName}</td>
                                         <td className="px-6 py-4">{value.materialDesc}</td>
                                         <td className="px-6 py-4">{value.remarks}</td>
                                         <td className="px-6 py-4">{value.materialType}</td>
-                                        <td className="px-6 py-4">{value.addedDate}</td>
                                         <td className="px-6 py-4">
                                             <Link target="_blank" to={value.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Link onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</Link>
+                                            <Link to="/AdminStaffUpdateMaterial" onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</Link>
                                         </td>
                                     </tr>
                                 );
@@ -107,7 +108,6 @@ const AdminStaffViewAllMaterial = () => {
                             </tr>
                         )}
                     </tbody>
-
                 </table>
             </div>
         </div>

@@ -2,14 +2,18 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const AdmStaffNavBar = () => {
+
     const navigate = useNavigate();
+
     const logOut = () => {
         navigate('/admstafflogin');
         sessionStorage.clear()
     }
+
     const handleLogoutConfirm = () => {
         logOut();
     };
+
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -21,52 +25,39 @@ const AdmStaffNavBar = () => {
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav">
                             <li className="nav-item">
-                                <Link className="nav-link active" aria-current="page" to="/addcollege">Add College</Link>
-                            </li>
-                            <li className="nav-item">
                                 <Link className="nav-link active" aria-current="page" to="/admstaffdashboard">Dashboard</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link active" aria-current="page" to="/AdminStaffViewAllMaterial">View All Materials</Link>
-                            </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/adminStaffAddmaterials">Add Materials</Link>
-                            </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/adminAddcurriculum">Add Curriculum</Link>
-                            </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/addcollegestaff">Add College Staff</Link>
-                            </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/adminaddbatch">Add Batch</Link>
-                            </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/adminaddsession">Add Session</Link>
-                            </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/adminAddtask">Add Task</Link>
-                            </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/adminAddtrainer">Add Trainer</Link>
                             </li>
                             <li>
                                 <Link className="nav-link active" aria-current="page" to="/AdminSendNotification">Send Notifications</Link>
                             </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/AdminViewRefundRequests">View Refunds</Link>
+                            <li className="nav-item dropdown">
+                                <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Add
+                                </Link>
+                                <ul className="dropdown-menu">
+                                    <li><Link className="dropdown-item" to="/addcollege">Add College</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminStaffAddmaterials">Add Materials</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminAddcurriculum">Add Curriculum</Link></li>
+                                    <li><Link className="dropdown-item" to="/addcollegestaff">Add College Staff</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminaddbatch">Add Batch</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminaddsession">Add Session</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminAddtask">Add Task</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminAddtrainer">Add Trainer</Link></li>
+                                </ul>
                             </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/AdminSearchSessionDetails">Search Session</Link>
-                            </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/adminSearchBatch">Search Batch</Link>
-                            </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/adminsearchtask">Search Tasks</Link>
-                            </li>
-                            <li>
-                                <Link className="nav-link active" aria-current="page" to="/adminsearchcurriculum">Search Curriculum</Link>
+                            <li className="nav-item dropdown">
+                                <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Search
+                                </Link>
+                                <ul className="dropdown-menu">
+                                    <li><Link className="dropdown-item" to="/AdminSearchSessionDetails">Search Session</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminSearchBatch">Search Batch</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminsearchtask">Search Tasks</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminsearchcurriculum">Search Curriculum</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminSearchClg">Search Colleges</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminSearchTrainers">Search Trainers</Link></li>
+                                    <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search College Staff</Link></li>
+                                </ul>
                             </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -75,13 +66,11 @@ const AdmStaffNavBar = () => {
                                 <ul className="dropdown-menu">
                                     <li><Link className="dropdown-item" to="/adminviewallcollege">View All College</Link></li>
                                     <li><Link className="dropdown-item" to="/adminstaffviewsubmittedtask">View Submitted Task</Link></li>
-                                    <li><Link className="dropdown-item" to="/adminSearchClg">Search Colleges</Link></li>
+                                    <li><Link className="dropdown-item" to="/AdminViewRefundRequests">View Refunds</Link></li>
                                     <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
-                                    <li><Link className="dropdown-item" to="/adminSearchTrainers">Search Trainers</Link></li>
+                                    <li><Link className="dropdown-item" to="/AdminStaffViewAllMaterial">View All Materials</Link></li>
                                     <li><Link className="dropdown-item" to="/adminviewallclgstaff">View All College Staff</Link></li>
-                                    <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search College Staff</Link></li>
                                 </ul>
-
                             </li>
                             <li className="nav-item">
                                 <button className="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutConfirmationModal">
@@ -114,7 +103,6 @@ const AdmStaffNavBar = () => {
                     </div>
                 </div>
             </div>
-
         </div >
     )
 }

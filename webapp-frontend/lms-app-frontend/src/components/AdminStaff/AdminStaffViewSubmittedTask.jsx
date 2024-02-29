@@ -85,7 +85,6 @@ const AdminStaffViewSubmittedTask = () => {
             "evaluatorRemarks": inputField.evaluatorRemarks,
             "score": inputField.score
         }
-        console.log(data2)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Task evaluated successfully") {
@@ -127,7 +126,6 @@ const AdminStaffViewSubmittedTask = () => {
     }
 
     const readValue = (id) => {
-        console.log(id)
         setSubmittedTaskId(id)
     }
 
@@ -191,7 +189,7 @@ const AdminStaffViewSubmittedTask = () => {
                         <tbody>
                             {taskData ? (taskData.map(
                                 (value, index) => {
-                                    return <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    return <tr index={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
 
                                         <td className="px-6 py-4">
                                             {value.collegeName}
@@ -219,7 +217,6 @@ const AdminStaffViewSubmittedTask = () => {
                                                 {value.gitLink}
                                             </Link>
                                         </td>
-
                                         <td className="px-6 py-4">
                                             {value.remarks}
                                         </td>
@@ -311,7 +308,6 @@ const AdminStaffViewSubmittedTask = () => {
                                 <button data-bs-dismiss="modal" onClick={() => evaluateTask()} type="button" className="btn btn-primary">
                                     Submit
                                 </button>
-
                             </div>
                         </div>
                     </div>

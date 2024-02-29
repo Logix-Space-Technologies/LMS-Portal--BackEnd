@@ -5,6 +5,7 @@ import axios from 'axios';
 
 
 const AdminStaffChangePassword = () => {
+
     const [updateField, setUpdateField] = useState({
         "Email": sessionStorage.getItem("Email"),
         "oldAdSfPassword": "",
@@ -13,8 +14,6 @@ const AdminStaffChangePassword = () => {
 
     const apiurl = global.config.urls.api.server + "/api/lms/adminStaffChangePassword";
     const navigate = useNavigate();
-
-
 
     const updateHandler = (event) => {
         setUpdateField({ ...updateField, [event.target.name]: event.target.value });
@@ -52,9 +51,9 @@ const AdminStaffChangePassword = () => {
                     }
                 }
             }
-
         )
     }
+
     return (
         <div>
             <div className="container">

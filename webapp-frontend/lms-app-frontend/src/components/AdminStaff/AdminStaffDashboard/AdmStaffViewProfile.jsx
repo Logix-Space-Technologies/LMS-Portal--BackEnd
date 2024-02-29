@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 const AdmStaffViewProfile = () => {
+
     const [admStaffData, setAdmStaffData] = useState([])
 
     const navigate = useNavigate()
@@ -38,7 +39,6 @@ const AdmStaffViewProfile = () => {
 
     useEffect(() => { getData() }, [])
 
-
     return (
         <div style={{ border: '2px solid #000000', padding: 10, margin: 10 }}>
             <div className="row align-items-center">
@@ -53,12 +53,6 @@ const AdmStaffViewProfile = () => {
                         <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Phone No. : {admStaffData.PhNo}</span></li>
                         <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Aadhar Number : {admStaffData.AadharNo}</span></li>
                         <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Address : {admStaffData.Address}</span></li>
-                    </ul>
-                    <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                        <li><a href="#!"><i className="ti-twitter-alt" /></a></li>
-                        <li><a href="#!"><i className="ti-facebook" /></a></li>
-                        <li><a href="#!"><i className="ti-pinterest" /></a></li>
-                        <li><a href="#!"><i className="ti-instagram" /></a></li>
                     </ul>
                 </div>
             </div>
