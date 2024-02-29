@@ -4,6 +4,7 @@ import axios from 'axios';
 import '../../config/config';
 
 const AdminViewLog = () => {
+    
     const [AdminLogData, setAdminLogData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [logsPerPage] = useState(10); // Number of logs per page
@@ -22,7 +23,6 @@ const AdminViewLog = () => {
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
                 setAdminLogData(response.data);
-                console.log(response.data);
             }
         );
     };

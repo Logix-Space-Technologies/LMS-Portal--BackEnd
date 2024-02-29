@@ -4,6 +4,7 @@ import axios from 'axios';
 import Navbar from './Navbar';
 
 const AdminViewAdStaffLog = () => {
+    
     const [adStaffLog, setAdStaffLog] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [logsPerPage] = useState(10); // Number of logs per page
@@ -21,7 +22,6 @@ const AdminViewAdStaffLog = () => {
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
                 setAdStaffLog(response.data);
-                console.log(response.data);
             }
         );
     };

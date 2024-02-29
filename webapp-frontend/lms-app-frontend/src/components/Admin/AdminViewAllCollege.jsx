@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminViewAllCollege = () => {
+
     const [collegeData, setCollegeData] = useState([])
     const [key, setKey] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -37,7 +38,6 @@ const AdminViewAllCollege = () => {
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
                 setCollegeData(response.data.data)
-                console.log(response.data.data)
             }
         )
     }
@@ -71,7 +71,6 @@ const AdminViewAllCollege = () => {
 
     const readValue = (id) => {
         setDeleteCollege(id)
-        console.log(id)
     };
 
     // Logic for displaying current colleges
@@ -146,8 +145,8 @@ const AdminViewAllCollege = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentColleges.map((value, index) => (
-                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        {currentColleges.map((value, index) => {
+                            return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td className="px-6 py-4">
                                     {index + 1}
                                 </td>
@@ -185,7 +184,7 @@ const AdminViewAllCollege = () => {
                                     </td>
                                 )}
                             </tr>
-                        ))}
+                        })}
 
                         {currentColleges.length === 0 && (
                             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">

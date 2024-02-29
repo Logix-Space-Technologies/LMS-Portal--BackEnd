@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import axios from 'axios';
 
 const AdminViewCollegeStaffLog = () => {
+    
     const [collegeStaffLogData, setcollegeStaffLogData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [logsPerPage] = useState(10); // Number of logs per page
@@ -22,7 +23,6 @@ const AdminViewCollegeStaffLog = () => {
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
                 setcollegeStaffLogData(response.data);
-                console.log(response.data);
             }
         );
     };

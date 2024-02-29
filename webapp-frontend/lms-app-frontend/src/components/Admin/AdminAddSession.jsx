@@ -364,6 +364,7 @@ const AdminAddSession = () => {
                                             <option value="">Select Type</option>
                                             <option value="Online">Online</option>
                                             <option value="Offline">Offline</option>
+                                            <option value="Recorded">Recorded</option>
                                         </select>
                                         {errors.type && (<span style={{ color: 'red' }} className="error">{errors.type}</span>)}
                                     </div>

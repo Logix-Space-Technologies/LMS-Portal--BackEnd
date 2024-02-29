@@ -6,6 +6,7 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 import '../../config/config';
 
 const AdminViewAllBatch = () => {
+
     const [batchData, setBatchData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [batchesPerPage] = useState(10); // Number of batches per page
@@ -37,7 +38,6 @@ const AdminViewAllBatch = () => {
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 setBatchData(response.data.data);
-                console.log(response.data);
             }
         );
     };
@@ -59,10 +59,9 @@ const AdminViewAllBatch = () => {
         };
         axios.post(apiUrl2, deletedata, axiosConfig2).then(
             (response) => {
-                console.log(deletedata);
                 if (response.data.status === "Batch Deleted.") {
                     alert("Batch Deleted Successfully!!");
-                    window.location.reload();
+                    getData()
                 } else {
                     alert(response.data.status);
                 }
@@ -138,9 +137,9 @@ const AdminViewAllBatch = () => {
                     </thead>
                     <tbody>
                         {/* Table rows */}
-                        {currentBatches.length > 0 ? currentBatches.map((value, index) => (
-                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td className="px-6 py-4">{index+1}</td>
+                        {currentBatches.length > 0 ? currentBatches.map((value, index) => {
+                            return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td className="px-6 py-4">{index + 1}</td>
                                 <td className="px-6 py-4">{value.collegeName}</td>
                                 <td className="px-6 py-4">{value.batchName}</td>
                                 <td className="px-6 py-4">{new Date(value.regStartDate).toLocaleDateString()}</td>
@@ -166,7 +165,7 @@ const AdminViewAllBatch = () => {
                                     </td>
                                 )}
                             </tr>
-                        )) : (
+                        }) : (
                             <tr>
                                 <td colSpan="13" className="px-6 py-4" style={{ textAlign: "center" }}>
                                     No Batches Found !!!

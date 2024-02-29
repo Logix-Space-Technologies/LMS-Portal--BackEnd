@@ -8,7 +8,9 @@ const AdminUpdateCurriculum = () => {
 
     const [curriculumData, setCurriculumData] = useState([])
     const [file, setFile] = useState("")
-    const [fileValidationMessage, setFileValidationMessage] = useState('');
+    const [fileType, setFileType] = useState("");
+    const [errors, setErrors] = useState({})
+
     const [updateField, setUpdateField] = useState(
         {
             "id": sessionStorage.getItem("curriculumId"),
@@ -28,30 +30,20 @@ const AdminUpdateCurriculum = () => {
     }
 
     const fileUploadHandler = (event) => {
-        setFileValidationMessage({})
-        const file = event.target.files[0];
-        if (file) {
-            const isSizeValid = file.size <= 2097152; // 2MB in bytes
-            const isTypeValid = file.type === "application/pdf";
-
-            if (isSizeValid && isTypeValid) {
-                setFile(file);
-                setFileValidationMessage('');
-            } else {
-                if (!isSizeValid) {
-                    setFileValidationMessage('File size should be less than 2MB.');
-                }
-                if (!isTypeValid) {
-                    setFileValidationMessage('Invalid file type. Only PDFs are allowed.');
-                }
-            }
+        setErrors({});
+        const uploadedFile = event.target.files[0];
+        if (uploadedFile) {
+            setErrors({});
+            setFile(uploadedFile);
+            const extension = uploadedFile.name.split('.').pop().toLowerCase();
+            setFileType(extension);
         } else {
-            setFileValidationMessage("Please upload a file.");
+            setFile(null);
+            setFileType("");
         }
-    };
+    }
 
-
-    const readNewValue = () => {
+    const readNewValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
         if (currentKey !== 'lmsapp') {
@@ -59,85 +51,100 @@ const AdminUpdateCurriculum = () => {
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        if (!file) {
-            setFileValidationMessage("Please upload a file.");
-            return;
-        }
-        if (fileValidationMessage) {
-            return;
-        }
-        console.log(updateField)
-        let axiosConfig2 = {
-            headers: {
-                'content-type': 'multipart/form-data',
-                "Access-Control-Allow-Origin": "*",
-                "token": token,
-                "key": currentKey
+        e.preventDefault()
+        const validationErrors = validateForm(updateField)
+        if (Object.keys(validationErrors).length === 0) {
+            let axiosConfig2 = {
+                headers: {
+                    'content-type': 'multipart/form-data',
+                    "Access-Control-Allow-Origin": "*",
+                    "token": token,
+                    "key": currentKey
+                }
             }
-        }
-        let data = {
-            "id": sessionStorage.getItem("curriculumId"),
-            "curriculumTitle": updateField.curriculumTitle,
-            "curriculumDesc": updateField.curriculumDesc,
-            "updatedBy": sessionStorage.getItem("adminId"),
-            "curriculumFileLink": file
-        }
-        axios.post(apiUrl2, data, axiosConfig2).then(
-            (Response) => {
-                if (Response.data.status === "success") {
-                    setUpdateField({
-                        "id": sessionStorage.getItem("curriculumId"),
-                        "curriculumTitle": "",
-                        "curriculumDesc": "",
-                        "updatedBy": sessionStorage.getItem("adminId"),
-                        "curriculumFileLink": ""
-                    })
-                    alert("Curriculum Updated Successfully")
-                    navigate("/adminviewallcurriculum")
-                } else {
-                    if (Response.data.status === "Validation failed" && Response.data.data.curriculumTitle) {
-                        alert(Response.data.data.curriculumTitle)
+            let data = {
+                "id": sessionStorage.getItem("curriculumId"),
+                "curriculumTitle": updateField.curriculumTitle,
+                "curriculumDesc": updateField.curriculumDesc,
+                "updatedBy": sessionStorage.getItem("adminId"),
+                "curriculumFileLink": file
+            }
+            axios.post(apiUrl2, data, axiosConfig2).then(
+                (Response) => {
+                    if (Response.data.status === "success") {
+                        setUpdateField({
+                            "id": sessionStorage.getItem("curriculumId"),
+                            "curriculumTitle": "",
+                            "curriculumDesc": "",
+                            "updatedBy": sessionStorage.getItem("adminId"),
+                            "curriculumFileLink": ""
+                        })
+                        alert("Curriculum Updated Successfully")
+                        setFile(null)
+                        navigate("/adminviewallcurriculum")
                     } else {
-                        if (Response.data.status === "Validation failed" && Response.data.data.curriculumDesc) {
-                            alert(Response.data.data.curriculumDesc)
+                        if (Response.data.status === "Validation failed" && Response.data.data.curriculumTitle) {
+                            alert(Response.data.data.curriculumTitle)
                         } else {
-                            if (Response.data.status === "Validation failed" && Response.data.data.updatedBy) {
-                                alert(Response.data.data.updatedBy)
+                            if (Response.data.status === "Validation failed" && Response.data.data.curriculumDesc) {
+                                alert(Response.data.data.curriculumDesc)
                             } else {
-                                alert(Response.data.status)
-                            }
+                                if (Response.data.status === "Validation failed" && Response.data.data.updatedBy) {
+                                    alert(Response.data.data.updatedBy)
+                                } else {
+                                    alert(Response.data.status)
+                                }
 
+                            }
                         }
                     }
                 }
+            ).catch(error => {
+                if (error.response) {
+                    // Extract the status code from the response
+                    const statusCode = error.response.status;
 
-            }
-        ).catch(error => {
-            if (error.response) {
-                // Extract the status code from the response
-                const statusCode = error.response.status;
-
-                if (statusCode === 400) {
-                    console.log("Status 400:", error.response.data);
-                    alert(error.response.data.status)
-                    // Additional logic for status 400
-                } else if (statusCode === 500) {
-                    console.log("Status 500:", error.response.data);
-                    alert(error.response.data.status)
-                    // Additional logic for status 500
+                    if (statusCode === 400) {
+                        console.log("Status 400:", error.response.data);
+                        alert(error.response.data.status)
+                        // Additional logic for status 400
+                    } else if (statusCode === 500) {
+                        console.log("Status 500:", error.response.data);
+                        alert(error.response.data.status)
+                        // Additional logic for status 500
+                    } else {
+                        alert(error.response.data.status)
+                    }
+                } else if (error.request) {
+                    console.log(error.request);
+                    alert(error.request);
+                } else if (error.message) {
+                    console.log('Error', error.message);
+                    alert('Error', error.message);
                 } else {
-                    console.log(error.response.data);
-                    alert(error.response.data.status)
+                    alert(error.config);
+                    console.log(error.config);
                 }
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('Error', error.message);
-            }
-            console.log(error.config);
-        })
+            })
+        } else {
+            setErrors(validationErrors)
+        }
     }
 
+    const validateForm = (data) => {
+        let errors = {};
+
+        if (!data.curriculumTitle.trim()) {
+            errors.curriculumTitle = 'Curriculum Title Name is required';
+        }
+        if (!data.curriculumDesc.trim()) {
+            errors.curriculumDesc = 'Curriculum Description is required';
+        }
+        if (fileType !== "pdf" && fileType !== "docx") {
+            errors.file = "File must be in PDF or DOCX format";
+        }
+        return errors;
+    };
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -160,7 +167,6 @@ const AdminUpdateCurriculum = () => {
             (response) => {
                 setCurriculumData(response.data.curriculum)
                 setUpdateField(response.data.curriculum[0])
-                console.log(response.data.curriculum)
             }
         )
     }
@@ -189,23 +195,25 @@ const AdminUpdateCurriculum = () => {
                                     <div className="col-lg-6 px-xl-10">
                                         <ul className="list-unstyled mb-1-9">
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                                <label htmlFor="" className="form-label">Id</label>
-                                                <input type="text" className="form-control" name="id" value={updateField.id} disabled />
+                                                {/* <label htmlFor="" className="form-label">Id</label> */}
+                                                <input type="hidden" className="form-control" name="id" value={updateField.id} disabled />
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Curriculum Title</label>
                                                 <input onChange={updateHandler} type="text" className="form-control" name="curriculumTitle" value={updateField.curriculumTitle} />
+                                                {errors.curriculumTitle && <span style={{ color: 'red' }} className="error">{errors.curriculumTitle}</span>}
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Curriculum Description</label>
                                                 <input onChange={updateHandler} type="text" className="form-control" name="curriculumDesc" value={updateField.curriculumDesc} />
+                                                {errors.curriculumDesc && <span style={{ color: 'red' }} className="error">{errors.curriculumDesc}</span>}
                                             </div>
                                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                                 <label for="studProfilePic" className="form-label">
                                                     Curriculum File <span className="text-danger">*</span>
                                                 </label>
                                                 <input onChange={fileUploadHandler} type="file" className="form-control" name="curriculumFileLink" id="curriculumFileLink" accept="*" />
-                                                {fileValidationMessage && <div className="text-danger">{fileValidationMessage}</div>}
+                                                {errors.file && <span style={{ color: 'red' }} className="error">{errors.file}</span>}
                                             </div>
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
@@ -216,16 +224,8 @@ const AdminUpdateCurriculum = () => {
                                                 <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
                                             </div>
                                         </ul>
-
-                                        <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                            <li><Link to="#!"><i className="ti-twitter-alt" /></Link></li>
-                                            <li><Link to="#!"><i className="ti-facebook" /></Link></li>
-                                            <li><Link to="#!"><i className="ti-pinterest" /></Link></li>
-                                            <li><Link to="#!"><i className="ti-instagram" /></Link></li>
-                                        </ul>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>

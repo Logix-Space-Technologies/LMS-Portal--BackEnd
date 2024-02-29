@@ -151,7 +151,7 @@ const AdminSearchSessionDetails = () => {
                                 <div>
                                     <strong>Session Details</strong>
                                     <br /><br />
-                                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                                    <div className="relative overflow-x shadow-md sm:rounded-lg">
                                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                             {/* Table headers */}
                                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -199,7 +199,7 @@ const AdminSearchSessionDetails = () => {
                                                             )}
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Update</button>
+                                                            <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Reschedule</button>
                                                         </td>
                                                     </tr>
                                                 })}

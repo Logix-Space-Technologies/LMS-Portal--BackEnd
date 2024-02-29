@@ -6,7 +6,9 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 import Navbar from './Navbar';
 
 const AdminUpdateSession = () => {
+
   const [sessionData, setSessionData] = useState([]);
+  const [trainers, setTrainers] = useState([])
   const [updateField, setUpdateField] = useState({
     "id": sessionStorage.getItem('sessionId'),
     "sessionName": '',
@@ -19,11 +21,35 @@ const AdminUpdateSession = () => {
   });
   const apiURL = global.config.urls.api.server + '/api/lms/AdmViewOneSession';
   const apiUrl2 = global.config.urls.api.server + '/api/lms/updateSession';
+  const trainerUrl = global.config.urls.api.server + "/api/lms/viewAllTrainer";
   const navigate = useNavigate();
   const [key, setKey] = useState('')
 
   const updateHandler = (event) => {
     setUpdateField({ ...updateField, [event.target.name]: event.target.value })
+  }
+
+  const getTrainer = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
+    let axiosConfig = {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        'Access-Control-Allow-Origin': '*',
+        "token": token,
+        "key": currentKey
+      }
+    };
+    axios.post(trainerUrl, {}, axiosConfig).then(
+      (response) => {
+        setTrainers(response.data.Trainers)
+      }
+    )
   }
 
   const readNewValue = () => {
@@ -34,7 +60,6 @@ const AdminUpdateSession = () => {
       token = sessionStorage.getItem("admstaffLogintoken");
       setKey(currentKey); // Update the state if needed
     }
-    console.log(updateField);
     let axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
@@ -121,7 +146,6 @@ const AdminUpdateSession = () => {
     axios.post(apiURL, data, axiosConfig).then((response) => {
       setSessionData(response.data.data);
       setUpdateField(response.data.data[0]);
-      console.log(response.data.data);
     });
   };
 
@@ -133,6 +157,10 @@ const AdminUpdateSession = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    getTrainer()
+  }, [])
 
   // Update key state when component mounts
   useEffect(() => {
@@ -148,7 +176,7 @@ const AdminUpdateSession = () => {
           <br></br>
           <br></br>
           <br></br>
-          <h3 className="h2 text-black mb-0">Update Session Details</h3>
+          <h3 className="h2 text-black mb-0">Reschedule Session</h3>
           <br></br>
           <div className="card card-style1 --bs-primary-border-subtle border-5">
             <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
@@ -156,11 +184,11 @@ const AdminUpdateSession = () => {
                 <div className="col-lg-6 px-xl-10">
                   <ul className="list-unstyled mb-1-9">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                      <label htmlFor="" className="form-label">
+                      {/* <label htmlFor="" className="form-label">
                         Id
-                      </label>
+                      </label> */}
                       <input
-                        type="text"
+                        type="hidden"
                         className="form-control"
                         name="id"
                         value={updateField.id}
@@ -241,15 +269,22 @@ const AdminUpdateSession = () => {
                     </div>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                       <label htmlFor="" className="form-label">
-                        TrainerId
+                        Trainer Name
                       </label>
-                      <input
-                        onChange={updateHandler}
-                        type="text"
-                        className="form-control"
+                      <select
                         name="trainerId"
                         value={updateField.trainerId}
-                      />
+                        onChange={updateHandler}
+                        id="trainerId"
+                        className="form-control"
+                      >
+                        <option value="">Select</option>
+                        {trainers.map((trainer) => {
+                          return <option key={trainer.id} value={trainer.id}>
+                            {trainer.trainerName}
+                          </option>
+                        })}
+                      </select>
                     </div>
                     <br></br>
                     <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
@@ -261,29 +296,6 @@ const AdminUpdateSession = () => {
                     <div class="mb-3">
                       <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
                     </div>
-                  </ul>
-
-                  <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                    <li>
-                      <a href="#!">
-                        <i className="ti-twitter-alt" />
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#!">
-                        <i className="ti-facebook" />
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#!">
-                        <i className="ti-pinterest" />
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#!">
-                        <i className="ti-instagram" />
-                      </a>
-                    </li>
                   </ul>
                 </div>
               </div>

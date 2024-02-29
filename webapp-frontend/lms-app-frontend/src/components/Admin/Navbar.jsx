@@ -2,16 +2,10 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
+    
     const navigate = useNavigate()
     const logout = () => {
-        sessionStorage.removeItem("adminId")
-        sessionStorage.removeItem("admkey")
-        sessionStorage.removeItem("admtoken")
-        sessionStorage.removeItem("userName")
-        sessionStorage.removeItem("trainerId")
-        sessionStorage.removeItem("curriculumId")
-        sessionStorage.removeItem("clgStaffId")
-        sessionStorage.removeItem("batchId")
+        sessionStorage.clear()
         navigate('/');
 
     }
@@ -19,6 +13,7 @@ const Navbar = () => {
     const handleLogoutConfirm = () => {
         logout();
     };
+
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
