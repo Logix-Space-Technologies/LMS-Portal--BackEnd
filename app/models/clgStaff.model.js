@@ -143,7 +143,7 @@ CollegeStaff.clgStaffDelete = (collegeStaffId, result) => {
                 return;
             }
 
-            logCollegeStaff(collegeStaffId.id, "Admin Staff Deleted");
+            logCollegeStaff(collegeStaffId.id, "College Staff Deleted");
 
             console.log("Delete college staff with id: ", { id: collegeStaffId.id });
             result(null, { id: collegeStaffId.id });
