@@ -161,8 +161,9 @@ const StudentViewTasks = () => {
                                                 </p>
                                             )}
                                             {!task.updatedDate && task.subDate > task.dueDate && (
-                                                <p className="text-gray-700 mb-2">
-                                                    <strong>Submission Date:</strong> {task.lateSubDate}
+                                                <p className="text-gray-700 mb-2" style={{ display: 'flex', alignItems: 'center' }}>
+                                                    <strong>Submission Date: </strong> {task.lateSubDate}
+                                                    <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '5px' }} />
                                                 </p>
                                             )}
                                             {!task.updatedDate && task.subDate <= task.dueDate && (
@@ -215,8 +216,9 @@ const StudentViewTasks = () => {
                                                 </p>
                                             )}
                                             {!task.updatedDate && task.subDate > task.dueDate && (
-                                                <p className="text-gray-700 mb-2">
-                                                    <strong>Submission Date:</strong> {task.lateSubDate}
+                                                <p className="text-gray-700 mb-2" style={{ display: 'flex', alignItems: 'center' }}>
+                                                    <strong style={{ marginRight: '8px' }}>Submission Date: </strong> {task.lateSubDate}
+                                                    <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '5px' }} />
                                                 </p>
                                             )}
                                             {!task.updatedDate && task.subDate <= task.dueDate && (
