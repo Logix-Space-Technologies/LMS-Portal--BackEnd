@@ -23,7 +23,20 @@ const AdminStaffViewAllMaterial = () => {
         }
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
-                setmaterialData(response.data)
+                if (response.data) {
+                    setmaterialData(response.data)
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data) {
+                            setmaterialData([])
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
@@ -90,7 +103,7 @@ const AdminStaffViewAllMaterial = () => {
                             })
                         ) : (
                             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td className="px-6 py-4" colSpan="7" style={{textAlign: "center"}}>No Materials Found !!</td>
+                                <td className="px-6 py-4" colSpan="7" style={{ textAlign: "center" }}>No Materials Found !!</td>
                             </tr>
                         )}
                     </tbody>
