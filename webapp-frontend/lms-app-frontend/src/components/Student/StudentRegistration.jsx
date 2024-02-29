@@ -26,6 +26,8 @@ const StudentRegistration = () => {
 
   const [file, setFile] = useState(null)
 
+  const [showModal, setShowModal] = useState(false);
+
   const fileUploadHandler = (event) => {
     setErrors({})
     setFile(event.target.files[0])
@@ -53,8 +55,6 @@ const StudentRegistration = () => {
   const [updateField, setUpdateField] = useState({
     "otp": ""
   })
-
-  const [showModal, setShowModal] = useState(false);
 
 
   const apiUrl = global.config.urls.api.server + "/api/lms/studreg"
