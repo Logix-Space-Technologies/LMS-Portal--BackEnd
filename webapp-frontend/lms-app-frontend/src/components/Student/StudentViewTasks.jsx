@@ -89,7 +89,6 @@ const StudentViewTasks = () => {
             (response) => {
                 if (response.data.status === "success") {
                     alert("Task Submitted Successfully !!");
-                    window.location.reload();
                     setInputField({
                         "gitLink": "",
                         "remarks": ""
