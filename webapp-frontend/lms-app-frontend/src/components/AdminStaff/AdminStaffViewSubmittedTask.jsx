@@ -215,7 +215,7 @@ const AdminStaffViewSubmittedTask = () => {
                                             {value.remarks}
                                         </td>
                                         {value.subDate > value.dueDate && (
-                                            <td className="px-6 py-12" style={{ display: 'flex', alignItems: 'center'}}>
+                                            <td className="px-6 py-12" style={{ display: 'flex', alignItems: 'center' }}>
                                                 <span>{value.lateSubDate}</span>
                                                 <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '10px' }} />
                                             </td>
@@ -225,9 +225,16 @@ const AdminStaffViewSubmittedTask = () => {
                                                 {value.subDate}
                                             </td>
                                         )}
-                                        <td className="px-6 py-4">
-                                            {value.evalDate}
-                                        </td>
+                                        {!value.evalDate === null && (
+                                            <td className="px-6 py-4">
+                                                {value.evalDate}
+                                            </td>
+                                        )}
+                                        {value.evalDate === null && (
+                                            <td className="px-6 py-4">
+                                                NIL
+                                            </td>
+                                        )}
                                         <td className="px-6 py-4">
                                             {value.evaluatorRemarks}
                                         </td>
