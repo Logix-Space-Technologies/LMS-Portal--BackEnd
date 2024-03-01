@@ -235,12 +235,26 @@ const AdminStaffViewSubmittedTask = () => {
                                                 NIL
                                             </td>
                                         )}
-                                        <td className="px-6 py-4">
-                                            {value.evaluatorRemarks}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.score}
-                                        </td>
+                                        {!value.evaluatorRemarks === null && (
+                                            <td className="px-6 py-4">
+                                                {value.evaluatorRemarks}
+                                            </td>
+                                        )}
+                                        {value.evaluatorRemarks === null && (
+                                            <td className="px-6 py-4">
+                                                NIL
+                                            </td>
+                                        )}
+                                        {!value.score === null && (
+                                            <td className="px-6 py-4">
+                                                {value.score}
+                                            </td>
+                                        )}
+                                        {value.score === null && (
+                                            <td className="px-6 py-4">
+                                                NIL
+                                            </td>
+                                        )}
                                         <td className="px-6 py-4">
                                             <button onClick={() => readValue(value.submitTaskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Evaluate Task</button>
                                         </td>
