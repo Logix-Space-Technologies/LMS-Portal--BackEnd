@@ -122,6 +122,12 @@ const StudentViewTasks = () => {
         console.log(taskId)
     };
 
+    // Convert a date string from 'DD/MM/YYYY' to a JavaScript Date object
+    const parseDateString = (dateString) => {
+        const [day, month, year] = dateString.split('/');
+        return new Date(year, month - 1, day);
+    };
+
     useEffect(() => { getData(); }, []);
 
     return (
@@ -135,6 +141,12 @@ const StudentViewTasks = () => {
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {studViewTaskData && studViewTaskData.length > 0 ? (studViewTaskData.map(
                             (task, index) => {
+                                // Convert dueDate and subDate/lateSubDate to Date objects for comparison
+                                const dueDateObj = parseDateString(task.dueDate);
+                                const submissionDateObj = task.lateSubDate ? parseDateString(task.lateSubDate) : task.subDate ? parseDateString(task.subDate) : null;
+
+                                // Determine if the task was submitted late
+                                const isLateSubmission = submissionDateObj && submissionDateObj > dueDateObj;
                                 return <div className="bg-white shadow-lg rounded-md p-4" key={index}>
                                     {task.taskStatus === "Task Submitted" && task.evaluateStatus === "Evaluated" && (
                                         <>
@@ -159,20 +171,16 @@ const StudentViewTasks = () => {
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Due Date:</strong> {task.dueDate}
                                             </p>
-                                            {task.updatedDate && (
+                                            {task.updatedDate ? (
                                                 <p className="text-gray-700 mb-2">
                                                     <strong>Submission Date:</strong> {task.updatedDate}
                                                 </p>
-                                            )}
-                                            {!task.updatedDate && task.subDate > task.dueDate && (
+                                            ) : (
                                                 <p className="text-gray-700 mb-2" style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <strong style={{ marginRight: '8px' }}>Submission Date: </strong> {task.lateSubDate}
-                                                    <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '5px' }} />
-                                                </p>
-                                            )}
-                                            {!task.updatedDate && task.subDate <= task.dueDate && (
-                                                <p className="text-gray-700 mb-2">
-                                                    <strong>Submission Date:</strong> {task.subDate}
+                                                    <strong style={{ marginRight: '8px' }}>Submission Date:</strong> {task.subDate}
+                                                    {isLateSubmission && (
+                                                        <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '5px' }} />
+                                                    )}
                                                 </p>
                                             )}
                                             <p className="text-gray-700 mb-2">
@@ -209,30 +217,20 @@ const StudentViewTasks = () => {
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Due Date:</strong> {task.dueDate}
                                             </p>
-                                            {task.updatedDate && (
+                                            {task.updatedDate ? (
                                                 <p className="text-gray-700 mb-2">
                                                     <strong>Submission Date:</strong> {task.updatedDate}
                                                 </p>
-                                            )}
-                                            {!task.updatedDate && task.subDate > task.dueDate && (
+                                            ) : (
                                                 <p className="text-gray-700 mb-2" style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <strong style={{ marginRight: '8px' }}>Submission Date: </strong> {task.lateSubDate}
-                                                    <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '5px' }} />
+                                                    <strong style={{ marginRight: '8px' }}>Submission Date:</strong> {task.subDate}
+                                                    {isLateSubmission && (
+                                                        <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '5px' }} />
+                                                    )}
                                                 </p>
                                             )}
-                                            {!task.updatedDate && task.subDate <= task.dueDate && (
-                                                <p className="text-gray-700 mb-2">
-                                                    <strong>Submission Date:</strong> {task.subDate}
-                                                </p>
-                                            )}
-                                            <p className="text-gray-700 mb-2">
-                                                <p><strong>Submission Status: </strong>Submitted</p>
-                                            </p>
-                                            <p className="text-gray-700 mb-2">
-                                                <p><strong>Evaluation Status: </strong>Not Evaluated</p><br />
-                                            </p>
                                             <td>
-                                                <div className="flex justify-start pl-8" >
+                                                <div className="flex justify-start pl-8 pt-20" >
                                                     <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 

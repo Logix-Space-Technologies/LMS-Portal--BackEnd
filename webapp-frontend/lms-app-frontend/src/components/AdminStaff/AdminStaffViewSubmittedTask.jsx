@@ -37,6 +37,7 @@ const AdminStaffViewSubmittedTask = () => {
             (response) => {
                 if (response.data.data) {
                     setTaskData(response.data.data)
+                    console.log(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
                         navigate("/admstafflogin")
@@ -89,6 +90,7 @@ const AdminStaffViewSubmittedTask = () => {
             (response) => {
                 if (response.data.status === "Task evaluated successfully") {
                     alert("Task evaluated successfully")
+                    getData()
                     setInputField({
                         evaluatorRemarks: "",
                         score: ""
@@ -128,6 +130,12 @@ const AdminStaffViewSubmittedTask = () => {
     const readValue = (id) => {
         setSubmittedTaskId(id)
     }
+
+    // Convert a date string from 'DD/MM/YYYY' to a JavaScript Date object
+    const parseDateString = (dateString) => {
+        const [day, month, year] = dateString.split('/');
+        return new Date(year, month - 1, day);
+    };
 
     useEffect(() => { getData() }, [])
 
@@ -179,14 +187,23 @@ const AdminStaffViewSubmittedTask = () => {
                                     Score
                                 </th>
                                 <th scope="col" className="px-6 py-3">
+                                    Total Score
+                                </th>
+                                <th scope="col" className="px-6 py-3">
 
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            {taskData ? (taskData.map(
+                            {taskData && taskData.length > 0 ? (taskData.map(
                                 (value, index) => {
-                                    return <tr index={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    // Convert dueDate and subDate to Date objects for comparison
+                                    const dueDateObj = parseDateString(value.dueDate);
+                                    const submissionDateObj = parseDateString(value.subDate);
+
+                                    // Determine if the task was submitted late
+                                    const isLateSubmission = submissionDateObj > dueDateObj;
+                                    return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
 
                                         <td className="px-6 py-4">
                                             {value.collegeName}
@@ -214,17 +231,12 @@ const AdminStaffViewSubmittedTask = () => {
                                         <td className="px-6 py-4">
                                             {value.remarks}
                                         </td>
-                                        {value.subDate > value.dueDate && (
-                                            <td className="px-6 py-12" style={{ display: 'flex', alignItems: 'center' }}>
-                                                <span>{value.lateSubDate}</span>
+                                        <td className="px-6 py-12" style={{ display: 'flex', alignItems: 'center' }}>
+                                            {value.subDate}
+                                            {isLateSubmission && (
                                                 <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '10px' }} />
-                                            </td>
-                                        )}
-                                        {value.subDate < value.dueDate && (
-                                            <td className="px-6 py-4">
-                                                {value.subDate}
-                                            </td>
-                                        )}
+                                            )}
+                                        </td>
                                         {!value.evalDate === null && (
                                             <td className="px-6 py-4">
                                                 {value.evalDate}
@@ -255,6 +267,9 @@ const AdminStaffViewSubmittedTask = () => {
                                                 NIL
                                             </td>
                                         )}
+                                        <td className="px-6 py-4">
+                                            {value.totalScore}
+                                        </td>
                                         <td className="px-6 py-4">
                                             <button onClick={() => readValue(value.submitTaskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Evaluate Task</button>
                                         </td>
