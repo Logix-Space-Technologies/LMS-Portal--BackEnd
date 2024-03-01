@@ -173,16 +173,13 @@ const AdminStaffViewSubmittedTask = () => {
                                     Evaluated Date
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    Late Submission Date
-                                </th>
-                                <th scope="col" className="px-6 py-3">
                                     Evaluator Remarks
                                 </th>
                                 <th scope="col" className="px-6 py-3">
                                     Score
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    
+
                                 </th>
                             </tr>
                         </thead>
@@ -210,21 +207,26 @@ const AdminStaffViewSubmittedTask = () => {
                                             {value.dueDate}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Link to={value.gitLink} target="_blank" rel="noopener noreferrer">
-                                                {value.gitLink}
+                                            <Link to={value.gitLink} className='btn btn-primary' target="_blank" rel="noopener noreferrer">
+                                                Link
                                             </Link>
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.remarks}
                                         </td>
-                                        <td className="px-6 py-4">
-                                            {value.subDate}
-                                        </td>
+                                        {value.subDate > value.dueDate && (
+                                            <td className="px-6 py-12" style={{ display: 'flex', alignItems: 'center'}}>
+                                                <span>{value.lateSubDate}</span>
+                                                <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '10px' }} />
+                                            </td>
+                                        )}
+                                        {value.subDate < value.dueDate && (
+                                            <td className="px-6 py-4">
+                                                {value.subDate}
+                                            </td>
+                                        )}
                                         <td className="px-6 py-4">
                                             {value.evalDate}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.lateSubDate}
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.evaluatorRemarks}
