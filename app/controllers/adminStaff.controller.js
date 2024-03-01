@@ -375,13 +375,8 @@ exports.viewAdminStaffProfile = (request, response) => {
     }
 
     jwt.verify(admStaffProfileToken, "lmsappadmstaff", (err, decoded) => {
-        if (err) {
-            console.error("Token verification failed:", err);
-            return response.json({ "status": err });
-        }
-
         if (!decoded) {
-            return response.json({ "status": "Invalid token." });
+            return response.json({ "status": "Unauthorized User!!" });
         }
 
         AdminStaff.viewAdminStaffProfile(id, (err, data) => {
@@ -390,7 +385,7 @@ exports.viewAdminStaffProfile = (request, response) => {
                 return response.json({ "status": err });
             }
 
-            response.json({ "status": "success", "data": data });
+            return response.json({ "status": "success", "data": data });
         });
     });
 };
@@ -418,7 +413,7 @@ exports.adsfViewSubmttedTask = (request, response) => {
 exports.viewOneAdminStaff = (request, response) => {
     const trainerToken = request.headers.token;
     const key = request.headers.key; //give respective keys of admin and adminstaff
-    const id = request.body.id; 
+    const id = request.body.id;
 
     jwt.verify(trainerToken, key, (err, decoded) => {
         if (decoded) {
@@ -446,13 +441,13 @@ exports.AdmViewAllMaterial = (request, response) => {
             AdminStaff.AdmViewAllMaterial((err, data) => {
                 if (err) {
                     console.log(err)
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
-                    response.json(data)
+                    return response.json(data)
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -460,7 +455,7 @@ exports.AdmViewAllMaterial = (request, response) => {
 exports.viewOneMaterial = (request, response) => {
     const materialToken = request.headers.token;
     const key = request.headers.key; //give respective keys of admin and adminstaff
-    const materialId = request.body.id; 
+    const materialId = request.body.id;
 
     jwt.verify(materialToken, key, (err, decoded) => {
         if (decoded) {
@@ -479,4 +474,32 @@ exports.viewOneMaterial = (request, response) => {
         }
     });
 };
+
+
+exports.searchSubmittedTask = (request, response) => {
+    const subTaskSearchQuery = request.body.subTaskSearchQuery;
+    const searchSubmittedTaskToken = request.headers.token;
+
+    jwt.verify(searchSubmittedTaskToken, "lmsappadmstaff", (error, decoded) => {
+        if (decoded) {
+            if (!subTaskSearchQuery) {
+                console.log("Search Item is required.");
+                return response.json({ "status": "Search Item is required." });
+            }
+            AdminStaff.searchSubmittedTask(subTaskSearchQuery, (error, data) => {
+                if (error) {
+                    return response.json({ "status": error });
+                } else {
+                    if (data.length === 0) {
+                        return response.json({ "status": "No Search Items Found." });
+                    } else {
+                        return response.json({ "status": "Result Found", "data": data });
+                    }
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized access!!" })
+        }
+    })
+}
 

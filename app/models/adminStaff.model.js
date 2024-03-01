@@ -292,7 +292,8 @@ AdminStaff.viewSubmittedTask = (result) => {
                 result("No Submitted Tasks Found.", null)
                 return
             }
-            result(null, res)
+            const formattedSubTasks = res.map(subtasks => ({ ...subtasks, dueDate: subtasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), subDate: subtasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), evalDate: subtasks.evalDate ? subtasks.evalDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, lateSubDate: subtasks.lateSubDate ? subtasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null }));
+            result(null, formattedSubTasks)
         })
 }
 
@@ -311,14 +312,14 @@ AdminStaff.viewOneAdminStaff = (id, result) => {
 }
 
 AdminStaff.AdmViewAllMaterial = async (result) => {
-    let query = "SELECT id,fileName,materialDesc,uploadFile,remarks,addedDate,materialType FROM materials WHERE deleteStatus = 0 AND isActive = 1";
+    let query = "SELECT c.collegeName, b.batchName, m.* FROM materials m JOIN batches b ON m.batchId = b.id JOIN college c ON c.id = b.collegeId WHERE m.deleteStatus = 0 AND m.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 ORDER BY c.collegeName, b.batchName, m.id DESC";
     db.query(query, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
             return;
         } else {
-            const formattedMaterials = res.map(materials => ({ ...materials, addedDate: materials.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })})); // Formats the date as 'YYYY-MM-DD'
+            const formattedMaterials = res.map(materials => ({ ...materials, addedDate: materials.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); // Formats the date as 'YYYY-MM-DD'
             console.log("Materials: ", formattedMaterials);
             result(null, formattedMaterials);
 
@@ -327,7 +328,7 @@ AdminStaff.AdmViewAllMaterial = async (result) => {
 }
 
 AdminStaff.viewOneMaterial = (materialId, result) => {
-    db.query("SELECT fileName,batchId,materialDesc,uploadFile,remarks,addedDate,materialType FROM materials WHERE deleteStatus = 0 AND isActive = 1 AND id = ?", materialId,
+    db.query("SELECT c.id AS collegeId, c.collegeName, m.fileName, m.batchId, m.materialDesc, m.uploadFile, m.remarks, m.addedDate, m.materialType FROM materials m JOIN batches b ON m.batchId = b.id JOIN college c ON b.collegeId = c.id WHERE m.deleteStatus = 0 AND m.isActive = 1 AND m.id = ?", materialId,
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -336,6 +337,21 @@ AdminStaff.viewOneMaterial = (materialId, result) => {
             }
             console.log("Material: ", res);
             result(null, res);
+        })
+}
+
+AdminStaff.searchSubmittedTask = (searchSubTask, result) => {
+    const searchString = '%' + searchSubTask + '%';
+    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, t.id, t.taskTitle, t.dueDate, st.id AS 'submitTaskId', st.gitLink, st.remarks, st.subDate, st.evalDate, st.lateSubDate, st.evaluatorRemarks, st.score FROM submit_task st JOIN task t ON st.taskId = t.id JOIN student s ON st.studId = s.id JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.validity > CURRENT_DATE() AND s.isVerified = 1 AND s.isActive = 1 AND s.emailVerified = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND st.isEvaluated = 0 AND (c.collegeName LIKE ? OR b.batchName LIKE ? OR t.taskTitle LIKE ?)",
+        [searchString, searchString, searchString],
+        (err, res) => {
+            if (err) {
+                console.log("Error: ", err);
+                result(err, null);
+            } else {
+                console.log("Submitted Task Details: ", res);
+                result(null, res);
+            }
         })
 }
 

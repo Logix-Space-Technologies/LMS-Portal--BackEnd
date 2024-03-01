@@ -98,6 +98,10 @@ const AdminSearchCollegeStaff = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * staffPerPage) + index + 1;
+    }
+
     // Total pages
     const pageNumbers = [];
     if (collegeStaff && collegeStaff.length > 0) {
@@ -164,7 +168,7 @@ const AdminSearchCollegeStaff = () => {
                                 <tbody>
                                     {currentStaff.length > 0 && currentStaff.map((staff, index) => {
                                         return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td className="px-6 py-4">{index + 1}</td>
+                                            <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                             <td className="px-6 py-4">{staff.collegeStaffName}</td>
                                             <td className="px-6 py-4">{staff.email}</td>
                                             <td className="px-6 py-4">{staff.phNo}</td>

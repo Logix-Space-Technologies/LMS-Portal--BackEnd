@@ -65,6 +65,11 @@ const AdminViewAllAdminStaff = () => {
   // Change page
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
+  const calculateSerialNumber = (index) => {
+    return ((currentPage - 1) * adminStaffPerPage) + index + 1;
+}
+
+
 
   const updateClick = (id) => {
     let data = id;
@@ -95,7 +100,6 @@ const AdminViewAllAdminStaff = () => {
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aadhar No.</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Added Date</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
               </tr>
@@ -103,13 +107,12 @@ const AdminViewAllAdminStaff = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {currentAdminStaff.length > 0 ? currentAdminStaff.map((value, index) => {
                 return <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{calculateSerialNumber(index)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.AdStaffName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.PhNo}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.Address}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.AadharNo}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.Email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{value.addedDate}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => { readValue(value.id) }}>Delete</button>
                   </td>

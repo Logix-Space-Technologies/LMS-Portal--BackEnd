@@ -65,7 +65,7 @@ const AdminViewLog = () => {
                                         <td className="px-6 py-4">{serialNumber}</td>
                                         <td className="px-6 py-4">Admin</td>
                                         <td className="px-6 py-4">{value.Action}</td>
-                                        <td className="px-6 py-4">{new Date(value.DateTime).toLocaleDateString()}</td>
+                                        <td className="px-6 py-4">{value.DateTime}</td>
                                     </tr>
                                 );
                             })

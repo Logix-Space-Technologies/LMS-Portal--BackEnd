@@ -565,7 +565,7 @@ Student.viewAllStudentByAdmin = (batchId, result) => {
 
 Student.taskSubmissionByStudent = (submissionData, result) => {
     const { studId, taskId, gitLink, remarks } = submissionData;
-    const currentDate = new Date()
+    const currentDate = new Date();
 
     // Check if student is valid
     db.query("SELECT * FROM student WHERE id = ? AND isActive = 1 AND deleteStatus = 0 AND emailVerified = 1 AND isPaid = 1 AND isVerified = 1", [studId], (studentErr, studentRes) => {
@@ -617,11 +617,6 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
                     subDate: currentDate
                 };
 
-                // Check if submission date is greater than due date
-                if (currentDate > task.dueDate) {
-                    submission.lateSubDate = currentDate;
-                }
-
                 db.query("INSERT INTO submit_task SET ?", submission, (submissionErr, submissionRes) => {
                     if (submissionErr) {
                         console.error("Error saving submission: ", submissionErr);
@@ -629,25 +624,28 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
                         return;
                     }
 
+                    const submissionId = submissionRes.insertId; // Capture the id of the newly inserted submission
+
                     // Update lateSubDate in task table if submission date is greater than due date
                     if (currentDate > task.dueDate) {
-                        db.query("UPDATE submit_task SET lateSubDate = ? WHERE id = ?", [currentDate, taskId], (updateErr, updateRes) => {
+                        db.query("UPDATE submit_task SET lateSubDate = CURRENT_DATE() WHERE id = ?", [submissionId], (updateErr, updateRes) => { // Use submissionId instead of taskId
                             if (updateErr) {
                                 console.error("Error updating lateSubDate: ", updateErr);
                                 result(updateErr, null);
                                 return;
                             }
-
-                            result(null, null);
+                            console.log(updateRes)
+                            result(null, "Submission successful, note that it was late.");
                         });
                     } else {
-                        result(null, null);
+                        result(null, "Submission successful.");
                     }
                 });
             });
         });
     });
 };
+
 
 
 SubmitTask.viewEvaluatedTasks = (studId, result) => {
@@ -1012,7 +1010,7 @@ SubmitTask.studentUpdateSubmittedTask = (updateSubTask, result) => {
             }
 
             // Update the submitted task
-            db.query("UPDATE `submit_task` SET `gitLink` = ?, `remarks` = ?, `updatedDate` = CURRENT_DATE() WHERE `id` = ?",
+            db.query("UPDATE submit_task s INNER JOIN task t ON s.taskId = t.id SET s.gitLink = ?, s.remarks = ?, s.updatedDate = CASE WHEN t.dueDate >= CURRENT_DATE() THEN CURRENT_DATE() ELSE s.updatedDate END, s.subDate = CASE WHEN t.dueDate < CURRENT_DATE() THEN CURRENT_DATE() ELSE s.subDate END, s.lateSubDate = CASE WHEN t.dueDate < CURRENT_DATE() THEN CURRENT_DATE() ELSE s.lateSubDate END WHERE s.id = ?",
                 [updateSubTask.gitLink, updateSubTask.remarks, updateSubTask.id],
                 (err, res) => {
                     if (err) {

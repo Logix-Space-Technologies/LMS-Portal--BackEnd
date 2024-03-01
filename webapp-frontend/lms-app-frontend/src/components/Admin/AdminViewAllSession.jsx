@@ -64,7 +64,13 @@ const AdminViewAllSession = () => {
         );
     };
 
-    const handleClick = (id) => {
+    const [cancelId, setCancelId] = useState(null);
+
+    const cancelClick = (id) => {
+        setCancelId(id)
+    }
+
+    const handleClick = () => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
         if (currentKey !== 'lmsapp') {
@@ -72,7 +78,7 @@ const AdminViewAllSession = () => {
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        let data = { "id": id };
+        let data = { "id": cancelId };
         let axiosConfigTwo = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -84,32 +90,10 @@ const AdminViewAllSession = () => {
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "success") {
+                    alert("Session Cancelled Successfully.")
                     getData()
                 } else {
                     alert(response.data.status);
-                }
-            }
-        );
-    };
-
-    const deleteSession = (sessionId) => {
-        let axiosConfig = {
-            headers: {
-                "content-type": "application/json;charset=UTF-8",
-                "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
-            }
-        };
-
-        axios.post(deleteApiLink, { id: sessionId }, axiosConfig)
-            .then(response => {
-                if (response.data.status === "success") {
-                    alert("Session Deleted!!")
-                    setUpdateField(updateField.filter(session => session.id !== sessionId));
-                    getData()
-                } else {
-                    console.error("Error deleting session:", response.data.status);
                 }
             })
             .catch(error => {
@@ -162,6 +146,11 @@ const AdminViewAllSession = () => {
 
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * sessionsPerPage) + index + 1;
+    }
+
 
     useEffect(() => { getData() }, []);
 
@@ -239,7 +228,7 @@ const AdminViewAllSession = () => {
                     <tbody>
                         {currentSessions.length > 0 ? currentSessions.map((value, index) => {
                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td className="px-6 py-4">{index + 1}</td>
+                                <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                     <div className="ps-3">
                                         <div className="text-base font-semibold">{value.sessionName}</div>
@@ -268,7 +257,7 @@ const AdminViewAllSession = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.cancelStatus === "ACTIVE" && (
-                                        <button onClick={() => handleClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                        <button onClick={() => cancelClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none" data-bs-toggle="modal" data-bs-target="#cancelModal">
                                             Cancel Session
                                         </button>
                                     )}
@@ -347,6 +336,27 @@ const AdminViewAllSession = () => {
                     </div>
                 </div>
             )}
+
+            {/* Cancel Confirmation Modal */}
+            <div className="row">
+                <div className="modal fade" id="cancelModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to cancel this session?</h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div className="modal-body">
+                                <p>This action cannot be undone.</p>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No, cancel</button>
+                                <button onClick={() => handleClick()} type="button" className="btn btn-danger" data-bs-dismiss="modal">Yes, I'm sure</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

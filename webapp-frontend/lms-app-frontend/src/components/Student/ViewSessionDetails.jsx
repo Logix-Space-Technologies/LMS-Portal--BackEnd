@@ -36,7 +36,11 @@ const SessionView = () => {
             navigate("/studentLogin")
             sessionStorage.clear()
           } else {
-            alert(response.data.status);
+            if (response.data.status === "No Session found!") {
+              setSessions([]) //setSessions made empty
+            } else {
+              alert(response.data.status);
+            }
           }
         }
       })
@@ -145,31 +149,31 @@ const SessionView = () => {
                     {session.venueORlink.includes("zoom.us") && (
                       <Link to={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</Link>
                     )}
-                  {isSessionAccessible(session.date) ? (
-                    <>
-                      <Link to="/studentviewattendance" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
-                        Attendance
-                      </Link>
-                      <Link to="/studviewtasksessionwise" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
-                        Tasks
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
-                        Attendance (Unavailable)
-                      </Link>
-                      <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
-                        Tasks (Unavailable)
-                      </Link>
-                    </>
-                  )}
+                    {isSessionAccessible(session.date) ? (
+                      <>
+                        <Link to="/studentviewattendance" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Attendance
+                        </Link>
+                        <Link to="/studviewtasksessionwise" onClick={() => sessionClick(session.id)} className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Tasks
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Attendance (Unavailable)
+                        </Link>
+                        <Link to="#" className="text-blue-500 border border-blue-500 px-3 py-1 rounded-full text-xs font-semibold" style={{ margin: '0 10px' }}>
+                          Tasks (Unavailable)
+                        </Link>
+                      </>
+                    )}
 
+                  </div>
                 </div>
               </div>
             </div>
-            </div>
-  ))
+          ))
         )
       )}
 

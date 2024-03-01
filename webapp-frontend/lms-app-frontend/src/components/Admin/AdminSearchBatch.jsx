@@ -97,6 +97,10 @@ const AdminSearchBatch = () => {
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * batchesPerPage) + index + 1;
+    }
+
     // Update key state when component mounts
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
@@ -150,7 +154,7 @@ const AdminSearchBatch = () => {
                             <tbody>
                                 {currentBatches.map((batch, index) => {
                                     return <tr key={batch.id}>
-                                        <td>{index + 1}</td>
+                                        <td>{calculateSerialNumber(index)}</td>
                                         <td>{batch.collegeName}</td>
                                         <td>{batch.batchName}</td>
                                         <td>{batch.batchDesc}</td>

@@ -4,6 +4,7 @@ import '../../../config/config'
 import axios from 'axios'
 
 const AdminStaffHeader = () => {
+
     const [admStaffData, setAdmStaffData] = useState([])
 
     const apiUrl = global.config.urls.api.server + "/api/lms/profileViewByAdmStaff"
@@ -23,10 +24,12 @@ const AdminStaffHeader = () => {
                 if (response.data.data) {
                     setAdmStaffData(response.data.data)
                 } else {
-                    navigate("/admstafflogin")
-                    sessionStorage.removeItem("admstaffLogintoken")
-                    sessionStorage.removeItem("admstaffkey")
-                    sessionStorage.removeItem("admstaffId")
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -35,9 +38,7 @@ const AdminStaffHeader = () => {
     const navigate = useNavigate()
 
     const logOut = () => {
-        sessionStorage.removeItem("admstaffLogintoken")
-        sessionStorage.removeItem("admstaffkey")
-        sessionStorage.removeItem("admstaffId")
+        sessionStorage.clear()
         navigate('/admstafflogin');
     }
 
@@ -46,6 +47,7 @@ const AdminStaffHeader = () => {
     };
 
     useEffect(() => { getData() }, [])
+    
     return (
         <div>
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">

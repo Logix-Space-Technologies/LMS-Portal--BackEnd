@@ -38,12 +38,16 @@ const AdminViewAllStud = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * studentsPerPage) + index + 1;
+    }
+
     const apiUrl2 = global.config.urls.api.server + "/api/lms/createCommunityManager";
     const apiUrl3 = global.config.urls.api.server + "/api/lms/deleteCommunityManager";
 
     // Assign Community Manager
     const assignCommunityManager = (id, batchId) => {
-        let data = {"studentId": id, "batchId": batchId }; // Ensure this matches your expected backend format
+        let data = { "studentId": id, "batchId": batchId }; // Ensure this matches your expected backend format
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -52,7 +56,7 @@ const AdminViewAllStud = () => {
                 "key": sessionStorage.getItem("admkey") // Ensure your backend is expecting this key in the header
             }
         };
-    
+
         axios.post(apiUrl2, data, axiosConfig2).then(
             (response) => {
                 if (response.data.status === "success") {
@@ -116,7 +120,7 @@ const AdminViewAllStud = () => {
 
                 <div></div>
             </div>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <div className="relative overflow-x shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -170,7 +174,7 @@ const AdminViewAllStud = () => {
                             (value, index) => {
                                 return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <td className="px-6 py-4">
-                                        {index + 1}
+                                        {calculateSerialNumber(index)}
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.communityManager === 1 && (

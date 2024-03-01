@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import AdmStaffNavBar from './AdmStaffNavBar'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
 
 
 const AdminStaffViewSubmittedTask = () => {
 
     const [errors, setErrors] = useState({});
+
+    const navigate = useNavigate()
 
     let [submittedTaskId, setSubmittedTaskId] = useState("")
 
@@ -33,8 +35,20 @@ const AdminStaffViewSubmittedTask = () => {
         }
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
-                setTaskData(response.data.data)
-                console.log(response.data)
+                if (response.data.data) {
+                    setTaskData(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setTaskData([])
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
@@ -71,12 +85,10 @@ const AdminStaffViewSubmittedTask = () => {
             "evaluatorRemarks": inputField.evaluatorRemarks,
             "score": inputField.score
         }
-        console.log(data2)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Task evaluated successfully") {
                     alert("Task evaluated successfully")
-                    window.location.reload() // Refresh the data
                     setInputField({
                         evaluatorRemarks: "",
                         score: ""
@@ -84,11 +96,28 @@ const AdminStaffViewSubmittedTask = () => {
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
                         alert(response.data.data.evaluatorRemarks);
+                        setInputField({
+                            evaluatorRemarks: "",
+                            score: ""
+                        });
                     } else {
                         if (response.data.status === "Validation failed" && response.data.data.score) {
                             alert(response.data.data.score);
+                            setInputField({
+                                evaluatorRemarks: "",
+                                score: ""
+                            });
                         } else {
-                            alert(response.data.status);
+                            if (response.data.status === "Unauthorized access!!") {
+                                navigate("/admstafflogin")
+                                sessionStorage.clear()
+                            } else {
+                                alert(response.data.status);
+                                setInputField({
+                                    evaluatorRemarks: "",
+                                    score: ""
+                                });
+                            }
                         }
                     }
                 }
@@ -97,7 +126,6 @@ const AdminStaffViewSubmittedTask = () => {
     }
 
     const readValue = (id) => {
-        console.log(id)
         setSubmittedTaskId(id)
     }
 
@@ -110,7 +138,7 @@ const AdminStaffViewSubmittedTask = () => {
                 <AdmStaffNavBar />
                 <br />
                 <strong>Admin Staff View Submitted Tasks</strong><br /><br />
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <div className="relative overflow-x shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
@@ -130,9 +158,6 @@ const AdminStaffViewSubmittedTask = () => {
                                     Task Title
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    Task Id
-                                </th>
-                                <th scope="col" className="px-6 py-3">
                                     Due Date
                                 </th>
                                 <th scope="col" className="px-6 py-3">
@@ -148,20 +173,20 @@ const AdminStaffViewSubmittedTask = () => {
                                     Evaluated Date
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    Late Submission Date
-                                </th>
-                                <th scope="col" className="px-6 py-3">
                                     Evaluator Remarks
                                 </th>
                                 <th scope="col" className="px-6 py-3">
                                     Score
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
                             {taskData ? (taskData.map(
                                 (value, index) => {
-                                    return <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    return <tr index={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
 
                                         <td className="px-6 py-4">
                                             {value.collegeName}
@@ -179,35 +204,57 @@ const AdminStaffViewSubmittedTask = () => {
                                             {value.taskTitle}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {value.id}
-                                        </td>
-                                        <td className="px-6 py-4">
                                             {value.dueDate}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Link to={value.gitLink} target="_blank" rel="noopener noreferrer">
-                                                {value.gitLink}
+                                            <Link to={value.gitLink} className='btn btn-primary' target="_blank" rel="noopener noreferrer">
+                                                Link
                                             </Link>
                                         </td>
-
                                         <td className="px-6 py-4">
                                             {value.remarks}
                                         </td>
-                                        <td className="px-6 py-4">
-                                            {value.subDate}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.evalDate}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.lateSubDate}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.evaluatorRemarks}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.score}
-                                        </td>
+                                        {value.subDate > value.dueDate && (
+                                            <td className="px-6 py-12" style={{ display: 'flex', alignItems: 'center' }}>
+                                                <span>{value.lateSubDate}</span>
+                                                <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '10px' }} />
+                                            </td>
+                                        )}
+                                        {value.subDate < value.dueDate && (
+                                            <td className="px-6 py-4">
+                                                {value.subDate}
+                                            </td>
+                                        )}
+                                        {!value.evalDate === null && (
+                                            <td className="px-6 py-4">
+                                                {value.evalDate}
+                                            </td>
+                                        )}
+                                        {value.evalDate === null && (
+                                            <td className="px-6 py-4">
+                                                NIL
+                                            </td>
+                                        )}
+                                        {!value.evaluatorRemarks === null && (
+                                            <td className="px-6 py-4">
+                                                {value.evaluatorRemarks}
+                                            </td>
+                                        )}
+                                        {value.evaluatorRemarks === null && (
+                                            <td className="px-6 py-4">
+                                                NIL
+                                            </td>
+                                        )}
+                                        {!value.score === null && (
+                                            <td className="px-6 py-4">
+                                                {value.score}
+                                            </td>
+                                        )}
+                                        {value.score === null && (
+                                            <td className="px-6 py-4">
+                                                NIL
+                                            </td>
+                                        )}
                                         <td className="px-6 py-4">
                                             <button onClick={() => readValue(value.submitTaskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Evaluate Task</button>
                                         </td>
@@ -281,7 +328,6 @@ const AdminStaffViewSubmittedTask = () => {
                                 <button data-bs-dismiss="modal" onClick={() => evaluateTask()} type="button" className="btn btn-primary">
                                     Submit
                                 </button>
-
                             </div>
                         </div>
                     </div>

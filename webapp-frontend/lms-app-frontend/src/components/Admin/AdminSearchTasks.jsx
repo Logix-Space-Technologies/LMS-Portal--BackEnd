@@ -97,6 +97,10 @@ const AdminSearchTasks = () => {
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * tasksPerPage) + index + 1;
+    }
+
 
     // Update key state when component mounts
     useEffect(() => {
@@ -153,7 +157,7 @@ const AdminSearchTasks = () => {
                             <tbody>
                                 {currentTasks.map((task, index) => {
                                     return <tr key={task.id}>
-                                        <td>{index + 1}</td>
+                                        <td>{calculateSerialNumber(index)}</td>
                                         <td>{task.batchName}</td>
                                         <td>{task.sessionName}</td>
                                         <td>{task.taskTitle}</td>

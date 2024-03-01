@@ -242,7 +242,7 @@ exports.updateMaterial = (request, response) => {
                             if (err.kind === "not_found") {
                                 return response.json({ "status": "Material Details Not Found.." })
                             } else {
-                                response.json({ "status": err })
+                                return response.json({ "status": err })
                             }
 
                         } else {
@@ -254,7 +254,7 @@ exports.updateMaterial = (request, response) => {
 
 
                 } else {
-                    response.json({ "status": "Unauthorized Access!!!" })
+                    return response.json({ "status": "Unauthorized Access!!!" })
 
                 }
             })
@@ -289,3 +289,30 @@ exports.viewBatchMaterials = (request, response) => {
         }
     });
 };
+
+
+exports.deleteMaterial = (request, response) => {
+    const deleteToken = request.headers.token
+    const material = new Material({
+        'id': request.body.id
+    });
+
+    jwt.verify(deleteToken, "lmsappadmstaff", (err, decoded) => {
+        if (!decoded) {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+
+        Material.materialDelete(material, (err, data) => {
+            if (err) {
+                if (err.kind === "not_found") {
+                    console.log("Material not found");
+                    return response.json({ "status": "Material not found" });
+                } else {
+                    return response.json({ "status": err });
+                }
+            } else {
+                return response.json({ "status": "Material Deleted Successfully." });
+            }
+        })
+    })
+}
