@@ -292,7 +292,8 @@ AdminStaff.viewSubmittedTask = (result) => {
                 result("No Submitted Tasks Found.", null)
                 return
             }
-            result(null, res)
+            const formattedSubTasks = res.map(subtasks => ({ ...subtasks, dueDate: subtasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), subDate: subtasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), evalDate: subtasks.evalDate ? subtasks.evalDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, lateSubDate: subtasks.lateSubDate ? subtasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null }));
+            result(null, formattedSubTasks)
         })
 }
 
