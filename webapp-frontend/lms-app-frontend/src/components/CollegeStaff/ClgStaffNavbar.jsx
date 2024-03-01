@@ -35,6 +35,9 @@ const ClgStaffNavbar = () => {
                                 <Link className="nav-link" to="/clgStaffSearchTask">Search Task</Link>
                             </li>
                             <li className="nav-item">
+                                <Link className="nav-link" to="/CollegeStaffViewCollege">View College</Link>
+                            </li>
+                            <li className="nav-item">
                                 <Link className="nav-link" to="/collegeStaffViewBatch">View All Batches</Link>
                             </li>
                             <li className="nav-item">
