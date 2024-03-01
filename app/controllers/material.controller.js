@@ -130,7 +130,7 @@ exports.createMaterial = (request, response) => {
 
 
 exports.searchMaterial = async (request, response) => {
-    const materialQuery = request.headers.materialQuery;
+    const materialQuery = request.body.materialQuery;
     const materialSearchToken = request.headers.token;
 
     try {
