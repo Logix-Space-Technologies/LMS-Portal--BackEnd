@@ -18,7 +18,7 @@ const AdminStaffSearchMaterial = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1);
   const [updateField, setUpdateField] = useState([])
-  const [curriculumPerPage] = useState(10); // Number of curriculum per page
+  const [materialPerPage] = useState(10); // Number of curriculum per page
   const [deleteId, setDeleteId] = useState(null);
   const apiLink = global.config.urls.api.server + "/api/lms/searchMaterial";
   const apiLink2 = global.config.urls.api.server + "/api/lms/adminStaffDeleteMaterial";
@@ -52,8 +52,8 @@ const AdminStaffSearchMaterial = () => {
 
 
   // Logic for displaying current curriculum
-  const indexOfLastMaterial = currentPage * curriculumPerPage;
-  const indexOfFirstMaterial = indexOfLastMaterial - curriculumPerPage;
+  const indexOfLastMaterial = currentPage * materialPerPage;
+  const indexOfFirstMaterial = indexOfLastMaterial - materialPerPage;
   const currentMaterial = updateField ? updateField.slice(indexOfFirstMaterial, indexOfLastMaterial) : [];
 
   // Change page
@@ -62,7 +62,7 @@ const AdminStaffSearchMaterial = () => {
   // Total pages
   const pageNumbers = [];
   if (updateField && updateField.length > 0) {
-    updateField.forEach((curriculum, index) => {
+    updateField.forEach((material, index) => {
       const pageNumber = index + 1;
       pageNumbers.push(pageNumber);
     });
@@ -74,7 +74,6 @@ const AdminStaffSearchMaterial = () => {
 
   const handleDeleteClick = () => {
     let data = { "id": deleteId };
-    console.log(data)
     let axiosConfig2 = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
@@ -86,10 +85,10 @@ const AdminStaffSearchMaterial = () => {
 
     axios.post(apiLink2, data, axiosConfig2).then(
       (response) => {
-        if (response.data.status === "success") {
-          alert("Curriculum deleted!!");
-          // Remove the deleted curriculum from updateField state
-          setUpdateField(updateField.filter(curriculum => curriculum.id !== deleteId))
+        if (response.data.status === "Material Deleted Successfully.") {
+          alert("Material deleted!!");
+          // Remove the deleted material from updateField state
+          setUpdateField(updateField.filter(material => material.id !== deleteId));
         } else {
           alert(response.data.status);
         }
@@ -107,7 +106,7 @@ const AdminStaffSearchMaterial = () => {
 
   return (
     <div>
-      <AdmStaffNavBar/>
+      <AdmStaffNavBar />
       <strong style={{ paddingLeft: '30px' }}>Search Material</strong>
 
       <div className="flex justify-between items-center mx-4 my-4">
