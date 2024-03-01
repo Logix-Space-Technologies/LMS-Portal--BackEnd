@@ -14,7 +14,6 @@ const StudentViewTasks = () => {
 
     let [taskId, setTaskId] = useState({})
     const navigate = useNavigate()
-    const [showModal, setShowModal] = useState(false);
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studViewTask";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
@@ -69,7 +68,6 @@ const StudentViewTasks = () => {
         }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
-            setShowModal(true)
             return;
         }
         let axiosConfig = {
@@ -91,20 +89,16 @@ const StudentViewTasks = () => {
             (response) => {
                 if (response.data.status === "success") {
                     alert("Task Submitted Successfully !!");
-                    getData()
                     setInputField({
                         "gitLink": "",
                         "remarks": ""
                     });
-                    setShowModal(false)
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.gitLink) {
                         alert(response.data.data.gitLink);
-                        setShowModal(true)
                     } else {
                         if (response.data.status === "Validation failed" && response.data.data.remarks) {
                             alert(response.data.data.remarks);
-                            setShowModal(true)
                         } else {
                             if (response.data.status === "Unauthorized Access!!") {
                                 navigate("/studentLogin")
@@ -121,13 +115,7 @@ const StudentViewTasks = () => {
 
     const readValue = (taskId) => {
         setTaskId(taskId)
-        setShowModal(true)
-    };
-
-    const parseDateStr = (dateStr) => {
-        if (!dateStr) return null; // Return null if the input is falsy
-        const parts = dateStr.split('/'); // Split the string by '/'
-        return new Date(parts[2], parts[1] - 1, parts[0]); // Create a new Date object
+        console.log(taskId)
     };
 
     useEffect(() => { getData(); }, []);
@@ -136,19 +124,13 @@ const StudentViewTasks = () => {
         <div>
             <StudNavBar />
             <br />
-            <h1 style={{ marginLeft: "20px", marginBottom: "0px", textAlign: "center" }}>Student View Tasks</h1>
+            <h1 style={{marginLeft:"20px", marginBottom: "0px", textAlign:"center"}}>Student View Tasks</h1>
             <section className="flex flex-col justify-center antialiased bg-gray-100 text-gray-600 min-h-screen p-4 pt-0 pb-0">
                 <div className="h-full">
                     {/* Cards */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {studViewTaskData ? (studViewTaskData.map(
                             (task, index) => {
-                                // Parse the dueDate and subDate/lateSubDate
-                                const dueDate = parseDateStr(task.dueDate);
-                                const subDate = task.lateSubDate ? parseDateStr(task.lateSubDate) : parseDateStr(task.subDate);
-
-                                // Determine if the task was submitted late
-                                const isLateSubmission = subDate && dueDate && subDate > dueDate;
                                 return <div className="bg-white shadow-lg rounded-md p-4" key={index}>
                                     {task.taskStatus === "Task Submitted" && task.evaluateStatus === "Evaluated" && (
                                         <>
@@ -178,9 +160,9 @@ const StudentViewTasks = () => {
                                                     <strong>Submission Date:</strong> {task.updatedDate}
                                                 </p>
                                             )}
-                                            {isLateSubmission && (
+                                            {!task.updatedDate && task.subDate > task.dueDate && (
                                                 <p className="text-gray-700 mb-2" style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <strong style={{ marginRight: '8px' }}>Submission Date:</strong> {task.lateSubDate || task.subDate}
+                                                    <strong style={{ marginRight: '8px' }}>Submission Date: </strong> {task.lateSubDate}
                                                     <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '5px' }} />
                                                 </p>
                                             )}
@@ -239,18 +221,24 @@ const StudentViewTasks = () => {
                                                     <strong>Submission Date:</strong> {task.subDate}
                                                 </p>
                                             )}
+                                            <p className="text-gray-700 mb-2">
+                                                <p><strong>Submission Status: </strong>Submitted</p>
+                                            </p>
+                                            <p className="text-gray-700 mb-2">
+                                                <p><strong>Evaluation Status: </strong>Not Evaluated</p><br />
+                                            </p>
                                             <td>
-                                                <div className="flex justify-start pt-24 pl-8" >
+                                                <div className="flex justify-start pl-8" >
                                                     <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
                                             </td>
                                             <td>
-                                                <button onClick={() => { updateSubTask(task.submitTaskId) }} className="btn btn-primary" style={{ marginLeft: "30px" }}>Update</button>
+                                                <button onClick={() => { updateSubTask(task.submitTaskId) }} className="btn btn-primary" style={{marginLeft:"30px"}}>Update</button>
                                             </td>
                                         </>
                                     )}
-                                    {task.taskStatus === "Task Not Submitted" && task.evaluateStatus === "Not Evaluated" && (
+                                    {task.taskStatus === "Task Not Submitted" && (
                                         <>
                                             <span className="text-red-500 font-semibold">[Assigned]</span>
                                             <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
@@ -278,7 +266,7 @@ const StudentViewTasks = () => {
                                             </td>
                                             <td>
                                                 <div className="flex justify-end">
-                                                    <button onClick={() => readValue(task.taskId)} style={{ marginLeft: "20px" }} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Submit Task</button>
+                                                    <button onClick={() => readValue(task.taskId)} style={{marginLeft:"20px"}} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
                                                 </div>
                                             </td>
                                         </>
@@ -287,38 +275,36 @@ const StudentViewTasks = () => {
                             })) : <p>No Tasks Found !!!!</p>}
                     </div>
                 </div>
-                {showModal && (
-                    <div className="flex justify-end">
-                        <div className="modal show d-block" tabIndex={-1}>
-                            <div className="modal-dialog">
-                                <div className="modal-content">
-                                    <div className="modal-header">
-                                        <h1 className="modal-title fs-5" id="exampleModalLabel">Submit Task</h1>
-                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                                    </div>
-                                    <div className="modal-body">
-                                        <form>
-                                            <div className="mb-3">
-                                                <label htmlFor="recipient-name" className="col-form-label">GitHub Link:</label>
-                                                <input type="text" name="gitLink" className="form-control" value={inputField.gitLink} onChange={inputHandler} />
-                                                {errors.gitLink && <span style={{ color: 'red' }} className="error">{errors.gitLink}</span>}
-                                            </div>
-                                            <div className="mb-3">
-                                                <label htmlFor="message-text" className="col-form-label">Remarks:</label>
-                                                <textarea name="remarks" className="form-control" value={inputField.remarks} onChange={inputHandler} />
-                                                {errors.remarks && <span style={{ color: 'red' }} className="error">{errors.remarks}</span>}
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <div className="modal-footer">
-                                        <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Close</button>
-                                        <button type="button" onClick={() => submitTask()} className="btn btn-primary">Submit</button>
-                                    </div>
+                <div className="flex justify-end">
+                    <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h1 className="modal-title fs-5" id="exampleModalLabel">Submit Task</h1>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                                </div>
+                                <div className="modal-body">
+                                    <form>
+                                        <div className="mb-3">
+                                            <label htmlFor="recipient-name" className="col-form-label">GitHub Link:</label>
+                                            <input type="text" name="gitLink" className="form-control" value={inputField.gitLink} onChange={inputHandler} />
+                                            {errors.gitLink && <span style={{ color: 'red' }} className="error">{errors.gitLink}</span>}
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="message-text" className="col-form-label">Remarks:</label>
+                                            <textarea name="remarks" className="form-control" value={inputField.remarks} onChange={inputHandler} />
+                                            {errors.remarks && <span style={{ color: 'red' }} className="error">{errors.remarks}</span>}
+                                        </div>
+                                    </form>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" onClick={() => submitTask()} className="btn btn-primary">Submit</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                )}
+                </div>
             </section>
         </div>
     );
