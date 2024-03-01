@@ -37,7 +37,7 @@ const SessionView = () => {
             sessionStorage.clear()
           } else {
             if (response.data.status === "No Session found!") {
-              setSessions([])
+              setSessions([]) //setSessions made empty
             } else {
               alert(response.data.status);
             }
