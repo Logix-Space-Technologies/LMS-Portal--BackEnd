@@ -93,7 +93,7 @@ Attendence.studentViewSessionWiseAttendance = (studentId, sessionId, result) => 
             return;
         }
         // Format the date for each session
-        const formattedAttendance = res.map(attendance => ({ ...attendance, date: attendance.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })})); // Formats the date as 'YYYY-MM-DD'
+        const formattedAttendance = res.map(attendance => ({ ...attendance, date: attendance.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })})); // Formats the date as 'YYYY-MM-DD'
         console.log("attendance:", formattedAttendance);
         result(null, formattedAttendance);
     });

@@ -151,7 +151,7 @@ const StudentViewTasks = () => {
                                     {task.taskStatus === "Task Submitted" && task.evaluateStatus === "Evaluated" && (
                                         <>
                                             <span className="text-green-500 font-semibold">[Evaluated]</span>
-                                            <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
+                                            <h2 className="text-lg font-semibold mb-1">{task.taskTitle}</h2>
                                             <p className="text-gray-500 mb-4">{task.taskDesc}</p>
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Session Name:</strong> {task.sessionName}
@@ -163,7 +163,7 @@ const StudentViewTasks = () => {
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Submitted Git Link:</strong> {task.gitLink}
+                                                <strong>Submitted Git Link:</strong> <span style={{fontSize:"14px"}}>{task.gitLink}</span>
                                             </p>
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Score Obtained:</strong> {task.score}
@@ -212,7 +212,7 @@ const StudentViewTasks = () => {
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Submitted Git Link:</strong> {task.gitLink}
+                                                <strong>Submitted Git Link:</strong> <span style={{fontSize:"14px"}}>{task.gitLink}</span>
                                             </p>
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Due Date:</strong> {task.dueDate}
