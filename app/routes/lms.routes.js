@@ -279,4 +279,6 @@ router.post('/viewCollegeWiseAttendance',AttendenceController.collegeStaffViewCo
 
 router.post('/viewClgStaffCollege',ClgStaffController.viewCollegeDetails)
 
+router.post('/adminStaffDeleteMaterial',MaterialController.deleteMaterial)
+
 module.exports = router

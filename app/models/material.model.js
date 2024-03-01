@@ -136,6 +136,37 @@ Material.viewBatchMaterials = (batchId, result) => {
     });
 };
 
+Material.materialDelete = (materialId, result) => {
+    db.query("SELECT * FROM materials WHERE deleteStatus = 0 AND isActive = 1",
+        [materialId.id],
+        (materialErr, materialRes) => {
+            if (materialErr) {
+                console.log("Error checking Material : ", materialErr);
+                return result(materialErr, null);
+            }
+            if (materialRes.length === 0) {
+                console.log("Material does not exist or is inactive/deleted.");
+                return result("Material does not exist or is inactive/deleted.", null);
+            }
+
+            db.query("UPDATE materials SET isActive = 0, deleteStatus = 1 WHERE id = ? AND isActive = 1 AND deleteStatus = 0",
+                [materialId.id],
+                (err, res) => {
+                    if (err) {
+                        console.log("Error deleting material : ", err)
+                        result(err, null);
+                        return;
+                    }
+                    if (res.affectedRows === 0) {
+                        result({ kind: "not_found" }, null);
+                        return;
+                    }
+                    console.log("Delete Material with id : ", { id: materialId.id });
+                    return result(null, { id: materialId.id });
+                })
+        })
+}
+
 
 
 module.exports = Material
