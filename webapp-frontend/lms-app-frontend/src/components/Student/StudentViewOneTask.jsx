@@ -13,6 +13,7 @@ const StudentViewOneTask = () => {
 
     let [taskId, setTaskId] = useState({})
     const navigate = useNavigate()
+    const [showModal, setShowModal] = useState(false);
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studViewTaskOfSessions";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
@@ -69,6 +70,7 @@ const StudentViewOneTask = () => {
         }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
+            setShowModal(true)
             return;
         }
         let axiosConfig = {
@@ -90,16 +92,20 @@ const StudentViewOneTask = () => {
             (response) => {
                 if (response.data.status === "success") {
                     alert("Task Submitted Successfully !!");
+                    getData()
                     setInputField({
                         "gitLink": "",
                         "remarks": ""
                     });
+                    setShowModal(false)
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.gitLink) {
                         alert(response.data.data.gitLink);
+                        setShowModal(true)
                     } else {
                         if (response.data.status === "Validation failed" && response.data.data.remarks) {
                             alert(response.data.data.remarks);
+                            setShowModal(true)
                         } else {
                             if (response.data.status === "Unauthorized Access!!") {
                                 navigate("/studentLogin")
@@ -116,7 +122,7 @@ const StudentViewOneTask = () => {
 
     const readValue = (taskId) => {
         setTaskId(taskId)
-        console.log(taskId)
+        setShowModal(true)
     };
 
     useEffect(() => { getData(); }, []);
@@ -223,7 +229,7 @@ const StudentViewOneTask = () => {
 
                                             </td>
                                             <td>
-                                                <button onClick={() => { updateSubTask(task.submitTaskId) }} className="btn btn-primary" style={{marginLeft:"20px"}}>Update</button>
+                                                <button onClick={() => { updateSubTask(task.submitTaskId) }} className="btn btn-primary" style={{ marginLeft: "20px" }}>Update</button>
                                             </td>
                                         </>
                                     )}
@@ -252,7 +258,7 @@ const StudentViewOneTask = () => {
                                             </td>
                                             <td>
                                                 <div className="flex justify-end">
-                                                    <button onClick={() => readValue(task.taskId)} style={{marginLeft:"20px"}} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
+                                                    <button onClick={() => readValue(task.taskId)} style={{ marginLeft: "20px" }} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Submit Task</button>
                                                 </div>
                                             </td>
                                         </>
@@ -261,36 +267,38 @@ const StudentViewOneTask = () => {
                             })) : <p>No Tasks Found !!!!</p>}
                     </div>
                 </div>
-                <div className="flex justify-end">
-                    <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h1 className="modal-title fs-5" id="exampleModalLabel">Submit Task</h1>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                                </div>
-                                <div className="modal-body">
-                                    <form>
-                                        <div className="mb-3">
-                                            <label htmlFor="recipient-name" className="col-form-label">GitHub Link:</label>
-                                            <input type="text" name="gitLink" className="form-control" value={inputField.gitLink} onChange={inputHandler} />
-                                            {errors.gitLink && <span style={{ color: 'red' }} className="error">{errors.gitLink}</span>}
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="message-text" className="col-form-label">Remarks:</label>
-                                            <textarea name="remarks" className="form-control" value={inputField.remarks} onChange={inputHandler} />
-                                            {errors.remarks && <span style={{ color: 'red' }} className="error">{errors.remarks}</span>}
-                                        </div>
-                                    </form>
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" onClick={() => submitTask()} className="btn btn-primary">Submit</button>
+                {showModal && (
+                    <div className="flex justify-end">
+                        <div className="modal show d-block" tabIndex={-1}>
+                            <div className="modal-dialog">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h1 className="modal-title fs-5" id="exampleModalLabel">Submit Task</h1>
+                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                                    </div>
+                                    <div className="modal-body">
+                                        <form>
+                                            <div className="mb-3">
+                                                <label htmlFor="recipient-name" className="col-form-label">GitHub Link:</label>
+                                                <input type="text" name="gitLink" className="form-control" value={inputField.gitLink} onChange={inputHandler} />
+                                                {errors.gitLink && <span style={{ color: 'red' }} className="error">{errors.gitLink}</span>}
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="message-text" className="col-form-label">Remarks:</label>
+                                                <textarea name="remarks" className="form-control" value={inputField.remarks} onChange={inputHandler} />
+                                                {errors.remarks && <span style={{ color: 'red' }} className="error">{errors.remarks}</span>}
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" onClick={() => submitTask()} className="btn btn-primary">Submit</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
             </section>
         </div>
     )

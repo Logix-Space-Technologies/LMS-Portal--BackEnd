@@ -631,7 +631,7 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
 
                     // Update lateSubDate in task table if submission date is greater than due date
                     if (currentDate > task.dueDate) {
-                        db.query("UPDATE submit_task SET lateSubDate = ? WHERE id = ?", [currentDate, taskId], (updateErr, updateRes) => {
+                        db.query("UPDATE submit_task SET lateSubDate = CURRENT_DATE() WHERE id = ?", [currentDate, taskId], (updateErr, updateRes) => {
                             if (updateErr) {
                                 console.error("Error updating lateSubDate: ", updateErr);
                                 result(updateErr, null);

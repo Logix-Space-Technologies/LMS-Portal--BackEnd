@@ -14,6 +14,7 @@ const StudentViewTasks = () => {
 
     let [taskId, setTaskId] = useState({})
     const navigate = useNavigate()
+    const [showModal, setShowModal] = useState(false);
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studViewTask";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
@@ -68,6 +69,7 @@ const StudentViewTasks = () => {
         }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
+            setShowModal(true)
             return;
         }
         let axiosConfig = {
@@ -89,16 +91,20 @@ const StudentViewTasks = () => {
             (response) => {
                 if (response.data.status === "success") {
                     alert("Task Submitted Successfully !!");
+                    getData()
                     setInputField({
                         "gitLink": "",
                         "remarks": ""
                     });
+                    setShowModal(false)
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.gitLink) {
                         alert(response.data.data.gitLink);
+                        setShowModal(true)
                     } else {
                         if (response.data.status === "Validation failed" && response.data.data.remarks) {
                             alert(response.data.data.remarks);
+                            setShowModal(true)
                         } else {
                             if (response.data.status === "Unauthorized Access!!") {
                                 navigate("/studentLogin")
@@ -115,7 +121,7 @@ const StudentViewTasks = () => {
 
     const readValue = (taskId) => {
         setTaskId(taskId)
-        console.log(taskId)
+        setShowModal(true)
     };
 
     useEffect(() => { getData(); }, []);
@@ -266,7 +272,7 @@ const StudentViewTasks = () => {
                                             </td>
                                             <td>
                                                 <div className="flex justify-end">
-                                                    <button onClick={() => readValue(task.taskId)} style={{marginLeft:"20px"}} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
+                                                    <button onClick={() => readValue(task.taskId)} style={{marginLeft:"20px"}} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Submit Task</button>
                                                 </div>
                                             </td>
                                         </>
@@ -275,8 +281,9 @@ const StudentViewTasks = () => {
                             })) : <p>No Tasks Found !!!!</p>}
                     </div>
                 </div>
-                <div className="flex justify-end">
-                    <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                {showModal && (
+                    <div className="flex justify-end">
+                    <div className="modal show d-block" tabIndex={-1}>
                         <div className="modal-dialog">
                             <div className="modal-content">
                                 <div className="modal-header">
@@ -298,13 +305,14 @@ const StudentViewTasks = () => {
                                     </form>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" className="btn btn-secondary" onClick={()=> setShowModal(false)}>Close</button>
                                     <button type="button" onClick={() => submitTask()} className="btn btn-primary">Submit</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                )}
             </section>
         </div>
     );
