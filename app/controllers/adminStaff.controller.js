@@ -487,8 +487,8 @@ exports.searchSubmittedTask = (request, response) => {
                 return response.json({ "status": "Search Item is required." });
             }
             AdminStaff.searchSubmittedTask(subTaskSearchQuery, (error, data) => {
-                if (err) {
-                    return response.json({ "status": err });
+                if (error) {
+                    return response.json({ "status": error });
                 } else {
                     if (data.length === 0) {
                         return response.json({ "status": "No Search Items Found." });
