@@ -162,7 +162,7 @@ const StudentViewTasks = () => {
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
-                                            <p className="text-gray-700 mb-2">
+                                            <p className="text-gray-700 mb-1">
                                                 <strong>Submitted Git Link:</strong> <span style={{fontSize:"14px"}}>{task.gitLink}</span>
                                             </p>
                                             <p className="text-gray-700 mb-2">
