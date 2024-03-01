@@ -319,7 +319,7 @@ AdminStaff.AdmViewAllMaterial = async (result) => {
             result(err, null);
             return;
         } else {
-            const formattedMaterials = res.map(materials => ({ ...materials, addedDate: materials.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })})); // Formats the date as 'YYYY-MM-DD'
+            const formattedMaterials = res.map(materials => ({ ...materials, addedDate: materials.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); // Formats the date as 'YYYY-MM-DD'
             console.log("Materials: ", formattedMaterials);
             result(null, formattedMaterials);
 
@@ -337,6 +337,21 @@ AdminStaff.viewOneMaterial = (materialId, result) => {
             }
             console.log("Material: ", res);
             result(null, res);
+        })
+}
+
+AdminStaff.searchSubmittedTask = (searchSubTask, result) => {
+    const searchString = '%' + searchSubTask + '%';
+    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, t.id, t.taskTitle, t.dueDate, st.id AS 'submitTaskId', st.gitLink, st.remarks, st.subDate, st.evalDate, st.lateSubDate, st.evaluatorRemarks, st.score FROM submit_task st JOIN task t ON st.taskId = t.id JOIN student s ON st.studId = s.id JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.validity > CURRENT_DATE() AND s.isVerified = 1 AND s.isActive = 1 AND s.emailVerified = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND st.isEvaluated = 0 AND (c.collegeName LIKE ? OR b.batchName LIKE ? OR t.taskTitle LIKE ?)",
+        [searchString, searchString, searchString],
+        (err, res) => {
+            if (err) {
+                console.log("Error: ", err);
+                result(err, null);
+            } else {
+                console.log("Submitted Task Details: ", res);
+                result(null, res);
+            }
         })
 }
 

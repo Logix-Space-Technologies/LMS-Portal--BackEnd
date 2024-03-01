@@ -475,3 +475,31 @@ exports.viewOneMaterial = (request, response) => {
     });
 };
 
+
+exports.searchSubmittedTask = (request, response) => {
+    const subTaskSearchQuery = request.body.subTaskSearchQuery;
+    const searchSubmittedTaskToken = request.headers.token;
+
+    jwt.verify(searchSubmittedTaskToken, "lmsappadmstaff", (error, decoded) => {
+        if (decoded) {
+            if (!subTaskSearchQuery) {
+                console.log("Search Item is required.");
+                return response.json({ "status": "Search Item is required." });
+            }
+            AdminStaff.searchSubmittedTask(subTaskSearchQuery, (error, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        return response.json({ "status": "No Search Items Found." });
+                    } else {
+                        return response.json({ "status": "Result Found", "data": data });
+                    }
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized access!!" })
+        }
+    })
+}
+

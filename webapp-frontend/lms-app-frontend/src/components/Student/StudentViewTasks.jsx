@@ -38,7 +38,11 @@ const StudentViewTasks = () => {
                         navigate("/studentLogin")
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status)
+                        if (response.data.status === "No tasks found!") {
+                            setStudViewTaskData([])
+                        } else {
+                            alert(response.data.status)
+                        }
                     }
                 }
             }
@@ -124,12 +128,12 @@ const StudentViewTasks = () => {
         <div>
             <StudNavBar />
             <br />
-            <h1 style={{marginLeft:"20px", marginBottom: "0px", textAlign:"center"}}>Student View Tasks</h1>
-            <section className="flex flex-col justify-center antialiased bg-gray-100 text-gray-600 min-h-screen p-4 pt-0 pb-0">
+            <h1 style={{ marginLeft: "20px", marginBottom: "0px", textAlign: "center" }}>Student View Tasks</h1>
+            <section className="flex flex-col justify-center items-center antialiased bg-gray-100 text-gray-600 min-vh-100 p-4 pt-0 pb-0">
                 <div className="h-full">
                     {/* Cards */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {studViewTaskData ? (studViewTaskData.map(
+                        {studViewTaskData && studViewTaskData.length > 0 ? (studViewTaskData.map(
                             (task, index) => {
                                 return <div className="bg-white shadow-lg rounded-md p-4" key={index}>
                                     {task.taskStatus === "Task Submitted" && task.evaluateStatus === "Evaluated" && (
@@ -234,7 +238,7 @@ const StudentViewTasks = () => {
 
                                             </td>
                                             <td>
-                                                <button onClick={() => { updateSubTask(task.submitTaskId) }} className="btn btn-primary" style={{marginLeft:"30px"}}>Update</button>
+                                                <button onClick={() => { updateSubTask(task.submitTaskId) }} className="btn btn-primary" style={{ marginLeft: "30px" }}>Update</button>
                                             </td>
                                         </>
                                     )}
@@ -266,46 +270,50 @@ const StudentViewTasks = () => {
                                             </td>
                                             <td>
                                                 <div className="flex justify-end">
-                                                    <button onClick={() => readValue(task.taskId)} style={{marginLeft:"20px"}} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
+                                                    <button onClick={() => readValue(task.taskId)} style={{ marginLeft: "20px" }} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
                                                 </div>
                                             </td>
                                         </>
                                     )}
                                 </div>
-                            })) : <p>No Tasks Found !!!!</p>}
+                            })) : (
+                            <div className="flex justify-center items-center w-full h-full">
+                                <p className="text-xl text-gray-800">No Tasks Found !!!!</p>
+                            </div>
+                        )}
                     </div>
                 </div>
-                <div className="flex justify-end">
-                    <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h1 className="modal-title fs-5" id="exampleModalLabel">Submit Task</h1>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                                </div>
-                                <div className="modal-body">
-                                    <form>
-                                        <div className="mb-3">
-                                            <label htmlFor="recipient-name" className="col-form-label">GitHub Link:</label>
-                                            <input type="text" name="gitLink" className="form-control" value={inputField.gitLink} onChange={inputHandler} />
-                                            {errors.gitLink && <span style={{ color: 'red' }} className="error">{errors.gitLink}</span>}
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="message-text" className="col-form-label">Remarks:</label>
-                                            <textarea name="remarks" className="form-control" value={inputField.remarks} onChange={inputHandler} />
-                                            {errors.remarks && <span style={{ color: 'red' }} className="error">{errors.remarks}</span>}
-                                        </div>
-                                    </form>
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" onClick={() => submitTask()} className="btn btn-primary">Submit</button>
-                                </div>
+            </section>
+            <div className="flex justify-end">
+                <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel">Submit Task</h1>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                            </div>
+                            <div className="modal-body">
+                                <form>
+                                    <div className="mb-3">
+                                        <label htmlFor="recipient-name" className="col-form-label">GitHub Link:</label>
+                                        <input type="text" name="gitLink" className="form-control" value={inputField.gitLink} onChange={inputHandler} />
+                                        {errors.gitLink && <span style={{ color: 'red' }} className="error">{errors.gitLink}</span>}
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="message-text" className="col-form-label">Remarks:</label>
+                                        <textarea name="remarks" className="form-control" value={inputField.remarks} onChange={inputHandler} />
+                                        {errors.remarks && <span style={{ color: 'red' }} className="error">{errors.remarks}</span>}
+                                    </div>
+                                </form>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" onClick={() => submitTask()} className="btn btn-primary">Submit</button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
         </div>
     );
 };

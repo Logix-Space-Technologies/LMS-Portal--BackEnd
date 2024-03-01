@@ -238,17 +238,17 @@ exports.studentTaskView = (request, response) => {
         if (decoded) {
             Tasks.studentTaskView(studId, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No tasks found!" });
+                        return response.json({ "status": "No tasks found!" });
                     } else {
-                        response.json({ "status": "success", "data": data });
+                        return response.json({ "status": "success", "data": data });
                     }
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     })
 }
