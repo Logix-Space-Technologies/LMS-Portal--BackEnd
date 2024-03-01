@@ -355,7 +355,7 @@ const AdminStaffUpdateMaterial = () => {
                                             </div>
                                             <br></br>
                                             <div class="mb-3">
-                                                <Link class="btn btn-danger" to="/AdminStaffViewAllMaterial">Back</Link>
+                                                <Link class="btn btn-danger" onClick={() => navigate(-1)}>Back</Link>
                                             </div>
                                         </ul>
                                     </div>
