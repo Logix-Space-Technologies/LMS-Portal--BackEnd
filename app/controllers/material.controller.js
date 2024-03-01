@@ -129,31 +129,37 @@ exports.createMaterial = (request, response) => {
 }
 
 
-exports.searchMaterial = (request, response) => {
-    const materialQuery = request.headers.materialQuery;
+exports.searchMaterial = async (request, response) => {
+    const materialQuery = request.body.materialQuery;
     const materialSearchToken = request.headers.token;
 
-    jwt.verify(materialSearchToken, "lmsappone", (err, decoded) => {
+    try {
+        const decoded = await jwt.verify(materialSearchToken, "lmsappadmstaff");
+
         if (!materialQuery) {
             return response.json({ "status": "Provide a search query" });
         }
+
         if (decoded) {
             Material.searchMaterial(materialQuery, (err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found" });
+                        return response.json({ "status": "No Search Items Found" });
                     } else {
-                        response.json({ "status": "success", "data": data });
+                        return response.json({ "status": "success", "data": data });
                     }
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
-    });
+    } catch (error) {
+        return response.json({ "status": "Error: " + error.message });
+    }
 };
+
 
 exports.updateMaterial = (request, response) => {
     const uploadSingle = upload.single('uploadFile')

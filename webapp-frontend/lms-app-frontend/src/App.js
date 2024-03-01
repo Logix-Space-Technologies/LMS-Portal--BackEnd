@@ -102,6 +102,8 @@ import StudentViewCommunityManager from './components/Student/StudentViewCommuni
 import CollegeStaffViewNotifications from './components/CollegeStaff/CollegeStaffViewNotifications';
 import CollegeStaffViewCollege from './components/CollegeStaff/CollegeStaffViewCollege';
 import AdminStaffSearchSubmittedTask from './components/AdminStaff/AdminStaffSearchSubmittedTask';
+import AdminStaffSearchMaterial from './components/AdminStaff/AdminStaffSearchMaterial';
+
 
 
 
@@ -186,6 +188,8 @@ function App() {
           <Route path='/adminstaffviewsubmittedtask' element={<AdminStaffViewSubmittedTask/>}/>
           <Route path='/adminStaffAddmaterials' element={<AdminStaffAddMaterials/>}/>
           <Route path='/adminStaffSearchSubmittedTask' element={<AdminStaffSearchSubmittedTask/>}/>
+          <Route path='/adminstaffsearchmaterial' element={<AdminStaffSearchMaterial/>}/>
+
           
 
 
