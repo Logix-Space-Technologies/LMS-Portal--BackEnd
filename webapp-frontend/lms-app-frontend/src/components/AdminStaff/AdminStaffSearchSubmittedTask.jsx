@@ -6,7 +6,7 @@ import axios from 'axios';
 const AdminStaffSearchSubmittedTask = () => {
 
     const [inputField, setInputField] = useState({
-        "taskQuery": ""
+        "subTaskSearchQuery": ""
     });
 
     const [subtasks, setSubTasks] = useState([]);
