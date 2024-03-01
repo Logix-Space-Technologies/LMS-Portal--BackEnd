@@ -227,14 +227,8 @@ const StudentViewTasks = () => {
                                                     <strong>Submission Date:</strong> {task.subDate}
                                                 </p>
                                             )}
-                                            <p className="text-gray-700 mb-2">
-                                                <p><strong>Submission Status: </strong>Submitted</p>
-                                            </p>
-                                            <p className="text-gray-700 mb-2">
-                                                <p><strong>Evaluation Status: </strong>Not Evaluated</p><br />
-                                            </p>
                                             <td>
-                                                <div className="flex justify-start pl-8" >
+                                                <div className="flex justify-start pt-24 pl-8" >
                                                     <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
