@@ -60,7 +60,7 @@ const StudentViewCollege = () => {
                                                     <br></br>
                                                 </div>
                                                 <ul className="list-unstyled mb-1-9">
-                                                    <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">College Name : {value.collegeName}</span></li>
+                                                    {/* <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">College Name : {value.collegeName}</span></li> */}
                                                     <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">College Code : {value.collegeCode}</span></li>
                                                     <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Address : {value.collegeAddress}</span></li>
                                                     <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Website : {value.website}</span></li>

@@ -26,7 +26,6 @@ const StudentUpdateSubmittedTask = () => {
 
     const getData = () => {
         let data = { id: sessionStorage.getItem('subtaskId') };
-        console.log(data);
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -53,7 +52,6 @@ const StudentUpdateSubmittedTask = () => {
     const updateSubmittedTask = (e) => {
         e.preventDefault();
         const validationErrors = validateForm(updateSubTaskField);
-        console.log(updateSubTaskField);
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -69,7 +67,6 @@ const StudentUpdateSubmittedTask = () => {
         };
         axios.post(apiUrl2, data, axiosConfig2).then((response) => {
             if (Object.keys(validationErrors).length === 0) {
-                console.log(response.data.status);
                 if (response.data.status === 'success') {
                     alert('Task Updated Successfully!!!');
                     navigate('/studentViewTask');

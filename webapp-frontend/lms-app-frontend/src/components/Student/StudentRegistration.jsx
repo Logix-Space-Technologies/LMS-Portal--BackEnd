@@ -95,14 +95,13 @@ const StudentRegistration = () => {
   const getData = () => {
     let axiosConfig = {
       headers: {
-        'content-type': 'multipart/form-data',
+        'content-type': 'application/json;charset=UTF-8',
         "Access-Control-Allow-Origin": "*"
       }
     };
     axios.post(apiUrl2, axiosConfig).then(
       (response) => {
         setOutputField(response.data.data)
-        console.log(response.data.data)
       }
     )
   }
@@ -112,38 +111,33 @@ const StudentRegistration = () => {
   const getBatches = (collegeId) => {
     let axiosConfig = {
       headers: {
-        'content-type': 'multipart/form-data',
+        'content-type': 'application/json;charset=UTF-8',
         "Access-Control-Allow-Origin": "*"
       }
     };
-    console.log(collegeId, axiosConfig)
-    axios.post(batchUrl, { collegeId }).then((response) => {
+    axios.post(batchUrl, { collegeId }, axiosConfig).then((response) => {
       setBatches(response.data);
-      console.log(response.data)
     });
   };
 
   const getBatchAmount = (batchId) => {
     let axiosConfig = {
       headers: {
-        'content-type': 'multipart/form-data',
+        'content-type': 'application/json;charset=UTF-8',
         "Access-Control-Allow-Origin": "*"
       }
     };
-    console.log(batchId, axiosConfig)
-    axios.post(batchAmountUrl, { batchId }).then(
+    axios.post(batchAmountUrl, { batchId }, axiosConfig).then(
       (response) => {
-        console.log(response.data)
         if (response.data.status === "success") {
           let currentAmount = response.data.data;
-          console.log(currentAmount)
           if (currentAmount !== batchAmount) {
             setAmount(currentAmount); // Update the state if needed
           }
           setbatchAmount(response.data.data)
-          console.log(response.data.data)
         } else {
-          console.log("Error in fetching batch amount.")
+          setAmount('')
+          setbatchAmount(0)
         }
       }
     )
@@ -159,7 +153,6 @@ const StudentRegistration = () => {
 
   const handleBatchChange = (e) => {
     const selectedBatchId = e.target.value;
-    console.log(selectedBatchId)
     setInputField(prevState => ({ ...prevState, batchId: selectedBatchId }));
     getBatchAmount(selectedBatchId)
   }
@@ -182,7 +175,6 @@ const StudentRegistration = () => {
     document.body.appendChild(script)
 
     script.onload = () => {
-      console.log(batchAmount)
       //initialize razorpay
       const rzp = new window.Razorpay({
         key: 'rzp_test_ZqcybzHd1QkWg8',
@@ -221,7 +213,6 @@ const StudentRegistration = () => {
               'content-type': 'multipart/form-data',
             }
           };
-          console.log(data)
           axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
               if (response.data.status === "success") {
@@ -292,7 +283,6 @@ const StudentRegistration = () => {
 
   const handleSubmit = () => {
     let data = { "studEmail": inputField.studEmail, "otp": updateField.otp };
-    console.log(data)
     let axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
@@ -382,8 +372,6 @@ const StudentRegistration = () => {
     }
 
     if (data.confirmpassword !== data.password) {
-      console.log(data.password)
-      console.log(data.confirmpassword)
       errors.confirmpassword = 'Passwords do not match';
     }
     return errors;

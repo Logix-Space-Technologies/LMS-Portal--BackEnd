@@ -3,6 +3,7 @@ import StudHeader from './StudHeader'
 import StudSideBar from './StudSideBar'
 import StudViewProfile from './StudViewProfile'
 import StudentFooter from './StudentFooter'
+import { Link } from 'react-router-dom'
 
 const StudDashboard = () => {
   return (
@@ -18,7 +19,7 @@ const StudDashboard = () => {
            <StudentFooter/>
         </div>
         {/* Back To Top */}
-        <a href="#" className="btn btn-lg btn-primary btn-lg-square back-to-top"><i className="bi bi-arrow-up" /></a>
+        <Link to="#" className="btn btn-lg btn-primary btn-lg-square back-to-top"><i className="bi bi-arrow-up" /></Link>
     </div>
   )
 }
