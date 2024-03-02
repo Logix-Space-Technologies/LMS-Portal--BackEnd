@@ -221,7 +221,7 @@ const StudentViewOneTask = () => {
                                                 </p>
                                             )}
                                             <td>
-                                                <div className="flex justify-start pl-8 pt-4" >
+                                                <div className="flex justify-start pl-8 pt-24" >
                                                     <Link target="_blank" rel='noreferrer' to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
@@ -235,21 +235,21 @@ const StudentViewOneTask = () => {
                                         <>
                                             <span className="text-red-500 font-semibold">[Assigned]</span>
                                             <h2 className="text-lg font-semibold mb-2">{task.taskTitle}</h2>
-                                            <p className="text-gray-500 mb-4">{task.taskDesc}</p>
-                                            <p className="text-gray-700 mb-3">
+                                            <p className="text-gray-500 mb-8">{task.taskDesc}</p>
+                                            <p className="text-gray-700 mb-8">
                                                 <strong>Task Type:</strong> {task.taskType}
                                             </p>
-                                            <p className="text-gray-700 mb-3">
+                                            <p className="text-gray-700 mb-8">
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
-                                            <p className="text-gray-700 mb-3">
+                                            <p className="text-gray-700 mb-4">
                                                 <strong>Due Date:</strong> {task.dueDate}
                                             </p>
-                                            <p className="text-gray-700 mb-6">
+                                            <p className="text-gray-700 mb-4">
 
                                             </p><br /><br />
                                             <td>
-                                                <div className="flex justify-start pl-4 pt-16" >
+                                                <div className="flex justify-start pl-4 pt-24" >
                                                     <Link target="_blank" rel='noreferrer' to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
