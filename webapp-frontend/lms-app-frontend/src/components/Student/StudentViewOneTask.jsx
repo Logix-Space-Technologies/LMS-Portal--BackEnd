@@ -129,6 +129,7 @@ const StudentViewOneTask = () => {
     const closeModal = () => {
         setShowModal(false);
         setShowOverlay(false);
+        setErrors({})
     };
 
     const readValue = (taskId) => {
