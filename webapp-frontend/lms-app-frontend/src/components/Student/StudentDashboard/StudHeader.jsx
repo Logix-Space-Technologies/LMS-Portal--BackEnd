@@ -69,7 +69,7 @@ const StudHeader = () => {
                         navigate("/studentLogin")
                     } else {
                         if (!response.data.data) {
-                            console.log(response.data.status)
+                            setSessionData([])
                         } else {
                             alert(response.data.status)
                         }

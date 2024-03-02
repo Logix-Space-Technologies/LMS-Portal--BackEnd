@@ -19,8 +19,6 @@ const StudentChangePassword = () => {
     };
 
     const readNewValue = () => {
-        console.log(updateField);
-
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -93,8 +91,8 @@ const StudentChangePassword = () => {
                                             <Link onClick={readNewValue} className="btn btn-warning">Update</Link>
                                         </div>
                                         <br></br>
-                                        <div class="mb-3">
-                                            <Link class="btn btn-danger" to="/studdashboard">Back</Link>
+                                        <div className="mb-3">
+                                            <Link className="btn btn-danger" to="/studdashboard">Back</Link>
                                         </div>
                                     </ul>
                                 </div>

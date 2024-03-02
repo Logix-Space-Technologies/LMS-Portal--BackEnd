@@ -196,7 +196,7 @@ const StudentUpdateProfile = () => {
                                             <input onChange={updateHandler} type="text" className="form-control" name="aadharNo" value={updateField.aadharNo} />
                                         </div>
                                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                            <label for="studProfilePic" className="form-label">
+                                            <label htmlFor="studProfilePic" className="form-label">
                                                 Profile Picture <span className="text-danger">*</span>
                                             </label>
                                             <input onChange={fileUploadHandler} type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" />
@@ -207,16 +207,9 @@ const StudentUpdateProfile = () => {
                                             <Link onClick={readNewValue} className="btn btn-warning">Update</Link>
                                         </div>
                                         <br></br>
-                                        <div class="mb-3">
-                                            <Link class="btn btn-danger" to="/studdashboard">Back</Link>
+                                        <div className="mb-3">
+                                            <Link className="btn btn-danger" to="/studdashboard">Back</Link>
                                         </div>
-                                    </ul>
-
-                                    <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                        <li><a href="#!"><i className="ti-twitter-alt" /></a></li>
-                                        <li><a href="#!"><i className="ti-facebook" /></a></li>
-                                        <li><a href="#!"><i className="ti-pinterest" /></a></li>
-                                        <li><a href="#!"><i className="ti-instagram" /></a></li>
                                     </ul>
                                 </div>
                             </div>
