@@ -133,6 +133,10 @@ const StudentViewTasks = () => {
         setShowModal(false);
         setShowOverlay(false);
         setErrors({})
+        setInputField({
+            "gitLink": "",
+            "remarks": ""
+        });
     };
 
 

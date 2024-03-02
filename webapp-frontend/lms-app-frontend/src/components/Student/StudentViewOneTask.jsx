@@ -130,6 +130,10 @@ const StudentViewOneTask = () => {
         setShowModal(false);
         setShowOverlay(false);
         setErrors({})
+        setInputField({
+            "gitLink": "",
+            "remarks": ""
+        });
     };
 
     const readValue = (taskId) => {
