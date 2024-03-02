@@ -181,7 +181,7 @@ const StudentRegistration = () => {
         amount: batchAmount * 100,
         name: 'Logix Space Technologies Pvt Ltd',
         description: 'Link Ur Codes Payment',
-        // image: <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" class="img-fluid" />,
+        // image: <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" className="img-fluid" />,
         image: 'https://www.linkurcodes.com/images/logo.png',
 
 
@@ -403,13 +403,13 @@ const StudentRegistration = () => {
               <div className="row">
                 <div className="col-12">
                   <div className="text-center mb-5">
-                    <a href="#!">
+                    <Link to="#!">
                       <img
                         src="https://www.linkurcodes.com/images/logo.png"
                         alt=""
                         width="175"
                         height="57" />
-                    </a>
+                    </Link>
                     <br />
                     <br />
                     <h3>Student Registration</h3>
@@ -595,10 +595,10 @@ const StudentRegistration = () => {
                   </div>
                   {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
                 </div>
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                  <div class="input-group">
-                    <input type="password" class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label for="password" className="form-label">Confirm Password <span className="text-danger">*</span></label>
+                  <div className="input-group">
+                    <input type="password" className="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
 
                   </div>
                   {errors.confirmpassword && <span style={{ color: 'red' }} className="error">{errors.confirmpassword}</span>}
