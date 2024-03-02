@@ -14,6 +14,8 @@ const StudentViewTasks = () => {
 
     let [taskId, setTaskId] = useState({})
     const navigate = useNavigate()
+    const [showModal, setShowModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studViewTask";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
@@ -72,6 +74,8 @@ const StudentViewTasks = () => {
         }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
+            setShowModal(true)
+            setShowOverlay(true);
             return;
         }
         let axiosConfig = {
@@ -93,16 +97,23 @@ const StudentViewTasks = () => {
             (response) => {
                 if (response.data.status === "success") {
                     alert("Task Submitted Successfully !!");
+                    getData()
                     setInputField({
                         "gitLink": "",
                         "remarks": ""
                     });
+                    setShowModal(false)
+                    setShowOverlay(false); // Close the overlay
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.gitLink) {
                         alert(response.data.data.gitLink);
+                        setShowModal(true)
+                        setShowOverlay(true);
                     } else {
                         if (response.data.status === "Validation failed" && response.data.data.remarks) {
                             alert(response.data.data.remarks);
+                            setShowModal(true)
+                            setShowOverlay(true);
                         } else {
                             if (response.data.status === "Unauthorized Access!!") {
                                 navigate("/studentLogin")
@@ -117,9 +128,18 @@ const StudentViewTasks = () => {
         );
     }
 
+    // Function to close both modal and overlay
+    const closeModal = () => {
+        setShowModal(false);
+        setShowOverlay(false);
+        setErrors({})
+    };
+
+
     const readValue = (taskId) => {
         setTaskId(taskId)
-        console.log(taskId)
+        setShowModal(true)
+        setShowOverlay(true);
     };
 
     // Convert a date string from 'DD/MM/YYYY' to a JavaScript Date object
@@ -163,7 +183,7 @@ const StudentViewTasks = () => {
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
                                             <p className="text-gray-700 mb-1">
-                                                <strong>Submitted Git Link:</strong> <span style={{fontSize:"14px"}}>{task.gitLink}</span>
+                                                <strong>Submitted Git Link:</strong> <span style={{ fontSize: "14px" }}>{task.gitLink}</span>
                                             </p>
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Score Obtained:</strong> {task.score}
@@ -212,7 +232,7 @@ const StudentViewTasks = () => {
                                                 <strong>Total Score:</strong> {task.totalScore}
                                             </p>
                                             <p className="text-gray-700 mb-2">
-                                                <strong>Submitted Git Link:</strong> <span style={{fontSize:"14px"}}>{task.gitLink}</span>
+                                                <strong>Submitted Git Link:</strong> <span style={{ fontSize: "14px" }}>{task.gitLink}</span>
                                             </p>
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Due Date:</strong> {task.dueDate}
@@ -268,7 +288,7 @@ const StudentViewTasks = () => {
                                             </td>
                                             <td>
                                                 <div className="flex justify-end">
-                                                    <button onClick={() => readValue(task.taskId)} style={{ marginLeft: "20px" }} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Submit Task</button>
+                                                    <button onClick={() => readValue(task.taskId)} style={{ marginLeft: "20px" }} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Submit Task</button>
                                                 </div>
                                             </td>
                                         </>
@@ -283,34 +303,56 @@ const StudentViewTasks = () => {
                 </div>
             </section>
             <div className="flex justify-end">
-                <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h1 className="modal-title fs-5" id="exampleModalLabel">Submit Task</h1>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                            </div>
-                            <div className="modal-body">
-                                <form>
-                                    <div className="mb-3">
-                                        <label htmlFor="recipient-name" className="col-form-label">GitHub Link:</label>
-                                        <input type="text" name="gitLink" className="form-control" value={inputField.gitLink} onChange={inputHandler} />
-                                        {errors.gitLink && <span style={{ color: 'red' }} className="error">{errors.gitLink}</span>}
-                                    </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="message-text" className="col-form-label">Remarks:</label>
-                                        <textarea name="remarks" className="form-control" value={inputField.remarks} onChange={inputHandler} />
-                                        {errors.remarks && <span style={{ color: 'red' }} className="error">{errors.remarks}</span>}
-                                    </div>
-                                </form>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" onClick={() => submitTask()} className="btn btn-primary">Submit</button>
+                {showModal && (
+                    <div className="modal show d-block" tabIndex={-1}>
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h1 className="modal-title fs-5" id="exampleModalLabel">Submit Task</h1>
+                                    <button type="button" className="btn-close" onClick={closeModal} />
+                                </div>
+                                <div className="modal-body">
+                                    <form>
+                                        <div className="mb-3">
+                                            <label htmlFor="recipient-name" className="col-form-label">GitHub Link:</label>
+                                            <input type="text" name="gitLink" className="form-control" value={inputField.gitLink} onChange={inputHandler} />
+                                            {errors.gitLink && <span style={{ color: 'red' }} className="error">{errors.gitLink}</span>}
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="message-text" className="col-form-label">Remarks:</label>
+                                            <textarea name="remarks" className="form-control" value={inputField.remarks} onChange={inputHandler} />
+                                            {errors.remarks && <span style={{ color: 'red' }} className="error">{errors.remarks}</span>}
+                                        </div>
+                                    </form>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
+                                    <button type="button" onClick={() => submitTask()} className="btn btn-primary">Submit</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
+            </div>
+            <div>
+                {showOverlay && (
+                    <div
+                        className="modal-backdrop fade show"
+                        onClick={() => {
+                            setShowModal(false);
+                            setShowOverlay(false);
+                        }}
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            zIndex: 1040, // Ensure this is below your modal's z-index
+                        }}
+                    ></div>
+                )}
             </div>
         </div>
     );
