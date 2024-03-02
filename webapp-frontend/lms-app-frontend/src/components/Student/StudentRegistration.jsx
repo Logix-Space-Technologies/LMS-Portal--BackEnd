@@ -596,7 +596,7 @@ const StudentRegistration = () => {
                   {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
                 </div>
                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="password" className="form-label">Confirm Password <span className="text-danger">*</span></label>
+                  <label htmlFor="password" className="form-label">Confirm Password <span className="text-danger">*</span></label>
                   <div className="input-group">
                     <input type="password" className="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
 
