@@ -34,7 +34,6 @@ const StudentViewTasks = () => {
             (response) => {
                 if (response.data.data) {
                     setStudViewTaskData(response.data.data);
-                    console.log(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
@@ -92,7 +91,6 @@ const StudentViewTasks = () => {
             "gitLink": inputField.gitLink,
             "remarks": inputField.remarks
         };
-        console.log(data2)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {

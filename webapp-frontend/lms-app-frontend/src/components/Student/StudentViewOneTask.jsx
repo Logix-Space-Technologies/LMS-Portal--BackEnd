@@ -21,7 +21,6 @@ const StudentViewOneTask = () => {
 
     const getData = () => {
         let data = { "id": sessionStorage.getItem("studentId"), "sessionId": sessionStorage.getItem("SessionId") };
-        console.log(data)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -30,12 +29,10 @@ const StudentViewOneTask = () => {
                 "key": sessionStorage.getItem("studentkey")
             }
         };
-        console.log(axiosConfig)
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
                     setStudViewTaskData(response.data.data);
-                    console.log(response.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
@@ -89,7 +86,6 @@ const StudentViewOneTask = () => {
             "gitLink": inputField.gitLink,
             "remarks": inputField.remarks
         };
-        console.log(data2)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {

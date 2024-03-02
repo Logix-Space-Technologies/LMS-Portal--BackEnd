@@ -35,7 +35,7 @@ const StudentViewRefundRequest = () => {
                         sessionStorage.clear()
                     } else {
                         if (response.data.status === "No refund requests found.") {
-                            console.log(response.data.status)
+                            setStudentViewRefundReqData([])
                         } else {
                             alert(response.data.status)
                         }

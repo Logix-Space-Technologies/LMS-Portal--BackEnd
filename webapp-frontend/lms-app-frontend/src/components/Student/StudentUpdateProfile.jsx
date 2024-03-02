@@ -61,7 +61,6 @@ const StudentUpdateProfile = () => {
         if (fileValidationMessage) {
             return;
         }
-        console.log(updateField)
         let axiosConfig = {
             headers: {
                 'content-type': 'multipart/form-data',
