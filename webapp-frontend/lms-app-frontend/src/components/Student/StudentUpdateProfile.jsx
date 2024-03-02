@@ -160,12 +160,12 @@ const StudentUpdateProfile = () => {
                                     </div>
                                     <ul className="list-unstyled mb-1-9">
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">College Name :   </label>
-                                            <input type="text" className="form-control" name="collegeName" value={studData.collegeName} disabled />
+                                            {/* <label htmlFor="" className="form-label">College Name :   </label> */}
+                                            <input type="hidden" className="form-control" name="collegeName" value={studData.collegeName} disabled />
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Batch ID : </label>
-                                            <input type="text" className="form-control" name="batchId" value={studData.batchId} disabled />
+                                            {/* <label htmlFor="" className="form-label">Batch ID : </label> */}
+                                            <input type="hidden" className="form-control" name="batchId" value={studData.batchId} disabled />
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label htmlFor="" className="form-label">Student Name :</label>

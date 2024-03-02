@@ -455,14 +455,14 @@ Student.StdChangePassword = (student, result) => {
 
 
 Student.viewStudentProfile = (studId, result) => {
-    db.query("SELECT c.collegeName, s.batchId, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.updatedDate, s.validity FROM student s LEFT JOIN college c ON s.collegeId = c.id WHERE s.deleteStatus=0 AND s.isActive=1 AND s.isVerified = 1 AND s.id = ?", [studId],
+    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.updatedDate, s.validity FROM student s LEFT JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus=0 AND s.isActive=1 AND s.isVerified = 1 AND s.id = ?", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
                 result(err, null)
                 return
             } else {
-                const formattedProfile = res.map(profile => ({ ...profile, addedDate: profile.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: profile.updatedDate ? profile.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, validity: profile.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                const formattedProfile = res.map(profile => ({ ...profile, addedDate: profile.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), updatedDate: profile.updatedDate ? profile.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null, validity: profile.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
                 console.log("Profile: ", formattedProfile);
                 result(null, formattedProfile)
                 return
@@ -931,7 +931,7 @@ Student.viewSession = (batchId, result) => {
                 result(err, null);
                 return;
             } else {
-                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
                 console.log("Session Details: ", formattedViewSession);
                 result(null, formattedViewSession);
             }
@@ -978,7 +978,7 @@ Payment.viewStudentTransactions = (studId, result) => {
                 result(err, null);
                 return;
             } else {
-                const formattedPayment = res.map(payment => ({ ...payment, paymentDate: payment.paymentDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); // Formats the date as 'YYYY-MM-DD'
+                const formattedPayment = res.map(payment => ({ ...payment, paymentDate: payment.paymentDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) })); // Formats the date as 'YYYY-MM-DD'
                 console.log("Payment Details: ", formattedPayment);
                 result(null, formattedPayment);
             }
