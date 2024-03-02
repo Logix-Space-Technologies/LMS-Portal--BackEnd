@@ -978,7 +978,7 @@ Payment.viewStudentTransactions = (studId, result) => {
                 result(err, null);
                 return;
             } else {
-                const formattedPayment = res.map(payment => ({ ...payment, paymentDate: payment.paymentDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) })); // Formats the date as 'YYYY-MM-DD'
+                const formattedPayment = res.map(payment => ({ ...payment, paymentDate: payment.paymentDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) })); // Formats the date as 'DD/MM/YYYY'
                 console.log("Payment Details: ", formattedPayment);
                 result(null, formattedPayment);
             }
@@ -994,7 +994,7 @@ Session.studViewNextSessionDate = (batchId, result) => {
                 return result(err, null)
             } else {
 
-                const formattedNextSession = res.map(nextsession => ({ ...nextsession, date: nextsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                const formattedNextSession = res.map(nextsession => ({ ...nextsession, date: nextsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
 
                 console.log("Next Session", formattedNextSession)
                 return result(null, formattedNextSession)
