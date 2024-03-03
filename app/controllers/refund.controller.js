@@ -16,19 +16,21 @@ exports.createRefundRequest = (request, response) => {
                 if (err) {
                     console.log(err);
                     if (err === "A refund request already exists for the student.") {
-                        response.json({ "status": "A refund request already exists for the student." });
+                        return response.json({ "status": "A refund request already exists for the student." });
                     } else if (err === "No payment history found for the student.") {
-                        response.json({ "status": "No payment history found for the student." });
+                        return response.json({ "status": "No payment history found for the student." });
+                    } else if (err === "A refund request was recently cancelled. Please wait for one week before creating a new request.") {
+                        return response.json({ "status": "A refund request was recently cancelled. Please wait for one week before creating a new request." });
                     } else {
-                        response.json({ "status": "Failed to create refund request." });
+                        return response.json({ "status": "Failed to create refund request." });
                     }
                 } else {
                     console.log("Refund request successfully created");
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
