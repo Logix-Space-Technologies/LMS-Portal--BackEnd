@@ -238,7 +238,7 @@ const AdminStaffSearchSubmittedTask = () => {
                                         )}
                                         <td>{task.totalScore}</td>
                                         <td>
-                                            <button onClick={() => readValue(task.submitTaskId)} type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Evaluate Task</button>
+                                            <button onClick={() => readValue(task.submitTaskId)} type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" disabled={task.evalDate !== null}>Evaluate Task</button>
                                         </td>
                                     </tr>
                                 })}
