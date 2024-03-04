@@ -356,4 +356,59 @@ AdminStaff.searchSubmittedTask = (searchSubTask, result) => {
         })
 }
 
+AdminStaff.forgotPassGenerateAndHashOTP = (Email, result) => {
+    // Generate a 6-digit numeric OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const saltRounds = 10;
+    const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
+
+    db.query(
+        "SELECT * FROM adminstaff_otp WHERE Email = ?",
+        [Email],
+        (err, res) => {
+            if (err) {
+                console.error("Error while checking OTP existence: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    // Email exists, so update the OTP
+                    const updateQuery = "UPDATE adminstaff_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                    db.query(
+                        updateQuery,
+                        [hashedOTP, Email],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while updating OTP: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("OTP updated successfully");
+                                result(null, otp); // Return the plain OTP for email sending
+                            }
+                        }
+                    );
+                } else {
+                    // Email does not exist, insert new OTP
+                    const insertQuery = "INSERT INTO adminstaff_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+                    db.query(
+                        insertQuery,
+                        [email, hashedOTP],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while inserting OTP: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("OTP inserted successfully");
+                                result(null, otp); // Return the plain OTP for email sending
+                            }
+                        }
+                    );
+                }
+            }
+        }
+    );
+}
+
+
+
 module.exports = AdminStaff
