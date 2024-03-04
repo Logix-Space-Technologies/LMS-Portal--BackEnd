@@ -1226,7 +1226,7 @@ Student.viewCommunityMangers = (batchId, result) => {
                 console.log("No community managers found.");
                 return result("No community managers found.", null);
             }
-            const formattedCommunityManagers = res.map(managers => ({ ...managers, addedDate: managers.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), validity: managers.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }));
+            const formattedCommunityManagers = res.map(managers => ({ ...managers, addedDate: managers.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), validity: managers.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
             console.log("Community Managers: ", formattedCommunityManagers);
             result(null, formattedCommunityManagers);
         }

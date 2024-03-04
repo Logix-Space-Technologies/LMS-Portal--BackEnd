@@ -6,10 +6,23 @@ import axios from 'axios';
 const AdminStaffSearchSubmittedTask = () => {
 
     const [inputField, setInputField] = useState({
-        "taskQuery": ""
+        "subTaskSearchQuery": ""
     });
 
+    const [outputField, setOutputField] = useState({
+        "adminstaffId": "",
+        "evaluatorRemarks": "",
+        "score": ""
+    });
+
+    const outputHandler = (event) => {
+        setErrors({}); // Clear previous errors
+        setOutputField({ ...outputField, [event.target.name]: event.target.value });
+    };
+
     const [subtasks, setSubTasks] = useState([]);
+    const [errors, setErrors] = useState({});
+    let [submittedTaskId, setSubmittedTaskId] = useState("")
     const [searchExecuted, setSearchExecuted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
@@ -17,11 +30,11 @@ const AdminStaffSearchSubmittedTask = () => {
     const [subtasksPerPage] = useState(10); // Number of tasks per page
 
     const apiUrl = global.config.urls.api.server + '/api/lms/admstaffsearchsubtask'
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/evaluateTask"
 
     const inputHandler = (event) => {
-        const { name, value } = event.target;
-        setInputField({ ...inputField, [name]: value });
-    };
+    setInputField({ ...inputField, [event.target.name]: event.target.value });
+};
 
     const searchSubmittedTasks = () => {
         setIsLoading(true);
@@ -35,8 +48,9 @@ const AdminStaffSearchSubmittedTask = () => {
         };
         axios.post(apiUrl, inputField, axiosConfig)
             .then(response => {
+                setInputField({ "subTaskSearchQuery": "" });
                 setSubTasks(response.data.data);
-                setInputField({ taskQuery: "" })
+                console.log(response.data.data)
                 setIsLoading(false);
                 setSearchExecuted(true);
             })
@@ -45,6 +59,75 @@ const AdminStaffSearchSubmittedTask = () => {
                 setIsLoading(false);
             });
     };
+
+    const evaluateTask = () => {
+        console.log(outputField)
+        let newErrors = {};
+        if (!outputField.evaluatorRemarks.trim()) {
+            newErrors.evaluatorRemarks = "Remarks required!";
+        }
+
+        if (!outputField.score.trim()) {
+            newErrors.score = "Score required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admstaffLogintoken"),
+                "key": sessionStorage.getItem("admstaffkey")
+            }
+        }
+        let data2 = {
+            "id": submittedTaskId,
+            "adminstaffId": sessionStorage.getItem("admstaffId"),
+            "evaluatorRemarks": outputField.evaluatorRemarks,
+            "score": outputField.score
+        }
+        axios.post(apiUrl2, data2, axiosConfig).then(
+            (response) => {
+                if (response.data.status === "Task evaluated successfully") {
+                    alert("Task evaluated successfully")
+                    searchSubmittedTasks()
+                    setOutputField({
+                        evaluatorRemarks: "",
+                        score: ""
+                    });
+                } else {
+                    if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
+                        alert(response.data.data.evaluatorRemarks);
+                        setOutputField({
+                            evaluatorRemarks: "",
+                            score: ""
+                        });
+                    } else {
+                        if (response.data.status === "Validation failed" && response.data.data.score) {
+                            alert(response.data.data.score);
+                            setOutputField({
+                                evaluatorRemarks: "",
+                                score: ""
+                            });
+                        } else {
+                            if (response.data.status === "Unauthorized access!!") {
+                                navigate("/admstafflogin")
+                                sessionStorage.clear()
+                            } else {
+                                alert(response.data.status);
+                                setOutputField({
+                                    evaluatorRemarks: "",
+                                    score: ""
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        )
+    }
 
     const indexOfLastTask = currentPage * subtasksPerPage;
     const indexOfFirstTask = indexOfLastTask - subtasksPerPage;
@@ -56,6 +139,10 @@ const AdminStaffSearchSubmittedTask = () => {
         return ((currentPage - 1) * subtasksPerPage) + index + 1;
     }
 
+    const readValue = (id) => {
+        setSubmittedTaskId(id)
+        console.log(id)
+    }
 
     return (
         <div>
@@ -97,6 +184,10 @@ const AdminStaffSearchSubmittedTask = () => {
                                     <th>Git Link</th>
                                     <th>Remarks</th>
                                     <th>Submitted Date</th>
+                                    <th>Evaluated Date</th>
+                                    <th>Evaluator Remarks</th>
+                                    <th>Score</th>
+                                    <th>Total Score</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -111,12 +202,43 @@ const AdminStaffSearchSubmittedTask = () => {
                                         <td>{task.taskTitle}</td>
                                         <td>{task.dueDate}</td>
                                         <td>
-                                            <Link target="_blank" to={task.gitLink} className="btn bg-blue-500 text-white btn-sm me-2">Submission</Link>
+                                            <Link target="_blank" to={task.gitLink} className="btn bg-blue-500 text-white btn-sm me-2">Link</Link>
                                         </td>
                                         <td>{task.remarks}</td>
                                         <td>{task.subDate}</td>
+                                        {task.evalDate !== null && (
+                                            <td>
+                                                {task.evalDate}
+                                            </td>
+                                        )}
+                                        {task.evalDate === null && (
+                                            <td>
+                                                NIL
+                                            </td>
+                                        )}
+                                        {task.evaluatorRemarks !== null && (
+                                            <td>
+                                                {task.evaluatorRemarks}
+                                            </td>
+                                        )}
+                                        {task.evaluatorRemarks === null && (
+                                            <td>
+                                                NIL
+                                            </td>
+                                        )}
+                                        {task.score !== null && (
+                                            <td>
+                                                {task.score}
+                                            </td>
+                                        )}
+                                        {task.score === null && (
+                                            <td>
+                                                NIL
+                                            </td>
+                                        )}
+                                        <td>{task.totalScore}</td>
                                         <td>
-                                            <button className="btn btn-primary btn-sm me-2">Evaluate Task</button>
+                                            <button onClick={() => readValue(task.submitTaskId)} type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Evaluate Task</button>
                                         </td>
                                     </tr>
                                 })}
@@ -152,6 +274,40 @@ const AdminStaffSearchSubmittedTask = () => {
                     </nav>
                 </div>
             )}
+            <div>
+                <div className="flex justify-end">
+                    <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h1 className="modal-title fs-5" id="exampleModalLabel">Evaluate Task</h1>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                                </div>
+                                <div className="modal-body">
+                                    <form>
+                                        <div className="mb-3">
+                                            <label htmlFor="recipient-name" className="col-form-label">Score:</label>
+                                            <input type="text" name="score" className="form-control" value={outputField.score} onChange={outputHandler} />
+                                            {errors.score && <span style={{ color: 'red' }} className="error">{errors.score}</span>}
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="message-text" className="col-form-label">Evaluator Remarks:</label>
+                                            <textarea name="evaluatorRemarks" className="form-control" value={outputField.evaluatorRemarks} onChange={outputHandler} />
+                                            {errors.evaluatorRemarks && <span style={{ color: 'red' }} className="error">{errors.evaluatorRemarks}</span>}
+                                        </div>
+                                    </form>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button onClick={() => evaluateTask()} type="button" className="btn btn-primary">
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
