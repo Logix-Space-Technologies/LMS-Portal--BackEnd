@@ -293,6 +293,8 @@ router.post('/admstaffotpsend', AdminStaffController.forgotPassword)
 
 router.post('/admstaffotpverification', AdminStaffController.verifyOtp)
 
+router.post('/studentotpsend', StudentController.forgotStudpassword)
 
+router.post('/studentotpverification', StudentController.verifyStudOtp)
 
 module.exports = router

@@ -1330,3 +1330,62 @@ exports.studentvalidityrenewal = (request, response) => {
         }
     })
 }
+
+exports.forgotStudpassword = (request, response) => {
+    const email = request.body.studEmail
+    // Generate and hash OTP
+    Student.forgotPassGenerateAndHashOTP(email, (err, otp) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            let studentotp = otp
+            Student.searchstudentbyemail(email, (err, data) => {
+                let studName = data
+                // Send OTP to email
+                const mailSent = sendOTPEmail(email, studName, otp);
+                if (mailSent) {
+                    return response.json({ "status": "OTP sent to email." });
+                } else {
+                    return response.json({ "status": "Failed to send OTP." });
+                }
+            })
+        }
+    });
+}
+
+// Function to send OTP
+function sendOTPEmail(email, studName, otp) {
+    const otpVerificationHTMLContent = mailContents.StudentOTPVerificationHTMLContent(studName, otp);
+    const otpVerificationTextContent = mailContents.StudentOTPVerificationTextContent(studName, otp);
+    mail.sendEmail(email, 'OTP Verification For Student', otpVerificationHTMLContent, otpVerificationTextContent)
+    return true; // Placeholder
+}
+
+// Function to verify OTP and update password
+exports.verifyStudOtp = (req, res) => {
+    // Extract email and OTP from request body
+    const email = req.body.studEmail;
+    const otp = req.body.otp;
+
+    // Input validation (basic example)
+    if (!email || !otp) {
+        return res.json({ "status": "Email and OTP are required" });
+    }
+
+    // Call the model function to verify the OTP
+    Student.verifyStudOTP(email, otp, (err, result) => {
+        if (err) {
+            // If there was an error or the OTP is not valid/expired
+            return res.json({ "status": err });
+        } else {
+            if (result) {
+                // If the OTP is verified successfully
+                return res.json({ "status": "OTP verified successfully" });
+            } else {
+                // If the OTP does not match
+                return res.json({ "status": "Invalid OTP" });
+            }
+        }
+    });
+};
+

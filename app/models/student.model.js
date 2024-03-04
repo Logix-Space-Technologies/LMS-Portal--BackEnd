@@ -1274,5 +1274,115 @@ Student.PaymentRenewal = (newStudent, result) => {
 }
 
 
+Student.forgotPassGenerateAndHashOTP = (studEmail, result) => {
+    // Generate a 6-digit numeric OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const saltRounds = 10;
+    const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
+
+    db.query(
+        "SELECT * FROM student_otp WHERE email = ?",
+        [studEmail],
+        (err, res) => {
+            if (err) {
+                console.error("Error while checking OTP existence: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    // Email exists, so update the OTP
+                    const updateQuery = "UPDATE student_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                    db.query(
+                        updateQuery,
+                        [hashedOTP, studEmail],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while updating OTP: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("OTP updated successfully");
+                                result(null, otp); // Return the plain OTP for email sending
+                            }
+                        }
+                    );
+                } else {
+                    // Email does not exist, insert new OTP
+                    const insertQuery = "INSERT INTO student_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+                    db.query(
+                        insertQuery,
+                        [studEmail, hashedOTP],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while inserting OTP: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("OTP inserted successfully");
+                                result(null, otp); // Return the plain OTP for email sending
+                            }
+                        }
+                    );
+                }
+            }
+        }
+    );
+}
+
+Student.searchstudentbyemail = (searchKey, result) => {
+    db.query(
+        "SELECT studName FROM student WHERE studEmail= ?",
+        [searchKey],
+        (err, res) => {
+            if (err) {
+                console.error("Error while searching student: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    // Directly access the collegeStaffName of the first result
+                    let name = res[0].studName; 
+                    result(null, name); 
+                } else {
+                    // Handle case where no results are found
+                    console.log("No student found with the given email.");
+                    result(null, []);
+                }
+                return;
+            }
+        }
+    );
+}
+
+
+Student.verifyStudOTP = (studEmail, otp, result) => {
+    const query = "SELECT otp, createdAt FROM student_otp WHERE email = ?";
+    db.query(query, [studEmail], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            if (res.length > 0) {
+                const studentotp = res[0].otp;
+                const createdAt = res[0].createdAt;
+                // Check if OTP is expired
+                const expiryDuration = 10 * 60 * 1000; // 10 minute in milliseconds
+                const otpCreatedAt = new Date(createdAt).getTime();
+                const currentTime = new Date().getTime();
+                if (currentTime - otpCreatedAt > expiryDuration) {
+                    return result("OTP expired", null);
+                }
+
+                // If OTP not expired, proceed to compare
+                const isMatch = bcrypt.compareSync(otp, studentotp);
+                if (isMatch) {
+                    return result(null, true);
+                } else {
+                    return result(null, false);
+                }
+            } else {
+                return result("OTP not found or expired", null);
+            }
+        }
+    });
+}
+
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 
