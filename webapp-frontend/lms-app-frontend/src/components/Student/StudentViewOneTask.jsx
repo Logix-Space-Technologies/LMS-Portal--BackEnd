@@ -31,8 +31,6 @@ const StudentViewOneTask = () => {
         };
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-                console.log("Axios Function Test")
-                console.log(response)
                 if (response.data.data) {
                     setStudViewTaskData(response.data.data);
                 } else {
