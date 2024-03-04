@@ -289,4 +289,8 @@ router.post('/clgstaffotpsend', ClgStaffController.forgotPassword)
 
 router.post('/clgstaffotpverification', ClgStaffController.verifyOtp)
 
+router.post('/admstaffotpsend', AdminStaffController.forgotPassword)
+
+router.post('/admstaffotpverification', AdminStaffController.verifyOtp)
+
 module.exports = router

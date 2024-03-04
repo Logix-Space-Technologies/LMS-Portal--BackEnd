@@ -631,14 +631,96 @@ function ClgStaffOTPVerificationHTMLContent(clgStaffName, otp) {
     return content;
 }
 
-function ClgStaffOTPVerificationTextContent(otp) {
-    content = `Dear College Staff,
+function ClgStaffOTPVerificationTextContent(clgStaffName, otp) {
+    content = `Dear ${clgStaffName},
 
     You are one step away from completing your registration with Link Ur Codes.
     
     Please use the following One-Time Password to complete your registration:
     
     ${otp}
+    
+    This OTP is valid for the next 10 minutes. Enter this OTP in the required field on the web or mobile app to continue.
+    
+    If you did not initiate this request, please ignore this email or contact support.
+    
+    © Link Ur Codes`
+
+    return content;
+}
+
+
+
+function AdminStaffOTPVerificationHTMLContent(adminstaffName, admstaffotp) {
+    content = `<!DOCTYPE html>
+    <html>
+    <head>
+        <title>OTP Verification</title>
+        <style>
+            body {
+                background-color: #faf4f4;
+                color: #140101;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+            }
+            .container {
+                background-color: #ece9e9;
+                border-radius: 8px;
+                padding: 20px;
+                margin: 20px auto;
+                max-width: 600px;
+            }
+            .logo-header img {
+                max-width: 30%;
+                height: auto;
+            }
+            .content {
+                margin-top: 20px;
+                border: 2px solid #a3a0a0; /* Corrected: Removed stray '/' */
+                padding: 20px;
+            }
+            .footer {
+                margin-top: 30px;
+                font-size: smaller;
+                color: grey;
+            }
+        </style>
+    </head>
+    <body>
+    
+    <div class="container">
+        <div class="logo-header">
+            <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+        </div>
+        <div class="content">
+            <h2>Welcome to Link Ur Codes</h2>
+    
+            <p>Dear ${adminstaffName},</p>
+            <p>You are one step away from completing your registration with Link Ur Codes.</p>
+            <p>Please use the following One-Time Password to complete your registration:</p>
+            <p><strong>${admstaffotp}</strong></p>
+            <p>This OTP is valid for the next 10 minutes. Enter this OTP in the required field on the web app to continue.</p>
+        </div>
+        <div class="footer">
+        <p>If you need assistance, please contact our support team :  admin@linkurcodes.com </p>
+        </div>
+    </div>
+    
+    </body>
+    </html>
+    `
+    return content;
+}
+
+function AdminStaffOTPVerificationTextContent(adminstaffName, admstaffotp) {
+    content = `Dear ${adminstaffName},
+
+    You are one step away from completing your registration with Link Ur Codes.
+    
+    Please use the following One-Time Password to complete your registration:
+    
+    ${admstaffotp}
     
     This OTP is valid for the next 10 minutes. Enter this OTP in the required field on the web or mobile app to continue.
     
@@ -664,6 +746,8 @@ module.exports = {
     studRegOTPVerificationHTMLContent,
     studRegOTPVerificationTextContent,
     ClgStaffOTPVerificationHTMLContent,
-    ClgStaffOTPVerificationTextContent
+    ClgStaffOTPVerificationTextContent,
+    AdminStaffOTPVerificationHTMLContent,
+    AdminStaffOTPVerificationTextContent
 };
 

@@ -829,8 +829,8 @@ exports.forgotPassword = (request, response) => {
 // Function to send OTP
 function sendOTPEmail(email, clgStaffName, otp) {
   const otpVerificationHTMLContent = mailContents.ClgStaffOTPVerificationHTMLContent(clgStaffName, otp);
-  const otpVerificationTextContent = mailContents.studRegOTPVerificationTextContent(clgStaffName, otp);
-  mail.sendEmail(email, 'OTP Verification For Student Registration', otpVerificationHTMLContent, otpVerificationTextContent)
+  const otpVerificationTextContent = mailContents.ClgStaffOTPVerificationTextContent(clgStaffName, otp);
+  mail.sendEmail(email, 'OTP Verification For College Staff', otpVerificationHTMLContent, otpVerificationTextContent)
   return true; // Placeholder
 }
 
