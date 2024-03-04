@@ -801,3 +801,63 @@ exports.viewCollegeDetails = (request, response) => {
   })
 
 }
+
+
+// Function to handle forgot password request
+exports.forgotPassword = (request, response) => {
+  const email = request.body.email
+  // Generate and hash OTP
+  CollegeStaff.forgotPassGenerateAndHashOTP(email, (err, otp) => {
+    if (err) {
+      return response.json({ "status": err });
+    } else {
+      let clgstaffotp = otp
+      CollegeStaff.searchcollegestaffbyemail(email, (err, data) => {
+        let clgstaffName = data
+        // Send OTP to email
+        const mailSent = sendOTPEmail(email, clgstaffName, clgstaffotp);
+        if (mailSent) {
+          return response.json({ "status": "OTP sent to email." });
+        } else {
+          return response.json({ "status": "Failed to send OTP." });
+        }
+      })
+    }
+  });
+};
+
+// Function to send OTP
+function sendOTPEmail(email, clgStaffName, otp) {
+  const otpVerificationHTMLContent = mailContents.ClgStaffOTPVerificationHTMLContent(clgStaffName, otp);
+  const otpVerificationTextContent = mailContents.studRegOTPVerificationTextContent(clgStaffName, otp);
+  mail.sendEmail(email, 'OTP Verification For Student Registration', otpVerificationHTMLContent, otpVerificationTextContent)
+  return true; // Placeholder
+}
+
+// Function to verify OTP and update password
+exports.verifyOtp = (req, res) => {
+  // Extract email and OTP from request body
+  const email = req.body.email;
+  const otp = req.body.otp;
+
+  // Input validation (basic example)
+  if (!email || !otp) {
+    return res.json({ "status": "Email and OTP are required" });
+  }
+
+  // Call the model function to verify the OTP
+  CollegeStaff.verifyOTP(email, otp, (err, result) => {
+    if (err) {
+      // If there was an error or the OTP is not valid/expired
+      return res.json({ "status": err });
+    } else {
+      if (result) {
+        // If the OTP is verified successfully
+        return res.json({ "status": "OTP verified successfully" });
+      } else {
+        // If the OTP does not match
+        return res.json({ "status": "Invalid OTP" });
+      }
+    }
+  });
+};

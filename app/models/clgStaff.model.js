@@ -1,6 +1,7 @@
 const { response } = require("express")
 const db = require("../models/db")
 const bcrypt = require('bcrypt')
+const crypto = require("crypto")
 const { CollegeStaffLog, logCollegeStaff } = require("../models/collegeStaffLog.model")
 const College = require("./college.model")
 
@@ -163,7 +164,7 @@ CollegeStaff.getAll = async (result) => {
             console.log("College staff: ", response)
             result(null, response)
         }
-    })  
+    })
 }
 
 
@@ -440,7 +441,7 @@ CollegeStaff.viewSession = (batchId, result) => {
         })
 }
 
-CollegeStaff.viewCollegeDetails= (collegeStaffId, result) => {
+CollegeStaff.viewCollegeDetails = (collegeStaffId, result) => {
     db.query("SELECT c.id, c.collegeName,c.collegeCode, c.collegeAddress, c.website, c.email, c.collegePhNo, c.collegeMobileNumber, c.collegeImage, c.addedDate, c.updatedDate, c.emailVerified, c.updatedStatus FROM college c JOIN college_staff cs ON c.id = cs.collegeId WHERE cs.id = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1", collegeStaffId, (err, res) => {
         if (err) {
             console.log("Error : ", err);
@@ -452,5 +453,118 @@ CollegeStaff.viewCollegeDetails= (collegeStaffId, result) => {
         }
     });
 }
+
+
+
+CollegeStaff.forgotPassGenerateAndHashOTP = (email, result) => {
+    // Generate a 6-digit numeric OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const saltRounds = 10;
+    const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
+
+    db.query(
+        "SELECT * FROM collegestaff_otp WHERE email = ?",
+        [email],
+        (err, res) => {
+            if (err) {
+                console.error("Error while checking OTP existence: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    // Email exists, so update the OTP
+                    const updateQuery = "UPDATE collegestaff_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                    db.query(
+                        updateQuery,
+                        [hashedOTP, email],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while updating OTP: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("OTP updated successfully");
+                                result(null, otp); // Return the plain OTP for email sending
+                            }
+                        }
+                    );
+                } else {
+                    // Email does not exist, insert new OTP
+                    const insertQuery = "INSERT INTO collegestaff_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+                    db.query(
+                        insertQuery,
+                        [email, hashedOTP],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while inserting OTP: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("OTP inserted successfully");
+                                result(null, otp); // Return the plain OTP for email sending
+                            }
+                        }
+                    );
+                }
+            }
+        }
+    );
+}
+
+
+CollegeStaff.verifyOTP = (email, otp, result) => {
+    const query = "SELECT otp, createdAt FROM collegestaff_otp WHERE email = ?";
+    db.query(query, [email], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            if (res.length > 0) {
+                const clgstaffotp = res[0].otp;
+                const createdAt = res[0].createdAt;
+                // Check if OTP is expired
+                const expiryDuration = 10 * 60 * 1000; // 10 minute in milliseconds
+                const otpCreatedAt = new Date(createdAt).getTime();
+                const currentTime = new Date().getTime();
+                if (currentTime - otpCreatedAt > expiryDuration) {
+                    return result("OTP expired", null);
+                }
+
+                // If OTP not expired, proceed to compare
+                const isMatch = bcrypt.compareSync(otp, clgstaffotp);
+                if (isMatch) {
+                    return result(null, true);
+                } else {
+                    return result(null, false);
+                }
+            } else {
+                return result("OTP not found or expired", null);
+            }
+        }
+    });
+}
+
+CollegeStaff.searchcollegestaffbyemail = (searchKey, result) => {
+    db.query(
+        "SELECT collegeStaffName FROM college_staff WHERE email= ?",
+        [searchKey],
+        (err, res) => {
+            if (err) {
+                console.error("Error while searching student: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    // Directly access the collegeStaffName of the first result
+                    let name = res[0].collegeStaffName; 
+                    result(null, name); 
+                } else {
+                    // Handle case where no results are found
+                    console.log("No college staff found with the given email.");
+                    result(null, []);
+                }
+                return;
+            }
+        }
+    );
+}
+
 
 module.exports = CollegeStaff
