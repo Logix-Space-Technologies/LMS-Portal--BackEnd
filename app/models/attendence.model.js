@@ -93,9 +93,23 @@ Attendence.studentViewSessionWiseAttendance = (studentId, sessionId, result) => 
             return;
         }
         // Format the date for each session
-        const formattedAttendance = res.map(attendance => ({ ...attendance, date: attendance.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })})); // Formats the date as 'YYYY-MM-DD'
+        const formattedAttendance = res.map(attendance => ({ ...attendance, date: attendance.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })})); // Formats the date as 'YYYY-MM-DD'
         console.log("attendance:", formattedAttendance);
         result(null, formattedAttendance);
+    });
+};
+
+// College Staff View College Wise Attendance
+Attendence.collegestaffViewCollegeWiseAttendance = (collegeId, result) => {
+    db.query("SELECT b.batchname,sd.sessionName,s.studName,CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendance_status,sd.date FROM sessiondetails sd JOIN attendence a ON sd.id = a.sessionId JOIN batches b ON sd.batchId = b.id JOIN student s ON a.studId = s.id WHERE b.collegeId = ? AND sd.date <= CURDATE()", [collegeId], (err, res) => {
+        if (err) {
+            console.log("error:", err);
+            result(err, null);
+            return;
+        }
+        const formattedViewAttendance = res.map(attendance => ({ ...attendance, date: attendance.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })  }))
+        console.log("attendance:", formattedViewAttendance);
+        result(null, formattedViewAttendance);
     });
 };
 

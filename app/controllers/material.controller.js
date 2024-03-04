@@ -85,7 +85,7 @@ exports.createMaterial = (request, response) => {
                     }
                     if (Validator.isEmpty(materialType).isValid) {
                         validationErrors.materialType = Validator.isEmpty(materialType).message;
-                    }                    
+                    }
                     if (!Validator.isValidAddress(materialDesc).isValid) {
                         validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
                     }
@@ -129,31 +129,37 @@ exports.createMaterial = (request, response) => {
 }
 
 
-exports.searchMaterial = (request, response) => {
-    const materialQuery = request.headers.materialQuery;
+exports.searchMaterial = async (request, response) => {
+    const materialQuery = request.body.materialQuery;
     const materialSearchToken = request.headers.token;
 
-    jwt.verify(materialSearchToken, "lmsappone", (err, decoded) => {
+    try {
+        const decoded = await jwt.verify(materialSearchToken, "lmsappadmstaff");
+
         if (!materialQuery) {
             return response.json({ "status": "Provide a search query" });
         }
+
         if (decoded) {
             Material.searchMaterial(materialQuery, (err, data) => {
                 if (err) {
                     response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found" });
+                        return response.json({ "status": "No Search Items Found" });
                     } else {
-                        response.json({ "status": "success", "data": data });
+                        return response.json({ "status": "success", "data": data });
                     }
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
-    });
+    } catch (error) {
+        return response.json({ "status": "Error: " + error.message });
+    }
 };
+
 
 exports.updateMaterial = (request, response) => {
     const uploadSingle = upload.single('uploadFile')
@@ -205,7 +211,7 @@ exports.updateMaterial = (request, response) => {
                     }
                     if (Validator.isEmpty(materialType).isValid) {
                         validationErrors.materialType = Validator.isEmpty(materialType).message;
-                    }                    
+                    }
                     if (!Validator.isValidAddress(materialDesc).isValid) {
                         validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
                     }
@@ -236,7 +242,7 @@ exports.updateMaterial = (request, response) => {
                             if (err.kind === "not_found") {
                                 return response.json({ "status": "Material Details Not Found.." })
                             } else {
-                                response.json({ "status": err })
+                                return response.json({ "status": err })
                             }
 
                         } else {
@@ -248,7 +254,7 @@ exports.updateMaterial = (request, response) => {
 
 
                 } else {
-                    response.json({ "status": "Unauthorized Access!!!" })
+                    return response.json({ "status": "Unauthorized Access!!!" })
 
                 }
             })
@@ -283,3 +289,30 @@ exports.viewBatchMaterials = (request, response) => {
         }
     });
 };
+
+
+exports.deleteMaterial = (request, response) => {
+    const deleteToken = request.headers.token
+    const material = new Material({
+        'id': request.body.id
+    });
+
+    jwt.verify(deleteToken, "lmsappadmstaff", (err, decoded) => {
+        if (!decoded) {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+
+        Material.materialDelete(material, (err, data) => {
+            if (err) {
+                if (err.kind === "not_found") {
+                    console.log("Material not found");
+                    return response.json({ "status": "Material not found" });
+                } else {
+                    return response.json({ "status": err });
+                }
+            } else {
+                return response.json({ "status": "Material Deleted Successfully." });
+            }
+        })
+    })
+}

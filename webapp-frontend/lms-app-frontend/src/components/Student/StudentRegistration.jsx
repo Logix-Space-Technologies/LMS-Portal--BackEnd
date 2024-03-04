@@ -26,10 +26,23 @@ const StudentRegistration = () => {
 
   const [file, setFile] = useState(null)
 
+  const [showModal, setShowModal] = useState(false);
+
   const fileUploadHandler = (event) => {
     setErrors({})
     setFile(event.target.files[0])
   }
+
+  // Call this function to close the modal and navigate
+  const closeAndNavigate = () => {
+    setShowModal(false); // Set showModal state to false
+
+    // Remove any leftover classes or styles that might be interfering
+    document.body.classList.remove('modal-open');
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+
+    navigate("/studentLogin"); // Navigate after modal is closed and cleaned up
+  };
 
   let [batchAmount, setbatchAmount] = useState(0)
 
@@ -39,23 +52,56 @@ const StudentRegistration = () => {
 
   const [amount, setAmount] = useState('')
 
+  const [updateField, setUpdateField] = useState({
+    "otp": ""
+  })
+
+
   const apiUrl = global.config.urls.api.server + "/api/lms/studreg"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/studentregviewcollege"
   const batchUrl = global.config.urls.api.server + "/api/lms/studregviewbatch";
   const batchAmountUrl = global.config.urls.api.server + "/api/lms/studregviewbatchamount"
+  const sendOtpUrl = global.config.urls.api.server + "/api/lms/studregotpmailsend"
+  const verifyOtpUrl = global.config.urls.api.server + "/api/lms/studregotpverify"
 
+
+  const sendOtp = async (e) => {
+    let data = { "admNo": inputField.admNo, "collegeId": inputField.collegeId, "batchId": inputField.batchId, "rollNo": inputField.rollNo, "aadharNo": inputField.aadharNo, "studEmail": inputField.studEmail }
+    let axiosConfig = {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
+    e.preventDefault();
+    const validationErrors = validateForm(inputField);
+    if (Object.keys(validationErrors).length === 0) {
+      axios.post(sendOtpUrl, data, axiosConfig).then(
+        (response) => {
+          if (response.data.status === "OTP sent to email.") {
+            alert("OTP Send To Your Email")
+            setShowModal(true)
+          } else {
+            alert(response.data.status)
+          }
+        }
+      )
+    } else {
+      setErrors(validationErrors);
+      setShowModal(false)
+    }
+  }
 
   const getData = () => {
     let axiosConfig = {
       headers: {
-        'content-type': 'multipart/form-data',
+        'content-type': 'application/json;charset=UTF-8',
         "Access-Control-Allow-Origin": "*"
       }
     };
     axios.post(apiUrl2, axiosConfig).then(
       (response) => {
         setOutputField(response.data.data)
-        console.log(response.data.data)
       }
     )
   }
@@ -65,38 +111,33 @@ const StudentRegistration = () => {
   const getBatches = (collegeId) => {
     let axiosConfig = {
       headers: {
-        'content-type': 'multipart/form-data',
+        'content-type': 'application/json;charset=UTF-8',
         "Access-Control-Allow-Origin": "*"
       }
     };
-    console.log(collegeId, axiosConfig)
-    axios.post(batchUrl, { collegeId }).then((response) => {
+    axios.post(batchUrl, { collegeId }, axiosConfig).then((response) => {
       setBatches(response.data);
-      console.log(response.data)
     });
   };
 
   const getBatchAmount = (batchId) => {
     let axiosConfig = {
       headers: {
-        'content-type': 'multipart/form-data',
+        'content-type': 'application/json;charset=UTF-8',
         "Access-Control-Allow-Origin": "*"
       }
     };
-    console.log(batchId, axiosConfig)
-    axios.post(batchAmountUrl, { batchId }).then(
+    axios.post(batchAmountUrl, { batchId }, axiosConfig).then(
       (response) => {
-        console.log(response.data)
         if (response.data.status === "success") {
           let currentAmount = response.data.data;
-          console.log(currentAmount)
           if (currentAmount !== batchAmount) {
             setAmount(currentAmount); // Update the state if needed
           }
           setbatchAmount(response.data.data)
-          console.log(response.data.data)
         } else {
-          console.log("Error in fetching batch amount.")
+          setAmount('')
+          setbatchAmount(0)
         }
       }
     )
@@ -112,7 +153,6 @@ const StudentRegistration = () => {
 
   const handleBatchChange = (e) => {
     const selectedBatchId = e.target.value;
-    console.log(selectedBatchId)
     setInputField(prevState => ({ ...prevState, batchId: selectedBatchId }));
     getBatchAmount(selectedBatchId)
   }
@@ -123,6 +163,11 @@ const StudentRegistration = () => {
     setInputField({ ...inputField, [event.target.name]: event.target.value });
   };
 
+  const updateHandler = (event) => {
+    setErrors({})
+    setUpdateField({ ...updateField, [event.target.name]: event.target.value });
+  };
+
   const loadRazorpayScript = async () => {
     const script = document.createElement('script')
     script.src = "https://checkout.razorpay.com/v1/checkout.js"
@@ -130,14 +175,13 @@ const StudentRegistration = () => {
     document.body.appendChild(script)
 
     script.onload = () => {
-      console.log(batchAmount)
       //initialize razorpay
       const rzp = new window.Razorpay({
         key: 'rzp_test_ZqcybzHd1QkWg8',
         amount: batchAmount * 100,
         name: 'Logix Space Technologies Pvt Ltd',
         description: 'Link Ur Codes Payment',
-        // image: <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" class="img-fluid" />,
+        // image: <img src="https://www.linkurcodes.com/images/logo.png" alt="Company Logo" className="img-fluid" />,
         image: 'https://www.linkurcodes.com/images/logo.png',
 
 
@@ -169,12 +213,11 @@ const StudentRegistration = () => {
               'content-type': 'multipart/form-data',
             }
           };
-          console.log(data)
           axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
               if (response.data.status === "success") {
                 alert("User Registered Successfully !!!")
-                navigate("/studentLogin")
+                closeAndNavigate()
                 setInputField({ "collegeId": "", "batchId": "", "studName": "", "admNo": "", "rollNo": "", "studDept": "", "course": "", "studEmail": "", "studPhNo": "", "studProfilePic": "", "aadharNo": "", "password": "", "confirmpassword": "" })
               } else {
                 if (response.data.status === "Validation failed" && response.data.data.college) {
@@ -238,15 +281,35 @@ const StudentRegistration = () => {
   }
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validateForm(inputField);
-    if (Object.keys(validationErrors).length === 0) {
-      loadRazorpayScript();
-    } else {
-      setErrors(validationErrors);
-    }
+  const handleSubmit = () => {
+    let data = { "studEmail": inputField.studEmail, "otp": updateField.otp };
+    let axiosConfig = {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
+    axios.post(verifyOtpUrl, data, axiosConfig).then(
+      (response) => {
+        if (response.data.status === "OTP verified successfully") {
+          setShowModal(false)
+          loadRazorpayScript()
+          setUpdateField({ "otp": "" })
+        } else {
+          if (response.data.status === "Invalid OTP") {
+            alert("Invalid OTP")
+            setUpdateField({ "otp": "" })
+            setShowModal(true);
+          } else {
+            alert(response.data.status)
+            setUpdateField({ "otp": "" })
+            setShowModal(false); // Reset showModal state
+          }
+        }
+      }
+    )
   };
+
 
 
 
@@ -309,8 +372,6 @@ const StudentRegistration = () => {
     }
 
     if (data.confirmpassword !== data.password) {
-      console.log(data.password)
-      console.log(data.confirmpassword)
       errors.confirmpassword = 'Passwords do not match';
     }
     return errors;
@@ -323,6 +384,16 @@ const StudentRegistration = () => {
     setAmount(batchAmount || '');
   }, []);
 
+  // Place this useEffect hook in your component
+  useEffect(() => {
+    if (showModal) {
+      new window.bootstrap.Modal(document.getElementById('exampleModal')).show();
+    } else {
+      // Optionally close the modal if needed
+    }
+  }, [showModal]);
+
+
   return (
     <div className="bg-light py-3 py-md-5">
       <div className="container">
@@ -332,13 +403,13 @@ const StudentRegistration = () => {
               <div className="row">
                 <div className="col-12">
                   <div className="text-center mb-5">
-                    <a href="#!">
+                    <Link to="#!">
                       <img
                         src="https://www.linkurcodes.com/images/logo.png"
                         alt=""
                         width="175"
                         height="57" />
-                    </a>
+                    </Link>
                     <br />
                     <br />
                     <h3>Student Registration</h3>
@@ -524,24 +595,52 @@ const StudentRegistration = () => {
                   </div>
                   {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
                 </div>
-                <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                  <label for="password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                  <div class="input-group">
-                    <input type="password" class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
+                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                  <label htmlFor="password" className="form-label">Confirm Password <span className="text-danger">*</span></label>
+                  <div className="input-group">
+                    <input type="password" className="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
 
                   </div>
                   {errors.confirmpassword && <span style={{ color: 'red' }} className="error">{errors.confirmpassword}</span>}
                 </div>
                 <div className="col-12">
                   {amount === batchAmount && (
-                    <button
-                      type="submit"
-                      className="btn btn-primary w-100 py-3"
-                      onClick={handleSubmit}>
-                      Register
-                    </button>
+                    // <button
+                    //   type="submit"
+                    //   className="btn btn-primary w-100 py-3"
+                    //   onClick={sendOtp}>
+                    //   Register
+                    // </button>
+                    <button type="button" onClick={sendOtp} className="btn btn-primary">Register</button>
                   )}
                 </div>
+              </div>
+              <div>
+                {showModal && (
+                  <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog">
+                      <div className="modal-content">
+                        <div className="modal-header">
+                          <h1 className="modal-title fs-5" id="exampleModalLabel">Verify Email</h1>
+                          <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                        </div>
+                        <div className="modal-body">
+                          <>
+                            <div className="mb-3">
+                              <label htmlFor="message-text" className="col-form-label">OTP:</label>
+                              <input type="text" onChange={updateHandler} value={updateField.otp} name="otp" className="form-control" id="message-text" defaultValue={""} />
+                            </div>
+                          </>
+                        </div>
+                        <div className="modal-footer">
+                          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="button" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
               </div>
               <br />
               <div className="row gy-3 gy-md-4 overflow-hidden">

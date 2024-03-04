@@ -4,6 +4,7 @@ import '../../../config/config'
 import axios from 'axios'
 
 const AdminStaffHeader = () => {
+
     const [admStaffData, setAdmStaffData] = useState([])
 
     const apiUrl = global.config.urls.api.server + "/api/lms/profileViewByAdmStaff"
@@ -23,10 +24,12 @@ const AdminStaffHeader = () => {
                 if (response.data.data) {
                     setAdmStaffData(response.data.data)
                 } else {
-                    navigate("/admstafflogin")
-                    sessionStorage.removeItem("admstaffLogintoken")
-                    sessionStorage.removeItem("admstaffkey")
-                    sessionStorage.removeItem("admstaffId")
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
@@ -35,12 +38,16 @@ const AdminStaffHeader = () => {
     const navigate = useNavigate()
 
     const logOut = () => {
-        sessionStorage.removeItem("admstaffLogintoken")
-        sessionStorage.removeItem("admstaffkey")
-        sessionStorage.removeItem("admstaffId")
+        sessionStorage.clear()
+        navigate('/admstafflogin');
     }
 
+    const handleLogoutConfirm = () => {
+        logOut();
+    };
+
     useEffect(() => { getData() }, [])
+    
     return (
         <div>
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
@@ -57,12 +64,35 @@ const AdminStaffHeader = () => {
                         </Link>
                         <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                             <Link to="/AdminStaffChangePassword" className="dropdown-item">Change Password</Link>
-                            <Link to="/admstafflogin" onClick={logOut} className="dropdown-item">Log Out</Link>
+                            <Link to="/" className="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
+                                Log Out
+                            </Link>
                         </div>
 
                     </div>
                 </div>
             </nav>
+            <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="deleteConfirmationModalLabel">Logout Confirmation</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            Are you sure you want to Logout?
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                                Close
+                            </button>
+                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleLogoutConfirm}>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

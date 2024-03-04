@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import '../../config/config'
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import AdmStaffNavBar from './AdmStaffNavBar';
 
 
 const AdminStaffChangePassword = () => {
+
     const [updateField, setUpdateField] = useState({
         "Email": sessionStorage.getItem("Email"),
         "oldAdSfPassword": "",
@@ -14,8 +14,6 @@ const AdminStaffChangePassword = () => {
 
     const apiurl = global.config.urls.api.server + "/api/lms/adminStaffChangePassword";
     const navigate = useNavigate();
-
-
 
     const updateHandler = (event) => {
         setUpdateField({ ...updateField, [event.target.name]: event.target.value });
@@ -35,9 +33,7 @@ const AdminStaffChangePassword = () => {
                 if (response.data.status === "success") {
                     alert("Password Changed Successfully");
                     navigate("/admstafflogin");
-                    sessionStorage.removeItem("admstaffLogintoken")
-                    sessionStorage.removeItem("admstaffkey")
-                    sessionStorage.removeItem("Email")
+                    sessionStorage.clear()
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.oldAdSfPassword) {
                         alert(response.data.data.oldAdSfPassword);
@@ -45,14 +41,19 @@ const AdminStaffChangePassword = () => {
                         if (response.data.status === "Validation failed" && response.data.data.newAdSfPassword) {
                             alert(response.data.data.newAdSfPassword);
                         } else {
-                            alert(response.data.status)
+                            if (response.data.status === "Unauthorized User!!") {
+                                navigate("/admstafflogin")
+                                sessionStorage.clear()
+                            } else {
+                                alert(response.data.status)
+                            }
                         }
                     }
                 }
             }
-
         )
     }
+
     return (
         <div>
             <div className="container">

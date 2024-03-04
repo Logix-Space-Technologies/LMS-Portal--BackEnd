@@ -6,6 +6,7 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 import '../../config/config';
 
 const AdminViewAllClgStaff = () => {
+
   const [clgStaffData, setClgStaffData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [clgStaffPerPage] = useState(10); // Number of college staff per page
@@ -82,6 +83,11 @@ const AdminViewAllClgStaff = () => {
   // Change page
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
+  const calculateSerialNumber = (index) => {
+    return ((currentPage - 1) * clgStaffPerPage) + index + 1;
+}
+
+
   const updateClick = (id) => {
     let data = id;
     sessionStorage.setItem("clgStaffId", data);
@@ -123,10 +129,10 @@ const AdminViewAllClgStaff = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentClgStaff.map((value, index) => (
-                <tr key={index}>
+              {currentClgStaff.map((value, index) => {
+                return <tr key={index}>
                   <td><img className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3" src={value.profilePic} alt="" /></td>
-                  <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{calculateSerialNumber(index)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.collegeStaffName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.collegeName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.department}</td>
@@ -144,7 +150,7 @@ const AdminViewAllClgStaff = () => {
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onClick={() => updateClick(value.id)}>Update</button>
                   </td>
                 </tr>
-              ))}
+              })}
             </tbody>
           </table>
           {/* Pagination */}

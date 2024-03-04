@@ -54,16 +54,18 @@ const RefundRequestForm = () => {
                             reason: "",
                         }));
                     } else {
-
-                        if (response.data.status === "A refund request already exists for the student.") {
+                        if (response.data.status === "Unauthorized User!!") {
+                            navigate("/studentLogin")
+                            sessionStorage.clear()
+                        } else if (response.data.status === "A refund request already exists for the student.") {
                             alert("A refund request already exists for the student.");
                         } else if (response.data.status === "No payment history found for the student.") {
                             alert("No payment history found for the student.");
+                        } else if ("A refund request was recently cancelled. Please wait for one week before creating a new request.") {
+                            alert("A refund request was recently cancelled. Please wait for one week before creating a new request.")
+                            navigate(-1)
                         } else if (response.data.status === "Failed to create refund request.") {
                             alert("Failed to create refund request.");
-                        } else if (response.data.status === "Unauthorized User!!") {
-                            navigate("/studentLogin")
-                            sessionStorage.clear()
                         }
                         setInputField((prevInputField) => ({
                             ...prevInputField,

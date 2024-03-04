@@ -5,6 +5,7 @@ import axios from 'axios';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminSendNotification = () => {
+
     const initialNotificationData = {
         "collegeId": "",
         "batchId": "",
@@ -45,7 +46,6 @@ const AdminSendNotification = () => {
         axios.post(apiUrl2, {}, axiosConfig2).then(
             (response) => {
                 setOutputField(response.data.data)
-                console.log(response.data.data)
             }
         )
     }
@@ -66,10 +66,8 @@ const AdminSendNotification = () => {
                 "key": currentKey
             }
         };
-        console.log(collegeId)
         axios.post(batchUrl, { collegeId }, axiosConfig3).then((response) => {
             setBatches(response.data)
-            console.log(response.data)
         })
     }
 
@@ -180,66 +178,70 @@ const AdminSendNotification = () => {
     useEffect(() => { setKey(sessionStorage.getItem("admkey") || '') }, []);
 
     return (
-        <div style={styles.container}>
+        <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
-            <br />
-            <h2>Send Notification</h2>
-            <br />
-            <div style={styles.card}>
-                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                    <label htmlFor="collegeId" className="form-label">
-                        College Name <span className="text-danger">*</span>
-                    </label>
-                    <select
-                        name="collegeId"
-                        value={notificationData.collegeId}
-                        onChange={handleCollegeChange}
-                        id="collegeId"
-                        className="form-control">
-                        <option value="">Select</option>
-                        {outputField.map((value) => {
-                            return <option value={value.id}> {value.collegeName} </option>
-                        })}
-                    </select>
+            <div style={styles.container}>
+
+                <br />
+                <h2>Send Notification</h2>
+                <br />
+                <div style={styles.card}>
+                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <label htmlFor="collegeId" className="form-label">
+                            College Name <span className="text-danger">*</span>
+                        </label>
+                        <select
+                            name="collegeId"
+                            value={notificationData.collegeId}
+                            onChange={handleCollegeChange}
+                            id="collegeId"
+                            className="form-control">
+                            <option value="">Select</option>
+                            {outputField.map((value) => {
+                                return <option value={value.id}> {value.collegeName} </option>
+                            })}
+                        </select>
+                    </div>
+                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <label htmlFor="batchName" className="form-label">
+                            Batch Name <span className="text-danger">*</span>
+                        </label>
+                        <select
+                            name="batchId"
+                            id="batchId"
+                            className="form-control"
+                            value={notificationData.batchId}
+                            onChange={handleChange}>
+                            <option value="">Select</option>
+                            {batches.data && batches.data.map((value) => {
+                                return <option value={value.id}> {value.batchName} </option>;
+                            })}
+                        </select>
+                    </div>
+                    <div>
+                        <label style={styles.label}>Title:</label>
+                        <input
+                            type="text"
+                            name="title"
+                            value={notificationData.title}
+                            onChange={handleChange}
+                            style={styles.input}
+                        />
+                    </div>
+                    <div>
+                        <label style={styles.label}>Message:</label>
+                        <textarea
+                            name="message"
+                            value={notificationData.message}
+                            onChange={handleChange}
+                            style={styles.textarea}
+                        />
+                    </div>
+                    <button type="submit" onClick={handleSubmit} style={styles.button}>Send Notification</button>
                 </div>
-                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                    <label htmlFor="batchName" className="form-label">
-                        Batch Name <span className="text-danger">*</span>
-                    </label>
-                    <select
-                        name="batchId"
-                        id="batchId"
-                        className="form-control"
-                        value={notificationData.batchId}
-                        onChange={handleChange}>
-                        <option value="">Select</option>
-                        {batches.data && batches.data.map((value) => {
-                            return <option value={value.id}> {value.batchName} </option>;
-                        })}
-                    </select>
-                </div>
-                <div>
-                    <label style={styles.label}>Title:</label>
-                    <input
-                        type="text"
-                        name="title"
-                        value={notificationData.title}
-                        onChange={handleChange}
-                        style={styles.input}
-                    />
-                </div>
-                <div>
-                    <label style={styles.label}>Message:</label>
-                    <textarea
-                        name="message"
-                        value={notificationData.message}
-                        onChange={handleChange}
-                        style={styles.textarea}
-                    />
-                </div>
-                <button type="submit" onClick={handleSubmit} style={styles.button}>Send Notification</button>
             </div>
         </div>
+
     );
 };
 

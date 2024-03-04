@@ -42,7 +42,6 @@ const AdminSearchCollege = () => {
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        console.log(inputField)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -51,12 +50,10 @@ const AdminSearchCollege = () => {
                 "key": currentKey
             }
         }
-        console.log(currentKey)
         axios.post(apiUrl, inputField, axiosConfig).then(
             (response) => {
                 setUpdateField(response.data.data)
                 setIsLoading(false)
-                console.log(response.data)
                 setInputField(
                     {
                         "collegeSearchQuery": ""
@@ -80,8 +77,8 @@ const AdminSearchCollege = () => {
             (response) => {
                 if (response.data.status === "College deleted.") {
                     alert("College Deleted Successfully!!!")
-                    // Reload the page after deleting college
-                    window.location.reload();
+                    // Remove the deleted college from updateField state
+                    setUpdateField(updateField.filter(college => college.id !== deleteCollege));
                 } else {
                     alert(response.data.status)
                 }
@@ -91,7 +88,6 @@ const AdminSearchCollege = () => {
 
     const readValue2 = (id) => {
         setDeleteCollege(id)
-        console.log(id)
     };
 
     const UpdateClick = (id) => {
@@ -108,6 +104,11 @@ const AdminSearchCollege = () => {
 
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * studentsPerPage) + index + 1;
+    }
+
 
     // Total pages
     const pageNumbers = [];
@@ -150,8 +151,7 @@ const AdminSearchCollege = () => {
                     //start
                     <div>
                         <br />
-                        <strong>List of Colleges</strong>
-                        <br /><br />
+                        <br />
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                 {/* Table headers */}
@@ -173,9 +173,9 @@ const AdminSearchCollege = () => {
                                 <tbody>
                                     {/* Table rows */}
                                     {/* Table rows */}
-                                    {currentColleges.map((value, index) => (
-                                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td className="px-6 py-4">{index + 1}</td>
+                                    {currentColleges.map((value, index) => {
+                                        return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                            <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                             <td className="p-4 whitespace-nowrap">
                                                 <div className="flex items-center">
                                                     <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
@@ -204,7 +204,7 @@ const AdminSearchCollege = () => {
                                                 </td>
                                             )}
                                         </tr>
-                                    ))}
+                                    })}
 
                                 </tbody>
                             </table>

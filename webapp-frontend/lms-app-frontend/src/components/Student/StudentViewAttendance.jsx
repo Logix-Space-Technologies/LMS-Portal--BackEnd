@@ -14,20 +14,21 @@ const StudentViewAttendance = () => {
     )
 
     const [errors, setErrors] = useState({});
+    const [showModal, setShowModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const navigate = useNavigate()
 
     const attendanceHandler = (event) => {
         setErrors({}); // Clear previous errors
-        setInputField({...inputField, [event.target.name]: event.target.value})
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
     }
 
     const apiUrl = global.config.urls.api.server + '/api/lms/studentViewSessionWiseAttendance';
-    const apiUrl2 = global.config.urls.api.server + '/api/lms//studmarkattendance'
+    const apiUrl2 = global.config.urls.api.server + '/api/lms/studmarkattendance'
 
     const getData = () => {
         const data = { "studId": sessionStorage.getItem('studentId'), "sessionId": sessionStorage.getItem("SessionId") };
-        console.log(data)
         const axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -39,7 +40,6 @@ const StudentViewAttendance = () => {
         axios.post(apiUrl, data, axiosConfig).then((response) => {
             if (response.data.data) {
                 setStudentViewAttendance(response.data.data);
-                console.log(response.data);
             } else {
                 if (response.data.status === "Unauthorized User!!") {
                     navigate("/studentLogin")
@@ -58,6 +58,8 @@ const StudentViewAttendance = () => {
         }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
+            setShowModal(true)
+            setShowOverlay(true);
             return;
         }
 
@@ -79,23 +81,44 @@ const StudentViewAttendance = () => {
             (response) => {
                 if (response.data.status === "success") {
                     alert("Attendance Marked Successfully!!!")
-                    navigate("/studSessionView")
+                    getData()
                     setInputField({
                         "attendenceCode": "",
                         "studId": ""
                     })
+                    setShowModal(false)
+                    setShowOverlay(false); // Close the overlay
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status)
+                        if (response.data.status === "Invalid Attendance Code") {
+                            alert(response.data.status)
+                        } else {
+                            alert(response.data.status)
+                        }
                     }
                 }
             }
         )
     }
 
+
+    const openModal = () => {
+        setShowModal(true);
+        setShowOverlay(true);
+    }
+
+    // Function to close both modal and overlay
+    const closeModal = () => {
+        setShowModal(false);
+        setShowOverlay(false);
+        setErrors({})
+        setInputField({
+            "attendenceCode": ""
+        })
+    };
 
     useEffect(() => {
         getData();
@@ -132,25 +155,21 @@ const StudentViewAttendance = () => {
                             const isPresent = value.attendence_status.toLowerCase() === 'present';
                             const buttonClassName = isPresent ? 'bg-green-500/20 text-green-700' : 'bg-red-500/20 text-red-700';
 
-                            // Function to format the current date as dd/mm/yyyy
                             const getCurrentDateFormatted = () => {
                                 const currentDate = new Date();
                                 const day = String(currentDate.getDate()).padStart(2, '0');
-                                const month = String(currentDate.getMonth() + 1); // January is 0!
+                                const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // January is 0!
                                 const year = currentDate.getFullYear();
                                 return `${day}/${month}/${year}`;
                             };
 
+
                             const currentDate = getCurrentDateFormatted()
-                            console.log(currentDate)
-                            console.log(value.date)
                             // Check if session date matches current date
                             const isSessionCurrentDate = value.date === currentDate;
-                            console.log(isSessionCurrentDate)
 
-                            console.log('attendence_status:', value.attendence_status);
                             return (
-                                <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                                <tr key={index} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                                     <td className="px-6 py-4">
                                         {value.sessionName}
                                     </td>
@@ -164,7 +183,7 @@ const StudentViewAttendance = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         {isSessionCurrentDate && !isPresent && (
-                                            <Link type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                            <Link type="button" class="btn btn-primary" onClick={openModal}>
                                                 Mark Attendance
                                             </Link>
                                         )}
@@ -178,26 +197,50 @@ const StudentViewAttendance = () => {
             </div>
             <div>
                 {/* Modal */}
-                <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h1 className="modal-title fs-5" id="exampleModalLabel">Mark Attendance</h1>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                            </div>
-                            <div className="modal-body">
-                                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                    <label htmlFor="" className="form-label">Attendance Code</label>
-                                    <input type="text" className="form-control" onChange={attendanceHandler} name="attendenceCode" value={inputField.attendenceCode} />
-                                    {errors.attendenceCode && <span style={{ color: 'red' }} className="error">{errors.gitLink}</span>}
+                <div>
+                    {showModal && (
+                        <div className="modal show d-block" tabIndex={-1}>
+                            <div className="modal-dialog">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h1 className="modal-title fs-5" id="exampleModalLabel">Mark Attendance</h1>
+                                        <button type="button" className="btn-close" onClick={closeModal} />
+                                    </div>
+                                    <div className="modal-body">
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <label htmlFor="" className="form-label">Attendance Code</label>
+                                            <input type="text" className="form-control" onChange={attendanceHandler} name="attendenceCode" value={inputField.attendenceCode} />
+                                            {errors.attendenceCode && <span style={{ color: 'red' }} className="error">{errors.attendenceCode}</span>}
+                                        </div>
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
+                                        <button type="button" onClick={submitAttendance} className="btn btn-primary">Submit</button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" onClick={submitAttendance} className="btn btn-primary" data-bs-dismiss="modal">Submit</button>
-                            </div>
                         </div>
-                    </div>
+                    )}
+                </div>
+                <div>
+                    {showOverlay && (
+                        <div
+                            className="modal-backdrop fade show"
+                            onClick={() => {
+                                setShowModal(false);
+                                setShowOverlay(false);
+                            }}
+                            style={{
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                backgroundColor: 'rgba(0,0,0,0.5)',
+                                zIndex: 1040, // Ensure this is below your modal's z-index
+                            }}
+                        ></div>
+                    )}
                 </div>
             </div>
         </div>

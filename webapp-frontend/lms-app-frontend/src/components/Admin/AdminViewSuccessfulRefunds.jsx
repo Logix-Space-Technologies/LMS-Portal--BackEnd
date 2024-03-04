@@ -25,7 +25,6 @@ const AdminViewSuccessfulRefunds = () => {
                 if (response.data.data) {
                     setrefundSuccessData(response.data.data);
                     setIsLoading(false)
-                    console.log(response.data.data);
                 } else {
                     setIsLoading(false)
                 }
@@ -90,8 +89,8 @@ const AdminViewSuccessfulRefunds = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {refundSuccessData.map((value, index) => (
-                                                            <tr key={index}>
+                                                        {refundSuccessData.map((value, index) => {
+                                                            return <tr key={index}>
                                                                 <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                                     {value.membership_no}
                                                                 </td>
@@ -120,7 +119,7 @@ const AdminViewSuccessfulRefunds = () => {
                                                                     {value.transactionNo}
                                                                 </td>
                                                             </tr>
-                                                        ))}
+                                                        })}
                                                     </tbody>
                                                 </table>
                                             </div>

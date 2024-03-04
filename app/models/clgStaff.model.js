@@ -2,6 +2,7 @@ const { response } = require("express")
 const db = require("../models/db")
 const bcrypt = require('bcrypt')
 const { CollegeStaffLog, logCollegeStaff } = require("../models/collegeStaffLog.model")
+const College = require("./college.model")
 
 const CollegeStaff = function (collegestaff) {
     this.id = collegestaff.id
@@ -142,7 +143,7 @@ CollegeStaff.clgStaffDelete = (collegeStaffId, result) => {
                 return;
             }
 
-            logCollegeStaff(collegeStaffId.id, "Admin Staff Deleted");
+            logCollegeStaff(collegeStaffId.id, "College Staff Deleted");
 
             console.log("Delete college staff with id: ", { id: collegeStaffId.id });
             result(null, { id: collegeStaffId.id });
@@ -439,5 +440,17 @@ CollegeStaff.viewSession = (batchId, result) => {
         })
 }
 
+CollegeStaff.viewCollegeDetails= (collegeStaffId, result) => {
+    db.query("SELECT c.id, c.collegeName,c.collegeCode, c.collegeAddress, c.website, c.email, c.collegePhNo, c.collegeMobileNumber, c.collegeImage, c.addedDate, c.updatedDate, c.emailVerified, c.updatedStatus FROM college c JOIN college_staff cs ON c.id = cs.collegeId WHERE cs.id = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1", collegeStaffId, (err, res) => {
+        if (err) {
+            console.log("Error : ", err);
+            result(err, null);
+            return;
+        } else {
+            console.log("College Details : ", res);
+            result(null, res);
+        }
+    });
+}
 
 module.exports = CollegeStaff

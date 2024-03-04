@@ -1,31 +1,31 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import '../../config/config'
-import StudNavBar from './StudNavBar'
+import ClgStaffNavbar from './ClgStaffNavbar';
 import { useNavigate } from 'react-router-dom'
 
-const StudentViewCollege = () => {
+const CollegeStaffViewCollege = () => {
     const [collegeData, setCollegeData] = useState([])
     const navigate = useNavigate()
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/viewCollegeStudent"
+    const apiUrl = global.config.urls.api.server + "/api/lms/viewClgStaffCollege"
     const getData = () => {
-        let data = { "studId": sessionStorage.getItem("studentId") }
+        let collegeStaffId = { "collegeStaffId": sessionStorage.getItem("clgStaffId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("studLoginToken"),
-                "key": sessionStorage.getItem("studentkey")
+                "token": sessionStorage.getItem("clgstaffLogintoken"),
+                "key": sessionStorage.getItem("clgstaffkey")
             }
         }
-        axios.post(apiUrl, data, axiosConfig).then(
+        axios.post(apiUrl, collegeStaffId, axiosConfig).then(
             (response) => {
-                if (response.data.status === "College Found") {
+                if (response.data.status === "success") {
                     setCollegeData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/studentLogin")
+                        navigate("/clgStafflogin")
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status)
@@ -38,7 +38,7 @@ const StudentViewCollege = () => {
     useEffect(() => { getData() }, [])
     return (
         <div>
-            <StudNavBar />
+            <ClgStaffNavbar />
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
@@ -60,7 +60,7 @@ const StudentViewCollege = () => {
                                                     <br></br>
                                                 </div>
                                                 <ul className="list-unstyled mb-1-9">
-                                                    {/* <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">College Name : {value.collegeName}</span></li> */}
+                                                    <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">College Name : {value.collegeName}</span></li>
                                                     <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">College Code : {value.collegeCode}</span></li>
                                                     <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Address : {value.collegeAddress}</span></li>
                                                     <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Website : {value.website}</span></li>
@@ -86,4 +86,4 @@ const StudentViewCollege = () => {
     )
 }
 
-export default StudentViewCollege
+export default CollegeStaffViewCollege

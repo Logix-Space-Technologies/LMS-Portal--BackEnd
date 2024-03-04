@@ -6,6 +6,7 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 import '../../config/config';
 
 const AdminViewAllBatch = () => {
+
     const [batchData, setBatchData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [batchesPerPage] = useState(10); // Number of batches per page
@@ -37,7 +38,6 @@ const AdminViewAllBatch = () => {
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 setBatchData(response.data.data);
-                console.log(response.data);
             }
         );
     };
@@ -59,10 +59,9 @@ const AdminViewAllBatch = () => {
         };
         axios.post(apiUrl2, deletedata, axiosConfig2).then(
             (response) => {
-                console.log(deletedata);
                 if (response.data.status === "Batch Deleted.") {
                     alert("Batch Deleted Successfully!!");
-                    window.location.reload();
+                    getData()
                 } else {
                     alert(response.data.status);
                 }
@@ -95,6 +94,11 @@ const AdminViewAllBatch = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * batchesPerPage) + index + 1;
+    }
+
+
     useEffect(() => { getData() }, []);
 
     // Update key state when component mounts
@@ -126,7 +130,6 @@ const AdminViewAllBatch = () => {
                             <th scope="col" className="px-6 py-3">Reg End Date</th>
                             <th scope="col" className="px-6 py-3">Batch Description</th>
                             <th scope="col" className="px-6 py-3">Batch Amount</th>
-                            <th scope="col" className="px-6 py-3">Added Date</th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
@@ -138,16 +141,15 @@ const AdminViewAllBatch = () => {
                     </thead>
                     <tbody>
                         {/* Table rows */}
-                        {currentBatches.length > 0 ? currentBatches.map((value, index) => (
-                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td className="px-6 py-4">{index+1}</td>
+                        {currentBatches.length > 0 ? currentBatches.map((value, index) => {
+                            return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                 <td className="px-6 py-4">{value.collegeName}</td>
                                 <td className="px-6 py-4">{value.batchName}</td>
                                 <td className="px-6 py-4">{new Date(value.regStartDate).toLocaleDateString()}</td>
                                 <td className="px-6 py-4">{new Date(value.regEndDate).toLocaleDateString()}</td>
                                 <td className="px-6 py-4">{value.batchDesc}</td>
                                 <td className="px-6 py-4">{value.batchAmount}</td>
-                                <td className="px-6 py-4">{new Date(value.addedDate).toLocaleDateString()}</td>
                                 <td className="px-6 py-4">
                                     <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Sessions</Link>
                                 </td>
@@ -166,7 +168,7 @@ const AdminViewAllBatch = () => {
                                     </td>
                                 )}
                             </tr>
-                        )) : (
+                        }) : (
                             <tr>
                                 <td colSpan="13" className="px-6 py-4" style={{ textAlign: "center" }}>
                                     No Batches Found !!!

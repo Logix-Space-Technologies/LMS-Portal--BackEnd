@@ -6,6 +6,7 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 
 const AdminViewRefundRequests = () => {
+
   const [refundRequests, setRefundRequests] = useState([]);
   const [key, setKey] = useState('');
   const [errors, setErrors] = useState({});
@@ -120,12 +121,11 @@ const AdminViewRefundRequests = () => {
         "admStaffId": sessionStorage.getItem("admstaffId"),
         "adminRemarks": inputField.adminRemarks
       }
-      console.log(data2)
       axios.post(apiUrl2, data2, axiosConfig2).then(
         (response) => {
           if (response.data.status === "Refund Request Cancelled.") {
             alert("Refund Request Rejected")
-            window.location.reload()
+            getData()
             setInputField({
               adminRemarks: ""
             });
@@ -164,12 +164,11 @@ const AdminViewRefundRequests = () => {
         "transactionNo": approveField.transactionNo,
         "approvedAmnt": approveField.approvedAmnt
       }
-      console.log(data3)
       axios.post(apiUrl3, data3, axiosConfig3).then(
         (response) => {
           if (response.data.status === "success") {
             alert("Refund Request Approved Successfully")
-            window.location.reload()
+            getData()
             setApproveField({
               adminRemarks: "",
               refundAmnt: "",
@@ -199,7 +198,6 @@ const AdminViewRefundRequests = () => {
 
   const readValue = (id) => {
     setReject(id)
-    console.log(id)
   };
 
   // Logic for displaying current students
@@ -210,6 +208,10 @@ const AdminViewRefundRequests = () => {
 
   // Change page
   const paginate = pageNumber => setCurrentPage(pageNumber);
+
+  const calculateSerialNumber = (index) => {
+    return ((currentPage - 1) * studentsPerPage) + index + 1;
+  }
 
   // Total pages
   const pageNumbers = [];
@@ -222,7 +224,6 @@ const AdminViewRefundRequests = () => {
 
   const approveValue = (id) => {
     setApprove(id)
-    console.log(id)
   }
 
   // Update key state when component mounts
@@ -249,6 +250,9 @@ const AdminViewRefundRequests = () => {
                   <table className="w-full table-auto">
                     <thead>
                       <tr className="text-center bg-primary">
+                        <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                          S/L
+                        </th>
                         <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                           Student Name
                         </th>
@@ -289,6 +293,9 @@ const AdminViewRefundRequests = () => {
                     <tbody>
                       {refundRequests.length > 0 ? refundRequests.map((value, index) => {
                         return <tr key={index}>
+                          <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {calculateSerialNumber(index)}
+                          </td>
                           <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.studName}
                           </td>

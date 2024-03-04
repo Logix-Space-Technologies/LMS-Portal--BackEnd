@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import '../../config/config'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from './AdmStaffNavBar';
 
 const AdminStaffAddMaterials = () => {
@@ -16,6 +16,8 @@ const AdminStaffAddMaterials = () => {
     })
 
     const [file, setFile] = useState(null)
+
+    const navigate = useNavigate()
 
     const [fileType, setFileType] = useState("");
 
@@ -54,7 +56,16 @@ const AdminStaffAddMaterials = () => {
         };
         axios.post(apiUrl2, {}, axiosConfig).then(
             (response) => {
-                setOutputField(response.data.data)
+                if (response.data.data) {
+                    setOutputField(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             }
         )
     }
@@ -68,10 +79,17 @@ const AdminStaffAddMaterials = () => {
                 "key": sessionStorage.getItem("admstaffkey")
             }
         };
-        console.log(collegeId)
         axios.post(batchUrl, { collegeId }, axiosConfig2).then((response) => {
-            setBatches(response.data)
-            console.log(response.data)
+            if (response.data.data) {
+                setBatches(response.data)
+            } else {
+                if (response.data.status === "Unauthorized User!!") {
+                    navigate("/admstafflogin")
+                    sessionStorage.clear()
+                } else {
+                    alert(response.data.status)
+                }
+            }
         })
     }
 
@@ -89,7 +107,6 @@ const AdminStaffAddMaterials = () => {
     const readValue = (e) => {
         e.preventDefault();
         const validationErrors = validateForm(inputField);
-        console.log(validationErrors)
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig3 = {
                 headers: {
@@ -99,7 +116,6 @@ const AdminStaffAddMaterials = () => {
                     "key": sessionStorage.getItem("admstaffkey")
                 }
             }
-            console.log(axiosConfig3)
             let data = {
                 "batchId": inputField.batchId,
                 "fileName": inputField.fileName,
@@ -108,9 +124,7 @@ const AdminStaffAddMaterials = () => {
                 "materialType": inputField.materialType,
                 "uploadFile": file
             }
-            console.log(data)
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
-                console.log(response.data.status)
                 if (response.data.status === 'success') {
                     alert('Material Added Successfully !!');
                     setInputField({
@@ -122,7 +136,6 @@ const AdminStaffAddMaterials = () => {
                         materialType: '',
                         uploadFile: ''
                     })
-                    window.location.reload()
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.batchId) {
                         alert(response.data.data.batchId)
@@ -139,7 +152,12 @@ const AdminStaffAddMaterials = () => {
                                     if (response.data.status === "Validation failed" && response.data.data.materialType) {
                                         alert(response.data.data.materialType)
                                     } else {
-                                        alert(response.data.status)
+                                        if (response.data.status === "Unauthorized User!!") {
+                                            navigate("/admstafflogin")
+                                            sessionStorage.clear()
+                                        } else {
+                                            alert(response.data.status)
+                                        }
                                     }
                                 }
                             }
@@ -161,16 +179,19 @@ const AdminStaffAddMaterials = () => {
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
-                        console.log(error.response.data);
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
                     console.log(error.request);
-                } else {
+                    alert(error.request);
+                } else if (error.message) {
                     console.log('Error', error.message);
+                    alert('Error', error.message);
+                } else {
+                    alert(error.config);
+                    console.log(error.config);
                 }
-                console.log(error.config);
-            });
+            })
         } else {
             setErrors(validationErrors);
         }

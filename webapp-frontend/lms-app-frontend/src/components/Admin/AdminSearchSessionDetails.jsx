@@ -6,6 +6,7 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 import { Link, useNavigate } from 'react-router-dom';
 
 const AdminSearchSessionDetails = () => {
+
     const [inputField, setInputField] = useState({ "SessionSearchQuery": "" });
     const [updateField, setUpdateField] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -81,6 +82,10 @@ const AdminSearchSessionDetails = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * SessionPerPage) + index + 1;
+    }
+
     // Total pages
     const pageNumbers = [];
     if (updateField && updateField.length > 0) {
@@ -150,7 +155,7 @@ const AdminSearchSessionDetails = () => {
                                 <div>
                                     <strong>Session Details</strong>
                                     <br /><br />
-                                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                                    <div className="relative overflow-x shadow-md sm:rounded-lg">
                                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                             {/* Table headers */}
                                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -173,9 +178,9 @@ const AdminSearchSessionDetails = () => {
                                             </thead>
                                             <tbody>
                                                 {/* Table rows */}
-                                                {currentSession.map((value,index) => (
-                                                    <tr key={value.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                                        <td className="px-6 py-4">{index+1}</td>
+                                                {currentSession.map((value, index) => {
+                                                    return <tr key={value.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                        <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                                         <td className="px-6 py-4">{value.collegeName}</td>
                                                         <td className="px-6 py-4">{value.batchName}</td>
                                                         <td className="px-6 py-4">{value.sessionName}</td>
@@ -198,10 +203,10 @@ const AdminSearchSessionDetails = () => {
                                                             )}
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Update</button>
+                                                            <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Reschedule</button>
                                                         </td>
                                                     </tr>
-                                                ))}
+                                                })}
                                             </tbody>
                                         </table>
                                     </div>

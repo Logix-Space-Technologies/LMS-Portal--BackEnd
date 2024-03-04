@@ -276,7 +276,7 @@ Student.create = (newStudent, result) => {
 Student.searchStudentByCollege = (searchKey, collegeId, result) => {
     const searchTerm = '%' + searchKey + '%';
     db.query(
-        "SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.validity FROM student s JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.isPaid = 1 AND s.emailVerified = 1 AND s.collegeId = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND s.validity > CURRENT_DATE AND (s.studName LIKE ? OR s.rollNo LIKE ? OR s.studDept LIKE ? OR s.course LIKE ? OR s.admNo LIKE ? )",
+        "SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.validity FROM student s JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.isPaid = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.collegeId = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND s.validity > CURRENT_DATE AND (s.studName LIKE ? OR s.rollNo LIKE ? OR s.studDept LIKE ? OR s.course LIKE ? OR s.admNo LIKE ? )",
         [collegeId, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm],
         (err, res) => {
             if (err) {
@@ -373,14 +373,21 @@ Student.findByEmail = (Email, result) => {
 
 
 Tasks.studentTaskView = (studId, result) => {
-    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, sd.sessionName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, asf.AdStaffName AS 'evaluatorName', st.score, st.lateSubDate,st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id LEFT JOIN sessiondetails sd ON t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 ORDER BY t.addeddate DESC", [studId],
+    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, sd.sessionName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, asf.AdStaffName AS 'evaluatorName', st.score, st.lateSubDate, st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id LEFT JOIN sessiondetails sd ON t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND sd.date <= CURDATE() ORDER BY t.addeddate DESC", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
                 result(err, null)
                 return
             } else {
-                const formattedTasks = res.map(tasks => ({ ...tasks, dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), subDate: tasks.subDate ? tasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, lateSubDate: tasks.lateSubDate ? tasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
+                const formattedTasks = res.map(tasks => ({
+                    ...tasks,
+                    dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }),
+                    subDate: tasks.subDate ? tasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
+                    lateSubDate: tasks.lateSubDate ? tasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
+                    updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null
+                }));
+                // Formats the date as 'YYYY-MM-DD'
                 console.log("Tasks: ", formattedTasks);
                 result(null, formattedTasks)
                 return
@@ -400,10 +407,10 @@ Tasks.studentSessionRelatedTaskView = (studId, sessionId, result) => {
             } else {
                 const formattedTasks = res.map(tasks => ({
                     ...tasks,
-                    dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }),
-                    subDate: tasks.subDate ? tasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null,
-                    lateSubDate: tasks.lateSubDate ? tasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null,
-                    updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null
+                    dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }),
+                    subDate: tasks.subDate ? tasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
+                    lateSubDate: tasks.lateSubDate ? tasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
+                    updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null
                 }));
                 console.log("Tasks: ", formattedTasks);
                 result(null, formattedTasks);
@@ -448,14 +455,14 @@ Student.StdChangePassword = (student, result) => {
 
 
 Student.viewStudentProfile = (studId, result) => {
-    db.query("SELECT c.collegeName, s.batchId, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.updatedDate, s.validity FROM student s LEFT JOIN college c ON s.collegeId = c.id WHERE s.deleteStatus=0 AND s.isActive=1 AND s.isVerified = 1 AND s.id = ?", [studId],
+    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.updatedDate, s.validity FROM student s LEFT JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus=0 AND s.isActive=1 AND s.isVerified = 1 AND s.id = ?", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
                 result(err, null)
                 return
             } else {
-                const formattedProfile = res.map(profile => ({ ...profile, addedDate: profile.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: profile.updatedDate ? profile.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, validity: profile.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                const formattedProfile = res.map(profile => ({ ...profile, addedDate: profile.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), updatedDate: profile.updatedDate ? profile.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null, validity: profile.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
                 console.log("Profile: ", formattedProfile);
                 result(null, formattedProfile)
                 return
@@ -565,7 +572,7 @@ Student.viewAllStudentByAdmin = (batchId, result) => {
 
 Student.taskSubmissionByStudent = (submissionData, result) => {
     const { studId, taskId, gitLink, remarks } = submissionData;
-    const currentDate = new Date()
+    const currentDate = new Date();
 
     // Check if student is valid
     db.query("SELECT * FROM student WHERE id = ? AND isActive = 1 AND deleteStatus = 0 AND emailVerified = 1 AND isPaid = 1 AND isVerified = 1", [studId], (studentErr, studentRes) => {
@@ -617,11 +624,6 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
                     subDate: currentDate
                 };
 
-                // Check if submission date is greater than due date
-                if (currentDate > task.dueDate) {
-                    submission.lateSubDate = currentDate;
-                }
-
                 db.query("INSERT INTO submit_task SET ?", submission, (submissionErr, submissionRes) => {
                     if (submissionErr) {
                         console.error("Error saving submission: ", submissionErr);
@@ -629,25 +631,28 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
                         return;
                     }
 
+                    const submissionId = submissionRes.insertId; // Capture the id of the newly inserted submission
+
                     // Update lateSubDate in task table if submission date is greater than due date
                     if (currentDate > task.dueDate) {
-                        db.query("UPDATE submit_task SET lateSubDate = ? WHERE id = ?", [currentDate, taskId], (updateErr, updateRes) => {
+                        db.query("UPDATE submit_task SET lateSubDate = CURRENT_DATE() WHERE id = ?", [submissionId], (updateErr, updateRes) => { // Use submissionId instead of taskId
                             if (updateErr) {
                                 console.error("Error updating lateSubDate: ", updateErr);
                                 result(updateErr, null);
                                 return;
                             }
-
-                            result(null, null);
+                            console.log(updateRes)
+                            result(null, "Submission successful, note that it was late.");
                         });
                     } else {
-                        result(null, null);
+                        result(null, "Submission successful.");
                     }
                 });
             });
         });
     });
 };
+
 
 
 SubmitTask.viewEvaluatedTasks = (studId, result) => {
@@ -918,7 +923,7 @@ Student.studentNotificationView = (studId, result) => {
 
 Student.viewSession = (batchId, result) => {
     db.query(
-        "SELECT DISTINCT s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink FROM sessiondetails s JOIN student st ON s.batchId = st.batchId WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND st.deleteStatus = 0 AND st.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;",
+        "SELECT DISTINCT s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink,t.trainerName FROM sessiondetails s JOIN student st ON s.batchId = st.batchId JOIN trainersinfo t ON s.trainerId = t.id  WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND st.deleteStatus = 0 AND st.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;",
         [batchId],
         (err, res) => {
             if (err) {
@@ -926,7 +931,7 @@ Student.viewSession = (batchId, result) => {
                 result(err, null);
                 return;
             } else {
-                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
                 console.log("Session Details: ", formattedViewSession);
                 result(null, formattedViewSession);
             }
@@ -973,7 +978,7 @@ Payment.viewStudentTransactions = (studId, result) => {
                 result(err, null);
                 return;
             } else {
-                const formattedPayment = res.map(payment => ({ ...payment, paymentDate: payment.paymentDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); // Formats the date as 'YYYY-MM-DD'
+                const formattedPayment = res.map(payment => ({ ...payment, paymentDate: payment.paymentDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) })); // Formats the date as 'DD/MM/YYYY'
                 console.log("Payment Details: ", formattedPayment);
                 result(null, formattedPayment);
             }
@@ -989,7 +994,7 @@ Session.studViewNextSessionDate = (batchId, result) => {
                 return result(err, null)
             } else {
 
-                const formattedNextSession = res.map(nextsession => ({ ...nextsession, date: nextsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                const formattedNextSession = res.map(nextsession => ({ ...nextsession, date: nextsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
 
                 console.log("Next Session", formattedNextSession)
                 return result(null, formattedNextSession)
@@ -1012,7 +1017,7 @@ SubmitTask.studentUpdateSubmittedTask = (updateSubTask, result) => {
             }
 
             // Update the submitted task
-            db.query("UPDATE `submit_task` SET `gitLink` = ?, `remarks` = ?, `updatedDate` = CURRENT_DATE() WHERE `id` = ?",
+            db.query("UPDATE submit_task s INNER JOIN task t ON s.taskId = t.id SET s.gitLink = ?, s.remarks = ?, s.updatedDate = CASE WHEN t.dueDate >= CURRENT_DATE() THEN CURRENT_DATE() ELSE s.updatedDate END, s.subDate = CASE WHEN t.dueDate < CURRENT_DATE() THEN CURRENT_DATE() ELSE s.subDate END, s.lateSubDate = CASE WHEN t.dueDate < CURRENT_DATE() THEN CURRENT_DATE() ELSE s.lateSubDate END WHERE s.id = ?",
                 [updateSubTask.gitLink, updateSubTask.remarks, updateSubTask.id],
                 (err, res) => {
                     if (err) {
@@ -1050,16 +1055,131 @@ SubmitTask.studentviewsubmittedtask = (id, result) => {
 
 
 // Function to generate and hash OTP
-Student.generateAndHashOTP = (studEmail, result) => {
+Student.generateAndHashOTP = (newStudentOtpSend, result) => {
     // Generate a 6-digit numeric OTP
     const otp = crypto.randomInt(100000, 999999).toString();
     const saltRounds = 10;
     const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
 
-    db.query("SELECT * FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1",
-    [studEmail])
-
+    db.query(
+        "SELECT * FROM student WHERE admNo = ? AND collegeId = ? AND batchId = ? AND deleteStatus = 0 AND isActive = 1",
+        [newStudentOtpSend.admNo, newStudentOtpSend.collegeId, newStudentOtpSend.batchId],
+        (err, res) => {
+            if (err) {
+                console.error("Error while checking uniqueness: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    console.log("Admission No already exists");
+                    result("Admission No already exists", null);
+                    return;
+                } else {
+                    db.query(
+                        "SELECT * FROM student WHERE rollNo = ? AND collegeId = ? AND batchId = ? AND deleteStatus = 0 AND isActive = 1",
+                        [newStudentOtpSend.rollNo, newStudentOtpSend.collegeId, newStudentOtpSend.batchId],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while checking uniqueness: ", err);
+                                result(err, null);
+                                return;
+                            } else {
+                                if (res.length > 0) {
+                                    console.log("Roll No already exists");
+                                    result("Roll No already exists", null);
+                                    return;
+                                } else {
+                                    db.query(
+                                        "SELECT * FROM student WHERE aadharNo = ? AND deleteStatus = 0 AND isActive = 1",
+                                        [newStudentOtpSend.aadharNo],
+                                        (err, res) => {
+                                            if (err) {
+                                                console.error("Error while checking uniqueness: ", err);
+                                                result(err, null);
+                                                return;
+                                            } else {
+                                                if (res.length > 0) {
+                                                    console.log("Aadhar No already exists");
+                                                    result("Aadhar No already exists", null);
+                                                    return;
+                                                } else {
+                                                    db.query(
+                                                        "SELECT * FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1",
+                                                        [newStudentOtpSend.studEmail],
+                                                        (err, res) => {
+                                                            if (err) {
+                                                                console.error("Error while checking uniqueness: ", err);
+                                                                result(err, null);
+                                                                return;
+                                                            } else {
+                                                                if (res.length > 0) {
+                                                                    console.log("Email already exists");
+                                                                    result("Email already exists", null);
+                                                                    return;
+                                                                } else {
+                                                                    db.query(
+                                                                        "SELECT * FROM student_otp WHERE email = ?",
+                                                                        [newStudentOtpSend.studEmail],
+                                                                        (err, res) => {
+                                                                            if (err) {
+                                                                                console.error("Error while checking OTP existence: ", err);
+                                                                                result(err, null);
+                                                                                return;
+                                                                            } else {
+                                                                                if (res.length > 0) {
+                                                                                    // Email exists, so update the OTP
+                                                                                    const updateQuery = "UPDATE student_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                                                                                    db.query(
+                                                                                        updateQuery,
+                                                                                        [hashedOTP, newStudentOtpSend.studEmail],
+                                                                                        (err, res) => {
+                                                                                            if (err) {
+                                                                                                console.error("Error while updating OTP: ", err);
+                                                                                                result(err, null);
+                                                                                            } else {
+                                                                                                console.log("OTP updated successfully");
+                                                                                                result(null, otp); // Return the plain OTP for email sending
+                                                                                            }
+                                                                                        }
+                                                                                    );
+                                                                                } else {
+                                                                                    // Email does not exist, insert new OTP
+                                                                                    const insertQuery = "INSERT INTO student_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+                                                                                    db.query(
+                                                                                        insertQuery,
+                                                                                        [newStudentOtpSend.studEmail, hashedOTP],
+                                                                                        (err, res) => {
+                                                                                            if (err) {
+                                                                                                console.error("Error while inserting OTP: ", err);
+                                                                                                result(err, null);
+                                                                                            } else {
+                                                                                                console.log("OTP inserted successfully");
+                                                                                                result(null, otp); // Return the plain OTP for email sending
+                                                                                            }
+                                                                                        }
+                                                                                    );
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    );
+                                                                }
+                                                            }
+                                                        }
+                                                    );
+                                                }
+                                            }
+                                        }
+                                    );
+                                }
+                            }
+                        }
+                    );
+                }
+            }
+        }
+    );
 };
+
 
 
 // Function to verify OTP
@@ -1073,15 +1193,15 @@ Student.verifyOTP = (studEmail, otp, result) => {
                 const studotp = res[0].otp;
                 const createdAt = res[0].createdAt;
                 // Check if OTP is expired
-                const expiryDuration = 10 *60 * 1000; // 10 minute in milliseconds
+                const expiryDuration = 10 * 60 * 1000; // 10 minute in milliseconds
                 const otpCreatedAt = new Date(createdAt).getTime();
                 const currentTime = new Date().getTime();
                 if (currentTime - otpCreatedAt > expiryDuration) {
                     return result("OTP expired", null);
                 }
-                
+
                 // If OTP not expired, proceed to compare
-                const isMatch = bcrypt.compareSync(otp,studotp);
+                const isMatch = bcrypt.compareSync(otp, studotp);
                 if (isMatch) {
                     return result(null, true);
                 } else {

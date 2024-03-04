@@ -4,6 +4,7 @@ import axios from 'axios';
 import Navbar from './Navbar';
 
 const AdminViewAdStaffLog = () => {
+
     const [adStaffLog, setAdStaffLog] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [logsPerPage] = useState(10); // Number of logs per page
@@ -21,7 +22,6 @@ const AdminViewAdStaffLog = () => {
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
                 setAdStaffLog(response.data);
-                console.log(response.data);
             }
         );
     };
@@ -33,6 +33,11 @@ const AdminViewAdStaffLog = () => {
 
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * logsPerPage) + index + 1;
+    }
+
 
     useEffect(() => { getData() }, []);
 
@@ -51,7 +56,7 @@ const AdminViewAdStaffLog = () => {
                                     <table className="w-full table-auto">
                                         <thead>
                                             <tr className="text-center bg-primary">
-                                            <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                                                <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                     S/N
                                                 </th>
                                                 <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
@@ -70,7 +75,7 @@ const AdminViewAdStaffLog = () => {
                                                 (value, index) => {
                                                     return <tr key={index}>
                                                         <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                            {index+1}
+                                                            {calculateSerialNumber(index)}
                                                         </td>
                                                         <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                             {value.AdStaffName}
@@ -79,7 +84,7 @@ const AdminViewAdStaffLog = () => {
                                                             {value.Action}
                                                         </td>
                                                         <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                            {new Date(value.DateTime).toLocaleDateString()}
+                                                            {value.DateTime}
                                                         </td>
                                                     </tr>
                                                 }

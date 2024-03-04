@@ -61,7 +61,6 @@ const AdminUpdateCollege = () => {
         }
         e.preventDefault()
         const validationErrors = validateForm(updateField)
-        console.log(validationErrors)
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig = {
                 headers: {
@@ -82,7 +81,6 @@ const AdminUpdateCollege = () => {
                 "collegeMobileNumber": updateField.collegeMobileNumber,
                 "collegeImage": file
             }
-            console.log(data)
             axios.post(apiUrl, data, axiosConfig).then(
                 (response) => {
                     if (response.data.status === "College Details Updated") {
@@ -138,15 +136,18 @@ const AdminUpdateCollege = () => {
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
-                        console.log(error.response.data);
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
                     console.log(error.request);
-                } else {
+                    alert(error.request);
+                } else if (error.message) {
                     console.log('Error', error.message);
+                    alert('Error', error.message);
+                } else {
+                    alert(error.config);
+                    console.log(error.config);
                 }
-                console.log(error.config);
             })
         } else {
             setErrors(validationErrors);
@@ -198,7 +199,6 @@ const AdminUpdateCollege = () => {
             (response) => {
                 setClgData(response.data.data)
                 setUpdateField(response.data.data[0])
-                console.log(response.data)
             }
         )
     }
@@ -224,8 +224,8 @@ const AdminUpdateCollege = () => {
                                 <div className="col-lg-6 px-xl-10">
                                     <ul className="list-unstyled mb-1-9">
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">College Id </label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="id" value={updateField.id} disabled />
+                                            {/* <label htmlFor="" className="form-label">College Id </label> */}
+                                            <input onChange={updateHandler} type="hidden" className="form-control" name="id" value={updateField.id} disabled />
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label htmlFor="" className="form-label">College Name</label>
@@ -275,13 +275,6 @@ const AdminUpdateCollege = () => {
                                         <div class="mb-3">
                                             <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
                                         </div>
-                                    </ul>
-
-                                    <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                        <li><a href="#!"><i className="ti-twitter-alt" /></a></li>
-                                        <li><a href="#!"><i className="ti-facebook" /></a></li>
-                                        <li><a href="#!"><i className="ti-pinterest" /></a></li>
-                                        <li><a href="#!"><i className="ti-instagram" /></a></li>
                                     </ul>
                                 </div>
                             </div>

@@ -5,6 +5,7 @@ import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 
 const AdminSearchAdminStaff = () => {
+
     const [inputField, setInputField] = useState({
         "adminStaffSearchQuery": ""
     });
@@ -40,10 +41,12 @@ const AdminSearchAdminStaff = () => {
                     alert("Deleted Successfully")
                     readValue();
                 } else {
+                    alert("Error deleting admin staff. Please try again later.")
                     console.error("Error deleting admin staff. Please try again later.");
                 }
             })
             .catch((err) => {
+                alert("Error deleting admin staff. Please try again later.")
                 console.error("Error deleting admin staff. Please try again later.");
             });
     };
@@ -69,7 +72,6 @@ const AdminSearchAdminStaff = () => {
                 setUpdateField(response.data.data);
                 setIsLoading(false);
                 setSearchExecuted(true);
-                console.log(response.data.data);
                 setInputField({ "adminStaffSearchQuery": "" });
             }
         );
@@ -82,6 +84,10 @@ const AdminSearchAdminStaff = () => {
 
     // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * itemsPerPage) + index + 1;
+    }
 
     return (
         <div>
@@ -104,7 +110,7 @@ const AdminSearchAdminStaff = () => {
                             <table className="table">
                                 <thead>
                                     <tr>
-                                        <th>S/N</th>
+                                        <th>S.No.</th>
                                         <th>Name</th>
                                         <th>Phone No</th>
                                         <th>Address</th>
@@ -115,9 +121,9 @@ const AdminSearchAdminStaff = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {currentItems.map((value, index) => (
-                                        <tr key={index}>
-                                            <td>{index + 1}</td>
+                                    {currentItems.map((value, index) => {
+                                        return <tr key={index}>
+                                            <td>{calculateSerialNumber(index)}</td>
                                             <td>{value.AdStaffName}</td>
                                             <td>{value.PhNo}</td>
                                             <td>{value.Address}</td>
@@ -132,7 +138,7 @@ const AdminSearchAdminStaff = () => {
                                                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onClick={() => updateClick(value.id)}>Update</button>
                                             </td>
                                         </tr>
-                                    ))}
+                                    })}
                                 </tbody>
                             </table>
                         </div>

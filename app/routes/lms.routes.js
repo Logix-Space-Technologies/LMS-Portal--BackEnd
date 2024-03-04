@@ -261,16 +261,26 @@ router.post('/AdmViewOneSession', SessionsController.viewOneSession)
 
 router.post('/ClgStaffViewSession', ClgStaffController.viewSessionsByCollegeStaff)
 
-router.post('/GenerateSessionWiseAttendancePdf',StudentController.generateSessionWiseAttendanceList)
+router.post('/GenerateSessionWiseAttendancePdf', StudentController.generateSessionWiseAttendanceList)
 
 router.post('/createCommunityManager', CommunityManagerController.createCommunityManager)
 
 router.post('/deleteCommunityManager', CommunityManagerController.deleteCommunityManager)
 
-router.post('/studregotpmailsend',StudentController.regOtpVerification)
+router.post('/studregotpmailsend', StudentController.regOtpVerification)
 
-router.post('/studregotpverify',StudentController.verifyOtp)
+router.post('/studregotpverify', StudentController.verifyOtp)
 
 router.post('/viewCommunityManager', StudentController.viewCommunityManagers)
+
+router.post('/clgstaffviewnotification', BatchesController.clgstaffNotificationView)
+
+router.post('/viewCollegeWiseAttendance', AttendenceController.collegeStaffViewCollegeWiseAttendance)
+
+router.post('/viewClgStaffCollege', ClgStaffController.viewCollegeDetails)
+
+router.post('/admstaffsearchsubtask', AdminStaffController.searchSubmittedTask)
+
+router.post('/adminStaffDeleteMaterial',MaterialController.deleteMaterial)
 
 module.exports = router

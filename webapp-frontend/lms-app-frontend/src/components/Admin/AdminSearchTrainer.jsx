@@ -42,7 +42,6 @@ const AdminSearchTrainer = () => {
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        console.log(inputField)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -55,7 +54,6 @@ const AdminSearchTrainer = () => {
             (response) => {
                 setUpdateField(response.data.data)
                 setIsLoading(false)
-                console.log(response.data)
                 setInputField(
                     {
                         "TrainerSearchQuery": ""
@@ -92,7 +90,8 @@ const AdminSearchTrainer = () => {
         axios.post(apiUrl2, deletedata, axiosConfig2).then((response) => {
             if (response.data.status === 'success') {
                 alert('Trainer Deleted Successfully!!');
-                window.location.reload();
+                // Remove the deleted Trainer from updateField state
+                setUpdateField(updateField.filter(trainer => trainer.id !== deleteId))
             } else {
                 alert(response.data.status);
             }
@@ -115,6 +114,10 @@ const AdminSearchTrainer = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * TrainerPerPage) + index + 1;
+    }
+
     // Total pages
     const pageNumbers = [];
     if (updateField && updateField.length > 0) {
@@ -128,6 +131,7 @@ const AdminSearchTrainer = () => {
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
@@ -177,9 +181,9 @@ const AdminSearchTrainer = () => {
                                 </thead>
                                 <tbody>
                                     {/* Table rows */}
-                                    {currentTrainers.map((value, index) => (
-                                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td className="px-6 py-4">{index + 1}</td>
+                                    {currentTrainers.map((value, index) => {
+                                        return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                            <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                             <td className="p-4 whitespace-nowrap">
                                                 <div className="flex items-center">
                                                     <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
@@ -206,7 +210,7 @@ const AdminSearchTrainer = () => {
                                                 </td>
                                             )}
                                         </tr>
-                                    ))}
+                                    })}
 
                                 </tbody>
                             </table>

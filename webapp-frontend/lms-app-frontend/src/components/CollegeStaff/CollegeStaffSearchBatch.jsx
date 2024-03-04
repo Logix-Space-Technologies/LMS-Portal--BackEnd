@@ -53,7 +53,8 @@ const CollegeStaffSearchBatch = () => {
                         navigate("/clgStafflogin")
                     } else {
                         if (!response.data.data) {
-                            // no data found
+                            setUpdateField([]); // Ensure the updateField is set to an empty array
+                            setIsLoading(false);
                         } else {
                             alert(response.data.status)
                         }
@@ -72,15 +73,14 @@ const CollegeStaffSearchBatch = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
-    // Total pages
-    const pageNumbers = [];
-    if (updateField && updateField.length > 0) {
-        updateField.forEach((student, index) => {
-            const pageNumber = index + 1;
-            pageNumbers.push(pageNumber);
-        });
+    // Calculate total pages
+    const totalPages = Math.ceil(updateField.length / batchPerPage);
+
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * batchPerPage) + index + 1;
     }
-    
+
+
     return (
         <div>
             <ClgStaffNavbar />
@@ -104,13 +104,16 @@ const CollegeStaffSearchBatch = () => {
                     <div className="col-12 text-center">
                         <p></p>
                     </div>
-                ) : (updateField ? (
+                ) : (currentBatch && currentBatch.length > 0 ? (
                     <>
                         <strong style={{ paddingLeft: '30px' }}>Batch Details</strong><br /><br /><br />
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
+                                        <th scope="col" className="px-6 py-3">
+                                            S/L
+                                        </th>
                                         <th scope="col" className="px-6 py-3">
                                             College Name
                                         </th>
@@ -132,9 +135,12 @@ const CollegeStaffSearchBatch = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {currentBatch.map (
+                                    {currentBatch.map(
                                         (value, index) => {
                                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                <td className="px-6 py-4">
+                                                    {calculateSerialNumber(index)}
+                                                </td>
                                                 <td className="px-6 py-4">
                                                     {value.collegeName}
                                                 </td>
@@ -163,28 +169,27 @@ const CollegeStaffSearchBatch = () => {
                 ) : (
                     <div className="col-12 text-center">No Batch Found!!</div>
                 ))}
+                <br></br>
+                {currentBatch.length > 0 && (
 
-                <div className="flex justify-center mt-8">
-                    <nav>
-                        <ul className="flex list-style-none">
+                    <div className="flex flex-col items-center">
+                        <span className="text-sm text-gray-700 dark:text-gray-400">
+                            Showing <span className="font-semibold text-gray-900 dark:text-white">{indexOfFirstStudent + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{indexOfLastStudent > updateField.length ? updateField.length : indexOfLastStudent}</span> of <span className="font-semibold text-gray-900 dark:text-white">{updateField.length}</span> Entries
+                        </span>
+                        <div className="inline-flex mt-2 xs:mt-0">
                             {currentPage > 1 && (
-                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                    Previous
-                                </li>
+                                <button onClick={() => paginate(currentPage - 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                    Prev
+                                </button>
                             )}
-                            {pageNumbers.map(number => (
-                                <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                                    {number}
-                                </li>
-                            ))}
-                            {currentPage < pageNumbers.length && (
-                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
+                            {currentPage < totalPages && (
+                                <button onClick={() => paginate(currentPage + 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                                     Next
-                                </li>
+                                </button>
                             )}
-                        </ul>
-                    </nav>
-                </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

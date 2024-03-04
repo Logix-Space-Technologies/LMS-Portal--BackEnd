@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminViewAllTrainers = () => {
+
     const [trainerData, setTrainerData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [trainersPerPage] = useState(10); // Number of trainers per page
@@ -35,7 +36,6 @@ const AdminViewAllTrainers = () => {
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
                 setTrainerData(response.data.Trainers);
-                console.log(response.data.Trainers);
             }
         );
     };
@@ -47,6 +47,11 @@ const AdminViewAllTrainers = () => {
 
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * trainersPerPage) + index + 1;
+    }
+
 
     const handleClick = () => {
         let data = { "id": deleteTrainer };
@@ -62,7 +67,7 @@ const AdminViewAllTrainers = () => {
             (response) => {
                 if (response.data.status === "success") {
                     // Reload the page after deleting trainer
-                    window.location.reload();
+                    getData()
                 } else {
                     alert(response.data.status);
                 }
@@ -80,7 +85,6 @@ const AdminViewAllTrainers = () => {
 
     const readValue = (id) => {
         setDeleteTrainer(id)
-        console.log(id)
     };
 
     useEffect(() => { getData() }, []);
@@ -89,6 +93,7 @@ const AdminViewAllTrainers = () => {
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
@@ -127,7 +132,7 @@ const AdminViewAllTrainers = () => {
                         {currentTrainers.length > 0 ? currentTrainers.map((value, index) => {
                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td className="px-6 py-4">
-                                    {index + 1}
+                                    {calculateSerialNumber(index)}
                                 </td>
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                     <img className="w-10 h-10 rounded-full" src={value.profilePicture} alt="" />
@@ -151,7 +156,7 @@ const AdminViewAllTrainers = () => {
                                     </td>
                                 )}
                                 <td className="px-6 py-4">
-                                    <Link onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Trainer</Link>
+                                    <button onClick={() => UpdateClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Trainer</button>
                                 </td>
                             </tr>
                         }
@@ -171,7 +176,7 @@ const AdminViewAllTrainers = () => {
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to delete this college?</h5>
+                                <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to delete this Trainer?</h5>
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div className="modal-body">

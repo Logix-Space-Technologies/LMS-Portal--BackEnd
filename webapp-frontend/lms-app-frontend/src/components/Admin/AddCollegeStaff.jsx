@@ -72,13 +72,10 @@ const AddCollegeStaff = () => {
     )
   }
 
-
-
   const inputHandler = (event) => {
     setErrors({})
     setInputField({ ...inputField, [event.target.name]: event.target.value })
   };
-
 
   const readValue = (e) => {
     let currentKey = sessionStorage.getItem("admkey");

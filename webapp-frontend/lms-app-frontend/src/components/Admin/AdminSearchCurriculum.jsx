@@ -15,9 +15,7 @@ const AdminSearchCurriculum = () => {
         }
     )
 
-    const [updateField, setUpdateField] = useState(
-        []
-    )
+    const [updateField, setUpdateField] = useState([])
 
     const [key, setKey] = useState('');
     const [isLoading, setIsLoading] = useState(true)
@@ -40,7 +38,6 @@ const AdminSearchCurriculum = () => {
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        console.log(inputField)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -54,7 +51,6 @@ const AdminSearchCurriculum = () => {
             (response) => {
                 setUpdateField(response.data.data);
                 setIsLoading(false);
-                console.log(response.data.data);
                 setInputField({
                     "CurriculumSearchQuery": ""
                 });
@@ -79,12 +75,10 @@ const AdminSearchCurriculum = () => {
 
         axios.post(apiLink2, data, axiosConfig2).then(
             (response) => {
-                console.log(data);
-                console.log(axiosConfig2);
                 if (response.data.status === "success") {
                     alert("Curriculum deleted!!");
-                    // Reload the page after clicking OK in the alert
-                    window.location.reload();
+                    // Remove the deleted curriculum from updateField state
+                    setUpdateField(updateField.filter(curriculum => curriculum.id !== deleteId))
                 } else {
                     alert(response.data.status);
                 }
@@ -100,6 +94,10 @@ const AdminSearchCurriculum = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * curriculumPerPage) + index + 1;
+    }
+
     // Total pages
     const pageNumbers = [];
     if (updateField && updateField.length > 0) {
@@ -113,7 +111,7 @@ const AdminSearchCurriculum = () => {
         sessionStorage.setItem("curriculumId", id);
         navigate("/AdminUpdateCurriculum");
     };
-  
+
     // Update key state when component mounts
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
@@ -177,12 +175,12 @@ const AdminSearchCurriculum = () => {
                         </thead>
                         <tbody>
                             {currentCurriculum.map(
-                                (value, index) => (
-                                    <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                (value, index) => {
+                                    return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <td className="px-6 py-4">
-                                            {index + 1}
+                                            {calculateSerialNumber(index)}
                                         </td>
-                                        <td className="px-6 py-4">                                    
+                                        <td className="px-6 py-4">
                                             {value.batchName}
                                         </td>
                                         <td className="px-6 py-4">
@@ -196,19 +194,19 @@ const AdminSearchCurriculum = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <Link target="_blank" to={value.curriculumFileLink} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>
-                                        </td>                                        
+                                        </td>
                                         {key === "lmsapp" && (
                                             <td className="p-4 whitespace-nowrap">
-                                            <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" onClick={() => handleClick(value.id)}>
-                                                Delete
-                                            </button>
-                                        </td>
+                                                <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal3" onClick={() => handleClick(value.id)}>
+                                                    Delete
+                                                </button>
+                                            </td>
                                         )}
                                         <td className="px-6 py-4">
                                             <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500">Update Curriculum</button>
                                         </td>
                                     </tr>
-                                )
+                                }
                             )}
                         </tbody>
                     </table>
@@ -239,7 +237,7 @@ const AdminSearchCurriculum = () => {
             </div>
 
             {/* Delete Confirmation Modal */}
-            <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+            <div className="modal fade" id="deleteConfirmationModal3" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">

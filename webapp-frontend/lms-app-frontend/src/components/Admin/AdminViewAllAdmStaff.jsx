@@ -5,6 +5,7 @@ import '../../config/config';
 import { Link, useNavigate } from 'react-router-dom';
 
 const AdminViewAllAdminStaff = () => {
+
   const [clgStaffData, setClgStaffData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [adminStaffPerPage] = useState(10); // Number of admin staff per page
@@ -64,6 +65,11 @@ const AdminViewAllAdminStaff = () => {
   // Change page
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
+  const calculateSerialNumber = (index) => {
+    return ((currentPage - 1) * adminStaffPerPage) + index + 1;
+}
+
+
 
   const updateClick = (id) => {
     let data = id;
@@ -73,7 +79,6 @@ const AdminViewAllAdminStaff = () => {
 
   const readValue = (id) => {
     setDeleteClgStaff(id)
-    console.log(id)
   };
 
   useEffect(() => {
@@ -95,29 +100,27 @@ const AdminViewAllAdminStaff = () => {
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aadhar No.</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Added Date</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentAdminStaff.length > 0 ? currentAdminStaff.map((value, index) => (
-                <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap">{index+1}</td>
+              {currentAdminStaff.length > 0 ? currentAdminStaff.map((value, index) => {
+                return <tr key={index}>
+                  <td className="px-6 py-4 whitespace-nowrap">{calculateSerialNumber(index)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.AdStaffName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.PhNo}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.Address}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.AadharNo}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{value.Email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{value.addedDate}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"  data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => { readValue(value.id) }}>Delete</button>
+                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => { readValue(value.id) }}>Delete</button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onClick={() => updateClick(value.id)}>Update</button>
                   </td>
                 </tr>
-              )) : (
+              }) : (
                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                   <td colSpan="15" className="px-6 py-4" style={{ textAlign: "center" }}>
                     No Admin Staff Found !!!
@@ -131,7 +134,7 @@ const AdminViewAllAdminStaff = () => {
               <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                   <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to delete this college?</h5>
+                    <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to delete this AdminStaff?</h5>
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div className="modal-body">

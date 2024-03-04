@@ -31,7 +31,7 @@ const StudentViewUpcomingSession = () => {
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
-                            console.log(response.data.status)
+                            setStudentViewUpcomingSessionData([])
                         } else {
                             alert(response.data.status)
                         }
@@ -88,14 +88,9 @@ const StudentViewUpcomingSession = () => {
                                         <p className="text-sm text-gray-600">Time: {formatTime(value.time)}</p>
                                         <p className="text-sm text-gray-600">Trainer Name: {value.trainerName}</p>
                                         <p className="text-sm text-gray-600">Type: {value.type}</p>
-                                        {!value.venueORlink.includes("meet.google.com") && (
+                                        {!value.venueORlink.includes("meet.google.com") && !value.venueORlink.includes("zoom.us") && (
                                             <p className="text-sm text-gray-600">Venue: {value.venueORlink}</p>
                                         )}
-                                        <div className="flex gap-4 mt-4">
-                                            {value.venueORlink.includes("meet.google.com") && (
-                                                <a href={value.venueORlink} className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold" target='_blank' rel='noopener noreferrer'>Meeting Link</a>
-                                            )}
-                                        </div>
                                     </div>
                                 </div>
                             </div>

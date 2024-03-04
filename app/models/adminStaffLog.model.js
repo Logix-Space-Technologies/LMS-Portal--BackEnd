@@ -30,8 +30,9 @@ AdminStaffLog.getAll = async(result) => {
             result(err, null)
             return           
         } else {
-            console.log("Admin Staff Log : ", response)
-            result(null, response)
+            const formattedAdmStaffLog = response.map(admstafflog => ({ ...admstafflog, DateTime: admstafflog.DateTime.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}));
+            console.log("Admin Staff Log : ", formattedAdmStaffLog)
+            result(null, formattedAdmStaffLog)
         }
     })
 

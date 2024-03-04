@@ -98,6 +98,12 @@ import StudentViewOneTask from './components/Student/StudentViewOneTask';
 import AdminUpdateSession from './components/Admin/AdminUpdateSession';
 import AdminStaffAddMaterials from './components/AdminStaff/AdminStaffAddMaterials';
 import CollegeStaffViewSession from './components/CollegeStaff/CollegeStaffViewSession';
+import StudentViewCommunityManager from './components/Student/StudentViewCommunityManager';
+import CollegeStaffViewNotifications from './components/CollegeStaff/CollegeStaffViewNotifications';
+import CollegeStaffViewCollege from './components/CollegeStaff/CollegeStaffViewCollege';
+import AdminStaffSearchSubmittedTask from './components/AdminStaff/AdminStaffSearchSubmittedTask';
+import AdminStaffSearchMaterial from './components/AdminStaff/AdminStaffSearchMaterial';
+
 
 
 
@@ -181,6 +187,9 @@ function App() {
           <Route path='/AdminStaffUpdateMaterial' element={<AdminStaffUpdateMaterial/>}/>
           <Route path='/adminstaffviewsubmittedtask' element={<AdminStaffViewSubmittedTask/>}/>
           <Route path='/adminStaffAddmaterials' element={<AdminStaffAddMaterials/>}/>
+          <Route path='/adminStaffSearchSubmittedTask' element={<AdminStaffSearchSubmittedTask/>}/>
+          <Route path='/adminstaffsearchmaterial' element={<AdminStaffSearchMaterial/>}/>
+
           
 
 
@@ -206,6 +215,9 @@ function App() {
           <Route path='/clgStaffSearchTask' element={<CollegeStaffSearchTask/>}/>
           <Route path='/clgstaffnavbar' element={<ClgStaffNavbar/>}/>
           <Route path='/clgstaffviewsession' element={<CollegeStaffViewSession/>}/>
+          <Route path='/clgstaffviewNotifications' element={<CollegeStaffViewNotifications/>}/>
+          <Route path='/CollegeStaffViewCollege' element={<CollegeStaffViewCollege/>}/>
+
 
 
 
@@ -235,6 +247,7 @@ function App() {
           <Route path='/studnavbar' element={<StudNavBar/>}/>
           <Route path='/studupdatesubtask' element={<StudentUpdateSubmittedTask/>}/>
           <Route path='/studviewtasksessionwise' element={<StudentViewOneTask/>}/>
+          <Route path='/studviewCommunityManager' element={<StudentViewCommunityManager/>}/>
 
 
 

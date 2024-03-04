@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import '../../config/config'
 
 const AdminUpdateAdminStaff = () => {
-
 
     const [adstaffData, setAdstaffData] = useState([])
     const [updateField, setUpdateField] = useState({
@@ -23,10 +22,9 @@ const AdminUpdateAdminStaff = () => {
     const updateHandler = (event) => {
         setUpdateField({ ...updateField, [event.target.name]: event.target.value })
     }
-    
+
     const readNewValue = (e) => {
         e.preventDefault()
-        console.log(updateField)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -52,7 +50,6 @@ const AdminUpdateAdminStaff = () => {
                         "Address": "",
                         "AadharNo": ""
                     })
-                    console.log(data)
                     alert("Profile Updated Successfully")
                     navigate("/AdminViewAllAdminStaff")
                 } else {
@@ -78,7 +75,7 @@ const AdminUpdateAdminStaff = () => {
         )
     }
 
-    const getData = () =>{
+    const getData = () => {
         let data = { "id": sessionStorage.getItem("admStaffId") }
         let axiosConfig = {
             headers: {
@@ -92,12 +89,11 @@ const AdminUpdateAdminStaff = () => {
             (response) => {
                 setAdstaffData(response.data.data)
                 setUpdateField(response.data.data[0])
-                console.log(response.data)
             }
         )
     }
 
-    useEffect(()=> { getData() }, [])
+    useEffect(() => { getData() }, [])
 
 
     return (
@@ -123,25 +119,25 @@ const AdminUpdateAdminStaff = () => {
                                         </div>
                                         <ul className="list-unstyled mb-1-9">
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                                <label htmlFor="" className="form-label">Id</label>
-                                                <input type="text" className="form-control" name="id" value={updateField.id} disabled />
+                                                {/* <label htmlFor="" className="form-label">Id</label> */}
+                                                <input type="hidden" className="form-control" name="id" value={updateField.id} disabled />
                                             </div>
 
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Staff Name</label>
-                                                <input type="text" className="form-control" name="AdStaffName" onChange={updateHandler} value={updateField.AdStaffName}/>
+                                                <input type="text" className="form-control" name="AdStaffName" onChange={updateHandler} value={updateField.AdStaffName} />
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Phone</label>
-                                                <input type="text" className="form-control" name="PhNo" onChange={updateHandler} value={updateField.PhNo}/>
+                                                <input type="text" className="form-control" name="PhNo" onChange={updateHandler} value={updateField.PhNo} />
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Address</label>
-                                                <input type="text" className="form-control" name="Address" onChange={updateHandler} value={updateField.Address}/>
+                                                <input type="text" className="form-control" name="Address" onChange={updateHandler} value={updateField.Address} />
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">AadharNo</label>
-                                                <input type="text" className="form-control" name="AadharNo" onChange={updateHandler} value={updateField.AadharNo}/>
+                                                <input type="text" className="form-control" name="AadharNo" onChange={updateHandler} value={updateField.AadharNo} />
                                             </div>
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
@@ -149,19 +145,11 @@ const AdminUpdateAdminStaff = () => {
                                             </div>
                                             <br></br>
                                             <div class="mb-3">
-                                                <a class="btn btn-danger" href="/AdminViewAllAdminStaff">Back</a>
+                                                <Link class="btn btn-danger" to="/AdminViewAllAdminStaff">Back</Link>
                                             </div>
-                                        </ul>
-
-                                        <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                            <li><a href="#!"><i className="ti-twitter-alt" /></a></li>
-                                            <li><a href="#!"><i className="ti-facebook" /></a></li>
-                                            <li><a href="#!"><i className="ti-pinterest" /></a></li>
-                                            <li><a href="#!"><i className="ti-instagram" /></a></li>
                                         </ul>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>

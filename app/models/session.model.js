@@ -213,7 +213,7 @@ Session.viewUpcomingSessions = (batchId, result) => {
             return;
         }
         // Format the date for each session
-        const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: session.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: session.updatedDate ? session.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
+        const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), addedDate: session.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), updatedDate: session.updatedDate ? session.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null })); // Formats the date as 'DD/MM/YYYY'
         console.log("session: ", formattedSessions);
         result(null, formattedSessions);
     });
@@ -338,7 +338,7 @@ Session.CheckIsTodaySessionAvailable = (result) => {
 }
 
 Session.viewOneSession = (sessionId, result) => {
-    db.query("SELECT id,sessionName,date,time,type,remarks,venueORlink,trainerId FROM sessiondetails WHERE id = ? AND isActive = 1 AND deleteStatus = 0", sessionId,
+    db.query("SELECT s.id,s.sessionName,s.date,s.time,s.type,s.remarks,s.venueORlink,s.trainerId,t.trainerName FROM sessiondetails s LEFT JOIN trainersinfo t ON s.trainerId = t.id WHERE s.id = ? AND s.isActive = 1 AND s.deleteStatus = 0", sessionId,
         (err, res) => {
             if (err) {
                 console.log("error: ", err);

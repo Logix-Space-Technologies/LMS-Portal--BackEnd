@@ -113,7 +113,6 @@ const AddCollege = () => {
                           alert(response.data.data.code)
                         } else {
                           alert(response.data.status)
-                          console.log(response.data.status)
                         }
                       }
                     }

@@ -6,12 +6,10 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const MaterialView = () => {
   const [materials, setMaterials] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [materialsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchMaterials();
-  }, []);
 
   const fetchMaterials = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/viewBatchMaterials";
@@ -29,7 +27,7 @@ const MaterialView = () => {
 
     axios.post(apiUrl, { "batchId": batchId }, axiosConfig)
       .then(response => {
-        if (response.data.status === "success") {
+        if (response.data.data) {
           setMaterials(response.data.data);
           setLoading(false);
         } else {
@@ -37,7 +35,12 @@ const MaterialView = () => {
             navigate("/studentLogin");
             sessionStorage.clear();
           } else {
-            alert(response.data.status);
+            if (!response.data.data) {
+              setMaterials([])
+              setLoading(false)
+            } else {
+              alert(response.data.status);
+            }
           }
         }
       })
@@ -49,10 +52,23 @@ const MaterialView = () => {
       });
   };
 
+  // Logic for displaying current logs
+  const indexOfLastMaterial = currentPage * materialsPerPage;
+  const indexOfFirstMaterial = indexOfLastMaterial - materialsPerPage;
+  const currentMaterials = materials ? materials.slice(indexOfFirstMaterial, indexOfLastMaterial) : [];
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  useEffect(() => { fetchMaterials(); }, []);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(materials.length / materialsPerPage);
+
   return (
     <div>
       <StudNavBar />
-      <div className="bg-light py-3 py-md-5">
+      <div className="bg-light py-2 py-md-3">
         <div className="container">
           <div className="row justify-content-md-center">
             <div className="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
@@ -84,17 +100,18 @@ const MaterialView = () => {
                         </tr>
                       </thead>
                       <tbody>
+                        <br />
                         {loading ? (
                           <tr>
                             <td colSpan="6" className="text-center">Loading...</td>
                           </tr>
                         ) : (
-                          materials.length === 0 ? (
+                          currentMaterials.length === 0 ? (
                             <tr>
                               <td colSpan="5" className="text-center">No materials found!</td>
                             </tr>
                           ) : (
-                            materials.map((material, index) => (
+                            currentMaterials.map((material, index) => (
                               <tr key={index} className={index % 2 === 0 ? 'even:bg-gray-50 even:dark:bg-gray-800' : 'odd:bg-white odd:dark:bg-gray-900 border-b dark:border-gray-700'}>
                                 <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                   {material.batchName}
@@ -110,9 +127,9 @@ const MaterialView = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                   {material.materialType.toLowerCase() === 'video' && material.uploadFile.toLowerCase().endsWith('.mp4') ? (
-                                    <a href={material.uploadFile} target="_blank" rel="noopener noreferrer" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Watch Video</a>
+                                    <Link to={material.uploadFile} target="_blank" rel="noreferrer" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Watch Video</Link>
                                   ) : (
-                                    <Link to={material.uploadFile} target="_blank" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
+                                    <Link to={material.uploadFile} target="_blank" rel="noreferrer" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                   )}
                                 </td>
 
@@ -124,7 +141,26 @@ const MaterialView = () => {
                     </table>
                   </div>
                 </div>
-              </div>
+              </div><br />
+              {currentMaterials.length > 0 && (
+                <div className="flex flex-col items-center">
+                  <span className="text-sm text-gray-700 dark:text-gray-400">
+                    Showing <span className="font-semibold text-gray-900 dark:text-white">{indexOfFirstMaterial + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{indexOfLastMaterial > materials.length ? materials.length : indexOfLastMaterial}</span> of <span className="font-semibold text-gray-900 dark:text-white">{materials.length}</span> Entries
+                  </span>
+                  <div className="inline-flex mt-2 xs:mt-0">
+                    {currentPage > 1 && (
+                      <button onClick={() => paginate(currentPage - 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        Prev
+                      </button>
+                    )}
+                    {currentPage < totalPages && (
+                      <button onClick={() => paginate(currentPage + 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        Next
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
