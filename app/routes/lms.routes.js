@@ -283,4 +283,6 @@ router.post('/admstaffsearchsubtask', AdminStaffController.searchSubmittedTask)
 
 router.post('/adminStaffDeleteMaterial',MaterialController.deleteMaterial)
 
+router.post('/studValidityRenewal',StudentController.studentvalidityrenewal)
+
 module.exports = router

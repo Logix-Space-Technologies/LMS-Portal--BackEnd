@@ -1233,5 +1233,46 @@ Student.viewCommunityMangers = (batchId, result) => {
     );
 }
 
+
+//Student Validity Renewal
+
+Student.PaymentRenewal = (newStudent, result) => {
+    // Calculate the new validity date
+    const currentDate = new Date();
+    currentDate.setFullYear(currentDate.getFullYear() + 1);
+    const formattedDate = currentDate.toISOString().slice(0, 10); // Format as "YYYY-MM-DD"
+
+    // Update the student's validity
+    newStudent.validity = formattedDate;
+    db.query("UPDATE student SET validity = ? WHERE id = ?", [newStudent.validity, newStudent.id], (err, res) => {
+        if (err) {
+            console.error("Error while updating student: ", err);
+            result(err, null);
+            return;
+        }
+
+        console.log("Student Details Updated", { id: newStudent.id, ...newStudent });
+
+        Payment.updatePayment = (newPayment, result) => {
+            newPayment.studId = newStudent.id;
+            db.query(
+                "UPDATE payment SET rpPaymentId = ?, rpOrderId = ?, rpAmount = ? WHERE studId = ?",
+                [newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount, newPayment.studId],
+                (err, paymentRes) => {
+                    if (err) {
+                        console.error("Error during payment update: ", err);
+                        return result(err, null);
+                    }
+
+                    console.log("Payment Updated", { ...paymentRes });
+                    result(null, { ...paymentRes });
+                }
+            );
+        };
+        result(null, { id: newStudent.id, ...newStudent });
+    });
+}
+
+
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 

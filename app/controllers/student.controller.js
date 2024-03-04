@@ -1285,7 +1285,7 @@ exports.viewCommunityManagers = (request, response) => {
     const batchId = request.body.batchId;
     jwt.verify(token, key, (err, decoded) => {
         if (decoded) {
-            Student.viewCommunityMangers(batchId,(err, data) => {
+            Student.viewCommunityMangers(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
@@ -1301,3 +1301,32 @@ exports.viewCommunityManagers = (request, response) => {
         }
     });
 };
+
+exports.studentvalidityrenewal = (request, response) => {
+    const { id, rpPaymentId, rpOrderId, rpAmount } = request.body
+
+    const newStudent = new Student({
+        id: id
+    })
+
+    Student.PaymentRenewal(newStudent, (err, data) => {
+        if (err) {
+            return res.json({ "status": err });
+        } else {
+            const newPayment = new Payment({
+                studId: id,
+                rpPaymentId: rpPaymentId,
+                rpOrderId: rpOrderId,
+                rpAmount: rpAmount
+            })
+
+            Payment.updatePayment(newPayment, (paymentErr, paymentData) => {
+                if (paymentErr) {
+                    return response.json({ "status": paymentErr });
+                } else {
+                    return response.json({ "status": "success", "data": data, "paymentData": paymentData });
+                }
+            })
+        }
+    })
+}
