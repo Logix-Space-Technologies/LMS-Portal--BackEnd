@@ -1256,7 +1256,7 @@ Student.PaymentRenewal = (newStudent, result) => {
         Payment.updatePayment = (newPayment, result) => {
             newPayment.studId = newStudent.id;
             db.query(
-                "UPDATE payment SET rpPaymentId = ?, rpOrderId = ?, rpAmount = ? WHERE studId = ?",
+                "UPDATE payment SET rpPaymentId = ?, rpOrderId = ?, rpAmount = ?, paymentDate = CURRENT_DATE() WHERE studId = ?",
                 [newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount, newPayment.studId],
                 (err, paymentRes) => {
                     if (err) {
@@ -1264,8 +1264,8 @@ Student.PaymentRenewal = (newStudent, result) => {
                         return result(err, null);
                     }
 
-                    console.log("Payment Updated", { ...paymentRes });
-                    result(null, { ...paymentRes });
+                    console.log("Payment Updated", { ...newPayment });
+                    result(null, { ...newPayment });
                 }
             );
         };
