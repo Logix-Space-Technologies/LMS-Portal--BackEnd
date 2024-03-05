@@ -541,26 +541,56 @@ exports.verifyOtp = (req, res) => {
     // Extract email and OTP from request body
     const email = req.body.Email;
     const otp = req.body.otp;
-  
+
     // Input validation (basic example)
     if (!email || !otp) {
-      return res.json({ "status": "Email and OTP are required" });
+        return res.json({ "status": "Email and OTP are required" });
     }
-  
+
     // Call the model function to verify the OTP
     AdminStaff.verifyOTP(email, otp, (err, result) => {
-      if (err) {
-        // If there was an error or the OTP is not valid/expired
-        return res.json({ "status": err });
-      } else {
-        if (result) {
-          // If the OTP is verified successfully
-          return res.json({ "status": "OTP verified successfully" });
+        if (err) {
+            // If there was an error or the OTP is not valid/expired
+            return res.json({ "status": err });
         } else {
-          // If the OTP does not match
-          return res.json({ "status": "Invalid OTP" });
+            if (result) {
+                // If the OTP is verified successfully
+                return res.json({ "status": "OTP verified successfully" });
+            } else {
+                // If the OTP does not match
+                return res.json({ "status": "Invalid OTP" });
+            }
         }
-      }
     });
-  };
+};
+
+exports.admstaffforgotpassword = (request, response) => {
+    const { Email, oldAdSfPassword, newAdSfPassword } = request.body;
+
+    const validationErrors = {};
+
+    if (Validator.isEmpty(Email).isValid) {
+        validationErrors.Email = "Email is required";
+    } else if (Validator.isEmpty(oldAdSfPassword).isValid) {
+        validationErrors.oldAdSfPassword = "Old password is required";
+    } else if (Validator.isEmpty(newAdSfPassword).isValid) {
+        validationErrors.newAdSfPassword = "New password is required";
+    } else if (oldAdSfPassword === newAdSfPassword) {
+        validationErrors.newAdSfPassword = "Old password and new password cannot be the same";
+    } else if (!Validator.isValidPassword(newAdSfPassword).isValid) {
+        validationErrors.newAdSfPassword = "New password is not valid";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
+
+    AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword }, (err, result) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            return response.json({ "status": "success" });
+        }
+    });
+}
 
