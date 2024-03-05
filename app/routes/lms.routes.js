@@ -281,6 +281,28 @@ router.post('/viewClgStaffCollege', ClgStaffController.viewCollegeDetails)
 
 router.post('/admstaffsearchsubtask', AdminStaffController.searchSubmittedTask)
 
-router.post('/adminStaffDeleteMaterial',MaterialController.deleteMaterial)
+router.post('/adminStaffDeleteMaterial', MaterialController.deleteMaterial)
+
+router.post('/studValidityRenewal', StudentController.studentvalidityrenewal)
+
+router.post('/clgstaffotpsend', ClgStaffController.forgotPassword)
+
+router.post('/clgstaffotpverification', ClgStaffController.verifyOtp)
+
+router.post('/admstaffotpsend', AdminStaffController.forgotPassword)
+
+router.post('/admstaffotpverification', AdminStaffController.verifyOtp)
+
+router.post('/studentotpsend', StudentController.forgotStudpassword)
+
+router.post('/studentotpverification', StudentController.verifyStudOtp)
+
+router.post('/adminforgotpassword', AdminController.adminforgotpassword)
+
+router.post('/studforgotpassword', StudentController.studforgotpassword)
+
+router.post('/clgstaffforgotpassword', ClgStaffController.collegestaffforgotpassword)
+
+router.post('/admstaffforgotpassword', AdminStaffController.admstaffforgotpassword)
 
 module.exports = router
