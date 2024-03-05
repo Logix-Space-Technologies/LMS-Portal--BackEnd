@@ -434,7 +434,7 @@ CollegeStaff.viewSession = (batchId, result) => {
                 result(err, null);
                 return;
             } else {
-                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
                 console.log("Sessions: ", formattedViewSession)
                 result(null, formattedViewSession)
             }
