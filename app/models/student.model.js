@@ -542,7 +542,7 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
                 console.log("No unverified students found.");
                 return result("No unverified students found.", null);
             }
-            const formattedViewUnverifiedStudents = res.map(students => ({ ...students, validity: students.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: students.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }));
+            const formattedViewUnverifiedStudents = res.map(students => ({ ...students, validity: students.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), addedDate: students.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
             console.log("Unverified students: ", formattedViewUnverifiedStudents);
             result(null, formattedViewUnverifiedStudents);
         });
@@ -1339,8 +1339,8 @@ Student.searchstudentbyemail = (searchKey, result) => {
             } else {
                 if (res.length > 0) {
                     // Directly access the collegeStaffName of the first result
-                    let name = res[0].studName; 
-                    result(null, name); 
+                    let name = res[0].studName;
+                    result(null, name);
                 } else {
                     // Handle case where no results are found
                     console.log("No student found with the given email.");
