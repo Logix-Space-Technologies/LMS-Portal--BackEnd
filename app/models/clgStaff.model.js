@@ -359,7 +359,7 @@ CollegeStaff.collegeStaffSearchBatch = (searchTerm, collegeId, result) => {
                 result(err, null)
                 return
             } else {
-                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: batches.addedDate ? batches.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null }));
+                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), addedDate: batches.addedDate ? batches.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
                 console.log("Batches : ", formattedBatches)
                 result(null, formattedBatches)
             }

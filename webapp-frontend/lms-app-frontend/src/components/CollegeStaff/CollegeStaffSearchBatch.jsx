@@ -150,7 +150,8 @@ const CollegeStaffSearchBatch = () => {
                                                 <td className="px-6 py-4">
                                                     {value.batchDesc}
                                                 </td>
-                                                <td className="px-6 py-4">
+                                                <td className="px-6 py-4" style={{ display: 'flex', alignItems: 'center' }}>
+                                                    <img src="https://www.svgrepo.com/show/389251/indian-rupee.svg" alt="rupee" style={{ marginRight: '8px', height: '15px' }} />
                                                     {value.batchAmount}
                                                 </td>
                                                 <td className="px-6 py-4">
