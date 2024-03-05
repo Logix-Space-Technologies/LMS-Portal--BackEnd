@@ -89,6 +89,28 @@ const CollegeStaffViewSession = () => {
 
     useEffect(() => { getData() }, []);
 
+    const isSessionPast = (sessionDate, sessionTime) => {
+        // Split sessionDate and sessionTime strings
+        const dateParts = sessionDate.split('/');
+        const timeParts = sessionTime.split(':');
+
+        // Parse date and time components
+        const day = parseInt(dateParts[0], 10);
+        const month = parseInt(dateParts[1], 10) - 1; // Adjust month to be zero-indexed
+        const year = parseInt(dateParts[2], 10);
+        const hours = parseInt(timeParts[0], 10);
+        const minutes = parseInt(timeParts[1], 10);
+
+        // Create a Date object for the session's date and time
+        const sessionDateTime = new Date(year, month, day, hours, minutes);
+
+        // Get the current date and time
+        const currentTime = new Date();
+
+        // Return true if the session date-time is in the past
+        return sessionDateTime < currentTime;
+    };
+
 
     return (
         <div>
@@ -137,6 +159,8 @@ const CollegeStaffViewSession = () => {
                         </thead>
                         <tbody>
                             {sessionData.length > 0 ? sessionData.map((value, index) => {
+                                // Check if the session is in the past
+                                const sessionIsPast = isSessionPast(value.date, value.time);
                                 return (
                                     <tr key={index} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                                         <td className="px-6 py-4">
@@ -162,7 +186,7 @@ const CollegeStaffViewSession = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.cancelStatus === "ACTIVE" && (
-                                                <button className="btn btn-primary" onClick={() => attendancePdfGenerate(value.id)}>
+                                                <button className="btn btn-primary" onClick={() => attendancePdfGenerate(value.id)} disabled={!sessionIsPast}>
                                                     Download Attendance List PDF
                                                 </button>
                                             )}
