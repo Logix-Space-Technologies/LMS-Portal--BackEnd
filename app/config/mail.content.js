@@ -811,7 +811,107 @@ function StudentOTPVerificationTextContent(studName, otp) {
     return content;
 }
 
+function StudentRegistrationSuccessfulMailHTMLContent(membershipNo) {
+    content = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Welcome to LinkUrCodes</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+    
+        h1 {
+          color: #007bff;
+        }
+    
+        p {
+          line-height: 1.6;
+        }
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>Welcome to LinkUrCodes!</h1>
+        <p>Congratulations on successfully registering with us. We are excited to have you on board as a member of our community.</p>
+        <p>Your Membership Number: <strong>${membershipNo}</strong></p>
+        <p>At LinkUrCodes, we provide a unique platform for college students to build their IT careers right from their college campus. As a part of our community, you'll have the opportunity to work on live projects, receive mentorship, and gain valuable experience that mirrors the professional IT world.</p>
+        <p>Your journey with us starts now! Get ready for a rewarding experience as you embark on live projects and gain insights that will shape your IT career.</p>
+        <p>Here are the next steps:</p>
+        <ol>
+         
+          <li>Once approved by the batch-in-charge of your college, log on to <a href="https://lms.linkurcodes.com/studentLogin" target="_blank">Student Portal</a>.</li>
+          <li>If you face any issues logging in, or if it takes some time for approval, please contact your batch-in-charge for assistance.</li>
+          <li>Download our mobile app from the Play Store to stay connected on the go: <a href="https://play.google.com/store/apps/details?id=com.linkurcodes.logixspace" target="_blank">LinkUrCodes Mobile App</a></li>
+        </ol>
+        <p>We're excited to have you with us. If you have any questions or need assistance, feel free to reach out.</p>
+        <p>Once again, welcome to LinkUrCodes!</p>
+        <p>Best Regards,</p>
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <a class="button" href="https://www.linkurcodes.com/" style="color: white;">Visit Link Ur Codes website</a>
+      </div>
+    </body>
+    </html>`
 
+    return content
+}
+
+function StudentRegistrationSuccessfulMailTextContent(membershipNo) {
+    content = `Welcome to LinkUrCodes!
+
+    Congratulations on successfully registering with us. We are excited to have you on board as a member of our community.
+    
+    Your Membership Number: ${membershipNo}
+    
+    At LinkUrCodes, we provide a unique platform for college students to build their IT careers right from their college campus. As a part of our community, you'll have the opportunity to work on live projects, receive mentorship, and gain valuable experience that mirrors the professional IT world.
+    
+    Your journey with us starts now! Get ready for a rewarding experience as you embark on live projects and gain insights that will shape your IT career.
+    
+    Here are the next steps:
+    
+    1. Once approved by the batch-in-charge of your college, log on to the Student Portal: https://lms.linkurcodes.com/studentLogin
+    2. If you face any issues logging in, or if it takes some time for approval, please contact your batch-in-charge for assistance.
+    3. Download our mobile app from the Play Store to stay connected on the go: https://play.google.com/store/apps/details?id=com.linkurcodes.logixspace
+    
+    We're excited to have you with us. If you have any questions or need assistance, feel free to reach out.
+    
+    Once again, welcome to LinkUrCodes!
+    
+    Best Regards,
+    
+    Link Ur Codes Team
+    
+    Visit Link Ur Codes website: https://www.linkurcodes.com/`
+
+    return content
+}
 
 module.exports = {
     admStaffAddHTMLContent,
@@ -832,6 +932,8 @@ module.exports = {
     AdminStaffOTPVerificationHTMLContent,
     AdminStaffOTPVerificationTextContent,
     StudentOTPVerificationHTMLContent,
-    StudentOTPVerificationTextContent
+    StudentOTPVerificationTextContent,
+    StudentRegistrationSuccessfulMailHTMLContent,
+    StudentRegistrationSuccessfulMailTextContent
 };
 

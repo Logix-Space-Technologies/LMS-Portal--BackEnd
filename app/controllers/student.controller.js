@@ -160,6 +160,11 @@ exports.createStudent = (req, res) => {
                             if (paymentErr) {
                                 return res.json({ "status": paymentErr });
                             } else {
+                                let membershipNo = data.membership_no
+                                let email = data.studEmail
+                                const otpVerificationHTMLContent = mailContents.StudentRegistrationSuccessfulMailHTMLContent(membershipNo);
+                                const otpVerificationTextContent = mailContents.StudentRegistrationSuccessfulMailTextContent(membershipNo);
+                                mail.sendEmail(email, 'Welcome To LinkUrCodes!', otpVerificationHTMLContent, otpVerificationTextContent)
                                 return res.json({ "status": "success", "data": data, "paymentData": paymentData });
                             }
                         });
@@ -726,11 +731,11 @@ function generatePDF(data, callback) {
             doc.moveDown(); // Add a newline between batches
         }
     }
-    // Add the generated date and time
     const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString() + ' ' + generatedDate.toLocaleTimeString(), {
+    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
         align: 'center',
     });
+
 
     doc.end();
 
@@ -858,9 +863,8 @@ function generateAttendancePDF(data, callback) {
             doc.moveDown(); // Add a newline between sessions
         }
     }
-    // Add the generated date and time
     const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString() + ' ' + generatedDate.toLocaleTimeString(), {
+    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
         align: 'center',
     });
 
@@ -1225,7 +1229,7 @@ exports.regOtpVerification = (request, response) => {
         } else {
             // Assuming sendOTPEmail is a function you have defined to handle email sending
             // This function should ideally be asynchronous and handle its own errors
-            const mailSent = sendOTPEmail(newStudentOtpSend.studEmail, otp); // Hypothetical function to send email
+            const mailSent = sendRegOTPEmail(newStudentOtpSend.studEmail, otp); // Hypothetical function to send email
             if (mailSent) {
                 // Successfully sent the OTP to the user's email
                 response.json({ "status": "OTP sent to email." });
@@ -1266,7 +1270,7 @@ exports.verifyOtp = (req, res) => {
 };
 
 // Function to send OTP
-function sendOTPEmail(email, otp) {
+function sendRegOTPEmail(email, otp) {
     const otpVerificationHTMLContent = mailContents.studRegOTPVerificationHTMLContent(otp);
     const otpVerificationTextContent = mailContents.studRegOTPVerificationTextContent(otp);
     mail.sendEmail(email, 'OTP Verification For Student Registration', otpVerificationHTMLContent, otpVerificationTextContent)
