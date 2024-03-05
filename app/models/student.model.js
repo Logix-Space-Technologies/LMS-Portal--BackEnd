@@ -213,6 +213,7 @@ Student.create = (newStudent, result) => {
                                                                                                                 }
                                                                                                             );
                                                                                                         };
+                                                                                                        console.log("Registered Student: ", { id: res.insertId, ...newStudent })
                                                                                                         result(null, { id: res.insertId, ...newStudent })
                                                                                                     });
 
