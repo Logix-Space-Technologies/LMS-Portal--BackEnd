@@ -93,6 +93,12 @@ const CollegeStaffViewSession = () => {
 
     const viewsessionId = (attendanceid) => {
         sessionStorage.setItem("viewattendanceid", attendanceid)
+        navigate("/clgstaffviewattendance")
+    }
+
+    const viewtasksessionId = (attendanceid) => {
+        sessionStorage.setItem("viewattendanceid", attendanceid)
+        navigate("/clgstaffviewtask")
     }
 
     useEffect(() => { getData() }, []);
@@ -223,16 +229,16 @@ const CollegeStaffViewSession = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.cancelStatus === "ACTIVE" && (
-                                                <Link to="/clgstaffviewattendance" onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary">
+                                                <button onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary" disabled={!sessionIsPast}>
                                                     View Attendance List
-                                                </Link>
+                                                </button>
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.cancelStatus === "ACTIVE" && (
-                                                <Link to="/clgstaffviewtask" onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary">
+                                                <button onClick={() => viewtasksessionId(value.id)} type="button" class="btn btn-primary" disabled={!sessionIsPast}>
                                                     View Tasks
-                                                </Link>
+                                                </button>
                                             )}
                                         </td>
                                     </tr>

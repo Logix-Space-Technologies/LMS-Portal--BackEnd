@@ -287,7 +287,7 @@ CollegeStaff.viewTask = (sessionId, result) => {
         } else {
             const formattedViewTasks = res.map(tasks => {
                 // Convert dueDate to a Date object if it's not 'Past Due Date'
-                const dueDate = tasks.dueDate === 'Past Due Date' ? 'Past Due Date' : new Date(tasks.dueDate).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+                const dueDate = tasks.dueDate === 'Past Due Date' ? 'Past Due Date' : new Date(tasks.dueDate).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
                 return {
                     ...tasks,
                     dueDate: dueDate,

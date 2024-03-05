@@ -57,6 +57,10 @@ const CollegeStaffViewAttendance = () => {
     // Calculate total pages
     const totalPages = Math.ceil(clgStaffViewAttendance.length / attendancePerPage);
 
+    const calculateSerialNumber = (index) => {
+        return ((currentPage - 1) * attendancePerPage) + index + 1;
+    }
+
     useEffect(() => { getData() }, []);
 
     return (
@@ -69,6 +73,9 @@ const CollegeStaffViewAttendance = () => {
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead>
                         <tr>
+                            <th scope="col" className="px-6 py-3">
+                                S/L
+                            </th>
                             <th scope="col" className="px-6 py-3">
                                 Session Name
                             </th>
@@ -92,6 +99,9 @@ const CollegeStaffViewAttendance = () => {
                             const buttonClassName = isPresent ? 'bg-green-500/20 text-green-700' : 'bg-red-500/20 text-red-700';
                             return (
                                 <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <td className="p-4 whitespace-nowrap">
+                                        {calculateSerialNumber(index)}
+                                    </td >
                                     <td className="p-4 whitespace-nowrap">
                                         {value.sessionName}
                                     </td >
