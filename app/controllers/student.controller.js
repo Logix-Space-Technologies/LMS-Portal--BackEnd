@@ -731,11 +731,11 @@ function generatePDF(data, callback) {
             doc.moveDown(); // Add a newline between batches
         }
     }
-    // Add the generated date and time
     const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString() + ' ' + generatedDate.toLocaleTimeString(), {
+    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
         align: 'center',
     });
+
 
     doc.end();
 
@@ -863,9 +863,8 @@ function generateAttendancePDF(data, callback) {
             doc.moveDown(); // Add a newline between sessions
         }
     }
-    // Add the generated date and time
     const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString() + ' ' + generatedDate.toLocaleTimeString(), {
+    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
         align: 'center',
     });
 

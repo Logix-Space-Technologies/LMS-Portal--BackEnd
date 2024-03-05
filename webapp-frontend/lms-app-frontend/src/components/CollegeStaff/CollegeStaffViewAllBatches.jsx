@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const CollegeStaffViewBatch = () => {
   const [batches, setBatches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [studentCount, setStudentCount] = useState(0);
 
   const apiUrl = global.config.urls.api.server + "/api/lms/collegeStaffViewBatch";
   const apiUrl2 = global.config.urls.api.server + "/api/lms/generatePdf";
@@ -29,7 +30,17 @@ const CollegeStaffViewBatch = () => {
     axios.post(apiUrl, { "collegeId": collegeId }, axiosConfig)
       .then(response => {
         if (response.data.data) {
-          setBatches(response.data.data);
+          // Assuming response.data.data is an array of batches
+          const batches = response.data.data;
+          setBatches(batches);
+
+          // Calculate the sum of verifiedStudentCount
+          let totalVerifiedStudentCount = batches.reduce((accumulator, batch) => {
+            return accumulator + (batch.verifiedStudentCount || 0);
+          }, 0);
+
+          // Store the sum in a variable
+          setStudentCount(totalVerifiedStudentCount)
         } else {
           if (response.data.status === "Unauthorized User!!") {
             sessionStorage.clear()
@@ -138,6 +149,7 @@ const CollegeStaffViewBatch = () => {
   }
 
   useEffect(() => { fetchBatches() }, []);
+  
 
   return (
     <div>
@@ -153,7 +165,7 @@ const CollegeStaffViewBatch = () => {
                       <h1 style={{ fontWeight: 'bold', fontSize: '40px' }}>Batch Details</h1>
                     </div>
                     <div className="col-6 text-end">
-                      <button className='btn btn-primary' onClick={pdfGenerate}>
+                      <button className='btn btn-primary' onClick={pdfGenerate} disabled={studentCount === 0}>
                         Download Batch-Wise Student List PDF
                       </button>
                     </div>
@@ -165,30 +177,41 @@ const CollegeStaffViewBatch = () => {
                       <div className="col-12 text-center">No batches found!</div>
                     ) : (
                       batches.map((batch, index) => {
-                        return <div key={index} className="col-12">
-                          <div className="card">
-                            <div className="card-body">
-                              <h5 className="card-title">{batch.batchName}</h5>
-                              <p className="card-text">Registration Start Date: {batch.regStartDate}</p>
-                              <p className="card-text">Registration End Date: {batch.regEndDate}</p>
-                              <p className="card-text">Description: {batch.batchDesc}</p>
-                              <p className="card-text">Amount: {batch.batchAmount}</p>
-                              <p className="card-text">Added Date: {batch.addedDate}</p><br />
-                              <button className='btn btn-primary' onClick={() => { attendancePdfGenerate(batch.id) }} style={{ marginLeft: '5px' }}>
-                                Download Session-Wise Attendance List PDF
-                              </button>
-                              <button onClick={() => batchClick(batch.id)} className="btn btn-primary" style={{ marginLeft: '20px' }}>
-                                View Session
-                              </button>
-                              <button className="btn btn-primary" onClick={() => studentClick(batch.id)} style={{ marginLeft: '20px' }}>
-                                View All Students
-                              </button>
-                              <button className="btn btn-primary" onClick={() => notificationClick(batch.id)} style={{ marginLeft: '20px' }}>
-                                View Notifications
-                              </button>
+                        return (
+                          <div key={index} className="col-12">
+                            <div className="card">
+                              <div className="card-body">
+                                <h5 className="card-title">{batch.batchName}</h5>
+                                <p className="card-text">Registration Start Date: {batch.regStartDate}</p>
+                                <p className="card-text">Registration End Date: {batch.regEndDate}</p>
+                                <p className="card-text">Description: {batch.batchDesc}</p>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <p className="card-text" style={{ margin: 0, marginRight: '8px' }}>Amount:</p>
+                                  <img src="https://www.svgrepo.com/show/389251/indian-rupee.svg" alt="rupee" style={{ marginRight: '2px', height: '14px', verticalAlign: 'middle' }} />
+                                  <p className="card-text" style={{ margin: 0 }}>{batch.batchAmount}</p>
+                                </div>
+                                <p className="card-text">Added Date: {batch.addedDate}</p><br />
+                                <button
+                                  className='btn btn-primary'
+                                  onClick={() => { attendancePdfGenerate(batch.id) }}
+                                  style={{ marginLeft: '5px' }}
+                                  disabled={batch.sessionCount === 0} // Disable button if sessionCount is 0
+                                >
+                                  Download Session-Wise Attendance List PDF
+                                </button>
+                                <button onClick={() => batchClick(batch.id)} className="btn btn-primary" style={{ marginLeft: '20px' }}>
+                                  View Session
+                                </button>
+                                <button className="btn btn-primary" onClick={() => studentClick(batch.id)} style={{ marginLeft: '20px' }}>
+                                  View All Students
+                                </button>
+                                <button className="btn btn-primary" onClick={() => notificationClick(batch.id)} style={{ marginLeft: '20px' }}>
+                                  View Notifications
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        );
                       })
                     )
                   )}

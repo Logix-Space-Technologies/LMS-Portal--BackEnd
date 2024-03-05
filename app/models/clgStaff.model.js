@@ -210,7 +210,7 @@ CollegeStaff.findByClgStaffEmail = (email, result) => {
 //To view batch
 CollegeStaff.viewBatch = (collegeId, result) => {
     db.query(
-        "SELECT DISTINCT b.id, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND cs.collegeId = ?",
+        "SELECT b.id, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate, COUNT(DISTINCT CASE WHEN st.isVerified = 1 THEN st.id END) AS verifiedStudentCount, COUNT(DISTINCT CASE WHEN STR_TO_DATE(CONCAT(s.date, ' ', s.time), '%Y-%m-%d %H:%i:%s') < NOW() AND s.isActive = 1 AND s.deleteStatus = 0 AND s.cancelStatus = 0 THEN s.id ELSE NULL END) AS sessionCount FROM batches b JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id LEFT JOIN sessiondetails s ON b.id = s.batchId LEFT JOIN student st ON st.batchId = b.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND cs.collegeId = ? GROUP BY b.id, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate",
         [collegeId],
         (err, res) => {
             if (err) {
@@ -218,7 +218,7 @@ CollegeStaff.viewBatch = (collegeId, result) => {
                 result(err, null);
                 return;
             } else {
-                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: batches.addedDate ? batches.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null }));
+                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), addedDate: batches.addedDate ? batches.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
                 console.log("Batch Details: ", formattedBatches);
                 result(null, formattedBatches);
             }
@@ -553,8 +553,8 @@ CollegeStaff.searchcollegestaffbyemail = (searchKey, result) => {
             } else {
                 if (res.length > 0) {
                     // Directly access the collegeStaffName of the first result
-                    let name = res[0].collegeStaffName; 
-                    result(null, name); 
+                    let name = res[0].collegeStaffName;
+                    result(null, name);
                 } else {
                     // Handle case where no results are found
                     console.log("No college staff found with the given email.");

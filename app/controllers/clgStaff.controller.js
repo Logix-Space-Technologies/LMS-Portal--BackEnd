@@ -467,16 +467,16 @@ exports.collegeStaffViewBatch = (request, response) => {
       const collegeId = request.body.collegeId;
       CollegeStaff.viewBatch(collegeId, (err, data) => {
         if (err) {
-          response.json({ "status": err });
+          return response.json({ "status": err });
         }
         if (data.length === 0) {
-          response.json({ "status": "No Batch found!" });
+          return response.json({ "status": "No Batch found!" });
         } else {
-          response.json({ "status": "success", "data": data });
+          return response.json({ "status": "success", "data": data });
         }
       });
     } else {
-      response.json({ "status": "Unauthorized User!!" });
+      return response.json({ "status": "Unauthorized User!!" });
     }
   });
 };
@@ -870,7 +870,7 @@ exports.collegestaffforgotpassword = (request, response) => {
   const validationErrors = {};
 
   if (Validator.isEmpty(email).isValid) {
-    validationErrors.email ="Email is required";
+    validationErrors.email = "Email is required";
   } else if (Validator.isEmpty(oldPassword).isValid) {
     validationErrors.oldPassword = "Old password is required";
   } else if (Validator.isEmpty(newPassword).isValid) {
