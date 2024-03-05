@@ -573,7 +573,7 @@ function ClgStaffOTPVerificationHTMLContent(clgStaffName, otp) {
     content = `<!DOCTYPE html>
     <html>
     <head>
-        <title>OTP Verification</title>
+        <title>Password Reset Request</title>
         <style>
             body {
                 background-color: #faf4f4;
@@ -583,6 +583,8 @@ function ClgStaffOTPVerificationHTMLContent(clgStaffName, otp) {
                 padding: 20px;
             }
             .container {
+                border-radius: 8px;
+    
                 background-color: #ece9e9;
                 border-radius: 8px;
                 padding: 20px;
@@ -595,8 +597,8 @@ function ClgStaffOTPVerificationHTMLContent(clgStaffName, otp) {
             }
             .content {
                 margin-top: 20px;
-                border: 2px solid #a3a0a0; /* Corrected: Removed stray '/' */
-                padding: 20px;
+                border: 2px solid #a3a0a0; /* Added a border to content */
+                padding: 20px; 
             }
             .footer {
                 margin-top: 30px;
@@ -612,16 +614,15 @@ function ClgStaffOTPVerificationHTMLContent(clgStaffName, otp) {
             <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
         </div>
         <div class="content">
-            <h2>Welcome to Link Ur Codes</h2>
+            <h2>Password Reset Request</h2>
     
             <p>Dear ${clgStaffName},</p>
-            <p>You are one step away from completing your registration with Link Ur Codes.</p>
-            <p>Please use the following One-Time Password to complete your registration:</p>
-            <p><strong>${otp}</strong></p>
-            <p>This OTP is valid for the next 10 minutes. Enter this OTP in the required field on the web app to continue.</p>
+            <p>You have requested to reset your password. Please use the verification code below to proceed with setting a new password:</p>
+            <p><strong>Verification Code: ${otp}</strong></p>
+            <p>This code is valid for 10 minutes and for one-time use only.</p>
         </div>
         <div class="footer">
-        <p>If you need assistance, please contact our support team :  admin@linkurcodes.com </p>
+            <p>If you did not initiate this request, please contact our support team :  admin@linkurcodes.com </p>
         </div>
     </div>
     
@@ -634,17 +635,16 @@ function ClgStaffOTPVerificationHTMLContent(clgStaffName, otp) {
 function ClgStaffOTPVerificationTextContent(clgStaffName, otp) {
     content = `Dear ${clgStaffName},
 
-    You are one step away from completing your registration with Link Ur Codes.
+    You have requested to reset your password. Please use the verification code below to proceed with setting a new password:
     
-    Please use the following One-Time Password to complete your registration:
+    Verification Code: ${otp}
     
-    ${otp}
+    This code is valid for 10 minutes and for one-time use only.
     
-    This OTP is valid for the next 10 minutes. Enter this OTP in the required field on the web or mobile app to continue.
+    If you did not initiate this request, please contact our support team immediately.
     
-    If you did not initiate this request, please ignore this email or contact support.
-    
-    © Link Ur Codes`
+    Best Regards,
+    Link Ur Codes Team`
 
     return content;
 }
@@ -655,7 +655,7 @@ function AdminStaffOTPVerificationHTMLContent(adminstaffName, admstaffotp) {
     content = `<!DOCTYPE html>
     <html>
     <head>
-        <title>OTP Verification</title>
+        <title>Password Reset Request</title>
         <style>
             body {
                 background-color: #faf4f4;
@@ -665,6 +665,8 @@ function AdminStaffOTPVerificationHTMLContent(adminstaffName, admstaffotp) {
                 padding: 20px;
             }
             .container {
+                border-radius: 8px;
+    
                 background-color: #ece9e9;
                 border-radius: 8px;
                 padding: 20px;
@@ -677,8 +679,8 @@ function AdminStaffOTPVerificationHTMLContent(adminstaffName, admstaffotp) {
             }
             .content {
                 margin-top: 20px;
-                border: 2px solid #a3a0a0; /* Corrected: Removed stray '/' */
-                padding: 20px;
+                border: 2px solid #a3a0a0; /* Added a border to content */
+                padding: 20px; 
             }
             .footer {
                 margin-top: 30px;
@@ -694,16 +696,15 @@ function AdminStaffOTPVerificationHTMLContent(adminstaffName, admstaffotp) {
             <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
         </div>
         <div class="content">
-            <h2>Welcome to Link Ur Codes</h2>
+            <h2>Password Reset Request</h2>
     
             <p>Dear ${adminstaffName},</p>
-            <p>You are one step away from completing your registration with Link Ur Codes.</p>
-            <p>Please use the following One-Time Password to complete your registration:</p>
-            <p><strong>${admstaffotp}</strong></p>
-            <p>This OTP is valid for the next 10 minutes. Enter this OTP in the required field on the web app to continue.</p>
+            <p>You have requested to reset your password. Please use the verification code below to proceed with setting a new password:</p>
+            <p><strong>Verification Code: ${admstaffotp}</strong></p>
+            <p>This code is valid for 10 minutes and for one-time use only.</p>
         </div>
         <div class="footer">
-        <p>If you need assistance, please contact our support team :  admin@linkurcodes.com </p>
+            <p>If you did not initiate this request, please contact our support team :  admin@linkurcodes.com </p>
         </div>
     </div>
     
@@ -716,17 +717,16 @@ function AdminStaffOTPVerificationHTMLContent(adminstaffName, admstaffotp) {
 function AdminStaffOTPVerificationTextContent(adminstaffName, admstaffotp) {
     content = `Dear ${adminstaffName},
 
-    You are one step away from completing your registration with Link Ur Codes.
+    You have requested to reset your password. Please use the verification code below to proceed with setting a new password:
     
-    Please use the following One-Time Password to complete your registration:
+    Verification Code: ${admstaffotp}
     
-    ${admstaffotp}
+    This code is valid for 10 minutes and for one-time use only.
     
-    This OTP is valid for the next 10 minutes. Enter this OTP in the required field on the web or mobile app to continue.
+    If you did not initiate this request, please contact our support team immediately.
     
-    If you did not initiate this request, please ignore this email or contact support.
-    
-    © Link Ur Codes`
+    Best Regards,
+    Link Ur Codes Team`
 
     return content;
 }
@@ -735,7 +735,7 @@ function StudentOTPVerificationHTMLContent(studName, otp) {
     content = `<!DOCTYPE html>
     <html>
     <head>
-        <title>OTP Verification</title>
+        <title>Password Reset Request</title>
         <style>
             body {
                 background-color: #faf4f4;
@@ -745,6 +745,8 @@ function StudentOTPVerificationHTMLContent(studName, otp) {
                 padding: 20px;
             }
             .container {
+                border-radius: 8px;
+    
                 background-color: #ece9e9;
                 border-radius: 8px;
                 padding: 20px;
@@ -757,8 +759,8 @@ function StudentOTPVerificationHTMLContent(studName, otp) {
             }
             .content {
                 margin-top: 20px;
-                border: 2px solid #a3a0a0; /* Corrected: Removed stray '/' */
-                padding: 20px;
+                border: 2px solid #a3a0a0; /* Added a border to content */
+                padding: 20px; 
             }
             .footer {
                 margin-top: 30px;
@@ -774,16 +776,15 @@ function StudentOTPVerificationHTMLContent(studName, otp) {
             <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
         </div>
         <div class="content">
-            <h2>Welcome to Link Ur Codes</h2>
+            <h2>Password Reset Request</h2>
     
             <p>Dear ${studName},</p>
-            <p>You are one step away from completing your registration with Link Ur Codes.</p>
-            <p>Please use the following One-Time Password to complete your registration:</p>
-            <p><strong>${otp}</strong></p>
-            <p>This OTP is valid for the next 10 minutes. Enter this OTP in the required field on the web app to continue.</p>
+            <p>You have requested to reset your password. Please use the verification code below to proceed with setting a new password:</p>
+            <p><strong>Verification Code: ${otp}</strong></p>
+            <p>This code is valid for 10 minutes and for one-time use only.</p>
         </div>
         <div class="footer">
-        <p>If you need assistance, please contact our support team :  admin@linkurcodes.com </p>
+            <p>If you did not initiate this request, please contact our support team :  admin@linkurcodes.com </p>
         </div>
     </div>
     
@@ -796,17 +797,16 @@ function StudentOTPVerificationHTMLContent(studName, otp) {
 function StudentOTPVerificationTextContent(studName, otp) {
     content = `Dear ${studName},
 
-    You are one step away from completing your registration with Link Ur Codes.
+    You have requested to reset your password. Please use the verification code below to proceed with setting a new password:
     
-    Please use the following One-Time Password to complete your registration:
+    Verification Code: ${otp}
     
-    ${otp}
+    This code is valid for 10 minutes and for one-time use only.
     
-    This OTP is valid for the next 10 minutes. Enter this OTP in the required field on the web or mobile app to continue.
+    If you did not initiate this request, please contact our support team immediately.
     
-    If you did not initiate this request, please ignore this email or contact support.
-    
-    © Link Ur Codes`
+    Best Regards,
+    Link Ur Codes Team`
 
     return content;
 }

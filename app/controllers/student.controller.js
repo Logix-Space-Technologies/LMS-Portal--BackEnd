@@ -1357,7 +1357,7 @@ exports.forgotStudpassword = (request, response) => {
 function sendOTPEmail(email, studName, otp) {
     const otpVerificationHTMLContent = mailContents.StudentOTPVerificationHTMLContent(studName, otp);
     const otpVerificationTextContent = mailContents.StudentOTPVerificationTextContent(studName, otp);
-    mail.sendEmail(email, 'OTP Verification For Student', otpVerificationHTMLContent, otpVerificationTextContent)
+    mail.sendEmail(email, 'Password Reset Request', otpVerificationHTMLContent, otpVerificationTextContent)
     return true; // Placeholder
 }
 
@@ -1389,3 +1389,33 @@ exports.verifyStudOtp = (req, res) => {
     });
 };
 
+exports.studforgotpassword = (request, response) => {
+    const { studEmail, oldPassword, newPassword } = request.body;
+
+    const validationErrors = {};
+
+    if (Validator.isEmpty(studEmail).isValid) {
+        validationErrors.userName = "Username is required";
+    } else if (Validator.isEmpty(oldPassword).isValid) {
+        validationErrors.oldPassword = "Old password is required";
+    } else if (Validator.isEmpty(newPassword).isValid) {
+        validationErrors.newPassword = "New password is required";
+    } else if (oldPassword === newPassword) {
+        validationErrors.newPassword = "Old password and new password cannot be the same";
+    } else if (!Validator.isValidPassword(newPassword).isValid) {
+        validationErrors.newPassword = "New password is not valid";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
+
+    Student.StdChangePassword({ studEmail, oldPassword, newPassword }, (err, data) => {
+        if (err) {
+            response.json({ "status": err });
+            return;
+        } else {
+            return response.json({ "status": "success" });
+        }
+    });
+}

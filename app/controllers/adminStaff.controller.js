@@ -530,7 +530,7 @@ exports.forgotPassword = (request, response) => {
 function sendOTPEmail(email, adminstaffName, admstaffotp) {
     const otpVerificationHTMLContent = mailContents.AdminStaffOTPVerificationHTMLContent(adminstaffName, admstaffotp);
     const otpVerificationTextContent = mailContents.AdminStaffOTPVerificationTextContent(adminstaffName, admstaffotp);
-    mail.sendEmail(email, 'OTP Verification For Admin Staff', otpVerificationHTMLContent, otpVerificationTextContent)
+    mail.sendEmail(email, 'Password Reset Request', otpVerificationHTMLContent, otpVerificationTextContent)
     return true; // Placeholder
 }
 
