@@ -11,6 +11,9 @@ const StudentViewOneTask = () => {
         "remarks": ""
     });
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [tasksPerPage] = useState(3);
+
     let [taskId, setTaskId] = useState({})
     const navigate = useNavigate()
     const [showModal, setShowModal] = useState(false);
@@ -144,6 +147,17 @@ const StudentViewOneTask = () => {
         return new Date(year, month - 1, day);
     };
 
+    // Logic for displaying current logs
+    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+    const currentTask = studViewTaskData ? studViewTaskData.slice(indexOfFirstTask, indexOfLastTask) : [];
+
+    // Change page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    // Calculate total pages
+    const totalPages = Math.ceil(studViewTaskData.length / tasksPerPage);
+
     useEffect(() => { getData(); }, []);
     return (
         <div>
@@ -151,11 +165,11 @@ const StudentViewOneTask = () => {
                 <h2 className="text-lg font-bold">Student View Tasks</h2>
                 <Link to="/studSessionView" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
             </div>
-            <section className="flex flex-col justify-center antialiased bg-gray-100 text-gray-600 min-h-screen p-4 pt-0 pb-0">
+            <section className="flex flex-col justify-center items-center antialiased bg-gray-100 text-gray-600 p-4 pt-2 pb-2">
                 <div className="h-full">
                     {/* Cards */}
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {studViewTaskData && studViewTaskData.length > 0 ? (studViewTaskData.map(
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+                        {currentTask && currentTask.length > 0 ? (currentTask.map(
                             (task, index) => {
                                 // Convert dueDate and subDate/lateSubDate to Date objects for comparison
                                 const dueDateObj = parseDateString(task.dueDate);
@@ -199,11 +213,11 @@ const StudentViewOneTask = () => {
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Evaluator Remarks:</strong> {task.evaluatorRemarks}
                                             </p>
-                                            <p className="text-gray-700 mb-2">
+                                            <p className="text-gray-700 mb-8">
                                                 <strong>Evaluated By:</strong> {task.evaluatorName}
                                             </p>
                                             <td>
-                                                <div className="flex justify-start pl-24" >
+                                                <div className="flex justify-start pl-40" >
                                                     <Link target="_blank" rel='noreferrer' to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
@@ -232,7 +246,7 @@ const StudentViewOneTask = () => {
                                                     <strong>Submission Date:</strong> {task.updatedDate}
                                                 </p>
                                             ) : (
-                                                <p className="text-gray-700 mb-2" style={{ display: 'flex', alignItems: 'center' }}>
+                                                <p className="text-gray-700 mb-4" style={{ display: 'flex', alignItems: 'center' }}>
                                                     <strong style={{ marginRight: '8px' }}>Submission Date:</strong> {task.subDate}
                                                     {isLateSubmission && (
                                                         <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '5px' }} />
@@ -240,7 +254,7 @@ const StudentViewOneTask = () => {
                                                 </p>
                                             )}
                                             <td>
-                                                <div className="flex justify-start pl-8 pt-24" >
+                                                <div className="flex justify-start pl-28 pt-24" >
                                                     <Link target="_blank" rel='noreferrer' to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
@@ -268,7 +282,7 @@ const StudentViewOneTask = () => {
 
                                             </p><br /><br />
                                             <td>
-                                                <div className="flex justify-start pl-4 pt-24" >
+                                                <div className="flex justify-start pl-16 pt-20" >
                                                     <Link target="_blank" rel='noreferrer' to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
@@ -337,6 +351,27 @@ const StudentViewOneTask = () => {
                     )}
                 </div>
             </section>
+            <div>
+                {currentTask.length > 0 && (
+                    <div className="flex flex-col items-center mt-4">
+                        <span className="text-sm text-gray-700 dark:text-gray-400">
+                            Showing <span className="font-semibold text-gray-900 dark:text-white">{indexOfFirstTask + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{indexOfLastTask > studViewTaskData.length ? studViewTaskData.length : indexOfLastTask}</span> of <span className="font-semibold text-gray-900 dark:text-white">{studViewTaskData.length}</span> Entries
+                        </span>
+                        <div className="inline-flex mt-2 xs:mt-0">
+                            {currentPage > 1 && (
+                                <button onClick={() => paginate(currentPage - 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                    Prev
+                                </button>
+                            )}
+                            {currentPage < totalPages && (
+                                <button onClick={() => paginate(currentPage + 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                    Next
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

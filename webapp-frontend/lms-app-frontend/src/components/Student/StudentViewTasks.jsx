@@ -6,6 +6,8 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const StudentViewTasks = () => {
     const [studViewTaskData, setStudViewTaskData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [tasksPerPage] = useState(3);
     const [errors, setErrors] = useState({});
     const [inputField, setInputField] = useState({
         "gitLink": "",
@@ -150,18 +152,29 @@ const StudentViewTasks = () => {
         return new Date(year, month - 1, day);
     };
 
+    // Logic for displaying current logs
+    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+    const currentTask = studViewTaskData ? studViewTaskData.slice(indexOfFirstTask, indexOfLastTask) : [];
+
+    // Change page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    // Calculate total pages
+    const totalPages = Math.ceil(studViewTaskData.length / tasksPerPage);
+
     useEffect(() => { getData(); }, []);
 
     return (
         <div>
             <StudNavBar />
             <br />
-            <h1 style={{ marginLeft: "20px", marginBottom: "0px", textAlign: "center" }}>Student View Tasks</h1>
-            <section className="flex flex-col justify-center items-center antialiased bg-gray-100 text-gray-600 min-vh-100 p-4 pt-0 pb-0">
+            <h1 style={{ marginLeft: "20px", marginBottom: "32px", textAlign: "center" }}>Student View Tasks</h1>
+            <section className="flex flex-col justify-center items-center antialiased bg-gray-100 text-gray-600 p-4 pt-2 pb-2">
                 <div className="h-full">
                     {/* Cards */}
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {studViewTaskData && studViewTaskData.length > 0 ? (studViewTaskData.map(
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+                        {currentTask && currentTask.length > 0 ? (currentTask.map(
                             (task, index) => {
                                 // Convert dueDate and subDate/lateSubDate to Date objects for comparison
                                 const dueDateObj = parseDateString(task.dueDate);
@@ -208,11 +221,11 @@ const StudentViewTasks = () => {
                                             <p className="text-gray-700 mb-2">
                                                 <strong>Evaluator Remarks:</strong> {task.evaluatorRemarks}
                                             </p>
-                                            <p className="text-gray-700 mb-2">
+                                            <p className="text-gray-700 mb-4">
                                                 <strong>Evaluated By:</strong> {task.evaluatorName}
                                             </p>
                                             <td>
-                                                <div className="flex justify-start pl-24" >
+                                                <div className="flex justify-start pl-36" >
                                                     <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
@@ -244,7 +257,7 @@ const StudentViewTasks = () => {
                                                     <strong>Submission Date:</strong> {task.updatedDate}
                                                 </p>
                                             ) : (
-                                                <p className="text-gray-700 mb-2" style={{ display: 'flex', alignItems: 'center' }}>
+                                                <p className="text-gray-700 mb-4" style={{ display: 'flex', alignItems: 'center' }}>
                                                     <strong style={{ marginRight: '8px' }}>Submission Date:</strong> {task.subDate}
                                                     {isLateSubmission && (
                                                         <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '5px' }} />
@@ -252,7 +265,7 @@ const StudentViewTasks = () => {
                                                 </p>
                                             )}
                                             <td>
-                                                <div className="flex justify-start pl-8 pt-20" >
+                                                <div className="flex justify-start pl-32 pt-20" >
                                                     <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
@@ -283,7 +296,7 @@ const StudentViewTasks = () => {
 
                                             </p><br /><br />
                                             <td>
-                                                <div className="flex justify-start pl-4 pt-28" >
+                                                <div className="flex justify-start pl-16 pt-28" >
                                                     <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                                 </div>
 
@@ -354,6 +367,27 @@ const StudentViewTasks = () => {
                             zIndex: 1040, // Ensure this is below your modal's z-index
                         }}
                     ></div>
+                )}
+            </div>
+            <div>
+                {currentTask.length > 0 && (
+                    <div className="flex flex-col items-center mt-4">
+                        <span className="text-sm text-gray-700 dark:text-gray-400">
+                            Showing <span className="font-semibold text-gray-900 dark:text-white">{indexOfFirstTask + 1}</span> to <span className="font-semibold text-gray-900 dark:text-white">{indexOfLastTask > studViewTaskData.length ? studViewTaskData.length : indexOfLastTask}</span> of <span className="font-semibold text-gray-900 dark:text-white">{studViewTaskData.length}</span> Entries
+                        </span>
+                        <div className="inline-flex mt-2 xs:mt-0">
+                            {currentPage > 1 && (
+                                <button onClick={() => paginate(currentPage - 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                    Prev
+                                </button>
+                            )}
+                            {currentPage < totalPages && (
+                                <button onClick={() => paginate(currentPage + 1)} className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                    Next
+                                </button>
+                            )}
+                        </div>
+                    </div>
                 )}
             </div>
         </div>
