@@ -43,6 +43,15 @@ const StudentViewCommunityManager = () => {
     }
 
     useEffect(() => { getData() }, [])
+
+    const getGridClass = () => {
+        const itemCount = communityManagerData.length;
+        if (itemCount === 1) return 'grid-cols-1';
+        if (itemCount === 2) return 'grid-cols-2';
+        return 'grid-cols-3';
+    };
+    
+
     return (
         <div>
             <StudNavBar />
@@ -57,7 +66,7 @@ const StudentViewCommunityManager = () => {
                         )}
                         <div className="h-full">
                             {/* Cards */}
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-2">
+                            <div className={`grid ${getGridClass()} gap-4`}>
                                 {isLoading ? (
                                     <div className="col-12 text-center">
                                         <p>Loading...</p>
