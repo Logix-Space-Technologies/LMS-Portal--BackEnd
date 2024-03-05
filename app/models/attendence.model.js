@@ -59,13 +59,13 @@ Attendence.markAttendence = (attendance, result) => {
 };
 
 Attendence.collegeStaffViewAttendance = (sessionId, result) => {
-    db.query("SELECT b.batchName, sd.sessionName, sd.date, s.membership_no, s.studName, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendence_status FROM attendence a JOIN sessiondetails sd ON a.sessionId = sd.id JOIN student s ON s.id = a.studId JOIN college c ON c.id = s.collegeId LEFT JOIN batches b ON b.id = sd.batchId WHERE sd.cancelStatus = 0 AND sd.id = ? ORDER BY b.batchName, sd.sessionName", [sessionId], (err, res) => {
+    db.query("SELECT b.batchName, sd.sessionName, sd.date, s.membership_no, s.studName, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendence_status FROM attendence a JOIN sessiondetails sd ON a.sessionId = sd.id JOIN student s ON s.id = a.studId JOIN college c ON c.id = s.collegeId LEFT JOIN batches b ON b.id = sd.batchId WHERE sd.cancelStatus = 0 AND s.isVerified = 1 AND sd.id = ? ORDER BY b.batchName, sd.sessionName, s.membership_no", [sessionId], (err, res) => {
         if (err) {
             console.log("error:", err);
             result(err, null);
             return;
         }
-        const formattedViewAttendance = res.map(attendance => ({ ...attendance, date: attendance.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })  }))
+        const formattedViewAttendance = res.map(attendance => ({ ...attendance, date: attendance.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })  }))
         console.log("attendance:", formattedViewAttendance);
         result(null, formattedViewAttendance);
     });

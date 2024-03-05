@@ -287,7 +287,7 @@ CollegeStaff.viewTask = (sessionId, result) => {
         } else {
             const formattedViewTasks = res.map(tasks => {
                 // Convert dueDate to a Date object if it's not 'Past Due Date'
-                const dueDate = tasks.dueDate === 'Past Due Date' ? 'Past Due Date' : new Date(tasks.dueDate).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+                const dueDate = tasks.dueDate === 'Past Due Date' ? 'Past Due Date' : new Date(tasks.dueDate).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
                 return {
                     ...tasks,
                     dueDate: dueDate,
@@ -434,7 +434,7 @@ CollegeStaff.viewSession = (batchId, result) => {
                 result(err, null);
                 return;
             } else {
-                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
                 console.log("Sessions: ", formattedViewSession)
                 result(null, formattedViewSession)
             }
