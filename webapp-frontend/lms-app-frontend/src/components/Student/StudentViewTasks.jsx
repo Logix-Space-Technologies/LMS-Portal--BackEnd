@@ -8,6 +8,12 @@ const StudentViewTasks = () => {
     const [studViewTaskData, setStudViewTaskData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(3);
+
+    const rangeSize = 5; // Number of pages to display in the pagination
+    const lastPage = Math.ceil(studViewTaskData.length / tasksPerPage); // Calculate the total number of pages
+    let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
+    let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
+
     const [errors, setErrors] = useState({});
     const [inputField, setInputField] = useState({
         "gitLink": "",
@@ -386,9 +392,9 @@ const StudentViewTasks = () => {
                                     </svg>
                                 </button>
                                 {/* Dynamically generate Link components for each page number */}
-                                {Array.from({ length: totalPages }, (_, index) => (
-                                    <button key={index} onClick={() => paginate(index + 1)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === index + 1 ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`} disabled={currentPage === index + 1}>
-                                        {index + 1}
+                                {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                                    <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
+                                        {startPage + index}
                                     </button>
                                 ))}
                                 <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>

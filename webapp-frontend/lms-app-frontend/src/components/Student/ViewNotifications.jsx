@@ -17,7 +17,6 @@ const NotificationView = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/studentNofificationView";
     let data = { "studId": sessionStorage.getItem("studentId") }
     const token = sessionStorage.getItem("studLoginToken");
-    console.log(data)
     let axiosConfig = {
       headers: {
         "content-type": "application/json;charset=UTF-8",
