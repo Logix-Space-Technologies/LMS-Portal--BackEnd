@@ -301,4 +301,6 @@ router.post('/adminforgotpassword', AdminController.adminforgotpassword)
 
 router.post('/studforgotpassword', StudentController.studforgotpassword)
 
+router.post('/clgstaffforgotpassword', ClgStaffController.collegestaffforgotpassword)
+
 module.exports = router

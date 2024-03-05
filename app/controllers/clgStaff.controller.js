@@ -861,3 +861,36 @@ exports.verifyOtp = (req, res) => {
     }
   });
 };
+
+
+
+exports.collegestaffforgotpassword = (request, response) => {
+  const { email, oldPassword, newPassword } = request.body;
+
+  const validationErrors = {};
+
+  if (Validator.isEmpty(email).isValid) {
+    validationErrors.email ="Email is required";
+  } else if (Validator.isEmpty(oldPassword).isValid) {
+    validationErrors.oldPassword = "Old password is required";
+  } else if (Validator.isEmpty(newPassword).isValid) {
+    validationErrors.newPassword = "New password is required";
+  } else if (oldPassword === newPassword) {
+    validationErrors.newPassword = "Old password and new password cannot be the same";
+  } else if (!Validator.isValidPassword(newPassword).isValid) {
+    validationErrors.newPassword = "New password is not valid";
+  }
+
+  if (Object.keys(validationErrors).length > 0) {
+    return response.json({ "status": "Validation failed", "data": validationErrors });
+  }
+
+  CollegeStaff.collegeStaffChangePassword({ email, oldPassword, newPassword }, (err, data) => {
+    if (err) {
+      response.json({ "status": err });
+      return;
+    } else {
+      return response.json({ "status": "success" });
+    }
+  });
+}

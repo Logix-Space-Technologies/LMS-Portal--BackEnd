@@ -1395,7 +1395,7 @@ exports.studforgotpassword = (request, response) => {
     const validationErrors = {};
 
     if (Validator.isEmpty(studEmail).isValid) {
-        validationErrors.userName = "Username is required";
+        validationErrors.studEmail = "Email is required";
     } else if (Validator.isEmpty(oldPassword).isValid) {
         validationErrors.oldPassword = "Old password is required";
     } else if (Validator.isEmpty(newPassword).isValid) {
