@@ -881,7 +881,7 @@ Student.studentNotificationView = (studId, result) => {
         } else {
             if (studentRes.length === 0) {
                 console.log("Student not found or not verified");
-                result(null, { status: "Student not found or not verified" });
+                result("Student not found or not verified", null);
                 return;
             }
             const batchId = studentRes[0].batchId;
@@ -893,7 +893,7 @@ Student.studentNotificationView = (studId, result) => {
                 } else {
                     if (batchRes.length === 0) {
                         console.log("Batch not found");
-                        result(null, { status: "Batch not found" });
+                        result("Batch not found", null);
                         return;
                     }
                     db.query(

@@ -15,9 +15,9 @@ const NotificationView = () => {
 
   const fetchNotifications = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/studentNofificationView";
-    const studentId = sessionStorage.getItem("studentId");
+    let data = { "studId": sessionStorage.getItem("studentId") }
     const token = sessionStorage.getItem("studLoginToken");
-
+    console.log(data)
     let axiosConfig = {
       headers: {
         "content-type": "application/json;charset=UTF-8",
@@ -27,7 +27,7 @@ const NotificationView = () => {
       }
     };
 
-    axios.post(apiUrl, { studId: studentId }, axiosConfig)
+    axios.post(apiUrl, data, axiosConfig)
       .then(response => {
         if (response.data.status === 'success') {
           setNotifications(response.data.data);
@@ -76,7 +76,7 @@ const NotificationView = () => {
                     {value.formattedDateTime}
                   </p>
                 </div>
-                <p className="mt-1 text-sm" style={{textAlign: "justify"}}>
+                <p className="mt-1 text-sm" style={{ textAlign: "justify" }}>
                   {value.message}
                 </p>
                 <br />
