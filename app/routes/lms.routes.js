@@ -297,4 +297,6 @@ router.post('/studentotpsend', StudentController.forgotStudpassword)
 
 router.post('/studentotpverification', StudentController.verifyStudOtp)
 
+
+
 module.exports = router
