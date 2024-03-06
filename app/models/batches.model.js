@@ -167,8 +167,9 @@ Batches.adminBatchView = (collegeId, result) => {
             result(err, null)
             return
         } else {
-            console.log("Batches: ", res);
-            result(null, res)
+            const formattedBatches = res.map(batchview => ({ ...batchview, regStartDate: batchview.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), regEndDate: batchview.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
+            console.log("Batches: ", formattedBatches);
+            result(null, formattedBatches)
         }
     })
 }

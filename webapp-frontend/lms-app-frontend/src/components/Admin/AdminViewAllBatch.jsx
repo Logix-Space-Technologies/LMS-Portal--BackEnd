@@ -37,7 +37,20 @@ const AdminViewAllBatch = () => {
         };
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-                setBatchData(response.data.data);
+                if (response.data.data) {
+                    setBatchData(response.data.data);
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/")
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setBatchData([])
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         );
     };
@@ -146,10 +159,13 @@ const AdminViewAllBatch = () => {
                                 <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                 <td className="px-6 py-4">{value.collegeName}</td>
                                 <td className="px-6 py-4">{value.batchName}</td>
-                                <td className="px-6 py-4">{new Date(value.regStartDate).toLocaleDateString()}</td>
-                                <td className="px-6 py-4">{new Date(value.regEndDate).toLocaleDateString()}</td>
+                                <td className="px-6 py-4">{value.regStartDate}</td>
+                                <td className="px-6 py-4">{value.regEndDate}</td>
                                 <td className="px-6 py-4">{value.batchDesc}</td>
-                                <td className="px-6 py-4">{value.batchAmount}</td>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <img src="https://www.svgrepo.com/show/389251/indian-rupee.svg" alt="rupee" style={{ marginLeft: '24px', height: '14px', verticalAlign: 'middle' }} />
+                                  <td className="px-6 py-4">{value.batchAmount}</td>
+                                </div>
                                 <td className="px-6 py-4">
                                     <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Sessions</Link>
                                 </td>
