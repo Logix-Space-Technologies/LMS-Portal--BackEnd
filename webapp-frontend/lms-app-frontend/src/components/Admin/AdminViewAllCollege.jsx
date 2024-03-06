@@ -37,7 +37,20 @@ const AdminViewAllCollege = () => {
         }
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
-                setCollegeData(response.data.data)
+                if (response.data.data) {
+                    setCollegeData(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/")
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setCollegeData([])
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
@@ -58,7 +71,12 @@ const AdminViewAllCollege = () => {
                     alert("College Deleted Successfully!!!")
                     getData();
                 } else {
-                    alert(response.data.status)
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             }
         )
