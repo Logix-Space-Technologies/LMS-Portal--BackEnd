@@ -48,7 +48,6 @@ const AdmStaffViewProfile = () => {
                         <br></br>
                     </div>
                     <ul className="list-unstyled mb-1-9">
-                        <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Admin Staff Id : {admStaffData.id}</span></li>
                         <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Email : {admStaffData.Email}</span></li>
                         <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Phone No. : {admStaffData.PhNo}</span></li>
                         <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Aadhar Number : {admStaffData.AadharNo}</span></li>

@@ -1301,27 +1301,35 @@ exports.viewCommunityManagers = (request, response) => {
 };
 
 exports.studentvalidityrenewal = (request, response) => {
-    const { id, rpPaymentId, rpOrderId, rpAmount } = request.body
+    const { id, studEmail, rpPaymentId, rpOrderId, rpAmount } = request.body
 
     const newStudent = new Student({
-        id: id
+        id: id,
+        studEmail: studEmail
     })
 
     Student.PaymentRenewal(newStudent, (err, data) => {
         if (err) {
             return res.json({ "status": err });
         } else {
+            let validityDate = data.validity.split('-').reverse().join('/')
+            let email = data.studEmail
             const newPayment = new Payment({
                 studId: id,
                 rpPaymentId: rpPaymentId,
                 rpOrderId: rpOrderId,
                 rpAmount: rpAmount
             })
-
             Payment.updatePayment(newPayment, (paymentErr, paymentData) => {
                 if (paymentErr) {
                     return response.json({ "status": paymentErr });
                 } else {
+                    let renewalAmount = paymentData.rpAmount
+                    let transactionNo = paymentData.rpPaymentId
+                    let paymentId = paymentData.rpOrderId
+                    const otpVerificationHTMLContent = mailContents.paymentRenewalSuccessfulHTMLContent(validityDate, renewalAmount, transactionNo, paymentId);
+                    const otpVerificationTextContent = mailContents.paymentRenewalSuccessfulTextContent(validityDate, renewalAmount, transactionNo, paymentId);
+                    mail.sendEmail(email, 'Payment Renewal Successful!', otpVerificationHTMLContent, otpVerificationTextContent)
                     return response.json({ "status": "success", "data": data, "paymentData": paymentData });
                 }
             })
