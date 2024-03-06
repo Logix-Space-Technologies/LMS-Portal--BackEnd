@@ -38,7 +38,7 @@ exports.deleteCommunityManager = (request, response) => {
     // Checking token validation
     jwt.verify(communityManagerToken, key, (tokenError, decoded) => {
         if (tokenError) {
-            return response.json({ "status": "Unauthorized User !!! " });
+            return response.json({ "status": "Unauthorized User !!!" });
         }
         CommunityManager.delete(id, (deleteError, data) => {
             if (deleteError) {

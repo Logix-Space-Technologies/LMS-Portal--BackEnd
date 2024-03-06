@@ -563,7 +563,7 @@ Student.viewAllStudentByAdmin = (batchId, result) => {
                 console.log("Data Not Found")
                 return result("Data Not Found", null)
             }
-            const formattedStudent = response.map(student => ({ ...student, validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); // Formats the date as 'YYYY-MM-DD'
+            const formattedStudent = response.map(student => ({ ...student, validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) })); // Formats the date as 'YYYY-MM-DD'
 
             console.log("College : ", formattedStudent)
             result(null, formattedStudent)
