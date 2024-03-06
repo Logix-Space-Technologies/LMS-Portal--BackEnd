@@ -94,17 +94,17 @@ exports.batchDelete = (request, response) => {
                 if (err) {
                     if (err.kind === "not_found") {
                         console.log({ "status": "Batch Not Found." })
-                        response.json({ "status": "Batch Not Found." })
+                        return response.json({ "status": "Batch Not Found." })
                     } else {
-                        response.json({ "status": "Error Deleting Batch." })
+                        return response.json({ "status": "Error Deleting Batch." })
                     }
                 } else {
                     logAdminStaff(0, "Admin Deleted Batch")
-                    response.json({ "status": "Batch Deleted." })
+                    return response.json({ "status": "Batch Deleted." })
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
