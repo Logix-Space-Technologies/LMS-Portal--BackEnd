@@ -149,14 +149,14 @@ exports.getSuccessfulRefunds = (request, response) => {
             Refund.getSuccessfulRefunds((err, data) => {
                 if (err) {
                     console.log(err);
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     console.log("Successful refunds successfully retrieved");
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
