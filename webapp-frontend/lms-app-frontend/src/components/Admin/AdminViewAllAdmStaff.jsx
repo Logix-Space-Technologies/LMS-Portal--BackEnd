@@ -11,7 +11,9 @@ const AdminViewAllAdminStaff = () => {
   const [adminStaffPerPage] = useState(10); // Number of admin staff per page
   const navigate = useNavigate();
   const [deleteClgStaff, setDeleteClgStaff] = useState({})
+  
   const apiUrl = global.config.urls.api.server + "/api/lms/viewalladmstaff";
+  const deleteUrl = global.config.urls.api.server + "/api/lms/deleteadmstaff";
 
   const getData = () => {
     let axiosConfig = {
@@ -34,7 +36,6 @@ const AdminViewAllAdminStaff = () => {
 
   const handleDeleteClick = () => {
     let id = deleteClgStaff
-    const deleteUrl = global.config.urls.api.server + "/api/lms/deleteadmstaff";
     const axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
