@@ -260,61 +260,72 @@ function collegeStaffHtmlContent(collegeStaffName, collegeName) {
 
 function collegeHtmlContent(collegeName) {
     content = `<!DOCTYPE html>
-<html>
-<head>
-    <title>College Registration Succesful</title>
-    <style>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Welcome to LinkUrCodes</title>
+      <style>
         body {
-            background-color: #faf4f4;
-            color: #140101;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
         }
+    
         .container {
-            border-radius: 8px;
-
-            background-color: #ece9e9;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 600px;
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
         }
-        .logo-header img {
-            max-width: 30%;
-            height: auto;
+    
+        h1 {
+          color: #007bff;
         }
-        .content {
-            margin-top: 20px;
-            border: 2px solid #a3a0a0; /* Added a border to content */
-            padding: 20px;
+    
+        p {
+          line-height: 1.6;
         }
-        .footer {
-            margin-top: 30px;
-            font-size: smaller;
-            color: grey;
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
         }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <div class="logo-header">
-        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
-    </div>
-    <div class="content">
-        <p>Dear ${collegeName},</p>
-        <p>Thank you for joining Link Ur Codes. We are excited to have you on board! Your training will commence shortly, and we are looking forward to helping you enhance your skills.</p>
-        <p>For more details about the upcoming sessions, please use our mobile app or contact your college directly. Stay tuned for more updates and prepare to embark on a rewarding learning journey with us.</p>
-        <p>Stay tuned for an exciting learning experience!</p>
-    </div>
-    <div class="footer">
-        <p>If you have any questions, feel free to reach out to us.</p>
-    </div>
-</div>
-
-</body>
-</html>`
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <h1>Welcome to LinkUrCodes!</h1>
+        <p>Dear ${collegeName} Administration,</p>
+        <p>Congratulations on joining LinkUrCodes! We are thrilled to welcome ${collegeName} to our platform, where we empower students and faculty to explore, learn, and excel in the world of technology.</p>
+        <p>LinkUrCodes provides a unique learning experience, and we are excited to collaborate with ${collegeName} to enhance the technological journey of your students. Here are some key features and benefits you can expect:</p>
+        <ul>
+          <li>Live coding projects for students</li>
+          <li>Mentorship and guidance from industry experts</li>
+          <li>Access to a vast library of coding resources</li>
+          <li>Opportunities for participation in coding events and competitions</li>
+        </ul>
+       
+        <p>Batch-in-Charge, can now log in and  will have access to all data related to ${collegeName} and can verify the students enrolled in coding batches.</p>
+        <p>We are here to support you throughout the onboarding process. If you have any questions or need assistance, please feel free to reach out to our dedicated support team.</p>
+        <p>Thank you for choosing LinkUrCodes. We look forward to a successful partnership in fostering technological excellence at ${collegeName}.</p>
+        <p>Best Regards,</p>
+        <p>The LinkUrCodes Team</p>
+      </div>
+    </body>
+    </html>`
     return content;
 }
 
