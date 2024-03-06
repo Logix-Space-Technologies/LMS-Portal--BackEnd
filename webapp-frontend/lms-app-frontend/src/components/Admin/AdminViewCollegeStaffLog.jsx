@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import Navbar from './Navbar';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AdminViewCollegeStaffLog = () => {
 
     const [collegeStaffLogData, setcollegeStaffLogData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [logsPerPage] = useState(10); // Number of logs per page
+
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewClgStaffLog";
 
@@ -22,14 +25,18 @@ const AdminViewCollegeStaffLog = () => {
         };
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
-                setcollegeStaffLogData(response.data);
                 if (response.data) {
-                    
+                    setcollegeStaffLogData(response.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        
+                        navigate("/")
+                        sessionStorage.clear()
                     } else {
-                        
+                        if (!response.data) {
+                            setcollegeStaffLogData([])
+                        } else {
+                            alert(response.data.status)
+                        }
                     }
                 }
             }
