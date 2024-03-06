@@ -197,7 +197,7 @@ Session.viewSessions = (batchId, result) => {
             return;
         }
         // Format the date for each session
-        const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: session.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: session.updatedDate ? session.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
+        const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), addedDate: session.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), updatedDate: session.updatedDate ? session.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null })); // Formats the date as 'YYYY-MM-DD'
 
         console.log("sessions: ", formattedSessions);
         result(null, formattedSessions);
