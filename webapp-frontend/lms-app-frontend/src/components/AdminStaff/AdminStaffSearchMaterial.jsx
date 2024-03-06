@@ -8,26 +8,17 @@ const AdminStaffSearchMaterial = () => {
 
   const navigate = useNavigate()
 
-  const [inputField, setInputField] = useState(
-    {
-      "materialQuery": ""
-    }
-  )
+  const [inputField, setInputField] = useState({
+    "materialQuery": ""
+  })
 
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1);
   const [updateField, setUpdateField] = useState([])
   const [materialPerPage] = useState(10);
-
-  const rangeSize = 5; // Number of pages to display in the pagination
-  const lastPage = Math.ceil(updateField.length / materialPerPage); // Calculate the total number of pages
-  let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
-  let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
-
   const [deleteId, setDeleteId] = useState(null);
   const apiLink = global.config.urls.api.server + "/api/lms/searchMaterial";
   const apiLink2 = global.config.urls.api.server + "/api/lms/adminStaffDeleteMaterial";
-
 
   const inputHandler = (event) => {
     setInputField({ ...inputField, [event.target.name]: event.target.value });
@@ -44,19 +35,16 @@ const AdminStaffSearchMaterial = () => {
       }
     };
 
-    axios.post(apiLink, inputField, axiosConfig).then(
-      (response) => {
-        setUpdateField(response.data.data);
-        setIsLoading(false);
-        setInputField({
-          "materialQuery": ""
-        });
-      }
-    );
+    axios.post(apiLink, inputField, axiosConfig).then((response) => {
+      setUpdateField(response.data.data);
+      setIsLoading(false);
+      setInputField({
+        "materialQuery": ""
+      });
+    });
   };
 
-
-  // Logic for displaying current curriculum
+  // Logic for displaying current materials
   const indexOfLastMaterial = currentPage * materialPerPage;
   const indexOfFirstMaterial = indexOfLastMaterial - materialPerPage;
   const currentMaterial = updateField ? updateField.slice(indexOfFirstMaterial, indexOfLastMaterial) : [];
@@ -64,11 +52,10 @@ const AdminStaffSearchMaterial = () => {
   // Change page
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
-  // Calculate total pages
-  const totalPages = Math.ceil(updateField.length / materialPerPage);
-
-  const calculateSerialNumber = (index) => {
-    return ((currentPage - 1) * materialPerPage) + index + 1;
+  // Total pages
+  let totalPages = []
+  if (updateField && updateField.length > 0) {
+    totalPages = Math.ceil(updateField.length / materialPerPage);
   }
 
   const handleClick = (id) => {
@@ -86,25 +73,25 @@ const AdminStaffSearchMaterial = () => {
       }
     };
 
-    axios.post(apiLink2, data, axiosConfig2).then(
-      (response) => {
-        if (response.data.status === "Material Deleted Successfully.") {
-          alert("Material deleted!!");
-          // Remove the deleted material from updateField state
-          setUpdateField(updateField.filter(material => material.id !== deleteId));
-        } else {
-          alert(response.data.status);
-        }
+    axios.post(apiLink2, data, axiosConfig2).then((response) => {
+      if (response.data.status === "Material Deleted Successfully.") {
+        alert("Material deleted!!");
+        // Remove the deleted material from updateField state
+        setUpdateField(updateField.filter(material => material.id !== deleteId));
+      } else {
+        alert(response.data.status);
       }
-    );
+    });
   };
 
   const UpdateClick = (id) => {
-    let data = id
-    sessionStorage.setItem("materialId", data)
+    sessionStorage.setItem("materialId", id)
     navigate("/AdminStaffUpdateMaterial")
-
   }
+
+  // Integration of new pagination logic
+  const startPage = currentPage > 2 ? currentPage - 2 : 1;
+  const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
 
   return (
     <div>
@@ -129,7 +116,7 @@ const AdminStaffSearchMaterial = () => {
         <div className="col-12 text-center">
           <p></p>
         </div>
-      ) : (currentMaterial.length > 0 ? (
+      ) : (updateField ? (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -156,9 +143,6 @@ const AdminStaffSearchMaterial = () => {
                 <th scope="col" className="px-6 py-3">
 
                 </th>
-                <th scope="col" className="px-6 py-3">
-
-                </th>
               </tr>
             </thead>
             <tbody>
@@ -166,7 +150,7 @@ const AdminStaffSearchMaterial = () => {
                 (value, index) => {
                   return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <td className="px-6 py-4">
-                      {calculateSerialNumber(index)}
+                      {index + 1}
                     </td>
                     <td className="px-6 py-4">
                       {value.fileName}
@@ -212,7 +196,7 @@ const AdminStaffSearchMaterial = () => {
                       <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
                     </svg>
                   </button>
-                  {/* Dynamically generate Link components for each page number */}
+                  {/* Dynamically generated page number buttons */}
                   {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
                     <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
                       {startPage + index}
