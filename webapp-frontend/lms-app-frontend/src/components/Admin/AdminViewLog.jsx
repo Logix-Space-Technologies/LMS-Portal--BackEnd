@@ -27,7 +27,20 @@ const AdminViewLog = () => {
         };
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
-                setAdminLogData(response.data);
+                if (response.data) {
+                    setAdminLogData(response.data);
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/")
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data) {
+                            setAdminLogData([])
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         );
     };

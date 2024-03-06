@@ -159,14 +159,14 @@ exports.viewAdminLog = (request, response) => {
             Admin.getAll((err, data) => {
                 if (err) {
                     console.log(err)
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
 
                 } else {
-                    response.json(data)
+                    return response.json(data)
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
