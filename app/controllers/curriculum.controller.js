@@ -176,13 +176,13 @@ exports.currView = (request, response) => {
                     response.json({ "status": err });
                 }
                 if (!data) {
-                    response.json({ "status": "No batches found!" });
+                    return response.json({ "status": "No batches found!" });
                 } else {
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     })
 }

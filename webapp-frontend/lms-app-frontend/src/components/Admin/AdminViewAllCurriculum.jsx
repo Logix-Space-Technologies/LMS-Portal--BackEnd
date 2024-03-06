@@ -12,7 +12,7 @@ const AdminViewAllCurriculum = () => {
     const [deleteCurriculumId, setDeleteCurriculumId] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
-    
+
     const navigate = useNavigate();
     const [key, setKey] = useState('');
 
@@ -150,7 +150,12 @@ const AdminViewAllCurriculum = () => {
                                         <td className="px-6 py-4">{value.curriculumDesc}</td>
                                         <td className="px-6 py-4">{value.addedDate}</td>
                                         <td className="px-6 py-4">{value.addedBy}</td>
-                                        <td className="px-6 py-4">{value.updatedBy}</td>
+                                        {value.updatedBy !== null && (
+                                            <td className="px-6 py-4">{value.updatedBy}</td>
+                                        )}
+                                        {value.updatedBy === null && (
+                                            <td className="px-6 py-4">NIL</td>
+                                        )}
                                         <td className="px-6 py-4">
                                             <Link target="_blank" to={value.curriculumFileLink} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Curriculum</Link>
                                         </td>
