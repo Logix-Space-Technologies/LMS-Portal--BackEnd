@@ -1245,7 +1245,7 @@ Student.PaymentRenewal = (newStudent, result) => {
 
     // Update the student's validity
     newStudent.validity = formattedDate;
-    db.query("UPDATE student SET validity = ? WHERE id = ?", [newStudent.validity, newStudent.id], (err, res) => {
+    db.query("UPDATE student SET validity = ? WHERE studEmail = ? AND id = ?", [newStudent.validity, newStudent.studEmail, newStudent.id], (err, res) => {
         if (err) {
             console.error("Error while updating student: ", err);
             result(err, null);

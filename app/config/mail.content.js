@@ -933,6 +933,100 @@ function StudentRegistrationSuccessfulMailTextContent(membershipNo) {
     return content
 }
 
+function paymentRenewalSuccessfulHTMLContent(validityDate, renewalAmount, transactionNo, paymentId) {
+    content = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>LinkUrCodes Subscription Renewal Confirmation</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+    
+        h1 {
+          color: #007bff;
+        }
+    
+        p {
+          line-height: 1.6;
+        }
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <h1>LinkUrCodes Subscription Renewal Confirmation</h1>
+        <p>Dear LinkUrCodes Member,</p>
+        <p>Thank you for renewing your LinkUrCodes subscription! We appreciate your continued support and trust in our platform.</p>
+        <p>Your subscription is now active, and you have full access to all the features and resources available on LinkUrCodes. If you have any questions, need assistance, or want to explore new features, feel free to reach out to our support team.</p>
+        <p>Details of your renewed subscription:</p>
+        <ul>
+          <li><strong>Validity:</strong> ${validityDate}</li>
+          <li><strong>Renewal Amount:</strong> ${renewalAmount}</li>
+          <li><strong> Payment Id :</strong> ${paymentId}</li>
+          <li><strong> Transaction Number :</strong> ${transactionNo}</li>
+        </ul>
+        <p>Thank you for being a valued member of LinkUrCodes! We look forward to providing you with an excellent learning experience.</p>
+        <p>Best Regards,</p>
+        <p>LinkUrCodes Team</p>
+      </div>
+    </body>
+    </html>`
+
+    return content
+}
+
+function paymentRenewalSuccessfulTextContent(validityDate, renewalAmount, transactionNo, paymentId) {
+   content = `LinkUrCodes Subscription Renewal Confirmation
+
+   Dear LinkUrCodes Member,
+   
+   Thank you for renewing your LinkUrCodes subscription! We appreciate your continued support and trust in our platform.
+   
+   Your subscription is now active, and you have full access to all the features and resources available on LinkUrCodes. If you have any questions, need assistance, or want to explore new features, feel free to reach out to our support team.
+   
+   Details of your renewed subscription:
+   
+   Validity: ${validityDate}
+   Renewal Amount: ${renewalAmount}
+   Payment Id: ${paymentId}
+   Transaction Number: ${transactionNo}
+   Thank you for being a valued member of LinkUrCodes! We look forward to providing you with an excellent learning experience.
+   
+   Best Regards,
+   
+   LinkUrCodes Team`
+
+   return content
+}
+
 module.exports = {
     admStaffAddHTMLContent,
     upcomingSessionContent,
@@ -954,6 +1048,8 @@ module.exports = {
     StudentOTPVerificationHTMLContent,
     StudentOTPVerificationTextContent,
     StudentRegistrationSuccessfulMailHTMLContent,
-    StudentRegistrationSuccessfulMailTextContent
+    StudentRegistrationSuccessfulMailTextContent,
+    paymentRenewalSuccessfulHTMLContent,
+    paymentRenewalSuccessfulTextContent
 };
 
