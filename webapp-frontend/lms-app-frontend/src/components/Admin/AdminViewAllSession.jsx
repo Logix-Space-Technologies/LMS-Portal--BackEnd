@@ -59,7 +59,20 @@ const AdminViewAllSession = () => {
         };
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-                setSessionData(response.data.Sessions);
+                if (response.data.Sessions) {
+                    setSessionData(response.data.Sessions);
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        navigate("/")
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.Sessions) {
+                            setSessionData([])
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         );
     };
@@ -93,7 +106,12 @@ const AdminViewAllSession = () => {
                     alert("Session Cancelled Successfully.")
                     getData()
                 } else {
-                    alert(response.data.status);
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status);
+                    }
                 }
             })
             .catch(error => {
@@ -184,7 +202,12 @@ const AdminViewAllSession = () => {
                     setUpdateField(updateField.filter(session => session.id !== deleteId));
                     getData()
                 } else {
-                    console.error("Error deleting session:", response.data.status);
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
                 }
             })
             .catch(error => {
