@@ -132,7 +132,7 @@ const AdminViewSuccessfulRefunds = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {refundSuccessData.map((value, index) => {
+                                                        {currentRefunds.map((value, index) => {
                                                             return <tr key={index}>
                                                                 <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                                     {calculateSerialNumber(index)}
