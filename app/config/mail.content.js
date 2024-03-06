@@ -330,18 +330,27 @@ function collegeHtmlContent(collegeName) {
 }
 
 function collegeTextContent(collegeName) {
-    content = `Dear ${collegeName},
+    content = `Welcome to LinkUrCodes!
 
-    We are thrilled to have you join us at Link Ur Codes. Your journey to connect and learn starts here!
+    Dear ${collegeName} Administration,
     
-    Our sessions will commence shortly, and we will update you with the details of the next session soon.
+    Congratulations on joining LinkUrCodes! We are thrilled to welcome ${collegeName} to our platform, where we empower students and faculty to explore, learn, and excel in the world of technology.
     
-    Stay tuned for an exciting learning experience!
+    LinkUrCodes provides a unique learning experience, and we are excited to collaborate with ${collegeName} to enhance the technological journey of your students. Here are some key features and benefits you can expect:
+    - Live coding projects for students
+    - Mentorship and guidance from industry experts
+    - Access to a vast library of coding resources
+    - Opportunities for participation in coding events and competitions
     
-    If you have any questions, feel free to reach out to us.
+    Batch-in-Charge can now log in and will have access to all data related to ${collegeName} and can verify the students enrolled in coding batches.
+    
+    We are here to support you throughout the onboarding process. If you have any questions or need assistance, please feel free to reach out to our dedicated support team.
+    
+    Thank you for choosing LinkUrCodes. We look forward to a successful partnership in fostering technological excellence at ${collegeName}.
     
     Best Regards,
-    Link Ur Codes Team`
+    
+    The LinkUrCodes Team`
     return content;
 }
 
