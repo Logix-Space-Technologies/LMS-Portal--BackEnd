@@ -1,6 +1,7 @@
 const { response } = require("express")
 const db = require("../models/db")
 const bcrypt = require("bcrypt")
+const crypto = require("crypto")
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
 const AdminStaff = function (adminStaff) {
@@ -292,7 +293,7 @@ AdminStaff.viewSubmittedTask = (result) => {
                 result("No Submitted Tasks Found.", null)
                 return
             }
-            const formattedSubTasks = res.map(subtasks => ({ ...subtasks, dueDate: subtasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), subDate: subtasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), evalDate: subtasks.evalDate ? subtasks.evalDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null, lateSubDate: subtasks.lateSubDate ? subtasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null }));
+            const formattedSubTasks = res.map(subtasks => ({ ...subtasks, dueDate: subtasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), subDate: subtasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), evalDate: subtasks.evalDate ? subtasks.evalDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null, lateSubDate: subtasks.lateSubDate ? subtasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
             result(null, formattedSubTasks)
         })
 }
@@ -342,17 +343,132 @@ AdminStaff.viewOneMaterial = (materialId, result) => {
 
 AdminStaff.searchSubmittedTask = (searchSubTask, result) => {
     const searchString = '%' + searchSubTask + '%';
-    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, t.id, t.taskTitle, t.dueDate, st.id AS 'submitTaskId', st.gitLink, st.remarks, st.subDate, st.evalDate, st.lateSubDate, st.evaluatorRemarks, st.score FROM submit_task st JOIN task t ON st.taskId = t.id JOIN student s ON st.studId = s.id JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.validity > CURRENT_DATE() AND s.isVerified = 1 AND s.isActive = 1 AND s.emailVerified = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND st.isEvaluated = 0 AND (c.collegeName LIKE ? OR b.batchName LIKE ? OR t.taskTitle LIKE ?)",
+    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, t.id, t.taskTitle, t.dueDate, t.totalScore, st.id AS 'submitTaskId', st.gitLink, st.remarks, st.subDate, st.evalDate, st.lateSubDate, st.evaluatorRemarks, st.score FROM submit_task st JOIN task t ON st.taskId = t.id JOIN student s ON st.studId = s.id JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.validity > CURRENT_DATE() AND s.isVerified = 1 AND s.isActive = 1 AND s.emailVerified = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND (c.collegeName LIKE ? OR b.batchName LIKE ? OR t.taskTitle LIKE ?)",
         [searchString, searchString, searchString],
         (err, res) => {
             if (err) {
                 console.log("Error: ", err);
                 result(err, null);
             } else {
-                console.log("Submitted Task Details: ", res);
-                result(null, res);
+                const formattedSubmittedTask = res.map(subtasks => ({ ...subtasks, dueDate: subtasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), subDate: subtasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), lateSubDate: subtasks.lateSubDate ? subtasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null, evalDate: subtasks.evalDate ? subtasks.evalDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
+                console.log("Submitted Task Details: ", formattedSubmittedTask);
+                result(null, formattedSubmittedTask);
             }
         })
 }
+
+AdminStaff.forgotPassGenerateAndHashOTP = (Email, result) => {
+    // Generate a 6-digit numeric OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const saltRounds = 10;
+    const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
+
+    db.query(
+        "SELECT * FROM adminstaff_otp WHERE Email = ?",
+        [Email],
+        (err, res) => {
+            if (err) {
+                console.error("Error while checking OTP existence: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    // Email exists, so update the OTP
+                    const updateQuery = "UPDATE adminstaff_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                    db.query(
+                        updateQuery,
+                        [hashedOTP, Email],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while updating OTP: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("OTP updated successfully");
+                                result(null, otp); // Return the plain OTP for email sending
+                            }
+                        }
+                    );
+                } else {
+                    // Email does not exist, insert new OTP
+                    const insertQuery = "INSERT INTO adminstaff_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+                    db.query(
+                        insertQuery,
+                        [Email, hashedOTP],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while inserting OTP: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("OTP inserted successfully");
+                                result(null, otp); // Return the plain OTP for email sending
+                            }
+                        }
+                    );
+                }
+            }
+        }
+    );
+}
+
+
+AdminStaff.searchadminstaffbyemail = (searchKey, result) => {
+    db.query(
+        "SELECT `AdStaffName` FROM `admin_staff` WHERE `Email` = ?",
+        [searchKey],
+        (err, res) => {
+            if (err) {
+                console.error("Error while searching student: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    // Directly access the AdminStaffName of the first result
+                    let name = res[0].AdStaffName; 
+                    result(null, name); 
+                } else {
+                    // Handle case where no results are found
+                    console.log("No admin staff found with the given email.");
+                    result(null, []);
+                }
+                return;
+            }
+        }
+    );
+}
+
+
+AdminStaff.verifyOTP = (Email, otp, result) => {
+    const query = "SELECT otp, createdAt FROM adminstaff_otp WHERE email = ?";
+    db.query(query, [Email], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            if (res.length > 0) {
+                const admstaffotp = res[0].otp;
+                const createdAt = res[0].createdAt;
+                // Check if OTP is expired
+                const expiryDuration = 10 * 60 * 1000; // 10 minute in milliseconds
+                const otpCreatedAt = new Date(createdAt).getTime();
+                const currentTime = new Date().getTime();
+                if (currentTime - otpCreatedAt > expiryDuration) {
+                    return result("OTP expired", null);
+                }
+
+                // If OTP not expired, proceed to compare
+                const isMatch = bcrypt.compareSync(otp, admstaffotp);
+                if (isMatch) {
+                    return result(null, true);
+                } else {
+                    return result(null, false);
+                }
+            } else {
+                return result("OTP not found or expired", null);
+            }
+        }
+    });
+}
+
+
+
 
 module.exports = AdminStaff

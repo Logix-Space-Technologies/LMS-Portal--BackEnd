@@ -36,7 +36,7 @@ const CollegeStaffViewNotifications = () => {
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
-                            console.log(response.data.status)
+                            setNotifications([])
                         } else {
                             alert(response.data.status);
                         }

@@ -160,6 +160,11 @@ exports.createStudent = (req, res) => {
                             if (paymentErr) {
                                 return res.json({ "status": paymentErr });
                             } else {
+                                let membershipNo = data.membership_no
+                                let email = data.studEmail
+                                const otpVerificationHTMLContent = mailContents.StudentRegistrationSuccessfulMailHTMLContent(membershipNo);
+                                const otpVerificationTextContent = mailContents.StudentRegistrationSuccessfulMailTextContent(membershipNo);
+                                mail.sendEmail(email, 'Welcome To LinkUrCodes!', otpVerificationHTMLContent, otpVerificationTextContent)
                                 return res.json({ "status": "success", "data": data, "paymentData": paymentData });
                             }
                         });
@@ -726,11 +731,11 @@ function generatePDF(data, callback) {
             doc.moveDown(); // Add a newline between batches
         }
     }
-    // Add the generated date and time
     const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString() + ' ' + generatedDate.toLocaleTimeString(), {
+    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
         align: 'center',
     });
+
 
     doc.end();
 
@@ -858,9 +863,8 @@ function generateAttendancePDF(data, callback) {
             doc.moveDown(); // Add a newline between sessions
         }
     }
-    // Add the generated date and time
     const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString() + ' ' + generatedDate.toLocaleTimeString(), {
+    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
         align: 'center',
     });
 
@@ -1033,19 +1037,13 @@ exports.studentNotificationView = (request, response) => {
 
     jwt.verify(studTaskToken, "lmsappstud", (err, decoded) => {
         if (err) {
-            response.json({ "status": "Unauthorized User" });
+            return response.json({ "status": "Unauthorized User" });
         } else {
             Student.studentNotificationView(studId, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
-                    if (data.status) {
-                        response.json({ "status": data.status });
-                    } else if (data.length === 0) {
-                        response.json({ "status": "No notifications found!" });
-                    } else {
-                        response.json({ "status": "success", "data": data });
-                    }
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         }
@@ -1231,7 +1229,7 @@ exports.regOtpVerification = (request, response) => {
         } else {
             // Assuming sendOTPEmail is a function you have defined to handle email sending
             // This function should ideally be asynchronous and handle its own errors
-            const mailSent = sendOTPEmail(newStudentOtpSend.studEmail, otp); // Hypothetical function to send email
+            const mailSent = sendRegOTPEmail(newStudentOtpSend.studEmail, otp); // Hypothetical function to send email
             if (mailSent) {
                 // Successfully sent the OTP to the user's email
                 response.json({ "status": "OTP sent to email." });
@@ -1272,7 +1270,7 @@ exports.verifyOtp = (req, res) => {
 };
 
 // Function to send OTP
-function sendOTPEmail(email, otp) {
+function sendRegOTPEmail(email, otp) {
     const otpVerificationHTMLContent = mailContents.studRegOTPVerificationHTMLContent(otp);
     const otpVerificationTextContent = mailContents.studRegOTPVerificationTextContent(otp);
     mail.sendEmail(email, 'OTP Verification For Student Registration', otpVerificationHTMLContent, otpVerificationTextContent)
@@ -1285,7 +1283,7 @@ exports.viewCommunityManagers = (request, response) => {
     const batchId = request.body.batchId;
     jwt.verify(token, key, (err, decoded) => {
         if (decoded) {
-            Student.viewCommunityMangers(batchId,(err, data) => {
+            Student.viewCommunityMangers(batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
@@ -1301,3 +1299,129 @@ exports.viewCommunityManagers = (request, response) => {
         }
     });
 };
+
+exports.studentvalidityrenewal = (request, response) => {
+    const { id, studEmail, rpPaymentId, rpOrderId, rpAmount } = request.body
+
+    const newStudent = new Student({
+        id: id,
+        studEmail: studEmail
+    })
+
+    Student.PaymentRenewal(newStudent, (err, data) => {
+        if (err) {
+            return res.json({ "status": err });
+        } else {
+            let validityDate = data.validity.split('-').reverse().join('/')
+            let email = data.studEmail
+            const newPayment = new Payment({
+                studId: id,
+                rpPaymentId: rpPaymentId,
+                rpOrderId: rpOrderId,
+                rpAmount: rpAmount
+            })
+            Payment.updatePayment(newPayment, (paymentErr, paymentData) => {
+                if (paymentErr) {
+                    return response.json({ "status": paymentErr });
+                } else {
+                    let renewalAmount = paymentData.rpAmount
+                    let transactionNo = paymentData.rpPaymentId
+                    let paymentId = paymentData.rpOrderId
+                    const otpVerificationHTMLContent = mailContents.paymentRenewalSuccessfulHTMLContent(validityDate, renewalAmount, transactionNo, paymentId);
+                    const otpVerificationTextContent = mailContents.paymentRenewalSuccessfulTextContent(validityDate, renewalAmount, transactionNo, paymentId);
+                    mail.sendEmail(email, 'Payment Renewal Successful!', otpVerificationHTMLContent, otpVerificationTextContent)
+                    return response.json({ "status": "success", "data": data, "paymentData": paymentData });
+                }
+            })
+        }
+    })
+}
+
+exports.forgotStudpassword = (request, response) => {
+    const email = request.body.studEmail
+    // Generate and hash OTP
+    Student.forgotPassGenerateAndHashOTP(email, (err, otp) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            let studentotp = otp
+            Student.searchstudentbyemail(email, (err, data) => {
+                let studName = data
+                // Send OTP to email
+                const mailSent = sendOTPEmail(email, studName, otp);
+                if (mailSent) {
+                    return response.json({ "status": "OTP sent to email." });
+                } else {
+                    return response.json({ "status": "Failed to send OTP." });
+                }
+            })
+        }
+    });
+}
+
+// Function to send OTP
+function sendOTPEmail(email, studName, otp) {
+    const otpVerificationHTMLContent = mailContents.StudentOTPVerificationHTMLContent(studName, otp);
+    const otpVerificationTextContent = mailContents.StudentOTPVerificationTextContent(studName, otp);
+    mail.sendEmail(email, 'Password Reset Request', otpVerificationHTMLContent, otpVerificationTextContent)
+    return true; // Placeholder
+}
+
+// Function to verify OTP and update password
+exports.verifyStudOtp = (req, res) => {
+    // Extract email and OTP from request body
+    const email = req.body.studEmail;
+    const otp = req.body.otp;
+
+    // Input validation (basic example)
+    if (!email || !otp) {
+        return res.json({ "status": "Email and OTP are required" });
+    }
+
+    // Call the model function to verify the OTP
+    Student.verifyStudOTP(email, otp, (err, result) => {
+        if (err) {
+            // If there was an error or the OTP is not valid/expired
+            return res.json({ "status": err });
+        } else {
+            if (result) {
+                // If the OTP is verified successfully
+                return res.json({ "status": "OTP verified successfully" });
+            } else {
+                // If the OTP does not match
+                return res.json({ "status": "Invalid OTP" });
+            }
+        }
+    });
+};
+
+exports.studforgotpassword = (request, response) => {
+    const { studEmail, oldPassword, newPassword } = request.body;
+
+    const validationErrors = {};
+
+    if (Validator.isEmpty(studEmail).isValid) {
+        validationErrors.studEmail = "Email is required";
+    } else if (Validator.isEmpty(oldPassword).isValid) {
+        validationErrors.oldPassword = "Old password is required";
+    } else if (Validator.isEmpty(newPassword).isValid) {
+        validationErrors.newPassword = "New password is required";
+    } else if (oldPassword === newPassword) {
+        validationErrors.newPassword = "Old password and new password cannot be the same";
+    } else if (!Validator.isValidPassword(newPassword).isValid) {
+        validationErrors.newPassword = "New password is not valid";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
+
+    Student.StdChangePassword({ studEmail, oldPassword, newPassword }, (err, data) => {
+        if (err) {
+            response.json({ "status": err });
+            return;
+        } else {
+            return response.json({ "status": "success" });
+        }
+    });
+}

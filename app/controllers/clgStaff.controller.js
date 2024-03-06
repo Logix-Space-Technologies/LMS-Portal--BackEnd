@@ -467,16 +467,16 @@ exports.collegeStaffViewBatch = (request, response) => {
       const collegeId = request.body.collegeId;
       CollegeStaff.viewBatch(collegeId, (err, data) => {
         if (err) {
-          response.json({ "status": err });
+          return response.json({ "status": err });
         }
         if (data.length === 0) {
-          response.json({ "status": "No Batch found!" });
+          return response.json({ "status": "No Batch found!" });
         } else {
-          response.json({ "status": "success", "data": data });
+          return response.json({ "status": "success", "data": data });
         }
       });
     } else {
-      response.json({ "status": "Unauthorized User!!" });
+      return response.json({ "status": "Unauthorized User!!" });
     }
   });
 };
@@ -800,4 +800,97 @@ exports.viewCollegeDetails = (request, response) => {
     }
   })
 
+}
+
+
+// Function to handle forgot password request
+exports.forgotPassword = (request, response) => {
+  const email = request.body.email
+  // Generate and hash OTP
+  CollegeStaff.forgotPassGenerateAndHashOTP(email, (err, otp) => {
+    if (err) {
+      return response.json({ "status": err });
+    } else {
+      let clgstaffotp = otp
+      CollegeStaff.searchcollegestaffbyemail(email, (err, data) => {
+        let clgstaffName = data
+        // Send OTP to email
+        const mailSent = sendOTPEmail(email, clgstaffName, clgstaffotp);
+        if (mailSent) {
+          return response.json({ "status": "OTP sent to email." });
+        } else {
+          return response.json({ "status": "Failed to send OTP." });
+        }
+      })
+    }
+  });
+};
+
+// Function to send OTP
+function sendOTPEmail(email, clgStaffName, otp) {
+  const otpVerificationHTMLContent = mailContents.ClgStaffOTPVerificationHTMLContent(clgStaffName, otp);
+  const otpVerificationTextContent = mailContents.ClgStaffOTPVerificationTextContent(clgStaffName, otp);
+  mail.sendEmail(email, 'Password Reset Request', otpVerificationHTMLContent, otpVerificationTextContent)
+  return true; // Placeholder
+}
+
+// Function to verify OTP and update password
+exports.verifyOtp = (req, res) => {
+  // Extract email and OTP from request body
+  const email = req.body.email;
+  const otp = req.body.otp;
+
+  // Input validation (basic example)
+  if (!email || !otp) {
+    return res.json({ "status": "Email and OTP are required" });
+  }
+
+  // Call the model function to verify the OTP
+  CollegeStaff.verifyOTP(email, otp, (err, result) => {
+    if (err) {
+      // If there was an error or the OTP is not valid/expired
+      return res.json({ "status": err });
+    } else {
+      if (result) {
+        // If the OTP is verified successfully
+        return res.json({ "status": "OTP verified successfully" });
+      } else {
+        // If the OTP does not match
+        return res.json({ "status": "Invalid OTP" });
+      }
+    }
+  });
+};
+
+
+
+exports.collegestaffforgotpassword = (request, response) => {
+  const { email, oldPassword, newPassword } = request.body;
+
+  const validationErrors = {};
+
+  if (Validator.isEmpty(email).isValid) {
+    validationErrors.email = "Email is required";
+  } else if (Validator.isEmpty(oldPassword).isValid) {
+    validationErrors.oldPassword = "Old password is required";
+  } else if (Validator.isEmpty(newPassword).isValid) {
+    validationErrors.newPassword = "New password is required";
+  } else if (oldPassword === newPassword) {
+    validationErrors.newPassword = "Old password and new password cannot be the same";
+  } else if (!Validator.isValidPassword(newPassword).isValid) {
+    validationErrors.newPassword = "New password is not valid";
+  }
+
+  if (Object.keys(validationErrors).length > 0) {
+    return response.json({ "status": "Validation failed", "data": validationErrors });
+  }
+
+  CollegeStaff.collegeStaffChangePassword({ email, oldPassword, newPassword }, (err, data) => {
+    if (err) {
+      response.json({ "status": err });
+      return;
+    } else {
+      return response.json({ "status": "success" });
+    }
+  });
 }

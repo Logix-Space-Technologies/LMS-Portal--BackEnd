@@ -71,7 +71,7 @@ exports.adminLogin = (request, response) => {
                         if (error) {
                             response.json({ "status": "Unauthorized User!!" })
                         } else {
-                            logAdminStaff(0,"Admin Logged In")
+                            logAdminStaff(0, "Admin Logged In")
                             response.json({ "status": "Success", "data": admin, "token": token })
                         }
                     })
@@ -153,7 +153,7 @@ exports.adminDashBoards = (request, response) => {
 
 exports.viewAdminLog = (request, response) => {
     const adminLogToken = request.headers.token
-    const key=request.headers.key
+    const key = request.headers.key
     jwt.verify(adminLogToken, key, (err, decoded) => {
         if (decoded) {
             Admin.getAll((err, data) => {
@@ -169,4 +169,36 @@ exports.viewAdminLog = (request, response) => {
             response.json({ "status": "Unauthorized User!!" })
         }
     })
+}
+
+exports.adminforgotpassword = (request, response) => {
+    const { userName, oldPassword, newPassword } = request.body;
+    // Basic Validation
+    const validationErrors = {};
+    if (Validator.isEmpty(userName).isValid) {
+        validationErrors.userName = "Username is required";
+    } else if (Validator.isEmpty(oldPassword).isValid) {
+        validationErrors.oldPassword = "Old password is required";
+    } else if (Validator.isEmpty(newPassword).isValid) {
+        validationErrors.newPassword = "New password is required";
+    } else if (oldPassword === newPassword) {
+        validationErrors.newPassword = "Old password and new password cannot be the same";
+    } else if (!Validator.isValidPassword(newPassword).isValid) {
+        validationErrors.newPassword = "New password is not valid";
+    }
+
+    // If validation fails
+    if (Object.keys(validationErrors).length > 0) {
+        return response.json({ "status": "Validation failed", "data": validationErrors });
+    }
+
+    Admin.adminChangePassword({ userName, oldPassword, newPassword }, (err, result) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            return response.json({ "status": "success" });
+        }
+        
+    });
+
 }

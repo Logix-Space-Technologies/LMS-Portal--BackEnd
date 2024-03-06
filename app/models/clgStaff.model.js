@@ -1,6 +1,7 @@
 const { response } = require("express")
 const db = require("../models/db")
 const bcrypt = require('bcrypt')
+const crypto = require("crypto")
 const { CollegeStaffLog, logCollegeStaff } = require("../models/collegeStaffLog.model")
 const College = require("./college.model")
 
@@ -163,7 +164,7 @@ CollegeStaff.getAll = async (result) => {
             console.log("College staff: ", response)
             result(null, response)
         }
-    })  
+    })
 }
 
 
@@ -209,7 +210,7 @@ CollegeStaff.findByClgStaffEmail = (email, result) => {
 //To view batch
 CollegeStaff.viewBatch = (collegeId, result) => {
     db.query(
-        "SELECT DISTINCT b.id, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND cs.collegeId = ?",
+        "SELECT b.id, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate, COUNT(DISTINCT CASE WHEN st.isVerified = 1 THEN st.id END) AS verifiedStudentCount, COUNT(DISTINCT CASE WHEN STR_TO_DATE(CONCAT(s.date, ' ', s.time), '%Y-%m-%d %H:%i:%s') < NOW() AND s.isActive = 1 AND s.deleteStatus = 0 AND s.cancelStatus = 0 THEN s.id ELSE NULL END) AS sessionCount FROM batches b JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id LEFT JOIN sessiondetails s ON b.id = s.batchId LEFT JOIN student st ON st.batchId = b.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND cs.collegeId = ? GROUP BY b.id, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate",
         [collegeId],
         (err, res) => {
             if (err) {
@@ -217,7 +218,7 @@ CollegeStaff.viewBatch = (collegeId, result) => {
                 result(err, null);
                 return;
             } else {
-                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: batches.addedDate ? batches.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null }));
+                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), addedDate: batches.addedDate ? batches.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
                 console.log("Batch Details: ", formattedBatches);
                 result(null, formattedBatches);
             }
@@ -286,7 +287,7 @@ CollegeStaff.viewTask = (sessionId, result) => {
         } else {
             const formattedViewTasks = res.map(tasks => {
                 // Convert dueDate to a Date object if it's not 'Past Due Date'
-                const dueDate = tasks.dueDate === 'Past Due Date' ? 'Past Due Date' : new Date(tasks.dueDate).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+                const dueDate = tasks.dueDate === 'Past Due Date' ? 'Past Due Date' : new Date(tasks.dueDate).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
                 return {
                     ...tasks,
                     dueDate: dueDate,
@@ -358,7 +359,7 @@ CollegeStaff.collegeStaffSearchBatch = (searchTerm, collegeId, result) => {
                 result(err, null)
                 return
             } else {
-                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: batches.addedDate ? batches.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null }));
+                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), addedDate: batches.addedDate ? batches.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
                 console.log("Batches : ", formattedBatches)
                 result(null, formattedBatches)
             }
@@ -433,14 +434,14 @@ CollegeStaff.viewSession = (batchId, result) => {
                 result(err, null);
                 return;
             } else {
-                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
                 console.log("Sessions: ", formattedViewSession)
                 result(null, formattedViewSession)
             }
         })
 }
 
-CollegeStaff.viewCollegeDetails= (collegeStaffId, result) => {
+CollegeStaff.viewCollegeDetails = (collegeStaffId, result) => {
     db.query("SELECT c.id, c.collegeName,c.collegeCode, c.collegeAddress, c.website, c.email, c.collegePhNo, c.collegeMobileNumber, c.collegeImage, c.addedDate, c.updatedDate, c.emailVerified, c.updatedStatus FROM college c JOIN college_staff cs ON c.id = cs.collegeId WHERE cs.id = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1", collegeStaffId, (err, res) => {
         if (err) {
             console.log("Error : ", err);
@@ -452,5 +453,118 @@ CollegeStaff.viewCollegeDetails= (collegeStaffId, result) => {
         }
     });
 }
+
+
+
+CollegeStaff.forgotPassGenerateAndHashOTP = (email, result) => {
+    // Generate a 6-digit numeric OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const saltRounds = 10;
+    const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
+
+    db.query(
+        "SELECT * FROM collegestaff_otp WHERE email = ?",
+        [email],
+        (err, res) => {
+            if (err) {
+                console.error("Error while checking OTP existence: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    // Email exists, so update the OTP
+                    const updateQuery = "UPDATE collegestaff_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                    db.query(
+                        updateQuery,
+                        [hashedOTP, email],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while updating OTP: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("OTP updated successfully");
+                                result(null, otp); // Return the plain OTP for email sending
+                            }
+                        }
+                    );
+                } else {
+                    // Email does not exist, insert new OTP
+                    const insertQuery = "INSERT INTO collegestaff_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+                    db.query(
+                        insertQuery,
+                        [email, hashedOTP],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while inserting OTP: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("OTP inserted successfully");
+                                result(null, otp); // Return the plain OTP for email sending
+                            }
+                        }
+                    );
+                }
+            }
+        }
+    );
+}
+
+
+CollegeStaff.verifyOTP = (email, otp, result) => {
+    const query = "SELECT otp, createdAt FROM collegestaff_otp WHERE email = ?";
+    db.query(query, [email], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            if (res.length > 0) {
+                const clgstaffotp = res[0].otp;
+                const createdAt = res[0].createdAt;
+                // Check if OTP is expired
+                const expiryDuration = 10 * 60 * 1000; // 10 minute in milliseconds
+                const otpCreatedAt = new Date(createdAt).getTime();
+                const currentTime = new Date().getTime();
+                if (currentTime - otpCreatedAt > expiryDuration) {
+                    return result("OTP expired", null);
+                }
+
+                // If OTP not expired, proceed to compare
+                const isMatch = bcrypt.compareSync(otp, clgstaffotp);
+                if (isMatch) {
+                    return result(null, true);
+                } else {
+                    return result(null, false);
+                }
+            } else {
+                return result("OTP not found or expired", null);
+            }
+        }
+    });
+}
+
+CollegeStaff.searchcollegestaffbyemail = (searchKey, result) => {
+    db.query(
+        "SELECT collegeStaffName FROM college_staff WHERE email= ?",
+        [searchKey],
+        (err, res) => {
+            if (err) {
+                console.error("Error while searching student: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    // Directly access the collegeStaffName of the first result
+                    let name = res[0].collegeStaffName;
+                    result(null, name);
+                } else {
+                    // Handle case where no results are found
+                    console.log("No college staff found with the given email.");
+                    result(null, []);
+                }
+                return;
+            }
+        }
+    );
+}
+
 
 module.exports = CollegeStaff

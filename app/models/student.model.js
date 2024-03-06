@@ -213,6 +213,7 @@ Student.create = (newStudent, result) => {
                                                                                                                 }
                                                                                                             );
                                                                                                         };
+                                                                                                        console.log("Registered Student: ", { id: res.insertId, ...newStudent })
                                                                                                         result(null, { id: res.insertId, ...newStudent })
                                                                                                     });
 
@@ -284,7 +285,7 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
                 result(err, null);
                 return;
             } else {
-                const formattedViewStudent = res.map(student => ({ ...student, addedDate: student.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+                const formattedViewStudent = res.map(student => ({ ...student, addedDate: student.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
                 console.log("Student found: ", formattedViewStudent);
                 result(null, formattedViewStudent);
                 return;
@@ -542,7 +543,7 @@ Student.viewUnverifiedStudents = (collegeId, result) => {
                 console.log("No unverified students found.");
                 return result("No unverified students found.", null);
             }
-            const formattedViewUnverifiedStudents = res.map(students => ({ ...students, validity: students.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: students.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }));
+            const formattedViewUnverifiedStudents = res.map(students => ({ ...students, validity: students.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), addedDate: students.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
             console.log("Unverified students: ", formattedViewUnverifiedStudents);
             result(null, formattedViewUnverifiedStudents);
         });
@@ -843,14 +844,14 @@ Student.generateAllBatchWiseList = async (result) => {
 };
 
 Student.generateBatchWiseAttendanceList = (batchId, result) => {
-    let query = "SELECT b.batchName, st.sessionName, s.studName, c.collegeName, s.admNo, s.studDept, s.course, s.membership_no, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendanceStatus, st.date AS attendanceDate, s.addedDate FROM batches b JOIN student s ON b.id = s.batchId JOIN college c ON s.collegeId = c.id LEFT JOIN attendence a ON s.id = a.studId LEFT JOIN sessiondetails st ON st.id = a.sessionId WHERE s.isActive = 1 AND b.isActive = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 AND s.deleteStatus = 0 AND b.deleteStatus = 0 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= s.addedDate AND b.id = ? ORDER BY c.collegeName, b.id, s.id, a.sessionId;"
+    let query = "SELECT b.batchName, st.sessionName, s.studName, c.collegeName, s.admNo, s.studDept, s.course, s.membership_no, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendanceStatus, st.date AS attendanceDate, s.addedDate FROM batches b JOIN student s ON b.id = s.batchId JOIN college c ON s.collegeId = c.id LEFT JOIN attendence a ON s.id = a.studId LEFT JOIN sessiondetails st ON st.id = a.sessionId WHERE s.isActive = 1 AND b.isActive = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 AND s.deleteStatus = 0 AND b.deleteStatus = 0 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= s.addedDate AND b.id = ? AND STR_TO_DATE(CONCAT(st.date, ' ', st.time), '%Y-%m-%d %H:%i') < NOW() ORDER BY c.collegeName, b.id, s.id, a.sessionId;"
 
     db.query(query, [batchId], (err, response) => {
         if (err) {
             console.log("Error executing the query:", err);
             result(err, null);
         } else {
-            const formattedAttendanceList = response.map(attendance => ({ ...attendance, attendanceDate: attendance.attendanceDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: attendance.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+            const formattedAttendanceList = response.map(attendance => ({ ...attendance, attendanceDate: attendance.attendanceDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), addedDate: attendance.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
             console.log("Query results:", formattedAttendanceList);
             result(null, formattedAttendanceList);
         }
@@ -865,7 +866,7 @@ Session.generateSessionAttendanceList = (sessionId, result) => {
             console.log("Error executing the query:", err);
             result(err, null);
         } else {
-            const formattedSessionAttendanceList = response.map(attendances => ({ ...attendances, attendanceDate: attendances.attendanceDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: attendances.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }))
+            const formattedSessionAttendanceList = response.map(attendances => ({ ...attendances, attendanceDate: attendances.attendanceDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), addedDate: attendances.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
             console.log("Query results:", formattedSessionAttendanceList);
             result(null, formattedSessionAttendanceList);
         }
@@ -881,7 +882,7 @@ Student.studentNotificationView = (studId, result) => {
         } else {
             if (studentRes.length === 0) {
                 console.log("Student not found or not verified");
-                result(null, { status: "Student not found or not verified" });
+                result("Student not found or not verified", null);
                 return;
             }
             const batchId = studentRes[0].batchId;
@@ -893,7 +894,7 @@ Student.studentNotificationView = (studId, result) => {
                 } else {
                     if (batchRes.length === 0) {
                         console.log("Batch not found");
-                        result(null, { status: "Batch not found" });
+                        result("Batch not found", null);
                         return;
                     }
                     db.query(
@@ -1226,11 +1227,162 @@ Student.viewCommunityMangers = (batchId, result) => {
                 console.log("No community managers found.");
                 return result("No community managers found.", null);
             }
-            const formattedCommunityManagers = res.map(managers => ({ ...managers, addedDate: managers.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), validity: managers.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }));
+            const formattedCommunityManagers = res.map(managers => ({ ...managers, addedDate: managers.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), validity: managers.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
             console.log("Community Managers: ", formattedCommunityManagers);
             result(null, formattedCommunityManagers);
         }
     );
+}
+
+
+//Student Validity Renewal
+
+Student.PaymentRenewal = (newStudent, result) => {
+    // Calculate the new validity date
+    const currentDate = new Date();
+    currentDate.setFullYear(currentDate.getFullYear() + 1);
+    const formattedDate = currentDate.toISOString().slice(0, 10); // Format as "YYYY-MM-DD"
+
+    // Update the student's validity
+    newStudent.validity = formattedDate;
+    db.query("UPDATE student SET validity = ? WHERE studEmail = ? AND id = ?", [newStudent.validity, newStudent.studEmail, newStudent.id], (err, res) => {
+        if (err) {
+            console.error("Error while updating student: ", err);
+            result(err, null);
+            return;
+        }
+
+        console.log("Student Details Updated", { id: newStudent.id, ...newStudent });
+
+        Payment.updatePayment = (newPayment, result) => {
+            newPayment.studId = newStudent.id;
+            db.query(
+                "UPDATE payment SET rpPaymentId = ?, rpOrderId = ?, rpAmount = ?, paymentDate = CURRENT_DATE() WHERE studId = ?",
+                [newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount, newPayment.studId],
+                (err, paymentRes) => {
+                    if (err) {
+                        console.error("Error during payment update: ", err);
+                        return result(err, null);
+                    }
+
+                    console.log("Payment Updated", { ...newPayment });
+                    result(null, { ...newPayment });
+                }
+            );
+        };
+        result(null, { id: newStudent.id, ...newStudent });
+    });
+}
+
+
+Student.forgotPassGenerateAndHashOTP = (studEmail, result) => {
+    // Generate a 6-digit numeric OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const saltRounds = 10;
+    const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
+
+    db.query(
+        "SELECT * FROM student_otp WHERE email = ?",
+        [studEmail],
+        (err, res) => {
+            if (err) {
+                console.error("Error while checking OTP existence: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    // Email exists, so update the OTP
+                    const updateQuery = "UPDATE student_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                    db.query(
+                        updateQuery,
+                        [hashedOTP, studEmail],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while updating OTP: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("OTP updated successfully");
+                                result(null, otp); // Return the plain OTP for email sending
+                            }
+                        }
+                    );
+                } else {
+                    // Email does not exist, insert new OTP
+                    const insertQuery = "INSERT INTO student_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+                    db.query(
+                        insertQuery,
+                        [studEmail, hashedOTP],
+                        (err, res) => {
+                            if (err) {
+                                console.error("Error while inserting OTP: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("OTP inserted successfully");
+                                result(null, otp); // Return the plain OTP for email sending
+                            }
+                        }
+                    );
+                }
+            }
+        }
+    );
+}
+
+Student.searchstudentbyemail = (searchKey, result) => {
+    db.query(
+        "SELECT studName FROM student WHERE studEmail= ?",
+        [searchKey],
+        (err, res) => {
+            if (err) {
+                console.error("Error while searching student: ", err);
+                result(err, null);
+                return;
+            } else {
+                if (res.length > 0) {
+                    // Directly access the collegeStaffName of the first result
+                    let name = res[0].studName;
+                    result(null, name);
+                } else {
+                    // Handle case where no results are found
+                    console.log("No student found with the given email.");
+                    result(null, []);
+                }
+                return;
+            }
+        }
+    );
+}
+
+
+Student.verifyStudOTP = (studEmail, otp, result) => {
+    const query = "SELECT otp, createdAt FROM student_otp WHERE email = ?";
+    db.query(query, [studEmail], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            if (res.length > 0) {
+                const studentotp = res[0].otp;
+                const createdAt = res[0].createdAt;
+                // Check if OTP is expired
+                const expiryDuration = 10 * 60 * 1000; // 10 minute in milliseconds
+                const otpCreatedAt = new Date(createdAt).getTime();
+                const currentTime = new Date().getTime();
+                if (currentTime - otpCreatedAt > expiryDuration) {
+                    return result("OTP expired", null);
+                }
+
+                // If OTP not expired, proceed to compare
+                const isMatch = bcrypt.compareSync(otp, studentotp);
+                if (isMatch) {
+                    return result(null, true);
+                } else {
+                    return result(null, false);
+                }
+            } else {
+                return result("OTP not found or expired", null);
+            }
+        }
+    });
 }
 
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };

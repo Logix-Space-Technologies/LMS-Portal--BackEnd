@@ -260,77 +260,97 @@ function collegeStaffHtmlContent(collegeStaffName, collegeName) {
 
 function collegeHtmlContent(collegeName) {
     content = `<!DOCTYPE html>
-<html>
-<head>
-    <title>College Registration Succesful</title>
-    <style>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Welcome to LinkUrCodes</title>
+      <style>
         body {
-            background-color: #faf4f4;
-            color: #140101;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
         }
+    
         .container {
-            border-radius: 8px;
-
-            background-color: #ece9e9;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 600px;
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
         }
-        .logo-header img {
-            max-width: 30%;
-            height: auto;
+    
+        h1 {
+          color: #007bff;
         }
-        .content {
-            margin-top: 20px;
-            border: 2px solid #a3a0a0; /* Added a border to content */
-            padding: 20px;
+    
+        p {
+          line-height: 1.6;
         }
-        .footer {
-            margin-top: 30px;
-            font-size: smaller;
-            color: grey;
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
         }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <div class="logo-header">
-        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
-    </div>
-    <div class="content">
-        <p>Dear ${collegeName},</p>
-        <p>Thank you for joining Link Ur Codes. We are excited to have you on board! Your training will commence shortly, and we are looking forward to helping you enhance your skills.</p>
-        <p>For more details about the upcoming sessions, please use our mobile app or contact your college directly. Stay tuned for more updates and prepare to embark on a rewarding learning journey with us.</p>
-        <p>Stay tuned for an exciting learning experience!</p>
-    </div>
-    <div class="footer">
-        <p>If you have any questions, feel free to reach out to us.</p>
-    </div>
-</div>
-
-</body>
-</html>`
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <h1>Welcome to LinkUrCodes!</h1>
+        <p>Dear ${collegeName} Administration,</p>
+        <p>Congratulations on joining LinkUrCodes! We are thrilled to welcome ${collegeName} to our platform, where we empower students and faculty to explore, learn, and excel in the world of technology.</p>
+        <p>LinkUrCodes provides a unique learning experience, and we are excited to collaborate with ${collegeName} to enhance the technological journey of your students. Here are some key features and benefits you can expect:</p>
+        <ul>
+          <li>Live coding projects for students</li>
+          <li>Mentorship and guidance from industry experts</li>
+          <li>Access to a vast library of coding resources</li>
+          <li>Opportunities for participation in coding events and competitions</li>
+        </ul>
+       
+        <p>Batch-in-Charge, can now log in and  will have access to all data related to ${collegeName} and can verify the students enrolled in coding batches.</p>
+        <p>We are here to support you throughout the onboarding process. If you have any questions or need assistance, please feel free to reach out to our dedicated support team.</p>
+        <p>Thank you for choosing LinkUrCodes. We look forward to a successful partnership in fostering technological excellence at ${collegeName}.</p>
+        <p>Best Regards,</p>
+        <p>The LinkUrCodes Team</p>
+      </div>
+    </body>
+    </html>`
     return content;
 }
 
 function collegeTextContent(collegeName) {
-    content = `Dear ${collegeName},
+    content = `Welcome to LinkUrCodes!
 
-    We are thrilled to have you join us at Link Ur Codes. Your journey to connect and learn starts here!
+    Dear ${collegeName} Administration,
     
-    Our sessions will commence shortly, and we will update you with the details of the next session soon.
+    Congratulations on joining LinkUrCodes! We are thrilled to welcome ${collegeName} to our platform, where we empower students and faculty to explore, learn, and excel in the world of technology.
     
-    Stay tuned for an exciting learning experience!
+    LinkUrCodes provides a unique learning experience, and we are excited to collaborate with ${collegeName} to enhance the technological journey of your students. Here are some key features and benefits you can expect:
+    - Live coding projects for students
+    - Mentorship and guidance from industry experts
+    - Access to a vast library of coding resources
+    - Opportunities for participation in coding events and competitions
     
-    If you have any questions, feel free to reach out to us.
+    Batch-in-Charge can now log in and will have access to all data related to ${collegeName} and can verify the students enrolled in coding batches.
+    
+    We are here to support you throughout the onboarding process. If you have any questions or need assistance, please feel free to reach out to our dedicated support team.
+    
+    Thank you for choosing LinkUrCodes. We look forward to a successful partnership in fostering technological excellence at ${collegeName}.
     
     Best Regards,
-    Link Ur Codes Team`
+    
+    The LinkUrCodes Team`
     return content;
 }
 
@@ -569,6 +589,444 @@ function studRegOTPVerificationTextContent(otp) {
     return content;
 }
 
+function ClgStaffOTPVerificationHTMLContent(clgStaffName, otp) {
+    content = `<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Password Reset Request</title>
+        <style>
+            body {
+                background-color: #faf4f4;
+                color: #140101;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+            }
+            .container {
+                border-radius: 8px;
+    
+                background-color: #ece9e9;
+                border-radius: 8px;
+                padding: 20px;
+                margin: 20px auto;
+                max-width: 600px;
+            }
+            .logo-header img {
+                max-width: 30%;
+                height: auto;
+            }
+            .content {
+                margin-top: 20px;
+                border: 2px solid #a3a0a0; /* Added a border to content */
+                padding: 20px; 
+            }
+            .footer {
+                margin-top: 30px;
+                font-size: smaller;
+                color: grey;
+            }
+        </style>
+    </head>
+    <body>
+    
+    <div class="container">
+        <div class="logo-header">
+            <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+        </div>
+        <div class="content">
+            <h2>Password Reset Request</h2>
+    
+            <p>Dear ${clgStaffName},</p>
+            <p>You have requested to reset your password. Please use the verification code below to proceed with setting a new password:</p>
+            <p><strong>Verification Code: ${otp}</strong></p>
+            <p>This code is valid for 10 minutes and for one-time use only.</p>
+        </div>
+        <div class="footer">
+            <p>If you did not initiate this request, please contact our support team :  admin@linkurcodes.com </p>
+        </div>
+    </div>
+    
+    </body>
+    </html>
+    `
+    return content;
+}
+
+function ClgStaffOTPVerificationTextContent(clgStaffName, otp) {
+    content = `Dear ${clgStaffName},
+
+    You have requested to reset your password. Please use the verification code below to proceed with setting a new password:
+    
+    Verification Code: ${otp}
+    
+    This code is valid for 10 minutes and for one-time use only.
+    
+    If you did not initiate this request, please contact our support team immediately.
+    
+    Best Regards,
+    Link Ur Codes Team`
+
+    return content;
+}
+
+
+
+function AdminStaffOTPVerificationHTMLContent(adminstaffName, admstaffotp) {
+    content = `<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Password Reset Request</title>
+        <style>
+            body {
+                background-color: #faf4f4;
+                color: #140101;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+            }
+            .container {
+                border-radius: 8px;
+    
+                background-color: #ece9e9;
+                border-radius: 8px;
+                padding: 20px;
+                margin: 20px auto;
+                max-width: 600px;
+            }
+            .logo-header img {
+                max-width: 30%;
+                height: auto;
+            }
+            .content {
+                margin-top: 20px;
+                border: 2px solid #a3a0a0; /* Added a border to content */
+                padding: 20px; 
+            }
+            .footer {
+                margin-top: 30px;
+                font-size: smaller;
+                color: grey;
+            }
+        </style>
+    </head>
+    <body>
+    
+    <div class="container">
+        <div class="logo-header">
+            <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+        </div>
+        <div class="content">
+            <h2>Password Reset Request</h2>
+    
+            <p>Dear ${adminstaffName},</p>
+            <p>You have requested to reset your password. Please use the verification code below to proceed with setting a new password:</p>
+            <p><strong>Verification Code: ${admstaffotp}</strong></p>
+            <p>This code is valid for 10 minutes and for one-time use only.</p>
+        </div>
+        <div class="footer">
+            <p>If you did not initiate this request, please contact our support team :  admin@linkurcodes.com </p>
+        </div>
+    </div>
+    
+    </body>
+    </html>
+    `
+    return content;
+}
+
+function AdminStaffOTPVerificationTextContent(adminstaffName, admstaffotp) {
+    content = `Dear ${adminstaffName},
+
+    You have requested to reset your password. Please use the verification code below to proceed with setting a new password:
+    
+    Verification Code: ${admstaffotp}
+    
+    This code is valid for 10 minutes and for one-time use only.
+    
+    If you did not initiate this request, please contact our support team immediately.
+    
+    Best Regards,
+    Link Ur Codes Team`
+
+    return content;
+}
+
+function StudentOTPVerificationHTMLContent(studName, otp) {
+    content = `<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Password Reset Request</title>
+        <style>
+            body {
+                background-color: #faf4f4;
+                color: #140101;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+            }
+            .container {
+                border-radius: 8px;
+    
+                background-color: #ece9e9;
+                border-radius: 8px;
+                padding: 20px;
+                margin: 20px auto;
+                max-width: 600px;
+            }
+            .logo-header img {
+                max-width: 30%;
+                height: auto;
+            }
+            .content {
+                margin-top: 20px;
+                border: 2px solid #a3a0a0; /* Added a border to content */
+                padding: 20px; 
+            }
+            .footer {
+                margin-top: 30px;
+                font-size: smaller;
+                color: grey;
+            }
+        </style>
+    </head>
+    <body>
+    
+    <div class="container">
+        <div class="logo-header">
+            <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+        </div>
+        <div class="content">
+            <h2>Password Reset Request</h2>
+    
+            <p>Dear ${studName},</p>
+            <p>You have requested to reset your password. Please use the verification code below to proceed with setting a new password:</p>
+            <p><strong>Verification Code: ${otp}</strong></p>
+            <p>This code is valid for 10 minutes and for one-time use only.</p>
+        </div>
+        <div class="footer">
+            <p>If you did not initiate this request, please contact our support team :  admin@linkurcodes.com </p>
+        </div>
+    </div>
+    
+    </body>
+    </html>
+    `
+    return content;
+}
+
+function StudentOTPVerificationTextContent(studName, otp) {
+    content = `Dear ${studName},
+
+    You have requested to reset your password. Please use the verification code below to proceed with setting a new password:
+    
+    Verification Code: ${otp}
+    
+    This code is valid for 10 minutes and for one-time use only.
+    
+    If you did not initiate this request, please contact our support team immediately.
+    
+    Best Regards,
+    Link Ur Codes Team`
+
+    return content;
+}
+
+function StudentRegistrationSuccessfulMailHTMLContent(membershipNo) {
+    content = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Welcome to LinkUrCodes</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+    
+        h1 {
+          color: #007bff;
+        }
+    
+        p {
+          line-height: 1.6;
+        }
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>Welcome to LinkUrCodes!</h1>
+        <p>Congratulations on successfully registering with us. We are excited to have you on board as a member of our community.</p>
+        <p>Your Membership Number: <strong>${membershipNo}</strong></p>
+        <p>At LinkUrCodes, we provide a unique platform for college students to build their IT careers right from their college campus. As a part of our community, you'll have the opportunity to work on live projects, receive mentorship, and gain valuable experience that mirrors the professional IT world.</p>
+        <p>Your journey with us starts now! Get ready for a rewarding experience as you embark on live projects and gain insights that will shape your IT career.</p>
+        <p>Here are the next steps:</p>
+        <ol>
+         
+          <li>Once approved by the batch-in-charge of your college, log on to <a href="https://lms.linkurcodes.com/studentLogin" target="_blank">Student Portal</a>.</li>
+          <li>If you face any issues logging in, or if it takes some time for approval, please contact your batch-in-charge for assistance.</li>
+          <li>Download our mobile app from the Play Store to stay connected on the go: <a href="https://play.google.com/store/apps/details?id=com.linkurcodes.logixspace" target="_blank">LinkUrCodes Mobile App</a></li>
+        </ol>
+        <p>We're excited to have you with us. If you have any questions or need assistance, feel free to reach out.</p>
+        <p>Once again, welcome to LinkUrCodes!</p>
+        <p>Best Regards,</p>
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <a class="button" href="https://www.linkurcodes.com/" style="color: white;">Visit Link Ur Codes website</a>
+      </div>
+    </body>
+    </html>`
+
+    return content
+}
+
+function StudentRegistrationSuccessfulMailTextContent(membershipNo) {
+    content = `Welcome to LinkUrCodes!
+
+    Congratulations on successfully registering with us. We are excited to have you on board as a member of our community.
+    
+    Your Membership Number: ${membershipNo}
+    
+    At LinkUrCodes, we provide a unique platform for college students to build their IT careers right from their college campus. As a part of our community, you'll have the opportunity to work on live projects, receive mentorship, and gain valuable experience that mirrors the professional IT world.
+    
+    Your journey with us starts now! Get ready for a rewarding experience as you embark on live projects and gain insights that will shape your IT career.
+    
+    Here are the next steps:
+    
+    1. Once approved by the batch-in-charge of your college, log on to the Student Portal: https://lms.linkurcodes.com/studentLogin
+    2. If you face any issues logging in, or if it takes some time for approval, please contact your batch-in-charge for assistance.
+    3. Download our mobile app from the Play Store to stay connected on the go: https://play.google.com/store/apps/details?id=com.linkurcodes.logixspace
+    
+    We're excited to have you with us. If you have any questions or need assistance, feel free to reach out.
+    
+    Once again, welcome to LinkUrCodes!
+    
+    Best Regards,
+    
+    Link Ur Codes Team
+    
+    Visit Link Ur Codes website: https://www.linkurcodes.com/`
+
+    return content
+}
+
+function paymentRenewalSuccessfulHTMLContent(validityDate, renewalAmount, transactionNo, paymentId) {
+    content = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>LinkUrCodes Subscription Renewal Confirmation</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+    
+        h1 {
+          color: #007bff;
+        }
+    
+        p {
+          line-height: 1.6;
+        }
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <h1>LinkUrCodes Subscription Renewal Confirmation</h1>
+        <p>Dear LinkUrCodes Member,</p>
+        <p>Thank you for renewing your LinkUrCodes subscription! We appreciate your continued support and trust in our platform.</p>
+        <p>Your subscription is now active, and you have full access to all the features and resources available on LinkUrCodes. If you have any questions, need assistance, or want to explore new features, feel free to reach out to our support team.</p>
+        <p>Details of your renewed subscription:</p>
+        <ul>
+          <li><strong>Validity:</strong> ${validityDate}</li>
+          <li><strong>Renewal Amount:</strong> ${renewalAmount}</li>
+          <li><strong> Payment Id :</strong> ${paymentId}</li>
+          <li><strong> Transaction Number :</strong> ${transactionNo}</li>
+        </ul>
+        <p>Thank you for being a valued member of LinkUrCodes! We look forward to providing you with an excellent learning experience.</p>
+        <p>Best Regards,</p>
+        <p>LinkUrCodes Team</p>
+      </div>
+    </body>
+    </html>`
+
+    return content
+}
+
+function paymentRenewalSuccessfulTextContent(validityDate, renewalAmount, transactionNo, paymentId) {
+   content = `LinkUrCodes Subscription Renewal Confirmation
+
+   Dear LinkUrCodes Member,
+   
+   Thank you for renewing your LinkUrCodes subscription! We appreciate your continued support and trust in our platform.
+   
+   Your subscription is now active, and you have full access to all the features and resources available on LinkUrCodes. If you have any questions, need assistance, or want to explore new features, feel free to reach out to our support team.
+   
+   Details of your renewed subscription:
+   
+   Validity: ${validityDate}
+   Renewal Amount: ${renewalAmount}
+   Payment Id: ${paymentId}
+   Transaction Number: ${transactionNo}
+   Thank you for being a valued member of LinkUrCodes! We look forward to providing you with an excellent learning experience.
+   
+   Best Regards,
+   
+   LinkUrCodes Team`
+
+   return content
+}
+
 module.exports = {
     admStaffAddHTMLContent,
     upcomingSessionContent,
@@ -582,6 +1040,16 @@ module.exports = {
     newTaskHtmlContent,
     newTaskTextContent,
     studRegOTPVerificationHTMLContent,
-    studRegOTPVerificationTextContent
+    studRegOTPVerificationTextContent,
+    ClgStaffOTPVerificationHTMLContent,
+    ClgStaffOTPVerificationTextContent,
+    AdminStaffOTPVerificationHTMLContent,
+    AdminStaffOTPVerificationTextContent,
+    StudentOTPVerificationHTMLContent,
+    StudentOTPVerificationTextContent,
+    StudentRegistrationSuccessfulMailHTMLContent,
+    StudentRegistrationSuccessfulMailTextContent,
+    paymentRenewalSuccessfulHTMLContent,
+    paymentRenewalSuccessfulTextContent
 };
 
