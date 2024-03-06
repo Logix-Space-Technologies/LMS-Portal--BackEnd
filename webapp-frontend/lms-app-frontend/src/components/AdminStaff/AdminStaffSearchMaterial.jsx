@@ -17,7 +17,7 @@ const AdminStaffSearchMaterial = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1);
   const [updateField, setUpdateField] = useState([])
-  const [materialPerPage] = useState(10); // Number of curriculum per page
+  const [materialPerPage] = useState(10);
 
   const rangeSize = 5; // Number of pages to display in the pagination
   const lastPage = Math.ceil(updateField.length / materialPerPage); // Calculate the total number of pages
@@ -66,6 +66,10 @@ const AdminStaffSearchMaterial = () => {
 
   // Calculate total pages
   const totalPages = Math.ceil(updateField.length / materialPerPage);
+
+  const calculateSerialNumber = (index) => {
+    return ((currentPage - 1) * materialPerPage) + index + 1;
+  }
 
   const handleClick = (id) => {
     setDeleteId(id);
@@ -162,7 +166,7 @@ const AdminStaffSearchMaterial = () => {
                 (value, index) => {
                   return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <td className="px-6 py-4">
-                      {index + 1}
+                      {calculateSerialNumber(index)}
                     </td>
                     <td className="px-6 py-4">
                       {value.fileName}

@@ -7,6 +7,13 @@ import AdmStaffNavBar from './AdmStaffNavBar'
 
 const AdminStaffViewAllMaterial = () => {
     const [materialData, setmaterialData] = useState([])
+    const [currentPage, setCurrentPage] = useState(1);
+    const [materialPerPage] = useState(10);
+
+    const rangeSize = 5; // Number of pages to display in the pagination
+    const lastPage = Math.ceil(materialData.length / materialPerPage); // Calculate the total number of pages
+    let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
+    let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
     const apiUrl = global.config.urls.api.server + "/api/lms/AdmViewAllMaterial"
     const navigate = useNavigate();
@@ -44,6 +51,17 @@ const AdminStaffViewAllMaterial = () => {
         let data = id
         sessionStorage.setItem("materialId", data)
     }
+
+    // Logic for displaying current curriculum
+    const indexOfLastMaterial = currentPage * materialPerPage;
+    const indexOfFirstMaterial = indexOfLastMaterial - materialPerPage;
+    const currentMaterial = materialData ? materialData.slice(indexOfFirstMaterial, indexOfLastMaterial) : [];
+
+    // Change page
+    const paginate = pageNumber => setCurrentPage(pageNumber);
+
+    // Calculate total pages
+    const totalPages = Math.ceil(materialData.length / materialPerPage);
 
     useEffect(() => { getData() }, [])
     return (
