@@ -371,7 +371,7 @@ const AdminViewAllSession = () => {
                             Are you sure you want to delete this session?
                         </div>
                         <div className="flex justify-center">
-                            <button onClick={confirmDelete} className="btn btn-primary">Confirm Delete</button>
+                            <button onClick={confirmDelete} className="btn btn-primary" style={{marginRight: '16px'}}>Confirm Delete</button>
                             <button onClick={() => setShowConfirmation(false)} className="btn btn-danger">Cancel</button>
                         </div>
                     </div>

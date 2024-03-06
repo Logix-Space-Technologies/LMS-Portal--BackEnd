@@ -12,10 +12,11 @@ const AdminViewAllCurriculum = () => {
     const [deleteCurriculumId, setDeleteCurriculumId] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/curriculumview";
+    
     const navigate = useNavigate();
     const [key, setKey] = useState('');
 
+    const apiUrl = global.config.urls.api.server + "/api/lms/curriculumview";
     const apiLink2 = global.config.urls.api.server + "/api/lms/deletecurriculum";
 
     const getData = () => {
