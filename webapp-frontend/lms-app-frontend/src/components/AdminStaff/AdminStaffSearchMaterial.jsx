@@ -98,7 +98,6 @@ const AdminStaffSearchMaterial = () => {
 
   const UpdateClick = (id) => {
     let data = id
-    console.log(data)
     sessionStorage.setItem("materialId", data)
     navigate("/AdminStaffUpdateMaterial")
 

@@ -50,7 +50,6 @@ const AdminStaffSearchSubmittedTask = () => {
             .then(response => {
                 setInputField({ "subTaskSearchQuery": "" });
                 setSubTasks(response.data.data);
-                console.log(response.data.data)
                 setIsLoading(false);
                 setSearchExecuted(true);
             })
@@ -61,7 +60,6 @@ const AdminStaffSearchSubmittedTask = () => {
     };
 
     const evaluateTask = () => {
-        console.log(outputField)
         let newErrors = {};
         if (!outputField.evaluatorRemarks.trim()) {
             newErrors.evaluatorRemarks = "Remarks required!";
@@ -141,7 +139,6 @@ const AdminStaffSearchSubmittedTask = () => {
 
     const readValue = (id) => {
         setSubmittedTaskId(id)
-        console.log(id)
     }
 
     return (

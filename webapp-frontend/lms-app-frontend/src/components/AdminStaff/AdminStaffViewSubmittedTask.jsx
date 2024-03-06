@@ -37,7 +37,6 @@ const AdminStaffViewSubmittedTask = () => {
             (response) => {
                 if (response.data.data) {
                     setTaskData(response.data.data)
-                    console.log(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
                         navigate("/admstafflogin")
