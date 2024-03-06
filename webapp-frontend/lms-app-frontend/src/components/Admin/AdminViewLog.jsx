@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import '../../config/config';
+import { useNavigate } from 'react-router-dom';
 
 const AdminViewLog = () => {
 
     const [AdminLogData, setAdminLogData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [logsPerPage] = useState(10); // Number of logs per page
+
+    const navigate = useNavigate()
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(AdminLogData.length / logsPerPage); // Calculate the total number of pages
@@ -27,7 +30,20 @@ const AdminViewLog = () => {
         };
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
-                setAdminLogData(response.data);
+                if (response.data) {
+                    setAdminLogData(response.data);
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/")
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data) {
+                            setAdminLogData([])
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         );
     };

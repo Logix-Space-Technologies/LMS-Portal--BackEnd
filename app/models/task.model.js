@@ -171,7 +171,7 @@ Tasks.taskView = (sessionId, result) => {
             result(err, null)
             return
         } else {
-            const formattedTasks = res.map(Tasks => ({ ...Tasks, addedDate: Tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), dueDate: Tasks.dueDate ? Tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null})); // Formats the date as 'YYYY-MM-DD'
+            const formattedTasks = res.map(Tasks => ({ ...Tasks, addedDate: Tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), dueDate: Tasks.dueDate ? Tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null})); // Formats the date as 'YYYY-MM-DD'
             console.log("Tasks: ", formattedTasks);
             result(null, formattedTasks)
         }

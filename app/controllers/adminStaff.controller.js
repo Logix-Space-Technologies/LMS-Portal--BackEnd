@@ -100,13 +100,13 @@ exports.viewalladmstaff = (request, response) => {
             AdminStaff.getAlladmstaff((err, data) => {
                 if (err) {
                     console.log(err)
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
-                    response.json(data)
+                    return response.json(data)
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -188,7 +188,7 @@ exports.admStaffDelete = (request, response) => {
                 if (err) {
                     if (err.kind === "not_found") {
                         console.log("Admin Staff id not found.")
-                        response.json({ "status": "Admin Staff id not found." })
+                        return response.json({ "status": "Admin Staff id not found." })
 
                     } else {
                         return response.send({ "status": err })
@@ -197,7 +197,7 @@ exports.admStaffDelete = (request, response) => {
                 return response.json({ "status": "Admin Staff Deleted." })
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     })
 

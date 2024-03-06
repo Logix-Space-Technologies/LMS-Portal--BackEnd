@@ -242,18 +242,18 @@ exports.clgStaffDelete = (request, response) => {
       CollegeStaff.clgStaffDelete(collegeStaff, (err, data) => {
         if (err) {
           if (err.kind === "not_found") {
-            response.json({ "status": "College Staff ID not found." });
+            return response.json({ "status": "College Staff ID not found." });
           } else {
             console.error(err);
-            response.json({ "status": "Error deleting Staff." });
+            return response.json({ "status": "Error deleting Staff." });
           }
         } else {
-          response.json({ "status": "Deleted successfully" });
+          return response.json({ "status": "Deleted successfully" });
         }
       });
 
     } else {
-      response.json({ "status": "Unauthorized User!!" });
+      return response.json({ "status": "Unauthorized User!!" });
     }
   });
 };
@@ -267,13 +267,13 @@ exports.viewAllCollegeStaff = (request, response) => {
       CollegeStaff.getAll((err, data) => {
         if (err) {
           console.log(err)
-          response.json({ "status": err })
+          return response.json({ "status": err })
         } else {
-          response.json(data)
+          return response.json(data)
         }
       })
     } else {
-      response.json({ "status": "Unauthorized User!!" });
+      return response.json({ "status": "Unauthorized User!!" });
     }
   })
 }
