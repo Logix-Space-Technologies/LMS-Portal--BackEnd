@@ -43,14 +43,14 @@ exports.getRefundRequests = (request, response) => {
             Refund.getRefundRequests((err, data) => {
                 if (err) {
                     console.log(err);
-                    response.json({ "status": "Failed to retrieve refund requests." });
+                    return response.json({ "status": "Failed to retrieve refund requests." });
                 } else {
                     console.log("Refund requests successfully retrieved");
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
@@ -100,14 +100,14 @@ exports.approveRefundRequest = (request, response) => {
             Refund.approveRefund(approvedAmnt, admStaffId, transactionNo, adminRemarks, refundId, (err, data) => {
                 if (err) {
                     console.log(err);
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     console.log("Refund request successfully approved");
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 }
@@ -129,10 +129,10 @@ exports.rejectRefundRequest = (request, response) => {
             Refund.rejectRefund(admStaffId, adminRemarks, refundId, (err, data) => {
                 if (err) {
                     console.log(err);
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
                     console.log("Refund Request Cancelled.");
-                    response.json({ "status": "Refund Request Cancelled." });
+                    return response.json({ "status": "Refund Request Cancelled." });
                 }
             })
         } else {
