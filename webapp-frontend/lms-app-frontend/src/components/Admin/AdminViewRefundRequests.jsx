@@ -29,7 +29,7 @@ const AdminViewRefundRequests = () => {
   });
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [studentsPerPage] = useState(2); // Number of students per page
+  const [studentsPerPage] = useState(10); // Number of students per page
 
   const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/rejectRefund"
