@@ -176,6 +176,9 @@ const AdminStaffViewSubmittedTask = () => {
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                    S/L
+                                </th>
+                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
                                     College Name
                                 </th>
                                 <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
@@ -229,7 +232,9 @@ const AdminStaffViewSubmittedTask = () => {
                                     // Determine if the task was submitted late
                                     const isLateSubmission = submissionDateObj > dueDateObj;
                                     return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-
+                                        <td className="px-6 py-4">
+                                            {calculateSerialNumber(index)}
+                                        </td>
                                         <td className="px-6 py-4">
                                             {value.collegeName}
                                         </td>

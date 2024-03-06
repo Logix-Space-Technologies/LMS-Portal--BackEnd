@@ -3,7 +3,6 @@ import '../../config/config'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
-import Navbar from '../Admin/Navbar'
 
 const AdminStaffSearchMaterial = () => {
 
