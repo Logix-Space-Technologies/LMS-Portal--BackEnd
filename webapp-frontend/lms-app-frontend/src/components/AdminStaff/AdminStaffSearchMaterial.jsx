@@ -89,6 +89,10 @@ const AdminStaffSearchMaterial = () => {
     navigate("/AdminStaffUpdateMaterial")
   }
 
+  const calculateSerialNumber = (index) => {
+    return ((currentPage - 1) * materialPerPage) + index + 1;
+  }
+
   // Integration of new pagination logic
   const startPage = currentPage > 2 ? currentPage - 2 : 1;
   const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
@@ -150,7 +154,7 @@ const AdminStaffSearchMaterial = () => {
                 (value, index) => {
                   return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <td className="px-6 py-4">
-                      {index + 1}
+                      {calculateSerialNumber(index)}
                     </td>
                     <td className="px-6 py-4">
                       {value.fileName}
