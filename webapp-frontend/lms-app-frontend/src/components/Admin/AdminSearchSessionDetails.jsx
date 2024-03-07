@@ -87,13 +87,14 @@ const AdminSearchSessionDetails = () => {
     }
 
     // Total pages
-    const pageNumbers = [];
+    let totalPages = []
     if (updateField && updateField.length > 0) {
-        updateField.forEach((session, index) => {
-            const pageNumber = index + 1;
-            pageNumbers.push(pageNumber);
-        });
+        totalPages = Math.ceil(updateField.length / SessionPerPage);
     }
+
+    // Integration of new pagination logic
+    const startPage = currentPage > 2 ? currentPage - 2 : 1;
+    const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
 
     function formatTime(timeString) {
         const options = { hour: '2-digit', minute: '2-digit', hour12: true };
@@ -216,26 +217,36 @@ const AdminSearchSessionDetails = () => {
                             )
                         )}
 
-                        <div className="flex justify-center mt-8">
-                            <nav>
-                                <ul className="flex list-style-none">
-                                    {currentPage > 1 && (
-                                        <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                            Previous
-                                        </li>
-                                    )}
-                                    {pageNumbers.map(number => (
-                                        <li key={number} onClick={() => paginate(number)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                                            {number}
-                                        </li>
-                                    ))}
-                                    {currentPage < pageNumbers.length && (
-                                        <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                            Next
-                                        </li>
-                                    )}
-                                </ul>
-                            </nav>
+                        <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+                            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                                <div>
+                                    <p className="text-sm text-gray-700">
+                                        Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > updateField.length ? updateField.length : indexOfLastSession}</span> of <span className="font-medium">{updateField.length}</span> results
+                                    </p>
+                                </div>
+                                <div>
+                                    <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                        <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
+                                            <span className="sr-only">Previous</span>
+                                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                                            </svg>
+                                        </button>
+                                        {/* Dynamically generate Link components for each page number */}
+                                        {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                                            <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
+                                                {startPage + index}
+                                            </button>
+                                        ))}
+                                        <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
+                                            <span className="sr-only">Next</span>
+                                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </nav>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}

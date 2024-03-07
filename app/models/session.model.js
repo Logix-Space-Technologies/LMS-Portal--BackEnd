@@ -259,7 +259,7 @@ Session.searchSession = (search, result) => {
                 result
             } else {
                 // Format the date for each session
-                const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }));
+                const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })}));
                 console.log("Session  Details : ", formattedSessions)
                 result(null, formattedSessions)
             }
