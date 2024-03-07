@@ -189,7 +189,7 @@ Tasks.searchTasks = (searchString, result) => {
                 result(err, null)
                 return
             } else {
-                const formattedSearchTasks = res.map(tasks => ({ ...tasks, dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}));
+                const formattedSearchTasks = res.map(tasks => ({ ...tasks, dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })}));
                 console.log("Tasks: ", formattedSearchTasks);
                 result(null, formattedSearchTasks)
             }
