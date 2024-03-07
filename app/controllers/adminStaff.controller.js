@@ -595,3 +595,31 @@ exports.admstaffforgotpassword = (request, response) => {
     });
 }
 
+exports.emailverification = (request, response) => {
+    const email = request.body.Email
+    // Generate and hash OTP
+    AdminStaff.forgotPassGenerateAndHashOTP(email, (err, otp) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            let admstaffotp = otp
+            AdminStaff.searchadminstaffbyemail(email, (err, data) => {
+                let adminstaffName = data
+                // Send OTP to email
+                const mailSent = sendEmailVerificationOTPEmail(email, adminstaffName, admstaffotp);
+                if (mailSent) {
+                    return response.json({ "status": "OTP sent to email." });
+                } else {
+                    return response.json({ "status": "Failed to send OTP." });
+                }
+            })
+        }
+    });
+};
+
+function sendEmailVerificationOTPEmail(email, adminstaffName, admstaffotp) {
+    const otpVerificationHTMLContent = mailContents.emailverificationAdmStaffHTMLContent(adminstaffName, admstaffotp);
+    const otpVerificationTextContent = mailContents.emailverificationAdmStaffTextContent(adminstaffName, admstaffotp);
+    mail.sendEmail(email, 'Email Verification!', otpVerificationHTMLContent, otpVerificationTextContent)
+    return true; // Placeholder
+}
