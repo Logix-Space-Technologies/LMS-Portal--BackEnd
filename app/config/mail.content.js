@@ -1058,6 +1058,97 @@ function paymentRenewalSuccessfulTextContent(validityDate, renewalAmount, transa
     return content
 }
 
+function emailverificationAdmStaffHTMLContent(adminstaffName, admstaffotp) {
+    content = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Admin Staff Account Verification OTP - LinkUrCodes</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+    
+        h1 {
+          color: #007bff;
+        }
+    
+        p {
+          line-height: 1.6;
+        }
+    
+        .otp {
+          background-color: #e114cc;
+          color: #fff;
+          padding: 10px 20px;
+          border-radius: 5px;
+          font-size: 18px;
+          display: inline-block;
+        }
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #ff6600;
+          color: #fff;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <h1>Account Verification OTP</h1>
+        <p>Dear ${adminstaffName},</p>
+        <p>To complete the verification of your account at LinkUrCodes, please use the following OTP:</p>
+        <p class="otp">${admstaffotp}</p>
+        <p>If you have any questions or need further assistance, please feel free to reach out.</p>
+        <p>Thank you for your cooperation.</p>
+        <p>Best Regards,</p>
+        <p>LinkUrCodes Team</p>
+      </div>
+    </body>
+    </html>`
+
+    return content
+}
+
+function emailverificationAdmStaffTextContent(adminstaffName, admstaffotp) {
+    content = `Admin Staff Account Verification OTP - LinkUrCodes
+
+    Dear ${adminstaffName},
+    
+    To complete the verification of your account at LinkUrCodes, please use the following OTP: ${admstaffotp}
+    
+    If you have any questions or need further assistance, please feel free to reach out.
+    
+    Thank you for your cooperation.
+    
+    Best Regards,
+    
+    LinkUrCodes Team`
+
+    return content
+}
+
 
 module.exports = {
     admStaffAddHTMLContent,
@@ -1083,6 +1174,8 @@ module.exports = {
     StudentRegistrationSuccessfulMailHTMLContent,
     StudentRegistrationSuccessfulMailTextContent,
     paymentRenewalSuccessfulHTMLContent,
-    paymentRenewalSuccessfulTextContent
+    paymentRenewalSuccessfulTextContent,
+    emailverificationAdmStaffHTMLContent,
+    emailverificationAdmStaffTextContent
 };
 
