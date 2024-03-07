@@ -1385,5 +1385,60 @@ Student.verifyStudOTP = (studEmail, otp, result) => {
     });
 }
 
+Student.renewalReminder = async (id) => {
+    try {
+        const query = `
+            SELECT 
+                student.studName,
+                student.validity,
+                student.studEmail,
+                payment.rpAmount
+            FROM 
+                student
+            LEFT JOIN 
+                payment ON student.id = payment.studId
+            WHERE 
+                student.isActive = 1 AND 
+                student.emailVerified = 1 AND 
+                student.isVerified = 1 AND 
+                student.deleteStatus = 0 AND 
+                student.id = ?`;
+
+        const results = await db.promise().query(query, [id]);
+        
+        if (!results || results[0].length === 0) {
+            const error = new Error('Student not found or does not meet criteria for renewal reminder. Student ID: ' + id);
+            console.error("Error fetching student details:", error);
+            throw error;
+        }
+
+        const studentData = results[0][0];
+        console.log('studentData:', studentData);
+
+        const response = {
+            studName: studentData.studName,
+            validity: studentData.validity,
+            studEmail: studentData.studEmail,
+            rpAmount: studentData.rpAmount
+        };
+
+        return response;
+    } catch (error) {
+        console.error("Error fetching student details:", error);
+        throw error;
+    }
+};
+
+
+
+
+
+
+
+
+
+
+  
+  
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 
