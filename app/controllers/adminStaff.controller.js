@@ -620,6 +620,6 @@ exports.emailverification = (request, response) => {
 function sendEmailVerificationOTPEmail(email, adminstaffName, admstaffotp) {
     const otpVerificationHTMLContent = mailContents.emailverificationAdmStaffHTMLContent(adminstaffName, admstaffotp);
     const otpVerificationTextContent = mailContents.emailverificationAdmStaffTextContent(adminstaffName, admstaffotp);
-    mail.sendEmail(email, 'Password Reset Request', otpVerificationHTMLContent, otpVerificationTextContent)
+    mail.sendEmail(email, 'Email Verification!', otpVerificationHTMLContent, otpVerificationTextContent)
     return true; // Placeholder
 }

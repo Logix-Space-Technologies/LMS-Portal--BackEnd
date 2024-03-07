@@ -894,3 +894,32 @@ exports.collegestaffforgotpassword = (request, response) => {
     }
   });
 }
+
+exports.emailverification = (request, response) => {
+  const email = request.body.email
+  // Generate and hash OTP
+  CollegeStaff.forgotPassGenerateAndHashOTP(email, (err, otp) => {
+    if (err) {
+      return response.json({ "status": err });
+    } else {
+      let clgstaffotp = otp
+      CollegeStaff.searchcollegestaffbyemail(email, (err, data) => {
+        let clgstaffName = data
+        // Send OTP to email
+        const mailSent = sendEmailVerificationOTPEmail(email, clgstaffName, clgstaffotp);
+        if (mailSent) {
+          return response.json({ "status": "OTP sent to email." });
+        } else {
+          return response.json({ "status": "Failed to send OTP." });
+        }
+      })
+    }
+  });
+};
+
+function sendEmailVerificationOTPEmail(email, clgstaffName, clgstaffotp) {
+  const otpVerificationHTMLContent = mailContents.clgstaffEmailVerificationOTPHTMLContent(clgstaffName, clgstaffotp);
+  const otpVerificationTextContent = mailContents.clgstaffEmailVerificationOTPTextContent(clgstaffName, clgstaffotp);
+  mail.sendEmail(email, 'Email Verification!', otpVerificationHTMLContent, otpVerificationTextContent)
+  return true; // Placeholder
+}
