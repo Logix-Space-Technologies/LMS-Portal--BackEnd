@@ -84,7 +84,8 @@ exports.create = (request, response) => {
                     const adminStaffName = newAdminStaff.AdStaffName
                     const adminStaffEmail = newAdminStaff.Email
                     const adminStaffHTMLEmailContent = mailContents.admStaffAddHTMLContent(adminStaffName);
-                    mail.sendEmail(adminStaffEmail, 'Registration Successful!', adminStaffHTMLEmailContent);
+                    const adminStaffTextEmailContent = mailContents.admStaffAddTextContent(adminStaffName)
+                    mail.sendEmail(adminStaffEmail, 'Registration Successful!', adminStaffHTMLEmailContent, adminStaffTextEmailContent);
                     response.json({ "status": "success", "data": data });
                 }
             });

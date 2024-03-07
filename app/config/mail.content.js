@@ -78,64 +78,95 @@ function upcomingSessionContent(studName, sessionName, date, time, venueORlink) 
 
 function admStaffAddHTMLContent(AdStaffName) {
     content = `<!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
-        <title>Registration Successful</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome to LinkUrCodes</title>
         <style>
-            .container {
-                font-family: Arial, sans-serif;
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f2f2f2;
+                margin: 0;
+                padding: 0;
+            }
+            .email-container {
                 max-width: 600px;
-                margin: 0 auto;
+                margin: auto;
+                background-color: #ffffff;
                 padding: 20px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                background-color: #f9f9f9;
             }
-            .header {
-                font-size: 24px;
-                color: #333;
-            }
-            .content {
-                font-size: 16px;
-                color: #555;
-            }
-            .footer {
-                font-size: 14px;
-                color: #999;
-                margin-top: 20px;
+            .email-header {
+                background-color: #004aad;
+                color: #ffffff;
+                padding: 10px;
                 text-align: center;
             }
-            .button {
-                display: inline-block;
-                padding: 10px 20px;
-                margin-top: 20px;
-                background-color: #007bff;
-                color: white;
-                text-decoration: none;
-                border-radius: 5px;
-                font-weight: bold;
+            .email-content {
+                padding: 20px;
+                text-align: left;
+                line-height: 1.5;
+            }
+            .email-footer {
+                background-color: #004aad;
+                color: #ffffff;
+                text-align: center;
+                padding: 10px;
+                font-size: 12px;
             }
         </style>
     </head>
     <body>
-        <div class="container">
-            <div class="header">
-                Registration Successful!
+        <div class="email-container">
+            <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+            <div class="email-header">
+                <h1>Welcome to LinkUrCodes!</h1>
             </div>
-            <div class="content">
+            <div class="email-content">
                 <p>Dear ${AdStaffName},</p>
-                <p>Thank you for joining Linkurcodes. We are excited to have you on board! Your training will commence shortly, and we are looking forward to helping you enhance your skills.</p>
-                <p>For more details about the upcoming sessions, please use our mobile app or contact your college directly. Stay tuned for more updates and prepare to embark on a rewarding learning journey with us.</p>
+                <p>We're excited to have you on board. Your registration with LinkUrCodes has been successfully completed by our administrator.</p>
+                <p>As a new member of our community, you now have access to a wide range of resources. Here are a few things to get you started:</p>
+                <ul>
+                    <li>Explore our <a href="https://linkurcodes.com">website</a> to learn more about what we offer.</li>
+                    <li>Join our community forums to discuss topics that interest you with fellow members.</li>
+                </ul>
+                <p>We look forward to your active participation and hope you find your experience with us rewarding.</p>
+                <p>Best Regards,</p>
+                <p>The LinkUrCodes Team</p>
             </div>
-            <div class="footer">
-                Best regards,<br>
-                The Linkurcodes Team
+            <div class="email-footer">
+                &copy; 2024 LinkUrCodes. All rights reserved.
             </div>
         </div>
     </body>
     </html>`
     return content
 }
+
+
+function admStaffAddTextContent(AdStaffName) {
+    content = `Welcome to LinkUrCodes!
+
+    Dear ${AdStaffName},
+    
+    We're excited to have you on board. Your registration with LinkUrCodes has been successfully completed by our administrator.
+    
+    As a new member of our community, you now have access to a wide range of resources. Here are a few things to get you started:
+    
+    Explore our website (https://linkurcodes.com) to learn more about what we offer.
+    Join our community forums to discuss topics that interest you with fellow members.
+    We look forward to your active participation and hope you find your experience with us rewarding.
+    
+    Best Regards,
+    
+    The LinkUrCodes Team
+    
+    © 2024 LinkUrCodes. All rights reserved.`
+
+    return content
+}
+
 
 function upcomingSessionTextContent(studName, sessionName, date, time, venueORlink) {
     textContent = `
@@ -1004,7 +1035,7 @@ function paymentRenewalSuccessfulHTMLContent(validityDate, renewalAmount, transa
 }
 
 function paymentRenewalSuccessfulTextContent(validityDate, renewalAmount, transactionNo, paymentId) {
-   content = `LinkUrCodes Subscription Renewal Confirmation
+    content = `LinkUrCodes Subscription Renewal Confirmation
 
    Dear LinkUrCodes Member,
    
@@ -1024,11 +1055,13 @@ function paymentRenewalSuccessfulTextContent(validityDate, renewalAmount, transa
    
    LinkUrCodes Team`
 
-   return content
+    return content
 }
+
 
 module.exports = {
     admStaffAddHTMLContent,
+    admStaffAddTextContent,
     upcomingSessionContent,
     upcomingSessionTextContent,
     collegeStaffTextContent,
