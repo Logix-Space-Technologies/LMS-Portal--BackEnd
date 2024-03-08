@@ -70,16 +70,30 @@ const AdminUpdateCollege = () => {
                     "key": currentKey
                 }
             }
-            let data = {
-                "id": sessionStorage.getItem("clgId"),
-                "collegeName": updateField.collegeName,
-                "collegeCode": updateField.collegeCode,
-                "collegeAddress": updateField.collegeAddress,
-                "website": updateField.website,
-                "email": updateField.email,
-                "collegePhNo": updateField.collegePhNo,
-                "collegeMobileNumber": updateField.collegeMobileNumber,
-                "collegeImage": file
+            let data = {}
+            if (file) {
+                data = {
+                    "id": sessionStorage.getItem("clgId"),
+                    "collegeName": updateField.collegeName,
+                    "collegeCode": updateField.collegeCode,
+                    "collegeAddress": updateField.collegeAddress,
+                    "website": updateField.website,
+                    "email": updateField.email,
+                    "collegePhNo": updateField.collegePhNo,
+                    "collegeMobileNumber": updateField.collegeMobileNumber
+                }
+            } else {
+                data = {
+                    "id": sessionStorage.getItem("clgId"),
+                    "collegeName": updateField.collegeName,
+                    "collegeCode": updateField.collegeCode,
+                    "collegeAddress": updateField.collegeAddress,
+                    "website": updateField.website,
+                    "email": updateField.email,
+                    "collegePhNo": updateField.collegePhNo,
+                    "collegeMobileNumber": updateField.collegeMobileNumber,
+                    "collegeImage": file
+                }
             }
             axios.post(apiUrl, data, axiosConfig).then(
                 (response) => {
