@@ -108,7 +108,7 @@ exports.createSession = (request, response) => {
                                 const sessionDate = newSession.date.split('-').reverse().join('/')
                                 const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                 const upcomingSessionTextContent = mailContents.upcomingSessionTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
-                                mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                mail.sendEmail(studentEmail, 'Session Reschedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 if (key == "lmsapp") {
                                     logAdminStaff(0, "Admin Created new Session")
                                 }
@@ -138,13 +138,13 @@ exports.createSession = (request, response) => {
 }
 
 exports.sessionUpdate = (request, response) => {
-    const sessionUpdateToken = request.headers.token
-    const key = request.headers.key
-    //add the appropriate key
+    const sessionUpdateToken = request.headers.token;
+    const key = request.headers.key;
+
     jwt.verify(sessionUpdateToken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
-            console.log(request.body.date)
+
             if (Validator.isEmpty(request.body.sessionName).isValid) {
                 validationErrors.sessionName = Validator.isEmpty(request.body.sessionName).message;
             }
@@ -160,33 +160,27 @@ exports.sessionUpdate = (request, response) => {
             if (!Validator.isDateGreaterThanToday(request.body.date).isValid) {
                 validationErrors.date = Validator.isDateGreaterThanToday(request.body.date).message;
             }
-
             if (Validator.isEmpty(request.body.time).isValid) {
                 validationErrors.time = Validator.isEmpty(request.body.time).message;
             }
-
             if (!Validator.isValidTime(request.body.time).isValid) {
                 validationErrors.time = Validator.isValidTime(request.body.time).message;
             }
-
             if (Validator.isEmpty(request.body.type).isValid) {
                 validationErrors.type = Validator.isEmpty(request.body.type).message;
             }
-
             if (Validator.isEmpty(request.body.remarks).isValid) {
                 validationErrors.remarks = Validator.isEmpty(request.body.remarks).message;
             }
-
             if (Validator.isEmpty(request.body.venueORlink).isValid) {
                 validationErrors.venueORlink = Validator.isEmpty(request.body.venueORlink).message;
             }
-
             if (Validator.isEmpty(request.body.trainerId).isValid) {
                 validationErrors.trainerId = Validator.isEmpty(request.body.trainerId).message;
             }
 
             if (Object.keys(validationErrors).length > 0) {
-                return response.json({ "status": "Validation failed", "data": validationErrors })
+                return response.json({ "status": "Validation failed", "data": validationErrors });
             }
 
             const upSession = new Session({
@@ -198,24 +192,49 @@ exports.sessionUpdate = (request, response) => {
                 remarks: request.body.remarks,
                 venueORlink: request.body.venueORlink,
                 trainerId: request.body.trainerId
-            })
+            });
 
             Session.updateSession(upSession, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
-                    if (key == "lmsapp") {
-                        logAdminStaff(0, "Admin Updated Session Details")
-                    }
-                    return response.json({ "status": "success", "data": data });
+                    let originaldate = data.originalDate;
+                    let sessionDate = upSession.date.split('-').reverse().join('/');
+                    let sessionTime = formatTime(upSession.time);
+                    db.query("SELECT * FROM sessiondetails WHERE id = ?", [upSession.id], (err, sessionres) => {
+                        if (err) {
+                            return response.json({ "status": err });
+                        }
+                        console.log(sessionres);
+                        const batchId = sessionres[0].batchId;
+
+                        Student.searchStudentByBatch(batchId, (err, res) => {
+                            if (err) {
+                                return response.json({ "status": err });
+                            }
+
+                            res.forEach(element => {
+                                const studentEmail = element.studEmail;
+                                const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement', upcomingSessionHtmlContent);
+                            });
+
+                            if (key == "lmsapp") {
+                                logAdminStaff(0, "Admin Updated Session Details");
+                            }
+                            return response.json({ "status": "success", "data": data });
+                        });
+                    });
                 }
-            })
+            });
         } else {
             return response.json({ "status": "Unauthorized User!!" });
         }
+    });
+};
 
-    })
-}
+
+
 
 // code to view sessions
 exports.viewSessions = (request, response) => {

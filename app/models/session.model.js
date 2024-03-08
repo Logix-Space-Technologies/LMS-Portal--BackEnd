@@ -156,37 +156,38 @@ Session.createSession = (newSession, result) => {
 };
 
 Session.updateSession = (sessionUpdate, result) => {
-    //Check If Session Exists
+    // Check If Session Exists
     db.query("SELECT * FROM sessiondetails WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
         [sessionUpdate.id],
         (sessionErr, sessionRes) => {
             if (sessionErr) {
-                console.log("Error Checking Session Details : ", sessionErr)
-                result(sessionErr, null)
-                return
+                console.log("Error Checking Session Details : ", sessionErr);
+                result(sessionErr, null);
+                return;
             } else {
                 if (sessionRes.length === 0) {
-                    console.log("Session Details Not Found")
-                    result("Session Details Not Found", null)
-                    return
+                    console.log("Session Details Not Found");
+                    result("Session Details Not Found", null);
+                    return;
                 } else {
+                    // Retrieve original date
+                    const originalDate = sessionRes[0].date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
+
                     db.query("UPDATE sessiondetails SET sessionName = ?, date = ?, time = ?, type = ?, remarks = ?, venueORlink = ?, trainerId = ?, updatedDate = CURRENT_DATE() WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
                         [sessionUpdate.sessionName, sessionUpdate.date, sessionUpdate.time, sessionUpdate.type, sessionUpdate.remarks, sessionUpdate.venueORlink, sessionUpdate.trainerId, sessionUpdate.id],
                         (err, res) => {
                             if (err) {
-                                console.log("Error : ", err)
-                                result(err, null)
-                                return
+                                console.log("Error : ", err);
+                                result(err, null);
+                                return;
                             }
-                            console.log("Updated Session Details : ", { id: sessionUpdate.id, ...sessionUpdate })
-                            result(null, { id: sessionUpdate.id, ...sessionUpdate })
-                        })
+                            console.log("Updated Session Details : ", { id: sessionUpdate.id, ...sessionUpdate, originalDate });
+                            result(null, { id: sessionUpdate.id, ...sessionUpdate, originalDate });
+                        });
                 }
-
             }
-
-        })
-}
+        });
+};
 
 Session.viewSessions = (batchId, result) => {
     const query = "SELECT s.id, s.batchId, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, t.trainerName, s.attendenceCode, s.addedDate, s.updatedDate, CASE WHEN cancelStatus = 0 THEN 'ACTIVE' WHEN cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN trainersinfo t ON s.trainerId = t.id WHERE s.isActive = 1 AND s.deleteStatus = 0 AND s.batchId = ?";
