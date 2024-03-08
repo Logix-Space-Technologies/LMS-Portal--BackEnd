@@ -1404,6 +1404,24 @@ Student.verifyStudOTP = (studEmail, otp, result) => {
     });
 }
 
+
+Student.searchStudRenewalDetailsByEmail = (studEmail, result) => {
+    db.query("SELECT s.*, c.collegeName, b.batchName, b.batchAmount FROM student s JOIN batches b ON s.batchId = b.id JOIN college c ON s.collegeId = c.id WHERE s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND s.validity < CURRENT_DATE", [studEmail],
+        (verifyErr, verifyRes) => {
+            if (verifyErr) {
+                console.log("Error: ", verifyErr)
+                return result(verifyErr, null)
+            }
+            if (verifyRes.length === 0) {
+                console.log("Student Does Not Exist")
+                return result("Student Does Not Exist", null)
+            } else {
+                result(null, verifyRes[0]);
+            }
+        })
+}
+
+
 Student.renewalReminder = async (id) => {
     try {
         const query = `
@@ -1451,13 +1469,5 @@ Student.renewalReminder = async (id) => {
 
 
 
-
-
-
-
-
-
-  
-  
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 
