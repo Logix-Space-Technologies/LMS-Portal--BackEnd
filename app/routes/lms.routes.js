@@ -317,5 +317,9 @@ router.post('/clgstaffemailverificationotpsend', ClgStaffController.emailverific
 
 router.post('/clgstaffemailverifyotp', ClgStaffController.emailVerificationClgStaffOtpVerify)
 
+router.post('/studemailverifyotpsend', StudentController.StudEmailVerifyOTPSend)
+
+router.post('/studemailverificationotpverify', StudentController.emailverifyStudOTP)
+
 
 module.exports = router

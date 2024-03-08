@@ -1430,7 +1430,95 @@ function renewalReminderHtmlContent(studName, validity, rpAmount) {
   }
 
 
+  function emailverifyStudentOTPHtmlContent(studName, otp) {
+    content = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Student Account Verification OTP - LinkUrCodes</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+    
+        h1 {
+          color: #007bff;
+        }
+    
+        p {
+          line-height: 1.6;
+        }
+    
+        .otp {
+          background-color: #007bff;
+          color: #fff;
+          padding: 10px 20px;
+          border-radius: 5px;
+          font-size: 18px;
+          display: inline-block;
+        }
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <h1>Account Verification OTP</h1>
+        <p>Dear ${studName},</p>
+        <p>To complete the verification of your student account at LinkUrCodes, please use the following OTP:</p>
+        <p class="otp">${otp}</p>
+        <p>If you have any questions or need further assistance, please feel free to reach out.</p>
+        <p>Thank you for your cooperation.</p>
+        <p>Best Regards,</p>
+        <br>
+        <p>LinkUrCodes Team</p>
+      </div>
+    </body>
+    </html>`
 
+    return content
+  }
+
+  function emailverifyStudentOTPTextContent(studName, otp) {
+    content = `Dear ${studName},
+
+    To complete the verification of your student account at LinkUrCodes, please use the following OTP: ${otp}
+    
+    If you have any questions or need further assistance, please feel free to reach out.
+    
+    Thank you for your cooperation.
+    
+    Best Regards,
+    
+    LinkUrCodes Team`
+
+    return content
+  }
 
 
 
@@ -1466,6 +1554,8 @@ module.exports = {
     clgstaffEmailVerificationOTPHTMLContent,
     clgstaffEmailVerificationOTPTextContent,
     reschedulingSessionHTMLContent,
-    reschedulingSessionTextContent
+    reschedulingSessionTextContent,
+    emailverifyStudentOTPHtmlContent,
+    emailverifyStudentOTPTextContent
 };
 
