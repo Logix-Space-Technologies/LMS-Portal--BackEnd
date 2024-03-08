@@ -98,35 +98,35 @@ College.collegeViewAll = async (result) => {
 
 College.delete = async (clgId, result) => {
     db.query("SELECT * FROM college WHERE deleteStatus = 0 AND isActive = 1", [clgId.id],
-    (clgErr,clgRes) =>{
-        
-        if (clgErr) {
-            console.error("Error checking college: ", clgErr)
-            return result(clgErr, null);
-        }
-        console.log(clgRes.length)
-        if (clgRes.length === 0) {
-            console.log("College does not exist or is inactive/deleted.")
-            return result("College does not exist or is inactive/deleted.", null);
-        }
+        (clgErr, clgRes) => {
 
-        db.query("UPDATE college SET isActive=0, deleteStatus=1 WHERE id = ? AND isActive = 1 AND deleteStatus = 0", [clgId.id], (err, res) => {
-            if (err) {
-                console.error("Error deleting college: ", err)
-                result(err, null)
-                return
+            if (clgErr) {
+                console.error("Error checking college: ", clgErr)
+                return result(clgErr, null);
             }
-    
-            if (res.affectedRows === 0) {
-                result({ kind: "not_found" }, null)
-                return
+            console.log(clgRes.length)
+            if (clgRes.length === 0) {
+                console.log("College does not exist or is inactive/deleted.")
+                return result("College does not exist or is inactive/deleted.", null);
             }
-    
-            console.log("Delete college with id: ", { id: clgId.id })
-            result(null, { id: clgId.id })
+
+            db.query("UPDATE college SET isActive=0, deleteStatus=1 WHERE id = ? AND isActive = 1 AND deleteStatus = 0", [clgId.id], (err, res) => {
+                if (err) {
+                    console.error("Error deleting college: ", err)
+                    result(err, null)
+                    return
+                }
+
+                if (res.affectedRows === 0) {
+                    result({ kind: "not_found" }, null)
+                    return
+                }
+
+                console.log("Delete college with id: ", { id: clgId.id })
+                result(null, { id: clgId.id })
+            })
         })
-    })
-    
+
 }
 
 
@@ -156,8 +156,34 @@ College.updateCollege = (clgUpdate, result) => {
                             result("Website Already Exists.", null)
                             return
                         } else {
-                            db.query("UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, collegePhNo = ?, collegeMobileNumber = ?, collegeImage = ?, updatedDate = CURRENT_DATE(), updatedStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-                                [clgUpdate.collegeName, clgUpdate.collegeAddress, clgUpdate.website, clgUpdate.collegePhNo, clgUpdate.collegeMobileNumber, clgUpdate.collegeImage, clgUpdate.id],
+
+                            let updateQuery;
+                            let updateValues;
+
+                            if (clgUpdate.collegeImage) {
+                                updateQuery = "UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, collegePhNo = ?, collegeMobileNumber = ?, collegeImage = ?, updatedDate = CURRENT_DATE(), updatedStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                                updateValues = [
+                                    clgUpdate.collegeName, 
+                                    clgUpdate.collegeAddress, 
+                                    clgUpdate.website, 
+                                    clgUpdate.collegePhNo, 
+                                    clgUpdate.collegeMobileNumber, 
+                                    clgUpdate.collegeImage, 
+                                    clgUpdate.id
+                                ];
+                            } else {
+                                updateQuery = "UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, collegePhNo = ?, collegeMobileNumber = ?, updatedDate = CURRENT_DATE(), updatedStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                                updateValues = [
+                                    clgUpdate.collegeName, 
+                                    clgUpdate.collegeAddress, 
+                                    clgUpdate.website, 
+                                    clgUpdate.collegePhNo, 
+                                    clgUpdate.collegeMobileNumber, 
+                                    clgUpdate.id
+                                ];
+                            }
+
+                            db.query(updateQuery, updateValues,
                                 (err, res) => {
                                     if (err) {
                                         console.log("error : ", err)
@@ -179,17 +205,17 @@ College.updateCollege = (clgUpdate, result) => {
 College.searchCollege = (search, result) => {
     const searchTerm = '%' + search + '%'
     db.query("SELECT id, collegeName, collegeAddress, website, email, collegePhNo, collegeMobileNumber, collegeImage, addedDate, updatedDate, emailVerified, updatedStatus FROM college WHERE deleteStatus = 0 AND isActive = 1 AND (collegeName LIKE ? OR collegeAddress LIKE ? OR website LIKE ? OR email LIKE ? OR collegePhNo LIKE ? OR collegeMobileNumber LIKE ?)",
-    [searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm],
-    (err, res) => {
-        if (err) {
-            console.log("Error : ", err)
-            result(err, null)
-            result
-        } else {
-            console.log("College Details : ", res)
-            result(null, res)
-        }
-    })
+        [searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                result
+            } else {
+                console.log("College Details : ", res)
+                result(null, res)
+            }
+        })
 }
 
 College.studentViewCollege = (studentId, result) => {
@@ -207,15 +233,15 @@ College.studentViewCollege = (studentId, result) => {
 
 College.viewOneCollege = (id, result) => {
     db.query("SELECT * FROM college WHERE isActive = 1 AND deleteStatus = 0 AND id = ?", [id],
-    (err, res) => {
-        if (err) {
-            console.log("Error : ", err);
-            result(err, null);
-            return;
-        }
-        console.log("College : ", res);
-        result(null, res);
-    })
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err);
+                result(err, null);
+                return;
+            }
+            console.log("College : ", res);
+            result(null, res);
+        })
 }
 
 

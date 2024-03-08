@@ -7,7 +7,8 @@ import axios from 'axios';
 const StudentUpdateProfile = () => {
     const [studData, setStudData] = useState([])
     const [file, setFile] = useState("")
-    const [fileValidationMessage, setFileValidationMessage] = useState('');
+    const [fileType, setFileType] = useState("");
+    const [errors, setErrors] = useState({})
     const [updateField, setUpdateField] = useState(
         {
             "id": sessionStorage.getItem("studentId"),
@@ -30,90 +31,116 @@ const StudentUpdateProfile = () => {
     }
 
     const fileUploadHandler = (event) => {
-        setFileValidationMessage({})
-        const file = event.target.files[0];
-        if (file) {
-            const isSizeValid = file.size <= 2097152; // 2MB in bytes
-            const isTypeValid = /image\/(jpg|jpeg|png|webp|heif)$/.test(file.type);
+        setErrors({});
+        const uploadedFile = event.target.files[0];
+        if (uploadedFile) {
+            setErrors({});
+            setFile(uploadedFile);
+            const extension = uploadedFile.name.split('.').pop().toLowerCase();
+            setFileType(extension);
+        } else {
+            setFile(null);
+            setFileType("");
+        }
+    }
 
-            if (isSizeValid && isTypeValid) {
-                setFile(file);
-                setFileValidationMessage('');
+    const readNewValue = async (e) => {
+        e.preventDefault()
+        const validationErrors = validateForm(updateField)
+
+        if (Object.keys(validationErrors).length === 0) {
+            let data = {}
+            if (file) {
+                data = {
+                    "id": sessionStorage.getItem("studentId"),
+                    "studName": updateField.studName,
+                    "admNo": updateField.admNo,
+                    "rollNo": updateField.rollNo,
+                    "studDept": updateField.studDept,
+                    "course": updateField.course,
+                    "studPhNo": updateField.studPhNo,
+                    "aadharNo": updateField.aadharNo,
+                    "studProfilePic": file
+                }
             } else {
-                if (!isSizeValid) {
-                    setFileValidationMessage('File size should be less than 2MB.');
+                data = {
+                    "id": sessionStorage.getItem("studentId"),
+                    "studName": updateField.studName,
+                    "admNo": updateField.admNo,
+                    "rollNo": updateField.rollNo,
+                    "studDept": updateField.studDept,
+                    "course": updateField.course,
+                    "studPhNo": updateField.studPhNo,
+                    "aadharNo": updateField.aadharNo
                 }
-                if (!isTypeValid) {
-                    setFileValidationMessage('Invalid file type. Only image files (jpeg, png, jpg, gif, bmp, tiff) are allowed.');
+            }
+            let axiosConfig = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    "Access-Control-Allow-Origin": "*",
+                    "token": sessionStorage.getItem("studLoginToken"),
+                    "key": sessionStorage.getItem("studentkey")
                 }
+            };
+            try {
+                axios.post(apiUrl2, data, axiosConfig).then(
+                    (Response) => {
+                        if (Response.data.status === "success") {
+                            setUpdateField({
+                                "id": sessionStorage.getItem("studentId"),
+                                "studName": "",
+                                "admNo": "",
+                                "rollNo": "",
+                                "studDept": "",
+                                "course": "",
+                                "studPhNo": "",
+                                "aadharNo": "",
+                                "studProfilePic": ""
+                            })
+                            alert("Profile Updated Successfully")
+                            navigate("/studdashboard")
+                        } else {
+                            if (Response.data.status === "Unauthorized User!!") {
+                                navigate("/studentLogin")
+                                sessionStorage.clear()
+                            } else {
+                                alert(Response.data.status)
+                            }
+                        }
+
+                    }
+                ).catch(error => {
+                    if (error.response) {
+                        // Extract the status code from the response
+                        const statusCode = error.response.status;
+
+                        if (statusCode === 400) {
+                            console.log("Status 400:", error.response.data);
+                            alert(error.response.data.status)
+                            // Additional logic for status 400
+                        } else if (statusCode === 500) {
+                            console.log("Status 500:", error.response.data);
+                            alert(error.response.data.status)
+                            // Additional logic for status 500
+                        } else {
+                            alert(error.response.data.status)
+                        }
+                    } else if (error.request) {
+                        console.log(error.request);
+                        alert(error.request);
+                    } else if (error.message) {
+                        console.log('Error', error.message);
+                        alert('Error', error.message);
+                    } else {
+                        alert(error.config);
+                        console.log(error.config);
+                    }
+                })
+            } catch (error) {
+                alert("An error occurred while updating the profile.");
             }
         } else {
-            setFileValidationMessage({});
-        }
-    };
-
-
-    const readNewValue = async () => {
-        if (fileValidationMessage) {
-            alert(fileValidationMessage);
-            return;
-        }
-
-        let data = {}
-        if (file) {
-            data = {
-                "id": sessionStorage.getItem("studentId"),
-                "studName": updateField.studName,
-                "admNo": updateField.admNo,
-                "rollNo": updateField.rollNo,
-                "studDept": updateField.studDept,
-                "course": updateField.course,
-                "studPhNo": updateField.studPhNo,
-                "aadharNo": updateField.aadharNo,
-                "studProfilePic": file
-            }
-        } else {
-            data = {
-                "id": sessionStorage.getItem("studentId"),
-                "studName": updateField.studName,
-                "admNo": updateField.admNo,
-                "rollNo": updateField.rollNo,
-                "studDept": updateField.studDept,
-                "course": updateField.course,
-                "studPhNo": updateField.studPhNo,
-                "aadharNo": updateField.aadharNo
-            }
-        }
-        let axiosConfig = {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("studLoginToken"),
-                "key": sessionStorage.getItem("studentkey")
-            }
-        };
-        try {
-            const response = await axios.post(apiUrl2, data, axiosConfig);
-            if (response.data.status === "success") {
-                alert("Profile Updated Successfully");
-                navigate("/studdashboard");
-            } else {
-                if (response.data.status === "Unauthorized User!!") {
-                    navigate("/studentLogin");
-                    sessionStorage.clear();
-                } else if (response.data.status === "Validation failed") {
-                    // Handle validation errors
-                    let errorMessage = "Validation Errors:\n";
-                    Object.keys(response.data.data).forEach(key => {
-                        errorMessage += `${key}: ${response.data.data[key]}\n`;
-                    });
-                    alert(errorMessage);
-                } else {
-                    alert(response.data.status);
-                }
-            }
-        } catch (error) {
-            alert("An error occurred while updating the profile.");
+            setErrors(validationErrors);
         }
     };
 
@@ -162,6 +189,14 @@ const StudentUpdateProfile = () => {
             }
         )
     }
+
+    const validateForm = (data) => {
+        let errors = {};
+        if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+            errors.file = "File must be in jpg/jpeg/png/webp/heif format";
+        }
+        return errors;
+    };
 
     useEffect(() => { getData() }, [])
 
@@ -226,7 +261,7 @@ const StudentUpdateProfile = () => {
                                                 Profile Picture <span className="text-danger">*</span>
                                             </label>
                                             <input onChange={fileUploadHandler} type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" />
-                                            {fileValidationMessage && <div className="text-danger">{fileValidationMessage}</div>}
+                                            {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
                                         </div>
                                         <br></br>
                                         <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
