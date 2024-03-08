@@ -923,3 +923,31 @@ function sendEmailVerificationOTPEmail(email, clgstaffName, clgstaffotp) {
   mail.sendEmail(email, 'Email Verification!', otpVerificationHTMLContent, otpVerificationTextContent)
   return true; // Placeholder
 }
+
+//Verify OTP and Update Email Verified Status
+exports.emailVerificationClgStaffOtpVerify = (req, res) => {
+  // Extract email and OTP from request body
+  const email = req.body.email;
+  const otp = req.body.otp;
+
+  // Input validation (basic example)
+  if (!email || !otp) {
+      return res.json({ "status": "Email and OTP are required" });
+  }
+
+  // Call the model function to verify the OTP
+  CollegeStaff.emailVerificationClgStaffOtpVerify(email, otp, (err, result) => {
+      if (err) {
+          // If there was an error or the OTP is not valid/expired
+          return res.json({ "status": err });
+      } else {
+          if (result) {
+              // If the OTP is verified successfully
+              return res.json({ "status": "OTP verified successfully" });
+          } else {
+              // If the OTP does not match
+              return res.json({ "status": "Invalid OTP" });
+          }
+      }
+  });
+};

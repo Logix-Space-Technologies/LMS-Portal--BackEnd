@@ -313,7 +313,9 @@ router.post('/emailverificationotpverify', AdminStaffController.emailVerificatio
 
 router.post('/studRenewalDataFetch', StudentController.searchStudRenewalDetailsByEmail)
 
-router.post('/clgstaffemailverificationotp', ClgStaffController.emailverification)
+router.post('/clgstaffemailverificationotpsend', ClgStaffController.emailverification)
+
+router.post('/clgstaffemailverifyotp', ClgStaffController.emailVerificationClgStaffOtpVerify)
 
 
 module.exports = router
