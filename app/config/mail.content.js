@@ -1406,7 +1406,28 @@ function renewalReminderHtmlContent(studName, validity, rpAmount) {
     return content;
   }
   
+  
+  function renewalReminderTextContent(studName, validity, rpAmount) {
+    content = `Dear ${studName},
 
+    We hope this message finds you well. We want to remind you that your LinkUrCodes subscription is set to expire on ${validity}. To ensure uninterrupted access to all our features and resources, we encourage you to renew your subscription before the expiration date.
+    
+    Details for Renewal:
+    
+    Renewal Date: ${validity}
+    Renewal Amount: Rs. ${rpAmount}
+    Renew your subscription now to continue enjoying the benefits of LinkUrCodes. You can proceed with the renewal process by visiting our website: https://lms.linkurcodes.com/studentLogin
+    
+    If you have already renewed your subscription, please ignore this message.
+    
+    Thank you for being a valued member of LinkUrCodes!
+    
+    Best Regards,
+    
+    The LinkUrCodes Team`
+
+    return content
+  }
 
 
 
@@ -1439,6 +1460,7 @@ module.exports = {
     paymentRenewalSuccessfulHTMLContent,
     paymentRenewalSuccessfulTextContent,
     renewalReminderHtmlContent,
+    renewalReminderTextContent,
     emailverificationAdmStaffHTMLContent,
     emailverificationAdmStaffTextContent,
     clgstaffEmailVerificationOTPHTMLContent,
