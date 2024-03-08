@@ -309,7 +309,11 @@ router.post('/sendRenewalReminderEmail', StudentController.sendRenewalReminderEm
 
 router.post('/emailverificationotpadmstaff', AdminStaffController.emailverification)
 
-router.post('/studRenewalDataFetch',StudentController.searchStudRenewalDetailsByEmail)
+router.post('/emailverificationotpverify', AdminStaffController.emailVerificationOtpSendVerify)
+
+router.post('/studRenewalDataFetch', StudentController.searchStudRenewalDetailsByEmail)
+
+router.post('/clgstaffemailverificationotp', ClgStaffController.emailverification)
 
 
 module.exports = router
