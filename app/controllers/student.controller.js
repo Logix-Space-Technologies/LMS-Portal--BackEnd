@@ -1503,6 +1503,7 @@ exports.studforgotpassword = (request, response) => {
     });
 }
 
+
 exports.searchStudRenewalDetailsByEmail = (request, response) => {
     const email = request.body.studEmail
 
@@ -1518,3 +1519,52 @@ exports.searchStudRenewalDetailsByEmail = (request, response) => {
         }
     })
 }
+
+
+exports.sendRenewalReminderEmail = async (req, res) => {
+    const token = req.headers.token;
+    const key = req.headers.key;
+    const id = req.body.id;
+
+    try {
+        const decoded = await jwt.verify(token, key);
+
+        if (!decoded) {
+            return res.status(401).json({
+                status: "error",
+                message: "Unauthorized User!!"
+            });
+        }
+
+        const studentData = await Student.renewalReminder(id);
+        const studEmail = studentData.studEmail;
+        const studname = studentData.studName
+        const validity = studentData.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
+        const rpAmt = studentData.rpAmount
+
+        const renewalReminderHTMLContent = mailContents.renewalReminderHtmlContent(studname, validity, rpAmt);
+
+        mail.sendEmail(
+            studEmail,
+            'LinkUrCodes Subscription Renewal Reminder',
+            renewalReminderHTMLContent
+        );
+
+        return res.json({
+            status: "success",
+            message: "Renewal reminder email sent successfully.",
+            data: studentData
+        });
+    } catch (error) {
+        console.error("Error in sending renewal reminder email:", error);
+        return res.status(500).json({
+            status: "error",
+            message: "Error in sending renewal reminder email.",
+            error: error.message 
+        });
+    }
+};
+
+
+
+ 
