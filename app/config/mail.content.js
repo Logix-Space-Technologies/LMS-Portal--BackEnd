@@ -1438,7 +1438,7 @@ module.exports = {
     StudentRegistrationSuccessfulMailTextContent,
     paymentRenewalSuccessfulHTMLContent,
     paymentRenewalSuccessfulTextContent,
-    renewalReminderHtmlContent
+    renewalReminderHtmlContent,
     emailverificationAdmStaffHTMLContent,
     emailverificationAdmStaffTextContent,
     clgstaffEmailVerificationOTPHTMLContent,
