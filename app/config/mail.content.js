@@ -1406,10 +1406,119 @@ function renewalReminderHtmlContent(studName, validity, rpAmount) {
     return content;
   }
   
+  
+  function renewalReminderTextContent(studName, validity, rpAmount) {
+    content = `Dear ${studName},
+
+    We hope this message finds you well. We want to remind you that your LinkUrCodes subscription is set to expire on ${validity}. To ensure uninterrupted access to all our features and resources, we encourage you to renew your subscription before the expiration date.
+    
+    Details for Renewal:
+    
+    Renewal Date: ${validity}
+    Renewal Amount: Rs. ${rpAmount}
+    Renew your subscription now to continue enjoying the benefits of LinkUrCodes. You can proceed with the renewal process by visiting our website: https://lms.linkurcodes.com/studentLogin
+    
+    If you have already renewed your subscription, please ignore this message.
+    
+    Thank you for being a valued member of LinkUrCodes!
+    
+    Best Regards,
+    
+    The LinkUrCodes Team`
+
+    return content
+  }
 
 
+  function emailverifyStudentOTPHtmlContent(studName, otp) {
+    content = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Student Account Verification OTP - LinkUrCodes</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+    
+        h1 {
+          color: #007bff;
+        }
+    
+        p {
+          line-height: 1.6;
+        }
+    
+        .otp {
+          background-color: #007bff;
+          color: #fff;
+          padding: 10px 20px;
+          border-radius: 5px;
+          font-size: 18px;
+          display: inline-block;
+        }
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <h1>Account Verification OTP</h1>
+        <p>Dear ${studName},</p>
+        <p>To complete the verification of your student account at LinkUrCodes, please use the following OTP:</p>
+        <p class="otp">${otp}</p>
+        <p>If you have any questions or need further assistance, please feel free to reach out.</p>
+        <p>Thank you for your cooperation.</p>
+        <p>Best Regards,</p>
+        <br>
+        <p>LinkUrCodes Team</p>
+      </div>
+    </body>
+    </html>`
 
+    return content
+  }
 
+  function emailverifyStudentOTPTextContent(studName, otp) {
+    content = `Dear ${studName},
+
+    To complete the verification of your student account at LinkUrCodes, please use the following OTP: ${otp}
+    
+    If you have any questions or need further assistance, please feel free to reach out.
+    
+    Thank you for your cooperation.
+    
+    Best Regards,
+    
+    LinkUrCodes Team`
+
+    return content
+  }
 
 
 
@@ -1439,11 +1548,14 @@ module.exports = {
     paymentRenewalSuccessfulHTMLContent,
     paymentRenewalSuccessfulTextContent,
     renewalReminderHtmlContent,
+    renewalReminderTextContent,
     emailverificationAdmStaffHTMLContent,
     emailverificationAdmStaffTextContent,
     clgstaffEmailVerificationOTPHTMLContent,
     clgstaffEmailVerificationOTPTextContent,
     reschedulingSessionHTMLContent,
-    reschedulingSessionTextContent
+    reschedulingSessionTextContent,
+    emailverifyStudentOTPHtmlContent,
+    emailverifyStudentOTPTextContent
 };
 

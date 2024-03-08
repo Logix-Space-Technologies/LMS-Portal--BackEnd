@@ -1543,11 +1543,13 @@ exports.sendRenewalReminderEmail = async (req, res) => {
         const rpAmt = studentData.rpAmount
 
         const renewalReminderHTMLContent = mailContents.renewalReminderHtmlContent(studname, validity, rpAmt);
+        const renewalReminderTextContent = mailContents.renewalReminderTextContent(studname, validity, rpAmt);
 
         mail.sendEmail(
             studEmail,
             'LinkUrCodes Subscription Renewal Reminder',
-            renewalReminderHTMLContent
+            renewalReminderHTMLContent,
+            renewalReminderTextContent
         );
 
         return res.json({
@@ -1564,6 +1566,67 @@ exports.sendRenewalReminderEmail = async (req, res) => {
         });
     }
 };
+
+//Email Verification OTP Send
+exports.StudEmailVerifyOTPSend = (request, response) => {
+    const email = request.body.studEmail
+    // Generate and hash OTP
+    Student.forgotPassGenerateAndHashOTP(email, (err, otp) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            Student.searchstudentbyemail(email, (err, data) => {
+                let studName = data
+                // Send OTP to email
+                const mailSent = sendOTPVerifyEmail(email, studName, otp);
+                if (mailSent) {
+                    return response.json({ "status": "OTP sent to email." });
+                } else {
+                    return response.json({ "status": "Failed to send OTP." });
+                }
+            })
+        }
+    });
+}
+
+function sendOTPVerifyEmail(email, studName, otp) {
+    const otpVerificationHTMLContent = mailContents.emailverifyStudentOTPHtmlContent(studName, otp);
+    const otpVerificationTextContent = mailContents.emailverifyStudentOTPTextContent(studName, otp);
+    mail.sendEmail(email, 'Password Reset Request', otpVerificationHTMLContent, otpVerificationTextContent)
+
+    return true;
+}
+
+
+//Verify OTP and Update Email Verification Status
+exports.emailverifyStudOTP = (req, res) => {
+    // Extract email and OTP from request body
+    const email = req.body.studEmail;
+    const otp = req.body.otp;
+
+    // Input validation (basic example)
+    if (!email || !otp) {
+        return res.json({ "status": "Email and OTP are required" });
+    }
+
+    // Call the model function to verify the OTP
+    Student.emailverifyStudOTP(email, otp, (err, result) => {
+        if (err) {
+            // If there was an error or the OTP is not valid/expired
+            return res.json({ "status": err });
+        } else {
+            if (result) {
+                // If the OTP is verified successfully
+                return res.json({ "status": "OTP verified successfully" });
+            } else {
+                // If the OTP does not match
+                return res.json({ "status": "Invalid OTP" });
+            }
+        }
+    });
+};
+
+
 
 
 

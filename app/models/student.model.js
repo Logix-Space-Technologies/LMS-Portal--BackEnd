@@ -1466,6 +1466,44 @@ Student.renewalReminder = async (id) => {
     }
 };
 
+Student.emailverifyStudOTP = (studEmail, otp, result) => {
+    const query = "SELECT otp, createdAt FROM student_otp WHERE email = ?";
+    db.query(query, [studEmail], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            if (res.length > 0) {
+                const studentotp = res[0].otp;
+                const createdAt = res[0].createdAt;
+                // Check if OTP is expired
+                const expiryDuration = 10 * 60 * 1000; // 10 minute in milliseconds
+                const otpCreatedAt = new Date(createdAt).getTime();
+                const currentTime = new Date().getTime();
+                if (currentTime - otpCreatedAt > expiryDuration) {
+                    return result("OTP expired", null);
+                }
+
+                // If OTP not expired, proceed to compare
+                const isMatch = bcrypt.compareSync(otp, studentotp);
+                if (isMatch) {
+                    db.query("UPDATE student SET emailVerified = 1 WHERE studEmail = ?", [studEmail], (verifyErr, verifyRes)=> {
+                        if (verifyErr) {
+                            return result(err, null);
+                        } else {
+                            return result(null, true);
+                        }
+                    })
+                } else {
+                    return result(null, false);
+                }
+            } else {
+                return result("OTP not found or expired", null);
+            }
+        }
+    });
+}
+
+
 
 
 
