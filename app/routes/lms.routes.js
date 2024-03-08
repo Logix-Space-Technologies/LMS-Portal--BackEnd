@@ -305,7 +305,6 @@ router.post('/clgstaffforgotpassword', ClgStaffController.collegestaffforgotpass
 
 router.post('/admstaffforgotpassword', AdminStaffController.admstaffforgotpassword)
 
-
 router.post('/sendRenewalReminderEmail', StudentController.sendRenewalReminderEmail)
 
 module.exports = router

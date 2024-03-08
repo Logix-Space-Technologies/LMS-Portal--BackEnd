@@ -1444,14 +1444,16 @@ exports.sendRenewalReminderEmail = async (req, res) => {
 
         const studentData = await Student.renewalReminder(id);
         const studEmail = studentData.studEmail;
+        const studname = studentData.studName
+        const validity = studentData.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
+        const rpAmt = studentData.rpAmount
 
-        const renewalReminderHTMLContent = mailContents.renewalReminderHtmlContent(studentData);
+        const renewalReminderHTMLContent = mailContents.renewalReminderHtmlContent(studname, validity, rpAmt);
 
         mail.sendEmail(
             studEmail,
             'LinkUrCodes Subscription Renewal Reminder',
-            renewalReminderHTMLContent,
-            null
+            renewalReminderHTMLContent
         );
 
         return res.json({

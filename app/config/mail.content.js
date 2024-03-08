@@ -1028,7 +1028,7 @@ function paymentRenewalSuccessfulTextContent(validityDate, renewalAmount, transa
 }
 
 
-function renewalReminderHtmlContent(studName, validity,rpAmount) {
+function renewalReminderHtmlContent(studName, validity, rpAmount) {
     const content = `<!DOCTYPE html>
   <html lang="en">
   <head>
@@ -1083,10 +1083,10 @@ function renewalReminderHtmlContent(studName, validity,rpAmount) {
       <p>Details for Renewal:</p>
       <ul>
         <li><strong>Renewal Date:</strong> ${validity}</li>
-        <li><strong>Renewal Amount:</strong> ${rpAmount}</li>
+        <li><strong>Renewal Amount:</strong> Rs. ${rpAmount}</li>
       </ul>
       <p>Renew your subscription now to continue enjoying the benefits of LinkUrCodes. Click the button below to proceed with the renewal process:</p>
-      <a class="button" href="https://lms.linkurcodes.com/studentLogin">Renew Subscription</a>
+      <a class="button" href="https://lms.linkurcodes.com/studentLogin" style="color: white;">Renew Subscription</a>
       <p>If you have already renewed your subscription, please ignore this message.</p>
       <p>Thank you for being a valued member of LinkUrCodes!</p>
       <p>Best Regards,</p>
