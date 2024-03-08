@@ -376,40 +376,40 @@ exports.profileUpdateStudent = (request, response) => {
                         if (Validator.isEmpty(studName).isValid) {
                             validationErrors.studName = Validator.isEmpty(studName).message;
                         }
-    
+
                         if (!Validator.isValidName(studName).isValid) {
                             validationErrors.studName = Validator.isValidName(studName).message;
                         }
-    
+
                         if (Validator.isEmpty(admNo).isValid) {
                             validationErrors.admNo = Validator.isEmpty(admNo).message;
                         }
-    
+
                         if (Validator.isEmpty(rollNo).isValid) {
                             validationErrors.rollNo = Validator.isEmpty(rollNo).message;
                         }
-    
+
                         if (Validator.isEmpty(studDept).isValid) {
                             validationErrors.studDept = Validator.isEmpty(studDept).message;
                         }
-    
+
                         if (Validator.isEmpty(course).isValid) {
                             validationErrors.course = Validator.isEmpty(course).message;
                         }
-    
+
                         if (Validator.isEmpty(aadharNo).isValid) {
                             validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
                         }
-    
+
                         if (!Validator.isValidAadharNumber(aadharNo).isValid) {
                             validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
                         }
-    
+
                         if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
                             validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
                         }
-    
-    
+
+
                         if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
                             validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
                         }
@@ -514,7 +514,7 @@ exports.profileUpdateStudent = (request, response) => {
                         studPhNo,
                         aadharNo
                     };
-                    
+
                     Student.updateStudentProfile(newStudent, (err, data) => {
                         if (err) {
                             if (err.kind === "not_found") {
@@ -1502,3 +1502,69 @@ exports.studforgotpassword = (request, response) => {
         }
     });
 }
+
+
+exports.searchStudRenewalDetailsByEmail = (request, response) => {
+    const email = request.body.studEmail
+
+    Student.searchStudRenewalDetailsByEmail(email, (err, data) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            if (data.length === 0) {
+                return response.json({ "status": "No students found!" });
+            } else {
+                return response.json({ "status": "success", "data": data });
+            }
+        }
+    })
+}
+
+
+exports.sendRenewalReminderEmail = async (req, res) => {
+    const token = req.headers.token;
+    const key = req.headers.key;
+    const id = req.body.id;
+
+    try {
+        const decoded = await jwt.verify(token, key);
+
+        if (!decoded) {
+            return res.status(401).json({
+                status: "error",
+                message: "Unauthorized User!!"
+            });
+        }
+
+        const studentData = await Student.renewalReminder(id);
+        const studEmail = studentData.studEmail;
+        const studname = studentData.studName
+        const validity = studentData.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
+        const rpAmt = studentData.rpAmount
+
+        const renewalReminderHTMLContent = mailContents.renewalReminderHtmlContent(studname, validity, rpAmt);
+
+        mail.sendEmail(
+            studEmail,
+            'LinkUrCodes Subscription Renewal Reminder',
+            renewalReminderHTMLContent
+        );
+
+        return res.json({
+            status: "success",
+            message: "Renewal reminder email sent successfully.",
+            data: studentData
+        });
+    } catch (error) {
+        console.error("Error in sending renewal reminder email:", error);
+        return res.status(500).json({
+            status: "error",
+            message: "Error in sending renewal reminder email.",
+            error: error.message 
+        });
+    }
+};
+
+
+
+ 
