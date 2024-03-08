@@ -48,66 +48,75 @@ const StudentUpdateProfile = () => {
                 }
             }
         } else {
-            setFileValidationMessage("Please upload a file.");
+            setFileValidationMessage({});
         }
     };
 
 
-    const readNewValue = () => {
-        if (!file) {
-            setFileValidationMessage("Please upload a file.");
+    const readNewValue = async () => {
+        if (fileValidationMessage) {
+            alert(fileValidationMessage);
             return;
         }
-        if (fileValidationMessage) {
-            return;
+
+        let data = {}
+        if (file) {
+            data = {
+                "id": sessionStorage.getItem("studentId"),
+                "studName": updateField.studName,
+                "admNo": updateField.admNo,
+                "rollNo": updateField.rollNo,
+                "studDept": updateField.studDept,
+                "course": updateField.course,
+                "studPhNo": updateField.studPhNo,
+                "aadharNo": updateField.aadharNo,
+                "studProfilePic": file
+            }
+        } else {
+            data = {
+                "id": sessionStorage.getItem("studentId"),
+                "studName": updateField.studName,
+                "admNo": updateField.admNo,
+                "rollNo": updateField.rollNo,
+                "studDept": updateField.studDept,
+                "course": updateField.course,
+                "studPhNo": updateField.studPhNo,
+                "aadharNo": updateField.aadharNo
+            }
         }
         let axiosConfig = {
             headers: {
-                'content-type': 'multipart/form-data',
+                'Content-Type': 'multipart/form-data',
                 "Access-Control-Allow-Origin": "*",
                 "token": sessionStorage.getItem("studLoginToken"),
                 "key": sessionStorage.getItem("studentkey")
             }
-        }
-        let data = {
-            "id": sessionStorage.getItem("studentId"),
-            "studName": updateField.studName,
-            "admNo": updateField.admNo,
-            "rollNo": updateField.rollNo,
-            "studDept": updateField.studDept,
-            "course": updateField.course,
-            "studPhNo": updateField.studPhNo,
-            "aadharNo": updateField.aadharNo,
-            "studProfilePic": file
-        }
-        axios.post(apiUrl2, data, axiosConfig).then(
-            (Response) => {
-                if (Response.data.status === "success") {
-                    setUpdateField({
-                        "id": sessionStorage.getItem("studentId"),
-                        "studName": "",
-                        "admNo": "",
-                        "rollNo": "",
-                        "studDept": "",
-                        "course": "",
-                        "studPhNo": "",
-                        "aadharNo": "",
-                        "studProfilePic": ""
-                    })
-                    alert("Profile Updated Successfully")
-                    navigate("/studdashboard")
+        };
+        try {
+            const response = await axios.post(apiUrl2, data, axiosConfig);
+            if (response.data.status === "success") {
+                alert("Profile Updated Successfully");
+                navigate("/studdashboard");
+            } else {
+                if (response.data.status === "Unauthorized User!!") {
+                    navigate("/studentLogin");
+                    sessionStorage.clear();
+                } else if (response.data.status === "Validation failed") {
+                    // Handle validation errors
+                    let errorMessage = "Validation Errors:\n";
+                    Object.keys(response.data.data).forEach(key => {
+                        errorMessage += `${key}: ${response.data.data[key]}\n`;
+                    });
+                    alert(errorMessage);
                 } else {
-                    if (Response.data.status === "Unauthorized User!!") {
-                        navigate("/studentLogin")
-                        sessionStorage.clear()
-                    } else {
-                        alert(Response.data.status)
-                    }
+                    alert(response.data.status);
                 }
-
             }
-        )
-    }
+        } catch (error) {
+            alert("An error occurred while updating the profile.");
+        }
+    };
+
 
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
@@ -129,7 +138,25 @@ const StudentUpdateProfile = () => {
                         navigate("/studentLogin")
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status)
+                        if (response.data.status === "Validation failed" && response.data.data.studName) {
+                            alert(response.data.data.studName);
+                        } else if (response.data.status === "Validation failed" && response.data.data.admNo) {
+                            alert(response.data.data.admNo);
+                        } else if (response.data.status === "Validation failed" && response.data.data.rollNo) {
+                            alert(response.data.data.rollNo);
+                        } else if (response.data.status === "Validation failed" && response.data.data.studDept) {
+                            alert(response.data.data.studDept);
+                        } else if (response.data.status === "Validation failed" && response.data.data.course) {
+                            alert(response.data.data.course);
+                        } else if (response.data.status === "Validation failed" && response.data.data.aadharNo) {
+                            alert(response.data.data.aadharNo);
+                        } else if (response.data.status === "Validation failed" && response.data.data.studPhNo) {
+                            alert(response.data.data.studPhNo);
+                        } else if (response.data.status === "Validation failed" && response.data.data.image) {
+                            alert(response.data.data.image);
+                        } else {
+                            alert(response.data.status);
+                        }
                     }
                 }
             }
