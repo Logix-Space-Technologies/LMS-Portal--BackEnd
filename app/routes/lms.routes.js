@@ -307,4 +307,7 @@ router.post('/admstaffforgotpassword', AdminStaffController.admstaffforgotpasswo
 
 router.post('/sendRenewalReminderEmail', StudentController.sendRenewalReminderEmail)
 
+router.post('/emailverificationotpadmstaff', AdminStaffController.emailverification)
+
+
 module.exports = router

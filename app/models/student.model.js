@@ -498,8 +498,12 @@ Student.updateStudentProfile = (student, result) => {
                         return result("Batch does not exist or is inactive/deleted.", null);
                     }
 
-                    db.query("UPDATE student SET studName = ?, admNo = ?, rollNo = ?, studDept = ?, course = ?, studPhNo = ?, studProfilePic = ?, aadharNo = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-                        [
+                    let updateQuery;
+                    let updateValues;
+
+                    if (student.studProfilePic) {
+                        updateQuery = "UPDATE student SET studName = ?, admNo = ?, rollNo = ?, studDept = ?, course = ?, studPhNo = ?, studProfilePic = ?, aadharNo = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                        updateValues = [
                             student.studName,
                             student.admNo,
                             student.rollNo,
@@ -509,7 +513,22 @@ Student.updateStudentProfile = (student, result) => {
                             student.studProfilePic,
                             student.aadharNo,
                             student.id
-                        ],
+                        ];
+                    } else {
+                        updateQuery = "UPDATE student SET studName = ?, admNo = ?, rollNo = ?, studDept = ?, course = ?, studPhNo = ?, aadharNo = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                        updateValues = [
+                            student.studName,
+                            student.admNo,
+                            student.rollNo,
+                            student.studDept,
+                            student.course,
+                            student.studPhNo,
+                            student.aadharNo,
+                            student.id
+                        ];
+                    }
+
+                    db.query(updateQuery, updateValues,
                         (updateErr, updateRes) => {
                             if (updateErr) {
                                 console.error("Error updating student: ", updateErr);
