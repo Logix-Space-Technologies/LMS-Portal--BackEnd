@@ -1,4 +1,3 @@
-const { content } = require("pdfkit/js/page");
 
 function upcomingSessionContent(studName, sessionName, date, time, venueORlink) {
     content = `<!DOCTYPE html>
@@ -1307,7 +1306,7 @@ function reschedulingSessionHTMLContent(originaldate, sessionDate, sessionTime, 
        
         <p>Best Regards,</p>
         <p> <br>LinkUrCodes Team</p>
-        <a class="button" href="https://www.linkurcodes.com">Visit LinkUrCodes</a>
+        <a class="button" href="https://www.linkurcodes.com" style="color: white;">Visit LinkUrCodes</a>
       </div>
     </body>
     </html>`
@@ -1317,7 +1316,7 @@ function reschedulingSessionHTMLContent(originaldate, sessionDate, sessionTime, 
 function reschedulingSessionTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
     content = `Dear LinkUrCodes Member,
 
-    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for [original date] to the new date [new date]. We apologize for any inconvenience this may cause and appreciate your understanding.
+    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
     
     Details of the rescheduled session:
     

@@ -217,7 +217,7 @@ exports.sessionUpdate = (request, response) => {
                                 const studentEmail = element.studEmail;
                                 const updateSessionHtmlContent = mailContents.reschedulingSessionHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
                                 const updateSessionTextContent = mailContents.reschedulingSessionTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
-                                mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement', updateSessionHtmlContent, updateSessionTextContent);
+                                mail.sendEmail(studentEmail, 'Session Reschedule Announcement', updateSessionHtmlContent, updateSessionTextContent);
                             });
 
                             if (key == "lmsapp") {
