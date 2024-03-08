@@ -103,6 +103,7 @@ import CollegeStaffViewNotifications from './components/CollegeStaff/CollegeStaf
 import CollegeStaffViewCollege from './components/CollegeStaff/CollegeStaffViewCollege';
 import AdminStaffSearchSubmittedTask from './components/AdminStaff/AdminStaffSearchSubmittedTask';
 import AdminStaffSearchMaterial from './components/AdminStaff/AdminStaffSearchMaterial';
+import StudentValidityRenewal from './components/Student/StudentValidityRenewal';
 
 
 
@@ -248,6 +249,7 @@ function App() {
           <Route path='/studupdatesubtask' element={<StudentUpdateSubmittedTask/>}/>
           <Route path='/studviewtasksessionwise' element={<StudentViewOneTask/>}/>
           <Route path='/studviewCommunityManager' element={<StudentViewCommunityManager/>}/>
+          <Route path='/studValidityRenewal' element={<StudentValidityRenewal/>}/>
 
 
 

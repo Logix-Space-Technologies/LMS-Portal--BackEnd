@@ -307,6 +307,8 @@ router.post('/admstaffforgotpassword', AdminStaffController.admstaffforgotpasswo
 
 router.post('/emailverificationotpadmstaff', AdminStaffController.emailverification)
 
+router.post('/studRenewalDataFetch',StudentController.searchStudRenewalDetailsByEmail)
+
 
 
 module.exports = router

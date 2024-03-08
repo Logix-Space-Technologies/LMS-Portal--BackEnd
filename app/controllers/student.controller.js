@@ -376,40 +376,40 @@ exports.profileUpdateStudent = (request, response) => {
                         if (Validator.isEmpty(studName).isValid) {
                             validationErrors.studName = Validator.isEmpty(studName).message;
                         }
-    
+
                         if (!Validator.isValidName(studName).isValid) {
                             validationErrors.studName = Validator.isValidName(studName).message;
                         }
-    
+
                         if (Validator.isEmpty(admNo).isValid) {
                             validationErrors.admNo = Validator.isEmpty(admNo).message;
                         }
-    
+
                         if (Validator.isEmpty(rollNo).isValid) {
                             validationErrors.rollNo = Validator.isEmpty(rollNo).message;
                         }
-    
+
                         if (Validator.isEmpty(studDept).isValid) {
                             validationErrors.studDept = Validator.isEmpty(studDept).message;
                         }
-    
+
                         if (Validator.isEmpty(course).isValid) {
                             validationErrors.course = Validator.isEmpty(course).message;
                         }
-    
+
                         if (Validator.isEmpty(aadharNo).isValid) {
                             validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
                         }
-    
+
                         if (!Validator.isValidAadharNumber(aadharNo).isValid) {
                             validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
                         }
-    
+
                         if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
                             validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
                         }
-    
-    
+
+
                         if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
                             validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
                         }
@@ -514,7 +514,7 @@ exports.profileUpdateStudent = (request, response) => {
                         studPhNo,
                         aadharNo
                     };
-                    
+
                     Student.updateStudentProfile(newStudent, (err, data) => {
                         if (err) {
                             if (err.kind === "not_found") {
@@ -1501,4 +1501,20 @@ exports.studforgotpassword = (request, response) => {
             return response.json({ "status": "success" });
         }
     });
+}
+
+exports.searchStudRenewalDetailsByEmail = (request, response) => {
+    const email = request.body.studEmail
+
+    Student.searchStudRenewalDetailsByEmail(email, (err, data) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            if (data.length === 0) {
+                return response.json({ "status": "No students found!" });
+            } else {
+                return response.json({ "status": "success", "data": data });
+            }
+        }
+    })
 }
