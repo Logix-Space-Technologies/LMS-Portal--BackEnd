@@ -84,7 +84,6 @@ const StudentUpdateProfile = () => {
                 "aadharNo": updateField.aadharNo
             }
         }
-        console.log(data)
         let axiosConfig = {
             headers: {
                 'Content-Type': 'multipart/form-data',
