@@ -1,3 +1,4 @@
+
 function upcomingSessionContent(studName, sessionName, date, time, venueORlink) {
     content = `<!DOCTYPE html>
     <html>
@@ -78,64 +79,95 @@ function upcomingSessionContent(studName, sessionName, date, time, venueORlink) 
 
 function admStaffAddHTMLContent(AdStaffName) {
     content = `<!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
-        <title>Registration Successful</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome to LinkUrCodes</title>
         <style>
-            .container {
-                font-family: Arial, sans-serif;
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f2f2f2;
+                margin: 0;
+                padding: 0;
+            }
+            .email-container {
                 max-width: 600px;
-                margin: 0 auto;
+                margin: auto;
+                background-color: #ffffff;
                 padding: 20px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                background-color: #f9f9f9;
             }
-            .header {
-                font-size: 24px;
-                color: #333;
-            }
-            .content {
-                font-size: 16px;
-                color: #555;
-            }
-            .footer {
-                font-size: 14px;
-                color: #999;
-                margin-top: 20px;
+            .email-header {
+                background-color: #004aad;
+                color: #ffffff;
+                padding: 10px;
                 text-align: center;
             }
-            .button {
-                display: inline-block;
-                padding: 10px 20px;
-                margin-top: 20px;
-                background-color: #007bff;
-                color: white;
-                text-decoration: none;
-                border-radius: 5px;
-                font-weight: bold;
+            .email-content {
+                padding: 20px;
+                text-align: left;
+                line-height: 1.5;
+            }
+            .email-footer {
+                background-color: #004aad;
+                color: #ffffff;
+                text-align: center;
+                padding: 10px;
+                font-size: 12px;
             }
         </style>
     </head>
     <body>
-        <div class="container">
-            <div class="header">
-                Registration Successful!
+        <div class="email-container">
+            <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+            <div class="email-header">
+                <h1>Welcome to LinkUrCodes!</h1>
             </div>
-            <div class="content">
+            <div class="email-content">
                 <p>Dear ${AdStaffName},</p>
-                <p>Thank you for joining Linkurcodes. We are excited to have you on board! Your training will commence shortly, and we are looking forward to helping you enhance your skills.</p>
-                <p>For more details about the upcoming sessions, please use our mobile app or contact your college directly. Stay tuned for more updates and prepare to embark on a rewarding learning journey with us.</p>
+                <p>We're excited to have you on board. Your registration with LinkUrCodes has been successfully completed by our administrator.</p>
+                <p>As a new member of our community, you now have access to a wide range of resources. Here are a few things to get you started:</p>
+                <ul>
+                    <li>Explore our <a href="https://linkurcodes.com">website</a> to learn more about what we offer.</li>
+                    <li>Join our community forums to discuss topics that interest you with fellow members.</li>
+                </ul>
+                <p>We look forward to your active participation and hope you find your experience with us rewarding.</p>
+                <p>Best Regards,</p>
+                <p>The LinkUrCodes Team</p>
             </div>
-            <div class="footer">
-                Best regards,<br>
-                The Linkurcodes Team
+            <div class="email-footer">
+                &copy; 2024 LinkUrCodes. All rights reserved.
             </div>
         </div>
     </body>
     </html>`
     return content
 }
+
+
+function admStaffAddTextContent(AdStaffName) {
+    content = `Welcome to LinkUrCodes!
+
+    Dear ${AdStaffName},
+    
+    We're excited to have you on board. Your registration with LinkUrCodes has been successfully completed by our administrator.
+    
+    As a new member of our community, you now have access to a wide range of resources. Here are a few things to get you started:
+    
+    Explore our website (https://linkurcodes.com) to learn more about what we offer.
+    Join our community forums to discuss topics that interest you with fellow members.
+    We look forward to your active participation and hope you find your experience with us rewarding.
+    
+    Best Regards,
+    
+    The LinkUrCodes Team
+    
+    © 2024 LinkUrCodes. All rights reserved.`
+
+    return content
+}
+
 
 function upcomingSessionTextContent(studName, sessionName, date, time, venueORlink) {
     textContent = `
@@ -1004,7 +1036,7 @@ function paymentRenewalSuccessfulHTMLContent(validityDate, renewalAmount, transa
 }
 
 function paymentRenewalSuccessfulTextContent(validityDate, renewalAmount, transactionNo, paymentId) {
-   content = `LinkUrCodes Subscription Renewal Confirmation
+    content = `LinkUrCodes Subscription Renewal Confirmation
 
    Dear LinkUrCodes Member,
    
@@ -1024,11 +1056,366 @@ function paymentRenewalSuccessfulTextContent(validityDate, renewalAmount, transa
    
    LinkUrCodes Team`
 
-   return content
+    return content
 }
+
+function emailverificationAdmStaffHTMLContent(adminstaffName, admstaffotp) {
+    content = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Admin Staff Account Verification OTP - LinkUrCodes</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+    
+        h1 {
+          color: #007bff;
+        }
+    
+        p {
+          line-height: 1.6;
+        }
+    
+        .otp {
+          background-color: #e114cc;
+          color: #fff;
+          padding: 10px 20px;
+          border-radius: 5px;
+          font-size: 18px;
+          display: inline-block;
+        }
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #ff6600;
+          color: #fff;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <h1>Account Verification OTP</h1>
+        <p>Dear ${adminstaffName},</p>
+        <p>To complete the verification of your account at LinkUrCodes, please use the following OTP:</p>
+        <p class="otp">${admstaffotp}</p>
+        <p>If you have any questions or need further assistance, please feel free to reach out.</p>
+        <p>Thank you for your cooperation.</p>
+        <p>Best Regards,</p>
+        <p>LinkUrCodes Team</p>
+      </div>
+    </body>
+    </html>`
+
+    return content
+}
+
+function emailverificationAdmStaffTextContent(adminstaffName, admstaffotp) {
+    content = `Admin Staff Account Verification OTP - LinkUrCodes
+
+    Dear ${adminstaffName},
+    
+    To complete the verification of your account at LinkUrCodes, please use the following OTP: ${admstaffotp}
+    
+    If you have any questions or need further assistance, please feel free to reach out.
+    
+    Thank you for your cooperation.
+    
+    Best Regards,
+    
+    LinkUrCodes Team`
+
+    return content
+}
+
+function clgstaffEmailVerificationOTPHTMLContent(clgstaffName, clgstaffotp) {
+    content = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Batch-in-Charge Account Verification OTP - LinkUrCodes</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+    
+        h1 {
+          color: #007bff;
+        }
+    
+        p {
+          line-height: 1.6;
+        }
+    
+        .otp {
+          background-color: #007bff;
+          color: #fff;
+          padding: 10px 20px;
+          border-radius: 5px;
+          font-size: 18px;
+          display: inline-block;
+        }
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <h1>Account Verification OTP</h1>
+        <p>Dear ${clgstaffName},</p>
+        <p>To complete the verification of your batch-in-charge account at LinkUrCodes, please use the following OTP:</p>
+        <p class="otp">${clgstaffotp}</p>
+        <p>If you have any questions or need further assistance, please feel free to reach out.</p>
+        <p>Thank you for your cooperation.</p>
+        <p>Best Regards,</p>
+        <br>
+        <p>LinkUrCodes Team</p>
+      </div>
+    </body>
+    </html>`
+
+    return content
+}
+
+function clgstaffEmailVerificationOTPTextContent(clgstaffName, clgstaffotp) {
+    content = `Account Verification OTP - LinkUrCodes
+
+    Dear ${clgstaffName},
+    
+    To complete the verification of your batch-in-charge account at LinkUrCodes, please use the following OTP: ${clgstaffotp}
+    
+    If you have any questions or need further assistance, please feel free to reach out.
+    
+    Thank you for your cooperation.
+    
+    Best Regards,
+    
+    LinkUrCodes Team`
+
+    return content
+}
+
+function reschedulingSessionHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+    content = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>LinkUrCodes Session Rescheduling</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+    
+        h1 {
+          color: #007bff;
+        }
+    
+        p {
+          line-height: 1.6;
+        }
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <h1>LinkUrCodes Session Rescheduling</h1>
+        <p>Dear LinkUrCodes Member,</p>
+        <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.</p>
+        <p>Details of the rescheduled session:</p>
+        <ul>
+          <li><strong>Original Date:</strong> ${originaldate} </li>
+          <li><strong>New Date:</strong> ${sessionDate} </li>
+          <li><strong>Time:</strong> ${sessionTime} </li>
+          <li><strong>Session Type:</strong> ${type} </li>
+          <li><strong>Meeting Link/Venue:</strong> ${venueORlink} </li>
+    
+        </ul>
+       
+        <p>Best Regards,</p>
+        <p> <br>LinkUrCodes Team</p>
+        <a class="button" href="https://www.linkurcodes.com" style="color: white;">Visit LinkUrCodes</a>
+      </div>
+    </body>
+    </html>`
+    return content;
+}
+
+function reschedulingSessionTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+    content = `Dear LinkUrCodes Member,
+
+    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
+    
+    Details of the rescheduled session:
+    
+    Original Date: ${originaldate}
+    New Date: ${sessionDate}
+    Time: ${sessionTime}
+    Session Type: ${type}
+    Meeting Link/Venue: ${venueORlink}
+
+    Best Regards,
+    
+    LinkUrCodes Team
+    
+    Visit LinkUrCodes: https://www.linkurcodes.com`
+
+    return content
+}
+
+
+function renewalReminderHtmlContent(studName, validity, rpAmount) {
+    const content = `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkUrCodes Subscription Renewal Reminder</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+  
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+  
+      h1 {
+        color: #007bff;
+      }
+  
+      p {
+        line-height: 1.6;
+      }
+  
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt="LinkUrCodes Logo"></p>
+  
+      <h1>LinkUrCodes Subscription Renewal Reminder</h1>
+      <p>Dear ${studName},</p>
+      <p>We hope this message finds you well. We want to remind you that your LinkUrCodes subscription is set to expire on ${validity}. To ensure uninterrupted access to all our features and resources, we encourage you to renew your subscription before the expiration date.</p>
+      <p>Details for Renewal:</p>
+      <ul>
+        <li><strong>Renewal Date:</strong> ${validity}</li>
+        <li><strong>Renewal Amount:</strong> Rs. ${rpAmount}</li>
+      </ul>
+      <p>Renew your subscription now to continue enjoying the benefits of LinkUrCodes. Click the button below to proceed with the renewal process:</p>
+      <a class="button" href="https://lms.linkurcodes.com/studentLogin" style="color: white;">Renew Subscription</a>
+      <p>If you have already renewed your subscription, please ignore this message.</p>
+      <p>Thank you for being a valued member of LinkUrCodes!</p>
+      <p>Best Regards,</p>
+      <p><br>LinkUrCodes Team</p>
+    </div>
+  </body>
+  </html>`;
+    
+    return content;
+  }
+  
+
+
+
+
+
+
 
 module.exports = {
     admStaffAddHTMLContent,
+    admStaffAddTextContent,
     upcomingSessionContent,
     upcomingSessionTextContent,
     collegeStaffTextContent,
@@ -1050,6 +1437,13 @@ module.exports = {
     StudentRegistrationSuccessfulMailHTMLContent,
     StudentRegistrationSuccessfulMailTextContent,
     paymentRenewalSuccessfulHTMLContent,
-    paymentRenewalSuccessfulTextContent
+    paymentRenewalSuccessfulTextContent,
+    renewalReminderHtmlContent,
+    emailverificationAdmStaffHTMLContent,
+    emailverificationAdmStaffTextContent,
+    clgstaffEmailVerificationOTPHTMLContent,
+    clgstaffEmailVerificationOTPTextContent,
+    reschedulingSessionHTMLContent,
+    reschedulingSessionTextContent
 };
 

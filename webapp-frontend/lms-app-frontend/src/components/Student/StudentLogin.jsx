@@ -65,6 +65,11 @@ const StudentLogin = () => {
                     sessionStorage.setItem("refundreqstatus",refundreqstatus);
 
                     navigate("/studViewRefundReq")
+                } else if (Response.data.status === "Account expired. Please Renew Your Plan") {
+                    alert("Account expired. Please Renew Your Plan")
+                    let studemail = inputField.studEmail
+                    sessionStorage.setItem("studemail", studemail);
+                    navigate("/studValidityRenewal")
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)

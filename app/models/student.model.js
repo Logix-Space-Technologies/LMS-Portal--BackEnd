@@ -498,8 +498,12 @@ Student.updateStudentProfile = (student, result) => {
                         return result("Batch does not exist or is inactive/deleted.", null);
                     }
 
-                    db.query("UPDATE student SET studName = ?, admNo = ?, rollNo = ?, studDept = ?, course = ?, studPhNo = ?, studProfilePic = ?, aadharNo = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-                        [
+                    let updateQuery;
+                    let updateValues;
+
+                    if (student.studProfilePic) {
+                        updateQuery = "UPDATE student SET studName = ?, admNo = ?, rollNo = ?, studDept = ?, course = ?, studPhNo = ?, studProfilePic = ?, aadharNo = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                        updateValues = [
                             student.studName,
                             student.admNo,
                             student.rollNo,
@@ -509,7 +513,22 @@ Student.updateStudentProfile = (student, result) => {
                             student.studProfilePic,
                             student.aadharNo,
                             student.id
-                        ],
+                        ];
+                    } else {
+                        updateQuery = "UPDATE student SET studName = ?, admNo = ?, rollNo = ?, studDept = ?, course = ?, studPhNo = ?, aadharNo = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                        updateValues = [
+                            student.studName,
+                            student.admNo,
+                            student.rollNo,
+                            student.studDept,
+                            student.course,
+                            student.studPhNo,
+                            student.aadharNo,
+                            student.id
+                        ];
+                    }
+
+                    db.query(updateQuery, updateValues,
                         (updateErr, updateRes) => {
                             if (updateErr) {
                                 console.error("Error updating student: ", updateErr);
@@ -1384,6 +1403,71 @@ Student.verifyStudOTP = (studEmail, otp, result) => {
         }
     });
 }
+
+
+Student.searchStudRenewalDetailsByEmail = (studEmail, result) => {
+    db.query("SELECT s.*, c.collegeName, b.batchName, b.batchAmount FROM student s JOIN batches b ON s.batchId = b.id JOIN college c ON s.collegeId = c.id WHERE s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND s.validity < CURRENT_DATE", [studEmail],
+        (verifyErr, verifyRes) => {
+            if (verifyErr) {
+                console.log("Error: ", verifyErr)
+                return result(verifyErr, null)
+            }
+            if (verifyRes.length === 0) {
+                console.log("Student Does Not Exist")
+                return result("Student Does Not Exist", null)
+            } else {
+                result(null, verifyRes[0]);
+            }
+        })
+}
+
+
+Student.renewalReminder = async (id) => {
+    try {
+        const query = `
+            SELECT 
+                student.studName,
+                student.validity,
+                student.studEmail,
+                payment.rpAmount
+            FROM 
+                student
+            LEFT JOIN 
+                payment ON student.id = payment.studId
+            WHERE 
+                student.isActive = 1 AND 
+                student.emailVerified = 1 AND 
+                student.isVerified = 1 AND 
+                student.deleteStatus = 0 AND 
+                student.id = ?`;
+
+        const results = await db.promise().query(query, [id]);
+        
+        if (!results || results[0].length === 0) {
+            const error = new Error('Student not found or does not meet criteria for renewal reminder. Student ID: ' + id);
+            console.error("Error fetching student details:", error);
+            throw error;
+        }
+
+        const studentData = results[0][0];
+        console.log('studentData:', studentData);
+
+        const response = {
+            studName: studentData.studName,
+            validity: studentData.validity,
+            studEmail: studentData.studEmail,
+            rpAmount: studentData.rpAmount
+        };
+
+        return response;
+    } catch (error) {
+        console.error("Error fetching student details:", error);
+        throw error;
+    }
+};
+
+
+
 
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 

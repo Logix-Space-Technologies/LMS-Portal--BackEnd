@@ -342,34 +342,123 @@ exports.studentViewProfile = (request, response) => {
 
 
 exports.profileUpdateStudent = (request, response) => {
-    uploadSingle = upload.single('studProfilePic');
+    let uploadSingle = upload.single('studProfilePic');
+
     uploadSingle(request, response, async (error) => {
         if (error) {
             return response.status(500).json({ "status": error.message });
         }
 
-        if (!request.file) {
-            return response.status(400).json({ "status": "No file uploaded" });
-        }
+        if (request.file) {
+            const file = request.file;
+            const fileStream = fs.createReadStream(file.path);
 
-        const file = request.file;
-        const fileStream = fs.createReadStream(file.path);
+            const uploadParams = {
+                Bucket: process.env.S3_BUCKET,
+                Key: `uploads/${file.filename}`,
+                Body: fileStream
+            };
 
-        const uploadParams = {
-            Bucket: process.env.S3_BUCKET,
-            Key: `uploads/${file.filename}`,
-            Body: fileStream
-        };
+            try {
+                await s3Client.send(new PutObjectCommand(uploadParams));
+                const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+                // Remove the file from local storage
+                fs.unlinkSync(file.path);
 
-        try {
-            const data = await s3Client.send(new PutObjectCommand(uploadParams));
-            const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
-            // Remove the file from local storage
-            fs.unlinkSync(file.path);
-            const { studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = request.body
-            const updateProfileToken = request.headers.token
-            const studProfilePic = imageUrl;
-            jwt.verify(updateProfileToken, "lmsappstud", (err, decoded) => {
+                const { studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = request.body;
+                const updateProfileToken = request.headers.token;
+                console.log(request.body)
+                jwt.verify(updateProfileToken, "lmsappstud", async (err, decoded) => {
+                    if (decoded) {
+                        // Validation
+                        const validationErrors = {};
+
+                        if (Validator.isEmpty(studName).isValid) {
+                            validationErrors.studName = Validator.isEmpty(studName).message;
+                        }
+
+                        if (!Validator.isValidName(studName).isValid) {
+                            validationErrors.studName = Validator.isValidName(studName).message;
+                        }
+
+                        if (Validator.isEmpty(admNo).isValid) {
+                            validationErrors.admNo = Validator.isEmpty(admNo).message;
+                        }
+
+                        if (Validator.isEmpty(rollNo).isValid) {
+                            validationErrors.rollNo = Validator.isEmpty(rollNo).message;
+                        }
+
+                        if (Validator.isEmpty(studDept).isValid) {
+                            validationErrors.studDept = Validator.isEmpty(studDept).message;
+                        }
+
+                        if (Validator.isEmpty(course).isValid) {
+                            validationErrors.course = Validator.isEmpty(course).message;
+                        }
+
+                        if (Validator.isEmpty(aadharNo).isValid) {
+                            validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
+                        }
+
+                        if (!Validator.isValidAadharNumber(aadharNo).isValid) {
+                            validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
+                        }
+
+                        if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+                            validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
+                        }
+
+
+                        if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+                            validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+                        }
+
+                        // If validation fails
+                        if (Object.keys(validationErrors).length > 0) {
+                            return response.json({ "status": "Validation failed", "data": validationErrors });
+                        }
+
+                        const studProfilePic = imageUrl;
+
+                        const newStudent = {
+                            'id': request.body.id,
+                            studName,
+                            admNo,
+                            rollNo,
+                            studDept,
+                            course,
+                            studPhNo,
+                            studProfilePic,
+                            aadharNo
+                        };
+                        console.log(newStudent)
+                        Student.updateStudentProfile(newStudent, (err, data) => {
+                            if (err) {
+                                if (err.kind === "not_found") {
+                                    return response.json({ "status": "Student with provided Id and batchId is not found." });
+                                } else {
+                                    return response.json({ "status": err.message });
+                                }
+                            } else {
+                                return response.json({ "status": "success", "data": data });
+                            }
+                        });
+
+                    } else {
+                        return response.json({ "status": "Unauthorized User!!" });
+                    }
+                });
+            } catch (err) {
+                fs.unlinkSync(file.path);
+                response.status(500).json({ "status": err.message });
+            }
+        } else {
+            // Handle if no file is uploaded
+            const { studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = request.body;
+            const updateProfileToken = request.headers.token;
+            console.log(request.body)
+            jwt.verify(updateProfileToken, "lmsappstud", async (err, decoded) => {
                 if (decoded) {
                     // Validation
                     const validationErrors = {};
@@ -410,54 +499,42 @@ exports.profileUpdateStudent = (request, response) => {
                         validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
                     }
 
-
-                    if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
-                        validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
-                    }
-
-
                     // If validation fails
                     if (Object.keys(validationErrors).length > 0) {
                         return response.json({ "status": "Validation failed", "data": validationErrors });
                     }
 
-
-                    const newStudent = new Student({
+                    const newStudent = {
                         'id': request.body.id,
-                        studName: studName,
-                        admNo: admNo,
-                        rollNo: rollNo,
-                        studDept: studDept,
-                        course: course,
-                        studPhNo: studPhNo,
-                        studProfilePic: studProfilePic,
-                        aadharNo: aadharNo
-                    });
+                        studName,
+                        admNo,
+                        rollNo,
+                        studDept,
+                        course,
+                        studPhNo,
+                        aadharNo
+                    };
 
                     Student.updateStudentProfile(newStudent, (err, data) => {
                         if (err) {
                             if (err.kind === "not_found") {
                                 return response.json({ "status": "Student with provided Id and batchId is not found." });
                             } else {
-                                return response.json({ "status": err });
+                                return response.json({ "status": err.message });
                             }
                         } else {
-                            response.json({ "status": "success", "data": data });
+                            return response.json({ "status": "success", "data": data });
                         }
-                    })
+                    });
 
                 } else {
-                    response.json({ "status": "Unauthorized User!!" });
+                    return response.json({ "status": "Unauthorized User!!" });
                 }
-            })
-
-
-        } catch (err) {
-            fs.unlinkSync(file.path);
-            response.status(500).json({ "status": err.message });
+            });
         }
-    })
-}
+    });
+};
+
 
 
 exports.viewUnverifiedStudents = (request, response) => {
@@ -1425,3 +1502,69 @@ exports.studforgotpassword = (request, response) => {
         }
     });
 }
+
+
+exports.searchStudRenewalDetailsByEmail = (request, response) => {
+    const email = request.body.studEmail
+
+    Student.searchStudRenewalDetailsByEmail(email, (err, data) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            if (data.length === 0) {
+                return response.json({ "status": "No students found!" });
+            } else {
+                return response.json({ "status": "success", "data": data });
+            }
+        }
+    })
+}
+
+
+exports.sendRenewalReminderEmail = async (req, res) => {
+    const token = req.headers.token;
+    const key = req.headers.key;
+    const id = req.body.id;
+
+    try {
+        const decoded = await jwt.verify(token, key);
+
+        if (!decoded) {
+            return res.status(401).json({
+                status: "error",
+                message: "Unauthorized User!!"
+            });
+        }
+
+        const studentData = await Student.renewalReminder(id);
+        const studEmail = studentData.studEmail;
+        const studname = studentData.studName
+        const validity = studentData.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
+        const rpAmt = studentData.rpAmount
+
+        const renewalReminderHTMLContent = mailContents.renewalReminderHtmlContent(studname, validity, rpAmt);
+
+        mail.sendEmail(
+            studEmail,
+            'LinkUrCodes Subscription Renewal Reminder',
+            renewalReminderHTMLContent
+        );
+
+        return res.json({
+            status: "success",
+            message: "Renewal reminder email sent successfully.",
+            data: studentData
+        });
+    } catch (error) {
+        console.error("Error in sending renewal reminder email:", error);
+        return res.status(500).json({
+            status: "error",
+            message: "Error in sending renewal reminder email.",
+            error: error.message 
+        });
+    }
+};
+
+
+
+ 
