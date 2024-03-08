@@ -1,3 +1,4 @@
+
 function upcomingSessionContent(studName, sessionName, date, time, venueORlink) {
     content = `<!DOCTYPE html>
     <html>
@@ -1241,6 +1242,99 @@ function clgstaffEmailVerificationOTPTextContent(clgstaffName, clgstaffotp) {
     return content
 }
 
+function reschedulingSessionHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+    content = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>LinkUrCodes Session Rescheduling</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+    
+        h1 {
+          color: #007bff;
+        }
+    
+        p {
+          line-height: 1.6;
+        }
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <h1>LinkUrCodes Session Rescheduling</h1>
+        <p>Dear LinkUrCodes Member,</p>
+        <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.</p>
+        <p>Details of the rescheduled session:</p>
+        <ul>
+          <li><strong>Original Date:</strong> ${originaldate} </li>
+          <li><strong>New Date:</strong> ${sessionDate} </li>
+          <li><strong>Time:</strong> ${sessionTime} </li>
+          <li><strong>Session Type:</strong> ${type} </li>
+          <li><strong>Meeting Link/Venue:</strong> ${venueORlink} </li>
+    
+        </ul>
+       
+        <p>Best Regards,</p>
+        <p> <br>LinkUrCodes Team</p>
+        <a class="button" href="https://www.linkurcodes.com" style="color: white;">Visit LinkUrCodes</a>
+      </div>
+    </body>
+    </html>`
+    return content;
+}
+
+function reschedulingSessionTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+    content = `Dear LinkUrCodes Member,
+
+    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
+    
+    Details of the rescheduled session:
+    
+    Original Date: ${originaldate}
+    New Date: ${sessionDate}
+    Time: ${sessionTime}
+    Session Type: ${type}
+    Meeting Link/Venue: ${venueORlink}
+
+    Best Regards,
+    
+    LinkUrCodes Team
+    
+    Visit LinkUrCodes: https://www.linkurcodes.com`
+
+    return content
+}
+
 module.exports = {
     admStaffAddHTMLContent,
     admStaffAddTextContent,
@@ -1269,6 +1363,8 @@ module.exports = {
     emailverificationAdmStaffHTMLContent,
     emailverificationAdmStaffTextContent,
     clgstaffEmailVerificationOTPHTMLContent,
-    clgstaffEmailVerificationOTPTextContent
+    clgstaffEmailVerificationOTPTextContent,
+    reschedulingSessionHTMLContent,
+    reschedulingSessionTextContent
 };
 
