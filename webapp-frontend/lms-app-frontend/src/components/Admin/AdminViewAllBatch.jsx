@@ -41,7 +41,7 @@ const AdminViewAllBatch = () => {
                     setBatchData(response.data.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/")
+                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {

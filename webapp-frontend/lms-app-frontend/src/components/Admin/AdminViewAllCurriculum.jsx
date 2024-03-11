@@ -42,7 +42,7 @@ const AdminViewAllCurriculum = () => {
                     setCurriculumData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/")
+                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status)
@@ -58,20 +58,13 @@ const AdminViewAllCurriculum = () => {
     }
 
     const handleConfirmDelete = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
         let data = { "id": deleteCurriculumId }
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": token,
-                "key": currentKey
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
             }
         }
 

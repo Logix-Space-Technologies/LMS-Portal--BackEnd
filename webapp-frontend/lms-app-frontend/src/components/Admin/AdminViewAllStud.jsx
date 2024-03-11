@@ -3,9 +3,11 @@ import '../../config/config';
 import axios from 'axios';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminViewAllStud = () => {
     const [studData, setStudData] = useState([]);
+    const [key, setKey] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [studentsPerPage] = useState(10); // Number of students per page
 
@@ -16,13 +18,20 @@ const AdminViewAllStud = () => {
     const apiUrl3 = global.config.urls.api.server + "/api/lms/deleteCommunityManager";
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "batchId": sessionStorage.getItem("viewbatchId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrl, data, axiosConfig).then(
@@ -31,7 +40,7 @@ const AdminViewAllStud = () => {
                     setStudData(response.data.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/")
+                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
@@ -70,13 +79,20 @@ const AdminViewAllStud = () => {
 
     // Assign Community Manager
     const assignCommunityManager = (id, batchId) => {
-        let data = { "studentId": id, "batchId": batchId }; // Ensure this matches your expected backend format
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let data = { "studentId": id, "batchId": batchId }; 
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"), // Your token storage method might need to match your backend expectations
-                "key": sessionStorage.getItem("admkey") // Ensure your backend is expecting this key in the header
+                "token": token, 
+                "key": currentKey 
             }
         };
 
@@ -90,7 +106,7 @@ const AdminViewAllStud = () => {
                     // Handle validation errors
                     alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
                 } else if (response.data.status === "Unauthorized User !!!") {
-                    navigate("/")
+                    {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
                     sessionStorage.clear()
                 } else {
                     // Handle other errors
@@ -105,13 +121,20 @@ const AdminViewAllStud = () => {
 
     // Remove Community Manager
     const removeCommunityManager = (id) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "id": id };
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrl3, data, axiosConfig).then(
@@ -121,7 +144,7 @@ const AdminViewAllStud = () => {
                     getData()
                 } else {
                     if (response.data.status === "Unauthorized User !!!") {
-                        navigate("/")
+                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status);
@@ -140,9 +163,13 @@ const AdminViewAllStud = () => {
 
     useEffect(() => { getData() }, []);
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <br />
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>

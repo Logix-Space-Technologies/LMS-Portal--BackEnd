@@ -12,7 +12,8 @@ const AdminStaffAddMaterials = () => {
         "fileName": "",
         "materialDesc": "",
         "remarks": "",
-        "materialType": ""
+        "materialType": "",
+        "uploadFile":""
     })
 
     const [file, setFile] = useState(null)
@@ -329,21 +330,36 @@ const AdminStaffAddMaterials = () => {
                                         <label htmlFor="materialType" className="form-label">
                                             Material Type <span className="text-danger">*</span>
                                         </label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
+                                        <select
+                                            className="form-select"
                                             name="materialType"
                                             id="materialType"
                                             value={inputField.materialType}
                                             onChange={inputHandler}
-                                        />
+                                        >
+                                            <option value="">Select Type</option>
+                                            <option value="Image">Image</option>
+                                            <option value="Video">Video</option>
+                                            <option value="Document">Document</option>
+                                            <option value="Link">Link</option>
+                                        </select>
                                         {errors.materialType && (<span style={{ color: 'red' }} className="error">{errors.materialType}</span>)}
                                     </div>
                                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                         <label htmlFor="uploadFile" className="form-label">
                                             Task File <span className="text-danger">*</span>
                                         </label>
-                                        <input type="file" className="form-control" name="uploadFile" id="uploadFile" onChange={fileUploadHandler} />
+                                        {inputField.materialType === "Link" ? (
+                                            <>
+                                                <input type="text" onChange={inputHandler} className="form-control" name="uploadFile" value={inputField.uploadFile} />
+                                                {errors.website && (<span style={{ color: 'red' }} className="error">{errors.website}</span>)}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <input type="file" className="form-control" name="uploadFile" id="uploadFile" onChange={fileUploadHandler} />
+                                                {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
+                                            </>
+                                        )}
                                     </div>
                                     <div className="col-12">
                                         <div className="d-grid">

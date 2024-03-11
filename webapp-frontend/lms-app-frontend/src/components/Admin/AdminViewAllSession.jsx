@@ -63,7 +63,7 @@ const AdminViewAllSession = () => {
                     setSessionData(response.data.Sessions);
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
-                        navigate("/")
+                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
                         sessionStorage.clear()
                     } else {
                         if (!response.data.Sessions) {
@@ -107,7 +107,7 @@ const AdminViewAllSession = () => {
                     getData()
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/")
+                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status);
