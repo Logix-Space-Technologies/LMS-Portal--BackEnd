@@ -321,5 +321,6 @@ router.post('/studemailverifyotpsend', StudentController.StudEmailVerifyOTPSend)
 
 router.post('/studemailverificationotpverify', StudentController.emailverifyStudOTP)
 
+router.post('/sendFirebaseNotifications',AdminController.sendNotifications)
 
 module.exports = router
