@@ -117,17 +117,30 @@ const AdminStaffUpdateMaterial = () => {
                     "key": sessionStorage.getItem("admstaffkey")
                 }
             }
-            let data = {
-                "id": sessionStorage.getItem("materialId"),
-                "batchId": updateField.batchId,
-                "fileName": updateField.fileName,
-                "materialDesc": updateField.materialDesc,
-                "remarks": updateField.remarks,
-                "materialType": updateField.materialType,
-                "uploadFile": file
+            let data = {}
+            if (file) {
+                data = {
+                    "id": sessionStorage.getItem("materialId"),
+                    "batchId": updateField.batchId,
+                    "fileName": updateField.fileName,
+                    "materialDesc": updateField.materialDesc,
+                    "remarks": updateField.remarks,
+                    "materialType": updateField.materialType,
+                    "uploadFile": file
+                }
+            } else {
+                data = {
+                    "id": sessionStorage.getItem("materialId"),
+                    "batchId": updateField.batchId,
+                    "fileName": updateField.fileName,
+                    "materialDesc": updateField.materialDesc,
+                    "remarks": updateField.remarks,
+                    "materialType": updateField.materialType
+                }
             }
             axios.post(apiUrl2, data, axiosConfig2).then(
                 (Response) => {
+                    console.log(Response)
                     if (Response.data.status === "Material Details Updated") {
                         setUpdateField({
                             "id": sessionStorage.getItem("materialId"),
@@ -136,7 +149,7 @@ const AdminStaffUpdateMaterial = () => {
                             "materialDesc": "",
                             "remarks": "",
                             "materialType": "",
-                            "uploadFile": ""
+                            "uploadFile": null
                         })
                         alert("Material Updated Successfully")
                         navigate("/AdminStaffViewAllMaterial")
@@ -156,12 +169,18 @@ const AdminStaffUpdateMaterial = () => {
                                         if (Response.data.status === "Validation failed" && Response.data.data.materialType) {
                                             alert(Response.data.data.materialType)
                                         } else {
-                                            if (Response.data.status === "Unauthorized Access!!!") {
-                                                navigate("/admstafflogin")
-                                                sessionStorage.clear()
+                                            if (Response.data.status === "Validation failed" && Response.data.data.file) {
+                                                alert(Response.data.data.file)
                                             } else {
-                                                alert(Response.data.status)
+                                                if (Response.data.status === "Unauthorized Access!!!") {
+                                                    navigate("/admstafflogin")
+                                                    sessionStorage.clear()
+                                                } else {
+                                                    alert(Response.data.status)
+                                                }
                                             }
+
+
                                         }
                                     }
                                 }
@@ -202,22 +221,20 @@ const AdminStaffUpdateMaterial = () => {
 
         if (!data.batchId) {
             errors.batchId = 'Batch Name is required';
-        }
-        if (!data.collegeId) {
+        } else if (!data.collegeId) {
             errors.collegeId = 'College Name is required';
-        }
-        if (!data.fileName) {
+        } else if (!data.fileName) {
             errors.fileName = 'Material Title is required';
-        }
-        if (!data.materialDesc) {
+        } else if (!data.materialDesc) {
             errors.materialDesc = 'Material Description is required';
-        }
-        if (!data.remarks) {
+        } else if (!data.remarks) {
             errors.remarks = 'Remarks are required';
-        }
-        if (!data.materialType) {
+        } else if (!data.materialType) {
             errors.materialType = 'Material Type is required';
+        } else if (file && fileType !== "docx" && fileType !== "pdf") {
+            errors.file = "File must be in PDF or DOCX format";
         }
+
         return errors;
     }
 
@@ -343,6 +360,7 @@ const AdminStaffUpdateMaterial = () => {
                                                     File <span className="text-danger">*</span>
                                                 </label>
                                                 <input onChange={fileUploadHandler} type="file" className="form-control" name="uploadFile" id="uploadFile" accept="*" />
+                                                {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
                                             </div>
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">

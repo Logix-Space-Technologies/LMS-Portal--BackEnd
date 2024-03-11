@@ -162,110 +162,99 @@ exports.searchMaterial = async (request, response) => {
 
 
 exports.updateMaterial = (request, response) => {
-    const uploadSingle = upload.single('uploadFile')
-    uploadSingle(request, response, async (error) => {
+    const uploadFile = upload.single('uploadFile');
+    uploadFile(request, response, async (error) => {
         if (error) {
             return response.status(500).json({ "status": error.message });
         }
 
-        if (!request.file) {
-            return response.status(400).json({ "status": "No file uploaded" });
-        }
         // File handling
         const file = request.file;
-        const fileStream = fs.createReadStream(file.path);
+        let fileUrl = null;
 
-        const uploadParams = {
-            Bucket: process.env.S3_BUCKET,
-            Key: `uploads/${file.filename}`,
-            Body: fileStream
-        };
-        try {
-            const data = await s3Client.send(new PutObjectCommand(uploadParams));
-            const fileUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+        if (file) {
+            const fileStream = fs.createReadStream(file.path);
 
-            // Remove the file from local storage
-            fs.unlinkSync(file.path);
-            const materialUpdateToken = request.headers.token
-            const { id, batchId, fileName, materialDesc, remarks, materialType } = request.body
+            const uploadParams = {
+                Bucket: process.env.S3_BUCKET,
+                Key: `uploads/${file.filename}`,
+                Body: fileStream
+            };
 
-            jwt.verify(materialUpdateToken, "lmsappadmstaff", (err, decoded) => {
-                if (decoded) {
+            try {
+                await s3Client.send(new PutObjectCommand(uploadParams));
+                fileUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
 
-                    const validationErrors = {};
-
-                    if (!Validator.isValidAmount(batchId).isValid) {
-                        validationErrors.batchId = Validator.isValidAmount(batchId).message;
-                    }
-                    if (Validator.isEmpty(batchId).isValid) {
-                        validationErrors.batchId = Validator.isEmpty(batchId).message;
-                    }
-                    if (Validator.isEmpty(fileName).isValid) {
-                        validationErrors.fileName = Validator.isEmpty(fileName).message;
-                    }
-                    if (Validator.isEmpty(materialDesc).isValid) {
-                        validationErrors.materialDesc = Validator.isEmpty(materialDesc).message;
-                    }
-                    if (Validator.isEmpty(remarks).isValid) {
-                        validationErrors.remarks = Validator.isEmpty(remarks).message;
-                    }
-                    if (Validator.isEmpty(materialType).isValid) {
-                        validationErrors.materialType = Validator.isEmpty(materialType).message;
-                    }
-                    if (!Validator.isValidAddress(materialDesc).isValid) {
-                        validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
-                    }
-
-                    if (!request.file) {
-                        validationErrors.file = 'Please upload a file'
-                    }
-
-                    // if validation fails
-                    if (Object.keys(validationErrors).length > 0) {
-                        return response.json({ "status": "Validation failed", "data": validationErrors });
-                    }
-
-
-                    const mtrlUpdate = new Material({
-                        id: id,
-                        batchId: batchId,
-                        fileName: fileName,
-                        materialDesc: materialDesc,
-                        remarks: remarks,
-                        materialType: materialType,
-                        uploadFile: fileUrl
-
-                    })
-
-                    Material.updateMaterial(mtrlUpdate, (err, data) => {
-                        if (err) {
-                            if (err.kind === "not_found") {
-                                return response.json({ "status": "Material Details Not Found.." })
-                            } else {
-                                return response.json({ "status": err })
-                            }
-
-                        } else {
-                            return response.json({ "status": "Material Details Updated", "data": data })
-
-                        }
-                    })
-
-
-
-                } else {
-                    return response.json({ "status": "Unauthorized Access!!!" })
-
-                }
-            })
-
-
-        } catch (err) {
-            fs.unlinkSync(file.path);
-            response.status(500).json({ "status": err.message });
+                // Remove the file from local storage
+                fs.unlinkSync(file.path);
+            } catch (err) {
+                fs.unlinkSync(file.path);
+                return response.status(500).json({ "status": err.message });
+            }
         }
-    })
-}
+
+        const { id, batchId, fileName, materialDesc, remarks, materialType } = request.body;
+        const materialUpdateToken = request.headers.token;
+
+        jwt.verify(materialUpdateToken, "lmsappadmstaff", (err, decoded) => {
+            if (decoded) {
+                const validationErrors = {};
+
+                if (!Validator.isValidAmount(batchId).isValid) {
+                    validationErrors.batchId = Validator.isValidAmount(batchId).message;
+                }
+                if (Validator.isEmpty(batchId).isValid) {
+                    validationErrors.batchId = Validator.isEmpty(batchId).message;
+                }
+                if (Validator.isEmpty(fileName).isValid) {
+                    validationErrors.fileName = Validator.isEmpty(fileName).message;
+                }
+                if (Validator.isEmpty(materialDesc).isValid) {
+                    validationErrors.materialDesc = Validator.isEmpty(materialDesc).message;
+                }
+                if (Validator.isEmpty(remarks).isValid) {
+                    validationErrors.remarks = Validator.isEmpty(remarks).message;
+                }
+                if (Validator.isEmpty(materialType).isValid) {
+                    validationErrors.materialType = Validator.isEmpty(materialType).message;
+                }
+                if (!Validator.isValidAddress(materialDesc).isValid) {
+                    validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
+                }
+
+                // If validation fails
+                if (Object.keys(validationErrors).length > 0) {
+                    return response.json({ "status": "Validation failed", "data": validationErrors });
+                }
+
+                const mtrlUpdate = new Material({
+                    id: id,
+                    batchId: batchId,
+                    fileName: fileName,
+                    materialDesc: materialDesc,
+                    remarks: remarks,
+                    materialType: materialType,
+                    uploadFile: fileUrl
+                });
+
+                Material.updateMaterial(mtrlUpdate, (err, data) => {
+                    if (err) {
+                        if (err.kind === "not_found") {
+                            return response.json({ "status": "Material Details Not Found.." });
+                        } else {
+                            return response.json({ "status": err });
+                        }
+                    } else {
+                        return response.json({ "status": "Material Details Updated", "data": data });
+                    }
+                });
+            } else {
+                return response.json({ "status": "Unauthorized Access!!!" });
+            }
+        });
+    });
+};
+
 
 exports.viewBatchMaterials = (request, response) => {
     const batchId = request.body.batchId;
