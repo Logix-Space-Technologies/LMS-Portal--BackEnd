@@ -226,7 +226,7 @@ exports.updateMaterial = (request, response) => {
             return response.status(500).json({ "status": error.message });
         }
 
-        if (file) {
+        if (request.file) {
             // File handling
             const file = request.file;
             const fileStream = fs.createReadStream(file.path);
