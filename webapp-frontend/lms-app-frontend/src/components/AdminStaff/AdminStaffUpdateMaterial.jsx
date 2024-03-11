@@ -150,7 +150,7 @@ const AdminStaffUpdateMaterial = () => {
                             "materialDesc": "",
                             "remarks": "",
                             "materialType": "",
-                            "uploadFile": null
+                            "uploadFile": ""
                         })
                         alert("Material Updated Successfully")
                         navigate("/AdminStaffViewAllMaterial")
