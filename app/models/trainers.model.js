@@ -83,21 +83,42 @@ Trainers.updateTrainer = (trainerUpdate, result) => {
                 result("Trainer Details Not Found", null)
                 return
             } else {
-                db.query("UPDATE trainersinfo SET trainerName = ?, profilePicture = ?, about = ?, phoneNumber = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-                    [trainerUpdate.trainerName, trainerUpdate.profilePicture, trainerUpdate.about, trainerUpdate.phoneNumber, trainerUpdate.id],
-                    (err, res) => {
-                        if (err) {
-                            console.log("Error : ", err)
-                            result(err, null)
-                            return
-                        }
-                        console.log("Updated Trainer Details : ", { id: trainerUpdate.id, ...trainerUpdate })
-                        result(null, { id: trainerUpdate.id, ...trainerUpdate })
-                    })
+                let updateQuery;
+                let updateValues;
+
+                if (trainerUpdate.profilePicture) {
+                    updateQuery = "UPDATE trainersinfo SET trainerName = ?, profilePicture = ?, about = ?, phoneNumber = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                    updateValues = [
+                        trainerUpdate.trainerName,
+                        trainerUpdate.profilePicture,
+                        trainerUpdate.about,
+                        trainerUpdate.phoneNumber,
+                        trainerUpdate.id
+                    ];
+                } else {
+                    updateQuery = "UPDATE trainersinfo SET trainerName = ?, about = ?, phoneNumber = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                    updateValues = [
+                        trainerUpdate.trainerName,
+                        trainerUpdate.about,
+                        trainerUpdate.phoneNumber,
+                        trainerUpdate.id
+                    ];
+                }
+
+                db.query(updateQuery, updateValues, (err, res) => {
+                    if (err) {
+                        console.log("Error : ", err)
+                        result(err, null)
+                        return
+                    }
+                    console.log("Updated Trainer Details : ", { id: trainerUpdate.id, ...trainerUpdate })
+                    result(null, { id: trainerUpdate.id, ...trainerUpdate })
+                })
             }
         }
     })
 }
+
 
 
 Trainers.deleteTrainer = (trainerId, result) => {
