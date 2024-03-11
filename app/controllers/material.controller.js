@@ -226,11 +226,9 @@ exports.updateMaterial = (request, response) => {
             return response.status(500).json({ "status": error.message });
         }
 
-        // File handling
-        const file = request.file;
-        let fileUrl = null;
-
         if (file) {
+            // File handling
+            const file = request.file;
             const fileStream = fs.createReadStream(file.path);
 
             const uploadParams = {
@@ -241,78 +239,145 @@ exports.updateMaterial = (request, response) => {
 
             try {
                 await s3Client.send(new PutObjectCommand(uploadParams));
-                fileUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+                const fileUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
 
                 // Remove the file from local storage
                 fs.unlinkSync(file.path);
+
+                const { id, batchId, fileName, materialDesc, remarks, materialType } = request.body;
+                const materialUpdateToken = request.headers.token;
+
+                jwt.verify(materialUpdateToken, "lmsappadmstaff", (err, decoded) => {
+                    if (decoded) {
+                        const validationErrors = {};
+
+                        if (!Validator.isValidAmount(batchId).isValid) {
+                            validationErrors.batchId = Validator.isValidAmount(batchId).message;
+                        }
+                        if (Validator.isEmpty(batchId).isValid) {
+                            validationErrors.batchId = Validator.isEmpty(batchId).message;
+                        }
+                        if (Validator.isEmpty(fileName).isValid) {
+                            validationErrors.fileName = Validator.isEmpty(fileName).message;
+                        }
+                        if (Validator.isEmpty(materialDesc).isValid) {
+                            validationErrors.materialDesc = Validator.isEmpty(materialDesc).message;
+                        }
+                        if (Validator.isEmpty(remarks).isValid) {
+                            validationErrors.remarks = Validator.isEmpty(remarks).message;
+                        }
+                        if (Validator.isEmpty(materialType).isValid) {
+                            validationErrors.materialType = Validator.isEmpty(materialType).message;
+                        }
+                        if (!Validator.isValidAddress(materialDesc).isValid) {
+                            validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
+                        }
+
+                        if (!request.file) {
+                            validationErrors.file = 'Please upload a file'
+                        }
+
+                        // If validation fails
+                        if (Object.keys(validationErrors).length > 0) {
+                            return response.json({ "status": "Validation failed", "data": validationErrors });
+                        }
+
+                        const mtrlUpdate = new Material({
+                            id: id,
+                            batchId: batchId,
+                            fileName: fileName,
+                            materialDesc: materialDesc,
+                            remarks: remarks,
+                            materialType: materialType,
+                            uploadFile: fileUrl
+                        });
+
+                        Material.updateMaterial(mtrlUpdate, (err, data) => {
+                            if (err) {
+                                if (err.kind === "not_found") {
+                                    return response.json({ "status": "Material Details Not Found.." });
+                                } else {
+                                    return response.json({ "status": err });
+                                }
+                            } else {
+                                return response.json({ "status": "Material Details Updated", "data": data });
+                            }
+                        });
+                    } else {
+                        return response.json({ "status": "Unauthorized Access!!!" });
+                    }
+                });
             } catch (err) {
                 fs.unlinkSync(file.path);
                 return response.status(500).json({ "status": err.message });
             }
-        }
+        } else {
+            const { id, batchId, fileName, materialDesc, remarks, materialType, uploadFile } = request.body;
+            const materialUpdateToken = request.headers.token;
 
-        const { id, batchId, fileName, materialDesc, remarks, materialType } = request.body;
-        const materialUpdateToken = request.headers.token;
+            jwt.verify(materialUpdateToken, "lmsappadmstaff", (err, decoded) => {
+                if (decoded) {
+                    const validationErrors = {};
 
-        jwt.verify(materialUpdateToken, "lmsappadmstaff", (err, decoded) => {
-            if (decoded) {
-                const validationErrors = {};
-
-                if (!Validator.isValidAmount(batchId).isValid) {
-                    validationErrors.batchId = Validator.isValidAmount(batchId).message;
-                }
-                if (Validator.isEmpty(batchId).isValid) {
-                    validationErrors.batchId = Validator.isEmpty(batchId).message;
-                }
-                if (Validator.isEmpty(fileName).isValid) {
-                    validationErrors.fileName = Validator.isEmpty(fileName).message;
-                }
-                if (Validator.isEmpty(materialDesc).isValid) {
-                    validationErrors.materialDesc = Validator.isEmpty(materialDesc).message;
-                }
-                if (Validator.isEmpty(remarks).isValid) {
-                    validationErrors.remarks = Validator.isEmpty(remarks).message;
-                }
-                if (Validator.isEmpty(materialType).isValid) {
-                    validationErrors.materialType = Validator.isEmpty(materialType).message;
-                }
-                if (!Validator.isValidAddress(materialDesc).isValid) {
-                    validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
-                }
-
-                // If validation fails
-                if (Object.keys(validationErrors).length > 0) {
-                    return response.json({ "status": "Validation failed", "data": validationErrors });
-                }
-
-                const mtrlUpdate = new Material({
-                    id: id,
-                    batchId: batchId,
-                    fileName: fileName,
-                    materialDesc: materialDesc,
-                    remarks: remarks,
-                    materialType: materialType,
-                    uploadFile: fileUrl
-                });
-
-                Material.updateMaterial(mtrlUpdate, (err, data) => {
-                    if (err) {
-                        if (err.kind === "not_found") {
-                            return response.json({ "status": "Material Details Not Found.." });
-                        } else {
-                            return response.json({ "status": err });
-                        }
-                    } else {
-                        return response.json({ "status": "Material Details Updated", "data": data });
+                    if (!Validator.isValidAmount(batchId).isValid) {
+                        validationErrors.batchId = Validator.isValidAmount(batchId).message;
                     }
-                });
-            } else {
-                return response.json({ "status": "Unauthorized Access!!!" });
-            }
-        });
+                    if (Validator.isEmpty(batchId).isValid) {
+                        validationErrors.batchId = Validator.isEmpty(batchId).message;
+                    }
+                    if (Validator.isEmpty(fileName).isValid) {
+                        validationErrors.fileName = Validator.isEmpty(fileName).message;
+                    }
+                    if (Validator.isEmpty(materialDesc).isValid) {
+                        validationErrors.materialDesc = Validator.isEmpty(materialDesc).message;
+                    }
+                    if (Validator.isEmpty(remarks).isValid) {
+                        validationErrors.remarks = Validator.isEmpty(remarks).message;
+                    }
+                    if (Validator.isEmpty(materialType).isValid) {
+                        validationErrors.materialType = Validator.isEmpty(materialType).message;
+                    }
+                    if (!Validator.isValidAddress(materialDesc).isValid) {
+                        validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
+                    }
+                    
+                    if (!Validator.isValidWebsite(uploadFile).isValid) {
+                        validationErrors.website = Validator.isValidWebsite(uploadFile).message;
+                    }
+
+                    // If validation fails
+                    if (Object.keys(validationErrors).length > 0) {
+                        return response.json({ "status": "Validation failed", "data": validationErrors });
+                    }
+
+                    const mtrlUpdate = new Material({
+                        id: id,
+                        batchId: batchId,
+                        fileName: fileName,
+                        materialDesc: materialDesc,
+                        remarks: remarks,
+                        materialType: materialType,
+                        uploadFile: uploadFile
+                    });
+
+                    Material.updateMaterial(mtrlUpdate, (err, data) => {
+                        if (err) {
+                            if (err.kind === "not_found") {
+                                return response.json({ "status": "Material Details Not Found.." });
+                            } else {
+                                return response.json({ "status": err });
+                            }
+                        } else {
+                            return response.json({ "status": "Material Details Updated", "data": data });
+                        }
+                    });
+                } else {
+                    return response.json({ "status": "Unauthorized Access!!!" });
+                }
+            });
+        }
     });
 };
-
 
 exports.viewBatchMaterials = (request, response) => {
     const batchId = request.body.batchId;
