@@ -134,9 +134,12 @@ Tasks.updateTask = (updatedTask, result) => {
                         return result("Title already exists for the same batchId.", null);
                     }
 
-                    // Update data in the task table
-                    db.query("UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, taskType = ?, taskFileUpload = ?, dueDate = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-                        [
+                    let updateQuery;
+                    let updateValues;
+
+                    if (updatedTask.taskFileUpload) {
+                        updateQuery = "UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, taskType = ?, taskFileUpload = ?, dueDate = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                        updateValues = [
                             updatedTask.batchId,
                             updatedTask.taskTitle,
                             updatedTask.taskDesc,
@@ -144,7 +147,21 @@ Tasks.updateTask = (updatedTask, result) => {
                             updatedTask.taskFileUpload,
                             updatedTask.dueDate,
                             updatedTask.id
-                        ],
+                        ];
+                    } else {
+                        updateQuery = "UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, taskType = ?, dueDate = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                        updateValues = [
+                            updatedTask.batchId,
+                            updatedTask.taskTitle,
+                            updatedTask.taskDesc,
+                            updatedTask.taskType,
+                            updatedTask.dueDate,
+                            updatedTask.id
+                        ];
+                    }
+
+                    // Update data in the task table
+                    db.query(updateQuery, updateValues,
                         (updateErr, updateRes) => {
                             if (updateErr) {
                                 console.error("Error updating task: ", updateErr);
@@ -161,6 +178,7 @@ Tasks.updateTask = (updatedTask, result) => {
                 });
         });
 };
+
 
 
 Tasks.taskView = (sessionId, result) => {

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const AdminUpdateTask = () => {
     const [taskData, setTaskData] = useState([]);
-    const [file, setFile] = useState(null)
+    const [errors, setErrors] = useState({});
+    const [file, setFile] = useState("")
     const [fileType, setFileType] = useState("");
-    const [errors, setErrors] = useState({})
     const [updateField, setUpdateField] = useState({
         "id": sessionStorage.getItem('taskId'),
         "batchId": '',
@@ -16,16 +16,15 @@ const AdminUpdateTask = () => {
         "taskType": '',
         "totalScore": '',
         "dueDate": '',
-        "taskFileUpload": file,
+        "taskFileUpload": null,
     });
     const apiURL = global.config.urls.api.server + '/api/lms/viewOneTask';
     const apiUrl2 = global.config.urls.api.server + '/api/lms/updateTask';
     const navigate = useNavigate();
-    const [key, setKey] = useState('');
 
     const updateHandler = (event) => {
         setErrors({});
-        setUpdateField({ ...updateField, [event.target.name]: event.target.value })
+        setUpdateField({ ...updateField, [event.target.name]: event.target.value });
     }
 
     const fileUploadHandler = (event) => {
@@ -43,13 +42,6 @@ const AdminUpdateTask = () => {
     }
 
     const readNewValue = (e) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
         e.preventDefault();
         const validationErrors = validateForm(updateField);
         if (Object.keys(validationErrors).length === 0) {
@@ -57,19 +49,32 @@ const AdminUpdateTask = () => {
                 headers: {
                     'content-type': 'multipart/form-data',
                     "Access-Control-Allow-Origin": "*",
-                    "token": token,
-                    "key": currentKey
+                    "token": sessionStorage.getItem("admtoken"),
+                    "key": sessionStorage.getItem("admkey")
                 }
             }
-            let data = {
-                "id": sessionStorage.getItem('taskId'),
-                "batchId": updateField.batchId,
-                "taskTitle": updateField.taskTitle,
-                "taskDesc": updateField.taskDesc,
-                "taskType": updateField.taskType,
-                "totalScore": updateField.totalScore,
-                "dueDate": updateField.dueDate,
-                "taskFileUpload": file,
+            let data = {}
+            if (file) {
+                data = {
+                    "id": sessionStorage.getItem('taskId'),
+                    "batchId": updateField.batchId,
+                    "taskTitle": updateField.taskTitle,
+                    "taskDesc": updateField.taskDesc,
+                    "taskType": updateField.taskType,
+                    "totalScore": updateField.totalScore,
+                    "dueDate": updateField.dueDate,
+                    "taskFileUpload": file
+                }
+            } else {
+                data = {
+                    "id": sessionStorage.getItem('taskId'),
+                    "batchId": updateField.batchId,
+                    "taskTitle": updateField.taskTitle,
+                    "taskDesc": updateField.taskDesc,
+                    "taskType": updateField.taskType,
+                    "totalScore": updateField.totalScore,
+                    "dueDate": updateField.dueDate
+                }
             }
             axios.post(apiUrl2, data, axiosConfig2).then(
                 (Response) => {
@@ -82,6 +87,7 @@ const AdminUpdateTask = () => {
                             "taskType": '',
                             "totalScore": '',
                             "dueDate": '',
+                            "taskFileUpload": null,
                         })
                         alert("Task Updated Successfully")
                         navigate(-1)
@@ -152,43 +158,31 @@ const AdminUpdateTask = () => {
 
         if (!data.batchId) {
             errors.batchId = 'Batch Name is required';
-        }
-        if (!data.taskTitle) {
+        } else if (!data.taskTitle) {
             errors.taskTitle = 'Task Title is required';
-        }
-        if (!data.taskDesc) {
+        } else if (!data.taskDesc) {
             errors.taskDesc = 'Task Description is required';
-        }
-        if (!data.taskType) {
+        } else if (!data.taskType) {
             errors.taskType = 'Task Type is required';
-        }
-        if (!data.totalScore) {
+        } else if (!data.totalScore) {
             errors.totalScore = 'Total Score is required';
-        }
-        if (!data.dueDate) {
+        } else if (!data.dueDate) {
             errors.dueDate = 'Due Date is required';
-        }
-        if (fileType !== "pdf" && fileType !== "docx") {
+        } else if (file && fileType !== "docx" && fileType !== "pdf") {
             errors.file = "File must be in PDF or DOCX format";
         }
+
         return errors;
     }
 
     const getData = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
         let data = { "id": sessionStorage.getItem('taskId') };
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                "token": token,
-                "key": currentKey,
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey"),
             }
         }
         axios.post(apiURL, data, axiosConfig).then((response) => {
@@ -210,10 +204,6 @@ const AdminUpdateTask = () => {
         getData();
     }, []);
 
-    // Update key state when component mounts
-    useEffect(() => {
-        setKey(sessionStorage.getItem("admkey") || '');
-    }, []);
     return (
         <div className="container">
             <div className="row">
@@ -230,9 +220,6 @@ const AdminUpdateTask = () => {
                                 <div className="col-lg-6 px-xl-10">
                                     <ul className="list-unstyled mb-1-9">
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            {/* <label htmlFor="" className="form-label">
-                                                Id
-                                            </label> */}
                                             <input
                                                 type="hidden"
                                                 className="form-control"
@@ -242,9 +229,6 @@ const AdminUpdateTask = () => {
                                             />
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            {/* <label htmlFor="" className="form-label">
-                                                BatchId
-                                            </label> */}
                                             <input
                                                 onChange={updateHandler}
                                                 type="hidden"
@@ -320,10 +304,10 @@ const AdminUpdateTask = () => {
                                             {errors.dueDate && (<span style={{ color: 'red' }} className="error">{errors.dueDate}</span>)}
                                         </div>
                                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                            <label for="studProfilePic" className="form-label">
+                                            <label for="taskFileUpload" className="form-label">
                                                 File <span className="text-danger">*</span>
                                             </label>
-                                            <input onChange={fileUploadHandler} type="file" className="form-control" name="taskFileUpload" id="taskFileUpload" accept="pdf/*" />
+                                            <input onChange={fileUploadHandler} type="file" className="form-control" name="taskFileUpload" id="taskFileUpload" accept="application/pdf" />
                                             {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
                                         </div>
                                         <br></br>
