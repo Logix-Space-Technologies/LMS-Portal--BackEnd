@@ -135,7 +135,8 @@ const AdminStaffUpdateMaterial = () => {
                     "fileName": updateField.fileName,
                     "materialDesc": updateField.materialDesc,
                     "remarks": updateField.remarks,
-                    "materialType": updateField.materialType
+                    "materialType": updateField.materialType,
+                    "uploadFile": updateField.uploadFile
                 }
             }
             axios.post(apiUrl2, data, axiosConfig2).then(
@@ -172,11 +173,15 @@ const AdminStaffUpdateMaterial = () => {
                                             if (Response.data.status === "Validation failed" && Response.data.data.file) {
                                                 alert(Response.data.data.file)
                                             } else {
-                                                if (Response.data.status === "Unauthorized Access!!!") {
-                                                    navigate("/admstafflogin")
-                                                    sessionStorage.clear()
+                                                if (Response.data.status === "Validation failed" && Response.data.data.website) {
+                                                    alert(Response.data.data.website)
                                                 } else {
-                                                    alert(Response.data.status)
+                                                    if (Response.data.status === "Unauthorized Access!!!") {
+                                                        navigate("/admstafflogin")
+                                                        sessionStorage.clear()
+                                                    } else {
+                                                        alert(Response.data.status)
+                                                    }
                                                 }
                                             }
 
@@ -234,7 +239,6 @@ const AdminStaffUpdateMaterial = () => {
         } else if (file && fileType !== "docx" && fileType !== "pdf") {
             errors.file = "File must be in PDF or DOCX format";
         }
-
         return errors;
     }
 
@@ -352,15 +356,36 @@ const AdminStaffUpdateMaterial = () => {
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Material Type</label>
-                                                <input onChange={updateHandler} type="text" className="form-control" name="materialType" value={updateField.materialType} />
+                                                <select
+                                                    className="form-select"
+                                                    name="materialType"
+                                                    id="materialType"
+                                                    value={updateField.materialType}
+                                                    onChange={updateHandler}
+                                                >
+                                                    <option value="">Select Type</option>
+                                                    <option value="Image">Image</option>
+                                                    <option value="Video">Video</option>
+                                                    <option value="Document">Document</option>
+                                                    <option value="Link">Link</option>
+                                                </select>
                                                 {errors.materialType && (<span style={{ color: 'red' }} className="error">{errors.materialType}</span>)}
                                             </div>
                                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                                 <label for="studProfilePic" className="form-label">
                                                     File <span className="text-danger">*</span>
                                                 </label>
-                                                <input onChange={fileUploadHandler} type="file" className="form-control" name="uploadFile" id="uploadFile" accept="*" />
-                                                {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
+                                                {updateField.materialType === "Link" ? (
+                                                    <>
+                                                        <input type="text" onChange={updateHandler} className="form-control" name="uploadFile" value={updateField.uploadFile} />
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <input onChange={fileUploadHandler} type="file" className="form-control" name="uploadFile" id="uploadFile" accept="*" />
+                                                        {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
+                                                    </>
+                                                )}
+                                                {errors.website && (<span style={{ color: 'red' }} className="error">{errors.website}</span>)}
                                             </div>
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
