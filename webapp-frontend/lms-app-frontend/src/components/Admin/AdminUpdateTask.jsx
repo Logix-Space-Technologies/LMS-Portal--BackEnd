@@ -268,13 +268,21 @@ const AdminUpdateTask = () => {
                                             <label htmlFor="" className="form-label">
                                                 Task Type
                                             </label>
-                                            <input
-                                                onChange={updateHandler}
-                                                type="text"
-                                                className="form-control"
-                                                name="taskType"
-                                                value={updateField.taskType}
-                                            />
+                                            <select
+                                            className="form-select"
+                                            name="taskType"
+                                            id="taskType"
+                                            value={updateField.taskType}
+                                            onChange={updateHandler}
+                                        >
+                                            <option value="">Select Type</option>
+                                            <option value="Mini Project">Mini Project</option>
+                                            <option value="Project">Project</option>
+                                            <option value="Live Project">Live Project</option>
+                                            <option value="Daily Task">Daily Task</option>
+                                            <option value="Weekly Task">Weekly Task</option>
+                                            <option value="Homework">Homework</option>
+                                        </select>
                                             {errors.taskType && (<span style={{ color: 'red' }} className="error">{errors.taskType}</span>)}
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">

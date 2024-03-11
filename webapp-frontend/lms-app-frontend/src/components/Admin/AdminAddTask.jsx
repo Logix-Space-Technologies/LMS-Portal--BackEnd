@@ -395,14 +395,21 @@ const AdminAddTask = () => {
                                         <label htmlFor="taskType" className="form-label">
                                             Task Type <span className="text-danger">*</span>
                                         </label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
+                                        <select
+                                            className="form-select"
                                             name="taskType"
                                             id="taskType"
                                             value={inputField.taskType}
                                             onChange={inputHandler}
-                                        />
+                                        >
+                                            <option value="">Select Type</option>
+                                            <option value="Mini Project">Mini Project</option>
+                                            <option value="Project">Project</option>
+                                            <option value="Live Project">Live Project</option>
+                                            <option value="Daily Task">Daily Task</option>
+                                            <option value="Weekly Task">Weekly Task</option>
+                                            <option value="Homework">Homework</option>
+                                        </select>
                                         {errors.taskType && (<span style={{ color: 'red' }} className="error">{errors.taskType}</span>)}
                                     </div>
                                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
