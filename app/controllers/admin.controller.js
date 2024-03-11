@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken")
 const Admin = require("../models/admin.model");
 const Validator = require('../config/data.validate')
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
-onst firebaseAdmin = require('firebase-admin')
+const firebaseAdmin = require('firebase-admin')
 const serviceAccount = require('../config/firebase_key/serviceaccount.json');
 
 firebaseAdmin.initializeApp({
