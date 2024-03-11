@@ -41,27 +41,88 @@ exports.createMaterial = (request, response) => {
             return response.status(500).json({ "status": error.message });
         }
 
-        if (!request.file) {
-            return response.status(400).json({ "status": "No file uploaded" });
-        }
+        if (request.file) {
+            // File handling
+            const file = request.file;
+            const fileStream = fs.createReadStream(file.path);
 
-        // File handling
-        const file = request.file;
-        const fileStream = fs.createReadStream(file.path);
+            const uploadParams = {
+                Bucket: process.env.S3_BUCKET,
+                Key: `uploads/${file.filename}`,
+                Body: fileStream
+            };
+            try {
+                const data = await s3Client.send(new PutObjectCommand(uploadParams));
+                const fileUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
 
-        const uploadParams = {
-            Bucket: process.env.S3_BUCKET,
-            Key: `uploads/${file.filename}`,
-            Body: fileStream
-        };
-        try {
-            const data = await s3Client.send(new PutObjectCommand(uploadParams));
-            const fileUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+                // Remove the file from local storage
+                fs.unlinkSync(file.path);
 
-            // Remove the file from local storage
-            fs.unlinkSync(file.path);
+                const { batchId, fileName, materialDesc, remarks, materialType } = request.body
+                const materialToken = request.headers.token
 
-            const { batchId, fileName, materialDesc, remarks, materialType } = request.body
+                jwt.verify(materialToken, "lmsappadmstaff", (err, decoded) => {
+                    if (decoded) {
+                        const validationErrors = {};
+
+                        if (!Validator.isValidAmount(batchId).isValid) {
+                            validationErrors.batchId = Validator.isValidAmount(batchId).message;
+                        }
+                        if (Validator.isEmpty(batchId).isValid) {
+                            validationErrors.batchId = Validator.isEmpty(batchId).message;
+                        }
+                        if (Validator.isEmpty(fileName).isValid) {
+                            validationErrors.fileName = Validator.isEmpty(fileName).message;
+                        }
+                        if (Validator.isEmpty(materialDesc).isValid) {
+                            validationErrors.materialDesc = Validator.isEmpty(materialDesc).message;
+                        }
+                        if (Validator.isEmpty(remarks).isValid) {
+                            validationErrors.remarks = Validator.isEmpty(remarks).message;
+                        }
+                        if (Validator.isEmpty(materialType).isValid) {
+                            validationErrors.materialType = Validator.isEmpty(materialType).message;
+                        }
+                        if (!Validator.isValidAddress(materialDesc).isValid) {
+                            validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
+                        }
+
+                        if (!request.file) {
+                            validationErrors.file = 'Please upload a file'
+                        }
+
+                        // If validation fails
+                        if (Object.keys(validationErrors).length > 0) {
+                            return response.json({ "status": "Validation failed", "data": validationErrors });
+                        }
+
+                        const addMaterial = new Material({
+                            batchId: batchId,
+                            fileName: fileName,
+                            materialDesc: materialDesc,
+                            remarks: remarks,
+                            materialType: materialType,
+                            uploadFile: fileUrl
+                        })
+
+                        Material.materialCreate(addMaterial, (err, data) => {
+                            if (err) {
+                                return response.json({ "status": err });
+                            } else {
+                                return response.json({ "status": "success", "data": data });
+                            }
+                        })
+
+                    } else {
+                        return response.json({ "status": "Unauthorized User!!" });
+                    }
+                })
+            } catch (err) {
+                fs.unlinkSync(file.path);
+                response.status(500).json({ "status": err.message });
+            }
+        } else {
+            const { batchId, fileName, materialDesc, remarks, materialType, uploadFile } = request.body
             const materialToken = request.headers.token
 
             jwt.verify(materialToken, "lmsappadmstaff", (err, decoded) => {
@@ -90,8 +151,8 @@ exports.createMaterial = (request, response) => {
                         validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
                     }
 
-                    if (!request.file) {
-                        validationErrors.file = 'Please upload a file'
+                    if (!Validator.isValidWebsite(uploadFile).isValid) {
+                        validationErrors.website = Validator.isValidWebsite(uploadFile).message;
                     }
 
                     // If validation fails
@@ -105,7 +166,7 @@ exports.createMaterial = (request, response) => {
                         materialDesc: materialDesc,
                         remarks: remarks,
                         materialType: materialType,
-                        uploadFile: fileUrl
+                        uploadFile: uploadFile
                     })
 
                     Material.materialCreate(addMaterial, (err, data) => {
@@ -120,9 +181,6 @@ exports.createMaterial = (request, response) => {
                     return response.json({ "status": "Unauthorized User!!" });
                 }
             })
-        } catch (err) {
-            fs.unlinkSync(file.path);
-            response.status(500).json({ "status": err.message });
         }
     })
 
