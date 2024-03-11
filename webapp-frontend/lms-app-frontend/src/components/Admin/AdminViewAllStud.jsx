@@ -3,6 +3,7 @@ import '../../config/config';
 import axios from 'axios';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminViewAllStud = () => {
     const [studData, setStudData] = useState([]);
