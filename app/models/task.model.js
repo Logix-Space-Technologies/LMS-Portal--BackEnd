@@ -138,22 +138,24 @@ Tasks.updateTask = (updatedTask, result) => {
                     let updateValues;
 
                     if (updatedTask.taskFileUpload) {
-                        updateQuery = "UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, taskType = ?, taskFileUpload = ?, dueDate = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                        updateQuery = "UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, totalScore = ?, taskType = ?, taskFileUpload = ?, dueDate = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
                         updateValues = [
                             updatedTask.batchId,
                             updatedTask.taskTitle,
                             updatedTask.taskDesc,
+                            updatedTask.totalScore,
                             updatedTask.taskType,
                             updatedTask.taskFileUpload,
                             updatedTask.dueDate,
                             updatedTask.id
                         ];
                     } else {
-                        updateQuery = "UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, taskType = ?, dueDate = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                        updateQuery = "UPDATE task SET batchId = ?, taskTitle = ?, taskDesc = ?, totalScore = ?, taskType = ?, dueDate = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
                         updateValues = [
                             updatedTask.batchId,
                             updatedTask.taskTitle,
                             updatedTask.taskDesc,
+                            updatedTask.totalScore,
                             updatedTask.taskType,
                             updatedTask.dueDate,
                             updatedTask.id
@@ -183,17 +185,17 @@ Tasks.updateTask = (updatedTask, result) => {
 
 Tasks.taskView = (sessionId, result) => {
     db.query("SELECT b.batchName, t.* FROM task t JOIN sessiondetails s ON t.sessionId = s.id LEFT JOIN batches b ON t.batchId = b.id AND s.batchId = b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND t.sessionId = ?",
-    [sessionId], (err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(err, null)
-            return
-        } else {
-            const formattedTasks = res.map(Tasks => ({ ...Tasks, addedDate: Tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), dueDate: Tasks.dueDate ? Tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null})); // Formats the date as 'YYYY-MM-DD'
-            console.log("Tasks: ", formattedTasks);
-            result(null, formattedTasks)
-        }
-    })
+        [sessionId], (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null)
+                return
+            } else {
+                const formattedTasks = res.map(Tasks => ({ ...Tasks, addedDate: Tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), dueDate: Tasks.dueDate ? Tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null })); // Formats the date as 'YYYY-MM-DD'
+                console.log("Tasks: ", formattedTasks);
+                result(null, formattedTasks)
+            }
+        })
 }
 
 
@@ -207,7 +209,7 @@ Tasks.searchTasks = (searchString, result) => {
                 result(err, null)
                 return
             } else {
-                const formattedSearchTasks = res.map(tasks => ({ ...tasks, dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })}));
+                const formattedSearchTasks = res.map(tasks => ({ ...tasks, dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
                 console.log("Tasks: ", formattedSearchTasks);
                 result(null, formattedSearchTasks)
             }
@@ -215,7 +217,7 @@ Tasks.searchTasks = (searchString, result) => {
 }
 
 Tasks.collegeStaffSearchTasks = (searchKey, collegeId, result) => {
-    const searchString = '%'+ searchKey + '%' 
+    const searchString = '%' + searchKey + '%'
     db.query("SELECT DISTINCT c.collegeName, b.batchName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, t.addedDate FROM task t JOIN batches b ON t.batchId= b.id JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.collegeId = ? AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ? OR t.taskType LIKE ? OR b.batchName LIKE ?)",
         [collegeId, searchString, searchString, searchString, searchString],
         (err, res) => {

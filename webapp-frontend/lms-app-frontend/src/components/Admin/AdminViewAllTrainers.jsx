@@ -115,7 +115,7 @@ const AdminViewAllTrainers = () => {
         setDeleteTrainer(id)
     };
 
-    useEffect(() => { getData() }, []);
+    useEffect(() =>  getData() , []);
 
     // Update key state when component mounts
     useEffect(() => {

@@ -61,12 +61,23 @@ const AdminUpdateTrainer = () => {
                     "key": currentKey
                 }
             }
-            let data = {
-                "id": sessionStorage.getItem("trainerId"),
-                "trainerName": updateField.trainerName,
-                "about": updateField.about,
-                "phoneNumber": updateField.phoneNumber,
-                "profilePicture": file
+            console.log(axiosConfig)
+            let data = {}
+            if (file) {
+                data = {
+                    "id": sessionStorage.getItem("trainerId"),
+                    "trainerName": updateField.trainerName,
+                    "about": updateField.about,
+                    "phoneNumber": updateField.phoneNumber,
+                    "profilePicture": file
+                }
+            } else {
+                data = {
+                    "id": sessionStorage.getItem("trainerId"),
+                    "trainerName": updateField.trainerName,
+                    "about": updateField.about,
+                    "phoneNumber": updateField.phoneNumber
+                }
             }
             axios.post(apiUrl2, data, axiosConfig).then(
                 (Response) => {
@@ -134,16 +145,14 @@ const AdminUpdateTrainer = () => {
 
         if (!data.trainerName.trim()) {
             errors.trainerName = 'Trainer Name is required';
-        }
-        if (!data.about.trim()) {
+        } else if (!data.about.trim()) {
             errors.about = 'About is required';
-        }
-        if (!data.phoneNumber.trim()) {
+        } else if (!data.phoneNumber.trim()) {
             errors.phoneNumber = 'Contact Details required';
-        }
-        if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+        } else if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
             errors.file = "File must be in jpg/jpeg/png/webp/heif format";
         }
+        
         return errors;
     }
 
@@ -178,7 +187,7 @@ const AdminUpdateTrainer = () => {
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
-    
+
     return (
         <div className="container">
             <div className="row">
@@ -225,6 +234,7 @@ const AdminUpdateTrainer = () => {
                                                 Profile Picture <span className="text-danger">*</span>
                                             </label>
                                             <input onChange={fileUploadHandler} type="file" className="form-control" name="profilePicture" id="profilePicture" accept="image/*" />
+                                            {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
                                         </div>
                                         <br></br>
                                         <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
