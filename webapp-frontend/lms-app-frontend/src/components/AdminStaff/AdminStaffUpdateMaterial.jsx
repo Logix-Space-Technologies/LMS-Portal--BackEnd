@@ -22,7 +22,7 @@ const AdminStaffUpdateMaterial = () => {
             "materialDesc": "",
             "remarks": "",
             "materialType": "",
-            "uploadFile": file
+            "uploadFile": ""
         }
     )
     const apiURL = global.config.urls.api.server + "/api/lms/AdmViewOneMaterial";
