@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AdminViewAllStud = () => {
     const [studData, setStudData] = useState([]);
+    const [key, setKey] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [studentsPerPage] = useState(10); // Number of students per page
 
@@ -16,13 +17,20 @@ const AdminViewAllStud = () => {
     const apiUrl3 = global.config.urls.api.server + "/api/lms/deleteCommunityManager";
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "batchId": sessionStorage.getItem("viewbatchId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrl, data, axiosConfig).then(
@@ -31,7 +39,7 @@ const AdminViewAllStud = () => {
                     setStudData(response.data.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/")
+                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
@@ -140,6 +148,10 @@ const AdminViewAllStud = () => {
 
     useEffect(() => { getData() }, []);
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div>
             <Navbar />

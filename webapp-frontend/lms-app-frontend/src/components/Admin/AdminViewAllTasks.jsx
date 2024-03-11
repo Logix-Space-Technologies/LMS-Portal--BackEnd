@@ -41,7 +41,7 @@ const AdminViewAllTasks = () => {
                     setTaskData(response.data.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/")
+                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
@@ -96,7 +96,7 @@ const AdminViewAllTasks = () => {
                     getData()
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/")
+                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status)
