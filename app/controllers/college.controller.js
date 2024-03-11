@@ -310,7 +310,39 @@ exports.updateCollege = (request, response) => {
                 if (decoded) {
                     const validationErrors = {};
 
-                    // Your existing validation logic
+                    // College name validation
+                    if (Validator.isEmpty(request.body.collegeName).isValid) {
+                        validationErrors.name = Validator.isEmpty(request.body.collegeName).message;
+                    }
+                    if (!Validator.isValidName(request.body.collegeName).isValid) {
+                        validationErrors.name = Validator.isValidName(request.body.collegeName).message;
+                    }
+
+                    // College address validation
+                    if (Validator.isEmpty(request.body.collegeAddress).isValid) {
+                        validationErrors.address = Validator.isEmpty(request.body.collegeAddress).message;
+                    }
+                    if (!Validator.isValidAddress(request.body.collegeAddress).isValid) {
+                        validationErrors.address = Validator.isValidAddress(request.body.collegeAddress).message;
+                    }
+
+                    // College website validation
+                    if (!Validator.isValidWebsite(request.body.website).isValid) {
+                        validationErrors.website = Validator.isValidWebsite(request.body.website).message;
+                    }
+
+                    // College phone number validation
+                    if (!Validator.isValidPhoneNumber(request.body.collegePhNo).isValid) {
+                        validationErrors.phone = Validator.isValidPhoneNumber(request.body.collegePhNo).message;
+                    }
+
+                    // College mobile number validation
+                    if (Validator.isEmpty(request.body.collegeMobileNumber).isValid) {
+                        validationErrors.mobile = Validator.isEmpty(request.body.collegeMobileNumber).message;
+                    }
+                    if (!Validator.isValidMobileNumber(request.body.collegeMobileNumber).isValid) {
+                        validationErrors.mobile = Validator.isValidMobileNumber(request.body.collegeMobileNumber).message;
+                    }
 
                     if (Object.keys(validationErrors).length > 0) {
                         return response.json({ "status": "Validation Failed", "data": validationErrors });

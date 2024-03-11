@@ -320,17 +320,17 @@ exports.taskUpdate = (request, response) => {
                         if (err.kind === "not_found") {
                             return response.json({ "status": "Task with provided Id is not found." });
                         } else {
-                            return response.status(422).json({ "status": err });
+                            return response.json({ "status": err });
                         }
                     } else {
                         if (key === "lmsapp") {
                             logAdminStaff(0, "Admin Updated Task")
                         }
-                        return response.status(200).json({ "status": "success", "data": data });
+                        return response.json({ "status": "success", "data": data });
                     }
                 });
             } else {
-                return response.status(403).json({ "status": "Unauthorized access!!" });
+                return response.json({ "status": "Unauthorized access!!" });
             }
         });
 
