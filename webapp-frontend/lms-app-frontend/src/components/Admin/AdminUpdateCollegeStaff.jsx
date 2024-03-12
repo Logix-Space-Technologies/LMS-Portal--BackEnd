@@ -64,17 +64,33 @@ const AdminUpdateCollegeStaff = () => {
                     "key": currentKey
                 }
             }
-            let data = {
-                "id": sessionStorage.getItem("clgStaffId"),
-                "collegeId": updateField.collegeId,
-                "collegeStaffName": updateField.collegeStaffName,
-                "email": updateField.email,
-                "phNo": updateField.phNo,
-                "aadharNo": updateField.aadharNo,
-                "clgStaffAddress": updateField.clgStaffAddress,
-                "profilePic": file,
-                "department": updateField.department
+            let data = {}
+            if (file) {
+                 data = {
+                    "id": sessionStorage.getItem("clgStaffId"),
+                    "collegeId": updateField.collegeId,
+                    "collegeStaffName": updateField.collegeStaffName,
+                    "email": updateField.email,
+                    "phNo": updateField.phNo,
+                    "aadharNo": updateField.aadharNo,
+                    "clgStaffAddress": updateField.clgStaffAddress,
+                    "profilePic": file,
+                    "department": updateField.department
+                }
+            } else {
+                 data = {
+                    "id": sessionStorage.getItem("clgStaffId"),
+                    "collegeId": updateField.collegeId,
+                    "collegeStaffName": updateField.collegeStaffName,
+                    "email": updateField.email,
+                    "phNo": updateField.phNo,
+                    "aadharNo": updateField.aadharNo,
+                    "clgStaffAddress": updateField.clgStaffAddress,
+                    "profilePic": "",
+                    "department": updateField.department
+                }
             }
+            
             axios.post(apiUrl, data, axiosConfig).then(
                 (response) => {
                     if (response.data.status === "success") {
@@ -85,8 +101,7 @@ const AdminUpdateCollegeStaff = () => {
                             "email": "",
                             "phNo": "",
                             "aadharNo": "",
-                            "clgStaffAddress": "",
-                            "profilePic": "",
+                            "clgStaffAddress": "",           
                             "department": ""
                         })
                         alert("Profile Updated Successfully")
@@ -175,7 +190,7 @@ const AdminUpdateCollegeStaff = () => {
         if (!data.department.trim()) {
             errors.department = 'Department is required';
         }
-        if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+        if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
             errors.file = "File must be in jpg/jpeg/png/webp/heif format";
         }
         return errors;

@@ -80,7 +80,8 @@ const AdminUpdateCollege = () => {
                     "website": updateField.website,
                     "email": updateField.email,
                     "collegePhNo": updateField.collegePhNo,
-                    "collegeMobileNumber": updateField.collegeMobileNumber
+                    "collegeMobileNumber": updateField.collegeMobileNumber,
+                    "collegeImage": file
                 }
             } else {
                 data = {
@@ -91,8 +92,7 @@ const AdminUpdateCollege = () => {
                     "website": updateField.website,
                     "email": updateField.email,
                     "collegePhNo": updateField.collegePhNo,
-                    "collegeMobileNumber": updateField.collegeMobileNumber,
-                    "collegeImage": file
+                    "collegeMobileNumber": updateField.collegeMobileNumber
                 }
             }
             axios.post(apiUrl, data, axiosConfig).then(
