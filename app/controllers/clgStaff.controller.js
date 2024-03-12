@@ -303,18 +303,13 @@ exports.collegeStaffUpdate = (req, res) => {
         // Remove the file from local storage
         fs.unlinkSync(file.path);
         const Updatetoken = req.headers.token;
-        console.log(Updatetoken)
-        const validationErrors = {};
-
-        // Your existing validation logic
-
-        if (Object.keys(validationErrors).length > 0) {
-          return response.json({ "status": "Validation Failed", "data": validationErrors });
-        }
 
         key = req.headers.key
         jwt.verify(Updatetoken, key, (error, decoded) => {
           if (decoded) {
+
+            const validationErrors = {};
+
             if (!req.body.collegeStaffName) {
               validationErrors.name = "Name is required.";
             }
@@ -333,7 +328,7 @@ exports.collegeStaffUpdate = (req, res) => {
             if (!Validator.isValidMobileNumber(req.body.phNo).isValid) {
               validationErrors.phNo = Validator.isValidMobileNumber(req.body.phNo).message;
             }
-            if (!req.file || !Validator.isValidImageWith1mbConstratint(req.file).isValid) {
+            if (!Validator.isValidImageWith1mbConstratint(req.file).isValid) {
               validationErrors.image = Validator.isValidImageWith1mbConstratint(req.file).message;
             }
             if (!req.body.department) {
@@ -385,6 +380,8 @@ exports.collegeStaffUpdate = (req, res) => {
       key = req.headers.key
       jwt.verify(Updatetoken, key, (error, decoded) => {
         if (decoded) {
+
+          let validationErrors = {}
           if (!req.body.collegeStaffName) {
             validationErrors.name = "Name is required.";
           }
@@ -402,9 +399,6 @@ exports.collegeStaffUpdate = (req, res) => {
           }
           if (!Validator.isValidMobileNumber(req.body.phNo).isValid) {
             validationErrors.phNo = Validator.isValidMobileNumber(req.body.phNo).message;
-          }
-          if (!req.file || !Validator.isValidImageWith1mbConstratint(req.file).isValid) {
-            validationErrors.image = Validator.isValidImageWith1mbConstratint(req.file).message;
           }
           if (!req.body.department) {
             validationErrors.department = "Department is required.";

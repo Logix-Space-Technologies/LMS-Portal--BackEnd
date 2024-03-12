@@ -190,7 +190,7 @@ const AdminUpdateCollegeStaff = () => {
         if (!data.department.trim()) {
             errors.department = 'Department is required';
         }
-        if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+        if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
             errors.file = "File must be in jpg/jpeg/png/webp/heif format";
         }
         return errors;
