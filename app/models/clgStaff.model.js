@@ -100,10 +100,35 @@ CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
             return result("College not found with the provided ID", null);
         }
 
+        let updateQuery;
+        let updateValues;
+
+        if (clgstaff.collegeImage) {
+            updateQuery = "UPDATE college_staff SET collegeId=?, collegeStaffName=?, phNo=?, clgStaffAddress=?, profilePic=?, department=?, updatedDate = CURRENT_DATE() WHERE id=? AND deleteStatus = 0 AND isActive = 1";
+            updateValues = [
+                clgstaff.collegeId,
+                clgstaff.collegeStaffName,
+                clgstaff.phNo,
+                clgstaff.clgStaffAddress,
+                clgstaff.department,
+                clgstaff.id,
+                clgstaff.profilePic
+            ];
+        } else {
+            updateQuery = "UPDATE college_staff SET collegeId=?, collegeStaffName=?, phNo=?, clgStaffAddress=?, department=?, updatedDate = CURRENT_DATE() WHERE id=? AND deleteStatus = 0 AND isActive = 1";
+            updateValues = [
+                clgstaff.collegeId,
+                clgstaff.collegeStaffName,
+                clgstaff.phNo,
+                clgstaff.clgStaffAddress,
+                clgstaff.department,
+                clgstaff.id
+            ];
+        }
+
         // Update college staff details
         db.query(
-            "UPDATE college_staff SET collegeId=?, collegeStaffName=?, phNo=?, clgStaffAddress=?, profilePic=?, department=?, updatedDate = CURRENT_DATE() WHERE id=? AND deleteStatus = 0 AND isActive = 1",
-            [clgstaff.collegeId, clgstaff.collegeStaffName, clgstaff.phNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, clgstaff.id],
+            updateQuery, updateValues,
             (updateErr, res) => {
                 if (updateErr) {
                     console.error("Error updating college staff details:", updateErr);

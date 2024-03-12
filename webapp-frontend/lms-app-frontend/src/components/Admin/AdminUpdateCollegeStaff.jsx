@@ -64,17 +64,33 @@ const AdminUpdateCollegeStaff = () => {
                     "key": currentKey
                 }
             }
-            let data = {
-                "id": sessionStorage.getItem("clgStaffId"),
-                "collegeId": updateField.collegeId,
-                "collegeStaffName": updateField.collegeStaffName,
-                "email": updateField.email,
-                "phNo": updateField.phNo,
-                "aadharNo": updateField.aadharNo,
-                "clgStaffAddress": updateField.clgStaffAddress,
-                "profilePic": file,
-                "department": updateField.department
+            let data = {}
+            if (file) {
+                 data = {
+                    "id": sessionStorage.getItem("clgStaffId"),
+                    "collegeId": updateField.collegeId,
+                    "collegeStaffName": updateField.collegeStaffName,
+                    "email": updateField.email,
+                    "phNo": updateField.phNo,
+                    "aadharNo": updateField.aadharNo,
+                    "clgStaffAddress": updateField.clgStaffAddress,
+                    "profilePic": file,
+                    "department": updateField.department
+                }
+            } else {
+                 data = {
+                    "id": sessionStorage.getItem("clgStaffId"),
+                    "collegeId": updateField.collegeId,
+                    "collegeStaffName": updateField.collegeStaffName,
+                    "email": updateField.email,
+                    "phNo": updateField.phNo,
+                    "aadharNo": updateField.aadharNo,
+                    "clgStaffAddress": updateField.clgStaffAddress,
+                    "profilePic": "",
+                    "department": updateField.department
+                }
             }
+            
             axios.post(apiUrl, data, axiosConfig).then(
                 (response) => {
                     if (response.data.status === "success") {
@@ -85,8 +101,7 @@ const AdminUpdateCollegeStaff = () => {
                             "email": "",
                             "phNo": "",
                             "aadharNo": "",
-                            "clgStaffAddress": "",
-                            "profilePic": "",
+                            "clgStaffAddress": "",           
                             "department": ""
                         })
                         alert("Profile Updated Successfully")
