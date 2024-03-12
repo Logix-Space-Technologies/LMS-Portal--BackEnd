@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import '../../config/config'
+import Navbar from './Navbar';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminUpdateCollege = () => {
 
@@ -221,6 +223,7 @@ const AdminUpdateCollege = () => {
 
     return (
         <div className="container">
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="row">
                 <div className="col-lg-12 mb-4 mb-sm-5">
                     <br></br>
@@ -248,7 +251,7 @@ const AdminUpdateCollege = () => {
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label htmlFor="" className="form-label">College Code</label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="collegeCode" value={updateField.collegeCode} disabled />
+                                            <input onChange={updateHandler} type="text" className="form-control" name="collegeCode" value={updateField.collegeCode}/>
                                         </div>
                                         <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label for="" class="form-label">College Address</label>
