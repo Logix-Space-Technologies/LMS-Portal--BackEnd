@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
 import Navbar from './Navbar'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminUpdateCurriculum = () => {
 
@@ -180,6 +181,7 @@ const AdminUpdateCurriculum = () => {
 
     return (
         <div>
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
