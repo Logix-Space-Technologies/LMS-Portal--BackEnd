@@ -376,40 +376,40 @@ exports.profileUpdateStudent = (request, response) => {
                         if (Validator.isEmpty(studName).isValid) {
                             validationErrors.studName = Validator.isEmpty(studName).message;
                         }
-    
+
                         if (!Validator.isValidName(studName).isValid) {
                             validationErrors.studName = Validator.isValidName(studName).message;
                         }
-    
+
                         if (Validator.isEmpty(admNo).isValid) {
                             validationErrors.admNo = Validator.isEmpty(admNo).message;
                         }
-    
+
                         if (Validator.isEmpty(rollNo).isValid) {
                             validationErrors.rollNo = Validator.isEmpty(rollNo).message;
                         }
-    
+
                         if (Validator.isEmpty(studDept).isValid) {
                             validationErrors.studDept = Validator.isEmpty(studDept).message;
                         }
-    
+
                         if (Validator.isEmpty(course).isValid) {
                             validationErrors.course = Validator.isEmpty(course).message;
                         }
-    
+
                         if (Validator.isEmpty(aadharNo).isValid) {
                             validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
                         }
-    
+
                         if (!Validator.isValidAadharNumber(aadharNo).isValid) {
                             validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
                         }
-    
+
                         if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
                             validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
                         }
-    
-    
+
+
                         if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
                             validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
                         }
@@ -514,7 +514,7 @@ exports.profileUpdateStudent = (request, response) => {
                         studPhNo,
                         aadharNo
                     };
-                    
+
                     Student.updateStudentProfile(newStudent, (err, data) => {
                         if (err) {
                             if (err.kind === "not_found") {
@@ -1504,6 +1504,23 @@ exports.studforgotpassword = (request, response) => {
 }
 
 
+exports.searchStudRenewalDetailsByEmail = (request, response) => {
+    const email = request.body.studEmail
+
+    Student.searchStudRenewalDetailsByEmail(email, (err, data) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            if (data.length === 0) {
+                return response.json({ "status": "No students found!" });
+            } else {
+                return response.json({ "status": "success", "data": data });
+            }
+        }
+    })
+}
+
+
 exports.sendRenewalReminderEmail = async (req, res) => {
     const token = req.headers.token;
     const key = req.headers.key;
@@ -1526,11 +1543,13 @@ exports.sendRenewalReminderEmail = async (req, res) => {
         const rpAmt = studentData.rpAmount
 
         const renewalReminderHTMLContent = mailContents.renewalReminderHtmlContent(studname, validity, rpAmt);
+        const renewalReminderTextContent = mailContents.renewalReminderTextContent(studname, validity, rpAmt);
 
         mail.sendEmail(
             studEmail,
             'LinkUrCodes Subscription Renewal Reminder',
-            renewalReminderHTMLContent
+            renewalReminderHTMLContent,
+            renewalReminderTextContent
         );
 
         return res.json({
@@ -1548,6 +1567,67 @@ exports.sendRenewalReminderEmail = async (req, res) => {
     }
 };
 
+//Email Verification OTP Send
+exports.StudEmailVerifyOTPSend = (request, response) => {
+    const email = request.body.studEmail
+    // Generate and hash OTP
+    Student.forgotPassGenerateAndHashOTP(email, (err, otp) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            Student.searchstudentbyemail(email, (err, data) => {
+                let studName = data
+                // Send OTP to email
+                const mailSent = sendOTPVerifyEmail(email, studName, otp);
+                if (mailSent) {
+                    return response.json({ "status": "OTP sent to email." });
+                } else {
+                    return response.json({ "status": "Failed to send OTP." });
+                }
+            })
+        }
+    });
+}
+
+function sendOTPVerifyEmail(email, studName, otp) {
+    const otpVerificationHTMLContent = mailContents.emailverifyStudentOTPHtmlContent(studName, otp);
+    const otpVerificationTextContent = mailContents.emailverifyStudentOTPTextContent(studName, otp);
+    mail.sendEmail(email, 'Password Reset Request', otpVerificationHTMLContent, otpVerificationTextContent)
+
+    return true;
+}
 
 
-  
+//Verify OTP and Update Email Verification Status
+exports.emailverifyStudOTP = (req, res) => {
+    // Extract email and OTP from request body
+    const email = req.body.studEmail;
+    const otp = req.body.otp;
+
+    // Input validation (basic example)
+    if (!email || !otp) {
+        return res.json({ "status": "Email and OTP are required" });
+    }
+
+    // Call the model function to verify the OTP
+    Student.emailverifyStudOTP(email, otp, (err, result) => {
+        if (err) {
+            // If there was an error or the OTP is not valid/expired
+            return res.json({ "status": err });
+        } else {
+            if (result) {
+                // If the OTP is verified successfully
+                return res.json({ "status": "OTP verified successfully" });
+            } else {
+                // If the OTP does not match
+                return res.json({ "status": "Invalid OTP" });
+            }
+        }
+    });
+};
+
+
+
+
+
+ 

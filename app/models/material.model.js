@@ -102,10 +102,34 @@ Material.updateMaterial = (materialUpdate, result) => {
                         result("Updated material details already exist.", null);
                         return;
                     } else {
+                        let updateQuery;
+                        let updateValues;
+
+                        if (materialUpdate.uploadFile) {
+                            updateQuery = "UPDATE materials SET fileName = ?, materialDesc = ?, uploadFile = ?, remarks = ?, batchId = ?, materialType = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                            updateValues = [
+                                materialUpdate.fileName,
+                                materialUpdate.materialDesc,
+                                materialUpdate.uploadFile,
+                                materialUpdate.remarks,
+                                materialUpdate.batchId,
+                                materialUpdate.materialType,
+                                materialUpdate.id
+                            ];
+                        } else {
+                            updateQuery = "UPDATE materials SET fileName = ?, materialDesc = ?, remarks = ?, batchId = ?, materialType = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
+                            updateValues = [
+                                materialUpdate.fileName,
+                                materialUpdate.materialDesc,
+                                materialUpdate.remarks,
+                                materialUpdate.batchId,
+                                materialUpdate.materialType,
+                                materialUpdate.id
+                            ];
+                        }
+
                         // Update material details
-                        // Update material details
-                        db.query("UPDATE materials SET fileName = ?, materialDesc = ?, uploadFile = ?, remarks = ?, batchId = ?, materialType = ?, updatedDate = CURRENT_DATE(), updateStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
-                            [materialUpdate.fileName, materialUpdate.materialDesc, materialUpdate.uploadFile, materialUpdate.remarks, materialUpdate.batchId, materialUpdate.materialType, materialUpdate.id],
+                        db.query(updateQuery, updateValues,
                             (err, res) => {
                                 if (err) {
                                     console.error("Error updating material: ", err);
@@ -121,6 +145,7 @@ Material.updateMaterial = (materialUpdate, result) => {
         }
     });
 };
+
 
 Material.viewBatchMaterials = (batchId, result) => {
     db.query("SELECT b.batchName,m.* FROM materials m JOIN batches b ON m.batchId = b.id WHERE m.batchId = ? AND m.deleteStatus = 0 AND m.isActive = 1", [batchId], (err, res) => {

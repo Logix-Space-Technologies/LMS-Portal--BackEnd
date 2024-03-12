@@ -19,6 +19,7 @@ const NotificationController = require("../controllers/notifications.controller"
 const curriculumController = require("../controllers/curriculum.controller")
 const AttendenceController = require("../controllers/attendence.controller")
 const CommunityManagerController = require("../controllers/communityManager.controller")
+const FirebaseController = require("../controllers/firebaseToken.controller")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -309,5 +310,20 @@ router.post('/sendRenewalReminderEmail', StudentController.sendRenewalReminderEm
 
 router.post('/emailverificationotpadmstaff', AdminStaffController.emailverification)
 
+router.post('/emailverificationotpverify', AdminStaffController.emailVerificationOtpSendVerify)
+
+router.post('/studRenewalDataFetch', StudentController.searchStudRenewalDetailsByEmail)
+
+router.post('/clgstaffemailverificationotpsend', ClgStaffController.emailverification)
+
+router.post('/clgstaffemailverifyotp', ClgStaffController.emailVerificationClgStaffOtpVerify)
+
+router.post('/studemailverifyotpsend', StudentController.StudEmailVerifyOTPSend)
+
+router.post('/studemailverificationotpverify', StudentController.emailverifyStudOTP)
+
+router.post('/sendFirebaseNotifications',AdminController.sendNotifications)
+
+router.post('/addFirebaseToken',FirebaseController.createTokens)
 
 module.exports = router

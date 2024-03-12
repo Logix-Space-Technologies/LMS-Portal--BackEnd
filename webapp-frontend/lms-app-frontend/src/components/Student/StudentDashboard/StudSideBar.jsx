@@ -10,6 +10,7 @@ const StudSideBar = () => {
                 </a>
                 <div className="navbar-nav w-100">
                     <a href="#" className="nav-item nav-link active"><i className="fa fa-tachometer-alt me-2" />Dashboard</a>
+                    <Link to='/studentViewTask' className="dropdown-item">View Assigned Tasks</Link>
                     <div className="nav-item dropdown">
                         <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i className="fa fa-laptop me-2" />Features</a>
                         <div className="dropdown-menu bg-transparent border-0">

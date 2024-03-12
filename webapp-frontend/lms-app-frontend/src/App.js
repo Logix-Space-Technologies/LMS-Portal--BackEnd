@@ -103,8 +103,13 @@ import CollegeStaffViewNotifications from './components/CollegeStaff/CollegeStaf
 import CollegeStaffViewCollege from './components/CollegeStaff/CollegeStaffViewCollege';
 import AdminStaffSearchSubmittedTask from './components/AdminStaff/AdminStaffSearchSubmittedTask';
 import AdminStaffSearchMaterial from './components/AdminStaff/AdminStaffSearchMaterial';
-
-
+import StudentValidityRenewal from './components/Student/StudentValidityRenewal';
+import TestLogin from './components/Student/TestLogin';
+import Content1 from './components/Student/TestStudent/Content1';
+import Home from './components/Student/TestStudent/Home';
+import TestNavbar from './components/Student/TestStudent/TestNavbar';
+import TestSidebar from './components/Student/TestStudent/TestSidebar';
+import TopHeader from './components/Student/TestStudent/TopHeader';
 
 
 
@@ -248,6 +253,13 @@ function App() {
           <Route path='/studupdatesubtask' element={<StudentUpdateSubmittedTask/>}/>
           <Route path='/studviewtasksessionwise' element={<StudentViewOneTask/>}/>
           <Route path='/studviewCommunityManager' element={<StudentViewCommunityManager/>}/>
+          <Route path='/studValidityRenewal' element={<StudentValidityRenewal/>}/>
+          <Route path='/testlogin' element={<TestLogin/>}/>
+          <Route path='/contentOne' element={<Content1/>}/>
+          <Route path='/home' element={<Home/>}/>
+          <Route path='/testNav' element={<TestNavbar/>}/>
+          <Route path='/testSidebar' element={<TestSidebar/>}/>
+          <Route path='/topHeader' element={<TopHeader/>}/>
 
 
 

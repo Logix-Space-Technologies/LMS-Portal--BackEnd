@@ -1404,6 +1404,24 @@ Student.verifyStudOTP = (studEmail, otp, result) => {
     });
 }
 
+
+Student.searchStudRenewalDetailsByEmail = (studEmail, result) => {
+    db.query("SELECT s.*, c.collegeName, b.batchName, b.batchAmount FROM student s JOIN batches b ON s.batchId = b.id JOIN college c ON s.collegeId = c.id WHERE s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND s.validity < CURRENT_DATE", [studEmail],
+        (verifyErr, verifyRes) => {
+            if (verifyErr) {
+                console.log("Error: ", verifyErr)
+                return result(verifyErr, null)
+            }
+            if (verifyRes.length === 0) {
+                console.log("Student Does Not Exist")
+                return result("Student Does Not Exist", null)
+            } else {
+                result(null, verifyRes[0]);
+            }
+        })
+}
+
+
 Student.renewalReminder = async (id) => {
     try {
         const query = `
@@ -1448,16 +1466,46 @@ Student.renewalReminder = async (id) => {
     }
 };
 
+Student.emailverifyStudOTP = (studEmail, otp, result) => {
+    const query = "SELECT otp, createdAt FROM student_otp WHERE email = ?";
+    db.query(query, [studEmail], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            if (res.length > 0) {
+                const studentotp = res[0].otp;
+                const createdAt = res[0].createdAt;
+                // Check if OTP is expired
+                const expiryDuration = 10 * 60 * 1000; // 10 minute in milliseconds
+                const otpCreatedAt = new Date(createdAt).getTime();
+                const currentTime = new Date().getTime();
+                if (currentTime - otpCreatedAt > expiryDuration) {
+                    return result("OTP expired", null);
+                }
+
+                // If OTP not expired, proceed to compare
+                const isMatch = bcrypt.compareSync(otp, studentotp);
+                if (isMatch) {
+                    db.query("UPDATE student SET emailVerified = 1 WHERE studEmail = ?", [studEmail], (verifyErr, verifyRes)=> {
+                        if (verifyErr) {
+                            return result(err, null);
+                        } else {
+                            return result(null, true);
+                        }
+                    })
+                } else {
+                    return result(null, false);
+                }
+            } else {
+                return result("OTP not found or expired", null);
+            }
+        }
+    });
+}
 
 
 
 
 
-
-
-
-
-  
-  
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 

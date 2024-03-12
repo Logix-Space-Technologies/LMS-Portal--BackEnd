@@ -595,6 +595,7 @@ exports.admstaffforgotpassword = (request, response) => {
     });
 }
 
+//OTP Send To Verify Email
 exports.emailverification = (request, response) => {
     const email = request.body.Email
     // Generate and hash OTP
@@ -623,3 +624,32 @@ function sendEmailVerificationOTPEmail(email, adminstaffName, admstaffotp) {
     mail.sendEmail(email, 'Email Verification!', otpVerificationHTMLContent, otpVerificationTextContent)
     return true; // Placeholder
 }
+
+
+//Verify OTP and Update Email Verified Status
+exports.emailVerificationOtpSendVerify = (req, res) => {
+    // Extract email and OTP from request body
+    const email = req.body.Email;
+    const otp = req.body.otp;
+
+    // Input validation (basic example)
+    if (!email || !otp) {
+        return res.json({ "status": "Email and OTP are required" });
+    }
+
+    // Call the model function to verify the OTP
+    AdminStaff.emailVerificationOtpSendVerify(email, otp, (err, result) => {
+        if (err) {
+            // If there was an error or the OTP is not valid/expired
+            return res.json({ "status": err });
+        } else {
+            if (result) {
+                // If the OTP is verified successfully
+                return res.json({ "status": "OTP verified successfully" });
+            } else {
+                // If the OTP does not match
+                return res.json({ "status": "Invalid OTP" });
+            }
+        }
+    });
+};

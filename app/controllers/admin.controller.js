@@ -3,7 +3,34 @@ const jwt = require("jsonwebtoken")
 const Admin = require("../models/admin.model");
 const Validator = require('../config/data.validate')
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
+const firebaseAdmin = require('firebase-admin')
+const serviceAccount = require('../config/firebase_key/serviceaccount.json');
 
+firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert(serviceAccount)
+});
+
+exports.sendNotifications = (request, response) => {
+    const token = request.body.token;
+    const message = request.body.message;
+    const payload = {
+        notification: {
+            title: "New Notification",
+            body: message
+        }
+    };
+
+    // Send notification to the device
+    firebaseAdmin.messaging().sendToDevice(token, payload)
+        .then((sendResponse) => {
+            console.log('Notification sent successfully:', sendResponse);
+            return response.status(200).send({ status: "success", data: 'Notification sent successfully' });
+        })
+        .catch((error) => {
+            console.error('Error sending notification:', error);
+            return response.status(500).send({ status: "failed", data: 'Failed to send notification', error: error });
+        });
+};
 
 
 // const saltRounds = 10;

@@ -592,4 +592,42 @@ CollegeStaff.searchcollegestaffbyemail = (searchKey, result) => {
 }
 
 
+CollegeStaff.emailVerificationClgStaffOtpVerify = (email, otp, result) => {
+    const query = "SELECT otp, createdAt FROM collegestaff_otp WHERE email = ?";
+    db.query(query, [email], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            if (res.length > 0) {
+                const clgstaffotp = res[0].otp;
+                const createdAt = res[0].createdAt;
+                // Check if OTP is expired
+                const expiryDuration = 10 * 60 * 1000; // 10 minute in milliseconds
+                const otpCreatedAt = new Date(createdAt).getTime();
+                const currentTime = new Date().getTime();
+                if (currentTime - otpCreatedAt > expiryDuration) {
+                    return result("OTP expired", null);
+                }
+
+                // If OTP not expired, proceed to compare
+                const isMatch = bcrypt.compareSync(otp, clgstaffotp);
+                if (isMatch) {
+                    db.query("UPDATE college_staff SET emailVerified = 1 WHERE email = ?", [email], (verifyErr, verifyRes)=> {
+                        if (verifyErr) {
+                            return result(err, null);
+                        } else {
+                            return result(null, true);
+                        }
+                    })
+                } else {
+                    return result(null, false);
+                }
+            } else {
+                return result("OTP not found or expired", null);
+            }
+        }
+    });
+}
+
+
 module.exports = CollegeStaff

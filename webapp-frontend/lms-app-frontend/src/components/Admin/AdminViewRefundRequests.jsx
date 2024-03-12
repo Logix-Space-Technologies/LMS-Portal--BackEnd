@@ -197,7 +197,7 @@ const AdminViewRefundRequests = () => {
                   alert(response.data.data.approvedAmnt)
                 } else {
                   if (response.data.status === "Unauthorized User!!") {
-                    navigate("/")
+                    {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
                     sessionStorage.clear()
                   } else {
                     alert(response.data.status)
