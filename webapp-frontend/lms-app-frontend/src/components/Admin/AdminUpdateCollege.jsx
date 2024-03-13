@@ -186,7 +186,7 @@ const AdminUpdateCollege = () => {
         if (!data.collegeMobileNumber.trim()) {
             errors.collegeMobileNumber = 'Mobile Number is required';
         }
-        if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+        if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
             errors.file = "File must be in jpg/jpeg/png/webp/heif format";
         }
         return errors;
