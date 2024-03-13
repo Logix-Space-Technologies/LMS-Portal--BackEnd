@@ -108,7 +108,7 @@ const AdminUpdateCollegeStaff = () => {
                         })
                         alert("Profile Updated Successfully")
                         setFile(null)
-                        navigate("/adminviewallclgstaff")
+                        navigate(-1)
                     } else {
                         if (response.data.status === "Validation failed" && response.data.data.name) {
                             alert(response.data.data.name)

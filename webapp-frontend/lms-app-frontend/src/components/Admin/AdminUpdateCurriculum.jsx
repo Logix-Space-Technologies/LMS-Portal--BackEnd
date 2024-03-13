@@ -82,7 +82,7 @@ const AdminUpdateCurriculum = () => {
                         })
                         alert("Curriculum Updated Successfully")
                         setFile(null)
-                        navigate("/adminviewallcurriculum")
+                        navigate(-1)
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.curriculumTitle) {
                             alert(Response.data.data.curriculumTitle)

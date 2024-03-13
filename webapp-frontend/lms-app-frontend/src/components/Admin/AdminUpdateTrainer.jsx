@@ -92,7 +92,7 @@ const AdminUpdateTrainer = () => {
                             "profilePicture": ""
                         })
                         alert("Profile Updated Successfully")
-                        navigate("/adminviewalltrainers")
+                        navigate(-1)
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.trainerName) {
                             alert(Response.data.data.trainerName)
