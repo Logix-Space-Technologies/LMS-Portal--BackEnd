@@ -340,10 +340,6 @@ exports.updateMaterial = (request, response) => {
                     if (!Validator.isValidAddress(materialDesc).isValid) {
                         validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
                     }
-                    
-                    if (!Validator.isValidWebsite(uploadFile).isValid) {
-                        validationErrors.website = Validator.isValidWebsite(uploadFile).message;
-                    }
 
                     // If validation fails
                     if (Object.keys(validationErrors).length > 0) {

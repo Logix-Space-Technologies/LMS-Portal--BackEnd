@@ -63,15 +63,27 @@ const AdminUpdateCurriculum = () => {
                     "key": currentKey
                 }
             }
-            let data = {
-                "id": sessionStorage.getItem("curriculumId"),
-                "curriculumTitle": updateField.curriculumTitle,
-                "curriculumDesc": updateField.curriculumDesc,
-                "updatedBy": sessionStorage.getItem("adminId"),
-                "curriculumFileLink": file
+            let data = {}
+            if (file) {
+                data = {
+                    "id": sessionStorage.getItem("curriculumId"),
+                    "curriculumTitle": updateField.curriculumTitle,
+                    "curriculumDesc": updateField.curriculumDesc,
+                    "updatedBy": sessionStorage.getItem("adminId"),
+                    "curriculumFileLink": file
+                }
+            } else {
+                data = {
+                    "id": sessionStorage.getItem("curriculumId"),
+                    "curriculumTitle": updateField.curriculumTitle,
+                    "curriculumDesc": updateField.curriculumDesc,
+                    "updatedBy": sessionStorage.getItem("adminId"),
+
+                }
             }
             axios.post(apiUrl2, data, axiosConfig2).then(
                 (Response) => {
+                    console.log(Response)
                     if (Response.data.status === "success") {
                         setUpdateField({
                             "id": sessionStorage.getItem("curriculumId"),
@@ -82,7 +94,7 @@ const AdminUpdateCurriculum = () => {
                         })
                         alert("Curriculum Updated Successfully")
                         setFile(null)
-                        navigate("/adminviewallcurriculum")
+                        navigate(-1)
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.curriculumTitle) {
                             alert(Response.data.data.curriculumTitle)
@@ -137,13 +149,12 @@ const AdminUpdateCurriculum = () => {
 
         if (!data.curriculumTitle.trim()) {
             errors.curriculumTitle = 'Curriculum Title Name is required';
-        }
-        if (!data.curriculumDesc.trim()) {
+        } else if (!data.curriculumDesc.trim()) {
             errors.curriculumDesc = 'Curriculum Description is required';
-        }
-        if (fileType !== "pdf" && fileType !== "docx") {
+        } else if (file && fileType !== "docx" && fileType !== "pdf") {
             errors.file = "File must be in PDF or DOCX format";
         }
+
         return errors;
     };
 

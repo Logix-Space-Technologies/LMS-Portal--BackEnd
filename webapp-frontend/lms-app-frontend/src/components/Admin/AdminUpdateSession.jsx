@@ -91,7 +91,7 @@ const AdminUpdateSession = () => {
           "trainerId": '',
         });
         alert('Session Updated Successfully');
-        navigate('/AdminViewAllSession');
+        navigate(-1);
       } else {
         if (Response.data.status === "Validation failed" && Response.data.data.sessionName) {
           alert(Response.data.data.sessionName)

@@ -68,7 +68,7 @@ const AdminUpdateBatch = () => {
                         "batchAmount": ""
                     })
                     alert("Batch Updated!")
-                    navigate("/adminviewallbatches")
+                    navigate(-1)
                 } else {
                     if (response.data.status === "Validation Failed" && response.data.data.batchName) {
                         alert(response.data.data.batchName)

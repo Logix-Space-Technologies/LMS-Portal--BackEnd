@@ -225,81 +225,81 @@ exports.updateCurriculum = (request, response) => {
             return response.status(500).json({ "status": error.message });
         }
 
-        if (!request.file) {
-            return response.status(400).json({ "status": "No file uploaded" });
-        }
-
         // File handling
         const file = request.file;
-        const fileStream = fs.createReadStream(file.path);
+        let curriculumFileLink = null;
 
-        const uploadParams = {
-            Bucket: process.env.S3_BUCKET,
-            Key: `uploads/${file.filename}`,
-            Body: fileStream
-        };
+        if (file) {
+            const fileStream = fs.createReadStream(file.path);
 
-        try {
-            const data = await s3Client.send(new PutObjectCommand(uploadParams));
-            const fileUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+            const uploadParams = {
+                Bucket: process.env.S3_BUCKET,
+                Key: `uploads/${file.filename}`,
+                Body: fileStream
+            };
 
-            // Remove the file from local storage
-            fs.unlinkSync(file.path);
+            try {
+                await s3Client.send(new PutObjectCommand(uploadParams));
+                curriculumFileLink = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
 
-            const curriculumToken = request.headers.token;
-            const key = request.headers.key;
-            const curriculumFileLink = fileUrl
-            jwt.verify(curriculumToken, key, (err, decoded) => {
-                if (decoded) {
-                    const validationErrors = {};
-
-                    // Validate curriculumTitle
-                    if (Validator.isEmpty(request.body.curriculumTitle).isValid) {
-                        validationErrors.curriculumTitle = Validator.isEmpty(request.body.curriculumTitle).message;
-                    }
-
-                    // Validate curriculumDesc
-                    if (Validator.isEmpty(request.body.curriculumDesc).isValid) {
-                        validationErrors.curriculumDesc = Validator.isEmpty(request.body.curriculumDesc).message;
-                    }
-
-                    // Validate updatedBy
-                    if (Validator.isEmpty(request.body.updatedBy).isValid) {
-                        validationErrors.updatedBy = Validator.isEmpty(request.body.updatedBy).message;
-                    }
-
-                    // If validation fails
-                    if (Object.keys(validationErrors).length > 0) {
-                        return response.json({ "status": "Validation failed", "data": validationErrors });
-                    }
-
-                    // Create a new Curriculum instance
-                    const updCurriculum = new Curriculum({
-                        'id': request.body.id,
-                        'curriculumTitle': request.body.curriculumTitle,
-                        'curriculumDesc': request.body.curriculumDesc,
-                        'updatedBy': request.body.updatedBy,
-                        'curriculumFileLink': curriculumFileLink
-                    });
-
-                    // Call the curriculumUpdate method
-                    Curriculum.curriculumUpdate(updCurriculum, (err, data) => {
-                        if (err) {
-                            return response.json({ "status": err });
-                        } else {
-                            return response.json({ "status": "success", "data": data });
-                        }
-                    });
-
-                } else {
-                    return response.json({ "status": "Unauthorized User!!" });
-                }
-            });
-
-        } catch (err) {
-            fs.unlinkSync(file.path);
-            response.status(500).json({ "status": err.message });
+                // Remove the file from local storage
+                fs.unlinkSync(file.path);
+            } catch (err) {
+                fs.unlinkSync(file.path);
+                return response.status(500).json({ "status": err.message });
+            }
         }
+
+        const curriculumToken = request.headers.token;
+        const key = request.headers.key;
+
+        jwt.verify(curriculumToken, key, (err, decoded) => {
+            if (decoded) {
+                const validationErrors = {};
+
+                // Validate curriculumTitle
+                if (Validator.isEmpty(request.body.curriculumTitle).isValid) {
+                    validationErrors.curriculumTitle = Validator.isEmpty(request.body.curriculumTitle).message;
+                }
+
+                // Validate curriculumDesc
+                if (Validator.isEmpty(request.body.curriculumDesc).isValid) {
+                    validationErrors.curriculumDesc = Validator.isEmpty(request.body.curriculumDesc).message;
+                }
+
+                // Validate updatedBy
+                if (Validator.isEmpty(request.body.updatedBy).isValid) {
+                    validationErrors.updatedBy = Validator.isEmpty(request.body.updatedBy).message;
+                }
+
+                // If validation fails
+                if (Object.keys(validationErrors).length > 0) {
+                    return response.json({ "status": "Validation failed", "data": validationErrors });
+                }
+
+                // Create a new Curriculum instance
+                const updCurriculum = new Curriculum({
+                    'id': request.body.id,
+                    'curriculumTitle': request.body.curriculumTitle,
+                    'curriculumDesc': request.body.curriculumDesc,
+                    'updatedBy': request.body.updatedBy,
+                    'curriculumFileLink': curriculumFileLink
+                });
+
+                // Call the curriculumUpdate method
+                Curriculum.updateCurriculum(updCurriculum, (err, data) => {
+                    if (err) {
+                        return response.json({ "status": err });
+                    } else {
+                        return response.json({ "status": "success", "data": data });
+                    }
+                });
+
+            } else {
+                return response.json({ "status": "Unauthorized User!!" });
+            }
+        });
+
     });
 };
 
