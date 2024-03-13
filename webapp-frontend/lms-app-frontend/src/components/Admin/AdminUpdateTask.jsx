@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from './Navbar';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminUpdateTask = () => {
     const [taskData, setTaskData] = useState([]);
+    const [key, setKey] = useState('');
     const [errors, setErrors] = useState({});
     const [file, setFile] = useState("")
     const [fileType, setFileType] = useState("");
@@ -42,6 +45,13 @@ const AdminUpdateTask = () => {
     }
 
     const readNewValue = (e) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         e.preventDefault();
         const validationErrors = validateForm(updateField);
         if (Object.keys(validationErrors).length === 0) {
@@ -49,8 +59,8 @@ const AdminUpdateTask = () => {
                 headers: {
                     'content-type': 'multipart/form-data',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("admtoken"),
-                    "key": sessionStorage.getItem("admkey")
+                    "token": token,
+                    "key": currentKey
                 }
             }
             let data = {}
@@ -176,13 +186,20 @@ const AdminUpdateTask = () => {
     }
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "id": sessionStorage.getItem('taskId') };
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey"),
+                "token": token,
+                "key": currentKey,
             }
         }
         axios.post(apiURL, data, axiosConfig).then((response) => {
@@ -204,8 +221,14 @@ const AdminUpdateTask = () => {
         getData();
     }, []);
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
     return (
         <div className="container">
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="row">
                 <div className="col-lg-12 mb-4 mb-sm-5">
                     <br></br>

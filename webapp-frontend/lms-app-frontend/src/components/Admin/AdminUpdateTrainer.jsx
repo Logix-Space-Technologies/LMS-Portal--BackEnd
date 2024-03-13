@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from './Navbar';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminUpdateTrainer = () => {
 
@@ -190,6 +192,7 @@ const AdminUpdateTrainer = () => {
 
     return (
         <div className="container">
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="row">
                 <div className="col-lg-12 mb-4 mb-sm-5">
                     <br></br>

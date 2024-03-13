@@ -285,33 +285,103 @@ exports.collegeStaffUpdate = (req, res) => {
     if (error) {
       return res.status(500).json({ "status": error.message });
     }
-    if (!req.file) {
-      return res.status(400).json({ "status": "No file uploaded" });
-    }
-    // File handling
-    const file = req.file;
-    const fileStream = fs.createReadStream(file.path);
+    if (req.file) {
 
-    const uploadParams = {
-      Bucket: process.env.S3_BUCKET,
-      Key: `uploads/${file.filename}`,
-      Body: fileStream
-    };
-    try {
-      const data = await s3Client.send(new PutObjectCommand(uploadParams));
-      const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+      // File handling
+      const file = req.file;
+      const fileStream = fs.createReadStream(file.path);
 
-      // Remove the file from local storage
-      fs.unlinkSync(file.path);
-      const Updatetoken = req.headers.token;
-      console.log(Updatetoken)
-      const validationErrors = {};
-      if (!req.file) {
-        return res.json({ "status": "Image is required." });
+      const uploadParams = {
+        Bucket: process.env.S3_BUCKET,
+        Key: `uploads/${file.filename}`,
+        Body: fileStream
+      };
+      try {
+        const data = await s3Client.send(new PutObjectCommand(uploadParams));
+        const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+
+        // Remove the file from local storage
+        fs.unlinkSync(file.path);
+        const Updatetoken = req.headers.token;
+
+        key = req.headers.key
+        jwt.verify(Updatetoken, key, (error, decoded) => {
+          if (decoded) {
+
+            const validationErrors = {};
+
+            if (!req.body.collegeStaffName) {
+              validationErrors.name = "Name is required.";
+            }
+            if (!Validator.isValidName(req.body.collegeStaffName).isValid) {
+              validationErrors.name = Validator.isValidName(req.body.collegeStaffName).message;
+            }
+            if (!req.body.clgStaffAddress) {
+              validationErrors.address = "Address is required.";
+            }
+            if (!Validator.isValidAddress(req.body.clgStaffAddress).isValid) {
+              validationErrors.address = Validator.isValidAddress(req.body.clgStaffAddress).message;
+            }
+            if (!req.body.phNo) {
+              validationErrors.phNo = "Mobile number is required.";
+            }
+            if (!Validator.isValidMobileNumber(req.body.phNo).isValid) {
+              validationErrors.phNo = Validator.isValidMobileNumber(req.body.phNo).message;
+            }
+            if (!Validator.isValidImageWith1mbConstratint(req.file).isValid) {
+              validationErrors.image = Validator.isValidImageWith1mbConstratint(req.file).message;
+            }
+            if (!req.body.department) {
+              validationErrors.department = "Department is required.";
+            }
+            if (!Validator.isValidName(req.body.department).isValid) {
+              validationErrors.department = Validator.isValidName(req.body.department).message;
+            }
+            if (!req.body.aadharNo) {
+              validationErrors.aadharnumber = "Aadhar number is required.";
+            }
+            if (!Validator.isValidAadharNumber(req.body.aadharNo).isValid) {
+              validationErrors.aadharnumber = Validator.isValidAadharNumber(req.body.aadharNo).message;
+            }
+            if (Object.keys(validationErrors).length > 0) {
+              return res.json({ "status": "Validation failed", "data": validationErrors });
+            }
+
+            const profilePic = req.file ? req.file.filename : null;
+            const clgstaff = new CollegeStaff({
+              id: req.body.id,
+              collegeId: req.body.collegeId,
+              collegeStaffName: req.body.collegeStaffName,
+              phNo: req.body.phNo,
+              clgStaffAddress: req.body.clgStaffAddress,
+              profilePic: imageUrl,
+              department: req.body.department,
+              aadharNo: req.body.aadharNo
+            });
+
+            CollegeStaff.updateCollegeStaff(clgstaff, (err, data) => {
+              if (err) {
+                return res.json({ "status": err });
+              }
+              return res.json({ "status": "success", "data": data });
+            });
+          } else {
+            return res.json({ "status": "Unauthorized User!!" });
+          }
+        });
+
       }
+      catch (err) {
+        fs.unlinkSync(file.path);
+        res.status(500).json({ "status": err.message });
+      }
+    } else {
+      const Updatetoken = req.headers.token;
       key = req.headers.key
       jwt.verify(Updatetoken, key, (error, decoded) => {
         if (decoded) {
+
+          let validationErrors = {}
           if (!req.body.collegeStaffName) {
             validationErrors.name = "Name is required.";
           }
@@ -330,9 +400,6 @@ exports.collegeStaffUpdate = (req, res) => {
           if (!Validator.isValidMobileNumber(req.body.phNo).isValid) {
             validationErrors.phNo = Validator.isValidMobileNumber(req.body.phNo).message;
           }
-          if (!req.file || !Validator.isValidImageWith1mbConstratint(req.file).isValid) {
-            validationErrors.image = Validator.isValidImageWith1mbConstratint(req.file).message;
-          }
           if (!req.body.department) {
             validationErrors.department = "Department is required.";
           }
@@ -349,14 +416,12 @@ exports.collegeStaffUpdate = (req, res) => {
             return res.json({ "status": "Validation failed", "data": validationErrors });
           }
 
-          const profilePic = req.file ? req.file.filename : null;
           const clgstaff = new CollegeStaff({
             id: req.body.id,
             collegeId: req.body.collegeId,
             collegeStaffName: req.body.collegeStaffName,
             phNo: req.body.phNo,
             clgStaffAddress: req.body.clgStaffAddress,
-            profilePic: imageUrl,
             department: req.body.department,
             aadharNo: req.body.aadharNo
           });
@@ -371,11 +436,6 @@ exports.collegeStaffUpdate = (req, res) => {
           return res.json({ "status": "Unauthorized User!!" });
         }
       });
-
-    }
-    catch (err) {
-      fs.unlinkSync(file.path);
-      res.status(500).json({ "status": err.message });
     }
   });
 };

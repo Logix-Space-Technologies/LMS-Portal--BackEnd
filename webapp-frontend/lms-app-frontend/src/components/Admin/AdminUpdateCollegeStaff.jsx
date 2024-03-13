@@ -2,6 +2,8 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
+import Navbar from './Navbar'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminUpdateCollegeStaff = () => {
 
@@ -64,17 +66,33 @@ const AdminUpdateCollegeStaff = () => {
                     "key": currentKey
                 }
             }
-            let data = {
-                "id": sessionStorage.getItem("clgStaffId"),
-                "collegeId": updateField.collegeId,
-                "collegeStaffName": updateField.collegeStaffName,
-                "email": updateField.email,
-                "phNo": updateField.phNo,
-                "aadharNo": updateField.aadharNo,
-                "clgStaffAddress": updateField.clgStaffAddress,
-                "profilePic": file,
-                "department": updateField.department
+            let data = {}
+            if (file) {
+                 data = {
+                    "id": sessionStorage.getItem("clgStaffId"),
+                    "collegeId": updateField.collegeId,
+                    "collegeStaffName": updateField.collegeStaffName,
+                    "email": updateField.email,
+                    "phNo": updateField.phNo,
+                    "aadharNo": updateField.aadharNo,
+                    "clgStaffAddress": updateField.clgStaffAddress,
+                    "profilePic": file,
+                    "department": updateField.department
+                }
+            } else {
+                 data = {
+                    "id": sessionStorage.getItem("clgStaffId"),
+                    "collegeId": updateField.collegeId,
+                    "collegeStaffName": updateField.collegeStaffName,
+                    "email": updateField.email,
+                    "phNo": updateField.phNo,
+                    "aadharNo": updateField.aadharNo,
+                    "clgStaffAddress": updateField.clgStaffAddress,
+                    "profilePic": "",
+                    "department": updateField.department
+                }
             }
+            
             axios.post(apiUrl, data, axiosConfig).then(
                 (response) => {
                     if (response.data.status === "success") {
@@ -85,8 +103,7 @@ const AdminUpdateCollegeStaff = () => {
                             "email": "",
                             "phNo": "",
                             "aadharNo": "",
-                            "clgStaffAddress": "",
-                            "profilePic": "",
+                            "clgStaffAddress": "",           
                             "department": ""
                         })
                         alert("Profile Updated Successfully")
@@ -175,7 +192,7 @@ const AdminUpdateCollegeStaff = () => {
         if (!data.department.trim()) {
             errors.department = 'Department is required';
         }
-        if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+        if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
             errors.file = "File must be in jpg/jpeg/png/webp/heif format";
         }
         return errors;
@@ -217,6 +234,7 @@ const AdminUpdateCollegeStaff = () => {
 
     return (
         <div className="container">
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="row">
                 <div className="col-lg-12 mb-4 mb-sm-5">
                     <br></br>
@@ -244,32 +262,32 @@ const AdminUpdateCollegeStaff = () => {
                                             {errors.collegeStaffName && <span style={{ color: 'red' }} className="error">{errors.collegeStaffName}</span>}
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">email</label>
+                                            <label htmlFor="" className="form-label">Email</label>
                                             <input onChange={updateHandler} type="text" className="form-control" name="email" value={updateField.email} disabled />
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">phNo</label>
+                                            <label htmlFor="" className="form-label">Phone No.</label>
                                             <input onChange={updateHandler} type="text" className="form-control" name="phNo" value={updateField.phNo} />
                                             {errors.phNo && <span style={{ color: 'red' }} className="error">{errors.phNo}</span>}
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">aadharNo</label>
+                                            <label htmlFor="" className="form-label">Aadhar No.</label>
                                             <input onChange={updateHandler} type="text" className="form-control" name="aadharNo" value={updateField.aadharNo} />
                                             {errors.aadharNo && <span style={{ color: 'red' }} className="error">{errors.aadharNo}</span>}
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">department</label>
+                                            <label htmlFor="" className="form-label">Department</label>
                                             <input onChange={updateHandler} type="text" className="form-control" name="department" value={updateField.department} />
                                             {errors.department && <span style={{ color: 'red' }} className="error">{errors.department}</span>}
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">clgStaffAddress</label>
+                                            <label htmlFor="" className="form-label">Address</label>
                                             <input onChange={updateHandler} type="text" className="form-control" name="clgStaffAddress" value={updateField.clgStaffAddress} />
                                             {errors.clgStaffAddress && <span style={{ color: 'red' }} className="error">{errors.clgStaffAddress}</span>}
                                         </div>
                                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                             <label for="studProfilePic" className="form-label">
-                                                profilePic  <span className="text-danger">*</span>
+                                                Profile Picture  <span className="text-danger">*</span>
                                             </label>
                                             <input type="file" onChange={fileUploadHandler} className="form-control" name="profilePic" id="profilePic" accept="image/*" />
                                             {errors.file && <span style={{ color: 'red' }} className="error">{errors.file}</span>}
