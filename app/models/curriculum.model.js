@@ -119,11 +119,11 @@ Curriculum.curriculumDelete = (id, result) => {
 };
 
 
-Curriculum.curriculumUpdate = (updCurriculum, result) => {
+Curriculum.updateCurriculum = (updCurriculum, result) => {
     db.query("SELECT * FROM curriculum WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [updCurriculum.id], (err, curRes) => {
         if (err) {
             console.error("Error checking existing curriculum: ", err);
-            result("Error checking existing curriculum", null);
+            result(err, null);
             return;
         }
 
@@ -135,7 +135,7 @@ Curriculum.curriculumUpdate = (updCurriculum, result) => {
         db.query("SELECT * FROM curriculum WHERE curriculumTitle=? AND batchId=? AND deleteStatus = 0 AND isActive = 1", [updCurriculum.curriculumTitle, updCurriculum.id], (err, res) => {
             if (err) {
                 console.error("Error checking existing curriculum: ", err);
-                result("Error checking existing curriculum", null);
+                result(err, null);
                 return;
             }
 
@@ -144,20 +144,43 @@ Curriculum.curriculumUpdate = (updCurriculum, result) => {
                 result("Curriculum Title already exists.", null);
                 return;
             }
-            db.query("UPDATE `curriculum` SET `curriculumTitle`= ?, `curriculumDesc`= ?, `updatedDate`= CURRENT_DATE, `updatedBy`= ?, `curriculumFileLink`= ?, `updateStatus`= 1 WHERE id = ?",
-                [updCurriculum.curriculumTitle, updCurriculum.curriculumDesc, updCurriculum.updatedBy, updCurriculum.curriculumFileLink, updCurriculum.id], (err, res) => {
-                    if (err) {
-                        console.error("Error updating curriculum: ", err);
-                        result("Error updating curriculum", null);
-                        return;
-                    }
 
-                    console.log("Updated Curriculum Details : ", { id: updCurriculum.id, ...updCurriculum });
-                    result(null, { id: updCurriculum.id, ...updCurriculum });
-                });
+            let updateQuery;
+            let updateValues;
+
+            if (updCurriculum.curriculumFileLink) {
+                updateQuery = "UPDATE `curriculum` SET `curriculumTitle`= ?, `curriculumDesc`= ?, `updatedDate`= CURRENT_DATE, `updatedBy`= ?, `curriculumFileLink`= ?, `updateStatus`= 1 WHERE id = ?";
+                updateValues = [
+                    updCurriculum.curriculumTitle,
+                    updCurriculum.curriculumDesc,
+                    updCurriculum.updatedBy,
+                    updCurriculum.curriculumFileLink,
+                    updCurriculum.id
+                ];
+            } else {
+                updateQuery = "UPDATE `curriculum` SET `curriculumTitle`= ?, `curriculumDesc`= ?, `updatedDate`= CURRENT_DATE, `updatedBy`= ?, `updateStatus`= 1 WHERE id = ?";
+                updateValues = [
+                    updCurriculum.curriculumTitle,
+                    updCurriculum.curriculumDesc,
+                    updCurriculum.updatedBy,
+                    updCurriculum.id
+                ];
+            }
+
+            db.query(updateQuery, updateValues, (err, res) => {
+                if (err) {
+                    console.error("Error updating curriculum: ", err);
+                    result(err, null);
+                    return;
+                }
+
+                console.log("Updated Curriculum Details : ", { id: updCurriculum.id, ...updCurriculum });
+                result(null, { id: updCurriculum.id, ...updCurriculum });
+            });
         });
     });
 };
+
 
 
 Curriculum.viewOneCurriculum  = (id, result) => {
