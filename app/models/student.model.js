@@ -1276,8 +1276,8 @@ Student.PaymentRenewal = (newStudent, result) => {
         Payment.updatePayment = (newPayment, result) => {
             newPayment.studId = newStudent.id;
             db.query(
-                "UPDATE payment SET rpPaymentId = ?, rpOrderId = ?, rpAmount = ?, paymentDate = CURRENT_DATE() WHERE studId = ?",
-                [newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount, newPayment.studId],
+                "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
+                [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
                 (err, paymentRes) => {
                     if (err) {
                         console.error("Error during payment update: ", err);
@@ -1442,7 +1442,7 @@ Student.renewalReminder = async (id) => {
                 student.id = ?`;
 
         const results = await db.promise().query(query, [id]);
-        
+
         if (!results || results[0].length === 0) {
             const error = new Error('Student not found or does not meet criteria for renewal reminder. Student ID: ' + id);
             console.error("Error fetching student details:", error);
@@ -1486,7 +1486,7 @@ Student.emailverifyStudOTP = (studEmail, otp, result) => {
                 // If OTP not expired, proceed to compare
                 const isMatch = bcrypt.compareSync(otp, studentotp);
                 if (isMatch) {
-                    db.query("UPDATE student SET emailVerified = 1 WHERE studEmail = ?", [studEmail], (verifyErr, verifyRes)=> {
+                    db.query("UPDATE student SET emailVerified = 1 WHERE studEmail = ?", [studEmail], (verifyErr, verifyRes) => {
                         if (verifyErr) {
                             return result(err, null);
                         } else {
