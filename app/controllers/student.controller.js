@@ -1602,6 +1602,7 @@ function sendOTPVerifyEmail(email, studName, otp) {
 exports.emailverifyStudOTP = (req, res) => {
     // Extract email and OTP from request body
     const email = req.body.studEmail;
+    const password = req.body.password;
     const otp = req.body.otp;
 
     // Input validation (basic example)
@@ -1610,14 +1611,14 @@ exports.emailverifyStudOTP = (req, res) => {
     }
 
     // Call the model function to verify the OTP
-    Student.emailverifyStudOTP(email, otp, (err, result) => {
+    Student.emailverifyStudOTP(email, password, otp, (err, result) => {
         if (err) {
             // If there was an error or the OTP is not valid/expired
             return res.json({ "status": err });
         } else {
             if (result) {
                 // If the OTP is verified successfully
-                return res.json({ "status": "OTP verified successfully" });
+                return res.json({ "status": "Password Changed Successfully!!" });
             } else {
                 // If the OTP does not match
                 return res.json({ "status": "Invalid OTP" });

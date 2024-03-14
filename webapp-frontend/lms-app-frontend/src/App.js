@@ -110,6 +110,7 @@ import Home from './components/Student/TestStudent/Home';
 import TestNavbar from './components/Student/TestStudent/TestNavbar';
 import TestSidebar from './components/Student/TestStudent/TestSidebar';
 import TopHeader from './components/Student/TestStudent/TopHeader';
+import StudentEmailVerification from './components/Student/StudentEmailVerification';
 
 
 
@@ -260,6 +261,7 @@ function App() {
           <Route path='/testNav' element={<TestNavbar/>}/>
           <Route path='/testSidebar' element={<TestSidebar/>}/>
           <Route path='/topHeader' element={<TopHeader/>}/>
+          <Route path='/studEmailVerification' element={<StudentEmailVerification/>}/>
 
 
 
