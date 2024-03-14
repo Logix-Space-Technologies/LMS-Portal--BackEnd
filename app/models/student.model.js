@@ -70,7 +70,22 @@ const Session = function (session) {
 
 let payStudId;
 
-
+function addOneYear(dateString) {
+    // Parse the input date string
+    const date = new Date(dateString);
+    
+    // Add one year. This takes into account leap years automatically.
+    date.setFullYear(date.getFullYear() + 1);
+    
+    // Format the date back to a string in YYYY-MM-DD format
+    const year = date.getFullYear();
+    // getMonth returns 0-11, add 1 to get 1-12 as month and pad with 0 if needed
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    // getDate returns 1-31, pad with 0 if needed
+    const day = date.getDate().toString().padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+}
 
 Student.create = (newStudent, result) => {
     const currentDate = new Date();
@@ -1257,40 +1272,59 @@ Student.viewCommunityMangers = (batchId, result) => {
 //Student Validity Renewal
 
 Student.PaymentRenewal = (newStudent, result) => {
-    // Calculate the new validity date
-    const currentDate = new Date();
-    currentDate.setFullYear(currentDate.getFullYear() + 1);
-    const formattedDate = currentDate.toISOString().slice(0, 10); // Format as "YYYY-MM-DD"
-
-    // Update the student's validity
-    newStudent.validity = formattedDate;
-    db.query("UPDATE student SET validity = ? WHERE studEmail = ? AND id = ?", [newStudent.validity, newStudent.studEmail, newStudent.id], (err, res) => {
+    db.query("SELECT `validity` FROM `student` WHERE `studEmail` = ? AND `id` = ?", [newStudent.studEmail, newStudent.id], (err, res) => {
         if (err) {
-            console.error("Error while updating student: ", err);
+            console.error("Error while selecting student: ", err);
             result(err, null);
             return;
         }
+        // Your original date in UTC
+        const originalDate = new Date(res[0].validity);
 
-        console.log("Student Details Updated", { id: newStudent.id, ...newStudent });
+        // Convert to the Asia/Kolkata timezone and extract the date part
+        const dateInKolkata = new Intl.DateTimeFormat('en-IN', {
+            timeZone: 'Asia/Kolkata',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        }).format(originalDate);
 
-        Payment.updatePayment = (newPayment, result) => {
-            newPayment.studId = newStudent.id;
-            db.query(
-                "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
-                [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
-                (err, paymentRes) => {
-                    if (err) {
-                        console.error("Error during payment update: ", err);
-                        return result(err, null);
+        // Split the resulting string to rearrange it into YYYY-MM-DD format
+        const [day, month, year] = dateInKolkata.split('/');
+        const formattedDate = `${year}-${month}-${day}`;
+
+        // Update the student's validity
+        newStudent.validity = addOneYear(formattedDate);
+
+        db.query("UPDATE student SET validity = ?, updatedDate = CURRENT_DATE, updateStatus = 1 WHERE studEmail = ? AND id = ?", [newStudent.validity, newStudent.studEmail, newStudent.id], (err, res) => {
+            if (err) {
+                console.error("Error while updating student: ", err);
+                result(err, null);
+                return;
+            }
+
+            console.log("Student Details Updated", { id: newStudent.id, ...newStudent });
+
+            Payment.updatePayment = (newPayment, result) => {
+                newPayment.studId = newStudent.id;
+                db.query(
+                    "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
+                    [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
+                    (err, paymentRes) => {
+                        if (err) {
+                            console.error("Error during payment update: ", err);
+                            return result(err, null);
+                        }
+
+                        console.log("Payment Updated", { ...newPayment });
+                        result(null, { ...newPayment });
                     }
+                );
+            };
+            result(null, { id: newStudent.id, ...newStudent });
+        });
 
-                    console.log("Payment Updated", { ...newPayment });
-                    result(null, { ...newPayment });
-                }
-            );
-        };
-        result(null, { id: newStudent.id, ...newStudent });
-    });
+    })
 }
 
 
