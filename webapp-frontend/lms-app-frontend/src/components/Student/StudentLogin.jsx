@@ -13,6 +13,7 @@ const StudentLogin = () => {
     const [errors, setErrors] = useState({});
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studentLogin"
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/studemailverifyotpsend"
     const navigate = useNavigate()
 
     const inputHandler = (event) => {
@@ -27,7 +28,7 @@ const StudentLogin = () => {
         }
         if (!inputField.password.trim()) {
             newErrors.password = "Password is required!";
-        } 
+        }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
@@ -62,9 +63,25 @@ const StudentLogin = () => {
                     sessionStorage.setItem("studemail", studemail);
                     sessionStorage.setItem("studBatchId", batchId);
                     sessionStorage.setItem("studLoginToken", studtoken);
-                    sessionStorage.setItem("refundreqstatus",refundreqstatus);
+                    sessionStorage.setItem("refundreqstatus", refundreqstatus);
 
                     navigate("/studViewRefundReq")
+                } else if (Response.data.status === "Email Not Verified" && inputField.password === "0") {
+                    let studemail = inputField.studEmail
+                    sessionStorage.setItem("studemail", studemail);
+                    let data = { "studEmail": studemail }
+                    axios.post(apiUrl2, data).then(
+                        (Response) => {
+                            if (Response.data.status === "OTP sent to email.") {
+                                alert("Please Change Your Password.\nOTP Send To Email For Verification!!")
+                                navigate("/studEmailVerification")
+                            } else if (Response.data.status.sqlMessage) {
+                                alert(Response.data.status.sqlMessage)
+                            } else {
+                                alert(Response.data.status)
+                            }
+                        }
+                    )
                 } else if (Response.data.status === "Account expired. Please Renew Your Plan") {
                     alert("Account expired. Please Renew Your Plan")
                     let studemail = inputField.studEmail

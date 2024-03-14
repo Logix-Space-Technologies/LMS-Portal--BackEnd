@@ -70,7 +70,22 @@ const Session = function (session) {
 
 let payStudId;
 
+function addOneYear(dateString) {
+    // Parse the input date string
+    const date = new Date(dateString);
 
+    // Add one year. This takes into account leap years automatically.
+    date.setFullYear(date.getFullYear() + 1);
+
+    // Format the date back to a string in YYYY-MM-DD format
+    const year = date.getFullYear();
+    // getMonth returns 0-11, add 1 to get 1-12 as month and pad with 0 if needed
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    // getDate returns 1-31, pad with 0 if needed
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
 
 Student.create = (newStudent, result) => {
     const currentDate = new Date();
@@ -325,45 +340,57 @@ Student.findByEmail = (Email, result) => {
                 console.log("Student Does Not Exist")
                 return result("Student Does Not Exist", null)
             } else {
-                db.query("SELECT * FROM student WHERE studEmail = ? AND isVerified = 1 AND emailVerified = 1", [Email],
-                    (err, res) => {
-                        if (err) {
-                            console.log("Error: ", err)
-                            return result(err, null)
+                db.query("SELECT * FROM student WHERE studEmail = ? AND emailVerified = 1", [Email],
+                    (verifyEmailErr, verifyEmailRes) => {
+                        if (verifyEmailErr) {
+                            console.log("Error: ", verifyEmailErr)
+                            return result(verifyEmailErr, null)
+                        }
+                        if (verifyEmailRes.length === 0) {
+                            console.log("Email Not Verified")
+                            return result("Email Not Verified", null)
                         } else {
-                            if (res.length === 0) {
-                                console.log("Account Under Verification Progress/Not Verified")
-                                return result("Account Under Verification Progress/Not Verified", null)
-                            } else {
-                                db.query("SELECT * FROM student WHERE studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
-                                    (validityErr, validityRes) => {
-                                        if (validityErr) {
-                                            console.log("Error: ", validityErr)
-                                            return result(validityErr, null)
+                            db.query("SELECT * FROM student WHERE studEmail = ? AND isVerified = 1", [Email],
+                                (err, res) => {
+                                    if (err) {
+                                        console.log("Error: ", err)
+                                        return result(err, null)
+                                    } else {
+                                        if (res.length === 0) {
+                                            console.log("Account Under Verification Progress/Not Verified")
+                                            return result("Account Under Verification Progress/Not Verified", null)
+                                        } else {
+                                            db.query("SELECT * FROM student WHERE studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
+                                                (validityErr, validityRes) => {
+                                                    if (validityErr) {
+                                                        console.log("Error: ", validityErr)
+                                                        return result(validityErr, null)
+                                                    }
+                                                    if (validityRes.length === 0) {
+                                                        console.log("Account expired. Please Renew Your Plan.")
+                                                        return result("Account expired. Please Renew Your Plan", null)
+                                                    }
+
+
+                                                    db.query("SELECT s.*, r.refundReqStatus, CASE WHEN cm.studentId IS NOT NULL THEN TRUE ELSE FALSE END AS communityManager FROM student s LEFT JOIN ( SELECT studId, CASE WHEN SUM(cancelStatus = 0) > 0 THEN 'Refund Request Active' ELSE 'No Refund Request' END AS refundReqStatus FROM refund GROUP BY studId ) r ON s.id = r.studId LEFT JOIN communitymanagers cm ON s.id = cm.studentId AND s.batchId = cm.batchId WHERE BINARY s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1", [Email],
+                                                        (err, res) => {
+                                                            if (err) {
+                                                                console.log("Error : ", err);
+                                                                return result(err, null);
+                                                            }
+
+                                                            if (res.length > 0) {
+                                                                // Log student login
+                                                                logStudent(res[0].id, "Student logged In");
+                                                                result(null, res[0]);
+                                                            }
+                                                        });
+
+                                                })
+
                                         }
-                                        if (validityRes.length === 0) {
-                                            console.log("Account expired. Please Renew Your Plan.")
-                                            return result("Account expired. Please Renew Your Plan", null)
-                                        }
-
-
-                                        db.query("SELECT s.*, r.refundReqStatus, CASE WHEN cm.studentId IS NOT NULL THEN TRUE ELSE FALSE END AS communityManager FROM student s LEFT JOIN ( SELECT studId, CASE WHEN SUM(cancelStatus = 0) > 0 THEN 'Refund Request Active' ELSE 'No Refund Request' END AS refundReqStatus FROM refund GROUP BY studId ) r ON s.id = r.studId LEFT JOIN communitymanagers cm ON s.id = cm.studentId AND s.batchId = cm.batchId WHERE BINARY s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1", [Email],
-                                            (err, res) => {
-                                                if (err) {
-                                                    console.log("Error : ", err);
-                                                    return result(err, null);
-                                                }
-
-                                                if (res.length > 0) {
-                                                    // Log student login
-                                                    logStudent(res[0].id, "Student logged In");
-                                                    result(null, res[0]);
-                                                }
-                                            });
-
-                                    })
-
-                            }
+                                    }
+                                })
                         }
                     })
 
@@ -1257,40 +1284,59 @@ Student.viewCommunityMangers = (batchId, result) => {
 //Student Validity Renewal
 
 Student.PaymentRenewal = (newStudent, result) => {
-    // Calculate the new validity date
-    const currentDate = new Date();
-    currentDate.setFullYear(currentDate.getFullYear() + 1);
-    const formattedDate = currentDate.toISOString().slice(0, 10); // Format as "YYYY-MM-DD"
-
-    // Update the student's validity
-    newStudent.validity = formattedDate;
-    db.query("UPDATE student SET validity = ? WHERE studEmail = ? AND id = ?", [newStudent.validity, newStudent.studEmail, newStudent.id], (err, res) => {
+    db.query("SELECT `validity` FROM `student` WHERE `studEmail` = ? AND `id` = ?", [newStudent.studEmail, newStudent.id], (err, res) => {
         if (err) {
-            console.error("Error while updating student: ", err);
+            console.error("Error while selecting student: ", err);
             result(err, null);
             return;
         }
+        // Your original date in UTC
+        const originalDate = new Date(res[0].validity);
 
-        console.log("Student Details Updated", { id: newStudent.id, ...newStudent });
+        // Convert to the Asia/Kolkata timezone and extract the date part
+        const dateInKolkata = new Intl.DateTimeFormat('en-IN', {
+            timeZone: 'Asia/Kolkata',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        }).format(originalDate);
 
-        Payment.updatePayment = (newPayment, result) => {
-            newPayment.studId = newStudent.id;
-            db.query(
-                "UPDATE payment SET rpPaymentId = ?, rpOrderId = ?, rpAmount = ?, paymentDate = CURRENT_DATE() WHERE studId = ?",
-                [newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount, newPayment.studId],
-                (err, paymentRes) => {
-                    if (err) {
-                        console.error("Error during payment update: ", err);
-                        return result(err, null);
+        // Split the resulting string to rearrange it into YYYY-MM-DD format
+        const [day, month, year] = dateInKolkata.split('/');
+        const formattedDate = `${year}-${month}-${day}`;
+
+        // Update the student's validity
+        newStudent.validity = addOneYear(formattedDate);
+
+        db.query("UPDATE student SET validity = ?, updatedDate = CURRENT_DATE, updateStatus = 1 WHERE studEmail = ? AND id = ?", [newStudent.validity, newStudent.studEmail, newStudent.id], (err, res) => {
+            if (err) {
+                console.error("Error while updating student: ", err);
+                result(err, null);
+                return;
+            }
+
+            console.log("Student Details Updated", { id: newStudent.id, ...newStudent });
+
+            Payment.updatePayment = (newPayment, result) => {
+                newPayment.studId = newStudent.id;
+                db.query(
+                    "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
+                    [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
+                    (err, paymentRes) => {
+                        if (err) {
+                            console.error("Error during payment update: ", err);
+                            return result(err, null);
+                        }
+
+                        console.log("Payment Updated", { ...newPayment });
+                        result(null, { ...newPayment });
                     }
+                );
+            };
+            result(null, { id: newStudent.id, ...newStudent });
+        });
 
-                    console.log("Payment Updated", { ...newPayment });
-                    result(null, { ...newPayment });
-                }
-            );
-        };
-        result(null, { id: newStudent.id, ...newStudent });
-    });
+    })
 }
 
 
@@ -1299,7 +1345,6 @@ Student.forgotPassGenerateAndHashOTP = (studEmail, result) => {
     const otp = crypto.randomInt(100000, 999999).toString();
     const saltRounds = 10;
     const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
-
     db.query(
         "SELECT * FROM student_otp WHERE email = ?",
         [studEmail],
@@ -1442,7 +1487,7 @@ Student.renewalReminder = async (id) => {
                 student.id = ?`;
 
         const results = await db.promise().query(query, [id]);
-        
+
         if (!results || results[0].length === 0) {
             const error = new Error('Student not found or does not meet criteria for renewal reminder. Student ID: ' + id);
             console.error("Error fetching student details:", error);
@@ -1466,7 +1511,7 @@ Student.renewalReminder = async (id) => {
     }
 };
 
-Student.emailverifyStudOTP = (studEmail, otp, result) => {
+Student.emailverifyStudOTP = (studEmail, password, otp, result) => {
     const query = "SELECT otp, createdAt FROM student_otp WHERE email = ?";
     db.query(query, [studEmail], (err, res) => {
         if (err) {
@@ -1486,7 +1531,8 @@ Student.emailverifyStudOTP = (studEmail, otp, result) => {
                 // If OTP not expired, proceed to compare
                 const isMatch = bcrypt.compareSync(otp, studentotp);
                 if (isMatch) {
-                    db.query("UPDATE student SET emailVerified = 1 WHERE studEmail = ?", [studEmail], (verifyErr, verifyRes)=> {
+                    const hashedNewPassword = bcrypt.hashSync(password, 10);
+                    db.query("UPDATE student SET password = ?, emailVerified = 1 WHERE studEmail = ?", [hashedNewPassword, studEmail], (verifyErr, verifyRes) => {
                         if (verifyErr) {
                             return result(err, null);
                         } else {
