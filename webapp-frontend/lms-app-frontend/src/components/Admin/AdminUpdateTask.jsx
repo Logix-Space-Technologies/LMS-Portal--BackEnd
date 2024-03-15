@@ -327,7 +327,7 @@ const AdminUpdateTask = () => {
                                             </label>
                                             <input
                                                 onChange={updateHandler}
-                                                type="text"
+                                                type="date"
                                                 className="form-control"
                                                 name="dueDate"
                                                 value={updateField.dueDate}

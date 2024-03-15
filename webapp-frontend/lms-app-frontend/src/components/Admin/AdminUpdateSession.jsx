@@ -213,7 +213,7 @@ const AdminUpdateSession = () => {
                       </label>
                       <input
                         onChange={updateHandler}
-                        type="text"
+                        type="date"
                         className="form-control"
                         name="date"
                         value={updateField.date}
