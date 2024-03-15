@@ -796,7 +796,6 @@ exports.viewOneClgStaff = (request, response) => {
   const clgStaffToken = request.headers.token;
   const key = request.headers.key; //give respective keys of admin and adminstaff
   const clgStaffId = request.body.id;
-  console.log(clgStaffId)
 
   jwt.verify(clgStaffToken, key, (err, decoded) => {
     if (decoded) {
