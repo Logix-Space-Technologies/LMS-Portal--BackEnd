@@ -423,18 +423,18 @@ exports.viewOneTask = (request, response) => {
 
     jwt.verify(token, key, (err, decoded) => {
         if (err || !decoded) {
-            return response.status(401).json({ "status": "Unauthorized: Invalid or missing token" });
+            return response.json({ "status": "Unauthorized Access!!!" });
         }
 
         Tasks.findById(id, (err, data) => {
             if (err) {
                 if (err.kind === "not_found") {
-                    response.status(404).json({ "status": "Task not found" });
+                    return response.json({ "status": "Task not found" });
                 } else {
-                    response.status(500).json({ "status": "Error retrieving task" });
+                    return response.json({ "status": "Error retrieving task" });
                 }
             } else {
-                response.json({ "status": "success", "data": data });
+                return response.json({ "status": "success", "data": data });
             }
         });
     });
