@@ -86,7 +86,7 @@ Curriculum.curriculumView = (batchId, result) => {
                 return result("Batch not found", null);
             }
 
-            db.query("SELECT b.batchName, c.id, c.curriculumTitle, c.curriculumDesc, c.addedDate, c.curriculumFileLink, COALESCE(asf.AdStaffName, CASE WHEN c.addedBy = 0 THEN 'Admin' ELSE c.addedBy END) AS addedBy, COALESCE(usf.AdStaffName, CASE WHEN c.updatedBy = 0 THEN 'Admin' ELSE c.updatedBy END) AS updatedBy FROM curriculum c JOIN batches b ON c.batchId = b.id LEFT JOIN admin_staff asf ON c.addedBy = asf.id AND c.addedBy != 0 AND asf.AdStaffName IS NOT NULL LEFT JOIN admin_staff usf ON c.updatedBy = usf.id AND c.updatedBy != 0 AND usf.AdStaffName IS NOT NULL WHERE c.deleteStatus = 0 AND c.isActive = 1 AND c.batchId = ?",[batchId],
+            db.query("SELECT b.batchName, c.id, c.curriculumTitle, c.curriculumDesc, c.addedDate, c.curriculumFileLink, COALESCE(asf.AdStaffName, CASE WHEN c.addedBy = 0 THEN 'Admin' ELSE c.addedBy END) AS addedBy, COALESCE(usf.AdStaffName, CASE WHEN c.updatedBy = 0 THEN 'Admin' ELSE c.updatedBy END) AS updatedBy, c.updatedDate FROM curriculum c JOIN batches b ON c.batchId = b.id LEFT JOIN admin_staff asf ON c.addedBy = asf.id AND c.addedBy != 0 AND asf.AdStaffName IS NOT NULL LEFT JOIN admin_staff usf ON c.updatedBy = usf.id AND c.updatedBy != 0 AND usf.AdStaffName IS NOT NULL WHERE c.deleteStatus = 0 AND c.isActive = 1 AND c.batchId = ?",[batchId],
                 (curriculumErr, curriculumRes) => {
                     if (curriculumErr) {
                         console.log("error: ", curriculumErr);

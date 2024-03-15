@@ -155,6 +155,7 @@ const AdminViewAllTasks = () => {
                             <th scope="col" className="px-6 py-3">Total Score</th>
                             <th scope="col" className="px-6 py-3">Due Date</th>
                             <th scope="col" className="px-6 py-3">Added Date</th>
+                            <th scope="col" className="px-6 py-3">Updated Date</th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             {key === "lmsapp" && (
@@ -175,6 +176,12 @@ const AdminViewAllTasks = () => {
                                         <td className="px-6 py-4">{value.totalScore}</td>
                                         <td className="px-6 py-4">{value.dueDate}</td>
                                         <td className="px-6 py-4">{value.addedDate}</td>
+                                        {value.updatedDate !== null && (
+                                            <td className="px-6 py-4">{value.updatedDate}</td>
+                                        )}
+                                        {value.updatedDate === null && (
+                                            <td className="px-6 py-4">NIL</td>
+                                        )}
                                         <td className="px-6 py-4">
                                             <Link target="_blank" to={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View File</Link>
                                         </td>
