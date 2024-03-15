@@ -130,7 +130,12 @@ const AdminUpdateCollege = () => {
                                         if (response.data.status === "Validation Failed" && response.data.data.mobile) {
                                             alert(response.data.data.mobile)
                                         } else {
-                                            alert(response.data.status)
+                                            if (response.data.status === "Unauthorized Access!!!") {
+                                                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                                sessionStorage.clear()
+                                            } else {
+                                                alert(response.data.status)
+                                            }
                                         }
                                     }
                                 }
@@ -213,8 +218,32 @@ const AdminUpdateCollege = () => {
         }
         axios.post(apiUrl2, data, axiosConfig).then(
             (response) => {
-                setClgData(response.data.data)
-                setUpdateField(response.data.data[0])
+                if (response.data.data) {
+                    setClgData(response.data.data)
+                    setUpdateField(response.data.data[0])
+                } else {
+                    if (response.data.status === "Unauthorized Access!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setClgData([])
+                            setUpdateField({
+                                "id": "",
+                                "collegeName": "",
+                                "collegeCode": "",
+                                "collegeAddress": "",
+                                "website": "",
+                                "email": "",
+                                "collegePhNo": "",
+                                "collegeMobileNumber": "",
+                                "collegeImage": ""
+                            })
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
@@ -251,7 +280,7 @@ const AdminUpdateCollege = () => {
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label htmlFor="" className="form-label">College Code</label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="collegeCode" value={updateField.collegeCode}/>
+                                            <input onChange={updateHandler} type="text" className="form-control" name="collegeCode" value={updateField.collegeCode} />
                                         </div>
                                         <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label for="" class="form-label">College Address</label>
