@@ -47,7 +47,20 @@ const AdminUpdateSession = () => {
     };
     axios.post(trainerUrl, {}, axiosConfig).then(
       (response) => {
-        setTrainers(response.data.Trainers)
+        if (response.data.Trainers) {
+          setTrainers(response.data.Trainers)
+        } else {
+          if (response.data.status === "Unauthorized access!!") {
+            { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+            sessionStorage.clear()
+          } else {
+            if (!response.data.Trainers) {
+              setTrainers([])
+            } else {
+              alert(response.data.status)
+            }
+          }
+        }
       }
     )
   }
@@ -114,7 +127,12 @@ const AdminUpdateSession = () => {
                     if (Response.data.status === "Validation failed" && Response.data.data.trainerId) {
                       alert(Response.data.data.trainerId)
                     } else {
-                      alert(Response.data.status)
+                      if (Response.data.status === "Unauthorized User!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                      } else {
+                        alert(Response.data.status)
+                      }
                     }
                   }
                 }
@@ -144,8 +162,31 @@ const AdminUpdateSession = () => {
       }
     }
     axios.post(apiURL, data, axiosConfig).then((response) => {
-      setSessionData(response.data.data);
-      setUpdateField(response.data.data[0]);
+      if (response.data.data) {
+        setSessionData(response.data.data);
+        setUpdateField(response.data.data[0]);
+      } else {
+        if (response.data.status === "Unauthorized access!!") {
+          { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+          sessionStorage.clear()
+        } else {
+          if (!response.data.data) {
+            setSessionData([]);
+            setUpdateField({
+              "id": "",
+              "sessionName": '',
+              "date": '',
+              "time": '',
+              "type": '',
+              "remarks": '',
+              "venueORlink": '',
+              "trainerId": '',
+            });
+          } else {
+            alert(response.data.status)
+          }
+        }
+      }
     });
   };
 

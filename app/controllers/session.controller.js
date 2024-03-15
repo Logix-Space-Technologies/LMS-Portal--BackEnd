@@ -416,7 +416,7 @@ exports.isSessionHappeningToday = (request, response) => {
 exports.viewOneSession = (request, response) => {
     const sessionToken = request.headers.token;
     const key = request.headers.key; // Provide the respective keys for admin and admin staff
-    const sessionId = request.body.id; // Assuming the session ID is provided in the request body
+    const sessionId = request.body.id; 
 
     jwt.verify(sessionToken, key, (err, decoded) => {
         if (decoded) {
