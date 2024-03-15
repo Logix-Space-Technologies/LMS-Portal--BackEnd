@@ -174,7 +174,6 @@ exports.batchUpdate = (request, response) => {
     } = request.body;
 
     const batchUpdateToken = request.headers.token;
-    console.log(batchUpdateToken)
     key = request.headers.key
     jwt.verify(batchUpdateToken, key, (err, decoded) => {
         if (decoded) {
@@ -227,11 +226,11 @@ exports.batchUpdate = (request, response) => {
                     if (key == "lmsapp") {
                         logAdminStaff(0, "Admin Updated Batch")
                     }
-                    response.json({ "status": "Updated Batch Details", "data": data });
+                    return response.json({ "status": "Updated Batch Details", "data": data });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
