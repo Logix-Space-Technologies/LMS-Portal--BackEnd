@@ -12,6 +12,7 @@ const AdminUpdateTrainer = () => {
     const [errors, setErrors] = useState({})
     const [fileType, setFileType] = useState("");
 
+
     const [updateField, setUpdateField] = useState(
         {
             "id": sessionStorage.getItem("trainerId"),
@@ -103,7 +104,12 @@ const AdminUpdateTrainer = () => {
                                 if (Response.data.status === "Validation failed" && Response.data.data.phoneNumber) {
                                     alert(Response.data.data.phoneNumber)
                                 } else {
-                                    alert(Response.data.status)
+                                    if (Response.data.status === "Unauthorized Access!!!") {
+                                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                        sessionStorage.clear()
+                                    } else {
+                                        alert(Response.data.status)
+                                    }
                                 }
                             }
                         }
@@ -154,7 +160,7 @@ const AdminUpdateTrainer = () => {
         } else if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
             errors.file = "File must be in jpg/jpeg/png/webp/heif format";
         }
-        
+
         return errors;
     }
 
@@ -177,8 +183,30 @@ const AdminUpdateTrainer = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                settrainerData(response.data.Trainers)
-                setUpdateField(response.data.Trainers[0])
+                if (response.data.Trainers) {
+                    settrainerData(response.data.Trainers)
+                    setUpdateField(response.data.Trainers[0])
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.Trainers) {
+                            settrainerData([])
+                            setUpdateField(
+                                {
+                                    "id": "",
+                                    "trainerName": "",
+                                    "about": "",
+                                    "phoneNumber": "",
+                                    "profilePicture": ""
+                                }
+                            )
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }

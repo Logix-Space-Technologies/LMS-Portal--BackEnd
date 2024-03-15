@@ -326,8 +326,6 @@ exports.trainerDetailsUpdate = (request, response) => {
 };
 
 
-// Code For Updating Trainer Password
-
 exports.viewOneTrainer = (request, response) => {
     const trainerToken = request.headers.token;
     const key = request.headers.key; //give respective keys of admin and adminstaff
