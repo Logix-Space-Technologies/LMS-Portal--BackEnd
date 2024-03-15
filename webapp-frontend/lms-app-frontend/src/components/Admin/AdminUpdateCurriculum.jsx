@@ -105,7 +105,12 @@ const AdminUpdateCurriculum = () => {
                                 if (Response.data.status === "Validation failed" && Response.data.data.updatedBy) {
                                     alert(Response.data.data.updatedBy)
                                 } else {
-                                    alert(Response.data.status)
+                                    if (Response.data.status === "Unauthorized User!!") {
+                                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                        sessionStorage.clear()
+                                    } else {
+                                        alert(Response.data.status)
+                                    }
                                 }
 
                             }
@@ -177,8 +182,28 @@ const AdminUpdateCurriculum = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setCurriculumData(response.data.curriculum)
-                setUpdateField(response.data.curriculum[0])
+                if (response.data.curriculum) {
+                    setCurriculumData(response.data.curriculum)
+                    setUpdateField(response.data.curriculum[0])
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.curriculum) {
+                            setCurriculumData([])
+                            setUpdateField({
+                                "id": "",
+                                "curriculumTitle": "",
+                                "curriculumDesc": "",
+                                "updatedBy": "",
+                                "curriculumFileLink": ""
+                            })
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
