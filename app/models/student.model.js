@@ -1511,7 +1511,7 @@ Student.renewalReminder = async (id) => {
     }
 };
 
-Student.emailverifyStudOTP = (studEmail, password, otp, result) => {
+Student.emailverifyStudOTP = (studEmail, otp, result) => {
     const query = "SELECT otp, createdAt FROM student_otp WHERE email = ?";
     db.query(query, [studEmail], (err, res) => {
         if (err) {
@@ -1531,14 +1531,7 @@ Student.emailverifyStudOTP = (studEmail, password, otp, result) => {
                 // If OTP not expired, proceed to compare
                 const isMatch = bcrypt.compareSync(otp, studentotp);
                 if (isMatch) {
-                    const hashedNewPassword = bcrypt.hashSync(password, 10);
-                    db.query("UPDATE student SET password = ?, emailVerified = 1 WHERE studEmail = ?", [hashedNewPassword, studEmail], (verifyErr, verifyRes) => {
-                        if (verifyErr) {
-                            return result(err, null);
-                        } else {
-                            return result(null, true);
-                        }
-                    })
+                    return result(null, true)
                 } else {
                     return result(null, false);
                 }
@@ -1549,7 +1542,29 @@ Student.emailverifyStudOTP = (studEmail, password, otp, result) => {
     });
 }
 
-
+Student.emailVerifyAndPasswordChange = (studEmail, password, result) => {
+    db.query("SELECT * FROM `student` WHERE `studEmail` = ?", [studEmail],
+        (err, res) => {
+            if (err) {
+                console.log("Error: ", err)
+                return result(err, null)
+            } else {
+                if (res[0].password === password) {
+                    console.log("Old Password And New Password Cannot Be Same.")
+                    return result("Old Password And New Password Cannot Be Same.", null)
+                } else {
+                    const hashedNewPassword = bcrypt.hashSync(password, 10);
+                    db.query("UPDATE student SET password = ?, emailVerified = 1 WHERE studEmail = ?", [hashedNewPassword, studEmail], (verifyErr, verifyRes) => {
+                        if (verifyErr) {
+                            return result(err, null);
+                        } else {
+                            return result(null, true);
+                        }
+                    })
+                }
+            }
+        })
+}
 
 
 

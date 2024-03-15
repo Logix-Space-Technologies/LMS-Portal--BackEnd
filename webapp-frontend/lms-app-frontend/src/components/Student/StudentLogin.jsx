@@ -10,15 +10,37 @@ const StudentLogin = () => {
         type: 'web'
     });
 
+    const [updateField, setUpdateField] = useState({
+        otp: ""
+    })
+
     const [errors, setErrors] = useState({});
+    const [showModal, setShowModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studentLogin"
     const apiUrl2 = global.config.urls.api.server + "/api/lms/studemailverifyotpsend"
+    const apiUrl3 = global.config.urls.api.server + "/api/lms/studemailverificationotpverify"
     const navigate = useNavigate()
 
     const inputHandler = (event) => {
         setErrors({}); // Clear previous errors
         setInputField({ ...inputField, [event.target.name]: event.target.value });
+    };
+
+    const updateHandler = (event) => {
+        setErrors({}); // Clear previous errors
+        setUpdateField({ ...updateField, [event.target.name]: event.target.value });
+    };
+
+    // Function to close both modal and overlay
+    const closeModal = () => {
+        setShowModal(false);
+        setShowOverlay(false);
+        setErrors({})
+        setInputField({
+            otp: ""
+        });
     };
 
     const readValue = () => {
@@ -67,18 +89,21 @@ const StudentLogin = () => {
 
                     navigate("/studViewRefundReq")
                 } else if (Response.data.status === "Email Not Verified" && inputField.password === "0") {
-                    let studemail = inputField.studEmail
-                    sessionStorage.setItem("studemail", studemail);
-                    let data = { "studEmail": studemail }
+                    let data = { "studEmail": inputField.studEmail }
                     axios.post(apiUrl2, data).then(
                         (Response) => {
                             if (Response.data.status === "OTP sent to email.") {
                                 alert("Please Change Your Password.\nOTP Send To Email For Verification!!")
-                                navigate("/studEmailVerification")
+                                setShowModal(true)
+                                setShowOverlay(true);
                             } else if (Response.data.status.sqlMessage) {
                                 alert(Response.data.status.sqlMessage)
+                                setShowModal(false)
+                                setShowOverlay(false);
                             } else {
                                 alert(Response.data.status)
+                                setShowModal(false)
+                                setShowOverlay(false);
                             }
                         }
                     )
@@ -106,6 +131,36 @@ const StudentLogin = () => {
             }
         );
     };
+
+    const otpVerify = () => {
+        let newErrors = {};
+        if (!inputField.studEmail) {
+            newErrors.otp = "Email is required!";
+        }
+        if (!updateField.otp) {
+            newErrors.otp = "OTP is required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        let data = { "studEmail": inputField.studEmail, "otp": updateField.otp }
+        axios.post(apiUrl3, data).then(
+            (response) => {
+                if (response.data.status === "OTP Verified Successfully!!!") {
+                    let studemail = inputField.studEmail
+                    sessionStorage.setItem("studemail", studemail);
+                    navigate("/studEmailVerification")
+                    setShowModal(false)
+                    setShowOverlay(false); // Close the overlay
+                } else {
+                    alert(response.data.status)
+                    setShowModal(true)
+                    setShowOverlay(true);
+                }
+            }
+        )
+    }
 
     return (
         <div className="container">
@@ -167,6 +222,49 @@ const StudentLogin = () => {
                     </div>
                 </div>
             </div>
+            {showModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel">Verify Email</h1>
+                                <button type="button" className="btn-close" onClick={closeModal} />
+                            </div>
+                            <div className="modal-body">
+                                <form>
+                                    <div className="mb-3">
+                                        <label htmlFor="recipient-name" className="col-form-label">OTP:</label>
+                                        <input type="text" name="otp" className="form-control" value={updateField.otp} onChange={updateHandler} />
+                                        {errors.otp && <span style={{ color: 'red' }} className="error">{errors.otp}</span>}
+                                    </div>
+                                </form>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
+                                <button type="button" onClick={() => otpVerify()} className="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     );
 };
