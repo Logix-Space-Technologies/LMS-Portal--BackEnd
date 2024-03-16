@@ -3,6 +3,7 @@ const Session = require("../models/session.model");
 const Validator = require("../config/data.validate");
 const { Student } = require("../models/student.model");
 const Attendence = require("../models/attendence.model")
+const CollegeStaff = require("../models/clgStaff.model")
 const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
@@ -86,18 +87,16 @@ exports.createSession = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
-                    // console.log(data)
                     const sessionId = data.id
-                    // console.log(sessionId)
+                    const batchId = data.batchId
                     //fetch corresponding students
                     Student.searchStudentByBatch(newSession.batchId, (err, res) => {
                         if (err) {
                             return response.json({ "status": err });
                         } else {
-                            console.log(res)
                             res.forEach(element => {
                                 let studentid = element.id
-                                // let sessionid=newSession.id
+
                                 const newAttendence = new Attendence({
                                     studId: studentid,
                                     sessionId: sessionId
@@ -124,13 +123,38 @@ exports.createSession = (request, response) => {
                                 }
                                 Attendence.create(newAttendence, (err, res) => {
                                     if (err) {
-                                        console.log({ "status": err });
+                                        return response.json({ "status": err });
                                     } else {
 
                                         // console.log({ "status": "success", "data": res });
                                     }
                                 })
                             });
+                            CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
+                                if (err) {
+                                    return response.json({ "status": err });
+                                } else {
+                                    console.log(res)
+                                    let clgstaffName = res[0].collegeStaffName
+                                    let clgstaffEmail = res[0].email
+                                    const clgstaffsessionTime = formatTime(newSession.time)
+                                    const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
+                                    if (newSession.type === "Offline") {
+                                        const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffOfflineHTMLContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
+                                        const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffOfflineTextContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
+                                        mail.sendEmail(clgstaffEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    } else if (newSession.type === "Online") {
+                                        const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffOnlineHTMLContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
+                                        const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffOnlineTextContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
+                                        mail.sendEmail(clgstaffEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    } else {
+                                        const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffRecordedHTMLContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
+                                        const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffRecordedTextContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
+                                        mail.sendEmail(clgstaffEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    }
+
+                                }
+                            })
 
                             return response.json({ "status": "success", "data": data });
 
