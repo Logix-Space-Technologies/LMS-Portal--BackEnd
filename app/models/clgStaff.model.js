@@ -630,4 +630,5 @@ CollegeStaff.emailVerificationClgStaffOtpVerify = (email, otp, result) => {
 }
 
 
+
 module.exports = CollegeStaff
