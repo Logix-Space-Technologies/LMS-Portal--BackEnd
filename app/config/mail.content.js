@@ -155,6 +155,8 @@ function upcomingSessionOnlineHTMLContent(studName, sessionName, date, time, ven
 }
 
 function upcomingSessionRecordedHTMLContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
   <html>
   
@@ -232,17 +234,9 @@ function upcomingSessionRecordedHTMLContent(studName, sessionName, date, time, v
               Link Ur Codes Team</p>
           </div>
           <div class="footer">
-              <p id="copyright">© [Year] Link Ur Codes. All rights reserved.</p>
+              <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
           </div>
       </div>
-  
-      <script>
-          // Get the current year
-          const currentYear = new Date().getFullYear();
-  
-          // Set the current year in the copyright paragraph
-          document.getElementById('copyright').textContent = © ${currentYear} Link Ur Codes. All rights reserved.;
-      </script>
   </body>
   
   </html>`

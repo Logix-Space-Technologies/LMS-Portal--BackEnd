@@ -106,9 +106,19 @@ exports.createSession = (request, response) => {
                                 const studentEmail = element.studEmail
                                 const sessionTime = formatTime(newSession.time)
                                 const sessionDate = newSession.date.split('-').reverse().join('/')
-                                const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
-                                const upcomingSessionTextContent = mailContents.upcomingSessionTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
-                                mail.sendEmail(studentEmail, 'Session Reschedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                if (newSession.type === "Offline") {
+                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionOfflineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                    const upcomingSessionTextContent = mailContents.upcomingSessionOfflineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                } else if (newSession.type === "Online") {
+                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionOnlineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                    const upcomingSessionTextContent = mailContents.upcomingSessionOnlineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                } else {
+                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionRecordedHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                    const upcomingSessionTextContent = mailContents.upcomingSessionRecordedTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                }
                                 if (key == "lmsapp") {
                                     logAdminStaff(0, "Admin Created new Session")
                                 }
@@ -416,7 +426,7 @@ exports.isSessionHappeningToday = (request, response) => {
 exports.viewOneSession = (request, response) => {
     const sessionToken = request.headers.token;
     const key = request.headers.key; // Provide the respective keys for admin and admin staff
-    const sessionId = request.body.id; 
+    const sessionId = request.body.id;
 
     jwt.verify(sessionToken, key, (err, decoded) => {
         if (decoded) {
