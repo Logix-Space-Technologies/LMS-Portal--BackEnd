@@ -1,4 +1,3 @@
-
 function upcomingSessionOfflineHTMLContent(studName, sessionName, date, time, venueORlink) {
   content = `<!DOCTYPE html>
     <html>
