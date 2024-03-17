@@ -93,7 +93,6 @@ exports.batchDelete = (request, response) => {
             Batches.batchDelete(batch, (err, data) => {
                 if (err) {
                     if (err.kind === "not_found") {
-                        console.log({ "status": "Batch Not Found." })
                         return response.json({ "status": "Batch Not Found." })
                     } else {
                         return response.json({ "status": "Error Deleting Batch." })
