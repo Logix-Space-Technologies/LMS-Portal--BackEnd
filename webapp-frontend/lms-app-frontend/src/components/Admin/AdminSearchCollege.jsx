@@ -15,20 +15,14 @@ const AdminSearchCollege = () => {
 
     const [updateField, setUpdateField] = useState([])
     const [searchExecuted, setSearchExecuted] = useState(false);
-
     const [key, setKey] = useState('');
-
     const navigate = useNavigate()
-
     const [isLoading, setIsLoading] = useState(true)
-
     const [deleteCollege, setDeleteCollege] = useState({})
-
     const [currentPage, setCurrentPage] = useState(1);
     const [studentsPerPage] = useState(10); // Number of students per page
 
     const apiUrl = global.config.urls.api.server + "/api/lms/searchCollege"
-
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteCollege"
 
     const inputHandler = (event) => {
@@ -53,14 +47,30 @@ const AdminSearchCollege = () => {
         }
         axios.post(apiUrl, inputField, axiosConfig).then(
             (response) => {
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                setInputField(
-                    {
-                        "collegeSearchQuery": ""
-                    }
-                )
-                setSearchExecuted(true);
+                if (response.data.data) {
+                    setUpdateField(response.data.data)
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "collegeSearchQuery": ""
+                        }
+                    )
+                    setSearchExecuted(true);
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setUpdateField([])
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "collegeSearchQuery": ""
+                        }
+                    )
+                    setSearchExecuted(true);
+                } else {
+                    alert(response.data.status)
+                }
             }
         )
     }
@@ -78,11 +88,13 @@ const AdminSearchCollege = () => {
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "College deleted.") {
-                    alert("College Deleted Successfully!!!")
                     // Remove the deleted college from updateField state
                     setUpdateField(updateField.filter(college => college.id !== deleteCollege));
+                } else if (response.data.status === "Unauthorized User!!") {
+                    navigate("/")
+                    sessionStorage.clear()
                 } else {
-                    alert(response.data.status)
+                    alert(response.data.status);
                 }
             }
         )
@@ -165,8 +177,8 @@ const AdminSearchCollege = () => {
                                         <th scope="col" className="px-6 py-3">College Address</th>
                                         <th scope="col" className="px-6 py-3">Website</th>
                                         <th scope="col" className="px-6 py-3">Email</th>
-                                        <th scope="col" className="px-6 py-3">College Phone No.</th>
-                                        <th scope="col" className="px-6 py-3">College Mobile No.</th>
+                                        <th scope="col" className="px-6 py-3">Phone No.</th>
+                                        <th scope="col" className="px-6 py-3">Mobile No.</th>
                                         <th scope="col" className="px-6 py-3"></th>
                                         <th scope="col" className="px-6 py-3"></th>
                                         <th scope="col" className="px-6 py-3"></th>

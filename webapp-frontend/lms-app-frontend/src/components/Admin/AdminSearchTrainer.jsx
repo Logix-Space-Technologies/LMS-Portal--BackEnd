@@ -110,13 +110,11 @@ const AdminSearchTrainer = () => {
             if (response.data.status === 'success') {
                 // Remove the deleted Trainer from updateField state
                 setUpdateField(updateField.filter(trainer => trainer.id !== deleteId))
+            } else if (response.data.status === "Unauthorized User!!") {
+                navigate("/")
+                sessionStorage.clear()
             } else {
-                if (response.data.status === "Unauthorized User!!") {
-                    navigate("/")
-                    sessionStorage.clear()
-                } else {
-                    alert(response.data.status);
-                }
+                alert(response.data.status);
             }
         });
 
