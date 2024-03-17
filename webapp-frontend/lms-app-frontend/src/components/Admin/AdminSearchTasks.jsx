@@ -47,10 +47,26 @@ const AdminSearchTasks = () => {
         };
         axios.post(apiUrl, inputField, axiosConfig)
             .then(response => {
-                setTasks(response.data.data);
-                setInputField({ taskQuery: "" })
-                setIsLoading(false);
-                setSearchExecuted(true);
+                if (response.data.data) {
+                    setTasks(response.data.data);
+                    setInputField({ taskQuery: "" })
+                    setIsLoading(false);
+                    setSearchExecuted(true);
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setTasks([]);
+                            setInputField({ taskQuery: "" })
+                            setIsLoading(false);
+                            setSearchExecuted(true);
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             })
             .catch(error => {
                 console.error("Search failed:", error);
@@ -68,9 +84,18 @@ const AdminSearchTasks = () => {
             }
         };
         axios.post(deleteUrl, { id }, axiosConfig)
-            .then(() => {
-                alert("Task deleted successfully");
-                searchTasks();
+            .then((response) => {
+                if (response.data.status === "Task Deleted.") {
+                    alert("Task deleted successfully");
+                    searchTasks();
+                } else {
+                    if (response.data.status === "") {
+                        navigate("/")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             })
             .catch(error => {
                 alert(error);

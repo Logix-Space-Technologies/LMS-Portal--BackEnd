@@ -210,7 +210,6 @@ exports.taskDelete = (request, response) => {
         Tasks.taskDelete(task, (err, data) => {
             if (err) {
                 if (err.kind === "not_found") {
-                    console.log("Task not found");
                     return response.json({ "status": "Task not found" });
                 } else {
                     return response.json({ "status": err });
@@ -372,17 +371,17 @@ exports.searchTask = (request, response) => {
         if (decoded) {
             Tasks.searchTasks(taskQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found" });
+                        return response.json({ "status": "No Search Items Found" });
                     } else {
-                        response.json({ "status": "success", "data": data });
+                        return response.json({ "status": "success", "data": data });
                     }
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
