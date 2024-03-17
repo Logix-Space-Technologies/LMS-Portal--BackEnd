@@ -3,6 +3,7 @@ import '../../config/config';
 import axios from 'axios';
 import Navbar from './Navbar';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import { useNavigate } from 'react-router-dom';
 
 const AdminSearchStudent = () => {
     const [inputField, setInputField] = useState({ studentSearchQuery: '' });
@@ -12,6 +13,7 @@ const AdminSearchStudent = () => {
     const [studentsPerPage] = useState(10);
     const [searched, setSearched] = useState(false);
     const [key, setKey] = useState('');
+    const navigate = useNavigate()
 
     const apiLink = global.config.urls.api.server + "/api/lms/searchStudentsByAdmAndAdmstf";
 
@@ -38,9 +40,24 @@ const AdminSearchStudent = () => {
             }
         };
         axios.post(apiLink, inputField, axiosConfig).then((response) => {
-            setUpdateField(response.data.data);
-            setIsLoading(false);
-            setInputField({ "studentSearchQuery": "" });
+            if (response.data.data) {
+                setUpdateField(response.data.data);
+                setIsLoading(false);
+                setInputField({ "studentSearchQuery": "" });
+            } else {
+                if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else {
+                    if (!response.data.data) {
+                        setUpdateField([]);
+                        setIsLoading(false);
+                        setInputField({ "studentSearchQuery": "" });
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
+            }
         });
     };
 
