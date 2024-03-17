@@ -678,18 +678,17 @@ exports.searchStudentsByAdmAndAdmstf = (request, response) => {
             }
             Student.searchStudentsByAdmAndAdmstf(studentSearchQuery, (err, data) => {
                 if (err) {
-                    console.error("Error in searchStudents:", err);
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found." });
+                        return response.json({ "status": "No Search Items Found." });
                     } else {
-                        response.json({ "status": "Result Found", "data": data });
+                        return response.json({ "status": "Result Found", "data": data });
                     }
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
