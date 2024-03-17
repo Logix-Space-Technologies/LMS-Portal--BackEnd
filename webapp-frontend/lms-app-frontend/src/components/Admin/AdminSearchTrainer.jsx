@@ -60,23 +60,19 @@ const AdminSearchTrainer = () => {
                             "TrainerSearchQuery": ""
                         }
                     )
-                } else {
-                    if (response.data.status === "Unauthorized User!!") {
-                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
-                        sessionStorage.clear()
-                    } else {
-                        if (!response.data.data) {
-                            setUpdateField([])
-                            setIsLoading(false)
-                            setInputField(
-                                {
-                                    "TrainerSearchQuery": ""
-                                }
-                            )
-                        } else {
-                            alert(response.data.status)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setUpdateField([])
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "TrainerSearchQuery": ""
                         }
-                    }
+                    )
+                } else {
+                    alert(response.data.status)
                 }
             }
         )

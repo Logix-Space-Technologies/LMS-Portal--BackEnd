@@ -45,17 +45,24 @@ const AdminSearchBatch = () => {
                 "key": currentKey
             }
         };
-        axios.post(apiUrl, inputField, axiosConfig)
-            .then(response => {
+        axios.post(apiUrl, inputField, axiosConfig).then((response) => {
+            if (response.data.data) {
                 setBatches(response.data.data);
                 setInputField({ batchQuery: "" })
                 setIsLoading(false);
                 setSearchExecuted(true);
-            })
-            .catch(error => {
-                console.error("Search failed:", error);
+            } else if (response.data.status === "Unauthorized User!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                sessionStorage.clear()
+            } else if (!response.data.data) {
+                setBatches([]);
+                setInputField({ batchQuery: "" })
                 setIsLoading(false);
-            });
+                setSearchExecuted(true);
+            } else {
+                alert(response.data.status)
+            }
+        })
     };
 
     const deleteBatch = () => {
@@ -147,7 +154,7 @@ const AdminSearchBatch = () => {
                             <span className="visually-hidden">Loading...</span>
                         </div>
                     </div>
-                ) : (searchExecuted && batches ? (
+                ) : (searchExecuted && batches.length > 0 ? (
                     <div className="table-responsive">
                         <table className="table table-hover">
                             <thead className="table-light">
@@ -183,7 +190,7 @@ const AdminSearchBatch = () => {
                             </tbody>
                         </table>
                     </div>
-                ) : (searchExecuted && !batches ? (
+                ) : (searchExecuted ? (
                     <div className="alert alert-info" role="alert">
                         No batches found.
                     </div>

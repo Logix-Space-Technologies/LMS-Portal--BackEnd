@@ -19,7 +19,7 @@ exports.batchCreate = (request, response) => {
             if (!Validator.isValidAmount(request.body.collegeId).isValid) {
                 validationErrors.collegeid = Validator.isValidAmount(request.body.collegeId).message; //validation for college id
             }
-        
+
             if (Validator.isEmpty(request.body.batchName).isValid) {
                 validationErrors.name = Validator.isEmpty(request.body.batchName).message
             }
@@ -70,8 +70,8 @@ exports.batchCreate = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
-                    if(key==="lmsapp"){
-                        logAdminStaff(0,"New Batch Created")
+                    if (key === "lmsapp") {
+                        logAdminStaff(0, "New Batch Created")
                     }
                     return response.json({ "status": "success", "data": data });
                 }
@@ -146,17 +146,17 @@ exports.searchBatch = (request, response) => {
         if (decoded) {
             Batches.searchBatch(batchQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No search items found." });
+                        return response.json({ "status": "No search items found." });
                     } else {
-                        response.json({ "status": "success", "data": data });
+                        return response.json({ "status": "success", "data": data });
                     }
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 }
@@ -262,7 +262,7 @@ exports.batchViewAdmin = (request, response) => {
 exports.viewOneBatch = (request, response) => {
     const batchToken = request.headers.token;
     const key = request.headers.key; //give respective keys of admin and adminstaff
-    const batchId = request.body.id; 
+    const batchId = request.body.id;
 
     jwt.verify(batchToken, key, (err, decoded) => {
         if (decoded) {
