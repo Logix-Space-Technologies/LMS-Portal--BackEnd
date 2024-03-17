@@ -1974,13 +1974,9 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
               <p>Link Ur Codes Team</p>
           </div>
           <div class="footer">
-              <p id="copyright">© [Year] Link Ur Codes. All rights reserved.</p>
+              <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
           </div>
       </div>
-      <script>
-          // Set the current year in the copyright paragraph
-          document.getElementById('copyright').textContent = © ${currentYear} Link Ur Codes. All rights reserved.;
-      </script>
   </body>
   </html>`
   return content;

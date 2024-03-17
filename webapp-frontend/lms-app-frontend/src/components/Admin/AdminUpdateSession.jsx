@@ -276,13 +276,18 @@ const AdminUpdateSession = () => {
                       <label htmlFor="" className="form-label">
                         Type
                       </label>
-                      <input
-                        onChange={updateHandler}
-                        type="text"
-                        className="form-control"
+                      <select
+                        className="form-select"
                         name="type"
+                        id="type"
                         value={updateField.type}
-                      />
+                        onChange={updateHandler}
+                      >
+                        <option value="">Select Type</option>
+                        <option value="Online">Online</option>
+                        <option value="Offline">Offline</option>
+                        <option value="Recorded">Recorded</option>
+                      </select>
                     </div>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                       <label htmlFor="" className="form-label">
