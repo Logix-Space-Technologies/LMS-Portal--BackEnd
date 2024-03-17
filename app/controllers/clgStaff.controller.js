@@ -244,8 +244,7 @@ exports.clgStaffDelete = (request, response) => {
           if (err.kind === "not_found") {
             return response.json({ "status": "College Staff ID not found." });
           } else {
-            console.error(err);
-            return response.json({ "status": "Error deleting Staff." });
+            return response.json({ "status": err });
           }
         } else {
           return response.json({ "status": "Deleted successfully" });
