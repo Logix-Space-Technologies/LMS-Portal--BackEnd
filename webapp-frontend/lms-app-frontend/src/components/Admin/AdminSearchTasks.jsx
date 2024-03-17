@@ -90,7 +90,7 @@ const AdminSearchTasks = () => {
                     // Remove the deleted Trainer from updateField state
                     setTasks(tasks.filter(task => task.id !== deleteId))
                 } else {
-                    if (response.data.status === "") {
+                    if (response.data.status === "Unauthorized User!!") {
                         navigate("/")
                         sessionStorage.clear()
                     } else {
