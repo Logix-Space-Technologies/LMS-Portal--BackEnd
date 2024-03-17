@@ -102,8 +102,8 @@ const AdminSearchTrainer = () => {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                token: sessionStorage.getItem('admtoken'),
-                key: sessionStorage.getItem('admkey')
+                'token': sessionStorage.getItem('admtoken'),
+                'key': sessionStorage.getItem('admkey')
             }
         };
         axios.post(apiUrl2, deletedata, axiosConfig2).then((response) => {

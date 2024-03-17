@@ -18,7 +18,7 @@ const AdminSearchCollegeStaff = () => {
     const [staffPerPage] = useState(10); // Number of staff per page
     const [searchPerformed, setSearchPerformed] = useState(false); // Added state to track search
     const [key, setKey] = useState('');
-    const [deleteCollegeStaff, setDeleteCollegeStaff] = useState({})
+    const [deleteCollegeStaff, setDeleteCollegeStaff] = useState(null)
 
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchCollegeStaff";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deletecolgstaff";
@@ -60,6 +60,7 @@ const AdminSearchCollegeStaff = () => {
                 "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
                 "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
             }
         };
 
