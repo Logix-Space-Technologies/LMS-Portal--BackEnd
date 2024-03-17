@@ -52,13 +52,32 @@ const AdminSearchTrainer = () => {
         }
         axios.post(apiUrl, inputField, axiosConfig).then(
             (response) => {
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                setInputField(
-                    {
-                        "TrainerSearchQuery": ""
+                if (response.data.data) {
+                    setUpdateField(response.data.data)
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "TrainerSearchQuery": ""
+                        }
+                    )
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setUpdateField([])
+                            setIsLoading(false)
+                            setInputField(
+                                {
+                                    "TrainerSearchQuery": ""
+                                }
+                            )
+                        } else {
+                            alert(response.data.status)
+                        }
                     }
-                )
+                }
             }
         )
     }
@@ -93,7 +112,12 @@ const AdminSearchTrainer = () => {
                 // Remove the deleted Trainer from updateField state
                 setUpdateField(updateField.filter(trainer => trainer.id !== deleteId))
             } else {
-                alert(response.data.status);
+                if (response.data.status === "Unauthorized User!!") {
+                    navigate("/")
+                    sessionStorage.clear()
+                } else {
+                    alert(response.data.status);
+                }
             }
         });
 

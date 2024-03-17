@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import '../../config/config';
 import axios from 'axios';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import { useNavigate } from 'react-router-dom';
 
 const AdminSendNotification = () => {
 
@@ -18,6 +19,7 @@ const AdminSendNotification = () => {
     const [outputField, setOutputField] = useState([])
     const [batches, setBatches] = useState([])
     const [key, setKey] = useState('');
+    const navigate = useNavigate()
 
     const apiUrl2 = global.config.urls.api.server + "/api/lms/viewallcolleges";
     const batchUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
@@ -45,7 +47,20 @@ const AdminSendNotification = () => {
         };
         axios.post(apiUrl2, {}, axiosConfig2).then(
             (response) => {
-                setOutputField(response.data.data)
+                if (response.data.data) {
+                    setOutputField(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setOutputField([])
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
@@ -67,7 +82,20 @@ const AdminSendNotification = () => {
             }
         };
         axios.post(batchUrl, { collegeId }, axiosConfig3).then((response) => {
-            setBatches(response.data)
+            if (response.data) {
+                setBatches(response.data)
+            } else {
+                if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else {
+                    if (!response.data) {
+                        setBatches([])
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
+            }
         })
     }
 
@@ -114,7 +142,12 @@ const AdminSendNotification = () => {
                 // Reset the text fields to their initial empty state
                 setNotificationData(initialNotificationData);
             } else {
-                alert(response.data.message)
+                if (response.data.message === "Invalid token") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else {
+                    alert(response.data.message)
+                }
             }
         } catch (error) {
             alert(error.message)
