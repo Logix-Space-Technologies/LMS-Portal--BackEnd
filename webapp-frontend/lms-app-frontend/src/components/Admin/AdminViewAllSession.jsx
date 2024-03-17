@@ -63,7 +63,7 @@ const AdminViewAllSession = () => {
                     setSessionData(response.data.Sessions);
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
-                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         if (!response.data.Sessions) {
@@ -107,16 +107,13 @@ const AdminViewAllSession = () => {
                     getData()
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status);
                     }
                 }
             })
-            .catch(error => {
-                console.error("Error during API call:", error);
-            });
     };
 
     const isSessionToday = (date) => {
@@ -205,24 +202,20 @@ const AdminViewAllSession = () => {
             }
         };
 
-        axios.post(deleteApiLink, { id: deleteId }, axiosConfig)
-            .then(response => {
-                if (response.data.status === "success") {
-                    alert("Session Deleted!!")
-                    setUpdateField(updateField.filter(session => session.id !== deleteId));
-                    getData()
+        axios.post(deleteApiLink, { id: deleteId }, axiosConfig).then(response => {
+            if (response.data.status === "success") {
+                alert("Session Deleted!!")
+                setUpdateField(updateField.filter(session => session.id !== deleteId));
+                getData()
+            } else {
+                if (response.data.status === "Unauthorized User!!") {
+                    navigate("/")
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Unauthorized User!!") {
-                        navigate("/")
-                        sessionStorage.clear()
-                    } else {
-                        alert(response.data.status)
-                    }
+                    alert(response.data.status)
                 }
-            })
-            .catch(error => {
-                console.error("Error during API call:", error);
-            });
+            }
+        })
 
         setShowConfirmation(false);
     };
@@ -371,7 +364,7 @@ const AdminViewAllSession = () => {
                             Are you sure you want to delete this session?
                         </div>
                         <div className="flex justify-center">
-                            <button onClick={confirmDelete} className="btn btn-primary" style={{marginRight: '16px'}}>Confirm Delete</button>
+                            <button onClick={confirmDelete} className="btn btn-primary" style={{ marginRight: '16px' }}>Confirm Delete</button>
                             <button onClick={() => setShowConfirmation(false)} className="btn btn-danger">Cancel</button>
                         </div>
                     </div>

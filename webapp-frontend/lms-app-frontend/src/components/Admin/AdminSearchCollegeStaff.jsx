@@ -13,16 +13,11 @@ const AdminSearchCollegeStaff = () => {
 
     const [collegeStaff, setCollegeStaff] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-
     const navigate = useNavigate()
-
     const [currentPage, setCurrentPage] = useState(1);
     const [staffPerPage] = useState(10); // Number of staff per page
-
     const [searchPerformed, setSearchPerformed] = useState(false); // Added state to track search
-
     const [key, setKey] = useState('');
-
     const [deleteCollegeStaff, setDeleteCollegeStaff] = useState({})
 
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchCollegeStaff";
@@ -51,14 +46,12 @@ const AdminSearchCollegeStaff = () => {
             }
         };
 
-        axios.post(searchApiLink, { searchQuery: inputField.searchQuery }, axiosConfig)
-            .then(response => {
-                setCollegeStaff(response.data.data);
-                setIsLoading(false);
-                setCurrentPage(1); // Reset to the first page after the search
-                setSearchPerformed(true); // Set searchPerformed to true
-            })
-            .catch(() => setIsLoading(false));
+        axios.post(searchApiLink, { searchQuery: inputField.searchQuery }, axiosConfig).then(response => {
+            setCollegeStaff(response.data.data);
+            setIsLoading(false);
+            setCurrentPage(1); // Reset to the first page after the search
+            setSearchPerformed(true); // Set searchPerformed to true
+        })
     };
 
     const deleteStaff = () => {

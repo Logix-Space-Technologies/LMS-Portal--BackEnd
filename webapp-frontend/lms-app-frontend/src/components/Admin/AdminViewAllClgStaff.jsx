@@ -35,26 +35,22 @@ const AdminViewAllClgStaff = () => {
       },
     };
 
-    axios.post(apiUrl, {}, axiosConfig)
-      .then((response) => {
-        if (response.data) {
-          setClgStaffData(response.data);
+    axios.post(apiUrl, {}, axiosConfig).then((response) => {
+      if (response.data) {
+        setClgStaffData(response.data);
+      } else {
+        if (response.data.status === "Unauthorized User!!") {
+          { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+          sessionStorage.clear()
         } else {
-          if (response.data.status === "Unauthorized User!!") {
-            {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
-            sessionStorage.clear()
+          if (!response.data) {
+            setClgStaffData([])
           } else {
-            if (!response.data) {
-              setClgStaffData([])
-            } else {
-              alert(response.data.status)
-            }
+            alert(response.data.status)
           }
         }
-      })
-      .catch((err) => {
-        console.error("Error fetching data. Please try again later.");
-      });
+      }
+    })
   };
 
   const handleDeleteClick = (id) => {
@@ -71,24 +67,20 @@ const AdminViewAllClgStaff = () => {
       },
     };
 
-    axios.post(deleteUrl, { id: deleteId }, axiosConfig)
-      .then((response) => {
-        if (response.data.status === "Deleted successfully") {
-          // Refresh the data after deletion
-          getData();
-          alert("College Staff Deleted!!");
+    axios.post(deleteUrl, { id: deleteId }, axiosConfig).then((response) => {
+      if (response.data.status === "Deleted successfully") {
+        // Refresh the data after deletion
+        getData();
+        alert("College Staff Deleted!!");
+      } else {
+        if (response.data.status === "Unauthorized User!!") {
+          navigate("/")
+          sessionStorage.clear()
         } else {
-          if (response.data.status === "Unauthorized User!!") {
-            navigate("/")
-            sessionStorage.clear()
-          } else {
-            alert(response.data.status)
-          }
+          alert(response.data.status)
         }
-      })
-      .catch((err) => {
-        console.error("Error deleting college staff. Please try again later.");
-      });
+      }
+    })
 
     setShowConfirmation(false);
   };

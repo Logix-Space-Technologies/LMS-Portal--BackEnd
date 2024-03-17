@@ -25,26 +25,22 @@ const AdminViewAllAdminStaff = () => {
       },
     };
 
-    axios.post(apiUrl, {}, axiosConfig)
-      .then((response) => {
-        if (response.data) {
-          setAdmStaffData(response.data);
+    axios.post(apiUrl, {}, axiosConfig).then((response) => {
+      if (response.data) {
+        setAdmStaffData(response.data);
+      } else {
+        if (response.data.status === "Unauthorized User!!") {
+          navigate("/")
+          sessionStorage.clear()
         } else {
-          if (response.data.status === "Unauthorized User!!") {
-            navigate("/")
-            sessionStorage.clear()
+          if (!response.data) {
+            setAdmStaffData([])
           } else {
-            if (!response.data) {
-              setAdmStaffData([])
-            } else {
-              alert(response.data.status)
-            }
+            alert(response.data.status)
           }
         }
-      })
-      .catch((err) => {
-        console.error("Error fetching data. Please try again later.");
-      });
+      }
+    })
   };
 
   const handleDeleteClick = () => {
@@ -56,24 +52,20 @@ const AdminViewAllAdminStaff = () => {
         "token": sessionStorage.getItem("admtoken"),
       },
     };
-    axios.post(deleteUrl, { id }, axiosConfig)
-      .then((response) => {
-        if (response.data.status === "Admin Staff Deleted.") {
-          alert("Admin staff deleted!")
-          // Refresh the data after deletion
-          getData();
+    axios.post(deleteUrl, { id }, axiosConfig).then((response) => {
+      if (response.data.status === "Admin Staff Deleted.") {
+        alert("Admin staff deleted!")
+        // Refresh the data after deletion
+        getData();
+      } else {
+        if (response.data.status === "Unauthorized User!!") {
+          navigate("/")
+          sessionStorage.clear()
         } else {
-          if (response.data.status === "Unauthorized User!!") {
-            navigate("/")
-            sessionStorage.clear()
-          } else {
-            alert(response.data.status)
-          }
+          alert(response.data.status)
         }
-      })
-      .catch((err) => {
-        console.error("Error deleting admin staff. Please try again later.");
-      });
+      }
+    })
   };
 
   // Logic for displaying current admin staff

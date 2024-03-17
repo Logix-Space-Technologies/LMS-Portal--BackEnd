@@ -41,7 +41,7 @@ const AdminViewAllTasks = () => {
                     setTaskData(response.data.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
@@ -89,23 +89,19 @@ const AdminViewAllTasks = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-        axios.post(deleteUrl, { id }, axiosConfig)
-            .then((response) => {
-                if (response.data.status === "Task Deleted.") {
-                    alert("Task deleted successfully");
-                    getData()
+        axios.post(deleteUrl, { id }, axiosConfig).then((response) => {
+            if (response.data.status === "Task Deleted.") {
+                alert("Task deleted successfully");
+                getData()
+            } else {
+                if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Unauthorized User!!") {
-                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
-                        sessionStorage.clear()
-                    } else {
-                        alert(response.data.status)
-                    }
+                    alert(response.data.status)
                 }
-            })
-            .catch(error => {
-                console.error("Delete failed:", error);
-            })
+            }
+        })
     };
 
     const handleUpdateClick = (taskId) => {
@@ -254,7 +250,7 @@ const AdminViewAllTasks = () => {
                             Are you sure you want to delete this task?
                         </div>
                         <div className="flex justify-center">
-                            <button onClick={confirmDelete} className="btn btn-primary" style={{marginRight:'16px'}}>Confirm Delete</button>
+                            <button onClick={confirmDelete} className="btn btn-primary" style={{ marginRight: '16px' }}>Confirm Delete</button>
                             <button onClick={() => setShowConfirmation(false)} className="btn btn-danger">Cancel</button>
                         </div>
                     </div>
