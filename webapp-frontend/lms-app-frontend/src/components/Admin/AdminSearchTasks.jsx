@@ -87,7 +87,8 @@ const AdminSearchTasks = () => {
             .then((response) => {
                 if (response.data.status === "Task Deleted.") {
                     alert("Task deleted successfully");
-                    searchTasks();
+                    // Remove the deleted Trainer from updateField state
+                    setTasks(tasks.filter(task => task.id !== deleteId))
                 } else {
                     if (response.data.status === "") {
                         navigate("/")
@@ -205,7 +206,7 @@ const AdminSearchTasks = () => {
                                         <td>
                                             <button onClick={() => handleUpdateClick(task.id)} className="btn btn-primary btn-sm me-2">Update</button>
                                             {key === "lmsapp" && (
-                                                <button type="button" className="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" onClick={() => handleClick(task.id)}>Delete</button>
+                                                <button type="button" className="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTaskConfirmationModal" onClick={() => handleClick(task.id)}>Delete</button>
                                             )}
                                         </td>
                                     </tr>
@@ -252,7 +253,7 @@ const AdminSearchTasks = () => {
                     </div>
                 </div>
             )}
-            <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+            <div className="modal fade" id="deleteTaskConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
