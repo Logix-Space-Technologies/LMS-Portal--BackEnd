@@ -131,7 +131,7 @@ function upcomingSessionOnlineHTMLContent(studName, sessionName, date, time, ven
           <li>Session Title : ${sessionName} </li>
           <li>Date : ${date}</li>
           <li>Time : ${time}</li>
-          <li>Link : ${venueORlink}</li>
+          <li>Meeting Link : ${venueORlink}</li>
       </ul>
 
       <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!</p>
@@ -376,7 +376,7 @@ function upcomingSessionClgStaffOnlineHTMLContent(clgstaffName, sessionName, dat
           <li>Session Title : ${sessionName} </li>
           <li>Date : ${date}</li>
           <li>Time : ${time}</li>
-          <li>Link : ${venueORlink}</li>
+          <li>Meeting Link : ${venueORlink}</li>
       </ul>
 
       <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!</p>
@@ -621,7 +621,7 @@ function upcomingSessionOnlineTextContent(studName, sessionName, date, time, ven
       Session Title: ${sessionName}
       Date: ${date}
       Time: ${time}
-      Link: ${venueORlink}
+      Meeting Link: ${venueORlink}
       It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!
       For the full session schedule and any changes, please check our online student portal or mobile app.
       We look forward to seeing you there!
@@ -638,7 +638,7 @@ function upcomingSessionClgStaffOnlineTextContent(clgstaffName, sessionName, dat
       Session Title: ${sessionName}
       Date: ${date}
       Time: ${time}
-      Link: ${venueORlink}
+      Meeting Link: ${venueORlink}
       It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!
       For the full session schedule and any changes, please check our online student portal or mobile app.
       We look forward to seeing you there!
@@ -1759,7 +1759,7 @@ function clgstaffEmailVerificationOTPTextContent(clgstaffName, clgstaffotp) {
   return content
 }
 
-function reschedulingSessionHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
   content = `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -1808,7 +1808,7 @@ function reschedulingSessionHTMLContent(originaldate, sessionDate, sessionTime, 
       <div class="container">
         <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
     
-        <h1>LinkUrCodes Session Rescheduling</h1>
+        <h1>Session Reschedule Announcement</h1>
         <p>Dear LinkUrCodes Member,</p>
         <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.</p>
         <p>Details of the rescheduled session:</p>
@@ -1817,7 +1817,7 @@ function reschedulingSessionHTMLContent(originaldate, sessionDate, sessionTime, 
           <li><strong>New Date:</strong> ${sessionDate} </li>
           <li><strong>Time:</strong> ${sessionTime} </li>
           <li><strong>Session Type:</strong> ${type} </li>
-          <li><strong>Meeting Link/Venue:</strong> ${venueORlink} </li>
+          <li><strong>Venue:</strong> ${venueORlink} </li>
     
         </ul>
        
@@ -1830,7 +1830,163 @@ function reschedulingSessionHTMLContent(originaldate, sessionDate, sessionTime, 
   return content;
 }
 
-function reschedulingSessionTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+  content = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>LinkUrCodes Session Rescheduling</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+    
+        h1 {
+          color: #007bff;
+        }
+    
+        p {
+          line-height: 1.6;
+        }
+    
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    
+        <h1>Session Reschedule Announcement</h1>
+        <p>Dear LinkUrCodes Member,</p>
+        <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.</p>
+        <p>Details of the rescheduled session:</p>
+        <ul>
+          <li><strong>Original Date:</strong> ${originaldate} </li>
+          <li><strong>New Date:</strong> ${sessionDate} </li>
+          <li><strong>Time:</strong> ${sessionTime} </li>
+          <li><strong>Session Type:</strong> ${type} </li>
+          <li><strong>Meeting Link:</strong> ${venueORlink} </li>
+    
+        </ul>
+       
+        <p>Best Regards,</p>
+        <p>LinkUrCodes Team</p>
+        <a class="button" href="https://www.linkurcodes.com" style="color: white;">Visit LinkUrCodes</a>
+      </div>
+    </body>
+    </html>`
+  return content;
+}
+
+function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html>
+  <head>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              background-color: #f4f4f4;
+          }
+  
+          .container {
+              max-width: 600px;
+              margin: 20px auto;
+              padding: 20px;
+              background-color: #ffffff;
+              border: 1px solid #dddddd;
+              border-radius: 8px;
+          }
+  
+          .header {
+              color: #333333;
+              text-align: center;
+          }
+  
+          .logo-header img {
+              max-width: 30%;
+              height: auto;
+          }
+  
+          .content {
+              color: #333333;
+              line-height: 1.6;
+          }
+  
+          .footer {
+              text-align: center;
+              margin-top: 20px;
+              font-size: 0.8em;
+              color: #666666;
+          }
+  
+          a {
+              color: #007bff;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="logo-header">
+              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+          </div>
+          <div class="header">
+              <h2>Session Reschedule Announcement</h2>
+          </div>
+          <div class="content">
+              <p>Dear LinkUrCodes Member,</p>
+              <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.</p>
+              <p>Details of the rescheduled session:</p>
+              <ul>
+                  <li><strong>Original Date:</strong> ${originaldate}</li>
+                  <li><strong>New Date:</strong> ${sessionDate}</li>
+                  <li><strong>Time:</strong> ${sessionTime}</li>
+                  <li><strong>Session Type:</strong> ${type}</li>
+                  <li><strong>Where:</strong> <a href=${venueORlink}>Access the Video Here</a></li>
+              </ul>
+              <p>Best Regards,</p>
+              <p>Link Ur Codes Team</p>
+          </div>
+          <div class="footer">
+              <p id="copyright">© [Year] Link Ur Codes. All rights reserved.</p>
+          </div>
+      </div>
+      <script>
+          // Set the current year in the copyright paragraph
+          document.getElementById('copyright').textContent = © ${currentYear} Link Ur Codes. All rights reserved.;
+      </script>
+  </body>
+  </html>`
+  return content;
+}
+
+function reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
   content = `Dear LinkUrCodes Member,
 
     We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
@@ -1841,7 +1997,51 @@ function reschedulingSessionTextContent(originaldate, sessionDate, sessionTime, 
     New Date: ${sessionDate}
     Time: ${sessionTime}
     Session Type: ${type}
-    Meeting Link/Venue: ${venueORlink}
+    Venue: ${venueORlink}
+
+    Best Regards,
+    
+    LinkUrCodes Team
+    
+    Visit LinkUrCodes: https://www.linkurcodes.com`
+
+  return content
+}
+
+function reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+  content = `Dear LinkUrCodes Member,
+
+    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
+    
+    Details of the rescheduled session:
+    
+    Original Date: ${originaldate}
+    New Date: ${sessionDate}
+    Time: ${sessionTime}
+    Session Type: ${type}
+    Meeting Link: ${venueORlink}
+
+    Best Regards,
+    
+    LinkUrCodes Team
+    
+    Visit LinkUrCodes: https://www.linkurcodes.com`
+
+  return content
+}
+
+function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+  content = `Dear LinkUrCodes Member,
+
+    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
+    
+    Details of the rescheduled session:
+    
+    Original Date: ${originaldate}
+    New Date: ${sessionDate}
+    Time: ${sessionTime}
+    Session Type: ${type}
+    Where: ${venueORlink}
 
     Best Regards,
     
@@ -2080,8 +2280,12 @@ module.exports = {
   emailverificationAdmStaffTextContent,
   clgstaffEmailVerificationOTPHTMLContent,
   clgstaffEmailVerificationOTPTextContent,
-  reschedulingSessionHTMLContent,
-  reschedulingSessionTextContent,
+  reschedulingSessionOfflineHTMLContent,
+  reschedulingSessionOnlineHTMLContent,
+  reschedulingSessionRecordedHTMLContent,
+  reschedulingSessionOfflineTextContent,
+  reschedulingSessionOnlineTextContent,
+  reschedulingSessionRecordedTextContent,
   emailverifyStudentOTPHtmlContent,
   emailverifyStudentOTPTextContent
 };

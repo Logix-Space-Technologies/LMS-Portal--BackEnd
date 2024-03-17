@@ -228,13 +228,17 @@ exports.sessionUpdate = (request, response) => {
                 trainerId: request.body.trainerId
             });
 
+            let originaldate = ""
+            let sessionDate = ""
+            let sessionTime = ""
+
             Session.updateSession(upSession, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
-                    let originaldate = data.originalDate;
-                    let sessionDate = upSession.date.split('-').reverse().join('/');
-                    let sessionTime = formatTime(upSession.time);
+                    originaldate = data.originalDate;
+                    sessionDate = upSession.date.split('-').reverse().join('/');
+                    sessionTime = formatTime(upSession.time);
                     db.query("SELECT * FROM sessiondetails WHERE id = ?", [upSession.id], (err, sessionres) => {
                         if (err) {
                             return response.json({ "status": err });
@@ -249,9 +253,19 @@ exports.sessionUpdate = (request, response) => {
 
                             res.forEach(element => {
                                 const studentEmail = element.studEmail;
-                                const updateSessionHtmlContent = mailContents.reschedulingSessionHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
-                                const updateSessionTextContent = mailContents.reschedulingSessionTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
-                                mail.sendEmail(studentEmail, 'Session Reschedule Announcement', updateSessionHtmlContent, updateSessionTextContent);
+                                if (upSession.type === "Offline") {
+                                    const updateSessionHtmlContent = mailContents.reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                    const updateSessionTextContent = mailContents.reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Reschedule Announcement', updateSessionHtmlContent, updateSessionTextContent);
+                                } else if (upSession.type === "Online") {
+                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                    const upcomingSessionTextContent = mailContents.reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Reschedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                } else {
+                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                    const upcomingSessionTextContent = mailContents.reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Reschedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                }
                             });
 
                             if (key == "lmsapp") {
