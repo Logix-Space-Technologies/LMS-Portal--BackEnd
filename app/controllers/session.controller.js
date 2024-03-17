@@ -355,22 +355,21 @@ exports.searchSession = (request, response) => {
     jwt.verify(SessionSearchToken, key, (err, decoded) => {
         if (decoded) {
             if (!SessionSearchQuery) {
-                console.log("Search Item is required.")
                 return response.json({ "status": "Search Item is required." })
             }
             Session.searchSession(SessionSearchQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found." })
+                        return response.json({ "status": "No Search Items Found." })
                     } else {
-                        response.json({ "status": "Result Found", "data": data })
+                        return response.json({ "status": "Result Found", "data": data })
                     }
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }

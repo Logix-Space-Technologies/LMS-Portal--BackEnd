@@ -86,7 +86,6 @@ const AdminSearchTasks = () => {
         axios.post(deleteUrl, { id }, axiosConfig)
             .then((response) => {
                 if (response.data.status === "Task Deleted.") {
-                    alert("Task deleted successfully");
                     // Remove the deleted Trainer from updateField state
                     setTasks(tasks.filter(task => task.id !== deleteId))
                 } else {

@@ -108,7 +108,6 @@ const AdminSearchTrainer = () => {
         };
         axios.post(apiUrl2, deletedata, axiosConfig2).then((response) => {
             if (response.data.status === 'success') {
-                alert('Trainer Deleted Successfully!!');
                 // Remove the deleted Trainer from updateField state
                 setUpdateField(updateField.filter(trainer => trainer.id !== deleteId))
             } else {

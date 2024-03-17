@@ -44,10 +44,22 @@ const AdminSearchSessionDetails = () => {
         };
 
         axios.post(searchApiLink, inputField, axiosConfig).then((response) => {
-            setUpdateField(response.data.data);
-            setIsSearchPerformed(true);
-            setIsLoading(false);
-            setInputField({ "SessionSearchQuery": "" });
+            if (response.data.data) {
+                setUpdateField(response.data.data);
+                setIsSearchPerformed(true);
+                setIsLoading(false);
+                setInputField({ "SessionSearchQuery": "" });
+            } else if (response.data.status === "Unauthorized User!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                sessionStorage.clear()
+            } else if (!response.data.data) {
+                setUpdateField([]);
+                setIsSearchPerformed(true);
+                setIsLoading(false);
+                setInputField({ "SessionSearchQuery": "" });
+            } else {
+                alert(response.data.status)
+            }
         });
     };
 
@@ -65,8 +77,11 @@ const AdminSearchSessionDetails = () => {
             .then(response => {
                 if (response.data.status === "success") {
                     setUpdateField(updateField.filter(session => session.id !== sessionId));
+                } else if (response.data.status === "Unauthorized User!!") {
+                    navigate("/")
+                    sessionStorage.clear()
                 } else {
-                    console.error("Error deleting session:", response.data.status);
+                    alert(response.data.status)
                 }
             })
             .catch(error => {
