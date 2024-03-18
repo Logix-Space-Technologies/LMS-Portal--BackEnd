@@ -1,12 +1,14 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import '../../../config/config'
+import { useNavigate } from 'react-router-dom';
 
 const AdminTableView = () => {
 
     const [batchData, setBatchData] = useState([]);
     const [studData, setStudData] = useState([]);
     const [taskData, setTaskData] = useState([]);
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/adminDashboard"
 

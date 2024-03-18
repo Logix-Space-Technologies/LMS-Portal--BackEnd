@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import '../../../config/config'
+import { useNavigate } from 'react-router-dom';
 
 const AdminCountView = () => {
     const [collegeData, setCollegeData] = useState([])
+
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/adminDashboard"
 
