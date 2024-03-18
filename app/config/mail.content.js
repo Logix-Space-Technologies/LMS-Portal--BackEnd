@@ -62,7 +62,9 @@ function upcomingSessionOfflineHTMLContent(studName, sessionName, date, time, ve
  
         <p>We look forward to seeing you there!</p>
  
-       
+        <p>Best regards,</p>
+        <p>Link Ur Codes Team</p>
+        <br>
     </div>
    
         <div class="footer">
@@ -140,7 +142,9 @@ function upcomingSessionOnlineHTMLContent(studName, sessionName, date, time, ven
 
       <p>We look forward to seeing you there!</p>
 
-     
+      <p>Best regards,</p>
+      <p>Link Ur Codes Team</p>
+      <br>
   </div>
  
       <div class="footer">
@@ -243,91 +247,83 @@ function upcomingSessionRecordedHTMLContent(studName, sessionName, date, time, v
   return content;
 }
 
-function upcomingSessionClgStaffHTMLContent(clgstaffName, sessionName, date, time, venueORlink) {
+function upcomingSessionClgStaffHTMLContent(sessionName, date, time, venueORlink, type, batchName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
-  <html>
-  
+  <html lang="en">
   <head>
-      <style>
-          body {
-              font-family: Arial, sans-serif;
-              margin: 0;
-              padding: 0;
-              background-color: #f4f4f4;
-          }
-  
-          .container {
-              max-width: 600px;
-              margin: 20px auto;
-              padding: 20px;
-              background-color: #ffffff;
-              border: 1px solid #dddddd;
-              border-radius: 8px;
-          }
-  
-          .header {
-              color: #333333;
-              text-align: center;
-          }
-  
-          .logo-header img {
-              max-width: 30%;
-              height: auto;
-          }
-  
-          .content {
-              color: #333333;
-              line-height: 1.6;
-          }
-  
-          .footer {
-              text-align: center;
-              margin-top: 20px;
-              font-size: 0.8em;
-              color: #666666;
-          }
-  
-          a {
-              color: #007bff;
-          }
-      </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Next Session Details</title>
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          line-height: 1.6;
+          margin: 0;
+          padding: 0;
+      }
+      .container {
+          max-width: 600px;
+          margin: auto;
+          padding: 20px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          background-color: #f9f9f9;
+      }
+      h2 {
+          color: #333;
+          text-align: center;
+      }
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+      p {
+          color: #555;
+      }
+      .button {
+          display: inline-block;
+          background-color: #007bff;
+          color: #fff;
+          text-decoration: none;
+          padding: 10px 20px;
+          border-radius: 5px;
+      }
+      .footer {
+          text-align: center;
+          font-size: 0.8em; /* Reduced font size for the footer */
+      }
+  </style>
   </head>
-  
   <body>
-      <div class="container">
-          <div class="logo-header">
-              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
-          </div>
-          <div class="header">
-              <h2>Upcoming Session Announcement: Dive Deeper with Our Next Recorded Lesson!</h2>
-          </div>
-          <div class="content">
-              <p>Dear ${clgstaffName},</p>
-              <p>We hope this message finds you well and eager to learn! At Link Ur Codes, we are continuously looking for
-                  ways to enhance your learning experience and adapt to your busy schedules. This time, we're excited to
-                  announce our next session in a format that offers you the flexibility to engage with the material at
-                  your own pace.</p>
-              <p><strong>Next Session: ${sessionName}</strong><br>
-                  <strong>Available From:</strong> ${date}, ${time}<br>
-                  <strong>Where:</strong> <a href=${venueORlink}>Access the Video Here</a>
-              </p>
-              <p>This session is specially recorded for you! Dive deep into the Session Content.</p>
-              <h3>Your Task</h3>
-              <p>After watching the video, we encourage you to put your knowledge to the test by completing the tasks
-                  mentioned towards the end of the session. This is a fantastic opportunity to apply what you've learned
-                  and receive feedback on your work.</p>
-  
-              <p>Happy Learning,</p>
-              Link Ur Codes Team</p>
-          </div>
-          <div class="footer">
-              <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
-          </div>
-      </div>
+  <div class="container">
+  <div class="logo-header">
+  <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+  </div>
+      <h2>Upcoming Session Details</h2>
+      <p>Dear College Staff,</p>
+      <p>We hope this email finds you well. We are writing to inform you about the upcoming session details for our coding platform, Link Ur Codes.</p>
+      <p>The next session is scheduled for:</p>
+      <ul>
+          <li><strong>Batch Name :</strong> ${batchName}</li>
+          <li><strong>Session Name:</strong> ${sessionName}</li>
+          <li><strong>Type:</strong> ${type}</li>
+          <li><strong>Date:</strong> ${date}</li>
+          <li><strong>Time:</strong> ${time}</li>
+          <li><strong>Link or Venue : ${venueORlink}</li>
+      </ul>
+      <p>We kindly request your assistance in disseminating this information to the students, ensuring maximum participation and engagement.</p>
+      <p>If you have any questions or concerns, please feel free to contact us.</p>
+      <p>Best regards,</p>
+      <p>Link Ur Codes Team</p>
+      <br>
+    <div class="footer">
+      <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+    </div>
+  </div>
   </body>
-  
   </html>`
   return content;
 }
@@ -441,18 +437,32 @@ function upcomingSessionOfflineTextContent(studName, sessionName, date, time, ve
 
 }
 
-function upcomingSessionClgStaffTextContent(clgstaffName, sessionName, date, time, venueORlink) {
+function upcomingSessionClgStaffTextContent(sessionName, date, time, venueORlink, type, batchName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
   textContent = `
-        Dear ${clgstaffName},
-        We are excited to announce the schedule for the upcoming session! Please find the details below:
-        Session Title: ${sessionName}
-        Date: ${date}
-        Time: ${time}
-        Location: ${venueORlink}
-        It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!
-        For the full session schedule and any changes, please check our online student portal or mobile app.
-        We look forward to seeing you there!
-        If you have any questions or need further information, please do not hesitate to contact us at admin@linkurcodes.com.`
+  Dear College Staff,
+  
+  We hope this email finds you well. We are writing to inform you about the upcoming session details for our coding platform, Link Ur Codes.
+  
+  The next session is scheduled for:
+  
+  Batch Name: ${batchName}
+  Session Name: ${sessionName}
+  Type: ${type}
+  Date: ${date}
+  Time: ${time}
+  Link or Venue: ${venueORlink}
+
+  We kindly request your assistance in disseminating this information to the students, ensuring maximum participation and engagement.
+  
+  If you have any questions or concerns, please feel free to contact us.
+  
+  Best regards,
+  
+  Link Ur Codes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
 
   return textContent
 

@@ -631,7 +631,7 @@ CollegeStaff.emailVerificationClgStaffOtpVerify = (email, otp, result) => {
 
 CollegeStaff.searchClgStaffByCollege = (searchKey, result) => {
     db.query(
-        "SELECT c.collegeStaffName, c.email FROM college_staff c JOIN batches b ON b.collegeId = c.collegeId WHERE b.id = ?",
+        "SELECT c.collegeStaffName, c.email, b.batchName FROM college_staff c JOIN batches b ON b.collegeId = c.collegeId WHERE b.id = ?",
         [searchKey],
         (err, res) => {
             if (err) {

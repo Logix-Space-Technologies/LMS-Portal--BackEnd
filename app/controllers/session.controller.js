@@ -89,6 +89,7 @@ exports.createSession = (request, response) => {
                 } else {
                     const sessionId = data.id
                     const batchId = data.batchId
+                    const type = data.type
                     //fetch corresponding students
                     Student.searchStudentByBatch(newSession.batchId, (err, res) => {
                         if (err) {
@@ -134,12 +135,12 @@ exports.createSession = (request, response) => {
                                 if (err) {
                                     return response.json({ "status": err });
                                 } else {
-                                    let clgstaffName = res[0].collegeStaffName
                                     let clgstaffEmail = res[0].email
+                                    let batchName = res[0].batchName
                                     const clgstaffsessionTime = formatTime(newSession.time)
                                     const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
-                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
-                                    const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
+                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName);
+                                    const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName);
                                     mail.sendEmail(clgstaffEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
 
                                 }
@@ -148,10 +149,7 @@ exports.createSession = (request, response) => {
                             return response.json({ "status": "success", "data": data });
 
                         }
-                    }
-                    )
-                    // console.log(data)
-                    // return response.json({ "status": "success", "data": data });
+                    })
                 }
             });
         } else {
