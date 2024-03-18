@@ -52,7 +52,16 @@ const AdminAddSession = () => {
         };
         axios.post(trainerUrl, {}, axiosConfig).then(
             (response) => {
-                setTrainers(response.data.Trainers)
+                if (response.data.Trainers) {
+                    setTrainers(response.data.Trainers)
+                } else if (response.data.status === "Unauthorized access!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.Trainers) {
+                    setTrainers([])
+                } else {
+                    alert(response.data.status)
+                }
             }
         )
     }
@@ -75,7 +84,16 @@ const AdminAddSession = () => {
         };
         axios.post(apiUrl2, {}, axiosConfig).then(
             (response) => {
-                setOutputField(response.data.data)
+                if (response.data.data) {
+                    setOutputField(response.data.data)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setOutputField([])
+                } else {
+                    alert(response.data.status)
+                }
             }
         )
     }
@@ -97,7 +115,16 @@ const AdminAddSession = () => {
             }
         };
         axios.post(batchUrl, { collegeId }, axiosConfig2).then((response) => {
-            setBatches(response.data)
+            if (response.data) {
+                setBatches(response.data)
+            } else if (response.data.status === "Unauthorized User!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                sessionStorage.clear()
+            } else if (!response.data) {
+                setBatches([])
+            } else {
+                alert(response.data.status)
+            }
         })
     }
 
@@ -156,43 +183,29 @@ const AdminAddSession = () => {
                         venueORlink: '',
                         trainerId: ''
                     })
+                } else if (response.data.status === "Validation failed" && response.data.data.batchId) {
+                    alert(response.data.data.batchId)
+                } else if (response.data.status === "Validation failed" && response.data.data.sessionName) {
+                    alert(response.data.data.sessionName)
+                } else if (response.data.status === "Validation failed" && response.data.data.date) {
+                    alert(response.data.data.date)
+                } else if (response.data.status === "Validation failed" && response.data.data.time) {
+                    alert(response.data.data.time)
+                } else if (response.data.status === "Validation failed" && response.data.data.type) {
+                    alert(response.data.data.type)
+                } else if (response.data.status === "Validation failed" && response.data.data.remarks) {
+                    alert(response.data.data.remarks)
+                } else if (response.data.status === "Validation failed" && response.data.data.venueORlink) {
+                    alert(response.data.data.venueORlink)
+                } else if (response.data.status === "Validation failed" && response.data.data.trainerId) {
+                    alert(response.data.data.trainerId)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.batchId) {
-                        alert(response.data.data.batchId)
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.sessionName) {
-                            alert(response.data.data.sessionName)
-                        } else {
-                            if (response.data.status === "Validation failed" && response.data.data.date) {
-                                alert(response.data.data.date)
-                            } else {
-                                if (response.data.status === "Validation failed" && response.data.data.time) {
-                                    alert(response.data.data.time)
-                                } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.type) {
-                                        alert(response.data.data.type)
-                                    } else {
-                                        if (response.data.status === "Validation failed" && response.data.data.remarks) {
-                                            alert(response.data.data.remarks)
-                                        } else {
-                                            if (response.data.status === "Validation failed" && response.data.data.venueORlink) {
-                                                alert(response.data.data.venueORlink)
-                                            } else {
-                                                if (response.data.status === "Validation failed" && response.data.data.trainerId) {
-                                                    alert(response.data.data.trainerId)
-                                                } else {
-                                                    alert(response.data.status)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    alert(response.data.status)
                 }
-            }
-            )
+            })
         } else {
             setErrors(validationErrors);
         }
