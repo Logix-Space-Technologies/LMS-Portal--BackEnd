@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
 import Navbar from './Navbar'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AddCollegeStaff = () => {
@@ -18,6 +18,8 @@ const AddCollegeStaff = () => {
     "password": "",
     "confirmpassword": ""
   })
+
+  const navigate = useNavigate()
 
   const [file, setFile] = useState(null)
 

@@ -2,7 +2,7 @@ import axios from 'axios';
 import '../../config/config';
 import React, { useState } from 'react';
 import Navbar from './Navbar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AddAdminStaff = () => {
 
@@ -17,6 +17,8 @@ const AddAdminStaff = () => {
     });
 
     const [errors, setErrors] = useState({});
+
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + '/api/lms/addAdminStaff';
 
