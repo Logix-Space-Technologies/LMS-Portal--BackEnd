@@ -43,6 +43,22 @@ const StudViewProfile = () => {
         )
     }
 
+    const UpdateClick = (email) => {
+        sessionStorage.setItem("studemail", email)
+        navigate("/studValidityRenewal");
+    };
+
+    const isRenewalDue = (validityDate) => {
+        const currentDate = new Date();
+        // Parse the validity date in DD/MM/YYYY format
+        const [day, month, year] = validityDate.split('/');
+        const parsedValidityDate = new Date(`${year}-${month}-${day}`);
+
+        const differenceInMilliseconds = parsedValidityDate - currentDate;
+        const differenceInDays = differenceInMilliseconds / (24 * 60 * 60 * 1000);
+        return differenceInDays <= 45;
+    };
+
     useEffect(() => { getData() }, [])
     return (
         <div className="container">
@@ -61,9 +77,16 @@ const StudViewProfile = () => {
                                             <img height="300px" src={value.studProfilePic} alt="" />
                                         </div>
                                         <div className="col-lg-6 px-xl-10">
-                                            <div className=" d-lg-inline-block py-1-9 px-1-9 px-sm-6 mb-1-9 rounded">
-                                                <h3 className="h2 text-black mb-0">{value.studName}</h3>
-                                                <br></br>
+                                            <div className="d-lg-flex justify-between align-items-center py-1-9 px-1-9 px-sm-6 mb-1-9 rounded">
+                                                <div className="d-lg-inline-block">
+                                                    <h3 className="h2 text-black mb-0">{value.studName}</h3>
+                                                    <br></br>
+                                                </div>
+                                                <div className="d-lg-inline-block">
+                                                    {value.validity && isRenewalDue(value.validity) && (
+                                                        <button onClick={() => { UpdateClick(value.studEmail) }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Renew</button>
+                                                    )}
+                                                </div>
                                             </div>
                                             <ul className="list-unstyled mb-1-9">
                                                 <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">College Name : {value.collegeName}</span></li>
