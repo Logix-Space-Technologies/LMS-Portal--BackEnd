@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar';
 import axios from 'axios';
 import '../../config/config'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminAddTask = () => {
@@ -19,6 +19,8 @@ const AdminAddTask = () => {
     })
 
     const [file, setFile] = useState(null)
+
+    const navigate = useNavigate()
 
     const [fileType, setFileType] = useState("");
 
@@ -69,7 +71,16 @@ const AdminAddTask = () => {
         };
         axios.post(apiUrl2, {}, axiosConfig).then(
             (response) => {
-                setOutputField(response.data.data)
+                if (response.data.data) {
+                    setOutputField(response.data.data)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setOutputField([])
+                } else {
+                    alert(response.data.status)
+                }
             }
         )
     }
@@ -91,7 +102,16 @@ const AdminAddTask = () => {
             }
         };
         axios.post(batchUrl, { collegeId }, axiosConfig2).then((response) => {
-            setBatches(response.data)
+            if (response.data) {
+                setBatches(response.data)
+            } else if (response.data.status === "Unauthorized User!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                sessionStorage.clear()
+            } else if (!response.data) {
+                setBatches([])
+            } else {
+                alert(response.data.status)
+            }
         })
     }
 
@@ -112,7 +132,16 @@ const AdminAddTask = () => {
             }
         };
         axios.post(apiUrl3, { batchId }, axiosConfig3).then((response) => {
-            setSessions(response.data.Sessions || []);
+            if (response.data.Sessions) {
+                setSessions(response.data.Sessions);
+            } else if (response.data.status === "Unauthorized access!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                sessionStorage.clear()
+            } else if (!response.data.Sessions) {
+                setSessions([]);
+            } else {
+                alert(response.data.status)
+            }
         });
     };
 
@@ -179,33 +208,25 @@ const AdminAddTask = () => {
                         dueDate: '',
                         taskFileUpload: ''
                     })
+                } else if (response.data.status === "Validation failed" && response.data.data.batchId) {
+                    alert(response.data.data.batchId)
+                } else if (response.data.status === "Validation failed" && response.data.data.taskTitle) {
+                    alert(response.data.data.taskTitle)
+                } else if (response.data.status === "Validation failed" && response.data.data.taskDesc) {
+                    alert(response.data.data.taskDesc)
+                } else if (response.data.status === "Validation failed" && response.data.data.taskType) {
+                    alert(response.data.data.taskType)
+                } else if (response.data.status === "Validation failed" && response.data.data.totalScore) {
+                    alert(response.data.data.totalScore)
+                } else if (response.data.status === "Validation failed" && response.data.data.dueDate) {
+                    alert(response.data.data.dueDate)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.batchId) {
-                        alert(response.data.data.batchId)
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.taskTitle) {
-                            alert(response.data.data.taskTitle)
-                        } else {
-                            if (response.data.status === "Validation failed" && response.data.data.taskDesc) {
-                                alert(response.data.data.taskDesc)
-                            } else {
-                                if (response.data.status === "Validation failed" && response.data.data.taskType) {
-                                    alert(response.data.data.taskType)
-                                } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.totalScore) {
-                                        alert(response.data.data.totalScore)
-                                    } else {
-                                        if (response.data.status === "Validation failed" && response.data.data.dueDate) {
-                                            alert(response.data.data.dueDate)
-                                        } else {
-                                            alert(response.data.status)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    alert(response.data.status)
                 }
+
             }
             ).catch(error => {
                 if (error.response) {
