@@ -188,7 +188,6 @@ exports.admStaffDelete = (request, response) => {
             AdminStaff.admStaffDelete(admStfDlt, (err, data) => {
                 if (err) {
                     if (err.kind === "not_found") {
-                        console.log("Admin Staff id not found.")
                         return response.json({ "status": "Admin Staff id not found." })
 
                     } else {
@@ -213,22 +212,21 @@ exports.adminStaffSearch = (request, response) => {
     jwt.verify(adminStaffSearcToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             if (!adminStaffSearchQuery) {
-                console.log("Search Item is required.")
                 return response.json({ "status": "Search Item is required." })
             }
             AdminStaff.adminStaffSearch(adminStaffSearchQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found." })
+                        return response.json({ "status": "No Search Items Found." })
                     } else {
-                        response.json({ "status": "Result Found", "data": data })
+                        return response.json({ "status": "Result Found", "data": data })
                     }
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }

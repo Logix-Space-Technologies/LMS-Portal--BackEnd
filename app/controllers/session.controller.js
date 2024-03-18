@@ -134,24 +134,13 @@ exports.createSession = (request, response) => {
                                 if (err) {
                                     return response.json({ "status": err });
                                 } else {
-                                    console.log(res)
                                     let clgstaffName = res[0].collegeStaffName
                                     let clgstaffEmail = res[0].email
                                     const clgstaffsessionTime = formatTime(newSession.time)
                                     const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
-                                    if (newSession.type === "Offline") {
-                                        const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffOfflineHTMLContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
-                                        const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffOfflineTextContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
-                                        mail.sendEmail(clgstaffEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
-                                    } else if (newSession.type === "Online") {
-                                        const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffOnlineHTMLContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
-                                        const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffOnlineTextContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
-                                        mail.sendEmail(clgstaffEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
-                                    } else {
-                                        const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffRecordedHTMLContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
-                                        const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffRecordedTextContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
-                                        mail.sendEmail(clgstaffEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
-                                    }
+                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
+                                    const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(clgstaffName, newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink);
+                                    mail.sendEmail(clgstaffEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
 
                                 }
                             })
