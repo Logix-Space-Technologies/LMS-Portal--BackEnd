@@ -222,7 +222,7 @@ exports.clgStaffCreate = (request, response) => {
 
     } catch (err) {
       fs.unlinkSync(file.path);
-      response.status(500).json({ "status": err.message });
+      return response.status(500).json({ "status": err.message });
     }
   });
 };
