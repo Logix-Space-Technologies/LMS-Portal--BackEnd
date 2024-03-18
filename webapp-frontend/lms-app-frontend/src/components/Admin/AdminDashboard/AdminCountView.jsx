@@ -4,7 +4,7 @@ import '../../../config/config'
 
 const AdminCountView = () => {
     const [collegeData, setCollegeData] = useState([])
-    
+
     const apiUrl = global.config.urls.api.server + "/api/lms/adminDashboard"
 
     const getData = () => {
@@ -18,7 +18,16 @@ const AdminCountView = () => {
         };
         axios.post(apiUrl, {}, axiosConfig).then(
             (Response) => {
-                setCollegeData(Response.data.data)
+                if (Response.data.data) {
+                    setCollegeData(Response.data.data)
+                } else if (Response.data.status === "Unauthorized User!!!") {
+                    navigate("/")
+                    sessionStorage.clear()
+                } else if (!Response.data.data) {
+                    setCollegeData([])
+                } else {
+                    alert(Response.data.status)
+                }
             }
         )
     }
