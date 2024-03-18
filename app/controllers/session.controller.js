@@ -230,7 +230,6 @@ exports.sessionUpdate = (request, response) => {
                         if (err) {
                             return response.json({ "status": err });
                         }
-                        console.log(sessionres);
                         const batchId = sessionres[0].batchId;
 
                         Student.searchStudentByBatch(batchId, (err, res) => {
@@ -254,6 +253,19 @@ exports.sessionUpdate = (request, response) => {
                                     mail.sendEmail(studentEmail, 'Session Reschedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 }
                             });
+                            
+                            CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
+                                if (err) {
+                                    return response.json({ "status": err });
+                                } else {
+                                    let clgstaffEmail = res[0].email
+                                    let batchName = res[0].batchName
+                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName);
+                                    const upcomingSessionTextContent = mailContents.reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName);
+                                    mail.sendEmail(clgstaffEmail, 'Session Reschedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+
+                                }
+                            })
 
                             if (key == "lmsapp") {
                                 logAdminStaff(0, "Admin Updated Session Details");

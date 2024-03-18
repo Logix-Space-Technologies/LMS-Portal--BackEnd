@@ -1793,6 +1793,88 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
   return content;
 }
 
+function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html>
+  <head>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              background-color: #f4f4f4;
+          }
+  
+          .container {
+              max-width: 600px;
+              margin: 20px auto;
+              padding: 20px;
+              background-color: #ffffff;
+              border: 1px solid #dddddd;
+              border-radius: 8px;
+          }
+  
+          .header {
+              color: #333333;
+              text-align: center;
+          }
+  
+          .logo-header img {
+              max-width: 30%;
+              height: auto;
+          }
+  
+          .content {
+              color: #333333;
+              line-height: 1.6;
+          }
+  
+          .footer {
+              text-align: center;
+              margin-top: 20px;
+              font-size: 0.8em;
+              color: #666666;
+          }
+  
+          a {
+              color: #007bff;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="logo-header">
+              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+          </div>
+          <div class="header">
+              <h2>Session Reschedule Announcement</h2>
+          </div>
+          <div class="content">
+              <p>Dear College Staff,</p>
+              <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.</p>
+              <p>Details of the rescheduled session:</p>
+              <ul>
+                  <li><strong>Original Date:</strong> ${originaldate}</li>
+                  <li><strong>New Date:</strong> ${sessionDate}</li>
+                  <li><strong>Batch Name:</strong> ${batchName}</li>
+                  <li><strong>Time:</strong> ${sessionTime}</li>
+                  <li><strong>Session Type:</strong> ${type}</li>
+                  <li><strong>Meeting Link/Venue:</strong> ${venueORlink}</li>
+              </ul>
+              <p>Best Regards,</p>
+              <p>Link Ur Codes Team</p>
+          </div>
+          <div class="footer">
+              <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+          </div>
+      </div>
+  </body>
+  </html>`
+  return content;
+}
+
 function reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
   content = `Dear LinkUrCodes Member,
 
@@ -1849,6 +1931,29 @@ function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessi
     Time: ${sessionTime}
     Session Type: ${type}
     Where: ${venueORlink}
+
+    Best Regards,
+    
+    LinkUrCodes Team
+    
+    Visit LinkUrCodes: https://www.linkurcodes.com`
+
+  return content
+}
+
+function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName) {
+  content = `Dear College Staff,
+
+    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
+    
+    Details of the rescheduled session:
+    
+    Original Date: ${originaldate}
+    New Date: ${sessionDate}
+    Batch Name: ${batchName}
+    Time: ${sessionTime}
+    Session Type: ${type}
+    Meeting Link/Venue: ${venueORlink}
 
     Best Regards,
     
@@ -2086,9 +2191,11 @@ module.exports = {
   reschedulingSessionOfflineHTMLContent,
   reschedulingSessionOnlineHTMLContent,
   reschedulingSessionRecordedHTMLContent,
+  reschedulingSessionClgStaffHTMLContent,
   reschedulingSessionOfflineTextContent,
   reschedulingSessionOnlineTextContent,
   reschedulingSessionRecordedTextContent,
+  reschedulingSessionClgStaffTextContent,
   emailverifyStudentOTPHtmlContent,
   emailverifyStudentOTPTextContent
 };
