@@ -4,8 +4,7 @@ import '../../../config/config'
 
 const AdminCountView = () => {
     const [collegeData, setCollegeData] = useState([])
-
-    // const apiLink = "http://localhost:8080/api/lms/adminDashboard"
+    
     const apiUrl = global.config.urls.api.server + "/api/lms/adminDashboard"
 
     const getData = () => {
