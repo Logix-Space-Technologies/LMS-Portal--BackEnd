@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar';
 import axios from 'axios';
 import '../../config/config'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminAddTrainer = () => {
@@ -15,6 +15,8 @@ const AdminAddTrainer = () => {
         "phoneNumber": "",
         "confirmpassword": ""
     })
+
+    const navigate = useNavigate()
 
     const [file, setFile] = useState(null)
 
@@ -85,59 +87,44 @@ const AdminAddTrainer = () => {
                         confirmpassword: '',
                         profilePicture: ''
                     })
+                } else if (response.data.status === "Validation failed" && response.data.data.trainerName) {
+                    alert(response.data.data.trainerName)
+                } else if (response.data.status === "Validation failed" && response.data.data.about) {
+                    alert(response.data.data.about)
+                } else if (response.data.status === "Validation failed" && response.data.data.email) {
+                    alert(response.data.data.email)
+                } else if (response.data.status === "Validation failed" && response.data.data.phoneNumber) {
+                    alert(response.data.data.phoneNumber)
+                } else if (response.data.status === "Validation failed" && response.data.data.password) {
+                    alert(response.data.data.password)
+                } else if (response.data.status === "Validation failed" && response.data.data.date) {
+                    alert(response.data.data.date)
+                } else if (response.data.status === "Unauthorized access!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                        alert(response.data.data.trainerName)
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.about) {
-                            alert(response.data.data.about)
-                        } else {
-                            if (response.data.status === "Validation failed" && response.data.data.email) {
-                                alert(response.data.data.email)
-                            } else {
-                                if (response.data.status === "Validation failed" && response.data.data.phoneNumber) {
-                                    alert(response.data.data.phoneNumber)
-                                } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.password) {
-                                        alert(response.data.data.password)
-                                    } else {
-                                        if (response.data.status === "Validation failed" && response.data.data.date) {
-                                            alert(response.data.data.date)
-                                        } else {
-                                            alert(response.data.status)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    alert(response.data.status)
                 }
-            }
-            ).catch(error => {
+            }).catch(error => {
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        console.log("Status 400:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        console.log("Status 500:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
                     alert(error.request);
                 } else if (error.message) {
-                    console.log('Error', error.message);
                     alert('Error', error.message);
                 } else {
                     alert(error.config);
-                    console.log(error.config);
                 }
             })
         } else {
