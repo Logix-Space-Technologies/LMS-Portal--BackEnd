@@ -14,7 +14,7 @@ exports.create = (request, response) => {
     // Checking token validation
     jwt.verify(adstaffToken, "lmsapp", (tokenError, decoded) => {
         if (!decoded) {
-            return response.json({ "status": "Unauthorized User !!! " });
+            return response.json({ "status": "Unauthorized User !!!" });
         }
 
         // Checking validations
@@ -78,7 +78,7 @@ exports.create = (request, response) => {
 
             AdminStaff.create(newAdminStaff, (createError, data) => {
                 if (createError) {
-                    response.json({ "status": createError });
+                    return response.json({ "status": createError });
                 } else {
                     // //send mail
                     const adminStaffName = newAdminStaff.AdStaffName
@@ -86,7 +86,7 @@ exports.create = (request, response) => {
                     const adminStaffHTMLEmailContent = mailContents.admStaffAddHTMLContent(adminStaffName);
                     const adminStaffTextEmailContent = mailContents.admStaffAddTextContent(adminStaffName)
                     mail.sendEmail(adminStaffEmail, 'Registration Successful!', adminStaffHTMLEmailContent, adminStaffTextEmailContent);
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         });
@@ -184,7 +184,6 @@ exports.admStaffDelete = (request, response) => {
             const admStfDlt = new AdminStaff({
                 'id': request.body.id
             });
-            console.log(admStfDlt)
             AdminStaff.admStaffDelete(admStfDlt, (err, data) => {
                 if (err) {
                     if (err.kind === "not_found") {

@@ -5,7 +5,7 @@ import Navbar from './Navbar';
 import { Link } from 'react-router-dom';
 
 const AddAdminStaff = () => {
-    
+
     const [inputField, setInputField] = useState({
         "AdStaffName": "",
         "PhNo": "",
@@ -74,6 +74,9 @@ const AddAdminStaff = () => {
                             alert(response.data.data.email);
                         } else if (response.data.status === 'Validation failed' && response.data.data.password) {
                             alert(response.data.data.password);
+                        } else if (response.data.status === "Unauthorized User !!!") {
+                            navigate("/")
+                            sessionStorage.clear()
                         } else {
                             alert(response.data.status);
                         }
