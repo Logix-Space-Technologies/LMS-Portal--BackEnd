@@ -64,7 +64,6 @@ const AdminUpdateTrainer = () => {
                     "key": currentKey
                 }
             }
-            console.log(axiosConfig)
             let data = {}
             if (file) {
                 data = {
@@ -133,14 +132,11 @@ const AdminUpdateTrainer = () => {
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
                     alert(error.request);
                 } else if (error.message) {
-                    console.log('Error', error.message);
                     alert('Error', error.message);
                 } else {
                     alert(error.config);
-                    console.log(error.config);
                 }
             })
         } else {
