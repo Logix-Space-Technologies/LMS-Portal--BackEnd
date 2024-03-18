@@ -90,36 +90,25 @@ const AddCollege = () => {
               collegeMobileNumber: '',
               collegeImage: ''
             })
+          } else if (response.data.status === "Validation failed" && response.data.data.name) {
+            alert(response.data.data.name)
+          } else if (response.data.status === "Validation failed" && response.data.data.address) {
+            alert(response.data.data.address)
+          } else if (response.data.status === "Validation failed" && response.data.data.website) {
+            alert(response.data.data.website)
+          } else if (response.data.status === "Validation failed" && response.data.data.email) {
+            alert(response.data.data.email)
+          } else if (response.data.status === "Validation failed" && response.data.data.phone) {
+            alert(response.data.data.phone)
+          } else if (response.data.status === "Validation failed" && response.data.data.mobile) {
+            alert(response.data.data.mobile)
+          } else if (response.data.status === "Validation failed" && response.data.data.code) {
+            alert(response.data.data.code)
+          } else if (response.data.status === "Unauthorized User!!") {
+            { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+            sessionStorage.clear()
           } else {
-            if (response.data.status === "Validation failed" && response.data.data.name) {
-              alert(response.data.data.name)
-            } else {
-              if (response.data.status === "Validation failed" && response.data.data.address) {
-                alert(response.data.data.address)
-              } else {
-                if (response.data.status === "Validation failed" && response.data.data.website) {
-                  alert(response.data.data.website)
-                } else {
-                  if (response.data.status === "Validation failed" && response.data.data.email) {
-                    alert(response.data.data.email)
-                  } else {
-                    if (response.data.status === "Validation failed" && response.data.data.phone) {
-                      alert(response.data.data.phone)
-                    } else {
-                      if (response.data.status === "Validation failed" && response.data.data.mobile) {
-                        alert(response.data.data.mobile)
-                      } else {
-                        if (response.data.status === "Validation failed" && response.data.data.code) {
-                          alert(response.data.data.code)
-                        } else {
-                          alert(response.data.status)
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            alert(response.data.status)
           }
         }
       ).catch(error => {

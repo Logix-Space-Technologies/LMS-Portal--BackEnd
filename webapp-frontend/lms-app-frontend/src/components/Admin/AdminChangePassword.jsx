@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const AdminChangePassword = () => {
-    
+
     const [updateField, setUpdateField] = useState({
         "userName": sessionStorage.getItem("userName"),
         "oldPassword": "",
@@ -36,21 +36,20 @@ const AdminChangePassword = () => {
                     alert("Password Changed Successfully");
                     navigate("/");
                     sessionStorage.clear()
+                } else if (response.data.status === "Validation failed" && response.data.data.oldPassword) {
+                    alert(response.data.data.oldPassword);
+                } else if (response.data.status === "Validation failed" && response.data.data.newPassword) {
+                    alert(response.data.data.newPassword);
+                } else if (response.data.status === "Unauthorized User!!") {
+                    navigate("/")
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.oldPassword) {
-                        alert(response.data.data.oldPassword);
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.newPassword) {
-                            alert(response.data.data.newPassword);
-                        } else {
-                            alert(response.data.status)
-                        }
-                    }
+                    alert(response.data.status)
                 }
             }
         )
     }
-    
+
     return (
         <div>
             <div className="container">

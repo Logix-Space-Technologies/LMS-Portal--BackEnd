@@ -1,13 +1,15 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import '../../../config/config'
+import { useNavigate } from 'react-router-dom';
 
 const AdminTableView = () => {
 
     const [batchData, setBatchData] = useState([]);
     const [studData, setStudData] = useState([]);
     const [taskData, setTaskData] = useState([]);
-    
+    const navigate = useNavigate()
+
     const apiUrl = global.config.urls.api.server + "/api/lms/adminDashboard"
 
     const getData = () => {
@@ -21,9 +23,20 @@ const AdminTableView = () => {
         };
         axios.post(apiUrl, {}, axiosConfig).then(
             (Response) => {
-                setBatchData(Response.data.data.collegeBatches);
-                setStudData(Response.data.data.collegeStudentStatistics);
-                setTaskData(Response.data.data.collegeTaskStatistics);
+                if (Response.data.data) {
+                    setBatchData(Response.data.data.collegeBatches);
+                    setStudData(Response.data.data.collegeStudentStatistics);
+                    setTaskData(Response.data.data.collegeTaskStatistics);
+                } else if (Response.data.status === "Unauthorized User!!!") {
+                    navigate("/")
+                    sessionStorage.clear()
+                } else if (!Response.data.data) {
+                    setBatchData([]);
+                    setStudData([]);
+                    setTaskData([]);
+                } else {
+                    alert(Response.data.status)
+                }
             }
         );
     };

@@ -113,10 +113,7 @@ const AdminViewAllStud = () => {
                     alert(response.data.status);
                 }
             }
-        ).catch(error => {
-            console.error("Error assigning community manager:", error);
-            alert("An error occurred while assigning the community manager. Please try again.");
-        });
+        )
     };
 
     // Remove Community Manager
@@ -151,10 +148,7 @@ const AdminViewAllStud = () => {
                     }
                 }
             }
-        ).catch(error => {
-            console.error("Error removing community manager:", error);
-            alert("An error occurred while removing the community manager. Please try again.");
-        });
+        )
     };
 
 

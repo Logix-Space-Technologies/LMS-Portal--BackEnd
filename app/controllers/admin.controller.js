@@ -141,16 +141,13 @@ exports.adminChangePwd = (request, response) => {
 
     // JWT Verification
     jwt.verify(token, "lmsapp", (error, decoded) => {
-        if (error) {
-            return response.json({ "status": "Unauthorized User!!" });
-        }
-
         if (decoded) {
             Admin.adminChangePassword({ userName, oldPassword, newPassword }, (err, result) => {
                 if (err) {
                     return response.json({ "status": err });
+                } else {
+                    return response.json({ "status": "success" });
                 }
-                return response.json({ "status": "success" });
             });
         } else {
             return response.json({ "status": "Unauthorized User!!" });
@@ -171,7 +168,7 @@ exports.adminDashBoards = (request, response) => {
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!!" });
+            return response.json({ "status": "Unauthorized User!!!" });
         }
     });
 
@@ -225,7 +222,7 @@ exports.adminforgotpassword = (request, response) => {
         } else {
             return response.json({ "status": "success" });
         }
-        
+
     });
 
 }

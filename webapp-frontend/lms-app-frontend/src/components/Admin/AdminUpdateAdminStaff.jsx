@@ -65,7 +65,12 @@ const AdminUpdateAdminStaff = () => {
                                 if (response.data.status === "Validation failed" && response.data.data.aadharno) {
                                     alert(response.data.data.aadharno)
                                 } else {
-                                    alert(response.data.status)
+                                    if (response.data.status === "Unauthorized access!!") {
+                                        navigate("/")
+                                        sessionStorage.clear()
+                                    } else {
+                                        alert(response.data.status)
+                                    }
                                 }
                             }
                         }
@@ -87,8 +92,28 @@ const AdminUpdateAdminStaff = () => {
         }
         axios.post(apiUrl2, data, axiosConfig).then(
             (response) => {
-                setAdstaffData(response.data.data)
-                setUpdateField(response.data.data[0])
+                if (response.data.data) {
+                    setAdstaffData(response.data.data)
+                    setUpdateField(response.data.data[0])
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        navigate("/")
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setAdstaffData([])
+                            setUpdateField({
+                                "id": "",
+                                "AdStaffName": "",
+                                "PhNo": "",
+                                "Address": "",
+                                "AadharNo": ""
+                            })
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }

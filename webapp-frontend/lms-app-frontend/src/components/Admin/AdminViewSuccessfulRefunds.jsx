@@ -31,29 +31,25 @@ const AdminViewSuccessfulRefunds = () => {
             }
         }
 
-        axios.post(apiUrl, {}, axiosConfig)
-            .then((response) => {
-                if (response.data.data) {
-                    setrefundSuccessData(response.data.data);
-                    setIsLoading(false)
+        axios.post(apiUrl, {}, axiosConfig).then((response) => {
+            if (response.data.data) {
+                setrefundSuccessData(response.data.data);
+                setIsLoading(false)
+            } else {
+                if (response.data.status === "Unauthorized User!!") {
+                    navigate("/")
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Unauthorized User!!") {
-                        navigate("/")
-                        sessionStorage.clear()
+                    if (!response.data.data) {
+                        setIsLoading(false)
+                        setrefundSuccessData([])
                     } else {
-                        if (!response.data.data) {
-                            setIsLoading(false)
-                            setrefundSuccessData([])
-                        } else {
-                            setIsLoading(false)
-                            alert(response.data.status)
-                        }
+                        setIsLoading(false)
+                        alert(response.data.status)
                     }
                 }
-            })
-            .catch((error) => {
-                console.error('Error retrieving refund requests:', error);
-            });
+            }
+        })
     };
 
 

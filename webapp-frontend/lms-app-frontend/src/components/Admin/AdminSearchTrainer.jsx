@@ -52,13 +52,28 @@ const AdminSearchTrainer = () => {
         }
         axios.post(apiUrl, inputField, axiosConfig).then(
             (response) => {
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                setInputField(
-                    {
-                        "TrainerSearchQuery": ""
-                    }
-                )
+                if (response.data.data) {
+                    setUpdateField(response.data.data)
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "TrainerSearchQuery": ""
+                        }
+                    )
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setUpdateField([])
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "TrainerSearchQuery": ""
+                        }
+                    )
+                } else {
+                    alert(response.data.status)
+                }
             }
         )
     }
@@ -83,15 +98,17 @@ const AdminSearchTrainer = () => {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                token: sessionStorage.getItem('admtoken'),
-                key: sessionStorage.getItem('admkey')
+                'token': sessionStorage.getItem('admtoken'),
+                'key': sessionStorage.getItem('admkey')
             }
         };
         axios.post(apiUrl2, deletedata, axiosConfig2).then((response) => {
             if (response.data.status === 'success') {
-                alert('Trainer Deleted Successfully!!');
                 // Remove the deleted Trainer from updateField state
                 setUpdateField(updateField.filter(trainer => trainer.id !== deleteId))
+            } else if (response.data.status === "Unauthorized User!!") {
+                navigate("/")
+                sessionStorage.clear()
             } else {
                 alert(response.data.status);
             }
@@ -155,7 +172,7 @@ const AdminSearchTrainer = () => {
                     <div className="col-12 text-center">
                         <p></p>
                     </div>
-                ) : (updateField ? (
+                ) : (updateField.length > 0 ? (
 
                     //start
                     <div>

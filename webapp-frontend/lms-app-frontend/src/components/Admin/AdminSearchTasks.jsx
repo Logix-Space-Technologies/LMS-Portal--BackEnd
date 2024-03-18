@@ -47,10 +47,26 @@ const AdminSearchTasks = () => {
         };
         axios.post(apiUrl, inputField, axiosConfig)
             .then(response => {
-                setTasks(response.data.data);
-                setInputField({ taskQuery: "" })
-                setIsLoading(false);
-                setSearchExecuted(true);
+                if (response.data.data) {
+                    setTasks(response.data.data);
+                    setInputField({ taskQuery: "" })
+                    setIsLoading(false);
+                    setSearchExecuted(true);
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setTasks([]);
+                            setInputField({ taskQuery: "" })
+                            setIsLoading(false);
+                            setSearchExecuted(true);
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             })
             .catch(error => {
                 console.error("Search failed:", error);
@@ -68,9 +84,18 @@ const AdminSearchTasks = () => {
             }
         };
         axios.post(deleteUrl, { id }, axiosConfig)
-            .then(() => {
-                alert("Task deleted successfully");
-                searchTasks();
+            .then((response) => {
+                if (response.data.status === "Task Deleted.") {
+                    // Remove the deleted Trainer from updateField state
+                    setTasks(tasks.filter(task => task.id !== deleteId))
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
             })
             .catch(error => {
                 alert(error);
@@ -146,7 +171,7 @@ const AdminSearchTasks = () => {
                             <span className="visually-hidden">Loading...</span>
                         </div>
                     </div>
-                ) : (searchExecuted && tasks ? (
+                ) : (searchExecuted && tasks.length > 0 ? (
                     <div className="table-responsive">
                         <table className="table table-hover">
                             <thead className="table-light">
@@ -180,7 +205,7 @@ const AdminSearchTasks = () => {
                                         <td>
                                             <button onClick={() => handleUpdateClick(task.id)} className="btn btn-primary btn-sm me-2">Update</button>
                                             {key === "lmsapp" && (
-                                                <button type="button" className="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" onClick={() => handleClick(task.id)}>Delete</button>
+                                                <button type="button" className="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTaskConfirmationModal" onClick={() => handleClick(task.id)}>Delete</button>
                                             )}
                                         </td>
                                     </tr>
@@ -188,7 +213,7 @@ const AdminSearchTasks = () => {
                             </tbody>
                         </table>
                     </div>
-                ) : (searchExecuted && !tasks ? (
+                ) : (searchExecuted && tasks.length === 0 ? (
                     <div className="alert alert-info" role="alert">
                         No tasks found.
                     </div>
@@ -227,7 +252,7 @@ const AdminSearchTasks = () => {
                     </div>
                 </div>
             )}
-            <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+            <div className="modal fade" id="deleteTaskConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">

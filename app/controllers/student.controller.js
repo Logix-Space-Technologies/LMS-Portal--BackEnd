@@ -678,18 +678,17 @@ exports.searchStudentsByAdmAndAdmstf = (request, response) => {
             }
             Student.searchStudentsByAdmAndAdmstf(studentSearchQuery, (err, data) => {
                 if (err) {
-                    console.error("Error in searchStudents:", err);
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found." });
+                        return response.json({ "status": "No Search Items Found." });
                     } else {
-                        response.json({ "status": "Result Found", "data": data });
+                        return response.json({ "status": "Result Found", "data": data });
                     }
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
@@ -1562,7 +1561,7 @@ exports.sendRenewalReminderEmail = async (req, res) => {
         return res.status(500).json({
             status: "error",
             message: "Error in sending renewal reminder email.",
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -1602,7 +1601,6 @@ function sendOTPVerifyEmail(email, studName, otp) {
 exports.emailverifyStudOTP = (req, res) => {
     // Extract email and OTP from request body
     const email = req.body.studEmail;
-    const password = req.body.password;
     const otp = req.body.otp;
 
     // Input validation (basic example)
@@ -1611,14 +1609,14 @@ exports.emailverifyStudOTP = (req, res) => {
     }
 
     // Call the model function to verify the OTP
-    Student.emailverifyStudOTP(email, password, otp, (err, result) => {
+    Student.emailverifyStudOTP(email, otp, (err, result) => {
         if (err) {
             // If there was an error or the OTP is not valid/expired
             return res.json({ "status": err });
         } else {
             if (result) {
                 // If the OTP is verified successfully
-                return res.json({ "status": "Password Changed Successfully!!" });
+                return res.json({ "status": "OTP Verified Successfully!!!" });
             } else {
                 // If the OTP does not match
                 return res.json({ "status": "Invalid OTP" });
@@ -1627,8 +1625,35 @@ exports.emailverifyStudOTP = (req, res) => {
     });
 };
 
+exports.emailVerifyAndPasswordChange = (req, res) => {
+    const email = req.body.studEmail
+    const password = req.body.password
+
+    const validationErrors = {};
+
+    if (Validator.isEmpty(email).isValid) {
+        validationErrors.studEmail = "Email is required";
+    } else if (Validator.isEmpty(password).isValid) {
+        validationErrors.oldPassword = "Password is required";
+    } else if (!Validator.isValidPassword(password).isValid) {
+        validationErrors.newPassword = "Invalid Password!!";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+        return res.json({ "status": "Validation failed", "data": validationErrors });
+    }
+
+    Student.emailVerifyAndPasswordChange(email, password, (err, data) => {
+        if (err) {
+            return res.json({ "status": err });
+        } else {
+            return res.json({ "status": "Password Changed Successfully!!!" });
+        }
+    })
+}
 
 
 
 
- 
+
+

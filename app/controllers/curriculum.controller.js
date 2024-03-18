@@ -145,22 +145,21 @@ exports.searchCurriculum = (request, response) => {
     jwt.verify(CurriculumSearchToken, key, (err, decoded) => {
         if (decoded) {
             if (!CurriculumSearchQuery) {
-                console.log("Search Item is required.")
                 return response.json({ "status": "Search Item is required." })
             }
             Curriculum.searchCurriculum(CurriculumSearchQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found." })
+                        return response.json({ "status": "No Search Items Found." })
                     } else {
-                        response.json({ "status": "Result Found", "data": data })
+                        return response.json({ "status": "Result Found", "data": data })
                     }
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -197,7 +196,6 @@ exports.curriculumDelete = (request, response) => {
             Curriculum.curriculumDelete(id, (err, data) => {
                 if (err) {
                     if (err.kind === "not_found") {
-                        console.log("Curriculum not found.")
                         return response.json({ "status": "Curriculum not found." })
                     } else {
                         return response.json({ "status": err })

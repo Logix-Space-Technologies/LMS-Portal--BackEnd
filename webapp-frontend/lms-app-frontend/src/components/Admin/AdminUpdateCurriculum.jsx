@@ -105,7 +105,12 @@ const AdminUpdateCurriculum = () => {
                                 if (Response.data.status === "Validation failed" && Response.data.data.updatedBy) {
                                     alert(Response.data.data.updatedBy)
                                 } else {
-                                    alert(Response.data.status)
+                                    if (Response.data.status === "Unauthorized User!!") {
+                                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                        sessionStorage.clear()
+                                    } else {
+                                        alert(Response.data.status)
+                                    }
                                 }
 
                             }
@@ -118,25 +123,20 @@ const AdminUpdateCurriculum = () => {
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        console.log("Status 400:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        console.log("Status 500:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
                     alert(error.request);
                 } else if (error.message) {
-                    console.log('Error', error.message);
                     alert('Error', error.message);
                 } else {
                     alert(error.config);
-                    console.log(error.config);
                 }
             })
         } else {
@@ -177,8 +177,28 @@ const AdminUpdateCurriculum = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setCurriculumData(response.data.curriculum)
-                setUpdateField(response.data.curriculum[0])
+                if (response.data.curriculum) {
+                    setCurriculumData(response.data.curriculum)
+                    setUpdateField(response.data.curriculum[0])
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.curriculum) {
+                            setCurriculumData([])
+                            setUpdateField({
+                                "id": "",
+                                "curriculumTitle": "",
+                                "curriculumDesc": "",
+                                "updatedBy": "",
+                                "curriculumFileLink": ""
+                            })
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }

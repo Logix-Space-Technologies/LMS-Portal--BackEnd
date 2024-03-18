@@ -612,7 +612,7 @@ CollegeStaff.emailVerificationClgStaffOtpVerify = (email, otp, result) => {
                 // If OTP not expired, proceed to compare
                 const isMatch = bcrypt.compareSync(otp, clgstaffotp);
                 if (isMatch) {
-                    db.query("UPDATE college_staff SET emailVerified = 1 WHERE email = ?", [email], (verifyErr, verifyRes)=> {
+                    db.query("UPDATE college_staff SET emailVerified = 1 WHERE email = ?", [email], (verifyErr, verifyRes) => {
                         if (verifyErr) {
                             return result(err, null);
                         } else {
@@ -629,5 +629,23 @@ CollegeStaff.emailVerificationClgStaffOtpVerify = (email, otp, result) => {
     });
 }
 
+CollegeStaff.searchClgStaffByCollege = (searchKey, result) => {
+    db.query(
+        "SELECT c.collegeStaffName, c.email, b.batchName FROM college_staff c JOIN batches b ON b.collegeId = c.collegeId WHERE b.id = ?",
+        [searchKey],
+        (err, res) => {
+            if (err) {
+                console.error("Error while searching college staff: ", err);
+                result(err, null);
+                return;
+            } else {
+                // console.log("Students found: ", res);
+                let data = Object.values(JSON.parse(JSON.stringify(res)))
+                result(null, data);
+                return;
+            }
+        }
+    );
+}
 
 module.exports = CollegeStaff

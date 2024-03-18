@@ -147,7 +147,7 @@ exports.createTrainer = (request, response) => {
 
         } catch (err) {
             fs.unlinkSync(file.path);
-            response.status(500).json({ "status": err.message });
+            return response.status(500).json({ "status": err.message });
         }
     })
 };
@@ -189,17 +189,17 @@ exports.searchTrainer = (request, response) => {
             }
             Trainers.searchTrainer(TrainerSearchQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found." })
+                        return response.json({ "status": "No Search Items Found." })
                     } else {
-                        response.json({ "status": "Result Found", "data": data })
+                        return response.json({ "status": "Result Found", "data": data })
                     }
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -325,8 +325,6 @@ exports.trainerDetailsUpdate = (request, response) => {
     });
 };
 
-
-// Code For Updating Trainer Password
 
 exports.viewOneTrainer = (request, response) => {
     const trainerToken = request.headers.token;

@@ -6,15 +6,14 @@ const StudentEmailVerification = () => {
     let [inputField, setInputField] = useState({
         "studEmail": "",
         "password": "",
-        "confirmpass": "",
-        "otp": ""
+        "confirmpass": ""
     })
 
     const [errors, setErrors] = useState({});
 
     const navigate = useNavigate()
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/studemailverificationotpverify"
+    const apiUrl = global.config.urls.api.server + "/api/lms/emailverifypwdchangestud"
 
     const inputHandler = (event) => {
         setErrors({}); // Clear previous errors
@@ -23,9 +22,6 @@ const StudentEmailVerification = () => {
 
     const readValue = () => {
         let newErrors = {};
-        if (!inputField.otp.trim()) {
-            newErrors.otp = "OTP is required!";
-        }
         if (!inputField.password.trim()) {
             newErrors.password = "Password is required!";
         }
@@ -42,13 +38,12 @@ const StudentEmailVerification = () => {
 
         let data = {
             "studEmail": sessionStorage.getItem("studemail"),
-            "password": inputField.password,
-            "otp": inputField.otp
+            "password": inputField.password
         }
 
         axios.post(apiUrl, data).then(
             (Response) => {
-                if (Response.data.status === "Password Changed Successfully!!") {
+                if (Response.data.status === "Password Changed Successfully!!!") {
                     alert("Email Verified And Password Updated.")
                     sessionStorage.clear()
                     navigate("/studentLogin")
@@ -57,7 +52,6 @@ const StudentEmailVerification = () => {
                 }
             }
         )
-
 
     }
     return (
@@ -78,11 +72,6 @@ const StudentEmailVerification = () => {
                                             <br></br>
                                         </div>
                                         <ul className="list-unstyled mb-1-9">
-                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                                <label htmlFor="" className="form-label">Otp :</label>
-                                                <input onChange={inputHandler} type="text" className="form-control" name="otp" value={inputField.otp} />
-                                                {errors.otp && <span style={{ color: 'red' }} className="error">{errors.otp}</span>}
-                                            </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Password :</label>
                                                 <input onChange={inputHandler} type="password" className="form-control" name="password" value={inputField.password} />
