@@ -159,7 +159,7 @@ const AdminSearchCurriculum = () => {
                 <div className="col-12 text-center">
                     <p></p>
                 </div>
-            ) : (searchExecuted && updateField ? (
+            ) : (searchExecuted && updateField.length > 0 ? (
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -230,7 +230,7 @@ const AdminSearchCurriculum = () => {
                         </tbody>
                     </table>
                 </div>
-            ) : (searchExecuted && !updateField ? (
+            ) : (searchExecuted && updateField.length === 0 ? (
                 <div className="alert alert-info" role="alert">
                     No Curriculum found.
                 </div>

@@ -171,7 +171,7 @@ const AdminSearchTasks = () => {
                             <span className="visually-hidden">Loading...</span>
                         </div>
                     </div>
-                ) : (searchExecuted && tasks ? (
+                ) : (searchExecuted && tasks.length > 0 ? (
                     <div className="table-responsive">
                         <table className="table table-hover">
                             <thead className="table-light">
@@ -213,7 +213,7 @@ const AdminSearchTasks = () => {
                             </tbody>
                         </table>
                     </div>
-                ) : (searchExecuted && !tasks ? (
+                ) : (searchExecuted && tasks.length === 0 ? (
                     <div className="alert alert-info" role="alert">
                         No tasks found.
                     </div>

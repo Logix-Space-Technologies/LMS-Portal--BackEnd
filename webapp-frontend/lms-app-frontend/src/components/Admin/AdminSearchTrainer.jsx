@@ -172,7 +172,7 @@ const AdminSearchTrainer = () => {
                     <div className="col-12 text-center">
                         <p></p>
                     </div>
-                ) : (updateField ? (
+                ) : (updateField.length > 0 ? (
 
                     //start
                     <div>

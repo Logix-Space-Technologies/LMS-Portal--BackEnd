@@ -157,11 +157,12 @@ const AdminSearchCollege = () => {
                         </div>
                     </div>
                 </div>
+                <br />
                 {isLoading ? (
                     <div className="col-12 text-center">
                         <p></p>
                     </div>
-                ) : (searchExecuted && updateField ? (
+                ) : (searchExecuted && updateField.length > 0 ? (
                     //start
                     <div>
                         <br />
@@ -245,7 +246,7 @@ const AdminSearchCollege = () => {
                     </div>
                     //end
 
-                ) : (searchExecuted && !updateField ? (
+                ) : (searchExecuted && updateField.length === 0 ? (
                     <div className="alert alert-info" role="alert">
                         No Colleges found.
                     </div>
