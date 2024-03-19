@@ -38,7 +38,7 @@ const StudentLogin = () => {
         setShowModal(false);
         setShowOverlay(false);
         setErrors({})
-        setInputField({
+        setUpdateField({
             otp: ""
         });
     };

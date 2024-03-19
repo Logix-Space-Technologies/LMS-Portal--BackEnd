@@ -42,7 +42,7 @@ const AdminStaffLogin = () => {
         setShowModal(false);
         setShowOverlay(false);
         setErrors({})
-        setInputField({
+        setUpdateField({
             otp: ""
         });
     };
@@ -118,7 +118,6 @@ const AdminStaffLogin = () => {
         axios.post(apiUrl3, data).then(
             (response) => {
                 if (response.data.status === "OTP verified successfully") {
-                    setUpdateField({ otp: "" })
                     setShowModal(false)
                     setShowOverlay(false); // Close the overlay
                     alert("Email Verified Successfully !!!\nPlease Login Again.")

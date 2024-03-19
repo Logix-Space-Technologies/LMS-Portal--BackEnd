@@ -9,14 +9,39 @@ const CollegeStaffLogin = () => {
         password: ""
     });
 
+    const [updateField, setUpdateField] = useState({
+        otp: ""
+    })
+
+    const [showModal, setShowModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const [errors, setErrors] = useState({});
 
     const apiUrl = global.config.urls.api.server + "/api/lms/clgStaffLogin";
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/clgstaffemailverificationotpsend";
+    const apiUrl3 = global.config.urls.api.server + "/api/lms/clgstaffemailverifyotp";
+
     const navigate = useNavigate();
 
     const inputHandler = (event) => {
         setErrors({}); // Clear previous errors
         setInputField({ ...inputField, [event.target.name]: event.target.value });
+    };
+
+    const updateHandler = (event) => {
+        setErrors({}); // Clear previous errors
+        setUpdateField({ ...updateField, [event.target.name]: event.target.value });
+    };
+
+    // Function to close both modal and overlay
+    const closeModal = () => {
+        setShowModal(false);
+        setShowOverlay(false);
+        setErrors({})
+        setUpdateField({
+            otp: ""
+        });
     };
 
     const readValue = () => {
@@ -45,20 +70,62 @@ const CollegeStaffLogin = () => {
                     sessionStorage.setItem("clgstaffkey", clgstaffkey);
                     sessionStorage.setItem("clgStaffCollegeId", clgStaffCollegeId)
                     navigate("/collegeStaffDashboard")
-                } else {
-                    if (response.data.status === "Validation failed" && response.data.data.email) {
-                        alert(response.data.data.email);
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.password) {
-                            alert(response.data.data.password);
-                        } else {
-                            alert(response.data.status);
+                } else if (response.data.status === "Email Not Verified") {
+                    let data = { "email": inputField.email }
+                    axios.post(apiUrl2, data).then(
+                        (Response) => {
+                            if (Response.data.status === "OTP sent to email.") {
+                                setShowModal(true)
+                                setShowOverlay(true);
+                            } else if (Response.data.status.sqlMessage) {
+                                alert(Response.data.status.sqlMessage)
+                                setShowModal(false)
+                                setShowOverlay(false);
+                            } else {
+                                alert(Response.data.status)
+                                setShowModal(false)
+                                setShowOverlay(false);
+                            }
                         }
-                    }
+                    )
+                } else if (response.data.status === "Validation failed" && response.data.data.email) {
+                    alert(response.data.data.email);
+                } else if (response.data.status === "Validation failed" && response.data.data.password) {
+                    alert(response.data.data.password);
+                } else {
+                    alert(response.data.status);
                 }
             }
         );
     };
+
+    const otpVerify = () => {
+        let newErrors = {};
+        if (!inputField.email) {
+            newErrors.otp = "Email is required!";
+        }
+        if (!updateField.otp) {
+            newErrors.otp = "OTP is required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        let data = { "email": inputField.email, "otp": updateField.otp }
+        axios.post(apiUrl3, data).then(
+            (response) => {
+                if (response.data.status === "OTP verified successfully") {
+                    setShowModal(false)
+                    setShowOverlay(false); // Close the overlay
+                    alert("Email Verified Successfully !!!\nPlease Login Again.")
+                } else {
+                    alert(response.data.status)
+                    setShowModal(true)
+                    setShowOverlay(true);
+                }
+            }
+        )
+    }
 
     return (
         <div className="container">
@@ -104,6 +171,50 @@ const CollegeStaffLogin = () => {
                     </div>
                 </div>
             </div>
+            {showModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel">Verify Email</h1>
+                                <button type="button" className="btn-close" onClick={closeModal} />
+                            </div>
+                            <div className="modal-body">
+                                <p style={{ fontSize: "15px" }}>Your Email Is Not Verified. Enter OTP Send To Email For Verification.</p><br />
+                                <form>
+                                    <div className="mb-3">
+                                        <label htmlFor="recipient-name" className="col-form-label">OTP:</label>
+                                        <input type="text" name="otp" className="form-control" value={updateField.otp} onChange={updateHandler} />
+                                        {errors.otp && <span style={{ color: 'red' }} className="error">{errors.otp}</span>}
+                                    </div>
+                                </form>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
+                                <button type="button" onClick={() => otpVerify()} className="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     );
 };
