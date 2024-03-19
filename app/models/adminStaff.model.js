@@ -182,7 +182,7 @@ AdminStaff.adminStaffSearch = (search, result) => {
 };
 
 AdminStaff.findByEmail = (email, result) => {
-    db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND isActive=1 AND deleteStatus=0 ", email, (err, res) => {
+    db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND isActive = 1 AND deleteStatus = 0 ", email, (err, res) => {
 
         if (err) {
             console.log("Error : ", err)

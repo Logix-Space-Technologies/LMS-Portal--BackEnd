@@ -47,7 +47,7 @@ const AdminStaffLogin = () => {
                     sessionStorage.setItem("Email", Email)
                     sessionStorage.setItem("admstaffkey", admstaffkey)
                     sessionStorage.setItem("AdStaffName", AdStaffName)
-                    navigate("/admstaffdashboard")
+                    navigate("/admstaffdashboard") 
                 } else {
                     if (Response.data.status === "Validation failed" && Response.data.data.email) {
                         alert(Response.data.data.email)

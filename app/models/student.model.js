@@ -330,7 +330,7 @@ Student.searchStudentByBatch = (searchKey, result) => {
 
 
 Student.findByEmail = (Email, result) => {
-    db.query("SELECT * FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1", [Email],
+    db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1", [Email],
         (verifyErr, verifyRes) => {
             if (verifyErr) {
                 console.log("Error: ", verifyErr)
@@ -340,7 +340,7 @@ Student.findByEmail = (Email, result) => {
                 console.log("Student Does Not Exist")
                 return result("Student Does Not Exist", null)
             } else {
-                db.query("SELECT * FROM student WHERE studEmail = ? AND emailVerified = 1", [Email],
+                db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND emailVerified = 1", [Email],
                     (verifyEmailErr, verifyEmailRes) => {
                         if (verifyEmailErr) {
                             console.log("Error: ", verifyEmailErr)
@@ -350,7 +350,7 @@ Student.findByEmail = (Email, result) => {
                             console.log("Email Not Verified")
                             return result("Email Not Verified", null)
                         } else {
-                            db.query("SELECT * FROM student WHERE studEmail = ? AND isVerified = 1", [Email],
+                            db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND isVerified = 1", [Email],
                                 (err, res) => {
                                     if (err) {
                                         console.log("Error: ", err)
@@ -360,7 +360,7 @@ Student.findByEmail = (Email, result) => {
                                             console.log("Account Under Verification Progress/Not Verified")
                                             return result("Account Under Verification Progress/Not Verified", null)
                                         } else {
-                                            db.query("SELECT * FROM student WHERE studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
+                                            db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
                                                 (validityErr, validityRes) => {
                                                     if (validityErr) {
                                                         console.log("Error: ", validityErr)
