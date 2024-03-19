@@ -78,7 +78,6 @@ const AdminStaffLogin = () => {
                     axios.post(apiUrl2, data).then(
                         (Response) => {
                             if (Response.data.status === "OTP sent to email.") {
-                                alert("OTP For Email Verification Send To Mail !!")
                                 setShowModal(true)
                                 setShowOverlay(true);
                             } else if (Response.data.status.sqlMessage) {
@@ -118,10 +117,11 @@ const AdminStaffLogin = () => {
         let data = { "Email": inputField.Email, "otp": updateField.otp }
         axios.post(apiUrl3, data).then(
             (response) => {
-                if (response.data.status === "OTP Verified Successfully!!!") {
-                    alert("Email Verified Successfully !!! \n Please Login Again.")
+                if (response.data.status === "OTP verified successfully") {
+                    setUpdateField({ otp: "" })
                     setShowModal(false)
                     setShowOverlay(false); // Close the overlay
+                    alert("Email Verified Successfully !!!\nPlease Login Again.")
                 } else {
                     alert(response.data.status)
                     setShowModal(true)
@@ -182,7 +182,7 @@ const AdminStaffLogin = () => {
                                 <button type="button" className="btn-close" onClick={closeModal} />
                             </div>
                             <div className="modal-body">
-                                <p style={{fontSize:"15px"}}>Your Email Is Not Verified. Enter OTP Send To Email For Verification.</p><br />
+                                <p style={{ fontSize: "15px" }}>Your Email Is Not Verified. Enter OTP Send To Email For Verification.</p><br />
                                 <form>
                                     <div className="mb-3">
                                         <label htmlFor="recipient-name" className="col-form-label">OTP:</label>
