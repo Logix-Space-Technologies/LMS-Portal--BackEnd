@@ -27,6 +27,7 @@ const StudentRegistration = () => {
   const [file, setFile] = useState(null)
 
   const [showModal, setShowModal] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
   const fileUploadHandler = (event) => {
     setErrors({})
@@ -36,6 +37,7 @@ const StudentRegistration = () => {
   // Call this function to close the modal and navigate
   const closeAndNavigate = () => {
     setShowModal(false); // Set showModal state to false
+    setShowOverlay(false);
 
     // Remove any leftover classes or styles that might be interfering
     document.body.classList.remove('modal-open');
@@ -81,16 +83,29 @@ const StudentRegistration = () => {
           if (response.data.status === "OTP sent to email.") {
             alert("OTP Send To Your Email")
             setShowModal(true)
+            setShowOverlay(true)
           } else {
             alert(response.data.status)
+            setShowModal(false)
+            setShowOverlay(false)
           }
         }
       )
     } else {
       setErrors(validationErrors);
       setShowModal(false)
+      setShowOverlay(false)
     }
   }
+
+  // Function to close modal
+  const closeModal = () => {
+    setShowModal(false);
+    setShowOverlay(false)
+    setUpdateField({
+      "otp": ""
+    });
+  };
 
   const getData = () => {
     let axiosConfig = {
@@ -216,55 +231,35 @@ const StudentRegistration = () => {
           axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
               if (response.data.status === "success") {
+
                 alert("User Registered Successfully !!!")
                 closeAndNavigate()
                 setInputField({ "collegeId": "", "batchId": "", "studName": "", "admNo": "", "rollNo": "", "studDept": "", "course": "", "studEmail": "", "studPhNo": "", "studProfilePic": "", "aadharNo": "", "password": "", "confirmpassword": "" })
+
+              } else if (response.data.status === "Validation failed" && response.data.data.college) {
+                alert(response.data.data.college)
+              } else if (response.data.status === "Validation failed" && response.data.data.batch) {
+                alert(response.data.data.batch)
+              } else if (response.data.status === "Validation failed" && response.data.data.name) {
+                alert(response.data.data.name)
+              } else if (response.data.status === "Validation failed" && response.data.data.admNo) {
+                alert(response.data.data.admNo)
+              } else if (response.data.status === "Validation failed" && response.data.data.rollNo) {
+                alert(response.data.data.rollNo)
+              } else if (response.data.status === "Validation failed" && response.data.data.department) {
+                alert(response.data.data.department)
+              } else if (response.data.status === "Validation failed" && response.data.data.course) {
+                alert(response.data.data.course)
+              } else if (response.data.status === "Validation failed" && response.data.data.email) {
+                alert(response.data.data.email)
+              } else if (response.data.status === "Validation failed" && response.data.data.phone) {
+                alert(response.data.data.phone)
+              } else if (response.data.status === "Validation failed" && response.data.data.aadharNo) {
+                alert(response.data.data.aadharNo)
+              } else if (response.data.status === "Validation failed" && response.data.data.password) {
+                alert(response.data.data.password)
               } else {
-                if (response.data.status === "Validation failed" && response.data.data.college) {
-                  alert(response.data.data.college)
-                } else {
-                  if (response.data.status === "Validation failed" && response.data.data.batch) {
-                    alert(response.data.data.batch)
-                  } else {
-                    if (response.data.status === "Validation failed" && response.data.data.name) {
-                      alert(response.data.data.name)
-                    } else {
-                      if (response.data.status === "Validation failed" && response.data.data.admNo) {
-                        alert(response.data.data.admNo)
-                      } else {
-                        if (response.data.status === "Validation failed" && response.data.data.rollNo) {
-                          alert(response.data.data.rollNo)
-                        } else {
-                          if (response.data.status === "Validation failed" && response.data.data.department) {
-                            alert(response.data.data.department)
-                          } else {
-                            if (response.data.status === "Validation failed" && response.data.data.course) {
-                              alert(response.data.data.course)
-                            } else {
-                              if (response.data.status === "Validation failed" && response.data.data.email) {
-                                alert(response.data.data.email)
-                              } else {
-                                if (response.data.status === "Validation failed" && response.data.data.phone) {
-                                  alert(response.data.data.phone)
-                                } else {
-                                  if (response.data.status === "Validation failed" && response.data.data.aadharNo) {
-                                    alert(response.data.data.aadharNo)
-                                  } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.password) {
-                                      alert(response.data.data.password)
-                                    } else {
-                                      alert(response.data.status)
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
+                alert(response.data.status)
               }
             }
           )
@@ -293,18 +288,19 @@ const StudentRegistration = () => {
       (response) => {
         if (response.data.status === "OTP verified successfully") {
           setShowModal(false)
+          setShowOverlay(false)
           loadRazorpayScript()
           setUpdateField({ "otp": "" })
+        } else if (response.data.status === "Invalid OTP") {
+          alert("Invalid OTP")
+          setUpdateField({ "otp": "" })
+          setShowModal(true);
+          setShowOverlay(true);
         } else {
-          if (response.data.status === "Invalid OTP") {
-            alert("Invalid OTP")
-            setUpdateField({ "otp": "" })
-            setShowModal(true);
-          } else {
-            alert(response.data.status)
-            setUpdateField({ "otp": "" })
-            setShowModal(false); // Reset showModal state
-          }
+          alert(response.data.status)
+          setUpdateField({ "otp": "" })
+          setShowModal(false); // Reset showModal state
+          setShowOverlay(false);
         }
       }
     )
@@ -384,16 +380,6 @@ const StudentRegistration = () => {
     setAmount(batchAmount || '');
   }, []);
 
-  // Place this useEffect hook in your component
-  useEffect(() => {
-    if (showModal) {
-      new window.bootstrap.Modal(document.getElementById('exampleModal')).show();
-    } else {
-      // Optionally close the modal if needed
-    }
-  }, [showModal]);
-
-
   return (
     <div className="bg-light py-3 py-md-5">
       <div className="container">
@@ -449,28 +435,6 @@ const StudentRegistration = () => {
                       return <option key={value.id} value={value.id}> {value.batchName} </option>;
                     })}
                   </select>
-                  {/* <select
-                    name="batchId"
-                    id="batchId"
-                    className="form-control"
-                    value={inputField.batchId}
-                    onChange={inputHandler}
-                  >
-                    {batches.length === 0 ? (
-                      <option value="" disabled>
-                        No Batches Found
-                      </option>
-                    ) : (
-                      <>
-                        <option value="">Select</option>
-                        {batches.data.map((value) => (
-                          <option key={value.batchName} value={value.id}>
-                            {value.batchName}
-                          </option>
-                        ))}
-                      </>
-                    )}
-                  </select> */}
                   {errors.batchId && <span style={{ color: 'red' }} className="error">{errors.batchId}</span>}
                 </div>
                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
@@ -605,24 +569,18 @@ const StudentRegistration = () => {
                 </div>
                 <div className="col-12">
                   {amount === batchAmount && (
-                    // <button
-                    //   type="submit"
-                    //   className="btn btn-primary w-100 py-3"
-                    //   onClick={sendOtp}>
-                    //   Register
-                    // </button>
                     <button type="button" onClick={sendOtp} className="btn btn-primary">Register</button>
                   )}
                 </div>
               </div>
               <div>
                 {showModal && (
-                  <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div className="modal show d-block" tabIndex={-1}>
                     <div className="modal-dialog">
                       <div className="modal-content">
                         <div className="modal-header">
                           <h1 className="modal-title fs-5" id="exampleModalLabel">Verify Email</h1>
-                          <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                          <button type="button" className="btn-close" onClick={closeModal} />
                         </div>
                         <div className="modal-body">
                           <>
@@ -633,12 +591,30 @@ const StudentRegistration = () => {
                           </>
                         </div>
                         <div className="modal-footer">
-                          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
                           <button type="button" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
                         </div>
                       </div>
                     </div>
                   </div>
+                )}
+                {showOverlay && (
+                  <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                      setShowModal(false);
+                      setShowOverlay(false);
+                    }}
+                    style={{
+                      position: 'fixed',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: 'rgba(0,0,0,0.5)',
+                      zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                  ></div>
                 )}
 
               </div>

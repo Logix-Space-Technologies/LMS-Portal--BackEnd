@@ -103,190 +103,123 @@ Student.create = (newStudent, result) => {
     const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, "0");
     const membershipNoPrefix = "LUC";
 
-    db.query("SELECT * FROM student WHERE admNo = ? AND collegeId = ? AND batchId = ? AND deleteStatus = 0 AND isActive = 1",
-        [newStudent.admNo, newStudent.collegeId, newStudent.batchId], (err, res) => {
+    // Update counter and fetch currentCounter
+    db.query("UPDATE counter SET Counter = Counter + 1", (err, updateRes) => {
+        if (err) {
+            console.error("Error while updating counter: ", err);
+            result(err, null);
+            return;
+        }
+
+        db.query("SELECT Counter FROM counter", (err, counterRes) => {
             if (err) {
-                console.error("Error while checking uniqueness: ", err);
+                console.error("Error while fetching counter value: ", err);
                 result(err, null);
                 return;
-            } else {
-                if (res.length > 0) {
-                    console.log("Admission No already exists");
-                    result("Admission No already exists", null);
-                    return;
-                } else {
-                    db.query("SELECT * FROM student WHERE rollNo = ? AND collegeId = ? AND batchId = ? AND deleteStatus = 0 AND isActive = 1",
-                        [newStudent.rollNo, newStudent.collegeId, newStudent.batchId],
-                        (err, res) => {
+            }
+
+            const currentCounter = counterRes[0].Counter.toString().padStart(5, "0");
+            const finalMembershipNo = `${membershipNoPrefix}${currentYear}${currentMonth}${currentCounter}`;
+
+            newStudent.membership_no = finalMembershipNo;
+            newStudent.validity = formattedDate;
+
+            // Checking if membership_no already exists
+
+            db.query("SELECT * FROM student WHERE membership_no = ? AND deleteStatus = 0 AND isActive = 1",
+                [newStudent.membership_no], (err, res) => {
+                    if (err) {
+                        console.error("Error while checking uniqueness: ", err);
+                        result(err, null);
+                        return;
+                    } else if (res.length > 0) {
+                        db.query("UPDATE counter SET Counter = Counter + 1", (err, updateRes) => {
                             if (err) {
-                                console.error("Error while checking uniqueness: ", err);
+                                console.error("Error while updating counter: ", err);
                                 result(err, null);
                                 return;
-                            } else {
-                                if (res.length > 0) {
-                                    console.log("Roll No already exists");
-                                    result("Roll No already exists", null);
-                                    return;
-                                } else {
-                                    db.query("SELECT * FROM student WHERE aadharNo = ? AND deleteStatus = 0 AND isActive = 1",
-                                        [newStudent.aadharNo], (err, res) => {
-                                            if (err) {
-                                                console.error("Error while checking uniqueness: ", err);
-                                                result(err, null);
-                                                return;
-                                            } else {
-                                                if (res.length > 0) {
-                                                    console.log("Aadhar No already exists");
-                                                    result("Aadhar No already exists", null);
-                                                    return;
-                                                } else {
-                                                    db.query("SELECT * FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1",
-                                                        [newStudent.studEmail], (err, res) => {
-                                                            if (err) {
-                                                                console.error("Error while checking uniqueness: ", err);
-                                                                result(err, null);
-                                                                return;
-                                                            } else {
-                                                                if (res.length > 0) {
-                                                                    console.log("Email already exists");
-                                                                    result("Email already exists", null);
-                                                                    return;
-                                                                } else {
-                                                                    // Update counter and fetch currentCounter
-                                                                    db.query("UPDATE counter SET Counter = Counter + 1", (err, updateRes) => {
-                                                                        if (err) {
-                                                                            console.error("Error while updating counter: ", err);
-                                                                            result(err, null);
-                                                                            return;
-                                                                        }
-
-                                                                        db.query("SELECT Counter FROM counter", (err, counterRes) => {
-                                                                            if (err) {
-                                                                                console.error("Error while fetching counter value: ", err);
-                                                                                result(err, null);
-                                                                                return;
-                                                                            }
-
-                                                                            const currentCounter = counterRes[0].Counter.toString().padStart(5, "0");
-                                                                            const finalMembershipNo = `${membershipNoPrefix}${currentYear}${currentMonth}${currentCounter}`;
-
-                                                                            newStudent.membership_no = finalMembershipNo;
-                                                                            newStudent.validity = formattedDate;
-
-                                                                            // Checking if membership_no already exists
-
-                                                                            db.query("SELECT * FROM student WHERE membership_no = ? AND deleteStatus = 0 AND isActive = 1",
-                                                                                [newStudent.membership_no], (err, res) => {
-                                                                                    if (err) {
-                                                                                        console.error("Error while checking uniqueness: ", err);
-                                                                                        result(err, null);
-                                                                                        return;
-                                                                                    } else {
-                                                                                        if (res.length > 0) {
-                                                                                            db.query("UPDATE counter SET Counter = Counter + 1", (err, updateRes) => {
-                                                                                                if (err) {
-                                                                                                    console.error("Error while updating counter: ", err);
-                                                                                                    result(err, null);
-                                                                                                    return;
-                                                                                                }
-
-                                                                                                db.query("SELECT Counter FROM counter", (err, counterRes) => {
-                                                                                                    if (err) {
-                                                                                                        console.error("Error while fetching counter value: ", err);
-                                                                                                        result(err, null);
-                                                                                                        return;
-                                                                                                    }
-
-                                                                                                    const currentCounter = counterRes[0].Counter.toString().padStart(5, "0");
-                                                                                                    const finalMembershipNo = `${membershipNoPrefix}${currentYear}${currentMonth}${currentCounter}`;
-
-                                                                                                    newStudent.membership_no = finalMembershipNo;
-
-                                                                                                    // Insert new student
-                                                                                                    db.query("INSERT INTO student SET ?", newStudent, (err, res) => {
-                                                                                                        if (err) {
-                                                                                                            console.error("Error while inserting a new student: ", err);
-                                                                                                            result(err, null);
-                                                                                                            return;
-                                                                                                        }
-
-                                                                                                        console.log("New student added: ", { id: res.insertId, ...newStudent });
-                                                                                                        payStudId = res.insertId;
-                                                                                                        Payment.create = (newPayment, result) => {
-                                                                                                            newPayment.studId = payStudId;
-                                                                                                            db.query(
-                                                                                                                "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
-                                                                                                                [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
-                                                                                                                (err, paymentRes) => {
-                                                                                                                    if (err) {
-                                                                                                                        console.error("Error during payment: ", err);
-                                                                                                                        return result(err, null);
-                                                                                                                    }
-
-                                                                                                                    console.log("Payment: ", { id: paymentRes.insertId, ...newPayment });
-                                                                                                                    result(null, { id: paymentRes.insertId, ...newPayment });
-                                                                                                                }
-                                                                                                            );
-                                                                                                        };
-                                                                                                        console.log("Registered Student: ", { id: res.insertId, ...newStudent })
-                                                                                                        result(null, { id: res.insertId, ...newStudent })
-                                                                                                    });
-
-                                                                                                });
-                                                                                            });
-
-                                                                                        } else {
-                                                                                            db.query("INSERT INTO student SET ?", newStudent, (err, res) => {
-                                                                                                if (err) {
-                                                                                                    console.error("Error while inserting a new student: ", err);
-                                                                                                    result(err, null);
-                                                                                                    return;
-                                                                                                }
-
-                                                                                                console.log("New student added: ", { id: res.insertId, ...newStudent });
-                                                                                                payStudId = res.insertId;
-                                                                                                Payment.create = (newPayment, result) => {
-                                                                                                    newPayment.studId = payStudId;
-                                                                                                    db.query(
-                                                                                                        "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
-                                                                                                        [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
-                                                                                                        (err, paymentRes) => {
-                                                                                                            if (err) {
-                                                                                                                console.error("Error during payment: ", err);
-                                                                                                                return result(err, null);
-                                                                                                            }
-
-                                                                                                            console.log("Payment: ", { id: paymentRes.insertId, ...newPayment });
-                                                                                                            result(null, { id: paymentRes.insertId, ...newPayment });
-                                                                                                        }
-                                                                                                    );
-                                                                                                };
-                                                                                                result(null, { id: res.insertId, ...newStudent })
-                                                                                            });
-
-                                                                                        }
-
-                                                                                    }
-                                                                                })
-                                                                        });
-                                                                    });
-
-                                                                }
-                                                            }
-                                                        });
-                                                }
-
-                                            }
-
-
-                                        });
-                                }
                             }
 
+                            db.query("SELECT Counter FROM counter", (err, counterRes) => {
+                                if (err) {
+                                    console.error("Error while fetching counter value: ", err);
+                                    result(err, null);
+                                    return;
+                                }
+
+                                const currentCounter = counterRes[0].Counter.toString().padStart(5, "0");
+                                const finalMembershipNo = `${membershipNoPrefix}${currentYear}${currentMonth}${currentCounter}`;
+
+                                newStudent.membership_no = finalMembershipNo;
+
+                                // Insert new student
+                                db.query("INSERT INTO student SET ?", newStudent, (err, res) => {
+                                    if (err) {
+                                        console.error("Error while inserting a new student: ", err);
+                                        result(err, null);
+                                        return;
+                                    }
+
+                                    console.log("New student added: ", { id: res.insertId, ...newStudent });
+                                    payStudId = res.insertId;
+                                    Payment.create = (newPayment, result) => {
+                                        newPayment.studId = payStudId;
+                                        db.query(
+                                            "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
+                                            [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
+                                            (err, paymentRes) => {
+                                                if (err) {
+                                                    console.error("Error during payment: ", err);
+                                                    return result(err, null);
+                                                }
+
+                                                console.log("Payment: ", { id: paymentRes.insertId, ...newPayment });
+                                                result(null, { id: paymentRes.insertId, ...newPayment });
+                                            }
+                                        );
+                                    };
+                                    console.log("Registered Student: ", { id: res.insertId, ...newStudent })
+                                    result(null, { id: res.insertId, ...newStudent })
+                                });
+
+                            });
                         });
-                }
-            }
+
+                    } else {
+                        db.query("INSERT INTO student SET ?", newStudent, (err, res) => {
+                            if (err) {
+                                console.error("Error while inserting a new student: ", err);
+                                result(err, null);
+                                return;
+                            }
+
+                            console.log("New student added: ", { id: res.insertId, ...newStudent });
+                            payStudId = res.insertId;
+                            Payment.create = (newPayment, result) => {
+                                newPayment.studId = payStudId;
+                                db.query(
+                                    "INSERT INTO payment (studId, rpPaymentId, rpOrderId, rpAmount) VALUES (?, ?, ?, ?)",
+                                    [newPayment.studId, newPayment.rpPaymentId, newPayment.rpOrderId, newPayment.rpAmount],
+                                    (err, paymentRes) => {
+                                        if (err) {
+                                            console.error("Error during payment: ", err);
+                                            return result(err, null);
+                                        }
+
+                                        console.log("Payment: ", { id: paymentRes.insertId, ...newPayment });
+                                        result(null, { id: paymentRes.insertId, ...newPayment });
+                                    }
+                                );
+                            };
+                            result(null, { id: res.insertId, ...newStudent })
+                        });
+
+                    }
+
+
+                })
         });
+    });
 };
 
 Student.searchStudentByCollege = (searchKey, collegeId, result) => {
@@ -335,8 +268,7 @@ Student.findByEmail = (Email, result) => {
             if (verifyErr) {
                 console.log("Error: ", verifyErr)
                 return result(verifyErr, null)
-            }
-            if (verifyRes.length === 0) {
+            } else if (verifyRes.length === 0) {
                 console.log("Student Does Not Exist")
                 return result("Student Does Not Exist", null)
             } else {
@@ -345,8 +277,7 @@ Student.findByEmail = (Email, result) => {
                         if (verifyEmailErr) {
                             console.log("Error: ", verifyEmailErr)
                             return result(verifyEmailErr, null)
-                        }
-                        if (verifyEmailRes.length === 0) {
+                        } else if (verifyEmailRes.length === 0) {
                             console.log("Email Not Verified")
                             return result("Email Not Verified", null)
                         } else {
@@ -355,41 +286,38 @@ Student.findByEmail = (Email, result) => {
                                     if (err) {
                                         console.log("Error: ", err)
                                         return result(err, null)
+                                    } else if (res.length === 0) {
+                                        console.log("Account Under Verification Progress/Not Verified")
+                                        return result("Account Under Verification Progress/Not Verified", null)
                                     } else {
-                                        if (res.length === 0) {
-                                            console.log("Account Under Verification Progress/Not Verified")
-                                            return result("Account Under Verification Progress/Not Verified", null)
-                                        } else {
-                                            db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
-                                                (validityErr, validityRes) => {
-                                                    if (validityErr) {
-                                                        console.log("Error: ", validityErr)
-                                                        return result(validityErr, null)
-                                                    }
-                                                    if (validityRes.length === 0) {
-                                                        console.log("Account expired. Please Renew Your Plan.")
-                                                        return result("Account expired. Please Renew Your Plan", null)
-                                                    }
+                                        db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
+                                            (validityErr, validityRes) => {
+                                                if (validityErr) {
+                                                    console.log("Error: ", validityErr)
+                                                    return result(validityErr, null)
+                                                } else if (validityRes.length === 0) {
+                                                    console.log("Account expired. Please Renew Your Plan.")
+                                                    return result("Account expired. Please Renew Your Plan", null)
+                                                }
 
+                                                db.query("SELECT s.*, r.refundReqStatus, CASE WHEN cm.studentId IS NOT NULL THEN TRUE ELSE FALSE END AS communityManager FROM student s LEFT JOIN ( SELECT studId, CASE WHEN SUM(cancelStatus = 0) > 0 THEN 'Refund Request Active' ELSE 'No Refund Request' END AS refundReqStatus FROM refund GROUP BY studId ) r ON s.id = r.studId LEFT JOIN communitymanagers cm ON s.id = cm.studentId AND s.batchId = cm.batchId WHERE BINARY s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1", [Email],
+                                                    (err, res) => {
+                                                        if (err) {
+                                                            console.log("Error : ", err);
+                                                            return result(err, null);
+                                                        }
 
-                                                    db.query("SELECT s.*, r.refundReqStatus, CASE WHEN cm.studentId IS NOT NULL THEN TRUE ELSE FALSE END AS communityManager FROM student s LEFT JOIN ( SELECT studId, CASE WHEN SUM(cancelStatus = 0) > 0 THEN 'Refund Request Active' ELSE 'No Refund Request' END AS refundReqStatus FROM refund GROUP BY studId ) r ON s.id = r.studId LEFT JOIN communitymanagers cm ON s.id = cm.studentId AND s.batchId = cm.batchId WHERE BINARY s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1", [Email],
-                                                        (err, res) => {
-                                                            if (err) {
-                                                                console.log("Error : ", err);
-                                                                return result(err, null);
-                                                            }
+                                                        if (res.length > 0) {
+                                                            // Log student login
+                                                            logStudent(res[0].id, "Student logged In");
+                                                            result(null, res[0]);
+                                                        }
+                                                    });
 
-                                                            if (res.length > 0) {
-                                                                // Log student login
-                                                                logStudent(res[0].id, "Student logged In");
-                                                                result(null, res[0]);
-                                                            }
-                                                        });
+                                            })
 
-                                                })
-
-                                        }
                                     }
+
                                 })
                         }
                     })
