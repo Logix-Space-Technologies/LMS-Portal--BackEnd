@@ -12,15 +12,40 @@ const AdminStaffLogin = () => {
         }
     )
 
+    const [updateField, setUpdateField] = useState({
+        otp: ""
+    })
+
+    const [showModal, setShowModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const [errors, setErrors] = useState({});
 
     const apiUrl = global.config.urls.api.server + "/api/lms/AdminStaffLogin"
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/emailverificationotpadmstaff"
+    const apiUrl3 = global.config.urls.api.server + "/api/lms/emailverificationotpverify"
+
     const navigate = useNavigate()
 
     const inputHandler = (event) => {
         setErrors({}); // Clear previous errors
         setInputField({ ...inputField, [event.target.name]: event.target.value })
     }
+
+    const updateHandler = (event) => {
+        setErrors({}); // Clear previous errors
+        setUpdateField({ ...updateField, [event.target.name]: event.target.value });
+    };
+
+    // Function to close both modal and overlay
+    const closeModal = () => {
+        setShowModal(false);
+        setShowOverlay(false);
+        setErrors({})
+        setInputField({
+            otp: ""
+        });
+    };
 
     const readValue = () => {
         let newErrors = {};
@@ -47,17 +72,60 @@ const AdminStaffLogin = () => {
                     sessionStorage.setItem("Email", Email)
                     sessionStorage.setItem("admstaffkey", admstaffkey)
                     sessionStorage.setItem("AdStaffName", AdStaffName)
-                    navigate("/admstaffdashboard") 
-                } else {
-                    if (Response.data.status === "Validation failed" && Response.data.data.email) {
-                        alert(Response.data.data.email)
-                    } else {
-                        if (Response.data.status === "Validation failed" && Response.data.data.password) {
-                            alert(Response.data.data.password)
-                        } else {
-                            alert(Response.data.status)
+                    navigate("/admstaffdashboard")
+                } else if (Response.data.status === "Email Not Verified") {
+                    let data = { "Email": inputField.Email }
+                    axios.post(apiUrl2, data).then(
+                        (Response) => {
+                            if (Response.data.status === "OTP sent to email.") {
+                                alert("OTP For Email Verification Send To Mail !!")
+                                setShowModal(true)
+                                setShowOverlay(true);
+                            } else if (Response.data.status.sqlMessage) {
+                                alert(Response.data.status.sqlMessage)
+                                setShowModal(false)
+                                setShowOverlay(false);
+                            } else {
+                                alert(Response.data.status)
+                                setShowModal(false)
+                                setShowOverlay(false);
+                            }
                         }
-                    }
+                    )
+                } else if (Response.data.status === "Validation failed" && Response.data.data.email) {
+                    alert(Response.data.data.email)
+                } else if (Response.data.status === "Validation failed" && Response.data.data.password) {
+                    alert(Response.data.data.password)
+                } else {
+                    alert(Response.data.status)
+                }
+            }
+        )
+    }
+
+    const otpVerify = () => {
+        let newErrors = {};
+        if (!inputField.Email) {
+            newErrors.otp = "Email is required!";
+        }
+        if (!updateField.otp) {
+            newErrors.otp = "OTP is required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        let data = { "Email": inputField.Email, "otp": updateField.otp }
+        axios.post(apiUrl3, data).then(
+            (response) => {
+                if (response.data.status === "OTP Verified Successfully!!!") {
+                    alert("Email Verified Successfully !!! \n Please Login Again.")
+                    setShowModal(false)
+                    setShowOverlay(false); // Close the overlay
+                } else {
+                    alert(response.data.status)
+                    setShowModal(true)
+                    setShowOverlay(true);
                 }
             }
         )
@@ -105,6 +173,50 @@ const AdminStaffLogin = () => {
                     </div>
                 </div>
             </div>
+            {showModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel">Verify Email</h1>
+                                <button type="button" className="btn-close" onClick={closeModal} />
+                            </div>
+                            <div className="modal-body">
+                                <p style={{fontSize:"15px"}}>Your Email Is Not Verified. Enter OTP Send To Email For Verification.</p><br />
+                                <form>
+                                    <div className="mb-3">
+                                        <label htmlFor="recipient-name" className="col-form-label">OTP:</label>
+                                        <input type="text" name="otp" className="form-control" value={updateField.otp} onChange={updateHandler} />
+                                        {errors.otp && <span style={{ color: 'red' }} className="error">{errors.otp}</span>}
+                                    </div>
+                                </form>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
+                                <button type="button" onClick={() => otpVerify()} className="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }
