@@ -254,12 +254,8 @@ exports.adminStaffLogin = (request, response) => {
 
     AdminStaff.findByEmail(Email, (err, admin_staff) => {
         if (err) {
-            if (err.kind === "not_found") {
-                response.json({ "status": "Admin Staff does not exist" })
-            } else {
-                response.json({ "status": "Error retrieving Admin Staff details" })
 
-            }
+            return response.json({ "status": err })
 
         } else {
             const passwordMatch = bcrypt.compareSync(Password, admin_staff.Password)
@@ -268,15 +264,14 @@ exports.adminStaffLogin = (request, response) => {
                 jwt.sign({ Email: getEmail, Password: getPassword }, "lmsappadmstaff", { expiresIn: "30m" },
                     (error, token) => {
                         if (error) {
-                            response.json({ "status": "Unauthorized user!!" })
+                            return response.json({ "status": "Unauthorized user!!" })
                         } else {
-                            response.json({ "status": "Success", "data": admin_staff, "token": token })
+                            return response.json({ "status": "Success", "data": admin_staff, "token": token })
                         }
                     }
-
                 )
             } else {
-                response.json({ "status": "Invalid Email or Password!!!" })
+                return response.json({ "status": "Invalid Email or Password!!!" })
             }
         }
     })
