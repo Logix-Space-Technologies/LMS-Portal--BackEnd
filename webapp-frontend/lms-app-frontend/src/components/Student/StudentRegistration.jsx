@@ -22,6 +22,10 @@ const StudentRegistration = () => {
 
   const navigate = useNavigate()
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [errors, setErrors] = useState({})
 
   const [file, setFile] = useState(null)
@@ -530,7 +534,7 @@ const StudentRegistration = () => {
                   <input type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" onChange={fileUploadHandler} />
                   {errors.studProfilePic && <span style={{ color: 'red' }} className="error">{errors.studProfilePic}</span>}
                 </div>
-                <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                   <label htmlFor="aadharNo" className="form-label">
                     AadharNo <span className="text-danger">*</span>
                   </label>
@@ -548,13 +552,13 @@ const StudentRegistration = () => {
                   </label>
                   <div className="input-group">
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       className="form-control"
                       name="password"
                       value={inputField.password} onChange={inputHandler}
-                      id="password" /><br />
-                    <span className="input-group-text">
-                      <i className="bi bi-eye-slash" id="togglePassword"></i>
+                      id="password" />
+                    <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
+                      <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
                     </span><br />
                   </div>
                   {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
@@ -562,8 +566,10 @@ const StudentRegistration = () => {
                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                   <label htmlFor="password" className="form-label">Confirm Password <span className="text-danger">*</span></label>
                   <div className="input-group">
-                    <input type="password" className="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
-
+                    <input type={showConfirmPassword ? "text" : "password"} className="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
+                    <span className="input-group-text" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                      <i className={showConfirmPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="toggleConfirmPassword"></i>
+                    </span><br />
                   </div>
                   {errors.confirmpassword && <span style={{ color: 'red' }} className="error">{errors.confirmpassword}</span>}
                 </div>
