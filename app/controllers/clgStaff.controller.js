@@ -495,11 +495,7 @@ exports.collegeStaffLogin = (request, response) => {
 
   CollegeStaff.findByClgStaffEmail(email, (err, clgstaff) => {
     if (err) {
-      if (err.kind === "not_found") {
-        return response.json({ "status": "College Staff does not Exist." })
-      } else {
-        return response.json({ "status": "Error retrieving College Staff Details." })
-      }
+      return response.json({ "status": err })
     } else {
       const clgStaffPasswordMatch = bcrypt.compareSync(password, clgstaff.password)
       if (clgStaffPasswordMatch) {
