@@ -16,6 +16,7 @@ const AdminViewAllStud = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/viewAllStudByAdmin";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/createCommunityManager";
     const apiUrl3 = global.config.urls.api.server + "/api/lms/deleteCommunityManager";
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/sendRenewalReminderEmail";
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -40,7 +41,7 @@ const AdminViewAllStud = () => {
                     setStudData(response.data.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
@@ -86,13 +87,13 @@ const AdminViewAllStud = () => {
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        let data = { "studentId": id, "batchId": batchId }; 
+        let data = { "studentId": id, "batchId": batchId };
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": token, 
-                "key": currentKey 
+                "token": token,
+                "key": currentKey
             }
         };
 
@@ -100,13 +101,12 @@ const AdminViewAllStud = () => {
             (response) => {
                 if (response.data.status === "success") {
                     // Assuming "Assigned to Community Manager" is a message you want to display
-                    alert("Assigned to Community Manager");
                     getData(); // Ensure getData() is defined and fetches the latest data
                 } else if (response.data.status === "Validation failed") {
                     // Handle validation errors
                     alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
                 } else if (response.data.status === "Unauthorized User !!!") {
-                    {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
                     // Handle other errors
@@ -137,11 +137,10 @@ const AdminViewAllStud = () => {
         axios.post(apiUrl3, data, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    alert(`Removed from Community Manager`);
                     getData()
                 } else {
                     if (response.data.status === "Unauthorized User !!!") {
-                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status);
@@ -151,7 +150,51 @@ const AdminViewAllStud = () => {
         )
     };
 
+    const sendRenewalRemainderMail = (id) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let data = { "id": id };
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+        axios.post(apiUrl4, data, axiosConfig).then(
+            (response) => {
+                if (response.data.status === "success") {
+                    alert(response.data.message)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (response.data.status === "error") {
+                    alert(response.data.message)
+                } else {
+                    alert(response.data.status);
+                }
 
+            }
+        )
+
+    }
+
+    const isRenewalDue = (validityDate) => {
+        const currentDate = new Date();
+        // Parse the validity date in DD/MM/YYYY format
+        const [day, month, year] = validityDate.split('/');
+        const parsedValidityDate = new Date(`${year}-${month}-${day}`);
+
+        const differenceInMilliseconds = parsedValidityDate - currentDate;
+        const differenceInDays = differenceInMilliseconds / (24 * 60 * 60 * 1000);
+        return differenceInDays <= 45;
+    };
 
 
 
@@ -190,9 +233,6 @@ const AdminViewAllStud = () => {
                                 Membership No.
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                College Name
-                            </th>
-                            <th scope="col" className="px-6 py-3">
                                 Batch Name
                             </th>
                             <th scope="col" className="px-6 py-3">
@@ -215,6 +255,9 @@ const AdminViewAllStud = () => {
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Valid Upto
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+
                             </th>
                             <th scope="col" className="px-6 py-3">
 
@@ -249,9 +292,6 @@ const AdminViewAllStud = () => {
                                         {value.membership_no}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {value.collegeName}
-                                    </td>
-                                    <td className="px-6 py-4">
                                         {value.batchName}
                                     </td>
                                     <td className="px-6 py-4">
@@ -277,17 +317,22 @@ const AdminViewAllStud = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.communityManager === 0 && (
-                                            <button onClick={() => assignCommunityManager(value.id, value.batchId)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Assign Community Manager</button>
+                                            <button onClick={() => assignCommunityManager(value.id, value.batchId)} style={{ fontSize: '12px' }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Assign Community Manager</button>
                                         )}
                                         {value.communityManager === 1 && (
-                                            <button onClick={() => { removeCommunityManager(value.commManagerId) }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Remove Community Manager</button>
+                                            <button onClick={() => { removeCommunityManager(value.commManagerId) }} style={{ fontSize: '12px' }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Remove Community Manager</button>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {value.validity && isRenewalDue(value.validity) && (
+                                            <button onClick={() => sendRenewalRemainderMail(value.id)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md" style={{ fontSize: '12px' }}>Send Renewal Remainder Mail</button>
                                         )}
                                     </td>
                                 </tr>
                             }
                         ) : (
                             <tr>
-                                <td colSpan="11" className="px-6 py-4" style={{ textAlign: "center" }}>
+                                <td colSpan="12" className="px-6 py-4" style={{ textAlign: "center" }}>
                                     No Students Found !!!
                                 </td>
                             </tr>
