@@ -3,6 +3,7 @@ const Session = require("../models/session.model");
 const Validator = require("../config/data.validate");
 const { Student } = require("../models/student.model");
 const Attendence = require("../models/attendence.model")
+const CollegeStaff = require("../models/clgStaff.model")
 const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
@@ -86,18 +87,17 @@ exports.createSession = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
-                    // console.log(data)
                     const sessionId = data.id
-                    // console.log(sessionId)
+                    const batchId = data.batchId
+                    const type = data.type
                     //fetch corresponding students
                     Student.searchStudentByBatch(newSession.batchId, (err, res) => {
                         if (err) {
                             return response.json({ "status": err });
                         } else {
-                            console.log(res)
                             res.forEach(element => {
                                 let studentid = element.id
-                                // let sessionid=newSession.id
+
                                 const newAttendence = new Attendence({
                                     studId: studentid,
                                     sessionId: sessionId
@@ -106,29 +106,50 @@ exports.createSession = (request, response) => {
                                 const studentEmail = element.studEmail
                                 const sessionTime = formatTime(newSession.time)
                                 const sessionDate = newSession.date.split('-').reverse().join('/')
-                                const upcomingSessionHtmlContent = mailContents.upcomingSessionContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
-                                const upcomingSessionTextContent = mailContents.upcomingSessionTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
-                                mail.sendEmail(studentEmail, 'Upcoming Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                if (newSession.type === "Offline") {
+                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionOfflineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                    const upcomingSessionTextContent = mailContents.upcomingSessionOfflineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                } else if (newSession.type === "Online") {
+                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionOnlineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                    const upcomingSessionTextContent = mailContents.upcomingSessionOnlineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                } else {
+                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionRecordedHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                    const upcomingSessionTextContent = mailContents.upcomingSessionRecordedTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                }
                                 if (key == "lmsapp") {
                                     logAdminStaff(0, "Admin Created new Session")
                                 }
                                 Attendence.create(newAttendence, (err, res) => {
                                     if (err) {
-                                        console.log({ "status": err });
+                                        return response.json({ "status": err });
                                     } else {
 
                                         // console.log({ "status": "success", "data": res });
                                     }
                                 })
                             });
+                            CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
+                                if (err) {
+                                    return response.json({ "status": err });
+                                } else {
+                                    let clgstaffEmail = res[0].email
+                                    let batchName = res[0].batchName
+                                    const clgstaffsessionTime = formatTime(newSession.time)
+                                    const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
+                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName);
+                                    const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName);
+                                    mail.sendEmail(clgstaffEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+
+                                }
+                            })
 
                             return response.json({ "status": "success", "data": data });
 
                         }
-                    }
-                    )
-                    // console.log(data)
-                    // return response.json({ "status": "success", "data": data });
+                    })
                 }
             });
         } else {
@@ -138,13 +159,13 @@ exports.createSession = (request, response) => {
 }
 
 exports.sessionUpdate = (request, response) => {
-    const sessionUpdateToken = request.headers.token
-    const key = request.headers.key
-    //add the appropriate key
+    const sessionUpdateToken = request.headers.token;
+    const key = request.headers.key;
+
     jwt.verify(sessionUpdateToken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
-            console.log(request.body.date)
+
             if (Validator.isEmpty(request.body.sessionName).isValid) {
                 validationErrors.sessionName = Validator.isEmpty(request.body.sessionName).message;
             }
@@ -160,33 +181,27 @@ exports.sessionUpdate = (request, response) => {
             if (!Validator.isDateGreaterThanToday(request.body.date).isValid) {
                 validationErrors.date = Validator.isDateGreaterThanToday(request.body.date).message;
             }
-
             if (Validator.isEmpty(request.body.time).isValid) {
                 validationErrors.time = Validator.isEmpty(request.body.time).message;
             }
-
             if (!Validator.isValidTime(request.body.time).isValid) {
                 validationErrors.time = Validator.isValidTime(request.body.time).message;
             }
-
             if (Validator.isEmpty(request.body.type).isValid) {
                 validationErrors.type = Validator.isEmpty(request.body.type).message;
             }
-
             if (Validator.isEmpty(request.body.remarks).isValid) {
                 validationErrors.remarks = Validator.isEmpty(request.body.remarks).message;
             }
-
             if (Validator.isEmpty(request.body.venueORlink).isValid) {
                 validationErrors.venueORlink = Validator.isEmpty(request.body.venueORlink).message;
             }
-
             if (Validator.isEmpty(request.body.trainerId).isValid) {
                 validationErrors.trainerId = Validator.isEmpty(request.body.trainerId).message;
             }
 
             if (Object.keys(validationErrors).length > 0) {
-                return response.json({ "status": "Validation failed", "data": validationErrors })
+                return response.json({ "status": "Validation failed", "data": validationErrors });
             }
 
             const upSession = new Session({
@@ -198,24 +213,76 @@ exports.sessionUpdate = (request, response) => {
                 remarks: request.body.remarks,
                 venueORlink: request.body.venueORlink,
                 trainerId: request.body.trainerId
-            })
+            });
+
+            let originaldate = ""
+            let sessionDate = ""
+            let sessionTime = ""
 
             Session.updateSession(upSession, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
-                    if (key == "lmsapp") {
-                        logAdminStaff(0, "Admin Updated Session Details")
-                    }
-                    return response.json({ "status": "success", "data": data });
+                    originaldate = data.originalDate;
+                    sessionDate = upSession.date.split('-').reverse().join('/');
+                    sessionTime = formatTime(upSession.time);
+                    db.query("SELECT * FROM sessiondetails WHERE id = ?", [upSession.id], (err, sessionres) => {
+                        if (err) {
+                            return response.json({ "status": err });
+                        }
+                        const batchId = sessionres[0].batchId;
+
+                        Student.searchStudentByBatch(batchId, (err, res) => {
+                            if (err) {
+                                return response.json({ "status": err });
+                            }
+
+                            res.forEach(element => {
+                                const studentEmail = element.studEmail;
+                                if (upSession.type === "Offline") {
+                                    const updateSessionHtmlContent = mailContents.reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                    const updateSessionTextContent = mailContents.reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Reschedule Announcement', updateSessionHtmlContent, updateSessionTextContent);
+                                } else if (upSession.type === "Online") {
+                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                    const upcomingSessionTextContent = mailContents.reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Reschedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                } else {
+                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                    const upcomingSessionTextContent = mailContents.reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Reschedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                }
+                            });
+                            
+                            CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
+                                if (err) {
+                                    return response.json({ "status": err });
+                                } else {
+                                    let clgstaffEmail = res[0].email
+                                    let batchName = res[0].batchName
+                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName);
+                                    const upcomingSessionTextContent = mailContents.reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName);
+                                    mail.sendEmail(clgstaffEmail, 'Session Reschedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+
+                                }
+                            })
+
+                            if (key == "lmsapp") {
+                                logAdminStaff(0, "Admin Updated Session Details");
+                            }
+                            return response.json({ "status": "success", "data": data });
+                        });
+                    });
                 }
-            })
+            });
         } else {
             return response.json({ "status": "Unauthorized User!!" });
         }
+    });
+};
 
-    })
-}
+
+
 
 // code to view sessions
 exports.viewSessions = (request, response) => {
@@ -301,22 +368,21 @@ exports.searchSession = (request, response) => {
     jwt.verify(SessionSearchToken, key, (err, decoded) => {
         if (decoded) {
             if (!SessionSearchQuery) {
-                console.log("Search Item is required.")
                 return response.json({ "status": "Search Item is required." })
             }
             Session.searchSession(SessionSearchQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found." })
+                        return response.json({ "status": "No Search Items Found." })
                     } else {
-                        response.json({ "status": "Result Found", "data": data })
+                        return response.json({ "status": "Result Found", "data": data })
                     }
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -396,7 +462,7 @@ exports.isSessionHappeningToday = (request, response) => {
 exports.viewOneSession = (request, response) => {
     const sessionToken = request.headers.token;
     const key = request.headers.key; // Provide the respective keys for admin and admin staff
-    const sessionId = request.body.id; // Assuming the session ID is provided in the request body
+    const sessionId = request.body.id;
 
     jwt.verify(sessionToken, key, (err, decoded) => {
         if (decoded) {

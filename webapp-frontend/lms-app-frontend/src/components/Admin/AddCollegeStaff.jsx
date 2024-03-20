@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import axios from 'axios'
 import Navbar from './Navbar'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AddCollegeStaff = () => {
@@ -18,6 +18,8 @@ const AddCollegeStaff = () => {
     "password": "",
     "confirmpassword": ""
   })
+
+  const navigate = useNavigate()
 
   const [file, setFile] = useState(null)
 
@@ -65,9 +67,16 @@ const AddCollegeStaff = () => {
     };
     axios.post(apiUrl2, {}, axiosConfig).then(
       (response) => {
-        // console.log(axiosConfig)
-        setOutputField(response.data.data)
-        // console.log(response.data.data)
+        if (response.data.data) {
+          setOutputField(response.data.data)
+        } else if (response.data.status === "Unauthorized User!!") {
+          { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+          sessionStorage.clear()
+        } else if (!response.data.data) {
+          setOutputField([])
+        } else {
+          alert(response.data.status)
+        }
       }
     )
   }
@@ -124,39 +133,27 @@ const AddCollegeStaff = () => {
               confirmpassword: '',
               profilePic: ''
             })
+          } else if (response.data.status === "Validation failed" && response.data.data.dept) {
+            alert(response.data.data.dept)
+          } else if (response.data.status === "Validation failed" && response.data.data.name) {
+            alert(response.data.data.name)
+          } else if (response.data.status === "Validation failed" && response.data.data.address) {
+            alert(response.data.data.address)
+          } else if (response.data.status === "Validation failed" && response.data.data.email) {
+            alert(response.data.data.email)
+          } else if (response.data.status === "Validation failed" && response.data.data.mobile) {
+            alert(response.data.data.mobile)
+          } else if (response.data.status === "Validation failed" && response.data.data.aadharnumber) {
+            alert(response.data.data.aadharnumber)
+          } else if (response.data.status === "Validation failed" && response.data.data.password) {
+            alert(response.data.data.password)
+          } else if (response.data.status === "Unauthorized access!!") {
+            { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+            sessionStorage.clear()
           } else {
-            if (response.data.status === "Validation failed" && response.data.data.dept) {
-              alert(response.data.data.dept)
-            } else {
-              if (response.data.status === "Validation failed" && response.data.data.name) {
-                alert(response.data.data.name)
-              } else {
-                if (response.data.status === "Validation failed" && response.data.data.address) {
-                  alert(response.data.data.address)
-                } else {
-                  if (response.data.status === "Validation failed" && response.data.data.email) {
-                    alert(response.data.data.email)
-                  } else {
-                    if (response.data.status === "Validation failed" && response.data.data.mobile) {
-                      alert(response.data.data.mobile)
-                    } else {
-                      if (response.data.status === "Validation failed" && response.data.data.aadharnumber) {
-                        alert(response.data.data.aadharnumber)
-                      } else {
-                        if (response.data.status === "Validation failed" && response.data.data.password) {
-                          alert(response.data.data.password)
-                        } else {
-                          alert(response.data.status)
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            alert(response.data.status)
           }
-        }
-      ).catch(error => {
+        }).catch(error => {
         if (error.response) {
           // Extract the status code from the response
           const statusCode = error.response.status;

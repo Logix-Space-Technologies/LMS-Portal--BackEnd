@@ -52,13 +52,28 @@ const AdminSearchTrainer = () => {
         }
         axios.post(apiUrl, inputField, axiosConfig).then(
             (response) => {
-                setUpdateField(response.data.data)
-                setIsLoading(false)
-                setInputField(
-                    {
-                        "TrainerSearchQuery": ""
-                    }
-                )
+                if (response.data.data) {
+                    setUpdateField(response.data.data)
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "TrainerSearchQuery": ""
+                        }
+                    )
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setUpdateField([])
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "TrainerSearchQuery": ""
+                        }
+                    )
+                } else {
+                    alert(response.data.status)
+                }
             }
         )
     }
@@ -83,15 +98,17 @@ const AdminSearchTrainer = () => {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                token: sessionStorage.getItem('admtoken'),
-                key: sessionStorage.getItem('admkey')
+                'token': sessionStorage.getItem('admtoken'),
+                'key': sessionStorage.getItem('admkey')
             }
         };
         axios.post(apiUrl2, deletedata, axiosConfig2).then((response) => {
             if (response.data.status === 'success') {
-                alert('Trainer Deleted Successfully!!');
                 // Remove the deleted Trainer from updateField state
                 setUpdateField(updateField.filter(trainer => trainer.id !== deleteId))
+            } else if (response.data.status === "Unauthorized User!!") {
+                navigate("/")
+                sessionStorage.clear()
             } else {
                 alert(response.data.status);
             }
@@ -118,14 +135,14 @@ const AdminSearchTrainer = () => {
         return ((currentPage - 1) * TrainerPerPage) + index + 1;
     }
 
-    // Total pages
-    const pageNumbers = [];
+    let totalPages = []
     if (updateField && updateField.length > 0) {
-        updateField.forEach((student, index) => {
-            const pageNumber = index + 1;
-            pageNumbers.push(pageNumber);
-        });
+        totalPages = Math.ceil(updateField.length / TrainerPerPage);
     }
+
+    // Integration of new pagination logic
+    const startPage = currentPage > 2 ? currentPage - 2 : 1;
+    const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
 
     // Update key state when component mounts
     useEffect(() => {
@@ -155,7 +172,7 @@ const AdminSearchTrainer = () => {
                     <div className="col-12 text-center">
                         <p></p>
                     </div>
-                ) : (updateField ? (
+                ) : (updateField.length > 0 ? (
 
                     //start
                     <div>
@@ -226,20 +243,36 @@ const AdminSearchTrainer = () => {
                 )}
 
                 {currentTrainers.length > 0 && (
-                    <div className="flex justify-center mt-8">
-                        <nav>
-                            <ul className="flex list-style-none">
-                                {currentPage > 1 && (
-                                    <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Previous</li>
-                                )}
-                                {Array.from({ length: Math.ceil(updateField.length / TrainerPerPage) }, (_, i) => (
-                                    <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>{i + 1}</li>
-                                ))}
-                                {currentPage < Math.ceil(updateField.length / TrainerPerPage) && (
-                                    <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Next</li>
-                                )}
-                            </ul>
-                        </nav>
+                    <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+                        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                            <div>
+                                <p className="text-sm text-gray-700">
+                                    Showing <span className="font-medium">{indexOfFirstStudent + 1}</span> to <span className="font-medium">{indexOfLastStudent > updateField.length ? updateField.length : indexOfLastStudent}</span> of <span className="font-medium">{updateField.length}</span> results
+                                </p>
+                            </div>
+                            <div>
+                                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                    <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
+                                        <span className="sr-only">Previous</span>
+                                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    {/* Dynamically generate Link components for each page number */}
+                                    {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                                        <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
+                                            {startPage + index}
+                                        </button>
+                                    ))}
+                                    <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
+                                        <span className="sr-only">Next</span>
+                                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>

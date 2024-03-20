@@ -19,6 +19,7 @@ const NotificationController = require("../controllers/notifications.controller"
 const curriculumController = require("../controllers/curriculum.controller")
 const AttendenceController = require("../controllers/attendence.controller")
 const CommunityManagerController = require("../controllers/communityManager.controller")
+const FirebaseController = require("../controllers/firebaseToken.controller")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -304,5 +305,28 @@ router.post('/studforgotpassword', StudentController.studforgotpassword)
 router.post('/clgstaffforgotpassword', ClgStaffController.collegestaffforgotpassword)
 
 router.post('/admstaffforgotpassword', AdminStaffController.admstaffforgotpassword)
+
+router.post('/sendRenewalReminderEmail', StudentController.sendRenewalReminderEmail)
+
+router.post('/emailverificationotpadmstaff', AdminStaffController.emailverification)
+
+router.post('/emailverificationotpverify', AdminStaffController.emailVerificationOtpSendVerify)
+
+router.post('/studRenewalDataFetch', StudentController.searchStudRenewalDetailsByEmail)
+
+router.post('/clgstaffemailverificationotpsend', ClgStaffController.emailverification)
+
+router.post('/clgstaffemailverifyotp', ClgStaffController.emailVerificationClgStaffOtpVerify)
+
+router.post('/studemailverifyotpsend', StudentController.StudEmailVerifyOTPSend)
+
+router.post('/studemailverificationotpverify', StudentController.emailverifyStudOTP)
+
+router.post('/sendFirebaseNotifications',AdminController.sendNotifications)
+
+router.post('/addFirebaseToken',FirebaseController.createTokens)
+
+router.post('/emailverifypwdchangestud', StudentController.emailVerifyAndPasswordChange)
+
 
 module.exports = router

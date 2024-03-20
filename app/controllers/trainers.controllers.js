@@ -147,7 +147,7 @@ exports.createTrainer = (request, response) => {
 
         } catch (err) {
             fs.unlinkSync(file.path);
-            response.status(500).json({ "status": err.message });
+            return response.status(500).json({ "status": err.message });
         }
     })
 };
@@ -189,17 +189,17 @@ exports.searchTrainer = (request, response) => {
             }
             Trainers.searchTrainer(TrainerSearchQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found." })
+                        return response.json({ "status": "No Search Items Found." })
                     } else {
-                        response.json({ "status": "Result Found", "data": data })
+                        return response.json({ "status": "Result Found", "data": data })
                     }
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -241,95 +241,90 @@ exports.trainerDetailsUpdate = (request, response) => {
             return response.status(500).json({ "status": error.message });
         }
 
-        if (!request.file) {
-            return response.status(400).json({ "status": "No file uploaded" });
-        }
+        const { trainerName, about, phoneNumber } = request.body;
+        const updateProfileToken = request.headers.token;
+        const key = request.headers.key;
 
-        const file = request.file;
-        const fileStream = fs.createReadStream(file.path);
+        jwt.verify(updateProfileToken, key, async (err, decoded) => {
+            if (decoded) {
+                // Validation
+                const validationErrors = {};
 
-        const uploadParams = {
-            Bucket: process.env.S3_BUCKET,
-            Key: `uploads/${file.filename}`,
-            Body: fileStream
-        };
-
-        try {
-            const data = await s3Client.send(new PutObjectCommand(uploadParams));
-            const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
-            // Remove the file from local storage
-            fs.unlinkSync(file.path);
-
-
-            const trainerUpdateToken = request.headers.token
-            const key = request.headers.key
-
-            jwt.verify(trainerUpdateToken, key, (err, decoded) => {
-                if (decoded) {
-                    const profilePicture = request.file ? request.file.filename : null
-                    if (!request.file) {
-                        return response.json({ "status": "Image cannot be empty!!" })
-                    }
-                    const validationErrors = {}
-
-                    if (Validator.isEmpty(request.body.trainerName).isValid) {
-                        validationErrors.trainerName = "Please enter your name";
-                    }
-                    if (Validator.isEmpty(request.body.about).isValid) {
-                        validationErrors.about = "Please enter something about you";
-                    }
-                    if (Validator.isEmpty(request.body.phoneNumber).isValid) {
-                        validationErrors.phoneNumber = "Please enter your phone number";
-                    }
-                    if (!Validator.isValidName(request.body.trainerName).isValid) {
-                        validationErrors.trainerName = "Please enter a valid name";
-                    }
-                    if (!Validator.isValidMobileNumber(request.body.phoneNumber).isValid) {
-                        validationErrors.phoneNumber = "Please enter a valid phone number";
-                    }
-
-                    if (Object.keys(validationErrors).length > 0) {
-                        return response.json({ "status": "Validation failed", "data": validationErrors });
-                    }
-
-                    const trainerUpdate = new Trainers({
-                        'id': request.body.id,
-                        trainerName: request.body.trainerName,
-                        about: request.body.about,
-                        email: request.body.email,
-                        password: request.body.password,
-                        phoneNumber: request.body.phoneNumber,
-                        profilePicture: imageUrl,
-                    });
-
-                    Trainers.updateTrainer(trainerUpdate, (err, data) => {
-                        if (err) {
-                            if (err.kind === "not_found") {
-                                return response.json({ "status": "Trainer Details Not Found!!" })
-                            } else {
-                                response.json({ "status": err })
-                            }
-                        } else {
-                            if (key == "lmsapp") {
-                                logAdminStaff(0, "Admin Updated Trainer Details")
-                            }
-                            return response.json({ "status": "Trainer Details Updated", "data": data })
-                        }
-                    })
-                } else {
-                    response.json({ "status": "Unauthorized Access!!!" })
+                if (Validator.isEmpty(trainerName).isValid) {
+                    validationErrors.trainerName = Validator.isEmpty(trainerName).message;
                 }
-            })
 
-        } catch (err) {
-            fs.unlinkSync(file.path);
-            response.status(500).json({ "status": err.message });
-        }
-    })
+                if (!Validator.isValidName(trainerName).isValid) {
+                    validationErrors.trainerName = Validator.isValidName(trainerName).message;
+                }
 
-}
+                if (Validator.isEmpty(about).isValid) {
+                    validationErrors.about = Validator.isEmpty(about).message;
+                }
 
-// Code For Updating Trainer Password
+                if (Validator.isEmpty(phoneNumber).isValid) {
+                    validationErrors.phoneNumber = Validator.isEmpty(phoneNumber).message;
+                }
+
+                if (!Validator.isValidPhoneNumber(phoneNumber).isValid) {
+                    validationErrors.phoneNumber = Validator.isValidPhoneNumber(phoneNumber).message;
+                }
+
+                if (Object.keys(validationErrors).length > 0) {
+                    return response.json({ "status": "Validation failed", "data": validationErrors });
+                }
+
+                let profilePicture = null;
+                if (request.file) {
+                    const file = request.file;
+                    const fileStream = fs.createReadStream(file.path);
+
+                    const uploadParams = {
+                        Bucket: process.env.S3_BUCKET,
+                        Key: `uploads/${file.filename}`,
+                        Body: fileStream
+                    };
+
+                    try {
+                        await s3Client.send(new PutObjectCommand(uploadParams));
+                        const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+                        profilePicture = imageUrl;
+                        // Remove the file from local storage
+                        fs.unlinkSync(file.path);
+                    } catch (err) {
+                        fs.unlinkSync(file.path);
+                        return response.status(500).json({ "status": err.message });
+                    }
+                }
+
+                const trainerUpdate = {
+                    'id': request.body.id,
+                    trainerName,
+                    about,
+                    phoneNumber,
+                    profilePicture,
+                };
+
+                Trainers.updateTrainer(trainerUpdate, (err, data) => {
+                    if (err) {
+                        if (err.kind === "not_found") {
+                            return response.json({ "status": "Trainer Details Not Found!!" });
+                        } else {
+                            return response.json({ "status": err.message });
+                        }
+                    } else {
+                        return response.json({ "status": "Trainer Details Updated", "data": data });
+                    }
+                });
+
+            } else {
+                return response.json({ "status": "Unauthorized Access!!!" });
+            }
+        });
+
+    });
+};
+
 
 exports.viewOneTrainer = (request, response) => {
     const trainerToken = request.headers.token;

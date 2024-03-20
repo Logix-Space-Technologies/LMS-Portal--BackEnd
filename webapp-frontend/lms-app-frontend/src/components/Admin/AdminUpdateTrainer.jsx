@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from './Navbar';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminUpdateTrainer = () => {
 
@@ -9,6 +11,7 @@ const AdminUpdateTrainer = () => {
     const [file, setFile] = useState("")
     const [errors, setErrors] = useState({})
     const [fileType, setFileType] = useState("");
+
 
     const [updateField, setUpdateField] = useState(
         {
@@ -61,12 +64,22 @@ const AdminUpdateTrainer = () => {
                     "key": currentKey
                 }
             }
-            let data = {
-                "id": sessionStorage.getItem("trainerId"),
-                "trainerName": updateField.trainerName,
-                "about": updateField.about,
-                "phoneNumber": updateField.phoneNumber,
-                "profilePicture": file
+            let data = {}
+            if (file) {
+                data = {
+                    "id": sessionStorage.getItem("trainerId"),
+                    "trainerName": updateField.trainerName,
+                    "about": updateField.about,
+                    "phoneNumber": updateField.phoneNumber,
+                    "profilePicture": file
+                }
+            } else {
+                data = {
+                    "id": sessionStorage.getItem("trainerId"),
+                    "trainerName": updateField.trainerName,
+                    "about": updateField.about,
+                    "phoneNumber": updateField.phoneNumber
+                }
             }
             axios.post(apiUrl2, data, axiosConfig).then(
                 (Response) => {
@@ -79,7 +92,7 @@ const AdminUpdateTrainer = () => {
                             "profilePicture": ""
                         })
                         alert("Profile Updated Successfully")
-                        navigate("/adminviewalltrainers")
+                        navigate(-1)
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.trainerName) {
                             alert(Response.data.data.trainerName)
@@ -90,7 +103,12 @@ const AdminUpdateTrainer = () => {
                                 if (Response.data.status === "Validation failed" && Response.data.data.phoneNumber) {
                                     alert(Response.data.data.phoneNumber)
                                 } else {
-                                    alert(Response.data.status)
+                                    if (Response.data.status === "Unauthorized Access!!!") {
+                                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                        sessionStorage.clear()
+                                    } else {
+                                        alert(Response.data.status)
+                                    }
                                 }
                             }
                         }
@@ -114,14 +132,11 @@ const AdminUpdateTrainer = () => {
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
                     alert(error.request);
                 } else if (error.message) {
-                    console.log('Error', error.message);
                     alert('Error', error.message);
                 } else {
                     alert(error.config);
-                    console.log(error.config);
                 }
             })
         } else {
@@ -134,16 +149,14 @@ const AdminUpdateTrainer = () => {
 
         if (!data.trainerName.trim()) {
             errors.trainerName = 'Trainer Name is required';
-        }
-        if (!data.about.trim()) {
+        } else if (!data.about.trim()) {
             errors.about = 'About is required';
-        }
-        if (!data.phoneNumber.trim()) {
+        } else if (!data.phoneNumber.trim()) {
             errors.phoneNumber = 'Contact Details required';
-        }
-        if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+        } else if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
             errors.file = "File must be in jpg/jpeg/png/webp/heif format";
         }
+
         return errors;
     }
 
@@ -166,8 +179,30 @@ const AdminUpdateTrainer = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                settrainerData(response.data.Trainers)
-                setUpdateField(response.data.Trainers[0])
+                if (response.data.Trainers) {
+                    settrainerData(response.data.Trainers)
+                    setUpdateField(response.data.Trainers[0])
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.Trainers) {
+                            settrainerData([])
+                            setUpdateField(
+                                {
+                                    "id": "",
+                                    "trainerName": "",
+                                    "about": "",
+                                    "phoneNumber": "",
+                                    "profilePicture": ""
+                                }
+                            )
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
@@ -178,9 +213,10 @@ const AdminUpdateTrainer = () => {
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
-    
+
     return (
         <div className="container">
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="row">
                 <div className="col-lg-12 mb-4 mb-sm-5">
                     <br></br>
@@ -225,6 +261,7 @@ const AdminUpdateTrainer = () => {
                                                 Profile Picture <span className="text-danger">*</span>
                                             </label>
                                             <input onChange={fileUploadHandler} type="file" className="form-control" name="profilePicture" id="profilePicture" accept="image/*" />
+                                            {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
                                         </div>
                                         <br></br>
                                         <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">

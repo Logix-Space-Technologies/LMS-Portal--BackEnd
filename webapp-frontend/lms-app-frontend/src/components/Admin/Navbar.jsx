@@ -53,11 +53,11 @@ const Navbar = () => {
                                 <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewCollegeStaffLog">View College Staff Log</Link></li>
                                 <li><Link className="dropdown-item" to="/AdminViewRefundRequests">View Refund Requests</Link></li>
-                                <li><Link className="dropdown-item" to="/AdminViewStudentLog">View student log</Link></li>
-                                <li><Link className="dropdown-item" to="/AdminViewAllAdminStaff">View admin staffs</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminViewStudentLog">View Student Log</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminViewAllAdminStaff">View Admin Staffs</Link></li>
                                 <li><Link className="dropdown-item" to="/adminViewlog">View Admin Logs</Link></li>
                                 <li><Link className="dropdown-item" to="/adminViewSuccessfulrefunds">View Successful Refunds</Link></li>
-                                <li><Link className="dropdown-item" to="/adminviewadstafflog">View AdStaffLog</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewadstafflog">View Admin Staff Log</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewallclgstaff">View College Staff</Link></li>
                             </ul>
                         </li>
@@ -73,8 +73,8 @@ const Navbar = () => {
                                 <li><Link className="dropdown-item" to="/adminSearchBatch">Search Batches</Link></li>
                                 <li><Link className="dropdown-item" to="/adminSearchTrainers">Search Trainers</Link></li>
                                 <li><Link className="dropdown-item" to="/adminsearchstudent">Search Student</Link></li>
-                                <li><Link className="dropdown-item" to="/AdminSearchSessionDetails">Search session details</Link></li>
-                                <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search college staffs</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminSearchSessionDetails">Search Session details</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search College staffs</Link></li>
                             </ul>
                         </li>
                         <li className="nav-item">

@@ -86,14 +86,14 @@ Curriculum.curriculumView = (batchId, result) => {
                 return result("Batch not found", null);
             }
 
-            db.query("SELECT b.batchName, c.id, c.curriculumTitle, c.curriculumDesc, c.addedDate, c.curriculumFileLink, COALESCE(asf.AdStaffName, CASE WHEN c.addedBy = 0 THEN 'Admin' ELSE c.addedBy END) AS addedBy, COALESCE(usf.AdStaffName, CASE WHEN c.updatedBy = 0 THEN 'Admin' ELSE c.updatedBy END) AS updatedBy FROM curriculum c JOIN batches b ON c.batchId = b.id LEFT JOIN admin_staff asf ON c.addedBy = asf.id AND c.addedBy != 0 AND asf.AdStaffName IS NOT NULL LEFT JOIN admin_staff usf ON c.updatedBy = usf.id AND c.updatedBy != 0 AND usf.AdStaffName IS NOT NULL WHERE c.deleteStatus = 0 AND c.isActive = 1 AND c.batchId = ?",[batchId],
+            db.query("SELECT b.batchName, c.id, c.curriculumTitle, c.curriculumDesc, c.addedDate, c.curriculumFileLink, COALESCE(asf.AdStaffName, CASE WHEN c.addedBy = 0 THEN 'Admin' ELSE c.addedBy END) AS addedBy, COALESCE(usf.AdStaffName, CASE WHEN c.updatedBy = 0 THEN 'Admin' ELSE c.updatedBy END) AS updatedBy, c.updatedDate FROM curriculum c JOIN batches b ON c.batchId = b.id LEFT JOIN admin_staff asf ON c.addedBy = asf.id AND c.addedBy != 0 AND asf.AdStaffName IS NOT NULL LEFT JOIN admin_staff usf ON c.updatedBy = usf.id AND c.updatedBy != 0 AND usf.AdStaffName IS NOT NULL WHERE c.deleteStatus = 0 AND c.isActive = 1 AND c.batchId = ?",[batchId],
                 (curriculumErr, curriculumRes) => {
                     if (curriculumErr) {
                         console.log("error: ", curriculumErr);
                         result(curriculumErr, null)
                         return
                     } else {
-                        const formattedCurriculums = curriculumRes.map(curriculum => ({ ...curriculum, addedDate: curriculum.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: curriculum.updatedDate ? curriculum.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null})); // Formats the date as 'YYYY-MM-DD'
+                        const formattedCurriculums = curriculumRes.map(curriculum => ({ ...curriculum, addedDate: curriculum.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), updatedDate: curriculum.updatedDate ? curriculum.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null})); // Formats the date as 'YYYY-MM-DD'
                         console.log("success:", formattedCurriculums)
                         result(null, formattedCurriculums);
                     }
@@ -119,11 +119,11 @@ Curriculum.curriculumDelete = (id, result) => {
 };
 
 
-Curriculum.curriculumUpdate = (updCurriculum, result) => {
+Curriculum.updateCurriculum = (updCurriculum, result) => {
     db.query("SELECT * FROM curriculum WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [updCurriculum.id], (err, curRes) => {
         if (err) {
             console.error("Error checking existing curriculum: ", err);
-            result("Error checking existing curriculum", null);
+            result(err, null);
             return;
         }
 
@@ -135,7 +135,7 @@ Curriculum.curriculumUpdate = (updCurriculum, result) => {
         db.query("SELECT * FROM curriculum WHERE curriculumTitle=? AND batchId=? AND deleteStatus = 0 AND isActive = 1", [updCurriculum.curriculumTitle, updCurriculum.id], (err, res) => {
             if (err) {
                 console.error("Error checking existing curriculum: ", err);
-                result("Error checking existing curriculum", null);
+                result(err, null);
                 return;
             }
 
@@ -144,20 +144,43 @@ Curriculum.curriculumUpdate = (updCurriculum, result) => {
                 result("Curriculum Title already exists.", null);
                 return;
             }
-            db.query("UPDATE `curriculum` SET `curriculumTitle`= ?, `curriculumDesc`= ?, `updatedDate`= CURRENT_DATE, `updatedBy`= ?, `curriculumFileLink`= ?, `updateStatus`= 1 WHERE id = ?",
-                [updCurriculum.curriculumTitle, updCurriculum.curriculumDesc, updCurriculum.updatedBy, updCurriculum.curriculumFileLink, updCurriculum.id], (err, res) => {
-                    if (err) {
-                        console.error("Error updating curriculum: ", err);
-                        result("Error updating curriculum", null);
-                        return;
-                    }
 
-                    console.log("Updated Curriculum Details : ", { id: updCurriculum.id, ...updCurriculum });
-                    result(null, { id: updCurriculum.id, ...updCurriculum });
-                });
+            let updateQuery;
+            let updateValues;
+
+            if (updCurriculum.curriculumFileLink) {
+                updateQuery = "UPDATE `curriculum` SET `curriculumTitle`= ?, `curriculumDesc`= ?, `updatedDate`= CURRENT_DATE, `updatedBy`= ?, `curriculumFileLink`= ?, `updateStatus`= 1 WHERE id = ?";
+                updateValues = [
+                    updCurriculum.curriculumTitle,
+                    updCurriculum.curriculumDesc,
+                    updCurriculum.updatedBy,
+                    updCurriculum.curriculumFileLink,
+                    updCurriculum.id
+                ];
+            } else {
+                updateQuery = "UPDATE `curriculum` SET `curriculumTitle`= ?, `curriculumDesc`= ?, `updatedDate`= CURRENT_DATE, `updatedBy`= ?, `updateStatus`= 1 WHERE id = ?";
+                updateValues = [
+                    updCurriculum.curriculumTitle,
+                    updCurriculum.curriculumDesc,
+                    updCurriculum.updatedBy,
+                    updCurriculum.id
+                ];
+            }
+
+            db.query(updateQuery, updateValues, (err, res) => {
+                if (err) {
+                    console.error("Error updating curriculum: ", err);
+                    result(err, null);
+                    return;
+                }
+
+                console.log("Updated Curriculum Details : ", { id: updCurriculum.id, ...updCurriculum });
+                result(null, { id: updCurriculum.id, ...updCurriculum });
+            });
         });
     });
 };
+
 
 
 Curriculum.viewOneCurriculum  = (id, result) => {

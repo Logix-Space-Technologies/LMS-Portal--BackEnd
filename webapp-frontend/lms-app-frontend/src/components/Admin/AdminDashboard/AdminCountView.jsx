@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import '../../../config/config'
+import { useNavigate } from 'react-router-dom';
 
 const AdminCountView = () => {
     const [collegeData, setCollegeData] = useState([])
 
-    // const apiLink = "http://localhost:8080/api/lms/adminDashboard"
+    const navigate = useNavigate()
+
     const apiUrl = global.config.urls.api.server + "/api/lms/adminDashboard"
 
     const getData = () => {
@@ -19,7 +21,16 @@ const AdminCountView = () => {
         };
         axios.post(apiUrl, {}, axiosConfig).then(
             (Response) => {
-                setCollegeData(Response.data.data)
+                if (Response.data.data) {
+                    setCollegeData(Response.data.data)
+                } else if (Response.data.status === "Unauthorized User!!!") {
+                    navigate("/")
+                    sessionStorage.clear()
+                } else if (!Response.data.data) {
+                    setCollegeData([])
+                } else {
+                    alert(Response.data.status)
+                }
             }
         )
     }

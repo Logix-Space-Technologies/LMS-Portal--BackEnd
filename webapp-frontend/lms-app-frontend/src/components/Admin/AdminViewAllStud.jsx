@@ -3,29 +3,54 @@ import '../../config/config';
 import axios from 'axios';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminViewAllStud = () => {
     const [studData, setStudData] = useState([]);
+    const [key, setKey] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [studentsPerPage] = useState(10); // Number of students per page
 
     const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewAllStudByAdmin";
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/createCommunityManager";
+    const apiUrl3 = global.config.urls.api.server + "/api/lms/deleteCommunityManager";
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/sendRenewalReminderEmail";
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "batchId": sessionStorage.getItem("viewbatchId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-                setStudData(response.data.data);
+                if (response.data.data) {
+                    setStudData(response.data.data);
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setStudData([])
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         );
     };
@@ -38,22 +63,37 @@ const AdminViewAllStud = () => {
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
+    // Total pages
+    let totalPages = []
+    if (studData && studData.length > 0) {
+        totalPages = Math.ceil(studData.length / studentsPerPage);
+    }
+
     const calculateSerialNumber = (index) => {
         return ((currentPage - 1) * studentsPerPage) + index + 1;
     }
 
-    const apiUrl2 = global.config.urls.api.server + "/api/lms/createCommunityManager";
-    const apiUrl3 = global.config.urls.api.server + "/api/lms/deleteCommunityManager";
+    // Integration of new pagination logic
+    const startPage = currentPage > 2 ? currentPage - 2 : 1;
+    const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
+
 
     // Assign Community Manager
     const assignCommunityManager = (id, batchId) => {
-        let data = { "studentId": id, "batchId": batchId }; // Ensure this matches your expected backend format
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let data = { "studentId": id, "batchId": batchId };
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"), // Your token storage method might need to match your backend expectations
-                "key": sessionStorage.getItem("admkey") // Ensure your backend is expecting this key in the header
+                "token": token,
+                "key": currentKey
             }
         };
 
@@ -61,57 +101,112 @@ const AdminViewAllStud = () => {
             (response) => {
                 if (response.data.status === "success") {
                     // Assuming "Assigned to Community Manager" is a message you want to display
-                    alert("Assigned to Community Manager");
                     getData(); // Ensure getData() is defined and fetches the latest data
                 } else if (response.data.status === "Validation failed") {
                     // Handle validation errors
                     alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
+                } else if (response.data.status === "Unauthorized User !!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
                 } else {
                     // Handle other errors
                     alert(response.data.status);
                 }
             }
-        ).catch(error => {
-            console.error("Error assigning community manager:", error);
-            alert("An error occurred while assigning the community manager. Please try again.");
-        });
+        )
     };
 
     // Remove Community Manager
     const removeCommunityManager = (id) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "id": id };
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrl3, data, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    alert(`Removed from Community Manager`);
                     getData()
+                } else {
+                    if (response.data.status === "Unauthorized User !!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status);
+                    }
+                }
+            }
+        )
+    };
+
+    const sendRenewalRemainderMail = (id) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let data = { "id": id };
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+        axios.post(apiUrl4, data, axiosConfig).then(
+            (response) => {
+                if (response.data.status === "success") {
+                    alert(response.data.message)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (response.data.status === "error") {
+                    alert(response.data.message)
                 } else {
                     alert(response.data.status);
                 }
+
             }
-        ).catch(error => {
-            console.error("Error removing community manager:", error);
-            alert("An error occurred while removing the community manager. Please try again.");
-        });
+        )
+
+    }
+
+    const isRenewalDue = (validityDate) => {
+        const currentDate = new Date();
+        // Parse the validity date in DD/MM/YYYY format
+        const [day, month, year] = validityDate.split('/');
+        const parsedValidityDate = new Date(`${year}-${month}-${day}`);
+
+        const differenceInMilliseconds = parsedValidityDate - currentDate;
+        const differenceInDays = differenceInMilliseconds / (24 * 60 * 60 * 1000);
+        return differenceInDays <= 45;
     };
-
-
 
 
 
     useEffect(() => { getData() }, []);
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <br />
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
@@ -136,9 +231,6 @@ const AdminViewAllStud = () => {
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Membership No.
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                College Name
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Batch Name
@@ -167,6 +259,9 @@ const AdminViewAllStud = () => {
                             <th scope="col" className="px-6 py-3">
 
                             </th>
+                            <th scope="col" className="px-6 py-3">
+
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -181,7 +276,7 @@ const AdminViewAllStud = () => {
                                             <img
                                                 src="https://www.svgrepo.com/show/303204/google-account-security-2-logo.svg"
                                                 alt="Community Manager Image"
-                                                style={{ width: '30px', height: '30px' }}
+                                                style={{ width: '30px', height: '25px' }}
                                             />
                                         )}
                                     </td>
@@ -195,9 +290,6 @@ const AdminViewAllStud = () => {
 
                                     <td className="px-6 py-4">
                                         {value.membership_no}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {value.collegeName}
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.batchName}
@@ -225,17 +317,22 @@ const AdminViewAllStud = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.communityManager === 0 && (
-                                            <button onClick={() => assignCommunityManager(value.id, value.batchId)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Assign Community Manager</button>
+                                            <button onClick={() => assignCommunityManager(value.id, value.batchId)} style={{ fontSize: '12px' }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Assign Community Manager</button>
                                         )}
                                         {value.communityManager === 1 && (
-                                            <button onClick={() => { removeCommunityManager(value.commManagerId) }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Remove Community Manager</button>
+                                            <button onClick={() => { removeCommunityManager(value.commManagerId) }} style={{ fontSize: '12px' }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Remove Community Manager</button>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {value.validity && isRenewalDue(value.validity) && (
+                                            <button onClick={() => sendRenewalRemainderMail(value.id)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md" style={{ fontSize: '12px' }}>Send Renewal Remainder Mail</button>
                                         )}
                                     </td>
                                 </tr>
                             }
                         ) : (
                             <tr>
-                                <td colSpan="11" className="px-6 py-4" style={{ textAlign: "center" }}>
+                                <td colSpan="12" className="px-6 py-4" style={{ textAlign: "center" }}>
                                     No Students Found !!!
                                 </td>
                             </tr>
@@ -243,29 +340,37 @@ const AdminViewAllStud = () => {
                     </tbody>
                 </table>
             </div>
-            {currentStudents.length > 0 && (
-                <div className="flex justify-center mt-8">
-                    <nav>
-                        <ul className="flex list-style-none">
-                            {currentPage > 1 && (
-                                <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                    Previous
-                                </li>
-                            )}
-                            {Array.from({ length: Math.ceil(studData.length / studentsPerPage) }, (_, i) => (
-                                <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                                    {i + 1}
-                                </li>
+            <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                    <div>
+                        <p className="text-sm text-gray-700">
+                            Showing <span className="font-medium">{indexOfFirstStudent + 1}</span> to <span className="font-medium">{indexOfLastStudent > studData.length ? studData.length : indexOfLastStudent}</span> of <span className="font-medium">{studData.length}</span> results
+                        </p>
+                    </div>
+                    <div>
+                        <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                            <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
+                                <span className="sr-only">Previous</span>
+                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                                </svg>
+                            </button>
+                            {/* Dynamically generate Link components for each page number */}
+                            {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                                <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
+                                    {startPage + index}
+                                </button>
                             ))}
-                            {currentPage < Math.ceil(studData.length / studentsPerPage) && (
-                                <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">
-                                    Next
-                                </li>
-                            )}
-                        </ul>
-                    </nav>
+                            <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
+                                <span className="sr-only">Next</span>
+                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                                </svg>
+                            </button>
+                        </nav>
+                    </div>
                 </div>
-            )}
+            </div>
         </div>
     );
 };

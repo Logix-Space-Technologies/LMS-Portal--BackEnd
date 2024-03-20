@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from './Navbar';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminUpdateTask = () => {
     const [taskData, setTaskData] = useState([]);
-    const [file, setFile] = useState(null)
+    const [key, setKey] = useState('');
+    const [errors, setErrors] = useState({});
+    const [file, setFile] = useState("")
     const [fileType, setFileType] = useState("");
-    const [errors, setErrors] = useState({})
     const [updateField, setUpdateField] = useState({
         "id": sessionStorage.getItem('taskId'),
         "batchId": '',
@@ -16,16 +19,15 @@ const AdminUpdateTask = () => {
         "taskType": '',
         "totalScore": '',
         "dueDate": '',
-        "taskFileUpload": file,
+        "taskFileUpload": null,
     });
     const apiURL = global.config.urls.api.server + '/api/lms/viewOneTask';
     const apiUrl2 = global.config.urls.api.server + '/api/lms/updateTask';
     const navigate = useNavigate();
-    const [key, setKey] = useState('');
 
     const updateHandler = (event) => {
         setErrors({});
-        setUpdateField({ ...updateField, [event.target.name]: event.target.value })
+        setUpdateField({ ...updateField, [event.target.name]: event.target.value });
     }
 
     const fileUploadHandler = (event) => {
@@ -61,15 +63,28 @@ const AdminUpdateTask = () => {
                     "key": currentKey
                 }
             }
-            let data = {
-                "id": sessionStorage.getItem('taskId'),
-                "batchId": updateField.batchId,
-                "taskTitle": updateField.taskTitle,
-                "taskDesc": updateField.taskDesc,
-                "taskType": updateField.taskType,
-                "totalScore": updateField.totalScore,
-                "dueDate": updateField.dueDate,
-                "taskFileUpload": file,
+            let data = {}
+            if (file) {
+                data = {
+                    "id": sessionStorage.getItem('taskId'),
+                    "batchId": updateField.batchId,
+                    "taskTitle": updateField.taskTitle,
+                    "taskDesc": updateField.taskDesc,
+                    "taskType": updateField.taskType,
+                    "totalScore": updateField.totalScore,
+                    "dueDate": updateField.dueDate,
+                    "taskFileUpload": file
+                }
+            } else {
+                data = {
+                    "id": sessionStorage.getItem('taskId'),
+                    "batchId": updateField.batchId,
+                    "taskTitle": updateField.taskTitle,
+                    "taskDesc": updateField.taskDesc,
+                    "taskType": updateField.taskType,
+                    "totalScore": updateField.totalScore,
+                    "dueDate": updateField.dueDate
+                }
             }
             axios.post(apiUrl2, data, axiosConfig2).then(
                 (Response) => {
@@ -82,6 +97,7 @@ const AdminUpdateTask = () => {
                             "taskType": '',
                             "totalScore": '',
                             "dueDate": '',
+                            "taskFileUpload": null,
                         })
                         alert("Task Updated Successfully")
                         navigate(-1)
@@ -104,7 +120,12 @@ const AdminUpdateTask = () => {
                                             if (Response.data.status === "Validation failed" && Response.data.data.date) {
                                                 alert(Response.data.data.date)
                                             } else {
-                                                alert(Response.data.status)
+                                                if (Response.data.status === "Unauthorized access!!") {
+                                                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                                    sessionStorage.clear()
+                                                } else {
+                                                    alert(Response.data.status)
+                                                }
                                             }
                                         }
                                     }
@@ -121,25 +142,20 @@ const AdminUpdateTask = () => {
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        console.log("Status 400:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        console.log("Status 500:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
                     alert(error.request);
                 } else if (error.message) {
-                    console.log('Error', error.message);
                     alert('Error', error.message);
                 } else {
                     alert(error.config);
-                    console.log(error.config);
                 }
             })
         } else {
@@ -152,25 +168,20 @@ const AdminUpdateTask = () => {
 
         if (!data.batchId) {
             errors.batchId = 'Batch Name is required';
-        }
-        if (!data.taskTitle) {
+        } else if (!data.taskTitle) {
             errors.taskTitle = 'Task Title is required';
-        }
-        if (!data.taskDesc) {
+        } else if (!data.taskDesc) {
             errors.taskDesc = 'Task Description is required';
-        }
-        if (!data.taskType) {
+        } else if (!data.taskType) {
             errors.taskType = 'Task Type is required';
-        }
-        if (!data.totalScore) {
+        } else if (!data.totalScore) {
             errors.totalScore = 'Total Score is required';
-        }
-        if (!data.dueDate) {
+        } else if (!data.dueDate) {
             errors.dueDate = 'Due Date is required';
-        }
-        if (fileType !== "pdf" && fileType !== "docx") {
+        } else if (file && fileType !== "docx" && fileType !== "pdf") {
             errors.file = "File must be in PDF or DOCX format";
         }
+
         return errors;
     }
 
@@ -192,8 +203,31 @@ const AdminUpdateTask = () => {
             }
         }
         axios.post(apiURL, data, axiosConfig).then((response) => {
-            setTaskData(response.data.data);
-            setUpdateField(response.data.data);
+            if (response.data.data) {
+                setTaskData(response.data.data);
+                setUpdateField(response.data.data);
+            } else {
+                if (response.data.status === "Unauthorized Access!!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else {
+                    if (!response.data.data) {
+                        setTaskData([])
+                        setUpdateField({
+                            "id": '',
+                            "batchId": '',
+                            "taskTitle": '',
+                            "taskDesc": '',
+                            "taskType": '',
+                            "totalScore": '',
+                            "dueDate": '',
+                            "taskFileUpload": '',
+                        })
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
+            }
         });
     };
 
@@ -214,8 +248,10 @@ const AdminUpdateTask = () => {
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
+
     return (
         <div className="container">
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="row">
                 <div className="col-lg-12 mb-4 mb-sm-5">
                     <br></br>
@@ -230,9 +266,6 @@ const AdminUpdateTask = () => {
                                 <div className="col-lg-6 px-xl-10">
                                     <ul className="list-unstyled mb-1-9">
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            {/* <label htmlFor="" className="form-label">
-                                                Id
-                                            </label> */}
                                             <input
                                                 type="hidden"
                                                 className="form-control"
@@ -242,9 +275,6 @@ const AdminUpdateTask = () => {
                                             />
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            {/* <label htmlFor="" className="form-label">
-                                                BatchId
-                                            </label> */}
                                             <input
                                                 onChange={updateHandler}
                                                 type="hidden"
@@ -284,13 +314,21 @@ const AdminUpdateTask = () => {
                                             <label htmlFor="" className="form-label">
                                                 Task Type
                                             </label>
-                                            <input
-                                                onChange={updateHandler}
-                                                type="text"
-                                                className="form-control"
+                                            <select
+                                                className="form-select"
                                                 name="taskType"
+                                                id="taskType"
                                                 value={updateField.taskType}
-                                            />
+                                                onChange={updateHandler}
+                                            >
+                                                <option value="">Select Type</option>
+                                                <option value="Mini Project">Mini Project</option>
+                                                <option value="Project">Project</option>
+                                                <option value="Live Project">Live Project</option>
+                                                <option value="Daily Task">Daily Task</option>
+                                                <option value="Weekly Task">Weekly Task</option>
+                                                <option value="Homework">Homework</option>
+                                            </select>
                                             {errors.taskType && (<span style={{ color: 'red' }} className="error">{errors.taskType}</span>)}
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -312,7 +350,7 @@ const AdminUpdateTask = () => {
                                             </label>
                                             <input
                                                 onChange={updateHandler}
-                                                type="text"
+                                                type="date"
                                                 className="form-control"
                                                 name="dueDate"
                                                 value={updateField.dueDate}
@@ -320,10 +358,10 @@ const AdminUpdateTask = () => {
                                             {errors.dueDate && (<span style={{ color: 'red' }} className="error">{errors.dueDate}</span>)}
                                         </div>
                                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                            <label for="studProfilePic" className="form-label">
+                                            <label for="taskFileUpload" className="form-label">
                                                 File <span className="text-danger">*</span>
                                             </label>
-                                            <input onChange={fileUploadHandler} type="file" className="form-control" name="taskFileUpload" id="taskFileUpload" accept="pdf/*" />
+                                            <input onChange={fileUploadHandler} type="file" className="form-control" name="taskFileUpload" id="taskFileUpload" accept="application/pdf" />
                                             {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
                                         </div>
                                         <br></br>

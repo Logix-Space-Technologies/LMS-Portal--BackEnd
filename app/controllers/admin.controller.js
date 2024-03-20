@@ -3,7 +3,45 @@ const jwt = require("jsonwebtoken")
 const Admin = require("../models/admin.model");
 const Validator = require('../config/data.validate')
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
+const firebaseAdmin = require('firebase-admin')
 
+firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert({
+        type: process.env.TYPE,
+        project_id: process.env.PROJECT_ID,
+        private_key_id: process.env.PRIVATE_KEY_ID,
+        private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'), 
+        client_email: process.env.CLIENT_EMAIL,
+        client_id: process.env.CLIENT_ID,
+        auth_uri: process.env.AUTH_URI,
+        token_uri: process.env.TOKEN_URI,
+        auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_X509_CERT_URL,
+        client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
+        universe_domain: process.env.UNIVERSE_DOMAIN
+    })
+});
+
+exports.sendNotifications = (request, response) => {
+    const token = request.body.token;
+    const message = request.body.message;
+    const payload = {
+        notification: {
+            title: "New Notification",
+            body: message
+        }
+    };
+
+    // Send notification to the device
+    firebaseAdmin.messaging().sendToDevice(token, payload)
+        .then((sendResponse) => {
+            console.log('Notification sent successfully:', sendResponse);
+            return response.status(200).send({ status: "success", data: 'Notification sent successfully' });
+        })
+        .catch((error) => {
+            console.error('Error sending notification:', error);
+            return response.status(500).send({ status: "failed", data: 'Failed to send notification', error: error });
+        });
+};
 
 
 // const saltRounds = 10;
@@ -114,16 +152,13 @@ exports.adminChangePwd = (request, response) => {
 
     // JWT Verification
     jwt.verify(token, "lmsapp", (error, decoded) => {
-        if (error) {
-            return response.json({ "status": "Unauthorized User!!" });
-        }
-
         if (decoded) {
             Admin.adminChangePassword({ userName, oldPassword, newPassword }, (err, result) => {
                 if (err) {
                     return response.json({ "status": err });
+                } else {
+                    return response.json({ "status": "success" });
                 }
-                return response.json({ "status": "success" });
             });
         } else {
             return response.json({ "status": "Unauthorized User!!" });
@@ -144,7 +179,7 @@ exports.adminDashBoards = (request, response) => {
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!!" });
+            return response.json({ "status": "Unauthorized User!!!" });
         }
     });
 
@@ -159,14 +194,14 @@ exports.viewAdminLog = (request, response) => {
             Admin.getAll((err, data) => {
                 if (err) {
                     console.log(err)
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
 
                 } else {
-                    response.json(data)
+                    return response.json(data)
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -198,7 +233,7 @@ exports.adminforgotpassword = (request, response) => {
         } else {
             return response.json({ "status": "success" });
         }
-        
+
     });
 
 }

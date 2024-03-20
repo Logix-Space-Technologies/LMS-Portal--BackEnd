@@ -2,10 +2,10 @@ import axios from 'axios';
 import '../../config/config';
 import React, { useState } from 'react';
 import Navbar from './Navbar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AddAdminStaff = () => {
-    
+
     const [inputField, setInputField] = useState({
         "AdStaffName": "",
         "PhNo": "",
@@ -17,6 +17,8 @@ const AddAdminStaff = () => {
     });
 
     const [errors, setErrors] = useState({});
+
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + '/api/lms/addAdminStaff';
 
@@ -74,6 +76,9 @@ const AddAdminStaff = () => {
                             alert(response.data.data.email);
                         } else if (response.data.status === 'Validation failed' && response.data.data.password) {
                             alert(response.data.data.password);
+                        } else if (response.data.status === "Unauthorized User !!!") {
+                            navigate("/")
+                            sessionStorage.clear()
                         } else {
                             alert(response.data.status);
                         }

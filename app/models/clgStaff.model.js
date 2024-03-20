@@ -100,10 +100,35 @@ CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
             return result("College not found with the provided ID", null);
         }
 
+        let updateQuery;
+        let updateValues;
+
+        if (clgstaff.collegeImage) {
+            updateQuery = "UPDATE college_staff SET collegeId=?, collegeStaffName=?, phNo=?, clgStaffAddress=?, profilePic=?, department=?, updatedDate = CURRENT_DATE() WHERE id=? AND deleteStatus = 0 AND isActive = 1";
+            updateValues = [
+                clgstaff.collegeId,
+                clgstaff.collegeStaffName,
+                clgstaff.phNo,
+                clgstaff.clgStaffAddress,
+                clgstaff.department,
+                clgstaff.id,
+                clgstaff.profilePic
+            ];
+        } else {
+            updateQuery = "UPDATE college_staff SET collegeId=?, collegeStaffName=?, phNo=?, clgStaffAddress=?, department=?, updatedDate = CURRENT_DATE() WHERE id=? AND deleteStatus = 0 AND isActive = 1";
+            updateValues = [
+                clgstaff.collegeId,
+                clgstaff.collegeStaffName,
+                clgstaff.phNo,
+                clgstaff.clgStaffAddress,
+                clgstaff.department,
+                clgstaff.id
+            ];
+        }
+
         // Update college staff details
         db.query(
-            "UPDATE college_staff SET collegeId=?, collegeStaffName=?, phNo=?, clgStaffAddress=?, profilePic=?, department=?, updatedDate = CURRENT_DATE() WHERE id=? AND deleteStatus = 0 AND isActive = 1",
-            [clgstaff.collegeId, clgstaff.collegeStaffName, clgstaff.phNo, clgstaff.clgStaffAddress, clgstaff.profilePic, clgstaff.department, clgstaff.id],
+            updateQuery, updateValues,
             (updateErr, res) => {
                 if (updateErr) {
                     console.error("Error updating college staff details:", updateErr);
@@ -195,15 +220,30 @@ CollegeStaff.findByClgStaffEmail = (email, result) => {
             console.log("Error : ", err)
             result(err, null)
             return
-        }
-        if (res.length) {
-            result(null, res[0])
+        } else if (res.length === 0) {
+            result("College Staff Staff Does Not Exist", null)
             return
+        } else {
+            db.query("SELECT * FROM college_staff WHERE BINARY email = ? AND emailVerified = 1", email, (verifyErr, verifyRes) => {
+                if (verifyErr) {
+                    console.log("Error: ", verifyEmailErr)
+                    return result(verifyEmailErr, null)
+                } else if (verifyRes.length === 0) {
+                    console.log("Email Not Verified")
+                    return result("Email Not Verified", null)
+                } else {
+                    db.query("SELECT * FROM college_staff WHERE BINARY email = ? AND isActive = 1 AND deleteStatus = 0 AND emailVerified = 1", email, (emailErr, emailRes) => {
+                        if (emailErr) {
+                            console.log("Error : ", emailErr);
+                            return result(emailErr, null);
+                        } else if (emailRes.length > 0) {
+                            result(null, emailRes[0])
+                        }
+                    })
+                }
+            })
         }
-        result({ kind: "not_found" }, null)
     })
-    // console.log("College Staff is Inactive or does not Exist.")
-    // result("College Staff is Inactive or does not Exist.", null)
 }
 
 
@@ -566,5 +606,61 @@ CollegeStaff.searchcollegestaffbyemail = (searchKey, result) => {
     );
 }
 
+
+CollegeStaff.emailVerificationClgStaffOtpVerify = (email, otp, result) => {
+    const query = "SELECT otp, createdAt FROM collegestaff_otp WHERE email = ?";
+    db.query(query, [email], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            if (res.length > 0) {
+                const clgstaffotp = res[0].otp;
+                const createdAt = res[0].createdAt;
+                // Check if OTP is expired
+                const expiryDuration = 10 * 60 * 1000; // 10 minute in milliseconds
+                const otpCreatedAt = new Date(createdAt).getTime();
+                const currentTime = new Date().getTime();
+                if (currentTime - otpCreatedAt > expiryDuration) {
+                    return result("OTP expired", null);
+                }
+
+                // If OTP not expired, proceed to compare
+                const isMatch = bcrypt.compareSync(otp, clgstaffotp);
+                if (isMatch) {
+                    db.query("UPDATE college_staff SET emailVerified = 1 WHERE email = ?", [email], (verifyErr, verifyRes) => {
+                        if (verifyErr) {
+                            return result(err, null);
+                        } else {
+                            return result(null, true);
+                        }
+                    })
+                } else {
+                    return result(null, false);
+                }
+            } else {
+                return result("OTP not found or expired", null);
+            }
+        }
+    });
+}
+
+CollegeStaff.searchClgStaffByCollege = (searchKey, result) => {
+    db.query(
+        "SELECT c.collegeStaffName, c.email, b.batchName FROM college_staff c JOIN batches b ON b.collegeId = c.collegeId WHERE b.id = ?",
+        [searchKey],
+        (err, res) => {
+            if (err) {
+                console.error("Error while searching college staff: ", err);
+                result(err, null);
+                return;
+            } else {
+                // console.log("Students found: ", res);
+                let data = Object.values(JSON.parse(JSON.stringify(res)))
+                result(null, data);
+                return;
+            }
+        }
+    );
+}
 
 module.exports = CollegeStaff

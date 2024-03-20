@@ -141,6 +141,10 @@ const CollegeStaffViewSession = () => {
         return ((currentPage - 1) * sessionsPerPage) + index + 1;
     }
 
+    function isSpecialDomain(venueLink) {
+        const domains = ["meet.google.com", "zoom.us", "youtube.com", "vimeo.com"];
+        return domains.some(domain => venueLink.includes(domain));
+    }
 
     return (
         <div>
@@ -215,7 +219,11 @@ const CollegeStaffViewSession = () => {
                                             {value.remarks}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {value.venueORlink}
+                                            {isSpecialDomain(value.venueORlink) ? (
+                                                <Link to={value.venueORlink} target="_blank" rel="noopener noreferrer" style={{ color: '#007bff', textDecoration: 'underline' }}>{value.venueORlink}</Link>
+                                            ) : (
+                                                value.venueORlink
+                                            )}
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.cancelStatus}

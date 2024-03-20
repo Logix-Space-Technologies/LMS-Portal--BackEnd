@@ -22,7 +22,7 @@ const AdminStaffUpdateMaterial = () => {
             "materialDesc": "",
             "remarks": "",
             "materialType": "",
-            "uploadFile": file
+            "uploadFile": ""
         }
     )
     const apiURL = global.config.urls.api.server + "/api/lms/AdmViewOneMaterial";
@@ -117,17 +117,31 @@ const AdminStaffUpdateMaterial = () => {
                     "key": sessionStorage.getItem("admstaffkey")
                 }
             }
-            let data = {
-                "id": sessionStorage.getItem("materialId"),
-                "batchId": updateField.batchId,
-                "fileName": updateField.fileName,
-                "materialDesc": updateField.materialDesc,
-                "remarks": updateField.remarks,
-                "materialType": updateField.materialType,
-                "uploadFile": file
+            let data = {}
+            if (file) {
+                data = {
+                    "id": sessionStorage.getItem("materialId"),
+                    "batchId": updateField.batchId,
+                    "fileName": updateField.fileName,
+                    "materialDesc": updateField.materialDesc,
+                    "remarks": updateField.remarks,
+                    "materialType": updateField.materialType,
+                    "uploadFile": file
+                }
+            } else {
+                data = {
+                    "id": sessionStorage.getItem("materialId"),
+                    "batchId": updateField.batchId,
+                    "fileName": updateField.fileName,
+                    "materialDesc": updateField.materialDesc,
+                    "remarks": updateField.remarks,
+                    "materialType": updateField.materialType,
+                    "uploadFile": updateField.uploadFile
+                }
             }
             axios.post(apiUrl2, data, axiosConfig2).then(
                 (Response) => {
+                    console.log(Response)
                     if (Response.data.status === "Material Details Updated") {
                         setUpdateField({
                             "id": sessionStorage.getItem("materialId"),
@@ -139,7 +153,7 @@ const AdminStaffUpdateMaterial = () => {
                             "uploadFile": ""
                         })
                         alert("Material Updated Successfully")
-                        navigate("/AdminStaffViewAllMaterial")
+                        navigate(-1)
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.batchId) {
                             alert(Response.data.data.batchId)
@@ -156,12 +170,22 @@ const AdminStaffUpdateMaterial = () => {
                                         if (Response.data.status === "Validation failed" && Response.data.data.materialType) {
                                             alert(Response.data.data.materialType)
                                         } else {
-                                            if (Response.data.status === "Unauthorized Access!!!") {
-                                                navigate("/admstafflogin")
-                                                sessionStorage.clear()
+                                            if (Response.data.status === "Validation failed" && Response.data.data.file) {
+                                                alert(Response.data.data.file)
                                             } else {
-                                                alert(Response.data.status)
+                                                if (Response.data.status === "Validation failed" && Response.data.data.website) {
+                                                    alert(Response.data.data.website)
+                                                } else {
+                                                    if (Response.data.status === "Unauthorized Access!!!") {
+                                                        navigate("/admstafflogin")
+                                                        sessionStorage.clear()
+                                                    } else {
+                                                        alert(Response.data.status)
+                                                    }
+                                                }
                                             }
+
+
                                         }
                                     }
                                 }
@@ -202,21 +226,18 @@ const AdminStaffUpdateMaterial = () => {
 
         if (!data.batchId) {
             errors.batchId = 'Batch Name is required';
-        }
-        if (!data.collegeId) {
+        } else if (!data.collegeId) {
             errors.collegeId = 'College Name is required';
-        }
-        if (!data.fileName) {
+        } else if (!data.fileName) {
             errors.fileName = 'Material Title is required';
-        }
-        if (!data.materialDesc) {
+        } else if (!data.materialDesc) {
             errors.materialDesc = 'Material Description is required';
-        }
-        if (!data.remarks) {
+        } else if (!data.remarks) {
             errors.remarks = 'Remarks are required';
-        }
-        if (!data.materialType) {
+        } else if (!data.materialType) {
             errors.materialType = 'Material Type is required';
+        } else if (file && fileType !== "docx" && fileType !== "pdf") {
+            errors.file = "File must be in PDF or DOCX format";
         }
         return errors;
     }
@@ -335,14 +356,36 @@ const AdminStaffUpdateMaterial = () => {
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Material Type</label>
-                                                <input onChange={updateHandler} type="text" className="form-control" name="materialType" value={updateField.materialType} />
+                                                <select
+                                                    className="form-select"
+                                                    name="materialType"
+                                                    id="materialType"
+                                                    value={updateField.materialType}
+                                                    onChange={updateHandler}
+                                                >
+                                                    <option value="">Select Type</option>
+                                                    <option value="Image">Image</option>
+                                                    <option value="Video">Video</option>
+                                                    <option value="Document">Document</option>
+                                                    <option value="Link">Link</option>
+                                                </select>
                                                 {errors.materialType && (<span style={{ color: 'red' }} className="error">{errors.materialType}</span>)}
                                             </div>
                                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                                 <label for="studProfilePic" className="form-label">
                                                     File <span className="text-danger">*</span>
                                                 </label>
-                                                <input onChange={fileUploadHandler} type="file" className="form-control" name="uploadFile" id="uploadFile" accept="*" />
+                                                {updateField.materialType === "Link" ? (
+                                                    <>
+                                                        <input type="text" onChange={updateHandler} className="form-control" name="uploadFile" value={updateField.uploadFile} />
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <input onChange={fileUploadHandler} type="file" className="form-control" name="uploadFile" id="uploadFile" accept="*" />
+                                                        {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
+                                                    </>
+                                                )}
+                                                {errors.website && (<span style={{ color: 'red' }} className="error">{errors.website}</span>)}
                                             </div>
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">

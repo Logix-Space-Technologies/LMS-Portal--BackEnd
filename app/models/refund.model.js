@@ -138,7 +138,7 @@ Refund.getRefundRequests = (result) => {
                 return;
             }
             // Format the date for each session
-            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate ? refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
+            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate ? refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null })); // Formats the date as 'YYYY-MM-DD'
             // Return all refund requests
             console.log(formattedRefunds)
             result(null, formattedRefunds);
@@ -306,9 +306,10 @@ Refund.getSuccessfulRefunds = (result) => {
                 result("No successful refunds found.", null);
                 return;
             }
-
+            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), refundInitiatedDate: refunds.refundInitiatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
             // Return all successful refunds
-            result(null, res);
+            console.log(formattedRefunds)
+            result(null, formattedRefunds);
         }
     );
 };

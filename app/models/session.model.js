@@ -156,37 +156,38 @@ Session.createSession = (newSession, result) => {
 };
 
 Session.updateSession = (sessionUpdate, result) => {
-    //Check If Session Exists
+    // Check If Session Exists
     db.query("SELECT * FROM sessiondetails WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
         [sessionUpdate.id],
         (sessionErr, sessionRes) => {
             if (sessionErr) {
-                console.log("Error Checking Session Details : ", sessionErr)
-                result(sessionErr, null)
-                return
+                console.log("Error Checking Session Details : ", sessionErr);
+                result(sessionErr, null);
+                return;
             } else {
                 if (sessionRes.length === 0) {
-                    console.log("Session Details Not Found")
-                    result("Session Details Not Found", null)
-                    return
+                    console.log("Session Details Not Found");
+                    result("Session Details Not Found", null);
+                    return;
                 } else {
+                    // Retrieve original date
+                    const originalDate = sessionRes[0].date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
+
                     db.query("UPDATE sessiondetails SET sessionName = ?, date = ?, time = ?, type = ?, remarks = ?, venueORlink = ?, trainerId = ?, updatedDate = CURRENT_DATE() WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
                         [sessionUpdate.sessionName, sessionUpdate.date, sessionUpdate.time, sessionUpdate.type, sessionUpdate.remarks, sessionUpdate.venueORlink, sessionUpdate.trainerId, sessionUpdate.id],
                         (err, res) => {
                             if (err) {
-                                console.log("Error : ", err)
-                                result(err, null)
-                                return
+                                console.log("Error : ", err);
+                                result(err, null);
+                                return;
                             }
-                            console.log("Updated Session Details : ", { id: sessionUpdate.id, ...sessionUpdate })
-                            result(null, { id: sessionUpdate.id, ...sessionUpdate })
-                        })
+                            console.log("Updated Session Details : ", { id: sessionUpdate.id, ...sessionUpdate, originalDate });
+                            result(null, { id: sessionUpdate.id, ...sessionUpdate, originalDate });
+                        });
                 }
-
             }
-
-        })
-}
+        });
+};
 
 Session.viewSessions = (batchId, result) => {
     const query = "SELECT s.id, s.batchId, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, t.trainerName, s.attendenceCode, s.addedDate, s.updatedDate, CASE WHEN cancelStatus = 0 THEN 'ACTIVE' WHEN cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN trainersinfo t ON s.trainerId = t.id WHERE s.isActive = 1 AND s.deleteStatus = 0 AND s.batchId = ?";
@@ -197,7 +198,7 @@ Session.viewSessions = (batchId, result) => {
             return;
         }
         // Format the date for each session
-        const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), addedDate: session.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), updatedDate: session.updatedDate ? session.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
+        const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), addedDate: session.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), updatedDate: session.updatedDate ? session.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null })); // Formats the date as 'YYYY-MM-DD'
 
         console.log("sessions: ", formattedSessions);
         result(null, formattedSessions);
@@ -205,7 +206,7 @@ Session.viewSessions = (batchId, result) => {
 }
 
 Session.viewUpcomingSessions = (batchId, result) => {
-    const query = "SELECT sd.id, sd.batchId, sd.sessionName, sd.date, sd.time, sd.type, sd.remarks, sd.venueORlink, t.trainerName, sd.addedDate, sd.updatedDate FROM sessiondetails sd JOIN trainersinfo t ON sd.trainerId = t.id WHERE sd.isActive = 1 AND sd.deleteStatus = 0 AND sd.cancelStatus = 0 AND (sd.date > CURRENT_DATE OR (sd.date = CURRENT_DATE AND sd.time >= CURRENT_TIME)) AND sd.batchId = ? ORDER BY sd.date DESC;";
+    const query = "SELECT sd.id, sd.batchId, sd.sessionName, sd.date, sd.time, sd.type, sd.remarks, sd.venueORlink, t.trainerName, sd.addedDate, sd.updatedDate FROM sessiondetails sd JOIN trainersinfo t ON sd.trainerId = t.id WHERE sd.isActive = 1 AND sd.deleteStatus = 0 AND sd.cancelStatus = 0 AND (sd.date > CURRENT_DATE OR (sd.date = CURRENT_DATE AND sd.time >= CURRENT_TIME)) AND sd.batchId = ? ORDER BY sd.date ASC;";
     db.query(query, [batchId], (err, res) => {
         if (err) {
             console.log("error: ", err);
@@ -259,7 +260,7 @@ Session.searchSession = (search, result) => {
                 result
             } else {
                 // Format the date for each session
-                const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }));
+                const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })}));
                 console.log("Session  Details : ", formattedSessions)
                 result(null, formattedSessions)
             }

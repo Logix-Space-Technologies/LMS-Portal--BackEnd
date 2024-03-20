@@ -6,12 +6,14 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const AdminViewAllAdminStaff = () => {
 
-  const [clgStaffData, setClgStaffData] = useState([]);
+  const [admStaffData, setAdmStaffData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [adminStaffPerPage] = useState(10); // Number of admin staff per page
   const navigate = useNavigate();
   const [deleteClgStaff, setDeleteClgStaff] = useState({})
+
   const apiUrl = global.config.urls.api.server + "/api/lms/viewalladmstaff";
+  const deleteUrl = global.config.urls.api.server + "/api/lms/deleteadmstaff";
 
   const getData = () => {
     let axiosConfig = {
@@ -23,18 +25,26 @@ const AdminViewAllAdminStaff = () => {
       },
     };
 
-    axios.post(apiUrl, {}, axiosConfig)
-      .then((response) => {
-        setClgStaffData(response.data);
-      })
-      .catch((err) => {
-        console.error("Error fetching data. Please try again later.");
-      });
+    axios.post(apiUrl, {}, axiosConfig).then((response) => {
+      if (response.data) {
+        setAdmStaffData(response.data);
+      } else {
+        if (response.data.status === "Unauthorized User!!") {
+          navigate("/")
+          sessionStorage.clear()
+        } else {
+          if (!response.data) {
+            setAdmStaffData([])
+          } else {
+            alert(response.data.status)
+          }
+        }
+      }
+    })
   };
 
   const handleDeleteClick = () => {
     let id = deleteClgStaff
-    const deleteUrl = global.config.urls.api.server + "/api/lms/deleteadmstaff";
     const axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
@@ -42,33 +52,44 @@ const AdminViewAllAdminStaff = () => {
         "token": sessionStorage.getItem("admtoken"),
       },
     };
-    axios.post(deleteUrl, { id }, axiosConfig)
-      .then((response) => {
-        if (response.data.status === "Admin Staff Deleted.") {
-          alert("Admin staff deleted!")
-          // Refresh the data after deletion
-          getData();
+    axios.post(deleteUrl, { id }, axiosConfig).then((response) => {
+      if (response.data.status === "Admin Staff Deleted.") {
+        alert("Admin staff deleted!")
+        // Refresh the data after deletion
+        getData();
+      } else {
+        if (response.data.status === "Unauthorized User!!") {
+          navigate("/")
+          sessionStorage.clear()
         } else {
-          console.error("Error deleting admin staff. Please try again later.");
+          alert(response.data.status)
         }
-      })
-      .catch((err) => {
-        console.error("Error deleting admin staff. Please try again later.");
-      });
+      }
+    })
   };
 
   // Logic for displaying current admin staff
   const indexOfLastAdminStaff = currentPage * adminStaffPerPage;
   const indexOfFirstAdminStaff = indexOfLastAdminStaff - adminStaffPerPage;
-  const currentAdminStaff = clgStaffData ? clgStaffData.slice(indexOfFirstAdminStaff, indexOfLastAdminStaff) : [];
+  const currentAdminStaff = admStaffData ? admStaffData.slice(indexOfFirstAdminStaff, indexOfLastAdminStaff) : [];
 
   // Change page
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
+  // Total pages
+  let totalPages = []
+  if (admStaffData && admStaffData.length > 0) {
+    totalPages = Math.ceil(admStaffData.length / adminStaffPerPage);
+  }
+
   const calculateSerialNumber = (index) => {
     return ((currentPage - 1) * adminStaffPerPage) + index + 1;
-}
+  }
 
+
+  // Integration of new pagination logic
+  const startPage = currentPage > 2 ? currentPage - 2 : 1;
+  const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
 
 
   const updateClick = (id) => {
@@ -149,20 +170,36 @@ const AdminViewAllAdminStaff = () => {
             </div>
           </div>
           {/* Pagination */}
-          <div className="flex justify-center mt-8">
-            <nav>
-              <ul className="flex list-style-none">
-                {currentPage > 1 && (
-                  <li onClick={() => paginate(currentPage - 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Previous</li>
-                )}
-                {Array.from({ length: Math.ceil(clgStaffData.length / adminStaffPerPage) }, (_, i) => (
-                  <li key={i} onClick={() => paginate(i + 1)} className={`cursor-pointer px-3 py-1 mx-1 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>{i + 1}</li>
-                ))}
-                {currentPage < Math.ceil(clgStaffData.length / adminStaffPerPage) && (
-                  <li onClick={() => paginate(currentPage + 1)} className="cursor-pointer px-3 py-1 mx-1 bg-gray-200 text-gray-800">Next</li>
-                )}
-              </ul>
-            </nav>
+          <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-gray-700">
+                  Showing <span className="font-medium">{indexOfFirstAdminStaff + 1}</span> to <span className="font-medium">{indexOfLastAdminStaff > admStaffData.length ? admStaffData.length : indexOfLastAdminStaff}</span> of <span className="font-medium">{admStaffData.length}</span> results
+                </p>
+              </div>
+              <div>
+                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                  <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
+                    <span className="sr-only">Previous</span>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                  {/* Dynamically generate Link components for each page number */}
+                  {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                    <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
+                      {startPage + index}
+                    </button>
+                  ))}
+                  <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
+                    <span className="sr-only">Next</span>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </nav>
+              </div>
+            </div>
           </div>
         </div>
       </section>

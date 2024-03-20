@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
 import Navbar from './Navbar'
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminUpdateCurriculum = () => {
 
@@ -62,15 +63,27 @@ const AdminUpdateCurriculum = () => {
                     "key": currentKey
                 }
             }
-            let data = {
-                "id": sessionStorage.getItem("curriculumId"),
-                "curriculumTitle": updateField.curriculumTitle,
-                "curriculumDesc": updateField.curriculumDesc,
-                "updatedBy": sessionStorage.getItem("adminId"),
-                "curriculumFileLink": file
+            let data = {}
+            if (file) {
+                data = {
+                    "id": sessionStorage.getItem("curriculumId"),
+                    "curriculumTitle": updateField.curriculumTitle,
+                    "curriculumDesc": updateField.curriculumDesc,
+                    "updatedBy": sessionStorage.getItem("adminId"),
+                    "curriculumFileLink": file
+                }
+            } else {
+                data = {
+                    "id": sessionStorage.getItem("curriculumId"),
+                    "curriculumTitle": updateField.curriculumTitle,
+                    "curriculumDesc": updateField.curriculumDesc,
+                    "updatedBy": sessionStorage.getItem("adminId"),
+
+                }
             }
             axios.post(apiUrl2, data, axiosConfig2).then(
                 (Response) => {
+                    console.log(Response)
                     if (Response.data.status === "success") {
                         setUpdateField({
                             "id": sessionStorage.getItem("curriculumId"),
@@ -81,7 +94,7 @@ const AdminUpdateCurriculum = () => {
                         })
                         alert("Curriculum Updated Successfully")
                         setFile(null)
-                        navigate("/adminviewallcurriculum")
+                        navigate(-1)
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.curriculumTitle) {
                             alert(Response.data.data.curriculumTitle)
@@ -92,7 +105,12 @@ const AdminUpdateCurriculum = () => {
                                 if (Response.data.status === "Validation failed" && Response.data.data.updatedBy) {
                                     alert(Response.data.data.updatedBy)
                                 } else {
-                                    alert(Response.data.status)
+                                    if (Response.data.status === "Unauthorized User!!") {
+                                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                        sessionStorage.clear()
+                                    } else {
+                                        alert(Response.data.status)
+                                    }
                                 }
 
                             }
@@ -105,25 +123,20 @@ const AdminUpdateCurriculum = () => {
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        console.log("Status 400:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        console.log("Status 500:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
                     alert(error.request);
                 } else if (error.message) {
-                    console.log('Error', error.message);
                     alert('Error', error.message);
                 } else {
                     alert(error.config);
-                    console.log(error.config);
                 }
             })
         } else {
@@ -136,13 +149,12 @@ const AdminUpdateCurriculum = () => {
 
         if (!data.curriculumTitle.trim()) {
             errors.curriculumTitle = 'Curriculum Title Name is required';
-        }
-        if (!data.curriculumDesc.trim()) {
+        } else if (!data.curriculumDesc.trim()) {
             errors.curriculumDesc = 'Curriculum Description is required';
-        }
-        if (fileType !== "pdf" && fileType !== "docx") {
+        } else if (file && fileType !== "docx" && fileType !== "pdf") {
             errors.file = "File must be in PDF or DOCX format";
         }
+
         return errors;
     };
 
@@ -165,8 +177,28 @@ const AdminUpdateCurriculum = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setCurriculumData(response.data.curriculum)
-                setUpdateField(response.data.curriculum[0])
+                if (response.data.curriculum) {
+                    setCurriculumData(response.data.curriculum)
+                    setUpdateField(response.data.curriculum[0])
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.curriculum) {
+                            setCurriculumData([])
+                            setUpdateField({
+                                "id": "",
+                                "curriculumTitle": "",
+                                "curriculumDesc": "",
+                                "updatedBy": "",
+                                "curriculumFileLink": ""
+                            })
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
@@ -180,6 +212,7 @@ const AdminUpdateCurriculum = () => {
 
     return (
         <div>
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">

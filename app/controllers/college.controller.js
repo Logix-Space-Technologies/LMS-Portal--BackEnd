@@ -170,7 +170,7 @@ exports.collegeCreate = (request, response) => {
             });
         } catch (err) {
             fs.unlinkSync(file.path);
-            response.status(500).json({ "status": err.message });
+            return response.status(500).json({ "status": err.message });
         }
     });
 };
@@ -184,17 +184,18 @@ exports.collegeAllView = (request, response) => {
         if (decoded) {
             College.collegeViewAll((err, data) => {
                 if (err) {
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     })
 }
 
+// Update college route handler
 exports.updateCollege = (request, response) => {
     const uploadSingle = upload.single('collegeImage');
     uploadSingle(request, response, async (error) => {
@@ -202,69 +203,149 @@ exports.updateCollege = (request, response) => {
             return response.status(500).json({ "status": error.message });
         }
 
-        if (!request.file) {
-            return response.status(400).json({ "status": "No file uploaded" });
-        }
-        // File handling
-        const file = request.file;
-        const fileStream = fs.createReadStream(file.path);
+        if (request.file) {
+            // File handling
+            const file = request.file;
+            const fileStream = fs.createReadStream(file.path);
 
-        const uploadParams = {
-            Bucket: process.env.S3_BUCKET,
-            Key: `uploads/${file.filename}`,
-            Body: fileStream
-        };
-        try {
-            const data = await s3Client.send(new PutObjectCommand(uploadParams));
-            const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+            const uploadParams = {
+                Bucket: process.env.S3_BUCKET,
+                Key: `uploads/${file.filename}`,
+                Body: fileStream
+            };
 
-            // Remove the file from local storage
-            const collegeUpdateToken = request.headers.token
-            const collegeImage = request.file ? request.file.filename : null
-            const key = request.headers.key // key for respective tokens
-            if (!request.file) {
-                return response.json({ "status": "Image cannot be empty!!" })
+            try {
+                const data = await s3Client.send(new PutObjectCommand(uploadParams));
+                const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+
+                // Remove the file from local storage
+                const collegeUpdateToken = request.headers.token;
+                const collegeImage = request.file ? request.file.filename : null;
+                const key = request.headers.key; // key for respective tokens
+
+                jwt.verify(collegeUpdateToken, key, (err, decoded) => {
+                    if (decoded) {
+                        const validationErrors = {};
+
+                        // College name validation
+                        if (Validator.isEmpty(request.body.collegeName).isValid) {
+                            validationErrors.name = Validator.isEmpty(request.body.collegeName).message;
+                        }
+                        if (!Validator.isValidName(request.body.collegeName).isValid) {
+                            validationErrors.name = Validator.isValidName(request.body.collegeName).message;
+                        }
+
+                        // College address validation
+                        if (Validator.isEmpty(request.body.collegeAddress).isValid) {
+                            validationErrors.address = Validator.isEmpty(request.body.collegeAddress).message;
+                        }
+                        if (!Validator.isValidAddress(request.body.collegeAddress).isValid) {
+                            validationErrors.address = Validator.isValidAddress(request.body.collegeAddress).message;
+                        }
+
+                        // College website validation
+                        if (!Validator.isValidWebsite(request.body.website).isValid) {
+                            validationErrors.website = Validator.isValidWebsite(request.body.website).message;
+                        }
+
+                        // College phone number validation
+                        if (!Validator.isValidPhoneNumber(request.body.collegePhNo).isValid) {
+                            validationErrors.phone = Validator.isValidPhoneNumber(request.body.collegePhNo).message;
+                        }
+
+                        // College mobile number validation
+                        if (Validator.isEmpty(request.body.collegeMobileNumber).isValid) {
+                            validationErrors.mobile = Validator.isEmpty(request.body.collegeMobileNumber).message;
+                        }
+                        if (!Validator.isValidMobileNumber(request.body.collegeMobileNumber).isValid) {
+                            validationErrors.mobile = Validator.isValidMobileNumber(request.body.collegeMobileNumber).message;
+                        }
+
+                        // College image validation
+                        if (!Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+                            validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+                        }
+
+                        if (Object.keys(validationErrors).length > 0) {
+                            return response.json({ "status": "Validation Failed", "data": validationErrors });
+                        }
+
+                        const clgUpdate = new College({
+                            'id': request.body.id,
+                            collegeName: request.body.collegeName,
+                            collegeAddress: request.body.collegeAddress,
+                            website: request.body.website,
+                            collegePhNo: request.body.collegePhNo,
+                            collegeMobileNumber: request.body.collegeMobileNumber,
+                            collegeImage: imageUrl
+                        });
+
+                        College.updateCollege(clgUpdate, (err, data) => {
+                            if (err) {
+                                if (err.kind === "not_found") {
+                                    return response.json({ "status": "College Details Not Found.." });
+                                } else {
+                                    return response.json({ "status": err });
+                                }
+                            } else {
+                                if (key == "lmsapp") {
+                                    logAdminStaff(0, "Admin Updated College");
+                                }
+                                return response.json({ "status": "College Details Updated", "data": data });
+                            }
+                        });
+                    } else {
+                        return response.json({ "status": "Unauthorized Access!!!" });
+                    }
+                });
+            } catch (err) {
+                fs.unlinkSync(file.path);
+                return response.status(500).json({ "status": err.message });
             }
+        } else {
+            const collegeUpdateToken = request.headers.token;
+            const key = request.headers.key; // key for respective tokens
+
             jwt.verify(collegeUpdateToken, key, (err, decoded) => {
                 if (decoded) {
+                    const validationErrors = {};
 
-                    const validationErrors = {}
-
+                    // College name validation
                     if (Validator.isEmpty(request.body.collegeName).isValid) {
-                        validationErrors.name = Validator.isEmpty(request.body.collegeName).message
+                        validationErrors.name = Validator.isEmpty(request.body.collegeName).message;
                     }
                     if (!Validator.isValidName(request.body.collegeName).isValid) {
-                        validationErrors.name = Validator.isValidName(request.body.collegeName).message
+                        validationErrors.name = Validator.isValidName(request.body.collegeName).message;
                     }
 
+                    // College address validation
                     if (Validator.isEmpty(request.body.collegeAddress).isValid) {
-                        validationErrors.address = Validator.isEmpty(request.body.collegeAddress).message
+                        validationErrors.address = Validator.isEmpty(request.body.collegeAddress).message;
                     }
                     if (!Validator.isValidAddress(request.body.collegeAddress).isValid) {
-                        validationErrors.address = Validator.isValidAddress(request.body.collegeAddress).message
+                        validationErrors.address = Validator.isValidAddress(request.body.collegeAddress).message;
                     }
 
+                    // College website validation
                     if (!Validator.isValidWebsite(request.body.website).isValid) {
-                        validationErrors.website = Validator.isValidWebsite(request.body.website).message
+                        validationErrors.website = Validator.isValidWebsite(request.body.website).message;
                     }
 
+                    // College phone number validation
                     if (!Validator.isValidPhoneNumber(request.body.collegePhNo).isValid) {
-                        validationErrors.phone = Validator.isValidPhoneNumber(request.body.collegePhNo).message
+                        validationErrors.phone = Validator.isValidPhoneNumber(request.body.collegePhNo).message;
                     }
 
+                    // College mobile number validation
                     if (Validator.isEmpty(request.body.collegeMobileNumber).isValid) {
-                        validationErrors.mobile = Validator.isEmpty(request.body.collegeMobileNumber).message
+                        validationErrors.mobile = Validator.isEmpty(request.body.collegeMobileNumber).message;
                     }
                     if (!Validator.isValidMobileNumber(request.body.collegeMobileNumber).isValid) {
-                        validationErrors.mobile = Validator.isValidMobileNumber(request.body.collegeMobileNumber).message
-                    }
-
-                    if (!Validator.isValidImageWith1mbConstratint(request.file).isValid) {
-                        validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message
+                        validationErrors.mobile = Validator.isValidMobileNumber(request.body.collegeMobileNumber).message;
                     }
 
                     if (Object.keys(validationErrors).length > 0) {
-                        return response.json({ "status": "Validation Failed", "data": validationErrors })
+                        return response.json({ "status": "Validation Failed", "data": validationErrors });
                     }
 
                     const clgUpdate = new College({
@@ -273,31 +354,27 @@ exports.updateCollege = (request, response) => {
                         collegeAddress: request.body.collegeAddress,
                         website: request.body.website,
                         collegePhNo: request.body.collegePhNo,
-                        collegeMobileNumber: request.body.collegeMobileNumber,
-                        collegeImage: imageUrl
-                    })
+                        collegeMobileNumber: request.body.collegeMobileNumber
+                    });
 
                     College.updateCollege(clgUpdate, (err, data) => {
                         if (err) {
                             if (err.kind === "not_found") {
-                                return response.json({ "status": "College Details Not Found.." })
+                                return response.json({ "status": "College Details Not Found.." });
                             } else {
-                                response.json({ "status": err })
+                                return response.json({ "status": err });
                             }
                         } else {
                             if (key == "lmsapp") {
-                                logAdminStaff(0, "Admin Updated College")
+                                logAdminStaff(0, "Admin Updated College");
                             }
-                            return response.json({ "status": "College Details Updated", "data": data })
+                            return response.json({ "status": "College Details Updated", "data": data });
                         }
-                    })
+                    });
                 } else {
-                    response.json({ "status": "Unauthorized Access!!!" })
+                    return response.json({ "status": "Unauthorized Access!!!" });
                 }
             });
-        } catch (err) {
-            fs.unlinkSync(file.path);
-            response.status(500).json({ "status": err.message });
         }
     });
 };
@@ -305,7 +382,6 @@ exports.updateCollege = (request, response) => {
 
 exports.deleteCollege = (request, response) => {
     const collegedeleteToken = request.headers.token
-    console.log(collegedeleteToken)
     jwt.verify(collegedeleteToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             const clgDlt = new College({
@@ -314,7 +390,6 @@ exports.deleteCollege = (request, response) => {
             College.delete(clgDlt, (err, data) => {
                 if (err) {
                     if (err.kind === "not_found") {
-                        console.log({ "status": "College id not found." })
                         return response.json({ "status": "College id not found." })
                     } else {
                         return response.json({ "status": err })
@@ -326,7 +401,7 @@ exports.deleteCollege = (request, response) => {
                 return response.json({ "status": "College deleted." })
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     })
 }
@@ -341,22 +416,21 @@ exports.searchCollege = (request, response) => {
     jwt.verify(collegeSearchToken, collegeSearchKey, (err, decoded) => {
         if (decoded) {
             if (!collegeSearchQuery) {
-                console.log("Search Item is required.")
                 return response.json({ "status": "Search Item is required." })
             }
             College.searchCollege(collegeSearchQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found." })
+                        return response.json({ "status": "No Search Items Found." })
                     } else {
-                        response.json({ "status": "Result Found", "data": data })
+                        return response.json({ "status": "Result Found", "data": data })
                     }
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -388,7 +462,6 @@ exports.viewOneClgDetail = (request, response) => {
     const clgToken = request.headers.token;
     const key = request.headers.key;
     const clgId = request.body.id;
-    console.log(clgId)
 
     jwt.verify(clgToken, key, (err, decoded) => {
         if (decoded) {
