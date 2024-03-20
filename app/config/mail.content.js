@@ -191,82 +191,90 @@ function upcomingSessionRecordedHTMLContent(studName, sessionName, date, time, v
   <html>
   
   <head>
-      <style>
-          body {
-              font-family: Arial, sans-serif;
-              margin: 0;
-              padding: 0;
-              background-color: #f4f4f4;
-          }
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
   
-          .container {
-              max-width: 600px;
-              margin: 20px auto;
-              padding: 20px;
-              background-color: #ffffff;
-              border: 1px solid #dddddd;
-              border-radius: 8px;
-          }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+      }
   
-          .header {
-              color: #333333;
-              text-align: center;
-          }
+      .header {
+        color: #333333;
+        text-align: center;
+      }
   
-          .logo-header img {
-              max-width: 30%;
-              height: auto;
-          }
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
   
-          .content {
-              color: #333333;
-              line-height: 1.6;
-          }
+      .content {
+        color: #333333;
+        line-height: 1.6;
+      }
   
-          .footer {
-              text-align: center;
-              margin-top: 20px;
-              font-size: 0.8em;
-              color: #666666;
-          }
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.8em;
+        color: #666666;
+      }
   
-          a {
-              color: #007bff;
-          }
-      </style>
+      a {
+        color: #007bff;
+      }
+    </style>
   </head>
   
   <body>
-      <div class="container">
-          <div class="logo-header">
-              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
-          </div>
-          <div class="header">
-              <h2>Upcoming Session Announcement: Dive Deeper with Our Next Recorded Lesson!</h2>
-          </div>
-          <div class="content">
-              <p>Dear ${studName},</p>
-              <p>We hope this message finds you well and eager to learn! At Link Ur Codes, we are continuously looking for
-                  ways to enhance your learning experience and adapt to your busy schedules. This time, we're excited to
-                  announce our next session in a format that offers you the flexibility to engage with the material at
-                  your own pace.</p>
-              <p><strong>Next Session: ${sessionName}</strong><br>
-                  <strong>Available From:</strong> ${date}, ${time}<br>
-                  <strong>Where:</strong> <a href=${venueORlink}>Access the Video Here</a>
-              </p>
-              <p>This session is specially recorded for you! Dive deep into the Session Content.</p>
-              <h3>Your Task</h3>
-              <p>After watching the video, we encourage you to put your knowledge to the test by completing the tasks
-                  mentioned towards the end of the session. This is a fantastic opportunity to apply what you've learned
-                  and receive feedback on your work.</p>
-  
-              <p>Happy Learning,</p>
-              Link Ur Codes Team</p>
-          </div>
-          <div class="footer">
-              <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
-          </div>
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
       </div>
+      <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="center">
+            <img src="https://linkurcodes.com/imgs/nextClass.jpg" alt="Next Class" width="300"
+              style="width: 300px; max-width: 100%; height: auto; border: none; outline: none;">
+          </td>
+        </tr>
+      </table>
+      <div class="header">
+        <h2>Upcoming Session Announcement: Dive Deeper with Our Next Recorded Lesson!</h2>
+      </div>
+      <div class="content">
+        <p>Dear ${studName},</p>
+        <p>We hope this message finds you well and eager to learn! At Link Ur Codes, we are continuously looking for
+          ways to enhance your learning experience and adapt to your busy schedules. This time, we're excited to
+          announce our next session in a format that offers you the flexibility to engage with the material at
+          your own pace.</p>
+        <p><strong>Next Session: ${sessionName}</strong><br>
+          <strong>Available From:</strong> ${date}, ${time}<br>
+          <strong>Where:</strong> <a href=${venueORlink}>Access the Video Here</a>
+        </p>
+        <p>This session is specially recorded for you! Dive deep into the Session Content.</p>
+        <h3>Your Task</h3>
+        <p>After watching the video, we encourage you to put your knowledge to the test by completing the tasks
+          mentioned towards the end of the session. This is a fantastic opportunity to apply what you've learned
+          and receive feedback on your work.</p>
+  
+        <p>Happy Learning,</p>
+        Link Ur Codes Team</p>
+      </div>
+      <div class="footer">
+        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
   </body>
   
   </html>`
@@ -1021,6 +1029,15 @@ function studRegOTPVerificationHTMLContent(otp) {
         padding: 20px;
       }
   
+      .otp {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 18px;
+        display: inline-block;
+      }
+  
       .footer {
         text-align: center;
         margin-top: 30px;
@@ -1042,7 +1059,7 @@ function studRegOTPVerificationHTMLContent(otp) {
         <p>Dear Student,</p>
         <p>You are one step away from completing your registration with Link Ur Codes.</p>
         <p>Please use the following One-Time Password to complete your registration:</p>
-        <p><strong>${otp}</strong></p>
+        <p class="otp">${otp}</p>
         <p>This OTP is valid for the next 10 minutes. Enter this OTP in the required field on the web app to continue.</p>
         <p>If you need assistance, please contact our support team : admin@linkurcodes.com </p>
       </div>
@@ -1119,6 +1136,15 @@ function ClgStaffOTPVerificationHTMLContent(clgStaffName, otp) {
         padding: 20px;
       }
   
+      .otp {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 18px;
+        display: inline-block;
+      }
+  
       .footer {
         text-align: center;
         margin-top: 30px;
@@ -1140,7 +1166,7 @@ function ClgStaffOTPVerificationHTMLContent(clgStaffName, otp) {
         <p>Dear ${clgStaffName},</p>
         <p>You have requested to reset your password. Please use the verification code below to proceed with setting a new
           password:</p>
-        <p><strong>Verification Code: ${otp}</strong></p>
+        <p class="otp">${otp}</p>
         <p>This code is valid for 10 minutes and for one-time use only.</p>
         <p>If you did not initiate this request, please contact our support team : admin@linkurcodes.com </p>
       </div>
@@ -1220,6 +1246,15 @@ function AdminStaffOTPVerificationHTMLContent(adminstaffName, admstaffotp) {
         padding: 20px;
       }
   
+      .otp {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 18px;
+        display: inline-block;
+      }
+  
       .footer {
         text-align: center;
         margin-top: 30px;
@@ -1241,7 +1276,7 @@ function AdminStaffOTPVerificationHTMLContent(adminstaffName, admstaffotp) {
         <p>Dear ${adminstaffName},</p>
         <p>You have requested to reset your password. Please use the verification code below to proceed with setting a new
           password:</p>
-        <p><strong>Verification Code: ${admstaffotp}</strong></p>
+        <p class="otp">${admstaffotp}</p>
         <p>This code is valid for 10 minutes and for one-time use only.</p>
         <p>If you did not initiate this request, please contact our support team : admin@linkurcodes.com </p>
       </div>
@@ -1319,6 +1354,15 @@ function StudentOTPVerificationHTMLContent(studName, otp) {
         padding: 20px;
       }
   
+      .otp {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 18px;
+        display: inline-block;
+      }
+  
       .footer {
         text-align: center;
         margin-top: 30px;
@@ -1340,7 +1384,7 @@ function StudentOTPVerificationHTMLContent(studName, otp) {
         <p>Dear ${studName},</p>
         <p>You have requested to reset your password. Please use the verification code below to proceed with setting a new
           password:</p>
-        <p><strong>Verification Code: ${otp}</strong></p>
+        <p class="otp">${otp}</p>
         <p>This code is valid for 10 minutes and for one-time use only.</p>
         <p>If you did not initiate this request, please contact our support team : admin@linkurcodes.com </p>
       </div>

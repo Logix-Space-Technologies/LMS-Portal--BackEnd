@@ -15,7 +15,7 @@ const AddCollege = () => {
       "website": "",
       "email": "",
       "collegePhNo": "",
-      "collegeMobileNumber": "",
+      "collegeMobileNumber": ""
     }
   )
 

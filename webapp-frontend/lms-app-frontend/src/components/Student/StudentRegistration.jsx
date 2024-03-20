@@ -31,6 +31,7 @@ const StudentRegistration = () => {
   const [file, setFile] = useState(null)
 
   const [showModal, setShowModal] = useState(false);
+  const [showWaitingModal, setShowWaitingModal] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
   const fileUploadHandler = (event) => {
@@ -110,6 +111,11 @@ const StudentRegistration = () => {
       "otp": ""
     });
   };
+
+  const closeWaitingModal = () => {
+    setShowOverlay(false)
+    setShowWaitingModal(false)
+  }
 
   const getData = () => {
     let axiosConfig = {
@@ -208,7 +214,8 @@ const StudentRegistration = () => {
 
           const PaymentId = response.razorpay_payment_id
 
-
+          setShowWaitingModal(true)
+          setShowOverlay(true)
           // Call Registration API and pass the details to the server
           let data = {
             "collegeId": inputField.collegeId,
@@ -235,11 +242,12 @@ const StudentRegistration = () => {
           axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
               if (response.data.status === "success") {
-
-                alert("User Registered Successfully !!!")
-                closeAndNavigate()
-                setInputField({ "collegeId": "", "batchId": "", "studName": "", "admNo": "", "rollNo": "", "studDept": "", "course": "", "studEmail": "", "studPhNo": "", "studProfilePic": "", "aadharNo": "", "password": "", "confirmpassword": "" })
-
+                closeWaitingModal()
+                setTimeout(() => {
+                  alert("User Registered Successfully !!!")
+                  closeAndNavigate()
+                  setInputField({ "collegeId": "", "batchId": "", "studName": "", "admNo": "", "rollNo": "", "studDept": "", "course": "", "studEmail": "", "studPhNo": "", "studProfilePic": "", "aadharNo": "", "password": "", "confirmpassword": "" })
+                }, 500)
               } else if (response.data.status === "Validation failed" && response.data.data.college) {
                 alert(response.data.data.college)
               } else if (response.data.status === "Validation failed" && response.data.data.batch) {
@@ -263,7 +271,10 @@ const StudentRegistration = () => {
               } else if (response.data.status === "Validation failed" && response.data.data.password) {
                 alert(response.data.data.password)
               } else {
-                alert(response.data.status)
+                closeWaitingModal()
+                setTimeout(()=>{
+                  alert(response.data.status)
+                }, 500)
               }
             }
           )
@@ -599,6 +610,26 @@ const StudentRegistration = () => {
                         <div className="modal-footer">
                           <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
                           <button type="button" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {showWaitingModal && (
+                  <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                      <div className="modal-content">
+                        <div className="modal-header">
+                          <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                        </div>
+                        <div className="modal-body">
+                          <>
+                            <div className="mb-3">
+                              <p>Processing Request. Do Not Refresh.</p>
+                            </div>
+                          </>
+                        </div>
+                        <div className="modal-footer">
                         </div>
                       </div>
                     </div>

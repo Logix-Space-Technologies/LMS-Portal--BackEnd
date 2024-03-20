@@ -12,6 +12,7 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 require('dotenv').config({ path: '../../.env' });
 const path = require("path");
+const whatsApp = require("../controllers/sendWhatsappMessage")
 // const { Session } = require("inspector");
 
 // AWS S3 Client Configuration
@@ -165,6 +166,8 @@ exports.createStudent = (req, res) => {
                                 const otpVerificationHTMLContent = mailContents.StudentRegistrationSuccessfulMailHTMLContent(membershipNo);
                                 const otpVerificationTextContent = mailContents.StudentRegistrationSuccessfulMailTextContent(membershipNo);
                                 mail.sendEmail(email, 'Welcome To LinkUrCodes!', otpVerificationHTMLContent, otpVerificationTextContent)
+                                // Send Whatsapp Message
+                                whatsApp.sendfn(data.studPhNo, data.studName);
                                 return res.json({ "status": "success", "data": data, "paymentData": paymentData });
                             }
                         });

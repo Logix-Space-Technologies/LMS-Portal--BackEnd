@@ -11,7 +11,7 @@ const AdminAddCurriculum = () => {
         "collegeId": "",
         "batchId": "",
         "curriculumTitle": "",
-        "curriculumDesc": "",
+        "curriculumDesc": ""
     })
 
     const navigate = useNavigate()
