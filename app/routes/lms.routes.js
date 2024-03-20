@@ -328,4 +328,5 @@ router.post('/addFirebaseToken',FirebaseController.createTokens)
 
 router.post('/emailverifypwdchangestud', StudentController.emailVerifyAndPasswordChange)
 
+
 module.exports = router

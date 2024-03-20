@@ -1379,7 +1379,7 @@ Student.verifyStudOTP = (studEmail, otp, result) => {
 
 
 Student.searchStudRenewalDetailsByEmail = (studEmail, result) => {
-    db.query("SELECT s.*, c.collegeName, b.batchName, b.batchAmount FROM student s JOIN batches b ON s.batchId = b.id JOIN college c ON s.collegeId = c.id WHERE s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND s.validity < CURRENT_DATE", [studEmail],
+    db.query("SELECT s.*, c.collegeName, b.batchName, b.batchAmount FROM student s JOIN batches b ON s.batchId = b.id JOIN college c ON s.collegeId = c.id WHERE BINARY s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1", [studEmail],
         (verifyErr, verifyRes) => {
             if (verifyErr) {
                 console.log("Error: ", verifyErr)
@@ -1387,7 +1387,7 @@ Student.searchStudRenewalDetailsByEmail = (studEmail, result) => {
             }
             if (verifyRes.length === 0) {
                 console.log("Student Does Not Exist")
-                return result("Student Does Not Exist", null)
+                return result(null, null)
             } else {
                 result(null, verifyRes[0]);
             }

@@ -8,6 +8,7 @@ const StudentValidityRenewal = () => {
     const [inputField, setInputField] = useState([])
 
     const [showModal, setShowModal] = useState(false);
+    let [key, setKey] = useState('');
 
     const navigate = useNavigate()
 
@@ -15,8 +16,8 @@ const StudentValidityRenewal = () => {
     const apiUrl2 = global.config.urls.api.server + "/api/lms/studValidityRenewal";
 
     const getData = () => {
+        key = sessionStorage.getItem("studentkey")
         let data = { "studEmail": sessionStorage.getItem("studemail") }
-        console.log(data)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -25,7 +26,6 @@ const StudentValidityRenewal = () => {
         };
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
-                console.log(response)
                 if (response.data.data) {
                     setInputField(response.data.data)
                 } else {
@@ -120,6 +120,11 @@ const StudentValidityRenewal = () => {
 
     useEffect(() => { getData() }, [])
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("studentkey") || '');
+    }, []);
+
     return (
         <div className="bg-light py-3 py-md-5">
             <div className="container">
@@ -138,7 +143,16 @@ const StudentValidityRenewal = () => {
                                         </Link>
                                         <br />
                                         <br />
-                                        <h3>Student Validity Renewal</h3>
+                                    </div>
+                                    <div className="flex justify-between items-center mb-3">
+                                        <div className="flex-grow text-center">
+                                            <h1>Validity Renewal</h1>
+                                        </div>
+                                        <div>
+                                            {key === "lmsappstud" && (
+                                                <Link className="btn btn-danger" to="/studdashboard">Back</Link>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
