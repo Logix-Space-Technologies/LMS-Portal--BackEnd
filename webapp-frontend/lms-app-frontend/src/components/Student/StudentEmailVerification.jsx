@@ -22,10 +22,10 @@ const StudentEmailVerification = () => {
 
     const readValue = () => {
         let newErrors = {};
-        if (!inputField.password.trim()) {
+        if (!inputField.password) {
             newErrors.password = "Password is required!";
         }
-        if (!inputField.confirmpass.trim()) {
+        if (!inputField.confirmpass) {
             newErrors.confirmpass = "Confirm Password is required!";
         }
         if (inputField.password !== inputField.confirmpass) {
