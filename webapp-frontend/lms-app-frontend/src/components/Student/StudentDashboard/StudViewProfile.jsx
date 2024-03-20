@@ -43,8 +43,7 @@ const StudViewProfile = () => {
         )
     }
 
-    const UpdateClick = (email) => {
-        sessionStorage.setItem("studemail", email)
+    const UpdateClick = () => {
         navigate("/studValidityRenewal");
     };
 
@@ -84,7 +83,7 @@ const StudViewProfile = () => {
                                                 </div>
                                                 <div className="d-lg-inline-block">
                                                     {value.validity && isRenewalDue(value.validity) && (
-                                                        <button onClick={() => { UpdateClick(value.studEmail) }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Renew</button>
+                                                        <button onClick={() => { UpdateClick() }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Renew</button>
                                                     )}
                                                 </div>
                                             </div>

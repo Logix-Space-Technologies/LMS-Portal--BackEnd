@@ -138,8 +138,14 @@ const StudentValidityRenewal = () => {
                                         </Link>
                                         <br />
                                         <br />
-                                        <h3>Student Validity Renewal</h3>
                                     </div>
+                                    <div className="flex justify-between items-center mt-8 ml-4 mb-4">
+                                        <div style={{ flex: 1 }}></div> {/* Empty div for balancing the center alignment */}
+                                        <h3 style={{ flex: 2, textAlign: 'center', margin: 0 }}>Student Validity Renewal</h3>
+                                        <Link to="/studdashboard" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded" style={{ flex: 1, textAlign: 'center' }}>Back</Link>
+                                    </div>
+
+
                                 </div>
                             </div>
                             <div className="row gy-3 gy-md-4 overflow-hidden">
