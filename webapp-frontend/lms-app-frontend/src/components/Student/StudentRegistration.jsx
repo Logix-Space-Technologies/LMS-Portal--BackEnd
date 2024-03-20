@@ -243,9 +243,11 @@ const StudentRegistration = () => {
             (response) => {
               if (response.data.status === "success") {
                 closeWaitingModal()
-                alert("User Registered Successfully !!!")
-                closeAndNavigate()
-                setInputField({ "collegeId": "", "batchId": "", "studName": "", "admNo": "", "rollNo": "", "studDept": "", "course": "", "studEmail": "", "studPhNo": "", "studProfilePic": "", "aadharNo": "", "password": "", "confirmpassword": "" })
+                setTimeout(() => {
+                  alert("User Registered Successfully !!!")
+                  closeAndNavigate()
+                  setInputField({ "collegeId": "", "batchId": "", "studName": "", "admNo": "", "rollNo": "", "studDept": "", "course": "", "studEmail": "", "studPhNo": "", "studProfilePic": "", "aadharNo": "", "password": "", "confirmpassword": "" })
+                }, 500)
               } else if (response.data.status === "Validation failed" && response.data.data.college) {
                 alert(response.data.data.college)
               } else if (response.data.status === "Validation failed" && response.data.data.batch) {
@@ -269,8 +271,10 @@ const StudentRegistration = () => {
               } else if (response.data.status === "Validation failed" && response.data.data.password) {
                 alert(response.data.data.password)
               } else {
-                alert(response.data.status)
                 closeWaitingModal()
+                setTimeout(()=>{
+                  alert(response.data.status)
+                }, 500)
               }
             }
           )
