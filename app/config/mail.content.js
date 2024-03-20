@@ -191,90 +191,90 @@ function upcomingSessionRecordedHTMLContent(studName, sessionName, date, time, v
   <html>
   
   <head>
-      <style>
-          body {
-              font-family: Arial, sans-serif;
-              margin: 0;
-              padding: 0;
-              background-color: #f4f4f4;
-          }
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
   
-          .container {
-              max-width: 600px;
-              margin: 20px auto;
-              padding: 20px;
-              background-color: #ffffff;
-              border: 1px solid #dddddd;
-              border-radius: 8px;
-          }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+      }
   
-          .header {
-              color: #333333;
-              text-align: center;
-          }
+      .header {
+        color: #333333;
+        text-align: center;
+      }
   
-          .logo-header img {
-              max-width: 30%;
-              height: auto;
-          }
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
   
-          .content {
-              color: #333333;
-              line-height: 1.6;
-          }
+      .content {
+        color: #333333;
+        line-height: 1.6;
+      }
   
-          .footer {
-              text-align: center;
-              margin-top: 20px;
-              font-size: 0.8em;
-              color: #666666;
-          }
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.8em;
+        color: #666666;
+      }
   
-          a {
-              color: #007bff;
-          }
-      </style>
+      a {
+        color: #007bff;
+      }
+    </style>
   </head>
   
   <body>
-      <div class="container">
-          <div class="logo-header">
-              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
-          </div>
-          <a style="display:block">
-                                <img align="center"
-                                style="width:300px;outline:none;text-decoration:none;display:block!important;border:none;padding:0 250px"
-                                 src="https://linkurcodes.com/imgs/nextClass.jpg"
-                               >
-                               
-                               <div class="a6S" dir="ltr" style="opacity: 0.01; left: 692.992px; top: 313.125px;"><span data-is-tooltip-wrapper="true" class="a5q" jsaction="JIbuQc:.CLIENT"><button class="VYBDae-JX-I VYBDae-JX-I-ql-ay5-ays CgzRE" jscontroller="PIVayb" jsaction="click:h5M12e;clickmod:h5M12e; pointerdown:FEiYhc; pointerup:mF5Elf; pointerenter:EX0mI; pointerleave:vpvbp; pointercancel:xyn4sd; contextmenu:xexox;focus:h06R8; blur:zjh6rb;mlnRJb:fLiPzd;" data-idom-class="CgzRE" jsname="hRZeKc" aria-label="Download attachment " data-tooltip-enabled="true" data-tooltip-id="tt-c27" data-tooltip-classes="AZPksf" id="" jslog="91252; u014N:cOuCgd,Kr2w4b,xr6bB; 4:WyIjbXNnLWY6MTc5MzkzNTk4MjI1ODQ2NTYwMSJd; 43:WyJpbWFnZS9qcGVnIl0."><span class="OiePBf-zPjgPe VYBDae-JX-UHGRz"></span><span class="bHC-Q" data-unbounded="false" jscontroller="LBaJxb" jsname="m9ZlFb" soy-skip="" ssk="6:RWVI5c"></span><span class="VYBDae-JX-ank-Rtc0Jf" jsname="S5tZuc" aria-hidden="true"><span class="bzc-ank" aria-hidden="true"><svg height="20" viewBox="0 -960 960 960" width="20" focusable="false" class=" aoH"><path d="M480-336 288-528l51-51 105 105v-342h72v342l105-105 51 51-192 192ZM263.717-192Q234-192 213-213.15T192-264v-72h72v72h432v-72h72v72q0 29.7-21.162 50.85Q725.676-192 695.96-192H263.717Z"></path></svg></span></span><div class="VYBDae-JX-ano"></div></button><div class="ne2Ple-oshW8e-J9" id="tt-c27" role="tooltip" aria-hidden="true">Download</div></span></div>
-                              </a>
-          <div class="header">
-              <h2>Upcoming Session Announcement: Dive Deeper with Our Next Recorded Lesson!</h2>
-          </div>
-          <div class="content">
-              <p>Dear ${studName},</p>
-              <p>We hope this message finds you well and eager to learn! At Link Ur Codes, we are continuously looking for
-                  ways to enhance your learning experience and adapt to your busy schedules. This time, we're excited to
-                  announce our next session in a format that offers you the flexibility to engage with the material at
-                  your own pace.</p>
-              <p><strong>Next Session: ${sessionName}</strong><br>
-                  <strong>Available From:</strong> ${date}, ${time}<br>
-                  <strong>Where:</strong> <a href=${venueORlink}>Access the Video Here</a>
-              </p>
-              <p>This session is specially recorded for you! Dive deep into the Session Content.</p>
-              <h3>Your Task</h3>
-              <p>After watching the video, we encourage you to put your knowledge to the test by completing the tasks
-                  mentioned towards the end of the session. This is a fantastic opportunity to apply what you've learned
-                  and receive feedback on your work.</p>
-  
-              <p>Happy Learning,</p>
-              Link Ur Codes Team</p>
-          </div>
-          <div class="footer">
-              <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
-          </div>
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
       </div>
+      <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="center">
+            <img src="https://linkurcodes.com/imgs/nextClass.jpg" alt="Next Class" width="300"
+              style="width: 300px; max-width: 100%; height: auto; border: none; outline: none;">
+          </td>
+        </tr>
+      </table>
+      <div class="header">
+        <h2>Upcoming Session Announcement: Dive Deeper with Our Next Recorded Lesson!</h2>
+      </div>
+      <div class="content">
+        <p>Dear ${studName},</p>
+        <p>We hope this message finds you well and eager to learn! At Link Ur Codes, we are continuously looking for
+          ways to enhance your learning experience and adapt to your busy schedules. This time, we're excited to
+          announce our next session in a format that offers you the flexibility to engage with the material at
+          your own pace.</p>
+        <p><strong>Next Session: ${sessionName}</strong><br>
+          <strong>Available From:</strong> ${date}, ${time}<br>
+          <strong>Where:</strong> <a href=${venueORlink}>Access the Video Here</a>
+        </p>
+        <p>This session is specially recorded for you! Dive deep into the Session Content.</p>
+        <h3>Your Task</h3>
+        <p>After watching the video, we encourage you to put your knowledge to the test by completing the tasks
+          mentioned towards the end of the session. This is a fantastic opportunity to apply what you've learned
+          and receive feedback on your work.</p>
+  
+        <p>Happy Learning,</p>
+        Link Ur Codes Team</p>
+      </div>
+      <div class="footer">
+        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
   </body>
   
   </html>`
