@@ -1526,12 +1526,11 @@ exports.sendRenewalReminderEmail = async (req, res) => {
     const id = req.body.id;
 
     try {
-        const decoded = await jwt.verify(token, key);
+        const decoded = jwt.verify(token, key);
 
         if (!decoded) {
-            return res.status(401).json({
-                status: "error",
-                message: "Unauthorized User!!"
+            return res.json({
+                "status": "Unauthorized User!!"
             });
         }
 
@@ -1558,10 +1557,10 @@ exports.sendRenewalReminderEmail = async (req, res) => {
         });
     } catch (error) {
         console.error("Error in sending renewal reminder email:", error);
-        return res.status(500).json({
-            status: "error",
-            message: "Error in sending renewal reminder email.",
-            error: error.message
+        return res.json({
+            "status": "error",
+            "message": "Error in sending renewal reminder email.",
+            "error": error.message
         });
     }
 };

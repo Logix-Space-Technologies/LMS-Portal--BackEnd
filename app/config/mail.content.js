@@ -1834,407 +1834,15 @@ function clgstaffEmailVerificationOTPTextContent(clgstaffName, clgstaffotp) {
 }
 
 function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
-  content = `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>LinkUrCodes Session Rescheduling</title>
-      <style>
-        body {
-          font-family: 'Arial', sans-serif;
-          background-color: #f5f5f5;
-          color: #333;
-          margin: 0;
-          padding: 0;
-        }
-    
-        .container {
-          max-width: 600px;
-          margin: 20px auto;
-          padding: 20px;
-          background-color: #fff;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-          border-radius: 5px;
-        }
-    
-        h1 {
-          color: #007bff;
-        }
-    
-        p {
-          line-height: 1.6;
-        }
-    
-        .button {
-          display: inline-block;
-          padding: 10px 20px;
-          font-size: 16px;
-          text-align: center;
-          text-decoration: none;
-          background-color: #007bff;
-          color: #fff;
-          border-radius: 5px;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
-    
-        <h1>Session Reschedule Announcement</h1>
-        <p>Dear LinkUrCodes Member,</p>
-        <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.</p>
-        <p>Details of the rescheduled session:</p>
-        <ul>
-          <li><strong>Original Date:</strong> ${originaldate} </li>
-          <li><strong>New Date:</strong> ${sessionDate} </li>
-          <li><strong>Time:</strong> ${sessionTime} </li>
-          <li><strong>Session Type:</strong> ${type} </li>
-          <li><strong>Venue:</strong> ${venueORlink} </li>
-    
-        </ul>
-       
-        <p>Best Regards,</p>
-        <p> <br>LinkUrCodes Team</p>
-        <a class="button" href="https://www.linkurcodes.com" style="color: white;">Visit LinkUrCodes</a>
-      </div>
-    </body>
-    </html>`
-  return content;
-}
-
-function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
-  content = `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>LinkUrCodes Session Rescheduling</title>
-      <style>
-        body {
-          font-family: 'Arial', sans-serif;
-          background-color: #f5f5f5;
-          color: #333;
-          margin: 0;
-          padding: 0;
-        }
-    
-        .container {
-          max-width: 600px;
-          margin: 20px auto;
-          padding: 20px;
-          background-color: #fff;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-          border-radius: 5px;
-        }
-    
-        h1 {
-          color: #007bff;
-        }
-    
-        p {
-          line-height: 1.6;
-        }
-    
-        .button {
-          display: inline-block;
-          padding: 10px 20px;
-          font-size: 16px;
-          text-align: center;
-          text-decoration: none;
-          background-color: #007bff;
-          color: #fff;
-          border-radius: 5px;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
-    
-        <h1>Session Reschedule Announcement</h1>
-        <p>Dear LinkUrCodes Member,</p>
-        <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.</p>
-        <p>Details of the rescheduled session:</p>
-        <ul>
-          <li><strong>Original Date:</strong> ${originaldate} </li>
-          <li><strong>New Date:</strong> ${sessionDate} </li>
-          <li><strong>Time:</strong> ${sessionTime} </li>
-          <li><strong>Session Type:</strong> ${type} </li>
-          <li><strong>Meeting Link:</strong> ${venueORlink} </li>
-    
-        </ul>
-       
-        <p>Best Regards,</p>
-        <p>LinkUrCodes Team</p>
-        <a class="button" href="https://www.linkurcodes.com" style="color: white;">Visit LinkUrCodes</a>
-      </div>
-    </body>
-    </html>`
-  return content;
-}
-
-function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
-  <html>
-  <head>
-      <style>
-          body {
-              font-family: Arial, sans-serif;
-              margin: 0;
-              padding: 0;
-              background-color: #f4f4f4;
-          }
-  
-          .container {
-              max-width: 600px;
-              margin: 20px auto;
-              padding: 20px;
-              background-color: #ffffff;
-              border: 1px solid #dddddd;
-              border-radius: 8px;
-          }
-  
-          .header {
-              color: #333333;
-              text-align: center;
-          }
-  
-          .logo-header img {
-              max-width: 30%;
-              height: auto;
-          }
-  
-          .content {
-              color: #333333;
-              line-height: 1.6;
-          }
-  
-          .footer {
-              text-align: center;
-              margin-top: 20px;
-              font-size: 0.8em;
-              color: #666666;
-          }
-  
-          a {
-              color: #007bff;
-          }
-      </style>
-  </head>
-  <body>
-      <div class="container">
-          <div class="logo-header">
-              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
-          </div>
-          <div class="header">
-              <h2>Session Reschedule Announcement</h2>
-          </div>
-          <div class="content">
-              <p>Dear LinkUrCodes Member,</p>
-              <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.</p>
-              <p>Details of the rescheduled session:</p>
-              <ul>
-                  <li><strong>Original Date:</strong> ${originaldate}</li>
-                  <li><strong>New Date:</strong> ${sessionDate}</li>
-                  <li><strong>Time:</strong> ${sessionTime}</li>
-                  <li><strong>Session Type:</strong> ${type}</li>
-                  <li><strong>Where:</strong> <a href=${venueORlink}>Access the Video Here</a></li>
-              </ul>
-              <p>Best Regards,</p>
-              <p>Link Ur Codes Team</p>
-          </div>
-          <div class="footer">
-              <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
-          </div>
-      </div>
-  </body>
-  </html>`
-  return content;
-}
-
-function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName) {
-  // Get the current year
-  const currentYear = new Date().getFullYear();
-  content = `<!DOCTYPE html>
-  <html>
-  <head>
-      <style>
-          body {
-              font-family: Arial, sans-serif;
-              margin: 0;
-              padding: 0;
-              background-color: #f4f4f4;
-          }
-  
-          .container {
-              max-width: 600px;
-              margin: 20px auto;
-              padding: 20px;
-              background-color: #ffffff;
-              border: 1px solid #dddddd;
-              border-radius: 8px;
-          }
-  
-          .header {
-              color: #333333;
-              text-align: center;
-          }
-  
-          .logo-header img {
-              max-width: 30%;
-              height: auto;
-          }
-  
-          .content {
-              color: #333333;
-              line-height: 1.6;
-          }
-  
-          .footer {
-              text-align: center;
-              margin-top: 20px;
-              font-size: 0.8em;
-              color: #666666;
-          }
-  
-          a {
-              color: #007bff;
-          }
-      </style>
-  </head>
-  <body>
-      <div class="container">
-          <div class="logo-header">
-              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
-          </div>
-          <div class="header">
-              <h2>Session Reschedule Announcement</h2>
-          </div>
-          <div class="content">
-              <p>Dear College Staff,</p>
-              <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.</p>
-              <p>Details of the rescheduled session:</p>
-              <ul>
-                  <li><strong>Original Date:</strong> ${originaldate}</li>
-                  <li><strong>New Date:</strong> ${sessionDate}</li>
-                  <li><strong>Batch Name:</strong> ${batchName}</li>
-                  <li><strong>Time:</strong> ${sessionTime}</li>
-                  <li><strong>Session Type:</strong> ${type}</li>
-                  <li><strong>Meeting Link/Venue:</strong> ${venueORlink}</li>
-              </ul>
-              <p>Best Regards,</p>
-              <p>Link Ur Codes Team</p>
-          </div>
-          <div class="footer">
-              <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
-          </div>
-      </div>
-  </body>
-  </html>`
-  return content;
-}
-
-function reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
-  content = `Dear LinkUrCodes Member,
-
-    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
-    
-    Details of the rescheduled session:
-    
-    Original Date: ${originaldate}
-    New Date: ${sessionDate}
-    Time: ${sessionTime}
-    Session Type: ${type}
-    Venue: ${venueORlink}
-
-    Best Regards,
-    
-    LinkUrCodes Team
-    
-    Visit LinkUrCodes: https://www.linkurcodes.com`
-
-  return content
-}
-
-function reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
-  content = `Dear LinkUrCodes Member,
-
-    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
-    
-    Details of the rescheduled session:
-    
-    Original Date: ${originaldate}
-    New Date: ${sessionDate}
-    Time: ${sessionTime}
-    Session Type: ${type}
-    Meeting Link: ${venueORlink}
-
-    Best Regards,
-    
-    LinkUrCodes Team
-    
-    Visit LinkUrCodes: https://www.linkurcodes.com`
-
-  return content
-}
-
-function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
-  content = `Dear LinkUrCodes Member,
-
-    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
-    
-    Details of the rescheduled session:
-    
-    Original Date: ${originaldate}
-    New Date: ${sessionDate}
-    Time: ${sessionTime}
-    Session Type: ${type}
-    Where: ${venueORlink}
-
-    Best Regards,
-    
-    LinkUrCodes Team
-    
-    Visit LinkUrCodes: https://www.linkurcodes.com`
-
-  return content
-}
-
-function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName) {
-  content = `Dear College Staff,
-
-    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
-    
-    Details of the rescheduled session:
-    
-    Original Date: ${originaldate}
-    New Date: ${sessionDate}
-    Batch Name: ${batchName}
-    Time: ${sessionTime}
-    Session Type: ${type}
-    Meeting Link/Venue: ${venueORlink}
-
-    Best Regards,
-    
-    LinkUrCodes Team
-    
-    Visit LinkUrCodes: https://www.linkurcodes.com`
-
-  return content
-}
-
-
-function renewalReminderHtmlContent(studName, validity, rpAmount) {
-  const content = `<!DOCTYPE html>
   <html lang="en">
+  
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkUrCodes Subscription Renewal Reminder</title>
+    <title>LinkUrCodes Session Rescheduling</title>
     <style>
       body {
         font-family: 'Arial', sans-serif;
@@ -2248,12 +1856,14 @@ function renewalReminderHtmlContent(studName, validity, rpAmount) {
         max-width: 600px;
         margin: 20px auto;
         padding: 20px;
+        border: 1px solid #ccc;
         background-color: #fff;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         border-radius: 5px;
       }
   
-      h1 {
+      h2 {
+        text-align: center;
         color: #007bff;
       }
   
@@ -2271,28 +1881,505 @@ function renewalReminderHtmlContent(studName, validity, rpAmount) {
         color: #fff;
         border-radius: 5px;
       }
+  
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: smaller;
+        color: grey;
+      }
     </style>
   </head>
+  
+  <body>
+    <div class="container">
+      <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+  
+      <h2>Session Reschedule Announcement</h2>
+      <p>Dear LinkUrCodes Member,</p>
+      <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session
+        originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this
+        may cause and appreciate your understanding.</p>
+      <p>Details of the rescheduled session:</p>
+      <ul>
+        <li><strong>Original Date:</strong> ${originaldate} </li>
+        <li><strong>New Date:</strong> ${sessionDate} </li>
+        <li><strong>Time:</strong> ${sessionTime} </li>
+        <li><strong>Session Type:</strong> ${type} </li>
+        <li><strong>Venue:</strong> ${venueORlink} </li>
+  
+      </ul>
+  
+      <p>Best Regards,</p>
+      <p>LinkUrCodes Team</p>
+      <a class="button" href="https://www.linkurcodes.com" style="color: white;" target="_blank">Visit LinkUrCodes
+        Website</a>
+      <div class="footer">
+        <p>© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkUrCodes Session Rescheduling</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+  
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+  
+      h2 {
+        text-align: center;
+        color: #007bff;
+      }
+  
+      p {
+        line-height: 1.6;
+      }
+  
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: smaller;
+        color: grey;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="container">
+      <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+  
+      <h2>Session Reschedule Announcement</h2>
+      <p>Dear LinkUrCodes Member,</p>
+      <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session
+        originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this
+        may cause and appreciate your understanding.</p>
+      <p>Details of the rescheduled session:</p>
+      <ul>
+        <li><strong>Original Date:</strong> ${originaldate} </li>
+        <li><strong>New Date:</strong> ${sessionDate} </li>
+        <li><strong>Time:</strong> ${sessionTime} </li>
+        <li><strong>Session Type:</strong> ${type} </li>
+        <li><strong>Meeting Link:</strong> ${venueORlink} </li>
+  
+      </ul>
+  
+      <p>Best Regards,</p>
+      <p>LinkUrCodes Team</p>
+      <a class="button" href="https://www.linkurcodes.com" style="color: white;" target="_blank">Visit LinkUrCodes
+        Website</a>
+      <div class="footer">
+        <p>© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html>
+  
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+  
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+      }
+  
+      .header {
+        color: #007bff;
+        text-align: center;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      .content {
+        color: #333333;
+        line-height: 1.6;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.8em;
+        color: #666666;
+      }
+  
+      a {
+        color: #007bff;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <div class="header">
+        <h2>Session Reschedule Announcement</h2>
+      </div>
+      <div class="content">
+        <p>Dear LinkUrCodes Member,</p>
+        <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming
+          session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any
+          inconvenience this may cause and appreciate your understanding.</p>
+        <p>Details of the rescheduled session:</p>
+        <ul>
+          <li><strong>Original Date:</strong> ${originaldate}</li>
+          <li><strong>New Date:</strong> ${sessionDate}</li>
+          <li><strong>Time:</strong> ${sessionTime}</li>
+          <li><strong>Session Type:</strong> ${type}</li>
+          <li><strong>Where:</strong> <a href=${venueORlink} target="_blank">Access the Recorded Video Here</a></li>
+        </ul>
+        <p>Best Regards,</p>
+        <p>Link Ur Codes Team</p>
+      </div>
+      <div class="footer">
+        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html>
+  
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+  
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+      }
+  
+      .header {
+        color: #007bff;
+        text-align: center;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      .content {
+        color: #333333;
+        line-height: 1.6;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.8em;
+        color: #666666;
+      }
+  
+      a {
+        color: #007bff;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <div class="header">
+        <h2>Session Reschedule Announcement</h2>
+      </div>
+      <div class="content">
+        <p>Dear College Staff,</p>
+        <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming
+          session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any
+          inconvenience this may cause and appreciate your understanding.</p>
+        <p>Details of the rescheduled session:</p>
+        <ul>
+          <li><strong>Original Date:</strong> ${originaldate}</li>
+          <li><strong>New Date:</strong> ${sessionDate}</li>
+          <li><strong>Batch Name:</strong> ${batchName}</li>
+          <li><strong>Time:</strong> ${sessionTime}</li>
+          <li><strong>Session Type:</strong> ${type}</li>
+          <li><strong>Meeting Link/Venue:</strong> <a href=${venueORlink} target="_blank">${venueORlink}</a></li></li>
+        </ul>
+        <p>Best Regards,</p>
+        <p>Link Ur Codes Team</p>
+      </div>
+      <div class="footer">
+        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear LinkUrCodes Member,
+
+    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
+    
+    Details of the rescheduled session:
+    
+    Original Date: ${originaldate}
+    New Date: ${sessionDate}
+    Time: ${sessionTime}
+    Session Type: ${type}
+    Venue: ${venueORlink}
+
+    Best Regards,
+    
+    LinkUrCodes Team
+    
+    Visit LinkUrCodes: https://www.linkurcodes.com
+    
+    © ${currentYear} Link Ur Codes. All rights reserved.`
+
+  return content
+}
+
+function reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear LinkUrCodes Member,
+
+    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
+    
+    Details of the rescheduled session:
+    
+    Original Date: ${originaldate}
+    New Date: ${sessionDate}
+    Time: ${sessionTime}
+    Session Type: ${type}
+    Meeting Link: ${venueORlink}
+
+    Best Regards,
+    
+    LinkUrCodes Team
+    
+    Visit LinkUrCodes: https://www.linkurcodes.com
+    
+    © ${currentYear} Link Ur Codes. All rights reserved.`
+
+  return content
+}
+
+function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear LinkUrCodes Member,
+
+    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
+    
+    Details of the rescheduled session:
+    
+    Original Date: ${originaldate}
+    New Date: ${sessionDate}
+    Time: ${sessionTime}
+    Session Type: ${type}
+    Where: ${venueORlink}
+
+    Best Regards,
+    
+    LinkUrCodes Team
+    
+    Visit LinkUrCodes: https://www.linkurcodes.com
+    
+    © ${currentYear} Link Ur Codes. All rights reserved.`
+
+  return content
+}
+
+function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear College Staff,
+
+    We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
+    
+    Details of the rescheduled session:
+    
+    Original Date: ${originaldate}
+    New Date: ${sessionDate}
+    Batch Name: ${batchName}
+    Time: ${sessionTime}
+    Session Type: ${type}
+    Meeting Link/Venue: ${venueORlink}
+
+    Best Regards,
+    
+    LinkUrCodes Team
+    
+    Visit LinkUrCodes: https://www.linkurcodes.com
+    
+    © ${currentYear} Link Ur Codes. All rights reserved.`
+
+  return content
+}
+
+
+function renewalReminderHtmlContent(studName, validity, rpAmount) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  const content = `<!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkUrCodes Subscription Renewal Reminder</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+  
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #dddddd;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+  
+      h2 {
+        text-align: center;
+        color: #007bff;
+      }
+  
+      p {
+        line-height: 1.6;
+      }
+  
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.8em;
+        color: #666666;
+      }
+    </style>
+  </head>
+  
   <body>
     <div class="container">
       <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt="LinkUrCodes Logo"></p>
   
-      <h1>LinkUrCodes Subscription Renewal Reminder</h1>
+      <h2>LinkUrCodes Subscription Renewal Reminder</h2>
       <p>Dear ${studName},</p>
-      <p>We hope this message finds you well. We want to remind you that your LinkUrCodes subscription is set to expire on ${validity}. To ensure uninterrupted access to all our features and resources, we encourage you to renew your subscription before the expiration date.</p>
+      <p>We hope this message finds you well. We want to remind you that your LinkUrCodes subscription is set to expire on
+        ${validity}. To ensure uninterrupted access to all our features and resources, we encourage you to renew your
+        subscription before the expiration date.</p>
       <p>Details for Renewal:</p>
       <ul>
         <li><strong>Renewal Date:</strong> ${validity}</li>
         <li><strong>Renewal Amount:</strong> Rs. ${rpAmount}</li>
       </ul>
-      <p>Renew your subscription now to continue enjoying the benefits of LinkUrCodes. Click the button below to proceed with the renewal process:</p>
-      <a class="button" href="https://lms.linkurcodes.com/studentLogin" style="color: white;">Renew Subscription</a>
+      <p>Renew your subscription now to continue enjoying the benefits of LinkUrCodes. Click the button below to proceed
+        with the renewal process:</p>
+      <a class="button" href="https://lms.linkurcodes.com/studentLogin" style="color: white;" target="_blank">Renew
+        Subscription</a>
       <p>If you have already renewed your subscription, please ignore this message.</p>
       <p>Thank you for being a valued member of LinkUrCodes!</p>
       <p>Best Regards,</p>
-      <p><br>LinkUrCodes Team</p>
+      <p>LinkUrCodes Team</p>
+      <div class="footer">
+        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
     </div>
   </body>
+  
   </html>`;
 
   return content;
@@ -2300,6 +2387,8 @@ function renewalReminderHtmlContent(studName, validity, rpAmount) {
 
 
 function renewalReminderTextContent(studName, validity, rpAmount) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
   content = `Dear ${studName},
 
     We hope this message finds you well. We want to remind you that your LinkUrCodes subscription is set to expire on ${validity}. To ensure uninterrupted access to all our features and resources, we encourage you to renew your subscription before the expiration date.
@@ -2316,87 +2405,107 @@ function renewalReminderTextContent(studName, validity, rpAmount) {
     
     Best Regards,
     
-    The LinkUrCodes Team`
+    The LinkUrCodes Team
+    
+    © ${currentYear} Link Ur Codes. All rights reserved.`
 
   return content
 }
 
 
 function emailverifyStudentOTPHtmlContent(studName, otp) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Student Account Verification OTP - LinkUrCodes</title>
-      <style>
-        body {
-          font-family: 'Arial', sans-serif;
-          background-color: #f5f5f5;
-          color: #333;
-          margin: 0;
-          padding: 0;
-        }
-    
-        .container {
-          max-width: 600px;
-          margin: 20px auto;
-          padding: 20px;
-          background-color: #fff;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-          border-radius: 5px;
-        }
-    
-        h1 {
-          color: #007bff;
-        }
-    
-        p {
-          line-height: 1.6;
-        }
-    
-        .otp {
-          background-color: #007bff;
-          color: #fff;
-          padding: 10px 20px;
-          border-radius: 5px;
-          font-size: 18px;
-          display: inline-block;
-        }
-    
-        .button {
-          display: inline-block;
-          padding: 10px 20px;
-          font-size: 16px;
-          text-align: center;
-          text-decoration: none;
-          background-color: #007bff;
-          color: #fff;
-          border-radius: 5px;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
-    
-        <h1>Account Verification OTP</h1>
-        <p>Dear ${studName},</p>
-        <p>To complete the verification of your student account at LinkUrCodes, please use the following OTP:</p>
-        <p class="otp">${otp}</p>
-        <p>If you have any questions or need further assistance, please feel free to reach out.</p>
-        <p>Thank you for your cooperation.</p>
-        <p>Best Regards,</p>
-        <br>
-        <p>LinkUrCodes Team</p>
+  <html lang="en">
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Account Verification OTP - LinkUrCodes</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+  
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #dddddd;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+  
+      h2 {
+        text-align: center;
+        color: #007bff;
+      }
+  
+      p {
+        line-height: 1.6;
+      }
+  
+      .otp {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 18px;
+        display: inline-block;
+      }
+  
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.8em;
+        color: #666666;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="container">
+      <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+  
+      <h2>Account Verification OTP</h2>
+      <p>Dear ${studName},</p>
+      <p>To complete the verification of your student account at LinkUrCodes, please use the following OTP:</p>
+      <p class="otp">${otp}</p>
+      <p>If you have any questions or need further assistance, please feel free to reach out.</p>
+      <p>Thank you for your cooperation.</p>
+      <p>Best Regards,</p>
+      <p>LinkUrCodes Team</p>
+      <div class="footer">
+        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
       </div>
-    </body>
-    </html>`
+    </div>
+  </body>
+  
+  </html>`
 
   return content
 }
 
 function emailverifyStudentOTPTextContent(studName, otp) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
   content = `Dear ${studName},
 
     To complete the verification of your student account at LinkUrCodes, please use the following OTP: ${otp}
@@ -2407,7 +2516,9 @@ function emailverifyStudentOTPTextContent(studName, otp) {
     
     Best Regards,
     
-    LinkUrCodes Team`
+    LinkUrCodes Team
+    
+    © ${currentYear} Link Ur Codes. All rights reserved.`
 
   return content
 }
