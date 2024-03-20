@@ -38,17 +38,17 @@ const StudentLogin = () => {
         setShowModal(false);
         setShowOverlay(false);
         setErrors({})
-        setInputField({
+        setUpdateField({
             otp: ""
         });
     };
 
     const readValue = () => {
         let newErrors = {};
-        if (!inputField.studEmail.trim()) {
+        if (!inputField.studEmail) {
             newErrors.studEmail = "Email is required!";
         }
-        if (!inputField.password.trim()) {
+        if (!inputField.password) {
             newErrors.password = "Password is required!";
         }
         if (Object.keys(newErrors).length > 0) {

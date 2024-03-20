@@ -220,15 +220,30 @@ CollegeStaff.findByClgStaffEmail = (email, result) => {
             console.log("Error : ", err)
             result(err, null)
             return
-        }
-        if (res.length) {
-            result(null, res[0])
+        } else if (res.length === 0) {
+            result("College Staff Staff Does Not Exist", null)
             return
+        } else {
+            db.query("SELECT * FROM college_staff WHERE BINARY email = ? AND emailVerified = 1", email, (verifyErr, verifyRes) => {
+                if (verifyErr) {
+                    console.log("Error: ", verifyEmailErr)
+                    return result(verifyEmailErr, null)
+                } else if (verifyRes.length === 0) {
+                    console.log("Email Not Verified")
+                    return result("Email Not Verified", null)
+                } else {
+                    db.query("SELECT * FROM college_staff WHERE BINARY email = ? AND isActive = 1 AND deleteStatus = 0 AND emailVerified = 1", email, (emailErr, emailRes) => {
+                        if (emailErr) {
+                            console.log("Error : ", emailErr);
+                            return result(emailErr, null);
+                        } else if (emailRes.length > 0) {
+                            result(null, emailRes[0])
+                        }
+                    })
+                }
+            })
         }
-        result({ kind: "not_found" }, null)
     })
-    // console.log("College Staff is Inactive or does not Exist.")
-    // result("College Staff is Inactive or does not Exist.", null)
 }
 
 

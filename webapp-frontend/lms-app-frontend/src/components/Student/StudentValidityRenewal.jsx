@@ -16,6 +16,7 @@ const StudentValidityRenewal = () => {
 
     const getData = () => {
         let data = { "studEmail": sessionStorage.getItem("studemail") }
+        console.log(data)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',

@@ -182,20 +182,34 @@ AdminStaff.adminStaffSearch = (search, result) => {
 };
 
 AdminStaff.findByEmail = (email, result) => {
-    db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND isActive=1 AND deleteStatus=0 ", email, (err, res) => {
-
+    db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND isActive = 1 AND deleteStatus = 0", email, (err, res) => {
         if (err) {
             console.log("Error : ", err)
             result(err, null)
             return
-
-        }
-        if (res.length) {
-            result(null, res[0])
+        } else if (res.length === 0) {
+            result("Admin Staff Does Not Exist", null)
             return
+        } else {
+            db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND emailVerified = 1", email, (verifyErr, verifyRes) => {
+                if (verifyErr) {
+                    console.log("Error: ", verifyEmailErr)
+                    return result(verifyEmailErr, null)
+                } else if (verifyRes.length === 0) {
+                    console.log("Email Not Verified")
+                    return result("Email Not Verified", null)
+                } else {
+                    db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND isActive = 1 AND deleteStatus = 0 AND emailVerified = 1", email, (emailErr, emailRes) => {
+                        if (emailErr) {
+                            console.log("Error : ", emailErr);
+                            return result(emailErr, null);
+                        } else if (emailRes.length > 0) {
+                            result(null, emailRes[0])
+                        }
+                    })
+                }
+            })
         }
-
-        result({ kind: "not_found" }, null)
     })
 }
 
@@ -423,8 +437,8 @@ AdminStaff.searchadminstaffbyemail = (searchKey, result) => {
             } else {
                 if (res.length > 0) {
                     // Directly access the AdminStaffName of the first result
-                    let name = res[0].AdStaffName; 
-                    result(null, name); 
+                    let name = res[0].AdStaffName;
+                    result(null, name);
                 } else {
                     // Handle case where no results are found
                     console.log("No admin staff found with the given email.");
@@ -488,7 +502,7 @@ AdminStaff.emailVerificationOtpSendVerify = (Email, otp, result) => {
                 // If OTP not expired, proceed to compare
                 const isMatch = bcrypt.compareSync(otp, admstaffotp);
                 if (isMatch) {
-                    db.query("UPDATE admin_staff SET emailVerified = 1 WHERE Email = ?", [Email], (verifyErr, verifyRes)=> {
+                    db.query("UPDATE admin_staff SET emailVerified = 1 WHERE Email = ?", [Email], (verifyErr, verifyRes) => {
                         if (verifyErr) {
                             return result(err, null);
                         } else {
