@@ -1029,6 +1029,15 @@ function studRegOTPVerificationHTMLContent(otp) {
         padding: 20px;
       }
   
+      .otp {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 18px;
+        display: inline-block;
+      }
+  
       .footer {
         text-align: center;
         margin-top: 30px;
@@ -1050,7 +1059,7 @@ function studRegOTPVerificationHTMLContent(otp) {
         <p>Dear Student,</p>
         <p>You are one step away from completing your registration with Link Ur Codes.</p>
         <p>Please use the following One-Time Password to complete your registration:</p>
-        <p><strong>${otp}</strong></p>
+        <p class="otp">${otp}</p>
         <p>This OTP is valid for the next 10 minutes. Enter this OTP in the required field on the web app to continue.</p>
         <p>If you need assistance, please contact our support team : admin@linkurcodes.com </p>
       </div>
@@ -1127,6 +1136,15 @@ function ClgStaffOTPVerificationHTMLContent(clgStaffName, otp) {
         padding: 20px;
       }
   
+      .otp {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 18px;
+        display: inline-block;
+      }
+  
       .footer {
         text-align: center;
         margin-top: 30px;
@@ -1148,7 +1166,7 @@ function ClgStaffOTPVerificationHTMLContent(clgStaffName, otp) {
         <p>Dear ${clgStaffName},</p>
         <p>You have requested to reset your password. Please use the verification code below to proceed with setting a new
           password:</p>
-        <p><strong>Verification Code: ${otp}</strong></p>
+        <p class="otp">${otp}</p>
         <p>This code is valid for 10 minutes and for one-time use only.</p>
         <p>If you did not initiate this request, please contact our support team : admin@linkurcodes.com </p>
       </div>
@@ -1228,6 +1246,15 @@ function AdminStaffOTPVerificationHTMLContent(adminstaffName, admstaffotp) {
         padding: 20px;
       }
   
+      .otp {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 18px;
+        display: inline-block;
+      }
+  
       .footer {
         text-align: center;
         margin-top: 30px;
@@ -1249,7 +1276,7 @@ function AdminStaffOTPVerificationHTMLContent(adminstaffName, admstaffotp) {
         <p>Dear ${adminstaffName},</p>
         <p>You have requested to reset your password. Please use the verification code below to proceed with setting a new
           password:</p>
-        <p><strong>Verification Code: ${admstaffotp}</strong></p>
+        <p class="otp">${admstaffotp}</p>
         <p>This code is valid for 10 minutes and for one-time use only.</p>
         <p>If you did not initiate this request, please contact our support team : admin@linkurcodes.com </p>
       </div>
@@ -1327,6 +1354,15 @@ function StudentOTPVerificationHTMLContent(studName, otp) {
         padding: 20px;
       }
   
+      .otp {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 18px;
+        display: inline-block;
+      }
+  
       .footer {
         text-align: center;
         margin-top: 30px;
@@ -1348,7 +1384,7 @@ function StudentOTPVerificationHTMLContent(studName, otp) {
         <p>Dear ${studName},</p>
         <p>You have requested to reset your password. Please use the verification code below to proceed with setting a new
           password:</p>
-        <p><strong>Verification Code: ${otp}</strong></p>
+        <p class="otp">${otp}</p>
         <p>This code is valid for 10 minutes and for one-time use only.</p>
         <p>If you did not initiate this request, please contact our support team : admin@linkurcodes.com </p>
       </div>
