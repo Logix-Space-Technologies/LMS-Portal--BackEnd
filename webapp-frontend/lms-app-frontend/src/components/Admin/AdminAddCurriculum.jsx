@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import '../../config/config'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const AdminAddCurriculum = () => {
 
@@ -13,6 +13,8 @@ const AdminAddCurriculum = () => {
         "curriculumTitle": "",
         "curriculumDesc": "",
     })
+
+    const navigate = useNavigate()
 
     const [file, setFile] = useState(null)
     const [key, setKey] = useState('');
