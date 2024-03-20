@@ -15,7 +15,7 @@ const AdminAddTask = () => {
         "taskDesc": "",
         "taskType": "",
         "totalScore": "",
-        "dueDate": "",
+        "dueDate": ""
     })
 
     const [file, setFile] = useState(null)

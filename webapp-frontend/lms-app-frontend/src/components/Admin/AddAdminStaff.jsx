@@ -13,7 +13,7 @@ const AddAdminStaff = () => {
         "AadharNo": "",
         "Email": "",
         "Password": "",
-        "confirmpassword": "",
+        "confirmpassword": ""
     });
 
     const [errors, setErrors] = useState({});
