@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 import '../../config/config';
@@ -220,6 +220,11 @@ const AdminViewAllSession = () => {
         setShowConfirmation(false);
     };
 
+    function isSpecialDomain(venueLink) {
+        const domains = ["meet.google.com", "zoom.us", "youtube.com", "vimeo.com"];
+        return domains.some(domain => venueLink.includes(domain));
+    }
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
@@ -264,7 +269,15 @@ const AdminViewAllSession = () => {
                                 <td className="px-6 py-4">{formatTime(value.time)}</td>
                                 <td className="px-6 py-4">{value.type}</td>
                                 <td className="px-6 py-4">{value.remarks}</td>
-                                <td className="px-6 py-4">{value.venueORlink}</td>
+                                <td className="px-6 py-4">
+                                    <p className="text-sm text-gray-600">
+                                        {isSpecialDomain(value.venueORlink) ? (
+                                            <Link to={value.venueORlink} target="_blank" rel="noopener noreferrer" style={{color: '#007bff', textDecoration: 'underline'}}>{value.venueORlink}</Link>
+                                        ) : (
+                                            value.venueORlink
+                                        )}
+                                    </p>
+                                </td>
                                 <td className="px-6 py-4">{value.trainerName}</td>
                                 <td className="px-6 py-4">{value.cancelStatus}</td>
                                 <td className="px-6 py-4">
