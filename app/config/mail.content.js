@@ -241,6 +241,14 @@ function upcomingSessionRecordedHTMLContent(studName, sessionName, date, time, v
           <div class="logo-header">
               <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
           </div>
+          <a style="display:block">
+                                <img align="center"
+                                style="width:300px;outline:none;text-decoration:none;display:block!important;border:none;padding:0 250px"
+                                 src="https://linkurcodes.com/imgs/nextClass.jpg"
+                               >
+                               
+                               <div class="a6S" dir="ltr" style="opacity: 0.01; left: 692.992px; top: 313.125px;"><span data-is-tooltip-wrapper="true" class="a5q" jsaction="JIbuQc:.CLIENT"><button class="VYBDae-JX-I VYBDae-JX-I-ql-ay5-ays CgzRE" jscontroller="PIVayb" jsaction="click:h5M12e;clickmod:h5M12e; pointerdown:FEiYhc; pointerup:mF5Elf; pointerenter:EX0mI; pointerleave:vpvbp; pointercancel:xyn4sd; contextmenu:xexox;focus:h06R8; blur:zjh6rb;mlnRJb:fLiPzd;" data-idom-class="CgzRE" jsname="hRZeKc" aria-label="Download attachment " data-tooltip-enabled="true" data-tooltip-id="tt-c27" data-tooltip-classes="AZPksf" id="" jslog="91252; u014N:cOuCgd,Kr2w4b,xr6bB; 4:WyIjbXNnLWY6MTc5MzkzNTk4MjI1ODQ2NTYwMSJd; 43:WyJpbWFnZS9qcGVnIl0."><span class="OiePBf-zPjgPe VYBDae-JX-UHGRz"></span><span class="bHC-Q" data-unbounded="false" jscontroller="LBaJxb" jsname="m9ZlFb" soy-skip="" ssk="6:RWVI5c"></span><span class="VYBDae-JX-ank-Rtc0Jf" jsname="S5tZuc" aria-hidden="true"><span class="bzc-ank" aria-hidden="true"><svg height="20" viewBox="0 -960 960 960" width="20" focusable="false" class=" aoH"><path d="M480-336 288-528l51-51 105 105v-342h72v342l105-105 51 51-192 192ZM263.717-192Q234-192 213-213.15T192-264v-72h72v72h432v-72h72v72q0 29.7-21.162 50.85Q725.676-192 695.96-192H263.717Z"></path></svg></span></span><div class="VYBDae-JX-ano"></div></button><div class="ne2Ple-oshW8e-J9" id="tt-c27" role="tooltip" aria-hidden="true">Download</div></span></div>
+                              </a>
           <div class="header">
               <h2>Upcoming Session Announcement: Dive Deeper with Our Next Recorded Lesson!</h2>
           </div>
