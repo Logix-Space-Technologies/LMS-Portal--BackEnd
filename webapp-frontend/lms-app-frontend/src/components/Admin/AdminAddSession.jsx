@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar';
 import axios from 'axios';
 import '../../config/config'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminAddSession = () => {
@@ -18,6 +18,8 @@ const AdminAddSession = () => {
         "venueORlink": "",
         "trainerId": ""
     })
+
+    const navigate = useNavigate()
 
     const [outputField, setOutputField] = useState([])
 
