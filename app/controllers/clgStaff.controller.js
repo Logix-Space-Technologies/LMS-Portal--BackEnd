@@ -179,9 +179,7 @@ exports.clgStaffCreate = (request, response) => {
             password: request.body.password,
           });
 
-          console.log(clgstaff)
-
-
+          let password = request.body.password
 
           bcrypt.hash(clgstaff.password, saltRounds, (err, hashedPassword) => {
             if (err) {
@@ -200,13 +198,13 @@ exports.clgStaffCreate = (request, response) => {
                 //send email
                 db.query('SELECT collegeName FROM college WHERE id=?', [clgstaff.collegeId], (err, result) => {
                   if (err) {
-                    console.log(err)
+                    return response.json({ "status": err })
                   } else {
                     collegeName = result[0].collegeName
                     const collegeStaffName = clgstaff.collegeStaffName
                     const collegeStaffEmail = clgstaff.email
-                    const collegeStaffEmailContent = mailContents.collegeStaffHtmlContent(collegeStaffName, collegeName)
-                    const collegeStaffTextContent = mailContents.collegeStaffTextContent(collegeStaffName, collegeName)
+                    const collegeStaffEmailContent = mailContents.collegeStaffHtmlContent(collegeStaffName, collegeName, collegeStaffEmail, password)
+                    const collegeStaffTextContent = mailContents.collegeStaffTextContent(collegeStaffName, collegeName, collegeStaffEmail, password)
                     mail.sendEmail(collegeStaffEmail, 'Registration Successful!', collegeStaffEmailContent, collegeStaffTextContent);
                   }
                 })

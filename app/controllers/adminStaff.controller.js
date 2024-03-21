@@ -60,7 +60,7 @@ exports.create = (request, response) => {
         if (Object.keys(validationErrors).length > 0) {
             return response.json({ "status": "Validation failed", "data": validationErrors });
         }
-
+        let password = request.body.Password
         // Generate a salt and hash the password
         bcrypt.hash(Password, saltRounds, (hashError, hashedPassword) => {
             if (hashError) {
@@ -83,8 +83,8 @@ exports.create = (request, response) => {
                     // //send mail
                     const adminStaffName = newAdminStaff.AdStaffName
                     const adminStaffEmail = newAdminStaff.Email
-                    const adminStaffHTMLEmailContent = mailContents.admStaffAddHTMLContent(adminStaffName);
-                    const adminStaffTextEmailContent = mailContents.admStaffAddTextContent(adminStaffName)
+                    const adminStaffHTMLEmailContent = mailContents.admStaffAddHTMLContent(adminStaffName, password, adminStaffEmail);
+                    const adminStaffTextEmailContent = mailContents.admStaffAddTextContent(adminStaffName, password, adminStaffEmail);
                     mail.sendEmail(adminStaffEmail, 'Registration Successful!', adminStaffHTMLEmailContent, adminStaffTextEmailContent);
                     return response.json({ "status": "success", "data": data });
                 }
