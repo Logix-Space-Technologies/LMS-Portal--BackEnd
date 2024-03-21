@@ -5,9 +5,11 @@ const StudSideBar = () => {
     return (
         <div className="sidebar pe-4 pb-3">
             <nav className="navbar bg-light navbar-light">
-                <a href="/collegeStaffDashboard" className="navbar-brand mx-4 mb-3">
-                    <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
-                </a>
+                <Link to="#" className="navbar-brand d-flex d-lg-none me-4">
+                    <h2 className="text-primary mb-0">
+                        <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
+                    </h2>
+                </Link>
                 <div className="navbar-nav w-100">
                     <a href="#" className="nav-item nav-link active"><i className="fa fa-tachometer-alt me-2" />Dashboard</a>
                     <Link to='/studentViewTask' className="dropdown-item">View Assigned Tasks</Link>
