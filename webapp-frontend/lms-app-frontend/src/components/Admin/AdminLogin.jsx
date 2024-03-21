@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
 
 const AdminLogin = () => {
-    
+
     const [inputField, setInputField] = useState(
         {
             "userName": "",
@@ -13,6 +13,7 @@ const AdminLogin = () => {
     )
 
     const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false);
 
     const apiUrl = global.config.urls.api.server + "/api/lms/"
     const navigate = useNavigate()
@@ -61,7 +62,7 @@ const AdminLogin = () => {
             }
         )
     }
-    
+
     return (
         <div class="container">
             <div class="row justify-content-center align-items-center min-vh-100">
@@ -83,7 +84,12 @@ const AdminLogin = () => {
                                 </div>
                                 <div class="mb-3 text-start">
                                     <label for="" class="form-label">Password</label>
-                                    <input type="password" name="Password" value={inputField.Password} onChange={inputHandler} class="form-control" />
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <input type={showPassword ? "text" : "password"} name="Password" value={inputField.Password} onChange={inputHandler} class="form-control" />
+                                        <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
+                                            <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
+                                        </span>
+                                    </div>
                                     {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
                                 </div>
                             </form>
