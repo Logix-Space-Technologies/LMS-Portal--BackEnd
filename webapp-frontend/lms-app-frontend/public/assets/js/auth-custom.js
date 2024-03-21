@@ -1,8 +1,8 @@
-
-  /* page loader */
-  function hideLoader() {
-    const loader = document.getElementById("loader");
-    loader.classList.add("!hidden")
+function hideLoader() {
+  const loader = document.getElementById("loader");
+  if (loader) {
+    loader.classList.add("!hidden");
+  } else {
+    console.error("Loader element not found");
+  }
 }
-window.addEventListener("load", hideLoader);
-/* page loader */

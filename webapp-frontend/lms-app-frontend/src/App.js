@@ -110,6 +110,9 @@ import Home from './components/Student/TestStudent/Home';
 import TestNavbar from './components/Student/TestStudent/TestNavbar';
 import TestSidebar from './components/Student/TestStudent/TestSidebar';
 import TopHeader from './components/Student/TestStudent/TopHeader';
+import TestSignUp from './components/Student/TestSignUp';
+import TestTaskView from './components/Student/TestTaskView';
+import TestStudProfile from './components/Student/TestStudProfile';
 
 
 
@@ -260,6 +263,9 @@ function App() {
           <Route path='/testNav' element={<TestNavbar/>}/>
           <Route path='/testSidebar' element={<TestSidebar/>}/>
           <Route path='/topHeader' element={<TopHeader/>}/>
+          <Route path='/testSignUp' element={<TestSignUp/>}/>
+          <Route path='/testTaskView' element={<TestTaskView/>}/>
+          <Route path='/testStudProfile' element={<TestStudProfile/>}/>
 
 
 

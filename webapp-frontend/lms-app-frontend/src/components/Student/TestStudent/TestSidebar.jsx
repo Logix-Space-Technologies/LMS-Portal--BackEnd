@@ -7,38 +7,38 @@ const TestSidebar = () => {
         <div>
             <aside className="app-sidebar" id="sidebar">
                 {/* Start::main-sidebar-header */}
-                <div className="main-sidebar-header">
+                <div className="main-sidebar-header" style={{ backgroundColor: '#C8F4F9' }}>
                     <a href="index.html" className="header-logo">
-                        <img
-                            src="../assets/images/brand-logos/desktop-logo.png"
+                        {/* <img
+                            src="https://www.linkurcodes.com/images/logo.png"
                             alt="logo"
                             className="desktop-logo"
-                        />
-                        <img
-                            src="../assets/images/brand-logos/toggle-logo.png"
+                        /> */}
+                        {/* <img
+                            src="https://www.linkurcodes.com/images/logo.png"
                             alt="logo"
                             className="toggle-logo"
-                        />
-                        <img
-                            src="../assets/images/brand-logos/desktop-dark.png"
+                        /> */}
+                        {/* <img
+                            src="https://www.linkurcodes.com/images/logo.png"
                             alt="logo"
                             className="desktop-dark"
-                        />
-                        <img
-                            src="../assets/images/brand-logos/toggle-dark.png"
+                        /> */}
+                        {/* <img
+                            src="https://www.linkurcodes.com/images/logo.png"
                             alt="logo"
                             className="toggle-dark"
-                        />
+                        /> */}
                         <img
-                            src="../assets/images/brand-logos/desktop-white.png"
+                            src="https://www.linkurcodes.com/images/logo.png"
                             alt="logo"
                             className="desktop-white"
                         />
-                        <img
-                            src="../assets/images/brand-logos/toggle-white.png"
+                        {/* <img
+                            src="https://www.linkurcodes.com/images/logo.png"
                             alt="logo"
                             className="toggle-white"
-                        />
+                        /> */}
                     </a>
                 </div>
                 {/* End::main-sidebar-header */}

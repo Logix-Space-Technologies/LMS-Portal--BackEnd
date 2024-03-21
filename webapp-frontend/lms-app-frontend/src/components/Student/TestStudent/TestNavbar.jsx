@@ -4,22 +4,24 @@ const menuItems = [
     { name: 'Home', path: '#', icon: 'bx bx-home side-menu__icon' },
 
     {
-        name: 'Dashboard',
-        path: '#', icon: 'bx bx-file side-menu__icon',
-        subItems: [{ name: 'Overview', path: '#' }, { name: 'Analytics', path: '#' }]
+        name: 'Session',
+        path: '#', icon: 'bx bxs-book-alt side-menu__icon',
+        subItems: [{ name: 'Upcoming Sessions', path: '#' }, { name: 'Session Details', path: '#' }]
     },
 
     { name: 'Task', path: '#', icon: 'bx bx-task side-menu__icon' },
-    { name: 'Batch-in-Charge', path: '#', icon: 'bx bx-group side-menu__icon' },
 
     {
-        name: 'Students',
-        path: '#', icon: 'bx bx-male-female side-menu__icon',
-        subItems: [{ name: 'View All', path: '#' }, { name: 'Analytics', path: '#' }]
+        name: 'Batch Officials',
+        path: '#', icon: 'bx bx-group side-menu__icon',
+        subItems: [{ name: 'Batch In-Charge', path: '#' }, { name: 'Community Managers', path: '#' }]
     },
 
+    { name: 'College Details', path: '#', icon: 'bx bxs-school side-menu__icon' },
 
-    { name: 'Services', path: '#', icon: 'bx bx-file side-menu__icon' }
+    { name: 'Notification', path: '#', icon: 'bx bxs-bell side-menu__icon' },
+    
+    { name: 'Materials', path: '#', icon: 'bx bx-file side-menu__icon' }
 
 ];
 
@@ -58,7 +60,7 @@ const TestNavbar = () => {
                 <ul className="main-menu">
                     {/* Start::slide__category */}
                     <li className="slide__category">
-                        <span className="category-name">Main</span>
+                        {/* <span className="category-name">Main</span> */}
                     </li>
                     {/* End::slide__category */}
                     {/* Start::slide */}
@@ -81,7 +83,7 @@ const TestNavbar = () => {
 
                                     </span>
 
-                                    {item.subItems && <span className='w-full text-left py-2.5 px-4 '>{openSubmenu === index ? <i className="fe fe-chevron-down side-menu__angle" /> : <i className="fe fe-chevron-right side-menu__angle" />}</span>}
+                                    {item.subItems && (openSubmenu === index ? <i className="fe fe-chevron-down side-menu__angle" /> : <i className="fe fe-chevron-right side-menu__angle" />)}
 
                                     {/* <i className="fe fe-chevron-right side-menu__angle" /> */}
                                 </a>
@@ -93,14 +95,15 @@ const TestNavbar = () => {
                                                 {/* <i className="bx bx-home side-menu__icon" /> */}
                                                 <br />
 
-                                                <span className="side-menu__label">
+                                                <div className="side-menu__label">
+                                                    <li className="text-white block py-1.5 px-5 rounded transition duration-200 hover:bg-white-700">
+                                                        <i className="bx bxs-checkbox side-menu__icon" />
+                                                        <a href={subItem.path} key={subIndex}>
+                                                            {subItem.name}
+                                                        </a>
+                                                    </li>
+                                                </div>
 
-                                                    {/* {subItem.name}    */}
-                                                    <a href={subItem.path} key={subIndex} className="text-white  block py-2.5 px-4 rounded transition duration-200 hover:bg-white-700">
-                                                        {subItem.name}
-                                                    </a>
-
-                                                </span>
                                             </div>
 
                                             // <a href={subItem.path} key={subIndex} className="text-white  block py-2.5 px-4 rounded transition duration-200 hover:bg-white-700">
