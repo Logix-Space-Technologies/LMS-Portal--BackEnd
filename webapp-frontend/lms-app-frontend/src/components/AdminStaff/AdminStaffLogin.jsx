@@ -16,6 +16,7 @@ const AdminStaffLogin = () => {
         otp: ""
     })
 
+    const [showPassword, setShowPassword] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
@@ -150,7 +151,12 @@ const AdminStaffLogin = () => {
                             </div>
                             <div className="mb-3 text-start">
                                 <label htmlFor="" className="form-label">Password</label>
-                                <input type="password" name="Password" value={inputField.Password} onChange={inputHandler} className="form-control" />
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <input type={showPassword ? "text" : "password"} name="Password" value={inputField.Password} onChange={inputHandler} className="form-control" />
+                                    <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
+                                        <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
+                                    </span>
+                                </div>
                                 {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
                             </div>
                             <div className="mb-3">

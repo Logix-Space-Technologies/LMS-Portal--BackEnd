@@ -74,8 +74,6 @@ const StudentChangePassword = () => {
             errors.newPassword = 'Password should not exceed 12 characters';
         } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(data.newPassword)) {
             errors.newPassword = 'Password should include one uppercase letter, one lowercase letter, numbers and special characters';
-        } else if (data.newPassword !== data.oldPassword) {
-            errors.newPassword = 'Passwords do not match';
         }
         return errors;
     };
