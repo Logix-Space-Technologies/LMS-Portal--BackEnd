@@ -6,7 +6,7 @@ const AdminStaffSideBar = () => {
     <div>
         <div className="sidebar pe-4 pb-3">
             <nav className="navbar bg-light navbar-light">
-                <Link to="/collegeStaffDashboard" className="navbar-brand mx-4 mb-3">
+                <Link to="#" className="navbar-brand mx-4 mb-3">
                     <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
                 </Link>
                 <div className="navbar-nav w-100">
