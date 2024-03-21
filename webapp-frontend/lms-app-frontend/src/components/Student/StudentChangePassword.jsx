@@ -12,6 +12,8 @@ const StudentChangePassword = () => {
     });
 
     const [errors, setErrors] = useState({})
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const APIurl = global.config.urls.api.server + "/api/lms/studentChangePassword";
     const navigate = useNavigate();
@@ -96,12 +98,22 @@ const StudentChangePassword = () => {
                                     <ul className="list-unstyled mb-1-9">
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label htmlFor="" className="form-label">Old Password :</label>
-                                            <input onChange={updateHandler} type="password" className="form-control" name="oldPassword" value={updateField.oldPassword} />
+                                            <div style={{display:'flex', alignItems:'center'}}>
+                                                <input onChange={updateHandler} type={showPassword ? "text" : "password"} className="form-control" name="oldPassword" value={updateField.oldPassword} />
+                                                <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
+                                                    <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
+                                                </span>
+                                            </div>
                                             {errors.oldPassword && <span style={{ color: 'red' }} className="error">{errors.oldPassword}</span>}
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label htmlFor="" className="form-label">New Password :</label>
-                                            <input onChange={updateHandler} type="password" className="form-control" name="newPassword" value={updateField.newPassword} />
+                                            <div style={{display:'flex', alignItems:'center'}}>
+                                                <input onChange={updateHandler} type={showConfirmPassword ? "text" : "password"} className="form-control" name="newPassword" value={updateField.newPassword} />
+                                                <span className="input-group-text" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                                    <i className={showConfirmPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="toggleConfirmPassword"></i>
+                                                </span>
+                                            </div>
                                             {errors.newPassword && <span style={{ color: 'red' }} className="error">{errors.newPassword}</span>}
                                         </div>
                                         <br></br>
