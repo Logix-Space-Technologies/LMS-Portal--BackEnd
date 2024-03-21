@@ -558,27 +558,29 @@ exports.verifyOtp = (req, res) => {
 };
 
 exports.admstaffforgotpassword = (request, response) => {
-    const { Email, oldAdSfPassword, newAdSfPassword } = request.body;
+    const Email = request.body.Email
+    const Password = request.body.Password
 
     const validationErrors = {};
 
     if (Validator.isEmpty(Email).isValid) {
         validationErrors.Email = "Email is required";
-    } else if (Validator.isEmpty(oldAdSfPassword).isValid) {
-        validationErrors.oldAdSfPassword = "Old password is required";
-    } else if (Validator.isEmpty(newAdSfPassword).isValid) {
-        validationErrors.newAdSfPassword = "New password is required";
-    } else if (oldAdSfPassword === newAdSfPassword) {
-        validationErrors.newAdSfPassword = "Old password and new password cannot be the same";
-    } else if (!Validator.isValidPassword(newAdSfPassword).isValid) {
-        validationErrors.newAdSfPassword = "New password is not valid";
+    } else if (Validator.isEmpty(Password).isValid) {
+        validationErrors.Password = "New password is required";
+    } else if (!Validator.isValidPassword(Password).isValid) {
+        validationErrors.Password = "New password is not valid";
     }
 
     if (Object.keys(validationErrors).length > 0) {
         return response.json({ "status": "Validation failed", "data": validationErrors });
     }
 
-    AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword }, (err, result) => {
+    let admstaff = {
+        Email: Email,
+        Password: Password
+    }
+
+    AdminStaff.forgotpassword(admstaff, (err, result) => {
         if (err) {
             return response.json({ "status": err });
         } else {
