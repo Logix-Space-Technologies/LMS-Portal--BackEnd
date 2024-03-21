@@ -24,7 +24,13 @@ const StudentEmailVerification = () => {
         let newErrors = {};
         if (!inputField.password) {
             newErrors.password = "Password is required!";
-        }
+        } else if (inputField.password.length < 8) {
+            newErrors.password = 'Password must be at least 8 characters';
+        } else if (inputField.password.length > 12) {
+            newErrors.password = 'Password should not exceed 12 characters';
+        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(inputField.password)) {
+            newErrors.password = 'Password should include one uppercase letter, one lowercase letter, numbers and special characters';
+        }        
         if (!inputField.confirmpass) {
             newErrors.confirmpass = "Confirm Password is required!";
         }
