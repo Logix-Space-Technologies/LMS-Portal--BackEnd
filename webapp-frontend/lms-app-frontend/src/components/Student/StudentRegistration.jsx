@@ -357,7 +357,7 @@ const StudentRegistration = () => {
     }
     if (!data.studPhNo.trim()) {
       errors.studPhNo = 'Phone No is required';
-    } else if (!/^\+91[6-9]\d{9}$|^\+91\s?[6-9]\d{9}$|^[6-9]\d{9}$/.test(data.studPhNo)) {
+    } else if (!/^\+?\d{1,3}?[ -]?(\(?\d{2,4}\)?[\s-]?)?\d{6,8}$/.test(data.studPhNo)) {
       errors.studPhNo = 'Invalid phone number';
     }
 
