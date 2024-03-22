@@ -5,7 +5,7 @@ function sendCancellationMessage(date, time, sessionType, destinationPhoneNumber
     const headers = {
         'Cache-Control': 'no-cache',
         'Content-Type': 'application/x-www-form-urlencoded',
-        'apikey': '', // Use your actual API key
+        'apikey': process.env.WhatsAppKey
     };
 
     // Encoding the template parameters
