@@ -115,7 +115,7 @@ exports.createStudent = (req, res) => {
             else if (!Validator.isValidEmail(studEmail).isValid) {
                 validationErrors.studEmail = Validator.isValidEmail(studEmail).message;
             }
-            else if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+            else if (!Validator.isValidMobileNumber(studPhNo).isValid) {
                 validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
             }
             else if (!Validator.isValidPassword(password).isValid) {
