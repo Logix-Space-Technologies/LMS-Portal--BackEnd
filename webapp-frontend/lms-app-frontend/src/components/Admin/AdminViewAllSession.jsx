@@ -32,7 +32,6 @@ const AdminViewAllSession = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [sessionsPerPage] = useState(10); // Number of sessions per page
     const navigate = useNavigate();
-    const [updateField, setUpdateField] = useState([]);
     const [key, setKey] = useState('')
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
@@ -104,6 +103,7 @@ const AdminViewAllSession = () => {
             (response) => {
                 if (response.data.status === "success") {
                     alert("Session Cancelled Successfully.")
+                    setSessionData(sessionData.filter(session => session.id !== cancelId));
                     getData()
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
@@ -205,7 +205,7 @@ const AdminViewAllSession = () => {
         axios.post(deleteApiLink, { id: deleteId }, axiosConfig).then(response => {
             if (response.data.status === "success") {
                 alert("Session Deleted!!")
-                setUpdateField(updateField.filter(session => session.id !== deleteId));
+                setSessionData(sessionData.filter(session => session.id !== deleteId));
                 getData()
             } else {
                 if (response.data.status === "Unauthorized User!!") {
