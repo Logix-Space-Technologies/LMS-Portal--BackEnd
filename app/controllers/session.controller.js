@@ -12,6 +12,7 @@ const path = require('path');
 const firebasetokens = require("../models/firebaseTokens.model");
 require('dotenv').config({ path: '../../.env' });
 const whatsAppcancelsession = require("./Whatsapp/cancelSession")
+const WhatsAppupcomingSession = require("./Whatsapp/upcomingSession")
 
 
 function formatTime(timeString) {
@@ -106,6 +107,7 @@ exports.createSession = (request, response) => {
                                 })
                                 const studentName = element.studName
                                 const studentEmail = element.studEmail
+                                const studentPhno = element.studPhNo
                                 const sessionTime = formatTime(newSession.time)
                                 const sessionDate = newSession.date.split('-').reverse().join('/')
                                 firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "New Session", body: `A new session has been scheduled on ${sessionDate} at ${sessionTime}` } }, (err, data) => {
@@ -113,6 +115,7 @@ exports.createSession = (request, response) => {
                                         return response.json({ "status": err });
                                     }
                                 });
+                                WhatsAppupcomingSession.sendfn(sessionDate, sessionTime, newSession.venueORlink, newSession.type, studentPhno)
                                 if (newSession.type === "Offline") {
                                     const upcomingSessionHtmlContent = mailContents.upcomingSessionOfflineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     const upcomingSessionTextContent = mailContents.upcomingSessionOfflineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
