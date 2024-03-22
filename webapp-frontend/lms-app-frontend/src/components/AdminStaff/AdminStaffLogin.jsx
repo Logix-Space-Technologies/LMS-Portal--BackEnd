@@ -207,7 +207,6 @@ const AdminStaffLogin = () => {
                         Email: "",
                         otp: ""
                     });
-                    alert("OTP Verified Successfully !!!")
                 } else {
                     alert(response.data.status)
                     setShowWaitingModal(false)
