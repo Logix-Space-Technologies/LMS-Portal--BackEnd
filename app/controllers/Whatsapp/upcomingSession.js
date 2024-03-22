@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 // Function to send a WhatsApp message via Gupshup
-function sendUpcomingSessionWhatsAppMessage(date, time, link, sessionType, destinationPhoneNumber) {
+function sendUpcomingSessionWhatsAppMessage(date, time, link, sessionType, destinationPhoneNumber, studentid) {
     // API endpoint
     const url = 'https://api.gupshup.io/wa/api/v1/template/msg';
 
@@ -22,6 +22,15 @@ function sendUpcomingSessionWhatsAppMessage(date, time, link, sessionType, desti
     axios.post(url, data, { headers: headers })
         .then(function (response) {
             console.log('Response:', response.data);
+            db.query("INSERT INTO `whatsappmsgfeedback`(`studId`, `msgId`, `status`) VALUES (?,?,?)", [studentid, response.data.messageId, response.data.status],
+                (err, res) => {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log(res)
+                    }
+
+                })
         })
         .catch(function (error) {
             console.error('Error sending message:', error);

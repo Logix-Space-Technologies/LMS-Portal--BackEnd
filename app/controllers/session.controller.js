@@ -100,7 +100,6 @@ exports.createSession = (request, response) => {
                         } else {
                             res.forEach(element => {
                                 let studentid = element.id
-                                console.log("Student Id: ",studentid)
                                 const newAttendence = new Attendence({
                                     studId: studentid,
                                     sessionId: sessionId
@@ -115,7 +114,7 @@ exports.createSession = (request, response) => {
                                         return response.json({ "status": err });
                                     }
                                 });
-                                WhatsAppupcomingSession.sendfn(sessionDate, sessionTime, newSession.venueORlink, newSession.type, studentPhno)
+                                WhatsAppupcomingSession.sendfn(sessionDate, sessionTime, newSession.venueORlink, newSession.type, studentPhno, studentid)
                                 if (newSession.type === "Offline") {
                                     const upcomingSessionHtmlContent = mailContents.upcomingSessionOfflineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     const upcomingSessionTextContent = mailContents.upcomingSessionOfflineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
