@@ -100,7 +100,7 @@ exports.createSession = (request, response) => {
                         } else {
                             res.forEach(element => {
                                 let studentid = element.id
-
+                                console.log("Student Id: ",studentid)
                                 const newAttendence = new Attendence({
                                     studId: studentid,
                                     sessionId: sessionId
@@ -428,7 +428,6 @@ exports.cancelSession = (request, response) => {
                     if (err) {
                         return response.json({ "status": err });
                     }
-                    console.log(sessionres)
                     const batchId = sessionres[0].batchId;
                     const sessionDate = sessionres[0].date.toLocaleDateString();
                     const sessiontype = sessionres[0].type;
@@ -452,7 +451,7 @@ exports.cancelSession = (request, response) => {
                             const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime);
                             const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime);
                             mail.sendEmail(studentEmail, 'Cancel Session Announcement', cancelSessionHtmlContent, cancelSessionTextContent);
-                            whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, studentPhno)
+                            whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, studentPhno, studentid)
                         });
                         return response.json({ "status": "success" });
                     });
