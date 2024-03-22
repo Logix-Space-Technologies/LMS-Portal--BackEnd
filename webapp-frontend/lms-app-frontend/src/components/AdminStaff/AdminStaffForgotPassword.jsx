@@ -3,20 +3,20 @@ import '../../config/config'
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-
-const AdminStaffChangePassword = () => {
-
+const AdminStaffForgotPassword = () => {
     const [updateField, setUpdateField] = useState({
-        "Email": sessionStorage.getItem("Email"),
-        "oldAdSfPassword": "",
-        "newAdSfPassword": ""
+        "Email": sessionStorage.getItem("admstaffemail"),
+        "Password": "",
+        "ConfirmPassword": ""
     })
 
     const [errors, setErrors] = useState({})
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const apiurl = global.config.urls.api.server + "/api/lms/adminStaffChangePassword";
+
+    const apiurl = global.config.urls.api.server + "/api/lms/admstaffforgotpassword";
+
     const navigate = useNavigate();
 
     const updateHandler = (event) => {
@@ -24,27 +24,45 @@ const AdminStaffChangePassword = () => {
         setUpdateField({ ...updateField, [event.target.name]: event.target.value });
     }
 
+    const backFunc = () => {
+        navigate("/admstafflogin");
+        sessionStorage.clear()
+        setUpdateField({
+            "Email": "",
+            "Password": "",
+            "ConfirmPassword": ""
+        })
+    }
+
     const readNewValue = () => {
         const validationErrors = validateForm(updateField);
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
-                "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admstaffLogintoken")
+                "Access-Control-Allow-Origin": "*"
             }
         };
+        let data = {
+            "Email": updateField.Email,
+            "Password": updateField.Password
+        }
 
         if (Object.keys(validationErrors).length === 0) {
-            axios.post(apiurl, updateField, axiosConfig).then(
+            axios.post(apiurl, data, axiosConfig).then(
                 (response) => {
                     if (response.data.status === "success") {
-                        alert("Password Changed Successfully");
+                        alert("Password Changed Successfully\nKindly Login.");
                         navigate("/admstafflogin");
+                        setUpdateField({
+                            "Email": "",
+                            "Password": "",
+                            "ConfirmPassword": ""
+                        })
                         sessionStorage.clear()
-                    } else if (response.data.status === "Validation failed" && response.data.data.oldAdSfPassword) {
-                        alert(response.data.data.oldAdSfPassword);
-                    } else if (response.data.status === "Validation failed" && response.data.data.newAdSfPassword) {
-                        alert(response.data.data.newAdSfPassword);
+                    } else if (response.data.status === "Validation failed" && response.data.data.Email) {
+                        alert(response.data.data.Email);
+                    } else if (response.data.status === "Validation failed" && response.data.data.Password) {
+                        alert(response.data.data.Password);
                     } else if (response.data.status === "Unauthorized User!!") {
                         navigate("/admstafflogin")
                         sessionStorage.clear()
@@ -62,21 +80,22 @@ const AdminStaffChangePassword = () => {
     const validateForm = (data) => {
         let errors = {};
 
-        if (!data.oldAdSfPassword) {
-            errors.oldAdSfPassword = 'Old password is required';
+        if (!data.ConfirmPassword) {
+            errors.ConfirmPassword = 'Confirm Password is required';
         }
-        if (!data.newAdSfPassword.trim()) {
-            errors.newAdSfPassword = 'New Password is required';
-        } else if (data.newAdSfPassword.length < 8) {
-            errors.newAdSfPassword = 'Password must be at least 8 characters';
-        } else if (data.newAdSfPassword.length > 12) {
-            errors.newAdSfPassword = 'Password should not exceed 12 characters';
-        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(data.newAdSfPassword)) {
-            errors.newAdSfPassword = 'Password should include one uppercase letter, one lowercase letter, numbers and special characters';
+        if (!data.Password.trim()) {
+            errors.Password = 'Password is required';
+        } else if (data.Password.length < 8) {
+            errors.Password = 'Password must be at least 8 characters';
+        } else if (data.Password.length > 12) {
+            errors.Password = 'Password should not exceed 12 characters';
+        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(data.Password)) {
+            errors.Password = 'Password should include one uppercase letter, one lowercase letter, numbers and special characters';
+        } else if (data.Password !== data.ConfirmPassword) {
+            errors.ConfirmPassword = 'Password And Confirm Password Does Not Match';
         }
         return errors;
     };
-
     return (
         <div>
             <div className="container">
@@ -91,29 +110,29 @@ const AdminStaffChangePassword = () => {
                                 <div className="row align-items-center">
                                     <div className="col-lg-6 px-xl-10">
                                         <div className=" d-lg-inline-block py-1-9 px-1-9 px-sm-6 mb-1-9 rounded">
-                                            <h3 className="h2 text-black mb-0">Change Password</h3>
+                                            <h3 className="h2 text-black mb-0">Reset Password</h3>
                                             <br></br>
                                         </div>
                                         <ul className="list-unstyled mb-1-9">
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                                <label htmlFor="" className="form-label">Old Password :</label>
+                                                <label htmlFor="" className="form-label">Password :</label>
                                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <input onChange={updateHandler} type={showPassword ? "text" : "password"} className="form-control" name="oldAdSfPassword" value={updateField.oldAdSfPassword} />
+                                                    <input onChange={updateHandler} type={showPassword ? "text" : "password"} className="form-control" name="Password" value={updateField.Password} />
                                                     <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
                                                         <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
                                                     </span>
                                                 </div>
-                                                {errors.oldAdSfPassword && <span style={{ color: 'red' }} className="error">{errors.oldAdSfPassword}</span>}
+                                                {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                                <label htmlFor="" className="form-label">New Password :</label>
+                                                <label htmlFor="" className="form-label">Confirm Password :</label>
                                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <input onChange={updateHandler} type={showConfirmPassword ? "text" : "password"} className="form-control" name="newAdSfPassword" value={updateField.newAdSfPassword} />
+                                                    <input onChange={updateHandler} type={showConfirmPassword ? "text" : "password"} className="form-control" name="ConfirmPassword" value={updateField.ConfirmPassword} />
                                                     <span className="input-group-text" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                                                         <i className={showConfirmPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="toggleConfirmPassword"></i>
                                                     </span>
                                                 </div>
-                                                {errors.newAdSfPassword && <span style={{ color: 'red' }} className="error">{errors.newAdSfPassword}</span>}
+                                                {errors.ConfirmPassword && <span style={{ color: 'red' }} className="error">{errors.ConfirmPassword}</span>}
                                             </div>
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
@@ -121,7 +140,7 @@ const AdminStaffChangePassword = () => {
                                             </div>
                                             <br></br>
                                             <div className="mb-3">
-                                                <Link className="btn btn-danger" to="/admstaffdashboard">Back</Link>
+                                                <Link className="btn btn-danger" onClick={() => backFunc()}>Back</Link>
                                             </div>
                                         </ul>
                                     </div>
@@ -135,4 +154,4 @@ const AdminStaffChangePassword = () => {
     )
 }
 
-export default AdminStaffChangePassword
+export default AdminStaffForgotPassword

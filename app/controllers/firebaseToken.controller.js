@@ -18,11 +18,27 @@ exports.createTokens = (request, response) => {
             studId: request.body.studId,
             firebaseToken: request.body.firebaseToken
         });
-        firebaseToken.create(firebaseSetup,(err, data) => {
+        firebaseToken.create(firebaseSetup, (err, data) => {
             if (err) {
                 return response.status(500).json({ "status": err });
             }
             return response.status(200).json({ "status": "success", "data": data });
         });
+    });
+};
+
+exports.sendNotificationByStudId = (request, response) => {
+    const studId = request.body.studId;
+    const payload = {
+        notification: {
+            title:request.body.title,
+            body: request.body.body
+        }
+    };
+    firebaseToken.sendNotificationByStudId(studId, payload, (err, data) => {
+        if (err) {
+            return response.status(500).json({ "status": err });
+        }
+        return response.status(200).json({ "status": "success", "data": data });
     });
 };

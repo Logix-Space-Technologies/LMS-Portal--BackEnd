@@ -9,7 +9,10 @@ const mail = require('../../sendEmail');
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 const db = require('../models/db')
 const path = require('path');
+const firebasetokens = require("../models/firebaseTokens.model");
 require('dotenv').config({ path: '../../.env' });
+const whatsAppcancelsession = require("./Whatsapp/cancelSession")
+const WhatsAppupcomingSession = require("./Whatsapp/upcomingSession")
 
 
 function formatTime(timeString) {
@@ -104,8 +107,15 @@ exports.createSession = (request, response) => {
                                 })
                                 const studentName = element.studName
                                 const studentEmail = element.studEmail
+                                const studentPhno = element.studPhNo
                                 const sessionTime = formatTime(newSession.time)
                                 const sessionDate = newSession.date.split('-').reverse().join('/')
+                                firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "New Session", body: `A new session has been scheduled on ${sessionDate} at ${sessionTime}` } }, (err, data) => {
+                                    if (err) {
+                                        return response.json({ "status": err });
+                                    }
+                                });
+                                WhatsAppupcomingSession.sendfn(sessionDate, sessionTime, newSession.venueORlink, newSession.type, studentPhno)
                                 if (newSession.type === "Offline") {
                                     const upcomingSessionHtmlContent = mailContents.upcomingSessionOfflineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     const upcomingSessionTextContent = mailContents.upcomingSessionOfflineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
@@ -239,6 +249,12 @@ exports.sessionUpdate = (request, response) => {
 
                             res.forEach(element => {
                                 const studentEmail = element.studEmail;
+                                const studentid = element.id;
+                                firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "Session Rescheduled", body: `Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding` } }, (err, data) => {
+                                    if (err) {
+                                        return response.json({ "status": err });
+                                    }
+                                });
                                 if (upSession.type === "Offline") {
                                     const updateSessionHtmlContent = mailContents.reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
                                     const updateSessionTextContent = mailContents.reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
@@ -253,7 +269,7 @@ exports.sessionUpdate = (request, response) => {
                                     mail.sendEmail(studentEmail, 'Session Reschedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 }
                             });
-                            
+
                             CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
                                 if (err) {
                                     return response.json({ "status": err });
@@ -415,7 +431,7 @@ exports.cancelSession = (request, response) => {
                     console.log(sessionres)
                     const batchId = sessionres[0].batchId;
                     const sessionDate = sessionres[0].date.toLocaleDateString();
-
+                    const sessiontype = sessionres[0].type;
                     const sessiontime = formatTime(sessionres[0].time);
 
                     Student.searchStudentByBatch(batchId, (err, res) => {
@@ -426,9 +442,17 @@ exports.cancelSession = (request, response) => {
                         res.forEach(element => {
                             const studentName = element.studName;
                             const studentEmail = element.studEmail;
+                            const studentPhno = element.studPhNo;
+                            const studentid = element.id;
+                            firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "Session Cancelled", body: `We regret to inform you that the session scheduled on ${sessionDate} at ${sessiontime} has been cancelled. We apologize for any inconvenience this may cause.` } }, (err, data) => {
+                                if (err) {
+                                    return response.json({ "status": err });
+                                }
+                            });
                             const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime);
                             const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime);
                             mail.sendEmail(studentEmail, 'Cancel Session Announcement', cancelSessionHtmlContent, cancelSessionTextContent);
+                            whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, studentPhno)
                         });
                         return response.json({ "status": "success" });
                     });

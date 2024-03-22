@@ -5,21 +5,6 @@ const Validator = require('../config/data.validate')
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 const firebaseAdmin = require('firebase-admin')
 
-firebaseAdmin.initializeApp({
-    credential: firebaseAdmin.credential.cert({
-        type: process.env.TYPE,
-        project_id: process.env.PROJECT_ID,
-        private_key_id: process.env.PRIVATE_KEY_ID,
-        private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'), 
-        client_email: process.env.CLIENT_EMAIL,
-        client_id: process.env.CLIENT_ID,
-        auth_uri: process.env.AUTH_URI,
-        token_uri: process.env.TOKEN_URI,
-        auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_X509_CERT_URL,
-        client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
-        universe_domain: process.env.UNIVERSE_DOMAIN
-    })
-});
 
 exports.sendNotifications = (request, response) => {
     const token = request.body.token;
@@ -207,19 +192,16 @@ exports.viewAdminLog = (request, response) => {
 }
 
 exports.adminforgotpassword = (request, response) => {
-    const { userName, oldPassword, newPassword } = request.body;
+    const username = request.body.userName
+    const password = request.body.Password
     // Basic Validation
     const validationErrors = {};
-    if (Validator.isEmpty(userName).isValid) {
+    if (Validator.isEmpty(username).isValid) {
         validationErrors.userName = "Username is required";
-    } else if (Validator.isEmpty(oldPassword).isValid) {
-        validationErrors.oldPassword = "Old password is required";
-    } else if (Validator.isEmpty(newPassword).isValid) {
-        validationErrors.newPassword = "New password is required";
-    } else if (oldPassword === newPassword) {
-        validationErrors.newPassword = "Old password and new password cannot be the same";
-    } else if (!Validator.isValidPassword(newPassword).isValid) {
-        validationErrors.newPassword = "New password is not valid";
+    } else if (Validator.isEmpty(password).isValid) {
+        validationErrors.newPassword = "Password is required";
+    } else if (!Validator.isValidPassword(password).isValid) {
+        validationErrors.newPassword = "Password is not valid";
     }
 
     // If validation fails
@@ -227,7 +209,12 @@ exports.adminforgotpassword = (request, response) => {
         return response.json({ "status": "Validation failed", "data": validationErrors });
     }
 
-    Admin.adminChangePassword({ userName, oldPassword, newPassword }, (err, result) => {
+    let admin = {
+       userName: username,
+       Password: password
+    }
+
+    Admin.forgotpassword(admin, (err, result) => {
         if (err) {
             return response.json({ "status": err });
         } else {

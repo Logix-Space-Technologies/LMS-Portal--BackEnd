@@ -11,6 +11,9 @@ const StudentEmailVerification = () => {
 
     const [errors, setErrors] = useState({});
 
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/emailverifypwdchangestud"
@@ -22,10 +25,16 @@ const StudentEmailVerification = () => {
 
     const readValue = () => {
         let newErrors = {};
-        if (!inputField.password.trim()) {
+        if (!inputField.password) {
             newErrors.password = "Password is required!";
+        } else if (inputField.password.length < 8) {
+            newErrors.password = 'Password must be at least 8 characters';
+        } else if (inputField.password.length > 12) {
+            newErrors.password = 'Password should not exceed 12 characters';
+        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(inputField.password)) {
+            newErrors.password = 'Password should include one uppercase letter, one lowercase letter, numbers and special characters';
         }
-        if (!inputField.confirmpass.trim()) {
+        if (!inputField.confirmpass) {
             newErrors.confirmpass = "Confirm Password is required!";
         }
         if (inputField.password !== inputField.confirmpass) {
@@ -74,12 +83,22 @@ const StudentEmailVerification = () => {
                                         <ul className="list-unstyled mb-1-9">
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Password :</label>
-                                                <input onChange={inputHandler} type="password" className="form-control" name="password" value={inputField.password} />
+                                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                    <input onChange={inputHandler} type={showPassword ? "text" : "password"} className="form-control" name="password" value={inputField.password} />
+                                                    <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
+                                                        <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
+                                                    </span>
+                                                </div>
                                                 {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Confirm Password :</label>
-                                                <input onChange={inputHandler} type="password" className="form-control" name="confirmpass" value={inputField.confirmpass} />
+                                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                    <input onChange={inputHandler} type={showConfirmPassword ? "text" : "password"} className="form-control" name="confirmpass" value={inputField.confirmpass} />
+                                                    <span className="input-group-text" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                                        <i className={showConfirmPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="toggleConfirmPassword"></i>
+                                                    </span>
+                                                </div>
                                                 {errors.confirmpass && <span style={{ color: 'red' }} className="error">{errors.confirmpass}</span>}
                                             </div>
                                             <br></br>

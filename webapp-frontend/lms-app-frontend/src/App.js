@@ -111,6 +111,7 @@ import TestNavbar from './components/Student/TestStudent/TestNavbar';
 import TestSidebar from './components/Student/TestStudent/TestSidebar';
 import TopHeader from './components/Student/TestStudent/TopHeader';
 import StudentEmailVerification from './components/Student/StudentEmailVerification';
+import AdminStaffForgotPassword from './components/AdminStaff/AdminStaffForgotPassword';
 
 
 
@@ -195,6 +196,7 @@ function App() {
           <Route path='/adminStaffAddmaterials' element={<AdminStaffAddMaterials/>}/>
           <Route path='/adminStaffSearchSubmittedTask' element={<AdminStaffSearchSubmittedTask/>}/>
           <Route path='/adminstaffsearchmaterial' element={<AdminStaffSearchMaterial/>}/>
+          <Route path='/adminstaffforgotpassword' element={<AdminStaffForgotPassword/>}/>
 
           
 

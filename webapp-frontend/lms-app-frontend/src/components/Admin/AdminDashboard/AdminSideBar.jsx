@@ -5,9 +5,9 @@ const AdminSideBar = () => {
     return (
         <div className="sidebar pe-4 pb-3">
             <nav className="navbar bg-light navbar-light">
-                <Link to="/admdashboard" className="navbar-brand mx-4 mb-3">
+                <h2 className="text-primary mb-0">
                     <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
-                </Link>
+                </h2>
                 <div className="navbar-nav w-100">
                     <Link to="/admdashboard" className="nav-item nav-link active"><i className="fa fa-tachometer-alt me-2" />Dashboard</Link>
                     <div className="nav-item dropdown">

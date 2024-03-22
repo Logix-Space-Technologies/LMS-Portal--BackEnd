@@ -91,11 +91,11 @@ const StudHeader = () => {
         <div>
 
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-                <a href="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
+                <Link to="#" className="navbar-brand d-flex d-lg-none me-4">
                     <h2 className="text-primary mb-0">
                         <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
                     </h2>
-                </a>
+                </Link>
                 {sessionData && sessionData.length > 0 ? (
                     sessionData.map((value, index) => {
                         return (

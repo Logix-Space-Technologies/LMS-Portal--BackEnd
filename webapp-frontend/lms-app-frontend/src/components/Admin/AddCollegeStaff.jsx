@@ -21,6 +21,9 @@ const AddCollegeStaff = () => {
 
   const navigate = useNavigate()
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [file, setFile] = useState(null)
 
   const [key, setKey] = useState('');
@@ -154,32 +157,32 @@ const AddCollegeStaff = () => {
             alert(response.data.status)
           }
         }).catch(error => {
-        if (error.response) {
-          // Extract the status code from the response
-          const statusCode = error.response.status;
+          if (error.response) {
+            // Extract the status code from the response
+            const statusCode = error.response.status;
 
-          if (statusCode === 400) {
-            console.log("Status 400:", error.response.data);
-            alert(error.response.data.status)
-            // Additional logic for status 400
-          } else if (statusCode === 500) {
-            console.log("Status 500:", error.response.data);
-            alert(error.response.data.status)
-            // Additional logic for status 500
+            if (statusCode === 400) {
+              console.log("Status 400:", error.response.data);
+              alert(error.response.data.status)
+              // Additional logic for status 400
+            } else if (statusCode === 500) {
+              console.log("Status 500:", error.response.data);
+              alert(error.response.data.status)
+              // Additional logic for status 500
+            } else {
+              alert(error.response.data.status)
+            }
+          } else if (error.request) {
+            console.log(error.request);
+            alert(error.request);
+          } else if (error.message) {
+            console.log('Error', error.message);
+            alert('Error', error.message);
           } else {
-            alert(error.response.data.status)
+            alert(error.config);
+            console.log(error.config);
           }
-        } else if (error.request) {
-          console.log(error.request);
-          alert(error.request);
-        } else if (error.message) {
-          console.log('Error', error.message);
-          alert('Error', error.message);
-        } else {
-          alert(error.config);
-          console.log(error.config);
-        }
-      })
+        })
     } else {
       setErrors(validationErrors);
     }
@@ -223,7 +226,13 @@ const AddCollegeStaff = () => {
     }
 
     if (!data.password.trim()) {
-      errors.password = 'Password is required';
+      errors.password = 'New Password is required';
+    } else if (data.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
+    } else if (data.password.length > 12) {
+      errors.password = 'Password should not exceed 12 characters';
+    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(data.password)) {
+      errors.password = 'Password should include one uppercase letter, one lowercase letter, numbers and special characters';
     }
 
     if (data.confirmpassword !== data.password) {
@@ -309,16 +318,20 @@ const AddCollegeStaff = () => {
                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                       <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
                       <div class="input-group">
-                        <input type="password" class="form-control" name="password" id="password" onChange={inputHandler} value={inputField.password} />
-
+                        <input type={showPassword ? "text" : "password"} class="form-control" name="password" id="password" onChange={inputHandler} value={inputField.password} />
+                        <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
+                          <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
+                        </span>
                       </div>
                       {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
                     </div>
                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                       <label for="password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
                       <div class="input-group">
-                        <input type="password" class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
-
+                        <input type={showConfirmPassword ? "text" : "password"} class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
+                        <span className="input-group-text" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                          <i className={showConfirmPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="toggleConfirmPassword"></i>
+                        </span>
                       </div>
                       {errors.confirmpassword && <span style={{ color: 'red' }} className="error">{errors.confirmpassword}</span>}
                     </div>

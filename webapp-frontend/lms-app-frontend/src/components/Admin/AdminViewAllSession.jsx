@@ -286,6 +286,12 @@ const AdminViewAllSession = () => {
                                             Show QR
                                         </button>
                                     )}
+                                    {!isSessionToday(value.date) && value.cancelStatus === "ACTIVE" && (
+                                        <p>Not Available</p>
+                                    )}
+                                    {!isSessionToday(value.date) && value.cancelStatus !== "ACTIVE" && (
+                                        <p>Not Available</p>
+                                    )}
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.cancelStatus === "ACTIVE" && (
