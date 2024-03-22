@@ -9,6 +9,7 @@ const mail = require('../../sendEmail');
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 const db = require('../models/db')
 const path = require('path');
+const firebasetokens = require("../models/firebaseTokens.model");
 require('dotenv').config({ path: '../../.env' });
 
 
@@ -106,6 +107,11 @@ exports.createSession = (request, response) => {
                                 const studentEmail = element.studEmail
                                 const sessionTime = formatTime(newSession.time)
                                 const sessionDate = newSession.date.split('-').reverse().join('/')
+                                firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "New Session", body: `A new session has been scheduled on ${sessionDate} at ${sessionTime}` } }, (err, data) => {
+                                    if (err) {
+                                        return response.json({ "status": err });
+                                    }
+                                });
                                 if (newSession.type === "Offline") {
                                     const upcomingSessionHtmlContent = mailContents.upcomingSessionOfflineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     const upcomingSessionTextContent = mailContents.upcomingSessionOfflineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
