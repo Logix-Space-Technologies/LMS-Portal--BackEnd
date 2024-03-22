@@ -246,6 +246,12 @@ exports.sessionUpdate = (request, response) => {
 
                             res.forEach(element => {
                                 const studentEmail = element.studEmail;
+                                const studentid = element.id;
+                                firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "Session Rescheduled", body: `Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding` } }, (err, data) => {
+                                    if (err) {
+                                        return response.json({ "status": err });
+                                    }
+                                });
                                 if (upSession.type === "Offline") {
                                     const updateSessionHtmlContent = mailContents.reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
                                     const updateSessionTextContent = mailContents.reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink);
@@ -434,6 +440,12 @@ exports.cancelSession = (request, response) => {
                             const studentName = element.studName;
                             const studentEmail = element.studEmail;
                             const studentPhno = element.studPhNo;
+                            const studentid = element.id;
+                            firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "Session Cancelled", body: `We regret to inform you that the session scheduled on ${sessionDate} at ${sessiontime} has been cancelled. We apologize for any inconvenience this may cause.` } }, (err, data) => {
+                                if (err) {
+                                    return response.json({ "status": err });
+                                }
+                            });
                             const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime);
                             const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime);
                             mail.sendEmail(studentEmail, 'Cancel Session Announcement', cancelSessionHtmlContent, cancelSessionTextContent);
