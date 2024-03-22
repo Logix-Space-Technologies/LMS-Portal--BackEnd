@@ -11,6 +11,7 @@ const db = require('../models/db')
 const path = require('path');
 const firebasetokens = require("../models/firebaseTokens.model");
 require('dotenv').config({ path: '../../.env' });
+const whatsAppcancelsession = require("./Whatsapp/cancelSession")
 
 
 function formatTime(timeString) {
@@ -259,7 +260,7 @@ exports.sessionUpdate = (request, response) => {
                                     mail.sendEmail(studentEmail, 'Session Reschedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 }
                             });
-                            
+
                             CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
                                 if (err) {
                                     return response.json({ "status": err });
@@ -421,7 +422,7 @@ exports.cancelSession = (request, response) => {
                     console.log(sessionres)
                     const batchId = sessionres[0].batchId;
                     const sessionDate = sessionres[0].date.toLocaleDateString();
-
+                    const sessiontype = sessionres[0].type;
                     const sessiontime = formatTime(sessionres[0].time);
 
                     Student.searchStudentByBatch(batchId, (err, res) => {
@@ -432,9 +433,11 @@ exports.cancelSession = (request, response) => {
                         res.forEach(element => {
                             const studentName = element.studName;
                             const studentEmail = element.studEmail;
+                            const studentPhno = element.studPhNo;
                             const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime);
                             const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime);
                             mail.sendEmail(studentEmail, 'Cancel Session Announcement', cancelSessionHtmlContent, cancelSessionTextContent);
+                            whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, studentPhno)
                         });
                         return response.json({ "status": "success" });
                     });
