@@ -114,7 +114,7 @@ exports.createSession = (request, response) => {
                                         return response.json({ "status": err });
                                     }
                                 });
-                                WhatsAppupcomingSession.sendfn(sessionDate, sessionTime, newSession.venueORlink, newSession.type, studentPhno, studentid)
+                                WhatsAppupcomingSession.sendfn(sessionDate, sessionTime, newSession.venueORlink, newSession.type, studentPhno)
                                 if (newSession.type === "Offline") {
                                     const upcomingSessionHtmlContent = mailContents.upcomingSessionOfflineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     const upcomingSessionTextContent = mailContents.upcomingSessionOfflineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
@@ -450,7 +450,7 @@ exports.cancelSession = (request, response) => {
                             const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime);
                             const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime);
                             mail.sendEmail(studentEmail, 'Cancel Session Announcement', cancelSessionHtmlContent, cancelSessionTextContent);
-                            whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, studentPhno, studentid)
+                            whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, studentPhno)
                         });
                         return response.json({ "status": "success" });
                     });
