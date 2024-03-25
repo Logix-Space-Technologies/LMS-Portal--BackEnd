@@ -229,7 +229,10 @@ const CollegeStaffLogin = () => {
                                     {errors.email && <span style={{ color: 'red' }} className="error">{errors.email}</span>}
                                 </div>
                                 <div className="mb-3 text-start">
-                                    <label htmlFor="" className="form-label">Password</label>
+                                    <div style={{ display: 'flex', alignItems: 'right', justifyContent: 'flex-start' }}>
+                                        <label for="" class="form-label" style={{ marginRight: '740px' }}>Password</label>
+                                        <Link onClick={forgotPassword} style={{ textDecoration: 'underline', color: 'blue' }}>Forgot Password?</Link>
+                                    </div>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                         <input type={showPassword ? "text" : "password"} name="password" value={inputField.password} onChange={inputHandler} className="form-control" />
                                         <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
