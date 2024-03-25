@@ -2760,7 +2760,7 @@ function SessionRemainderOfflineHTMLContent(studName, sessionName, date, time, v
         <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
       </div>
       <div class="content">
-        <h2>Session Reminder!</h2>
+        <h2>Reminder Regarding Upcoming Session</h2>
   
         <p>Dear ${studName},</p>
         <p>We hope this message finds you well. As your educational journey continues, we want to ensure you're fully prepared and excited for what's ahead. This email serves as a friendly reminder about the upcoming session you've enrolled in, an opportunity we believe will significantly enrich your learning experience. Please find the details below:</p>
@@ -2851,7 +2851,7 @@ function SessionRemainderOnlineHTMLContent(studName, sessionName, date, time, ve
         <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
       </div>
       <div class="content">
-        <h2>Session Reminder!</h2>
+        <h2>Reminder Regarding Upcoming Session</h2>
   
         <p>Dear ${studName},</p>
         <p>We hope this message finds you well. As your educational journey continues, we want to ensure you're fully prepared and excited for what's ahead. This email serves as a friendly reminder about the upcoming session you've enrolled in, an opportunity we believe will significantly enrich your learning experience. Please find the details below:</p>
