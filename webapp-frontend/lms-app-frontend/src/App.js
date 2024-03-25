@@ -113,6 +113,9 @@ import TopHeader from './components/Student/TestStudent/TopHeader';
 import TestSignUp from './components/Student/TestSignUp';
 import TestTaskView from './components/Student/TestTaskView';
 import TestStudProfile from './components/Student/TestStudProfile';
+import TestStudInput from './components/Student/TestStudInput';
+import TestStudentTables from './components/Student/TestStudentTables';
+import TestStudViewUpcomingSession from './components/Student/TestStudViewUpcomingSession';
 
 
 
@@ -266,6 +269,9 @@ function App() {
           <Route path='/testSignUp' element={<TestSignUp/>}/>
           <Route path='/testTaskView' element={<TestTaskView/>}/>
           <Route path='/testStudProfile' element={<TestStudProfile/>}/>
+          <Route path='/testStudInput' element={<TestStudInput/>}/>
+          <Route path='/testStudTable' element={<TestStudentTables/>}/>
+          <Route path='/testStudViewUpcomingSession' element={<TestStudViewUpcomingSession/>}/>
 
 
 
