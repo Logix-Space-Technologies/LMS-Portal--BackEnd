@@ -567,7 +567,7 @@ exports.sendRemainderMail = (request, response) => {
                         }
                     });
 
-                    CollegeStaff.searchClgStaffByCollege(newSession.batchId, (err, res) => {
+                    CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
                         if (err) {
                             return response.json({ "status": err });
                         } else {
@@ -576,7 +576,7 @@ exports.sendRemainderMail = (request, response) => {
                             const collegeStaffName = res[0].collegeStaffName
                             const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(collegeStaffName, sessionDate, sessionTime, venueORlink, type, batchName);
                             const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(collegeStaffName, sessionDate, sessionTime, venueORlink, type, batchName);
-                            mail.sendEmail(clgstaffEmail, `Announcement Regarding Upcoming Session Scheduled On ${clgstaffsessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                            mail.sendEmail(clgstaffEmail, `Remainder Regarding Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
                         }
                     })
                 }
