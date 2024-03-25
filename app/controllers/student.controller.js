@@ -1475,30 +1475,31 @@ exports.verifyStudOtp = (req, res) => {
 };
 
 exports.studforgotpassword = (request, response) => {
-    const { studEmail, oldPassword, newPassword } = request.body;
+    const Email = request.body.studEmail
+    const Password = request.body.password
 
     const validationErrors = {};
 
-    if (Validator.isEmpty(studEmail).isValid) {
-        validationErrors.studEmail = "Email is required";
-    } else if (Validator.isEmpty(oldPassword).isValid) {
-        validationErrors.oldPassword = "Old password is required";
-    } else if (Validator.isEmpty(newPassword).isValid) {
-        validationErrors.newPassword = "New password is required";
-    } else if (oldPassword === newPassword) {
-        validationErrors.newPassword = "Old password and new password cannot be the same";
-    } else if (!Validator.isValidPassword(newPassword).isValid) {
-        validationErrors.newPassword = "New password is not valid";
+    if (Validator.isEmpty(Email).isValid) {
+        validationErrors.Email = "Email is required";
+    } else if (Validator.isEmpty(Password).isValid) {
+        validationErrors.Password = "Password is required";
+    } else if (!Validator.isValidPassword(Password).isValid) {
+        validationErrors.Password = "Password is not valid";
     }
 
     if (Object.keys(validationErrors).length > 0) {
         return response.json({ "status": "Validation failed", "data": validationErrors });
     }
 
-    Student.forgotPassword(, (err, data) => {
+    let student = {
+        studEmail: Email,
+        password: Password
+    }
+
+    Student.forgotPassword(student, (err, data) => {
         if (err) {
-            response.json({ "status": err });
-            return;
+            return response.json({ "status": err });
         } else {
             return response.json({ "status": "success" });
         }
