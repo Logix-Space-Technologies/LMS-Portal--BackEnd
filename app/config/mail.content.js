@@ -1915,7 +1915,7 @@ function clgstaffEmailVerificationOTPTextContent(clgstaffName, clgstaffotp) {
   return content
 }
 
-function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -1978,7 +1978,7 @@ function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessio
       <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
   
       <h2>Session Reschedule Announcement</h2>
-      <p>Dear LinkUrCodes Member,</p>
+      <p>Dear ${studName},</p>
       <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session
         originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this
         may cause and appreciate your understanding.</p>
@@ -2006,7 +2006,7 @@ function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessio
   return content;
 }
 
-function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -2069,7 +2069,7 @@ function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, session
       <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
   
       <h2>Session Reschedule Announcement</h2>
-      <p>Dear LinkUrCodes Member,</p>
+      <p>Dear ${studName},</p>
       <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session
         originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this
         may cause and appreciate your understanding.</p>
@@ -2097,7 +2097,7 @@ function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, session
   return content;
 }
 
-function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -2158,7 +2158,7 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
         <h2>Session Reschedule Announcement</h2>
       </div>
       <div class="content">
-        <p>Dear LinkUrCodes Member,</p>
+        <p>Dear ${studName},</p>
         <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming
           session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any
           inconvenience this may cause and appreciate your understanding.</p>
@@ -2270,10 +2270,10 @@ function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessi
   return content;
 }
 
-function reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
-  content = `Dear LinkUrCodes Member,
+  content = `Dear ${studName},
 
     We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
     
@@ -2296,10 +2296,10 @@ function reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessio
   return content
 }
 
-function reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
-  content = `Dear LinkUrCodes Member,
+  content = `Dear ${studName},
 
     We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
     
@@ -2322,10 +2322,10 @@ function reschedulingSessionOnlineTextContent(originaldate, sessionDate, session
   return content
 }
 
-function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
-  content = `Dear LinkUrCodes Member,
+  content = `Dear ${studName},
 
     We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
     
