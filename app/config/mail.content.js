@@ -2983,7 +2983,7 @@ function SessionRemainderRecordedHTMLContent(studName, sessionName, date, time, 
   return content;
 }
 
-function SessionRemainderClgStaffHTMLContent(collegeStaffName, date, time, venueORlink, type, batchName) {
+function SessionRemainderClgStaffHTMLContent(collegeStaffName, date, time, venueORlink, type, batchName, sessionName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -3076,7 +3076,7 @@ function SessionRemainderClgStaffHTMLContent(collegeStaffName, date, time, venue
   return content;
 }
 
-function SessionRemainderClgStaffTextContent(collegeStaffName, date, time, venueORlink, type, batchName) {
+function SessionRemainderClgStaffTextContent(collegeStaffName, date, time, venueORlink, type, batchName, sessionName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `Dear ${collegeStaffName},

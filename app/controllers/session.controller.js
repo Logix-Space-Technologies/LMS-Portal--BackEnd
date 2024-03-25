@@ -574,8 +574,8 @@ exports.sendRemainderMail = (request, response) => {
                             const clgstaffEmail = res[0].email
                             const batchName = res[0].batchName
                             const collegeStaffName = res[0].collegeStaffName
-                            const upcomingSessionHtmlContent = mailContents.SessionRemainderClgStaffHTMLContent(collegeStaffName, sessionDate, sessionTime, venueORlink, type, batchName);
-                            const upcomingSessionTextContent = mailContents.SessionRemainderClgStaffTextContent(collegeStaffName, sessionDate, sessionTime, venueORlink, type, batchName);
+                            const upcomingSessionHtmlContent = mailContents.SessionRemainderClgStaffHTMLContent(collegeStaffName, sessionDate, sessionTime, venueORlink, type, batchName, sessionName);
+                            const upcomingSessionTextContent = mailContents.SessionRemainderClgStaffTextContent(collegeStaffName, sessionDate, sessionTime, venueORlink, type, batchName, sessionName);
                             mail.sendEmail(clgstaffEmail, `Remainder Regarding Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
                         }
                     })
