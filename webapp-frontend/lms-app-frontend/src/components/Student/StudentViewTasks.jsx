@@ -105,6 +105,9 @@ const StudentViewTasks = () => {
             "gitLink": inputField.gitLink,
             "remarks": inputField.remarks
         };
+        setShowModal(false)
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
@@ -120,6 +123,7 @@ const StudentViewTasks = () => {
                     setShowModal(false)
                     setShowOverlay(false); // Close the overlay
                 } else {
+                    setShowWaitingModal()
                     if (response.data.status === "Validation failed" && response.data.data.gitLink) {
                         alert(response.data.data.gitLink);
                         setShowModal(true)

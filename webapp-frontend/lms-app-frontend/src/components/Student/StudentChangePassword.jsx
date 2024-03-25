@@ -11,6 +11,9 @@ const StudentChangePassword = () => {
         "newPassword": ""
     });
 
+
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [errors, setErrors] = useState({})
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -23,6 +26,11 @@ const StudentChangePassword = () => {
         setUpdateField({ ...updateField, [event.target.name]: event.target.value });
     };
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
     const readNewValue = () => {
         const validationErrors = validateForm(updateField);
         let axiosConfig = {
@@ -34,24 +42,39 @@ const StudentChangePassword = () => {
             }
         };
 
+        setShowOverlay(true)
+        setShowWaitingModal(true)
+     
         if (Object.keys(validationErrors).length === 0) {
             axios.post(APIurl, updateField, axiosConfig).then(
                 (Response) => {
                     if (Response.data.status === "success") {
-                        alert("Password Changed Successfully");
-                        navigate("/studentLogin");
-                        sessionStorage.clear()
+                      closeWaitingModal()
+                        setTimeout(()=>{
+                            alert("Password Changed Successfully");
+                            navigate("/studentLogin");
+                            sessionStorage.clear()
+                        }, 500)
+                        
                     } else if (Response.data.status === "Validation failed" && Response.data.data.oldPassword) {
+                        closeWaitingModal()
                         alert(Response.data.data.oldPassword);
                     } else if (Response.data.status === "Validation failed" && Response.data.data.newPassword) {
+                        closeWaitingModal()
                         alert(Response.data.data.newPassword);
                     } else if (Response.data.status === "Old password and new password cannot be same.") {
+                        closeWaitingModal()
                         alert(Response.data.status)
                     } else if (Response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
                         sessionStorage.clear()
                     } else {
-                        alert(Response.data.status)
+                      
+                       closeWaitingModal()
+                                        setTimeout(() => {
+                                            alert(Response.data.status)
+                                        }, 500)
+
                     }
 
                 });
@@ -129,6 +152,44 @@ const StudentChangePassword = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div >
     )
 }
