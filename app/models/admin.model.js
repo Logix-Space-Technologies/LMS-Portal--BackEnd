@@ -84,6 +84,33 @@ Admin.adminChangePassword = (ad, result) => {
     });
 };
 
+Admin.forgotpassword = (admin, result) => {
+    const getAdminQuery = "SELECT * FROM admin WHERE userName = ?";
+    db.query(getAdminQuery, [admin.userName], (err, res) => {
+        if (err) {
+            console.log("Error: ", err);
+            result(err, null);
+            return;
+        } else if (res.length === 0) {
+            result("User not found!!!", null);
+        } else {
+            const updatePasswordQuery = "UPDATE admin SET Password = ?, updateStatus = 1 WHERE userName = ?";
+            const hashedNewPassword = bcrypt.hashSync(admin.Password, 10);
+
+            db.query(updatePasswordQuery, [hashedNewPassword, admin.userName], (updateErr, updateRes) => {
+                if (updateErr) {
+                    console.log("Error: ", updateErr);
+                    result(updateErr, null);
+                    return;
+                } else {
+                    result(null, null);
+                }
+            });
+        }
+    });
+
+}
+
 
 Admin.adminDashBoard = (result) => {
     const query1 = "SELECT CASE WHEN COUNT(*) = 0 THEN 0 ELSE COUNT(*) END AS totalColleges FROM college WHERE deleteStatus = 0 AND isActive = 1;";
@@ -98,8 +125,8 @@ Admin.adminDashBoard = (result) => {
     const query10 = "SELECT CASE WHEN SUM(approvedAmnt) IS NULL THEN 0 ELSE SUM(approvedAmnt) END AS totalAmountRefunded FROM refund WHERE approvedAmnt IS NOT NULL AND cancelStatus = 0 AND refundInitiatedDate >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR);    ";
     const query11 = "SELECT c.id, c.collegeName, COALESCE(COUNT(b.id), 0) AS numberOfBatches FROM college c LEFT JOIN batches b ON c.id = b.collegeId WHERE c.deleteStatus = 0 AND c.isActive = 1 GROUP BY c.id, c.collegeName;    ";
     const query12 = "SELECT c.id, c.collegeName, COALESCE(COUNT(s.id), 0) AS numberOfStudents FROM college c LEFT JOIN student s ON c.id = s.collegeId AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 WHERE c.deleteStatus = 0 AND c.isActive = 1 GROUP BY c.id, c.collegeName;    ";
-    const query13 = "SELECT c.collegeName, COUNT(DISTINCT s.id) AS noofstudents, COUNT(DISTINCT t.id) AS nooftasks, CASE WHEN COUNT(DISTINCT st.id) = 0 THEN 0 ELSE ROUND(COUNT(DISTINCT st.id) * 100.0 / COUNT(DISTINCT t.id), 2) END AS percentageofcompletion FROM college c JOIN student s ON c.id = s.collegeId LEFT JOIN batches b ON s.batchId = b.id LEFT JOIN submit_task st ON s.id = st.studId LEFT JOIN task t ON b.id = t.batchId GROUP BY c.collegeName;";
-    const query14 = "SELECT c.collegeName, COUNT(DISTINCT s.id) AS noofstudents FROM college c LEFT JOIN student s ON c.id = s.collegeId WHERE DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <=s.addedDate GROUP BY c.collegeName";
+    const query13 = "SELECT c.collegeName, COUNT(DISTINCT s.id) AS noofstudents, COUNT(DISTINCT t.id) AS nooftasks, CASE WHEN COUNT(DISTINCT t.id) = 0 THEN 0 ELSE ROUND(COUNT(DISTINCT st.id) * 100.0 / COUNT(DISTINCT t.id), 2) END AS percentageofcompletion FROM college c LEFT JOIN student s ON c.id = s.collegeId LEFT JOIN batches b ON s.batchId = b.id LEFT JOIN task t ON b.id = t.batchId LEFT JOIN submit_task st ON s.id = st.studId AND st.taskId = t.id GROUP BY c.collegeName;";
+    const query14 = "SELECT c.collegeName, COUNT(DISTINCT s.id) AS noofstudents FROM college c LEFT JOIN student s ON c.id = s.collegeId AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= s.addedDate GROUP BY c.collegeName";
 
     db.query(query1, (err1, res1) => {
         if (err1) {
@@ -240,7 +267,7 @@ Admin.getAll = async (result) => {
             result(err, null)
             return
         } else {
-            const formattedLog = response.map(log => ({ ...log, DateTime: log.DateTime.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })}));
+            const formattedLog = response.map(log => ({ ...log, DateTime: log.DateTime.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
             console.log("Admin Staff Log : ", formattedLog)
             result(null, formattedLog)
         }

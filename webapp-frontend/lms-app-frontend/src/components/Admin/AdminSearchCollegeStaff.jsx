@@ -13,17 +13,12 @@ const AdminSearchCollegeStaff = () => {
 
     const [collegeStaff, setCollegeStaff] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-
     const navigate = useNavigate()
-
     const [currentPage, setCurrentPage] = useState(1);
     const [staffPerPage] = useState(10); // Number of staff per page
-
     const [searchPerformed, setSearchPerformed] = useState(false); // Added state to track search
-
     const [key, setKey] = useState('');
-
-    const [deleteCollegeStaff, setDeleteCollegeStaff] = useState({})
+    const [deleteCollegeStaff, setDeleteCollegeStaff] = useState(null)
 
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchCollegeStaff";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deletecolgstaff";
@@ -51,14 +46,33 @@ const AdminSearchCollegeStaff = () => {
             }
         };
 
-        axios.post(searchApiLink, { searchQuery: inputField.searchQuery }, axiosConfig)
-            .then(response => {
+        axios.post(searchApiLink, { searchQuery: inputField.searchQuery }, axiosConfig).then(response => {
+            if (response.data.data) {
                 setCollegeStaff(response.data.data);
                 setIsLoading(false);
+                setInputField(
+                    {
+                        searchQuery: ""
+                    }
+                )
                 setCurrentPage(1); // Reset to the first page after the search
                 setSearchPerformed(true); // Set searchPerformed to true
-            })
-            .catch(() => setIsLoading(false));
+            } else if (response.data.status === "Unauthorized User!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                sessionStorage.clear()
+            } else if (!response.data.data) {
+                setCollegeStaff([]);
+                setIsLoading(false);
+                setInputField(
+                    {
+                        searchQuery: ""
+                    }
+                )
+                setSearchPerformed(true); // Set searchPerformed to true
+            } else {
+                alert(response.data.status)
+            }
+        })
     };
 
     const deleteStaff = () => {
@@ -67,16 +81,21 @@ const AdminSearchCollegeStaff = () => {
                 "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
                 "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
             }
         };
 
-        axios.post(deleteApiLink, { id: deleteCollegeStaff }, axiosConfig)
-            .then(() => {
-                alert("College Staff Deleted!");
-            })
-            .catch(error => {
-                alert(error)
-            });
+        axios.post(deleteApiLink, { id: deleteCollegeStaff }, axiosConfig).then((response) => {
+            if (response.data.status === "Deleted successfully") {
+                // Remove the deleted Trainer from updateField state
+                setCollegeStaff(collegeStaff.filter(clgstaff => clgstaff.id !== deleteCollegeStaff))
+            } else if (response.data.status === "Unauthorized User!!") {
+                navigate("/")
+                sessionStorage.clear()
+            } else {
+                alert(response.data.status);
+            }
+        })
     };
 
 
@@ -117,21 +136,6 @@ const AdminSearchCollegeStaff = () => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
 
-    const [deleteId, setDeleteId] = useState(null);
-
-    const handleDeleteClick = (id) => {
-        setDeleteId(id);
-    };
-
-    const handleDeleteConfirm = () => {
-        deleteStaff(deleteId);
-        setDeleteId(null);
-    };
-
-    const handleDeleteCancel = () => {
-        setDeleteId(null);
-    };
-
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
@@ -140,7 +144,7 @@ const AdminSearchCollegeStaff = () => {
                     <div className="col-12 col-md-8 text-center">
                         <h1>Search College Staff</h1>
                         <div className="d-flex justify-content-center align-items-center">
-                            <input onChange={inputHandler} type="text" className="form-control" name="searchQuery" value={inputField.searchQuery} />
+                            <input onChange={inputHandler} type="text" className="form-control" name="searchQuery" value={inputField.searchQuery} placeholder='Name/College/Email/Phone No./Department' />
                             <button onClick={searchCollegeStaff} className="btn btn-warning ms-2">Search</button>
                         </div>
                     </div>

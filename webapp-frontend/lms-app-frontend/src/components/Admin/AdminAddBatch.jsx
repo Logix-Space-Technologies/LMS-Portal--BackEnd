@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import '../../config/config'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminAddBatch = () => {
-    
+
     const [inputField, setInputField] = useState({
         "collegeId": '',
         "batchName": '',
@@ -18,6 +18,8 @@ const AdminAddBatch = () => {
 
     const [errors, setErrors] = useState({});
     const [outputField, setOutputField] = useState([]);
+
+    const navigate = useNavigate()
 
     const [key, setKey] = useState('');
 
@@ -42,7 +44,16 @@ const AdminAddBatch = () => {
         };
 
         axios.post(apiUrl, {}, axiosConfig).then((response) => {
-            setOutputField(response.data.data);
+            if (response.data.data) {
+                setOutputField(response.data.data)
+            } else if (response.data.status === "Unauthorized User!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                sessionStorage.clear()
+            } else if (!response.data.data) {
+                setOutputField([])
+            } else {
+                alert(response.data.status)
+            }
         });
     };
 
@@ -89,35 +100,25 @@ const AdminAddBatch = () => {
                         batchDesc: '',
                         batchAmount: ''
                     });
+                } else if (response.data.status === "Validation failed" && response.data.data.collegeid) {
+                    alert(response.data.data.collegeid)
+                } else if (response.data.status === "Validation failed" && response.data.data.name) {
+                    alert(response.data.data.name)
+                } else if (response.data.status === "Validation failed" && response.data.data.regstartdate) {
+                    alert(response.data.data.regstartdate)
+                } else if (response.data.status === "Validation failed" && response.data.data.regenddate) {
+                    alert(response.data.data.regenddate)
+                } else if (response.data.status === "Validation failed" && response.data.data.description) {
+                    alert(response.data.data.description)
+                } else if (response.data.status === "Validation failed" && response.data.data.amount) {
+                    alert(response.data.data.amount)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.collegeid) {
-                        alert(response.data.data.collegeid)
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.name) {
-                            alert(response.data.data.name)
-                        } else {
-                            if (response.data.status === "Validation failed" && response.data.data.regstartdate) {
-                                alert(response.data.data.regstartdate)
-                            } else {
-                                if (response.data.status === "Validation failed" && response.data.data.regenddate) {
-                                    alert(response.data.data.regenddate)
-                                } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.description) {
-                                        alert(response.data.data.description)
-                                    } else {
-                                        if (response.data.status === "Validation failed" && response.data.data.amount) {
-                                            alert(response.data.data.amount)
-                                        } else {
-                                            alert(response.data.status)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    alert(response.data.status)
                 }
-            }
-            )
+            })
         }
         else {
             setErrors(validationErrors);

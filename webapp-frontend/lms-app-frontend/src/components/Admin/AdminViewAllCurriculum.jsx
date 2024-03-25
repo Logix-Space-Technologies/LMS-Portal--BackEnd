@@ -142,6 +142,7 @@ const AdminViewAllCurriculum = () => {
                             <th scope="col" className="px-6 py-3">Added Date</th>
                             <th scope="col" className="px-6 py-3">Added By</th>
                             <th scope="col" className="px-6 py-3">Updated By</th>
+                            <th scope="col" className="px-6 py-3">Updated Date</th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
@@ -162,6 +163,12 @@ const AdminViewAllCurriculum = () => {
                                             <td className="px-6 py-4">{value.updatedBy}</td>
                                         )}
                                         {value.updatedBy === null && (
+                                            <td className="px-6 py-4">NIL</td>
+                                        )}
+                                        {value.updatedDate !== null && (
+                                            <td className="px-6 py-4">{value.updatedDate}</td>
+                                        )}
+                                        {value.updatedDate === null && (
                                             <td className="px-6 py-4">NIL</td>
                                         )}
                                         <td className="px-6 py-4">

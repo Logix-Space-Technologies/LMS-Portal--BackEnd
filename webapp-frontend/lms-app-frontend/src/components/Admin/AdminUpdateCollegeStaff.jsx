@@ -68,7 +68,7 @@ const AdminUpdateCollegeStaff = () => {
             }
             let data = {}
             if (file) {
-                 data = {
+                data = {
                     "id": sessionStorage.getItem("clgStaffId"),
                     "collegeId": updateField.collegeId,
                     "collegeStaffName": updateField.collegeStaffName,
@@ -80,7 +80,7 @@ const AdminUpdateCollegeStaff = () => {
                     "department": updateField.department
                 }
             } else {
-                 data = {
+                data = {
                     "id": sessionStorage.getItem("clgStaffId"),
                     "collegeId": updateField.collegeId,
                     "collegeStaffName": updateField.collegeStaffName,
@@ -92,7 +92,7 @@ const AdminUpdateCollegeStaff = () => {
                     "department": updateField.department
                 }
             }
-            
+
             axios.post(apiUrl, data, axiosConfig).then(
                 (response) => {
                     if (response.data.status === "success") {
@@ -103,12 +103,12 @@ const AdminUpdateCollegeStaff = () => {
                             "email": "",
                             "phNo": "",
                             "aadharNo": "",
-                            "clgStaffAddress": "",           
+                            "clgStaffAddress": "",
                             "department": ""
                         })
                         alert("Profile Updated Successfully")
                         setFile(null)
-                        navigate("/adminviewallclgstaff")
+                        navigate(-1)
                     } else {
                         if (response.data.status === "Validation failed" && response.data.data.name) {
                             alert(response.data.data.name)
@@ -131,7 +131,12 @@ const AdminUpdateCollegeStaff = () => {
                                                 if (response.data.status === "Validation failed" && response.data.data.image) {
                                                     alert(response.data.data.image)
                                                 } else {
-                                                    alert(response.data.status)
+                                                    if (response.data.status === "Unauthorized User!!") {
+                                                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                                        sessionStorage.clear()
+                                                    } else {
+                                                        alert(response.data.status)
+                                                    }
                                                 }
                                             }
                                         }
@@ -148,25 +153,20 @@ const AdminUpdateCollegeStaff = () => {
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        console.log("Status 400:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        console.log("Status 500:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
                     alert(error.request);
                 } else if (error.message) {
-                    console.log('Error', error.message);
                     alert('Error', error.message);
                 } else {
                     alert(error.config);
-                    console.log(error.config);
                 }
             })
         } else {
@@ -217,8 +217,32 @@ const AdminUpdateCollegeStaff = () => {
         }
         axios.post(apiUrl2, data, axiosConfig).then(
             (response) => {
-                setClgStaffData(response.data.ClgStaffs)
-                setUpdateField(response.data.ClgStaffs[0])
+                if (response.data.ClgStaffs) {
+                    setClgStaffData(response.data.ClgStaffs)
+                    setUpdateField(response.data.ClgStaffs[0])
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.ClgStaffs) {
+                            setClgStaffData([])
+                            setUpdateField({
+                                "id": "",
+                                "collegeId": "",
+                                "collegeStaffName": "",
+                                "email": "",
+                                "phNo": "",
+                                "aadharNo": "",
+                                "clgStaffAddress": "",
+                                "profilePic": "",
+                                "department": ""
+                            })
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }

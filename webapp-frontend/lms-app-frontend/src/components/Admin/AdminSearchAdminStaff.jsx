@@ -19,36 +19,33 @@ const AdminSearchAdminStaff = () => {
     const [deleteId, setDeleteId] = useState(null);
 
     const apiLink = global.config.urls.api.server + "/api/lms/searchAdminStaff";
+    const deleteUrl = global.config.urls.api.server + "/api/lms/deleteadmstaff";
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
 
     const handleDeleteClick = () => {
-        const deleteUrl = global.config.urls.api.server + "/api/lms/deleteadmstaff";
         const axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
-                "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
+                'Access-Control-Allow-Origin': '*',
+                'token': sessionStorage.getItem('admtoken'),
+                'key': sessionStorage.getItem('admkey')
             },
         };
 
-        axios.post(deleteUrl, { id: deleteId }, axiosConfig)
-            .then((response) => {
-                if (response.data.status === "Admin Staff Deleted.") {
-                    // Refresh the data after deletion
-                    alert("Deleted Successfully")
-                    readValue();
-                } else {
-                    alert("Error deleting admin staff. Please try again later.")
-                    console.error("Error deleting admin staff. Please try again later.");
-                }
-            })
-            .catch((err) => {
-                alert("Error deleting admin staff. Please try again later.")
-                console.error("Error deleting admin staff. Please try again later.");
-            });
+        axios.post(deleteUrl, { id: deleteId }, axiosConfig).then((response) => {
+            if (response.data.status === "Admin Staff Deleted.") {
+                // Refresh the data after deletion
+                setUpdateField(updateField.filter(admstaff => admstaff.id !== deleteId))
+            } else if (response.data.status === "Unauthorized User!!") {
+                navigate("/")
+                sessionStorage.clear()
+            } else {
+                alert(response.data.status)
+            }
+        })
     };
 
     const updateClick = (id) => {
@@ -69,10 +66,22 @@ const AdminSearchAdminStaff = () => {
 
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
-                setUpdateField(response.data.data);
-                setIsLoading(false);
-                setSearchExecuted(true);
-                setInputField({ "adminStaffSearchQuery": "" });
+                if (response.data.data) {
+                    setUpdateField(response.data.data);
+                    setIsLoading(false);
+                    setSearchExecuted(true);
+                    setInputField({ "adminStaffSearchQuery": "" });
+                } else if (response.data.status === "Unauthorized User!!") {
+                    navigate("/")
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setUpdateField([]);
+                    setIsLoading(false);
+                    setSearchExecuted(true);
+                    setInputField({ "adminStaffSearchQuery": "" });
+                } else {
+                    alert(response.data.status)
+                }
             }
         );
     };

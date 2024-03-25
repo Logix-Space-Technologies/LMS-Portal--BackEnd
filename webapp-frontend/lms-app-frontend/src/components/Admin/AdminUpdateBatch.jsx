@@ -6,8 +6,6 @@ import '../../config/config'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminUpdateBatch = () => {
-
-    // const [errors, setErrors] = useState({});
     const [batchData, setBatchData] = useState([])
     const [updateField, setUpdateField] = useState({
         "id": sessionStorage.getItem("batchId"),
@@ -68,7 +66,7 @@ const AdminUpdateBatch = () => {
                         "batchAmount": ""
                     })
                     alert("Batch Updated!")
-                    navigate("/adminviewallbatches")
+                    navigate(-1)
                 } else {
                     if (response.data.status === "Validation Failed" && response.data.data.batchName) {
                         alert(response.data.data.batchName)
@@ -85,7 +83,12 @@ const AdminUpdateBatch = () => {
                                     if (response.data.status === "Validation Failed" && response.data.data.batchAmount) {
                                         alert("batch amount: ", response.data.data.batchAmount)
                                     } else {
-                                        alert(response.data.status)
+                                        if (response.data.status === "Unauthorized User!!") {
+                                            { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                            sessionStorage.clear()
+                                        } else {
+                                            alert(response.data.status)
+                                        }
                                     }
                                 }
                             }
@@ -104,23 +107,6 @@ const AdminUpdateBatch = () => {
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        // let newErrors = {};
-        // if (!updateField.regStartDate || !updateField.regStartDate.trim()) {
-        //     newErrors.regStartDate = "Registration start date is required!";
-        // } else if (!/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)\d\d$/i.test(updateField.regStartDate)) {
-        //     newErrors.regStartDate = 'Invalid Date';
-        // }
-
-        // if (!updateField.regEndDate || !updateField.regEndDate.trim()) {
-        //     newErrors.regEndDate = "Registration End date is required!";
-        // } else if (!/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)\d\d$/i.test(updateField.regEndDate)) {
-        //     newErrors.regEndDate = 'Invalid Date';
-        // }
-
-        // if (Object.keys(newErrors).length > 0) {
-        //     setErrors(newErrors);
-        //     return;
-        // }
 
         let data = { "id": sessionStorage.getItem("batchId") }
         let axiosConfig = {
@@ -134,8 +120,30 @@ const AdminUpdateBatch = () => {
 
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                setBatchData(response.data.data)
-                setUpdateField(response.data.data[0])
+                if (response.data.data) {
+                    setBatchData(response.data.data)
+                    setUpdateField(response.data.data[0])
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setBatchData([])
+                            setUpdateField({
+                                "id": "",
+                                "collegeId": "",
+                                "batchName": "",
+                                "regStartDate": "",
+                                "regEndDate": "",
+                                "batchDesc": "",
+                                "batchAmount": ""
+                            })
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
@@ -160,7 +168,7 @@ const AdminUpdateBatch = () => {
 
     return (
         <>
-        {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
@@ -192,7 +200,7 @@ const AdminUpdateBatch = () => {
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Registration Start Date</label>
                                                 <input
-                                                    type="text"
+                                                    type="date"
                                                     className="form-control"
                                                     name="regStartDate"
                                                     onChange={updateHandler}
@@ -204,7 +212,7 @@ const AdminUpdateBatch = () => {
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Registration End Date</label>
                                                 <input
-                                                    type="text"
+                                                    type="date"
                                                     className="form-control"
                                                     name="regEndDate"
                                                     onChange={updateHandler}

@@ -153,7 +153,7 @@ const AdminStaffUpdateMaterial = () => {
                             "uploadFile": ""
                         })
                         alert("Material Updated Successfully")
-                        navigate("/AdminStaffViewAllMaterial")
+                        navigate(-1)
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.batchId) {
                             alert(Response.data.data.batchId)

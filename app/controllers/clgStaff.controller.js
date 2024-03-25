@@ -179,9 +179,7 @@ exports.clgStaffCreate = (request, response) => {
             password: request.body.password,
           });
 
-          console.log(clgstaff)
-
-
+          let password = request.body.password
 
           bcrypt.hash(clgstaff.password, saltRounds, (err, hashedPassword) => {
             if (err) {
@@ -200,13 +198,13 @@ exports.clgStaffCreate = (request, response) => {
                 //send email
                 db.query('SELECT collegeName FROM college WHERE id=?', [clgstaff.collegeId], (err, result) => {
                   if (err) {
-                    console.log(err)
+                    return response.json({ "status": err })
                   } else {
                     collegeName = result[0].collegeName
                     const collegeStaffName = clgstaff.collegeStaffName
                     const collegeStaffEmail = clgstaff.email
-                    const collegeStaffEmailContent = mailContents.collegeStaffHtmlContent(collegeStaffName, collegeName)
-                    const collegeStaffTextContent = mailContents.collegeStaffTextContent(collegeStaffName, collegeName)
+                    const collegeStaffEmailContent = mailContents.collegeStaffHtmlContent(collegeStaffName, collegeName, collegeStaffEmail, password)
+                    const collegeStaffTextContent = mailContents.collegeStaffTextContent(collegeStaffName, collegeName, collegeStaffEmail, password)
                     mail.sendEmail(collegeStaffEmail, 'Registration Successful!', collegeStaffEmailContent, collegeStaffTextContent);
                   }
                 })
@@ -222,7 +220,7 @@ exports.clgStaffCreate = (request, response) => {
 
     } catch (err) {
       fs.unlinkSync(file.path);
-      response.status(500).json({ "status": err.message });
+      return response.status(500).json({ "status": err.message });
     }
   });
 };
@@ -244,8 +242,7 @@ exports.clgStaffDelete = (request, response) => {
           if (err.kind === "not_found") {
             return response.json({ "status": "College Staff ID not found." });
           } else {
-            console.error(err);
-            return response.json({ "status": "Error deleting Staff." });
+            return response.json({ "status": err });
           }
         } else {
           return response.json({ "status": "Deleted successfully" });
@@ -453,18 +450,18 @@ exports.searchCollegeStaff = (request, response) => {
 
       CollegeStaff.searchCollegeStaff(searchQuery, (err, data) => {
         if (err) {
-          response.json({ "status": err });
+          return response.json({ "status": err });
         } else {
           if (data.length === 0) {
-            response.json({ "status": "No search items found." });
+            return response.json({ "status": "No search items found." });
           } else {
-            response.json({ "status": "success", "data": data });
+            return response.json({ "status": "success", "data": data });
           }
 
         }
       });
     } else {
-      response.json({ "status": "Unauthorized User!!" });
+      return response.json({ "status": "Unauthorized User!!" });
     }
   });
 };
@@ -496,11 +493,7 @@ exports.collegeStaffLogin = (request, response) => {
 
   CollegeStaff.findByClgStaffEmail(email, (err, clgstaff) => {
     if (err) {
-      if (err.kind === "not_found") {
-        return response.json({ "status": "College Staff does not Exist." })
-      } else {
-        return response.json({ "status": "Error retrieving College Staff Details." })
-      }
+      return response.json({ "status": err })
     } else {
       const clgStaffPasswordMatch = bcrypt.compareSync(password, clgstaff.password)
       if (clgStaffPasswordMatch) {
@@ -796,7 +789,6 @@ exports.viewOneClgStaff = (request, response) => {
   const clgStaffToken = request.headers.token;
   const key = request.headers.key; //give respective keys of admin and adminstaff
   const clgStaffId = request.body.id;
-  console.log(clgStaffId)
 
   jwt.verify(clgStaffToken, key, (err, decoded) => {
     if (decoded) {
@@ -925,30 +917,31 @@ exports.verifyOtp = (req, res) => {
 
 
 exports.collegestaffforgotpassword = (request, response) => {
-  const { email, oldPassword, newPassword } = request.body;
+  const Email = request.body.email
+  const Password = request.body.password
 
   const validationErrors = {};
 
-  if (Validator.isEmpty(email).isValid) {
-    validationErrors.email = "Email is required";
-  } else if (Validator.isEmpty(oldPassword).isValid) {
-    validationErrors.oldPassword = "Old password is required";
-  } else if (Validator.isEmpty(newPassword).isValid) {
-    validationErrors.newPassword = "New password is required";
-  } else if (oldPassword === newPassword) {
-    validationErrors.newPassword = "Old password and new password cannot be the same";
-  } else if (!Validator.isValidPassword(newPassword).isValid) {
-    validationErrors.newPassword = "New password is not valid";
+  if (Validator.isEmpty(Email).isValid) {
+    validationErrors.Email = "Email is required";
+  } else if (Validator.isEmpty(Password).isValid) {
+    validationErrors.Password = "Password is required";
+  } else if (!Validator.isValidPassword(Password).isValid) {
+    validationErrors.Password = "Password is not valid";
   }
 
   if (Object.keys(validationErrors).length > 0) {
     return response.json({ "status": "Validation failed", "data": validationErrors });
   }
 
-  CollegeStaff.collegeStaffChangePassword({ email, oldPassword, newPassword }, (err, data) => {
+  let clgstaff = {
+    email: Email,
+    password: Password
+  }
+
+  CollegeStaff.collegeStaffForgotPassword(clgstaff, (err, data) => {
     if (err) {
-      response.json({ "status": err });
-      return;
+      return response.json({ "status": err });
     } else {
       return response.json({ "status": "success" });
     }
@@ -992,22 +985,22 @@ exports.emailVerificationClgStaffOtpVerify = (req, res) => {
 
   // Input validation (basic example)
   if (!email || !otp) {
-      return res.json({ "status": "Email and OTP are required" });
+    return res.json({ "status": "Email and OTP are required" });
   }
 
   // Call the model function to verify the OTP
   CollegeStaff.emailVerificationClgStaffOtpVerify(email, otp, (err, result) => {
-      if (err) {
-          // If there was an error or the OTP is not valid/expired
-          return res.json({ "status": err });
+    if (err) {
+      // If there was an error or the OTP is not valid/expired
+      return res.json({ "status": err });
+    } else {
+      if (result) {
+        // If the OTP is verified successfully
+        return res.json({ "status": "OTP verified successfully" });
       } else {
-          if (result) {
-              // If the OTP is verified successfully
-              return res.json({ "status": "OTP verified successfully" });
-          } else {
-              // If the OTP does not match
-              return res.json({ "status": "Invalid OTP" });
-          }
+        // If the OTP does not match
+        return res.json({ "status": "Invalid OTP" });
       }
+    }
   });
 };

@@ -210,7 +210,6 @@ exports.taskDelete = (request, response) => {
         Tasks.taskDelete(task, (err, data) => {
             if (err) {
                 if (err.kind === "not_found") {
-                    console.log("Task not found");
                     return response.json({ "status": "Task not found" });
                 } else {
                     return response.json({ "status": err });
@@ -372,17 +371,17 @@ exports.searchTask = (request, response) => {
         if (decoded) {
             Tasks.searchTasks(taskQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found" });
+                        return response.json({ "status": "No Search Items Found" });
                     } else {
-                        response.json({ "status": "success", "data": data });
+                        return response.json({ "status": "success", "data": data });
                     }
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
@@ -423,18 +422,18 @@ exports.viewOneTask = (request, response) => {
 
     jwt.verify(token, key, (err, decoded) => {
         if (err || !decoded) {
-            return response.status(401).json({ "status": "Unauthorized: Invalid or missing token" });
+            return response.json({ "status": "Unauthorized Access!!!" });
         }
 
         Tasks.findById(id, (err, data) => {
             if (err) {
                 if (err.kind === "not_found") {
-                    response.status(404).json({ "status": "Task not found" });
+                    return response.json({ "status": "Task not found" });
                 } else {
-                    response.status(500).json({ "status": "Error retrieving task" });
+                    return response.json({ "status": "Error retrieving task" });
                 }
             } else {
-                response.json({ "status": "success", "data": data });
+                return response.json({ "status": "success", "data": data });
             }
         });
     });

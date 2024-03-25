@@ -2,10 +2,10 @@ import axios from 'axios';
 import '../../config/config';
 import React, { useState } from 'react';
 import Navbar from './Navbar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AddAdminStaff = () => {
-    
+
     const [inputField, setInputField] = useState({
         "AdStaffName": "",
         "PhNo": "",
@@ -13,10 +13,15 @@ const AddAdminStaff = () => {
         "AadharNo": "",
         "Email": "",
         "Password": "",
-        "confirmpassword": "",
+        "confirmpassword": ""
     });
 
     const [errors, setErrors] = useState({});
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + '/api/lms/addAdminStaff';
 
@@ -74,6 +79,9 @@ const AddAdminStaff = () => {
                             alert(response.data.data.email);
                         } else if (response.data.status === 'Validation failed' && response.data.data.password) {
                             alert(response.data.data.password);
+                        } else if (response.data.status === "Unauthorized User !!!") {
+                            navigate("/")
+                            sessionStorage.clear()
                         } else {
                             alert(response.data.status);
                         }
@@ -105,7 +113,13 @@ const AddAdminStaff = () => {
             errors.Email = 'Email is required';
         }
         if (!data.Password.trim()) {
-            errors.Password = 'Password is required';
+            errors.Password = 'New Password is required';
+        } else if (data.Password.length < 8) {
+            errors.Password = 'Password must be at least 8 characters';
+        } else if (data.Password.length > 12) {
+            errors.Password = 'Password should not exceed 12 characters';
+        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(data.Password)) {
+            errors.Password = 'Password should include one uppercase letter, one lowercase letter, numbers and special characters';
         }
         if (!data.confirmpassword) {
             errors.confirmpassword = 'Confirm password is required';
@@ -162,13 +176,21 @@ const AddAdminStaff = () => {
                                     </div>
                                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                         <label for="" class="form-label">Password</label>
-                                        <input onChange={inputHandler} type="password" class="form-control" name="Password" value={inputField.Password} id="Password" />
+                                        <div class="input-group">
+                                            <input onChange={inputHandler} type={showPassword ? "text" : "password"} class="form-control" name="Password" value={inputField.Password} id="Password" />
+                                            <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
+                                                <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
+                                            </span>
+                                        </div>
                                         {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
                                     </div>
                                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                         <label for="password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
                                         <div class="input-group">
-                                            <input type="password" class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
+                                            <input type={showConfirmPassword ? "text" : "password"} class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
+                                            <span className="input-group-text" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                                <i className={showConfirmPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="toggleConfirmPassword"></i>
+                                            </span>
                                         </div>
                                         {errors.confirmpassword && <span style={{ color: 'red' }} className="error">{errors.confirmpassword}</span>}
                                     </div>

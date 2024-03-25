@@ -14,7 +14,7 @@ exports.create = (request, response) => {
     // Checking token validation
     jwt.verify(adstaffToken, "lmsapp", (tokenError, decoded) => {
         if (!decoded) {
-            return response.json({ "status": "Unauthorized User !!! " });
+            return response.json({ "status": "Unauthorized User !!!" });
         }
 
         // Checking validations
@@ -60,7 +60,7 @@ exports.create = (request, response) => {
         if (Object.keys(validationErrors).length > 0) {
             return response.json({ "status": "Validation failed", "data": validationErrors });
         }
-
+        let password = request.body.Password
         // Generate a salt and hash the password
         bcrypt.hash(Password, saltRounds, (hashError, hashedPassword) => {
             if (hashError) {
@@ -78,15 +78,15 @@ exports.create = (request, response) => {
 
             AdminStaff.create(newAdminStaff, (createError, data) => {
                 if (createError) {
-                    response.json({ "status": createError });
+                    return response.json({ "status": createError });
                 } else {
                     // //send mail
                     const adminStaffName = newAdminStaff.AdStaffName
                     const adminStaffEmail = newAdminStaff.Email
-                    const adminStaffHTMLEmailContent = mailContents.admStaffAddHTMLContent(adminStaffName);
-                    const adminStaffTextEmailContent = mailContents.admStaffAddTextContent(adminStaffName)
+                    const adminStaffHTMLEmailContent = mailContents.admStaffAddHTMLContent(adminStaffName, password, adminStaffEmail);
+                    const adminStaffTextEmailContent = mailContents.admStaffAddTextContent(adminStaffName, password, adminStaffEmail);
                     mail.sendEmail(adminStaffEmail, 'Registration Successful!', adminStaffHTMLEmailContent, adminStaffTextEmailContent);
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         });
@@ -184,11 +184,9 @@ exports.admStaffDelete = (request, response) => {
             const admStfDlt = new AdminStaff({
                 'id': request.body.id
             });
-            console.log(admStfDlt)
             AdminStaff.admStaffDelete(admStfDlt, (err, data) => {
                 if (err) {
                     if (err.kind === "not_found") {
-                        console.log("Admin Staff id not found.")
                         return response.json({ "status": "Admin Staff id not found." })
 
                     } else {
@@ -213,22 +211,21 @@ exports.adminStaffSearch = (request, response) => {
     jwt.verify(adminStaffSearcToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             if (!adminStaffSearchQuery) {
-                console.log("Search Item is required.")
                 return response.json({ "status": "Search Item is required." })
             }
             AdminStaff.adminStaffSearch(adminStaffSearchQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found." })
+                        return response.json({ "status": "No Search Items Found." })
                     } else {
-                        response.json({ "status": "Result Found", "data": data })
+                        return response.json({ "status": "Result Found", "data": data })
                     }
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -257,12 +254,8 @@ exports.adminStaffLogin = (request, response) => {
 
     AdminStaff.findByEmail(Email, (err, admin_staff) => {
         if (err) {
-            if (err.kind === "not_found") {
-                response.json({ "status": "Admin Staff does not exist" })
-            } else {
-                response.json({ "status": "Error retrieving Admin Staff details" })
 
-            }
+            return response.json({ "status": err })
 
         } else {
             const passwordMatch = bcrypt.compareSync(Password, admin_staff.Password)
@@ -271,15 +264,14 @@ exports.adminStaffLogin = (request, response) => {
                 jwt.sign({ Email: getEmail, Password: getPassword }, "lmsappadmstaff", { expiresIn: "30m" },
                     (error, token) => {
                         if (error) {
-                            response.json({ "status": "Unauthorized user!!" })
+                            return response.json({ "status": "Unauthorized user!!" })
                         } else {
-                            response.json({ "status": "Success", "data": admin_staff, "token": token })
+                            return response.json({ "status": "Success", "data": admin_staff, "token": token })
                         }
                     }
-
                 )
             } else {
-                response.json({ "status": "Invalid Email or Password!!!" })
+                return response.json({ "status": "Invalid Email or Password!!!" })
             }
         }
     })
@@ -566,27 +558,29 @@ exports.verifyOtp = (req, res) => {
 };
 
 exports.admstaffforgotpassword = (request, response) => {
-    const { Email, oldAdSfPassword, newAdSfPassword } = request.body;
+    const Email = request.body.Email
+    const Password = request.body.Password
 
     const validationErrors = {};
 
     if (Validator.isEmpty(Email).isValid) {
         validationErrors.Email = "Email is required";
-    } else if (Validator.isEmpty(oldAdSfPassword).isValid) {
-        validationErrors.oldAdSfPassword = "Old password is required";
-    } else if (Validator.isEmpty(newAdSfPassword).isValid) {
-        validationErrors.newAdSfPassword = "New password is required";
-    } else if (oldAdSfPassword === newAdSfPassword) {
-        validationErrors.newAdSfPassword = "Old password and new password cannot be the same";
-    } else if (!Validator.isValidPassword(newAdSfPassword).isValid) {
-        validationErrors.newAdSfPassword = "New password is not valid";
+    } else if (Validator.isEmpty(Password).isValid) {
+        validationErrors.Password = "New password is required";
+    } else if (!Validator.isValidPassword(Password).isValid) {
+        validationErrors.Password = "New password is not valid";
     }
 
     if (Object.keys(validationErrors).length > 0) {
         return response.json({ "status": "Validation failed", "data": validationErrors });
     }
 
-    AdminStaff.asChangePassword({ Email, oldAdSfPassword, newAdSfPassword }, (err, result) => {
+    let admstaff = {
+        Email: Email,
+        Password: Password
+    }
+
+    AdminStaff.forgotpassword(admstaff, (err, result) => {
         if (err) {
             return response.json({ "status": err });
         } else {

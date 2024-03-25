@@ -12,6 +12,7 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 require('dotenv').config({ path: '../../.env' });
 const path = require("path");
+const whatsApp = require("./Whatsapp/sendWhatsappMessage")
 // const { Session } = require("inspector");
 
 // AWS S3 Client Configuration
@@ -114,7 +115,7 @@ exports.createStudent = (req, res) => {
             else if (!Validator.isValidEmail(studEmail).isValid) {
                 validationErrors.studEmail = Validator.isValidEmail(studEmail).message;
             }
-            else if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+            else if (!Validator.isValidMobileNumber(studPhNo).isValid) {
                 validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
             }
             else if (!Validator.isValidPassword(password).isValid) {
@@ -165,6 +166,8 @@ exports.createStudent = (req, res) => {
                                 const otpVerificationHTMLContent = mailContents.StudentRegistrationSuccessfulMailHTMLContent(membershipNo);
                                 const otpVerificationTextContent = mailContents.StudentRegistrationSuccessfulMailTextContent(membershipNo);
                                 mail.sendEmail(email, 'Welcome To LinkUrCodes!', otpVerificationHTMLContent, otpVerificationTextContent)
+                                // Send Whatsapp Message
+                                whatsApp.sendfn(data.studPhNo, data.studName);
                                 return res.json({ "status": "success", "data": data, "paymentData": paymentData });
                             }
                         });
@@ -174,7 +177,7 @@ exports.createStudent = (req, res) => {
 
         } catch (error) {
             fs.unlinkSync(file.path);
-            response.status(500).json({ "status": err.message });
+            return response.status(500).json({ "status": err.message });
         }
     });
 };
@@ -678,18 +681,17 @@ exports.searchStudentsByAdmAndAdmstf = (request, response) => {
             }
             Student.searchStudentsByAdmAndAdmstf(studentSearchQuery, (err, data) => {
                 if (err) {
-                    console.error("Error in searchStudents:", err);
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found." });
+                        return response.json({ "status": "No Search Items Found." });
                     } else {
-                        response.json({ "status": "Result Found", "data": data });
+                        return response.json({ "status": "Result Found", "data": data });
                     }
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
@@ -1473,30 +1475,31 @@ exports.verifyStudOtp = (req, res) => {
 };
 
 exports.studforgotpassword = (request, response) => {
-    const { studEmail, oldPassword, newPassword } = request.body;
+    const Email = request.body.studEmail
+    const Password = request.body.password
 
     const validationErrors = {};
 
-    if (Validator.isEmpty(studEmail).isValid) {
-        validationErrors.studEmail = "Email is required";
-    } else if (Validator.isEmpty(oldPassword).isValid) {
-        validationErrors.oldPassword = "Old password is required";
-    } else if (Validator.isEmpty(newPassword).isValid) {
-        validationErrors.newPassword = "New password is required";
-    } else if (oldPassword === newPassword) {
-        validationErrors.newPassword = "Old password and new password cannot be the same";
-    } else if (!Validator.isValidPassword(newPassword).isValid) {
-        validationErrors.newPassword = "New password is not valid";
+    if (Validator.isEmpty(Email).isValid) {
+        validationErrors.Email = "Email is required";
+    } else if (Validator.isEmpty(Password).isValid) {
+        validationErrors.Password = "Password is required";
+    } else if (!Validator.isValidPassword(Password).isValid) {
+        validationErrors.Password = "Password is not valid";
     }
 
     if (Object.keys(validationErrors).length > 0) {
         return response.json({ "status": "Validation failed", "data": validationErrors });
     }
 
-    Student.StdChangePassword({ studEmail, oldPassword, newPassword }, (err, data) => {
+    let student = {
+        studEmail: Email,
+        password: Password
+    }
+
+    Student.forgotPassword(student, (err, data) => {
         if (err) {
-            response.json({ "status": err });
-            return;
+            return response.json({ "status": err });
         } else {
             return response.json({ "status": "success" });
         }
@@ -1527,12 +1530,11 @@ exports.sendRenewalReminderEmail = async (req, res) => {
     const id = req.body.id;
 
     try {
-        const decoded = await jwt.verify(token, key);
+        const decoded = jwt.verify(token, key);
 
         if (!decoded) {
-            return res.status(401).json({
-                status: "error",
-                message: "Unauthorized User!!"
+            return res.json({
+                "status": "Unauthorized User!!"
             });
         }
 
@@ -1553,16 +1555,16 @@ exports.sendRenewalReminderEmail = async (req, res) => {
         );
 
         return res.json({
-            status: "success",
-            message: "Renewal reminder email sent successfully.",
-            data: studentData
+            "status": "success",
+            "message": "Renewal reminder email sent successfully.",
+            "data": studentData
         });
     } catch (error) {
         console.error("Error in sending renewal reminder email:", error);
-        return res.status(500).json({
-            status: "error",
-            message: "Error in sending renewal reminder email.",
-            error: error.message 
+        return res.json({
+            "status": "error",
+            "message": "Error in sending renewal reminder email.",
+            "error": error.message
         });
     }
 };
@@ -1617,7 +1619,7 @@ exports.emailverifyStudOTP = (req, res) => {
         } else {
             if (result) {
                 // If the OTP is verified successfully
-                return res.json({ "status": "OTP verified successfully" });
+                return res.json({ "status": "OTP Verified Successfully!!!" });
             } else {
                 // If the OTP does not match
                 return res.json({ "status": "Invalid OTP" });
@@ -1626,8 +1628,34 @@ exports.emailverifyStudOTP = (req, res) => {
     });
 };
 
+exports.emailVerifyAndPasswordChange = (req, res) => {
+    const email = req.body.studEmail
+    const password = req.body.password
+
+    const validationErrors = {};
+
+    if (Validator.isEmpty(email).isValid) {
+        validationErrors.studEmail = "Email is required";
+    } else if (Validator.isEmpty(password).isValid) {
+        validationErrors.oldPassword = "Password is required";
+    } else if (!Validator.isValidPassword(password).isValid) {
+        validationErrors.newPassword = "Invalid Password!!";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+        return res.json({ "status": "Validation failed", "data": validationErrors });
+    }
+
+    Student.emailVerifyAndPasswordChange(email, password, (err, data) => {
+        if (err) {
+            return res.json({ "status": err });
+        } else {
+            return res.json({ "status": "Password Changed Successfully!!!" });
+        }
+    })
+}
 
 
 
 
- 
+

@@ -4,11 +4,7 @@ const Admin = require("../models/admin.model");
 const Validator = require('../config/data.validate')
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 const firebaseAdmin = require('firebase-admin')
-const serviceAccount = require('../config/firebase_key/serviceaccount.json');
 
-firebaseAdmin.initializeApp({
-    credential: firebaseAdmin.credential.cert(serviceAccount)
-});
 
 exports.sendNotifications = (request, response) => {
     const token = request.body.token;
@@ -141,16 +137,13 @@ exports.adminChangePwd = (request, response) => {
 
     // JWT Verification
     jwt.verify(token, "lmsapp", (error, decoded) => {
-        if (error) {
-            return response.json({ "status": "Unauthorized User!!" });
-        }
-
         if (decoded) {
             Admin.adminChangePassword({ userName, oldPassword, newPassword }, (err, result) => {
                 if (err) {
                     return response.json({ "status": err });
+                } else {
+                    return response.json({ "status": "success" });
                 }
-                return response.json({ "status": "success" });
             });
         } else {
             return response.json({ "status": "Unauthorized User!!" });
@@ -171,7 +164,7 @@ exports.adminDashBoards = (request, response) => {
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!!" });
+            return response.json({ "status": "Unauthorized User!!!" });
         }
     });
 
@@ -199,19 +192,16 @@ exports.viewAdminLog = (request, response) => {
 }
 
 exports.adminforgotpassword = (request, response) => {
-    const { userName, oldPassword, newPassword } = request.body;
+    const username = request.body.userName
+    const password = request.body.Password
     // Basic Validation
     const validationErrors = {};
-    if (Validator.isEmpty(userName).isValid) {
+    if (Validator.isEmpty(username).isValid) {
         validationErrors.userName = "Username is required";
-    } else if (Validator.isEmpty(oldPassword).isValid) {
-        validationErrors.oldPassword = "Old password is required";
-    } else if (Validator.isEmpty(newPassword).isValid) {
-        validationErrors.newPassword = "New password is required";
-    } else if (oldPassword === newPassword) {
-        validationErrors.newPassword = "Old password and new password cannot be the same";
-    } else if (!Validator.isValidPassword(newPassword).isValid) {
-        validationErrors.newPassword = "New password is not valid";
+    } else if (Validator.isEmpty(password).isValid) {
+        validationErrors.newPassword = "Password is required";
+    } else if (!Validator.isValidPassword(password).isValid) {
+        validationErrors.newPassword = "Password is not valid";
     }
 
     // If validation fails
@@ -219,13 +209,18 @@ exports.adminforgotpassword = (request, response) => {
         return response.json({ "status": "Validation failed", "data": validationErrors });
     }
 
-    Admin.adminChangePassword({ userName, oldPassword, newPassword }, (err, result) => {
+    let admin = {
+       userName: username,
+       Password: password
+    }
+
+    Admin.forgotpassword(admin, (err, result) => {
         if (err) {
             return response.json({ "status": err });
         } else {
             return response.json({ "status": "success" });
         }
-        
+
     });
 
 }

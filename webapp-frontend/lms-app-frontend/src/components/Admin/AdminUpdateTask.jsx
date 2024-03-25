@@ -120,7 +120,12 @@ const AdminUpdateTask = () => {
                                             if (Response.data.status === "Validation failed" && Response.data.data.date) {
                                                 alert(Response.data.data.date)
                                             } else {
-                                                alert(Response.data.status)
+                                                if (Response.data.status === "Unauthorized access!!") {
+                                                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                                    sessionStorage.clear()
+                                                } else {
+                                                    alert(Response.data.status)
+                                                }
                                             }
                                         }
                                     }
@@ -137,25 +142,20 @@ const AdminUpdateTask = () => {
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        console.log("Status 400:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        console.log("Status 500:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
                     alert(error.request);
                 } else if (error.message) {
-                    console.log('Error', error.message);
                     alert('Error', error.message);
                 } else {
                     alert(error.config);
-                    console.log(error.config);
                 }
             })
         } else {
@@ -203,8 +203,31 @@ const AdminUpdateTask = () => {
             }
         }
         axios.post(apiURL, data, axiosConfig).then((response) => {
-            setTaskData(response.data.data);
-            setUpdateField(response.data.data);
+            if (response.data.data) {
+                setTaskData(response.data.data);
+                setUpdateField(response.data.data);
+            } else {
+                if (response.data.status === "Unauthorized Access!!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else {
+                    if (!response.data.data) {
+                        setTaskData([])
+                        setUpdateField({
+                            "id": '',
+                            "batchId": '',
+                            "taskTitle": '',
+                            "taskDesc": '',
+                            "taskType": '',
+                            "totalScore": '',
+                            "dueDate": '',
+                            "taskFileUpload": '',
+                        })
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
+            }
         });
     };
 
@@ -292,20 +315,20 @@ const AdminUpdateTask = () => {
                                                 Task Type
                                             </label>
                                             <select
-                                            className="form-select"
-                                            name="taskType"
-                                            id="taskType"
-                                            value={updateField.taskType}
-                                            onChange={updateHandler}
-                                        >
-                                            <option value="">Select Type</option>
-                                            <option value="Mini Project">Mini Project</option>
-                                            <option value="Project">Project</option>
-                                            <option value="Live Project">Live Project</option>
-                                            <option value="Daily Task">Daily Task</option>
-                                            <option value="Weekly Task">Weekly Task</option>
-                                            <option value="Homework">Homework</option>
-                                        </select>
+                                                className="form-select"
+                                                name="taskType"
+                                                id="taskType"
+                                                value={updateField.taskType}
+                                                onChange={updateHandler}
+                                            >
+                                                <option value="">Select Type</option>
+                                                <option value="Mini Project">Mini Project</option>
+                                                <option value="Project">Project</option>
+                                                <option value="Live Project">Live Project</option>
+                                                <option value="Daily Task">Daily Task</option>
+                                                <option value="Weekly Task">Weekly Task</option>
+                                                <option value="Homework">Homework</option>
+                                            </select>
                                             {errors.taskType && (<span style={{ color: 'red' }} className="error">{errors.taskType}</span>)}
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -327,7 +350,7 @@ const AdminUpdateTask = () => {
                                             </label>
                                             <input
                                                 onChange={updateHandler}
-                                                type="text"
+                                                type="date"
                                                 className="form-control"
                                                 name="dueDate"
                                                 value={updateField.dueDate}

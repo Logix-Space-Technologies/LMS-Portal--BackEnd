@@ -22,11 +22,17 @@ const StudentViewTasks = () => {
 
     let [taskId, setTaskId] = useState({})
     const navigate = useNavigate()
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studViewTask";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getData = () => {
         let data = { "id": sessionStorage.getItem("studentId") };
@@ -99,18 +105,25 @@ const StudentViewTasks = () => {
             "gitLink": inputField.gitLink,
             "remarks": inputField.remarks
         };
+        setShowModal(false)
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    alert("Task Submitted Successfully !!");
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert("Task Submitted Successfully !!");
                     getData()
                     setInputField({
                         "gitLink": "",
                         "remarks": ""
-                    });
+                    }, 500);
+                    })
                     setShowModal(false)
                     setShowOverlay(false); // Close the overlay
                 } else {
+                    setShowWaitingModal()
                     if (response.data.status === "Validation failed" && response.data.data.gitLink) {
                         alert(response.data.data.gitLink);
                         setShowModal(true)
@@ -125,7 +138,10 @@ const StudentViewTasks = () => {
                                 navigate("/studentLogin")
                                 sessionStorage.clear()
                             } else {
-                                alert(response.data.status);
+                                closeWaitingModal()
+                                setTimeout(() => {
+                                    alert(response.data.status)
+                                }, 500)
                             }
                         }
                     }
@@ -408,6 +424,44 @@ const StudentViewTasks = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     );
 };

@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
 
 const AdminLogin = () => {
-    
+
     const [inputField, setInputField] = useState(
         {
             "userName": "",
@@ -12,14 +12,89 @@ const AdminLogin = () => {
         }
     )
 
+    const [updateField, setUpdateField] = useState(
+        {
+            "username": "",
+            "password": ""
+        }
+    )
+
     const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const apiUrl = global.config.urls.api.server + "/api/lms/"
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/adminforgotpassword"
     const navigate = useNavigate()
 
     const inputHandler = (event) => {
         setErrors({}); // Clear previous errors
         setInputField({ ...inputField, [event.target.name]: event.target.value })
+    }
+
+    const updateHandler = (event) => {
+        setErrors({}); // Clear previous errors
+        setUpdateField({ ...updateField, [event.target.name]: event.target.value })
+    }
+
+    const forgotPassword = () => {
+        setShowModal(true)
+        setShowOverlay(true)
+    }
+
+    const closeModal = () => {
+        setErrors({})
+        setShowModal(false);
+        setShowOverlay(false)
+        setUpdateField({
+            "username": "",
+            "password": ""
+        });
+    };
+
+    const handleSubmit = () => {
+        let newErrors = {};
+        if (!updateField.username) {
+            newErrors.username = "Username is required!";
+        }
+        if (!updateField.password) {
+            newErrors.password = "Password is required!";
+        } else if (updateField.password.length < 8) {
+            newErrors.password = "Password must be at least 8 characters";
+        } else if (updateField.password.length > 12) {
+            newErrors.password = "Password should not exceed 12 characters";
+        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(updateField.password)) {
+            newErrors.password = "Password should include one uppercase letter, one lowercase letter, numbers and special characters";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        let data = {
+            "userName": updateField.username,
+            "Password": updateField.password
+        }
+
+        axios.post(apiUrl2, data).then(
+            (response) => {
+                if (response.data.status === "success") {
+                    closeModal()
+                    alert("Password Reset Successful !!!\nPlease Login.")
+                } else if (response.data.status === "Validation failed" && response.data.data.userName) {
+                    alert(response.data.data.userName);
+                    setShowModal(true)
+                    setShowOverlay(true)
+                } else if (response.data.status === "Validation failed" && response.data.data.newPassword) {
+                    alert(response.data.data.newPassword);
+                    setShowModal(true)
+                    setShowOverlay(true)
+                } else {
+                    alert(response.data.status)
+                }
+            }
+        )
     }
 
     const readValue = () => {
@@ -61,7 +136,7 @@ const AdminLogin = () => {
             }
         )
     }
-    
+
     return (
         <div class="container">
             <div class="row justify-content-center align-items-center min-vh-100">
@@ -82,8 +157,16 @@ const AdminLogin = () => {
                                     {errors.userName && <span style={{ color: 'red' }} className="error">{errors.userName}</span>}
                                 </div>
                                 <div class="mb-3 text-start">
-                                    <label for="" class="form-label">Password</label>
-                                    <input type="password" name="Password" value={inputField.Password} onChange={inputHandler} class="form-control" />
+                                    <div style={{ display: 'flex', alignItems: 'right', justifyContent: 'flex-start' }}>
+                                        <label for="" class="form-label" style={{ marginRight: '740px' }}>Password</label>
+                                        <Link onClick={forgotPassword} style={{ textDecoration: 'underline', color: 'blue' }}>Forgot Password?</Link>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <input type={showPassword ? "text" : "password"} name="Password" value={inputField.Password} onChange={inputHandler} class="form-control" />
+                                        <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
+                                            <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
+                                        </span>
+                                    </div>
                                     {errors.Password && <span style={{ color: 'red' }} className="error">{errors.Password}</span>}
                                 </div>
                             </form>
@@ -108,6 +191,54 @@ const AdminLogin = () => {
                     </div>
                 </div>
             </div>
+            {showModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel">Reset Password</h1>
+                                <button type="button" className="btn-close" onClick={closeModal} />
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <label htmlFor="message-text" className="col-form-label">Username:</label>
+                                        <input type="text" onChange={updateHandler} value={updateField.username} name="username" className="form-control" id="message-text" defaultValue={""} />
+                                        {errors.username && <span style={{ color: 'red' }} className="error">{errors.username}</span>}
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="message-text" className="col-form-label">Password:</label>
+                                        <input type="password" onChange={updateHandler} value={updateField.password} name="password" className="form-control" id="message-text" defaultValue={""} />
+                                        {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
+                                <button type="button" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }

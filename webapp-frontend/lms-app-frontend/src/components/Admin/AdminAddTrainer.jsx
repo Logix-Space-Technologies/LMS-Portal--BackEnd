@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar';
 import axios from 'axios';
 import '../../config/config'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminAddTrainer = () => {
@@ -16,7 +16,11 @@ const AdminAddTrainer = () => {
         "confirmpassword": ""
     })
 
+    const navigate = useNavigate()
+
     const [file, setFile] = useState(null)
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [fileType, setFileType] = useState("");
 
@@ -85,59 +89,44 @@ const AdminAddTrainer = () => {
                         confirmpassword: '',
                         profilePicture: ''
                     })
+                } else if (response.data.status === "Validation failed" && response.data.data.trainerName) {
+                    alert(response.data.data.trainerName)
+                } else if (response.data.status === "Validation failed" && response.data.data.about) {
+                    alert(response.data.data.about)
+                } else if (response.data.status === "Validation failed" && response.data.data.email) {
+                    alert(response.data.data.email)
+                } else if (response.data.status === "Validation failed" && response.data.data.phoneNumber) {
+                    alert(response.data.data.phoneNumber)
+                } else if (response.data.status === "Validation failed" && response.data.data.password) {
+                    alert(response.data.data.password)
+                } else if (response.data.status === "Validation failed" && response.data.data.date) {
+                    alert(response.data.data.date)
+                } else if (response.data.status === "Unauthorized access!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.trainerName) {
-                        alert(response.data.data.trainerName)
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.about) {
-                            alert(response.data.data.about)
-                        } else {
-                            if (response.data.status === "Validation failed" && response.data.data.email) {
-                                alert(response.data.data.email)
-                            } else {
-                                if (response.data.status === "Validation failed" && response.data.data.phoneNumber) {
-                                    alert(response.data.data.phoneNumber)
-                                } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.password) {
-                                        alert(response.data.data.password)
-                                    } else {
-                                        if (response.data.status === "Validation failed" && response.data.data.date) {
-                                            alert(response.data.data.date)
-                                        } else {
-                                            alert(response.data.status)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    alert(response.data.status)
                 }
-            }
-            ).catch(error => {
+            }).catch(error => {
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        console.log("Status 400:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        console.log("Status 500:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
                     alert(error.request);
                 } else if (error.message) {
-                    console.log('Error', error.message);
                     alert('Error', error.message);
                 } else {
                     alert(error.config);
-                    console.log(error.config);
                 }
             })
         } else {
@@ -158,7 +147,13 @@ const AdminAddTrainer = () => {
             errors.email = 'Email is required';
         }
         if (!data.password.trim()) {
-            errors.password = 'Password is required';
+            errors.password = 'New Password is required';
+        } else if (data.password.length < 8) {
+            errors.password = 'Password must be at least 8 characters';
+        } else if (data.password.length > 12) {
+            errors.password = 'Password should not exceed 12 characters';
+        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(data.password)) {
+            errors.password = 'Password should include one uppercase letter, one lowercase letter, numbers and special characters';
         }
         if (!data.phoneNumber.trim()) {
             errors.phoneNumber = 'Contact Details required';
@@ -271,20 +266,28 @@ const AdminAddTrainer = () => {
                                         <label htmlFor="password" className="form-label">
                                             Password <span className="text-danger">*</span>
                                         </label>
-                                        <input
-                                            type="password"
-                                            className="form-control"
-                                            name="password"
-                                            id="password"
-                                            value={inputField.password}
-                                            onChange={inputHandler}
-                                        />
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <input
+                                                type={showPassword ? "text" : "password"}
+                                                className="form-control"
+                                                name="password"
+                                                id="password"
+                                                value={inputField.password}
+                                                onChange={inputHandler}
+                                            />
+                                            <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
+                                                <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
+                                            </span>
+                                        </div>
                                         {errors.password && (<span style={{ color: 'red' }} className="error">{errors.password}</span>)}
                                     </div>
                                     <div class="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                         <label for="password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
                                         <div class="input-group">
-                                            <input type="password" class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
+                                            <input type={showConfirmPassword ? "text" : "password"} class="form-control" name="confirmpassword" id="confirmpassword" onChange={inputHandler} value={inputField.confirmpassword} />
+                                            <span className="input-group-text" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                                <i className={showConfirmPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="toggleConfirmPassword"></i>
+                                            </span>
                                         </div>
                                         {errors.confirmpassword && <span style={{ color: 'red' }} className="error">{errors.confirmpassword}</span>}
                                     </div>

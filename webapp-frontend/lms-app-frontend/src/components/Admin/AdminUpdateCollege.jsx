@@ -130,7 +130,12 @@ const AdminUpdateCollege = () => {
                                         if (response.data.status === "Validation Failed" && response.data.data.mobile) {
                                             alert(response.data.data.mobile)
                                         } else {
-                                            alert(response.data.status)
+                                            if (response.data.status === "Unauthorized Access!!!") {
+                                                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                                sessionStorage.clear()
+                                            } else {
+                                                alert(response.data.status)
+                                            }
                                         }
                                     }
                                 }
@@ -144,25 +149,20 @@ const AdminUpdateCollege = () => {
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        console.log("Status 400:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        console.log("Status 500:", error.response.data);
                         alert(error.response.data.status)
                         // Additional logic for status 500
                     } else {
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
                     alert(error.request);
                 } else if (error.message) {
-                    console.log('Error', error.message);
                     alert('Error', error.message);
                 } else {
                     alert(error.config);
-                    console.log(error.config);
                 }
             })
         } else {
@@ -188,7 +188,7 @@ const AdminUpdateCollege = () => {
         if (!data.collegeMobileNumber.trim()) {
             errors.collegeMobileNumber = 'Mobile Number is required';
         }
-        if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+        if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
             errors.file = "File must be in jpg/jpeg/png/webp/heif format";
         }
         return errors;
@@ -213,8 +213,32 @@ const AdminUpdateCollege = () => {
         }
         axios.post(apiUrl2, data, axiosConfig).then(
             (response) => {
-                setClgData(response.data.data)
-                setUpdateField(response.data.data[0])
+                if (response.data.data) {
+                    setClgData(response.data.data)
+                    setUpdateField(response.data.data[0])
+                } else {
+                    if (response.data.status === "Unauthorized Access!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setClgData([])
+                            setUpdateField({
+                                "id": "",
+                                "collegeName": "",
+                                "collegeCode": "",
+                                "collegeAddress": "",
+                                "website": "",
+                                "email": "",
+                                "collegePhNo": "",
+                                "collegeMobileNumber": "",
+                                "collegeImage": ""
+                            })
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }
@@ -251,7 +275,7 @@ const AdminUpdateCollege = () => {
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label htmlFor="" className="form-label">College Code</label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="collegeCode" value={updateField.collegeCode}/>
+                                            <input onChange={updateHandler} type="text" className="form-control" name="collegeCode" value={updateField.collegeCode} />
                                         </div>
                                         <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label for="" class="form-label">College Address</label>

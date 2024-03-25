@@ -12,6 +12,9 @@ const StudentUpdateSubmittedTask = () => {
         remarks: ''
     });
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const navigate = useNavigate();
 
     const [errors, setErrors] = useState({});
@@ -19,10 +22,16 @@ const StudentUpdateSubmittedTask = () => {
     const apiUrl = global.config.urls.api.server + '/api/lms/studentviewsubmittedtask';
     const apiUrl2 = global.config.urls.api.server + '/api/lms/studupdatesubmittedtask';
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    };
+
     const updateSubTaskHandler = (event) => {
         setErrors({})
         setUpdateSubTaskField({ ...updateSubTaskField, [event.target.name]: event.target.value });
     };
+
 
     const getData = () => {
         let data = { id: sessionStorage.getItem('subtaskId') };
@@ -52,6 +61,8 @@ const StudentUpdateSubmittedTask = () => {
     const updateSubmittedTask = (e) => {
         e.preventDefault();
         const validationErrors = validateForm(updateSubTaskField);
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -68,19 +79,26 @@ const StudentUpdateSubmittedTask = () => {
         axios.post(apiUrl2, data, axiosConfig2).then((response) => {
             if (Object.keys(validationErrors).length === 0) {
                 if (response.data.status === 'success') {
-                    alert('Task Updated Successfully!!!');
-                    navigate('/studentViewTask');
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert('Task Updated Successfully!!!');
+                        navigate('/studentViewTask');
+                    }, 500)
                 } else {
                     if (response.data.status === 'Unauthorized access!!') {
                         navigate('/studentLogin');
                         sessionStorage.clear();
                     } else {
+                        setShowWaitingModal()
                         if (response.data.status === 'Validation failed' && response.data.data.gitLink) {
                             alert(response.data.data.gitLink);
                         } else if (response.data.status === 'Validation failed' && response.data.data.Remarks) {
                             alert(response.data.data.Remarks);
                         } else {
-                            alert(response.data.status);
+                            closeWaitingModal()
+                            setTimeout(() => {
+                                alert(response.data.status)
+                            }, 500)
                         }
                     }
                 }
@@ -95,7 +113,7 @@ const StudentUpdateSubmittedTask = () => {
 
         if (!data.gitLink.trim()) {
             errors.gitLink = 'Git Link is required.';
-        } else if (!/^https:\/\/github\.com\/[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/i.test(data.gitLink)){
+        } else if (!/^https:\/\/github\.com\/[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/i.test(data.gitLink)) {
             errors.gitLink = "Invalid Git Link."
         }
 
@@ -103,7 +121,7 @@ const StudentUpdateSubmittedTask = () => {
             errors.remarks = 'Remarks is required!';
         }
 
-        return errors; // Add this line to return the errors object
+        return errors;
     };
 
     useEffect(() => {
@@ -152,15 +170,53 @@ const StudentUpdateSubmittedTask = () => {
                         <button onClick={updateSubmittedTask} className="btn btn-primary">
                             Update
                         </button>
-                        {/* <!-- Adding a back button with some spacing --> */}
                         <button onClick={() => navigate(-1)} className="btn btn-secondary">
                             Back
                         </button>
                     </div>
                 </div>
-            </section>
-        </div>
-    );
+                </section>
+                {showWaitingModal && (
+                    <div className="modal show d-block" tabIndex={-1}>
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                                </div>
+                                <div className="modal-body">
+                                    <>
+                                        <div className="mb-3">
+                                            <p>Processing Request. Do Not Refresh.</p>
+                                        </div>
+                                    </>
+                                </div>
+                                <div className="modal-footer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {showOverlay && (
+                    <div
+                        className="modal-backdrop fade show"
+                        onClick={() => {
+                            setShowWaitingModal(false);
+                            setShowOverlay(false);
+                        }}
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            zIndex: 1040, // Ensure this is below your modal's z-index
+                        }}
+                    ></div>
+                )}
+            </div>
+        );
 };
 
 export default StudentUpdateSubmittedTask;
+

@@ -12,6 +12,7 @@ const AdminUpdateTrainer = () => {
     const [errors, setErrors] = useState({})
     const [fileType, setFileType] = useState("");
 
+
     const [updateField, setUpdateField] = useState(
         {
             "id": sessionStorage.getItem("trainerId"),
@@ -63,7 +64,6 @@ const AdminUpdateTrainer = () => {
                     "key": currentKey
                 }
             }
-            console.log(axiosConfig)
             let data = {}
             if (file) {
                 data = {
@@ -92,7 +92,7 @@ const AdminUpdateTrainer = () => {
                             "profilePicture": ""
                         })
                         alert("Profile Updated Successfully")
-                        navigate("/adminviewalltrainers")
+                        navigate(-1)
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.trainerName) {
                             alert(Response.data.data.trainerName)
@@ -103,7 +103,12 @@ const AdminUpdateTrainer = () => {
                                 if (Response.data.status === "Validation failed" && Response.data.data.phoneNumber) {
                                     alert(Response.data.data.phoneNumber)
                                 } else {
-                                    alert(Response.data.status)
+                                    if (Response.data.status === "Unauthorized Access!!!") {
+                                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                        sessionStorage.clear()
+                                    } else {
+                                        alert(Response.data.status)
+                                    }
                                 }
                             }
                         }
@@ -127,14 +132,11 @@ const AdminUpdateTrainer = () => {
                         alert(error.response.data.status)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
                     alert(error.request);
                 } else if (error.message) {
-                    console.log('Error', error.message);
                     alert('Error', error.message);
                 } else {
                     alert(error.config);
-                    console.log(error.config);
                 }
             })
         } else {
@@ -154,7 +156,7 @@ const AdminUpdateTrainer = () => {
         } else if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
             errors.file = "File must be in jpg/jpeg/png/webp/heif format";
         }
-        
+
         return errors;
     }
 
@@ -177,8 +179,30 @@ const AdminUpdateTrainer = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                settrainerData(response.data.Trainers)
-                setUpdateField(response.data.Trainers[0])
+                if (response.data.Trainers) {
+                    settrainerData(response.data.Trainers)
+                    setUpdateField(response.data.Trainers[0])
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.Trainers) {
+                            settrainerData([])
+                            setUpdateField(
+                                {
+                                    "id": "",
+                                    "trainerName": "",
+                                    "about": "",
+                                    "phoneNumber": "",
+                                    "profilePicture": ""
+                                }
+                            )
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
             }
         )
     }

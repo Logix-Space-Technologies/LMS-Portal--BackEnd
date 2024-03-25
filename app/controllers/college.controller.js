@@ -170,7 +170,7 @@ exports.collegeCreate = (request, response) => {
             });
         } catch (err) {
             fs.unlinkSync(file.path);
-            response.status(500).json({ "status": err.message });
+            return response.status(500).json({ "status": err.message });
         }
     });
 };
@@ -285,7 +285,7 @@ exports.updateCollege = (request, response) => {
                                 if (err.kind === "not_found") {
                                     return response.json({ "status": "College Details Not Found.." });
                                 } else {
-                                    response.json({ "status": err });
+                                    return response.json({ "status": err });
                                 }
                             } else {
                                 if (key == "lmsapp") {
@@ -295,12 +295,12 @@ exports.updateCollege = (request, response) => {
                             }
                         });
                     } else {
-                        response.json({ "status": "Unauthorized Access!!!" });
+                        return response.json({ "status": "Unauthorized Access!!!" });
                     }
                 });
             } catch (err) {
                 fs.unlinkSync(file.path);
-                response.status(500).json({ "status": err.message });
+                return response.status(500).json({ "status": err.message });
             }
         } else {
             const collegeUpdateToken = request.headers.token;
@@ -362,7 +362,7 @@ exports.updateCollege = (request, response) => {
                             if (err.kind === "not_found") {
                                 return response.json({ "status": "College Details Not Found.." });
                             } else {
-                                response.json({ "status": err });
+                                return response.json({ "status": err });
                             }
                         } else {
                             if (key == "lmsapp") {
@@ -372,7 +372,7 @@ exports.updateCollege = (request, response) => {
                         }
                     });
                 } else {
-                    response.json({ "status": "Unauthorized Access!!!" });
+                    return response.json({ "status": "Unauthorized Access!!!" });
                 }
             });
         }
@@ -382,7 +382,6 @@ exports.updateCollege = (request, response) => {
 
 exports.deleteCollege = (request, response) => {
     const collegedeleteToken = request.headers.token
-    console.log(collegedeleteToken)
     jwt.verify(collegedeleteToken, "lmsapp", (err, decoded) => {
         if (decoded) {
             const clgDlt = new College({
@@ -391,7 +390,6 @@ exports.deleteCollege = (request, response) => {
             College.delete(clgDlt, (err, data) => {
                 if (err) {
                     if (err.kind === "not_found") {
-                        console.log({ "status": "College id not found." })
                         return response.json({ "status": "College id not found." })
                     } else {
                         return response.json({ "status": err })
@@ -418,22 +416,21 @@ exports.searchCollege = (request, response) => {
     jwt.verify(collegeSearchToken, collegeSearchKey, (err, decoded) => {
         if (decoded) {
             if (!collegeSearchQuery) {
-                console.log("Search Item is required.")
                 return response.json({ "status": "Search Item is required." })
             }
             College.searchCollege(collegeSearchQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err })
+                    return response.json({ "status": err })
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found." })
+                        return response.json({ "status": "No Search Items Found." })
                     } else {
-                        response.json({ "status": "Result Found", "data": data })
+                        return response.json({ "status": "Result Found", "data": data })
                     }
                 }
             })
         } else {
-            response.json({ "status": "Unauthorized User!!" })
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
@@ -465,7 +462,6 @@ exports.viewOneClgDetail = (request, response) => {
     const clgToken = request.headers.token;
     const key = request.headers.key;
     const clgId = request.body.id;
-    console.log(clgId)
 
     jwt.verify(clgToken, key, (err, decoded) => {
         if (decoded) {

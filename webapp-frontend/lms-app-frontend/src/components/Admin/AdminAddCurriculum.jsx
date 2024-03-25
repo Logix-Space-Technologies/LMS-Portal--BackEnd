@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import '../../config/config'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const AdminAddCurriculum = () => {
 
@@ -11,8 +11,10 @@ const AdminAddCurriculum = () => {
         "collegeId": "",
         "batchId": "",
         "curriculumTitle": "",
-        "curriculumDesc": "",
+        "curriculumDesc": ""
     })
+
+    const navigate = useNavigate()
 
     const [file, setFile] = useState(null)
     const [key, setKey] = useState('');
@@ -60,7 +62,16 @@ const AdminAddCurriculum = () => {
         };
         axios.post(apiUrl2, {}, axiosConfig).then(
             (response) => {
-                setOutputField(response.data.data)
+                if (response.data.data) {
+                    setOutputField(response.data.data)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setOutputField([])
+                } else {
+                    alert(response.data.status)
+                }
             }
         )
     }
@@ -82,7 +93,16 @@ const AdminAddCurriculum = () => {
             }
         };
         axios.post(batchUrl, { collegeId }, axiosConfig2).then((response) => {
-            setBatches(response.data)
+            if (response.data) {
+                setBatches(response.data)
+            } else if (response.data.status === "Unauthorized User!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                sessionStorage.clear()
+            } else if (!response.data) {
+                setBatches([])
+            } else {
+                alert(response.data.status)
+            }
         })
     }
 
@@ -139,27 +159,21 @@ const AdminAddCurriculum = () => {
                         curriculumDesc: '',
                         curriculumFileLink: '',
                     })
+                } else if (response.data.status === "Validation failed" && response.data.data.addedBy) {
+                    alert(response.data.data.addedBy)
+                } else if (response.data.status === "Validation failed" && response.data.data.batchId) {
+                    alert(response.data.data.batchId)
+                } else if (response.data.status === "Validation failed" && response.data.data.curriculumTitle) {
+                    alert(response.data.data.curriculumTitle)
+                } else if (response.data.status === "Validation failed" && response.data.data.curriculumDesc) {
+                    alert(response.data.data.curriculumDesc)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.addedBy) {
-                        alert(response.data.data.addedBy)
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.batchId) {
-                            alert(response.data.data.batchId)
-                        } else {
-                            if (response.data.status === "Validation failed" && response.data.data.curriculumTitle) {
-                                alert(response.data.data.curriculumTitle)
-                            } else {
-                                if (response.data.status === "Validation failed" && response.data.data.curriculumDesc) {
-                                    alert(response.data.data.curriculumDesc)
-                                } else {
-                                    alert(response.data.status)
-                                }
-                            }
-                        }
-                    }
+                    alert(response.data.status)
                 }
-            }
-            ).catch(error => {
+            }).catch(error => {
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;

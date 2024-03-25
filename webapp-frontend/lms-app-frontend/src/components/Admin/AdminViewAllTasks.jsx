@@ -41,7 +41,7 @@ const AdminViewAllTasks = () => {
                     setTaskData(response.data.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
@@ -89,23 +89,19 @@ const AdminViewAllTasks = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-        axios.post(deleteUrl, { id }, axiosConfig)
-            .then((response) => {
-                if (response.data.status === "Task Deleted.") {
-                    alert("Task deleted successfully");
-                    getData()
+        axios.post(deleteUrl, { id }, axiosConfig).then((response) => {
+            if (response.data.status === "Task Deleted.") {
+                alert("Task deleted successfully");
+                getData()
+            } else {
+                if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Unauthorized User!!") {
-                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
-                        sessionStorage.clear()
-                    } else {
-                        alert(response.data.status)
-                    }
+                    alert(response.data.status)
                 }
-            })
-            .catch(error => {
-                console.error("Delete failed:", error);
-            })
+            }
+        })
     };
 
     const handleUpdateClick = (taskId) => {
@@ -155,6 +151,7 @@ const AdminViewAllTasks = () => {
                             <th scope="col" className="px-6 py-3">Total Score</th>
                             <th scope="col" className="px-6 py-3">Due Date</th>
                             <th scope="col" className="px-6 py-3">Added Date</th>
+                            <th scope="col" className="px-6 py-3">Updated Date</th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             {key === "lmsapp" && (
@@ -175,6 +172,12 @@ const AdminViewAllTasks = () => {
                                         <td className="px-6 py-4">{value.totalScore}</td>
                                         <td className="px-6 py-4">{value.dueDate}</td>
                                         <td className="px-6 py-4">{value.addedDate}</td>
+                                        {value.updatedDate !== null && (
+                                            <td className="px-6 py-4">{value.updatedDate}</td>
+                                        )}
+                                        {value.updatedDate === null && (
+                                            <td className="px-6 py-4">NIL</td>
+                                        )}
                                         <td className="px-6 py-4">
                                             <Link target="_blank" to={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View File</Link>
                                         </td>
@@ -247,7 +250,7 @@ const AdminViewAllTasks = () => {
                             Are you sure you want to delete this task?
                         </div>
                         <div className="flex justify-center">
-                            <button onClick={confirmDelete} className="btn btn-primary" style={{marginRight:'16px'}}>Confirm Delete</button>
+                            <button onClick={confirmDelete} className="btn btn-primary" style={{ marginRight: '16px' }}>Confirm Delete</button>
                             <button onClick={() => setShowConfirmation(false)} className="btn btn-danger">Cancel</button>
                         </div>
                     </div>

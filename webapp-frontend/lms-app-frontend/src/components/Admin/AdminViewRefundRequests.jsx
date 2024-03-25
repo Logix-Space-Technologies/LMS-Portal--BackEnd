@@ -57,7 +57,7 @@ const AdminViewRefundRequests = () => {
           setRefundRequests(response.data.data);
         } else {
           if (response.data.status === "Unauthorized User!!") {
-            navigate("/")
+            { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
             sessionStorage.clear()
           } else {
             if (!response.data.data) {
@@ -138,7 +138,7 @@ const AdminViewRefundRequests = () => {
             });
           } else {
             if (response.data.status === "Unauthorized User!!") {
-              navigate("/")
+              { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
               sessionStorage.clear()
             } else {
               alert(response.data.status)
@@ -197,7 +197,7 @@ const AdminViewRefundRequests = () => {
                   alert(response.data.data.approvedAmnt)
                 } else {
                   if (response.data.status === "Unauthorized User!!") {
-                    {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                   } else {
                     alert(response.data.status)
