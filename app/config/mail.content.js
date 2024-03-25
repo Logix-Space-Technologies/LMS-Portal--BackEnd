@@ -2983,6 +2983,127 @@ function SessionRemainderRecordedHTMLContent(studName, sessionName, date, time, 
   return content;
 }
 
+function SessionRemainderClgStaffHTMLContent(collegeStaffName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Upcoming Session Reminder</title>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              line-height: 1.6;
+              margin: 0;
+              padding: 0;
+          }
+  
+          .container {
+              max-width: 600px;
+              margin: auto;
+              padding: 20px;
+              border: 1px solid #ccc;
+              border-radius: 5px;
+              background-color: #f9f9f9;
+          }
+  
+          h2 {
+              color: #333;
+              text-align: center;
+          }
+  
+          .logo-header img {
+              max-width: 30%;
+              height: auto;
+          }
+  
+          p {
+              color: #555;
+          }
+  
+          .button {
+              display: inline-block;
+              background-color: #007bff;
+              color: #fff;
+              text-decoration: none;
+              padding: 10px 20px;
+              border-radius: 5px;
+          }
+  
+          .footer {
+              text-align: center;
+              font-size: 0.8em;
+              /* Reduced font size for the footer */
+          }
+      </style>
+  </head>
+  
+  <body>
+      <div class="container">
+          <div class="logo-header">
+              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+          </div>
+          <h2>Reminder Regarding Upcoming Session</h2>
+          <p>Dear ${collegeStaffName},</p>
+          <p>This is a reminder regarding our upcoming session scheduled on ${date}.</p>
+          <p>Here are the details of the session:</p>
+          <ul>
+              <li><strong>Batch Name:</strong> ${batchName}</li>
+              <li><strong>Session Name:</strong> ${sessionName}</li>
+              <li><strong>Type:</strong> ${type}</li>
+              <li><strong>Date:</strong> ${date}</li>
+              <li><strong>Time:</strong> ${time}</li>
+              <li><strong>Link or Venue:</strong> ${venueORlink}</li>
+          </ul>
+          <p>Please ensure that this reminder reaches all students and encourage them to attend the session. We look
+              forward
+              to a session filled with learning and engagement.</p>
+          <p>If you have any questions, feel free to reach out to us !!</p>
+          <p>Regards,</p>
+          <p>The Link Ur Codes Team</p>
+          <br>
+          <div class="footer">
+              <p>© ${currentYear} Link Ur Codes. All rights reserved.</p>
+          </div>
+      </div>
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function SessionRemainderClgStaffTextContent(collegeStaffName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${collegeStaffName},
+
+  This is a reminder regarding our upcoming session scheduled on ${date}.
+  
+  Here are the details of the session:
+  
+  Batch Name: ${batchName}
+  Session Name: ${sessionName}
+  Type: ${type}
+  Date: ${date}
+  Time: ${time}
+  Link or Venue: ${venueORlink}
+  
+  Please ensure that this reminder reaches all students and encourage them to attend the session. We look forward to a session filled with learning and engagement.
+  
+  If you have any questions, feel free to reach out to us !!
+  
+  Regards,
+  
+  The Link Ur Codes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+  return content;
+}
+
 function SessionRemainderOfflineTextContent(studName, sessionName, date, time, venueORlink) {
   // Get the current year
   const currentYear = new Date().getFullYear();
@@ -3127,7 +3248,9 @@ module.exports = {
   SessionRemainderOnlineTextContent,
   SessionRemainderRecordedTextContent,
   cancelSessionClgStaffHTMLContent,
-  cancelSessionClgStaffTextContent
+  cancelSessionClgStaffTextContent,
+  SessionRemainderClgStaffHTMLContent,
+  SessionRemainderClgStaffTextContent
 
 };
 

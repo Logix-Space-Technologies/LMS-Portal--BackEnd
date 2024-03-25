@@ -552,15 +552,15 @@ exports.sendRemainderMail = (request, response) => {
                                 if (type === "Offline") {
                                     const SessionRemainderHtmlContent = mailContents.SessionRemainderOfflineHTMLContent(studentName, sessionName, sessionDate, sessionTime, venueORlink);
                                     const SessionRemainderTextContent = mailContents.SessionRemainderOfflineTextContent(studentName, sessionName, sessionDate, sessionTime, venueORlink);
-                                    mail.sendEmail(studentEmail, 'Session Remainder', SessionRemainderHtmlContent, SessionRemainderTextContent);
+                                    mail.sendEmail(studentEmail, `Remainder Regarding Session Scheduled On ${sessionDate}`, SessionRemainderHtmlContent, SessionRemainderTextContent);
                                 } else if (type === "Online") {
                                     const SessionRemainderHtmlContent = mailContents.SessionRemainderOnlineHTMLContent(studentName, sessionName, sessionDate, sessionTime, venueORlink);
                                     const SessionRemainderTextContent = mailContents.SessionRemainderOnlineTextContent(studentName, sessionName, sessionDate, sessionTime, venueORlink);
-                                    mail.sendEmail(studentEmail, 'Session Remainder', SessionRemainderHtmlContent, SessionRemainderTextContent);
+                                    mail.sendEmail(studentEmail, `Remainder Regarding Session Scheduled On ${sessionDate}`, SessionRemainderHtmlContent, SessionRemainderTextContent);
                                 } else {
                                     const SessionRemainderHtmlContent = mailContents.SessionRemainderRecordedHTMLContent(studentName, sessionName, sessionDate, sessionTime, venueORlink);
                                     const SessionRemainderTextContent = mailContents.SessionRemainderRecordedTextContent(studentName, sessionName, sessionDate, sessionTime, venueORlink);
-                                    mail.sendEmail(studentEmail, 'Session Remainder', SessionRemainderHtmlContent, SessionRemainderTextContent);
+                                    mail.sendEmail(studentEmail, `Remainder Regarding Session Scheduled On ${sessionDate}`, SessionRemainderHtmlContent, SessionRemainderTextContent);
                                 }
                             })
                             return response.json({ "status": "success" });
