@@ -3146,7 +3146,7 @@ function SessionRemainderOnlineTextContent(studName, sessionName, date, time, ve
   Session Title: ${sessionName}
   Date: ${date}
   Time: ${time}
-  Meeting Link: ${VenueORlink}
+  Meeting Link: ${venueORlink}
   It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!
   
   For the full session schedule and any changes, please check our online student portal or mobile app.
