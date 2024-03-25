@@ -137,7 +137,7 @@ const AdminStaffForgotPassword = () => {
                                             </div>
                                             <br></br>
                                             <div className="mb-3">
-                                                <Link className="btn btn-danger" onClick={() => backFunc()}>Back</Link>
+                                            <button className="btn btn-danger" onClick={() => backFunc()}>Back</button>
                                             </div>
                                         </ul>
                                     </div>

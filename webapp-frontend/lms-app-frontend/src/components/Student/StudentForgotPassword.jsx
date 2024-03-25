@@ -26,13 +26,15 @@ const StudentForgotPassword = () => {
     }
 
     const backFunc = () => {
-        navigate("/studentLogin");
         sessionStorage.clear()
         setUpdateField({
             "studEmail": "",
             "Password": "",
             "ConfirmPassword": ""
         })
+        setTimeout(()=>{
+            navigate("/studentLogin");
+        }, 500)
     }
 
     const readNewValue = () => {
@@ -150,7 +152,7 @@ const StudentForgotPassword = () => {
                                                 </div>
                                                 <br></br>
                                                 <div className="mb-3">
-                                                    <Link className="btn btn-danger" onClick={() => backFunc()}>Back</Link>
+                                                <button className="btn btn-danger" onClick={() => backFunc()}>Back</button>
                                                 </div>
                                             </ul>
                                         </div>
