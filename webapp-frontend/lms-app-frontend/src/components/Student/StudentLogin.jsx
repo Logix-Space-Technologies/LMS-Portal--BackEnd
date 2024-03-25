@@ -11,9 +11,12 @@ const StudentLogin = () => {
     });
 
     const [updateField, setUpdateField] = useState({
+        studEmail:"",
         otp: ""
     })
 
+    const [state, setState] = useState(false)
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
     const [errors, setErrors] = useState({});
@@ -23,6 +26,9 @@ const StudentLogin = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/studentLogin"
     const apiUrl2 = global.config.urls.api.server + "/api/lms/studemailverifyotpsend"
     const apiUrl3 = global.config.urls.api.server + "/api/lms/studemailverificationotpverify"
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/studentotpsend"
+    const apiUrl5 = global.config.urls.api.server + "/api/lms/studentotpverification"
+
     const navigate = useNavigate()
 
     const inputHandler = (event) => {
@@ -44,6 +50,22 @@ const StudentLogin = () => {
             otp: ""
         });
     };
+
+    //Function To Close Forgot Password Modal And Overlay
+    const closeWaitingModel = () => {
+        setShowWaitingModal(false)
+        setShowOverlay(false)
+        setErrors({})
+        setUpdateField({
+            Email: "",
+            otp: ""
+        });
+    }
+
+    const forgotPassword = () => {
+        setShowWaitingModal(true)
+        setShowOverlay(true)
+    }
 
     const readValue = () => {
         let newErrors = {};
@@ -158,6 +180,66 @@ const StudentLogin = () => {
                 } else {
                     alert(response.data.status)
                     setShowModal(true)
+                    setShowOverlay(true);
+                }
+            }
+        )
+    }
+
+    const otpForgotPasswordSend = () => {
+        let newErrors = {};
+        if (!updateField.studEmail) {
+            newErrors.forgotPassEmail = "Email is required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        let data = { "studEmail": updateField.studEmail}
+        axios.post(apiUrl4, data).then(
+            (response) => {
+                if (response.data.status === "OTP sent to email.") {
+                    setShowWaitingModal(true)
+                    setShowOverlay(true);
+                    setState(true)
+                } else {
+                    alert(response.data.status)
+                    setShowModal(true)
+                    setShowOverlay(true);
+                }
+            }
+        )
+    }
+
+    const otpForgotPasswordVerify = () => {
+        let newErrors = {};
+        if (!updateField.studEmail) {
+            newErrors.forgotpassotp = "Email is required!";
+        }
+        if (!updateField.otp) {
+            newErrors.forgotpassotp = "OTP is required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        let data = { "studEmail": updateField.studEmail, "otp": updateField.otp }
+        axios.post(apiUrl5, data).then(
+            (response) => {
+                if (response.data.status === "OTP verified successfully") {
+                    setShowWaitingModal(false)
+                    setShowOverlay(false); // Close the overlay
+                    setState(false)
+                    // navigate("/adminstaffforgotpassword")
+                    alert("OTP Verified Successfully !!!")
+                    // sessionStorage.setItem("studemail", updateField.studEmail)
+                    setUpdateField({
+                        studEmail: "",
+                        otp: ""
+                    });
+                } else {
+                    alert(response.data.status)
+                    setShowWaitingModal(false)
                     setShowOverlay(true);
                 }
             }
