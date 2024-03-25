@@ -112,6 +112,7 @@ import TestSidebar from './components/Student/TestStudent/TestSidebar';
 import TopHeader from './components/Student/TestStudent/TopHeader';
 import StudentEmailVerification from './components/Student/StudentEmailVerification';
 import AdminStaffForgotPassword from './components/AdminStaff/AdminStaffForgotPassword';
+import StudentForgotPassword from './components/Student/StudentForgotPassword';
 
 
 
@@ -264,6 +265,7 @@ function App() {
           <Route path='/testSidebar' element={<TestSidebar/>}/>
           <Route path='/topHeader' element={<TopHeader/>}/>
           <Route path='/studEmailVerification' element={<StudentEmailVerification/>}/>
+          <Route path='/studforgotpass' element={<StudentForgotPassword/>}/>
 
 
 
