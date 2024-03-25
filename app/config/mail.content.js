@@ -5,85 +5,89 @@ function upcomingSessionOfflineHTMLContent(studName, sessionName, date, time, ve
   <html>
   
   <head>
-    <title>Session Created</title>
-    <style>
-      body {
-        background-color: #faf4f4;
-        color: #140101;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 20px;
-      }
+      <title>Session Created</title>
+      <style>
+          body {
+              background-color: #faf4f4;
+              color: #140101;
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 20px;
+          }
   
-      .container {
-        border-radius: 8px;
+          .container {
+              border-radius: 8px;
   
-        background-color: #ece9e9;
-        border-radius: 8px;
-        padding: 20px;
-        margin: 20px auto;
-        max-width: 600px;
-      }
+              background-color: #ece9e9;
+              border-radius: 8px;
+              padding: 20px;
+              margin: 20px auto;
+              max-width: 600px;
+          }
   
-      .logo-header img {
-        max-width: 30%;
-        height: auto;
-      }
+          .logo-header img {
+              max-width: 30%;
+              height: auto;
+          }
   
-      .content {
-        margin-top: 20px;
-        border: 2px solid #a3a0a0;
-        /* Added a border to content */
-        padding: 20px;
-      }
+          .content {
+              margin-top: 20px;
+              border: 2px solid #a3a0a0;
+              /* Added a border to content */
+              padding: 20px;
+          }
   
-      .footer {
-        text-align: center;
-        margin-top: 30px;
-        font-size: smaller;
-        color: grey;
-      }
-    </style>
+          h2 {
+              text-align: center;
+          }
+  
+          .footer {
+              text-align: center;
+              margin-top: 30px;
+              font-size: smaller;
+              color: grey;
+          }
+      </style>
   </head>
   
   <body>
   
-    <div class="container">
-      <div class="logo-header">
-        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      <div class="container">
+          <div class="logo-header">
+              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+          </div>
+          <div class="content">
+              <h2>New Session Schedule Announcement</h2>
+  
+              <p>Dear ${studName},</p>
+              <p>We are excited to announce the schedule for the upcoming session! Please find the details below:</p>
+  
+              <!-- Replace the following placeholder content with actual schedule details -->
+              <ul>
+                  <li><strong>Session Title :</strong> ${sessionName} </li>
+                  <li><strong>Date :</strong> ${date}</li>
+                  <li><strong>Time :</strong> ${time}</li>
+                  <li><strong>Location :</strong> ${venueORlink}</li>
+              </ul>
+  
+              <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your
+                  calendars!</p>
+  
+              <p>For the full session schedule and any changes, please check our online student portal or mobile app.</p>
+  
+              <p>If you have any questions, feel free to reach out to us !! </p>
+  
+              <p>We look forward to seeing you there!</p>
+  
+              <p>Best regards,</p>
+              <p>Link Ur Codes Team</p>
+              <br>
+          </div>
+  
+          <div class="footer">
+              <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+          </div>
       </div>
-      <div class="content">
-        <h2>New Session Schedule Announcement</h2>
-  
-        <p>Dear ${studName},</p>
-        <p>We are excited to announce the schedule for the upcoming session! Please find the details below:</p>
-  
-        <!-- Replace the following placeholder content with actual schedule details -->
-        <ul>
-          <li>Session Title : ${sessionName} </li>
-          <li>Date : ${date}</li>
-          <li>Time : ${time}</li>
-          <li>Location : ${venueORlink}</li>
-        </ul>
-  
-        <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your
-          calendars!</p>
-  
-        <p>For the full session schedule and any changes, please check our online student portal or mobile app.</p>
-  
-        <p>If you have any questions, feel free to reach out to us !! </p>
-  
-        <p>We look forward to seeing you there!</p>
-  
-        <p>Best regards,</p>
-        <p>Link Ur Codes Team</p>
-        <br>
-      </div>
-  
-      <div class="footer">
-        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
-      </div>
-    </div>
   
   </body>
   
@@ -98,85 +102,89 @@ function upcomingSessionOnlineHTMLContent(studName, sessionName, date, time, ven
   <html>
   
   <head>
-    <title>Session Created</title>
-    <style>
-      body {
-        background-color: #faf4f4;
-        color: #140101;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 20px;
-      }
+      <title>Session Created</title>
+      <style>
+          body {
+              background-color: #faf4f4;
+              color: #140101;
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 20px;
+          }
   
-      .container {
-        border-radius: 8px;
+          .container {
+              border-radius: 8px;
   
-        background-color: #ece9e9;
-        border-radius: 8px;
-        padding: 20px;
-        margin: 20px auto;
-        max-width: 600px;
-      }
+              background-color: #ece9e9;
+              border-radius: 8px;
+              padding: 20px;
+              margin: 20px auto;
+              max-width: 600px;
+          }
   
-      .logo-header img {
-        max-width: 30%;
-        height: auto;
-      }
+          .logo-header img {
+              max-width: 30%;
+              height: auto;
+          }
   
-      .content {
-        margin-top: 20px;
-        border: 2px solid #a3a0a0;
-        /* Added a border to content */
-        padding: 20px;
-      }
+          .content {
+              margin-top: 20px;
+              border: 2px solid #a3a0a0;
+              /* Added a border to content */
+              padding: 20px;
+          }
   
-      .footer {
-        text-align: center;
-        margin-top: 30px;
-        font-size: smaller;
-        color: grey;
-      }
-    </style>
+          h2 {
+              text-align: center;
+          }
+  
+          .footer {
+              text-align: center;
+              margin-top: 30px;
+              font-size: smaller;
+              color: grey;
+          }
+      </style>
   </head>
   
   <body>
   
-    <div class="container">
-      <div class="logo-header">
-        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      <div class="container">
+          <div class="logo-header">
+              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+          </div>
+          <div class="content">
+              <h2>New Session Schedule Announcement</h2>
+  
+              <p>Dear ${studName},</p>
+              <p>We are excited to announce the schedule for the upcoming session! Please find the details below:</p>
+  
+              <!-- Replace the following placeholder content with actual schedule details -->
+              <ul>
+                  <li><strong>Session Title :</strong> ${sessionName} </li>
+                  <li><strong>Date :</strong> ${date}</li>
+                  <li><strong>Time :</strong> ${time}</li>
+                  <li><strong>Meeting Link :</strong> ${venueORlink}</li>
+              </ul>
+  
+              <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your
+                  calendars!</p>
+  
+              <p>For the full session schedule and any changes, please check our online student portal or mobile app.</p>
+  
+              <p>If you have any questions, feel free to reach out to us !! </p>
+  
+              <p>We look forward to seeing you there!</p>
+  
+              <p>Best regards,</p>
+              <p>Link Ur Codes Team</p>
+              <br>
+          </div>
+  
+          <div class="footer">
+              <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+          </div>
       </div>
-      <div class="content">
-        <h2>New Session Schedule Announcement</h2>
-  
-        <p>Dear ${studName},</p>
-        <p>We are excited to announce the schedule for the upcoming session! Please find the details below:</p>
-  
-        <!-- Replace the following placeholder content with actual schedule details -->
-        <ul>
-          <li>Session Title : ${sessionName} </li>
-          <li>Date : ${date}</li>
-          <li>Time : ${time}</li>
-          <li>Meeting Link : ${venueORlink}</li>
-        </ul>
-  
-        <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your
-          calendars!</p>
-  
-        <p>For the full session schedule and any changes, please check our online student portal or mobile app.</p>
-  
-        <p>If you have any questions, feel free to reach out to us !! </p>
-  
-        <p>We look forward to seeing you there!</p>
-  
-        <p>Best regards,</p>
-        <p>Link Ur Codes Team</p>
-        <br>
-      </div>
-  
-      <div class="footer">
-        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
-      </div>
-    </div>
   
   </body>
   
