@@ -2983,7 +2983,7 @@ function SessionRemainderRecordedHTMLContent(studName, sessionName, date, time, 
   return content;
 }
 
-function SessionRemainderClgStaffHTMLContent(collegeStaffName, sessionName, date, time, venueORlink) {
+function SessionRemainderClgStaffHTMLContent(collegeStaffName, date, time, venueORlink, type, batchName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -3076,7 +3076,7 @@ function SessionRemainderClgStaffHTMLContent(collegeStaffName, sessionName, date
   return content;
 }
 
-function SessionRemainderClgStaffTextContent(collegeStaffName, sessionName, date, time, venueORlink) {
+function SessionRemainderClgStaffTextContent(collegeStaffName, date, time, venueORlink, type, batchName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `Dear ${collegeStaffName},
@@ -3091,7 +3091,7 @@ function SessionRemainderClgStaffTextContent(collegeStaffName, sessionName, date
   Date: ${date}
   Time: ${time}
   Link or Venue: ${venueORlink}
-  
+
   Please ensure that this reminder reaches all students and encourage them to attend the session. We look forward to a session filled with learning and engagement.
   
   If you have any questions, feel free to reach out to us !!

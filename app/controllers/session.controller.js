@@ -537,11 +537,11 @@ exports.sendRemainderMail = (request, response) => {
                 if (!data || data.length === 0) {
                     return response.json({ "status": "No session found with the provided ID" });
                 } else {
-                    let sessionName = data[0].sessionName
-                    let sessionDate = data[0].date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
-                    let sessionTime = formatTime(data[0].time)
-                    let venueORlink = data[0].venueORlink
-                    let type = data[0].type
+                    const sessionName = data[0].sessionName
+                    const sessionDate = data[0].date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
+                    const sessionTime = formatTime(data[0].time)
+                    const venueORlink = data[0].venueORlink
+                    const type = data[0].type
                     Student.searchStudentByBatch(batchId, (err, res) => {
                         if (err) {
                             return response.json({ "status": err });
@@ -566,6 +566,19 @@ exports.sendRemainderMail = (request, response) => {
                             return response.json({ "status": "success" });
                         }
                     });
+
+                    CollegeStaff.searchClgStaffByCollege(newSession.batchId, (err, res) => {
+                        if (err) {
+                            return response.json({ "status": err });
+                        } else {
+                            const clgstaffEmail = res[0].email
+                            const batchName = res[0].batchName
+                            const collegeStaffName = res[0].collegeStaffName
+                            const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(collegeStaffName, sessionDate, sessionTime, venueORlink, type, batchName);
+                            const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(collegeStaffName, sessionDate, sessionTime, venueORlink, type, batchName);
+                            mail.sendEmail(clgstaffEmail, `Announcement Regarding Upcoming Session Scheduled On ${clgstaffsessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                        }
+                    })
                 }
             });
         } else {
