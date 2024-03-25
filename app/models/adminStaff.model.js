@@ -254,6 +254,32 @@ AdminStaff.asChangePassword = (adsf, result) => {
     });
 };
 
+AdminStaff.forgotpassword = (admstaff, result) => {
+    const getAdminStaffQuery = "SELECT * FROM admin_staff WHERE BINARY Email = ? AND deleteStatus = 0 AND isActive = 1";
+    db.query(getAdminStaffQuery, [admstaff.Email], (err, res) => {
+        if (err) {
+            console.log("Error: ", err);
+            result(err, null);
+            return;
+        } else if (res.length === 0) {
+            result("Admin Staff not found!!!", null);
+        } else {
+            const updatePasswordQuery = "UPDATE admin_staff SET Password = ?, updateStatus = 1, pwdUpdateStatus = 1, updatedDate = CURRENT_DATE() WHERE BINARY Email = ? AND deleteStatus = 0 AND isActive = 1";
+            const hashedNewPassword = bcrypt.hashSync(admstaff.Password, 10);
+
+            db.query(updatePasswordQuery, [hashedNewPassword, admstaff.Email], (updateErr, updateRes) => {
+                if (updateErr) {
+                    console.log("Error: ", updateErr);
+                    result(updateErr, null);
+                    return;
+                } else {
+                    result(null, null);
+                }
+            });
+        }
+    });
+}
+
 
 AdminStaff.searchCollegesByAdminStaff = (search, result) => {
     const searchString = '%' + search + '%';

@@ -84,6 +84,33 @@ Admin.adminChangePassword = (ad, result) => {
     });
 };
 
+Admin.forgotpassword = (admin, result) => {
+    const getAdminQuery = "SELECT * FROM admin WHERE userName = ?";
+    db.query(getAdminQuery, [admin.userName], (err, res) => {
+        if (err) {
+            console.log("Error: ", err);
+            result(err, null);
+            return;
+        } else if (res.length === 0) {
+            result("User not found!!!", null);
+        } else {
+            const updatePasswordQuery = "UPDATE admin SET Password = ?, updateStatus = 1 WHERE userName = ?";
+            const hashedNewPassword = bcrypt.hashSync(admin.Password, 10);
+
+            db.query(updatePasswordQuery, [hashedNewPassword, admin.userName], (updateErr, updateRes) => {
+                if (updateErr) {
+                    console.log("Error: ", updateErr);
+                    result(updateErr, null);
+                    return;
+                } else {
+                    result(null, null);
+                }
+            });
+        }
+    });
+
+}
+
 
 Admin.adminDashBoard = (result) => {
     const query1 = "SELECT CASE WHEN COUNT(*) = 0 THEN 0 ELSE COUNT(*) END AS totalColleges FROM college WHERE deleteStatus = 0 AND isActive = 1;";
@@ -240,7 +267,7 @@ Admin.getAll = async (result) => {
             result(err, null)
             return
         } else {
-            const formattedLog = response.map(log => ({ ...log, DateTime: log.DateTime.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })}));
+            const formattedLog = response.map(log => ({ ...log, DateTime: log.DateTime.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
             console.log("Admin Staff Log : ", formattedLog)
             result(null, formattedLog)
         }

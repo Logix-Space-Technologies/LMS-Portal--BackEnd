@@ -12,7 +12,7 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 require('dotenv').config({ path: '../../.env' });
 const path = require("path");
-const whatsApp = require("../controllers/sendWhatsappMessage")
+const whatsApp = require("./Whatsapp/sendWhatsappMessage")
 // const { Session } = require("inspector");
 
 // AWS S3 Client Configuration
@@ -115,7 +115,7 @@ exports.createStudent = (req, res) => {
             else if (!Validator.isValidEmail(studEmail).isValid) {
                 validationErrors.studEmail = Validator.isValidEmail(studEmail).message;
             }
-            else if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+            else if (!Validator.isValidMobileNumber(studPhNo).isValid) {
                 validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
             }
             else if (!Validator.isValidPassword(password).isValid) {

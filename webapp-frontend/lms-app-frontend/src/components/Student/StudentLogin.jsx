@@ -11,8 +11,13 @@ const StudentLogin = () => {
     });
 
     const [updateField, setUpdateField] = useState({
+        studEmail:"",
         otp: ""
     })
+
+    const [state, setState] = useState(false)
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const [errors, setErrors] = useState({});
     const [showModal, setShowModal] = useState(false);
@@ -21,6 +26,9 @@ const StudentLogin = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/studentLogin"
     const apiUrl2 = global.config.urls.api.server + "/api/lms/studemailverifyotpsend"
     const apiUrl3 = global.config.urls.api.server + "/api/lms/studemailverificationotpverify"
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/studentotpsend"
+    const apiUrl5 = global.config.urls.api.server + "/api/lms/studentotpverification"
+
     const navigate = useNavigate()
 
     const inputHandler = (event) => {
@@ -42,6 +50,22 @@ const StudentLogin = () => {
             otp: ""
         });
     };
+
+    //Function To Close Forgot Password Modal And Overlay
+    const closeWaitingModel = () => {
+        setShowWaitingModal(false)
+        setShowOverlay(false)
+        setErrors({})
+        setUpdateField({
+            Email: "",
+            otp: ""
+        });
+    }
+
+    const forgotPassword = () => {
+        setShowWaitingModal(true)
+        setShowOverlay(true)
+    }
 
     const readValue = () => {
         let newErrors = {};
@@ -162,6 +186,66 @@ const StudentLogin = () => {
         )
     }
 
+    const otpForgotPasswordSend = () => {
+        let newErrors = {};
+        if (!updateField.studEmail) {
+            newErrors.forgotPassEmail = "Email is required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        let data = { "studEmail": updateField.studEmail}
+        axios.post(apiUrl4, data).then(
+            (response) => {
+                if (response.data.status === "OTP sent to email.") {
+                    setShowWaitingModal(true)
+                    setShowOverlay(true);
+                    setState(true)
+                } else {
+                    alert(response.data.status)
+                    setShowModal(true)
+                    setShowOverlay(true);
+                }
+            }
+        )
+    }
+
+    const otpForgotPasswordVerify = () => {
+        let newErrors = {};
+        if (!updateField.studEmail) {
+            newErrors.forgotpassotp = "Email is required!";
+        }
+        if (!updateField.otp) {
+            newErrors.forgotpassotp = "OTP is required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        let data = { "studEmail": updateField.studEmail, "otp": updateField.otp }
+        axios.post(apiUrl5, data).then(
+            (response) => {
+                if (response.data.status === "OTP verified successfully") {
+                    setShowWaitingModal(false)
+                    setShowOverlay(false); // Close the overlay
+                    setState(false)
+                    // navigate("/adminstaffforgotpassword")
+                    alert("OTP Verified Successfully !!!")
+                    // sessionStorage.setItem("studemail", updateField.studEmail)
+                    setUpdateField({
+                        studEmail: "",
+                        otp: ""
+                    });
+                } else {
+                    alert(response.data.status)
+                    setShowWaitingModal(false)
+                    setShowOverlay(true);
+                }
+            }
+        )
+    }
+
     return (
         <div className="container">
             <div className="row justify-content-center align-items-center min-vh-100">
@@ -189,13 +273,18 @@ const StudentLogin = () => {
                                 </div>
                                 <div className="mb-3 text-start">
                                     <label htmlFor="password" className="form-label">Password</label>
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        value={inputField.password}
-                                        onChange={inputHandler}
-                                        className="form-control"
-                                    />
+                                    <div style={{display:'flex', alignItems:'center'}}>
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            name="password"
+                                            value={inputField.password}
+                                            onChange={inputHandler}
+                                            className="form-control"
+                                        />
+                                        <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
+                                            <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
+                                        </span>
+                                    </div>
                                     {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
                                 </div>
                             </form>

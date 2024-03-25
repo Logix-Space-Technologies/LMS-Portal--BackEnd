@@ -362,7 +362,7 @@ function upcomingSessionClgStaffHTMLContent(sessionName, date, time, venueORlink
   return content;
 }
 
-function admStaffAddHTMLContent(AdStaffName) {
+function admStaffAddHTMLContent(AdStaffName, password, adminStaffEmail) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -425,6 +425,12 @@ function admStaffAddHTMLContent(AdStaffName) {
         <p>As a new member of our community, you now have access to a wide range of resources. Here are a few things to
           get you started:</p>
         <ul>
+          <li>Your Login Credentials are as follows:
+            <ul>
+              <li>Email: ${adminStaffEmail}</li>
+              <li>Password: ${password}</li>
+            </ul>
+          </li>
           <li>Explore our <a href="https://linkurcodes.com">website</a> to learn more about what we offer.</li>
           <li>Join our community forums to discuss topics that interest you with fellow members.</li>
         </ul>
@@ -443,28 +449,30 @@ function admStaffAddHTMLContent(AdStaffName) {
 }
 
 
-function admStaffAddTextContent(AdStaffName) {
+function admStaffAddTextContent(AdStaffName, password, adminStaffEmail) {
   // Get the current year
   const currentYear = new Date().getFullYear();
-  content = `Welcome to LinkUrCodes!
+  content = `Dear ${AdStaffName},
 
-  Dear ${AdStaffName},
+  We're excited to have you on board. Your registration with LinkUrCodes has been successfully completed by our administrator.
   
-  We're excited to have you on board. Your registration with LinkUrCodes has been successfully completed by our
-  administrator.
+  As a new member of our community, you now have access to a wide range of resources. Here are a few things to get you started:
   
-  As a new member of our community, you now have access to a wide range of resources. Here are a few things to get you
-  started:
+  - Your Login Credentials are as follows:
+    * Email: ${adminStaffEmail}
+    * Password: ${password}
   
-  Explore our website (https://linkurcodes.com) to learn more about what we offer.
-  Join our community forums to discuss topics that interest you with fellow members.
+  - Explore our website (https://linkurcodes.com) to learn more about what we offer.
+  
+  - Join our community forums to discuss topics that interest you with fellow members.
+  
   We look forward to your active participation and hope you find your experience with us rewarding.
   
   Best Regards,
   
   The LinkUrCodes Team
   
-  © ${currentYear} LinkUrCodes. All rights reserved.`
+  © ${currentYear} Link Ur Codes. All rights reserved.`
 
   return content
 }
@@ -571,28 +579,28 @@ function upcomingSessionRecordedTextContent(studName, sessionName, date, time, v
 
 }
 
-function collegeStaffTextContent(collegeStaffName, clgName) {
+function collegeStaffTextContent(collegeStaffName, collegeName, collegeStaffEmail, password) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `Dear ${collegeStaffName},
 
-  We hope this email finds you well. We are pleased to inform you that your registration with the Link Ur Codes portal has
-  been successfully completed. As the batch-in-charge for ${clgName}, you are now the official point of contact and can
-  fully access the resources available on our platform.
+  We hope this email finds you well. We are pleased to inform you that your registration with the Link Ur Codes portal has been successfully completed. As the batch-in-charge for ${collegeName}, you are now the official point of contact and can fully access the resources available on our platform.
   
-  The Link Ur Codes portal is designed to provide a comprehensive and interactive learning experience for students and
-  educators in the field of coding and programming.
-  To get started, please log in with your registered email and password at Link Ur Codes Portal. We highly recommend
-  updating your profile and exploring the various sections of the portal to familiarize yourself with its functionalities.
+  The Link Ur Codes portal is designed to provide a comprehensive and interactive learning experience for students and educators in the field of coding and programming.
   
-  If you encounter any issues or have questions, please do not hesitate to reach out to our support team at
-  team@linkurcodes.com . We are here to assist you in making the most out of the Link Ur Codes experience.
+  To get started, please log in with the following credentials at the Link Ur Codes Portal:
   
-  We are excited to have ${clgName} on board and look forward to your active participation in our community. Together, we
-  can inspire and nurture the next generation of coding experts.
+  Email: ${collegeStaffEmail}
+  Password: ${password}
+
+  We highly recommend updating your profile and exploring the various sections of the portal to familiarize yourself with its functionalities.
   
+  We are excited to have ${collegeName} on board and look forward to your active participation in our community. Together, we can inspire and nurture the next generation of coding experts.
   
-  Regards
+  If you need assistance, please contact our support team at admin@linkurcodes.com.
+  
+  Best Regards,
+  
   Link Ur Codes Team
   
   © ${currentYear} Link Ur Codes. All rights reserved.`
@@ -600,11 +608,12 @@ function collegeStaffTextContent(collegeStaffName, clgName) {
 
 }
 
-function collegeStaffHtmlContent(collegeStaffName, collegeName) {
+function collegeStaffHtmlContent(collegeStaffName, collegeName, collegeStaffEmail, password) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
   <html>
+  
   <head>
     <title>Registration Successful</title>
     <style>
@@ -615,6 +624,7 @@ function collegeStaffHtmlContent(collegeStaffName, collegeName) {
         margin: 0;
         padding: 20px;
       }
+  
       .container {
         background-color: #ece9e9;
         border-radius: 8px;
@@ -622,15 +632,22 @@ function collegeStaffHtmlContent(collegeStaffName, collegeName) {
         margin: 20px auto;
         max-width: 600px;
       }
+  
+      h2 {
+        text-align: center;
+      }
+  
       .logo-header img {
         max-width: 30%;
         height: auto;
       }
+  
       .content {
         margin-top: 20px;
         border: 2px solid #a3a0a0;
         padding: 20px;
       }
+  
       .footer {
         text-align: center;
         margin-top: 30px;
@@ -639,18 +656,30 @@ function collegeStaffHtmlContent(collegeStaffName, collegeName) {
       }
     </style>
   </head>
+  
   <body>
     <div class="container">
       <div class="logo-header">
         <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
       </div>
       <div class="content">
-        <h1>Registration Successful</h1>
+        <h2>Batch-In-Charge Registration Successful !!!</h2>
         <p>Dear ${collegeStaffName},</p>
-        <p>We hope this email finds you well. We are pleased to inform you that your registration with the Link Ur Codes portal has been successfully completed. As the batch-in-charge for ${collegeName}, you are now the official point of contact and can fully access the resources available on our platform.</p>
-        <p>The Link Ur Codes portal is designed to provide a comprehensive and interactive learning experience for students and educators in the field of coding and programming.To get started, please log in with your registered email and password at Link Ur Codes Portal.</p>
-        <p>We highly recommend updating your profile and exploring the various sections of the portal to familiarize yourself with its functionalities.</p>
-        <p>We are excited to have ${collegeName} on board and look forward to your active participation in our community. Together, we can inspire and nurture the next generation of coding experts.</p>
+        <p>We hope this email finds you well. We are pleased to inform you that your registration with the Link Ur Codes
+          portal has been successfully completed. As the batch-in-charge for ${collegeName}, you are now the official
+          point of contact and can fully access the resources available on our platform.</p>
+        <p>The Link Ur Codes portal is designed to provide a comprehensive and interactive learning experience for
+          students and educators in the field of coding and programming.
+        <p>
+          <b>To get started, please log in with following credentials at Link Ur Codes Portal:</b>
+        <ul>
+          <li><b>Email:</b> ${collegeStaffEmail}</li>
+          <li><b>Password:</b> ${password}</li>
+        </ul>
+        <p>We highly recommend updating your profile and exploring the various sections of the portal to familiarize
+          yourself with its functionalities.</p>
+        <p>We are excited to have ${collegeName} on board and look forward to your active participation in our community.
+          Together, we can inspire and nurture the next generation of coding experts.</p>
         <p>If you need assistance, please contact our support team: admin@linkurcodes.com</p>
         <p>Best Regards,</p>
         <p>Link Ur Codes Team</p>
@@ -660,6 +689,7 @@ function collegeStaffHtmlContent(collegeStaffName, collegeName) {
       </div>
     </div>
   </body>
+  
   </html>`
   return content;
 }
