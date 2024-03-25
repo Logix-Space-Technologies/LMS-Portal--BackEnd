@@ -60,6 +60,7 @@ const AdminViewAllSession = () => {
             (response) => {
                 if (response.data.Sessions) {
                     setSessionData(response.data.Sessions);
+                    console.log(response.data.Sessions)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
@@ -192,6 +193,30 @@ const AdminViewAllSession = () => {
         setShowConfirmation(true);
     };
 
+    const remainderClick = (batchId) => {
+        
+    };
+
+    const canSendReminder = (sessionDate, sessionTime) => {
+        const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
+        const currentDate = new Date();
+        const [day, month, year] = sessionDate.split('/'); // Assuming date format is DD/MM/YYYY
+        const [hours, minutes] = sessionTime.split(':'); // Assuming time format is HH:mm
+    
+        // Convert sessionDate and sessionTime into a Date object
+        const sessionDateTime = new Date(year, month - 1, day, hours, minutes);
+    
+        // Check if session date/time is within next 24 hours and not in the past
+        const timeDifference = sessionDateTime.getTime() - currentDate.getTime();
+        const isFutureSession = timeDifference > 0;
+        const isWithin24Hours = timeDifference <= oneDay;
+        console.log(isWithin24Hours)
+    
+        return isFutureSession && isWithin24Hours;
+    };
+    
+    
+
     const confirmDelete = () => {
         let axiosConfig = {
             headers: {
@@ -318,6 +343,13 @@ const AdminViewAllSession = () => {
                                     {key === "lmsapp" && value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => deleteClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
                                             Delete Session
+                                        </button>
+                                    )}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.cancelStatus === "ACTIVE" && canSendReminder(value.date, value.time) && (
+                                        <button onClick={() => remainderClick(value.batchId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
+                                            Send Remainder
                                         </button>
                                     )}
                                 </td>
