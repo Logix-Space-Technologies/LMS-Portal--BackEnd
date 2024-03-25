@@ -240,7 +240,7 @@ const StudentLogin = () => {
                 } else {
                     alert(response.data.status)
                     setShowWaitingModal(false)
-                    setShowOverlay(true);
+                    setShowOverlay(false);
                 }
             }
         )
