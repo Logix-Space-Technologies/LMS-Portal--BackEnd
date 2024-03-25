@@ -1495,7 +1495,7 @@ exports.studforgotpassword = (request, response) => {
         return response.json({ "status": "Validation failed", "data": validationErrors });
     }
 
-    Student.StdChangePassword({ studEmail, oldPassword, newPassword }, (err, data) => {
+    Student.forgotPassword(, (err, data) => {
         if (err) {
             response.json({ "status": err });
             return;
