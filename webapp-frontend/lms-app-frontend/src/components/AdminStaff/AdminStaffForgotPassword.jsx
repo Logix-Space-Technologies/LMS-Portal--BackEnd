@@ -63,9 +63,6 @@ const AdminStaffForgotPassword = () => {
                         alert(response.data.data.Email);
                     } else if (response.data.status === "Validation failed" && response.data.data.Password) {
                         alert(response.data.data.Password);
-                    } else if (response.data.status === "Unauthorized User!!") {
-                        navigate("/admstafflogin")
-                        sessionStorage.clear()
                     } else {
                         alert(response.data.status)
                     }
