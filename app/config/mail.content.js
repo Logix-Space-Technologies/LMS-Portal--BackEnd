@@ -2597,6 +2597,373 @@ function emailverifyStudentOTPTextContent(studName, otp) {
   return content
 }
 
+function SessionRemainderOfflineHTMLContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html>
+  
+  <head>
+    <title>Session Reminder</title>
+    <style>
+      body {
+        background-color: #faf4f4;
+        color: #140101;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+  
+      .container {
+        background-color: #ece9e9;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 600px;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      .content {
+        margin-top: 20px;
+        border: 2px solid #a3a0a0;
+        padding: 20px;
+      }
+  
+      h2 {
+        text-align: center;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: smaller;
+        color: grey;
+      }
+    </style>
+  </head>
+  
+  <body>
+  
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <div class="content">
+        <h2>Session Reminder!</h2>
+  
+        <p>Dear ${studName},</p>
+        <p>We hope this message finds you well. As your educational journey continues, we want to ensure you're fully prepared and excited for what's ahead. This email serves as a friendly reminder about the upcoming session you've enrolled in, an opportunity we believe will significantly enrich your learning experience. Please find the details below:</p>
+  
+        <ul>
+          <li><strong>Session Title:</strong> ${sessionName}</li>
+          <li><strong>Date:</strong> ${date}</li>
+          <li><strong>Time:</strong> ${time}</li>
+          <li><strong>Location:</strong> ${venueORlink}</li>
+        </ul>
+  
+        <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!</p>
+  
+        <p>For the full session schedule and any changes, please check our online student portal or mobile app.</p>
+  
+        <p>If you have any questions, feel free to reach out to us!</p>
+  
+        <p>We look forward to seeing you there!</p>
+  
+        <p>Best regards,</p>
+        <p>The Link Ur Codes Team</p>
+      </div>
+  
+      <div class="footer">
+        <p>© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function SessionRemainderOnlineHTMLContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html>
+  
+  <head>
+    <title>Session Reminder</title>
+    <style>
+      body {
+        background-color: #faf4f4;
+        color: #140101;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+  
+      .container {
+        background-color: #ece9e9;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 600px;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      .content {
+        margin-top: 20px;
+        border: 2px solid #a3a0a0;
+        padding: 20px;
+      }
+  
+      h2 {
+        text-align: center;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: smaller;
+        color: grey;
+      }
+    </style>
+  </head>
+  
+  <body>
+  
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <div class="content">
+        <h2>Session Reminder!</h2>
+  
+        <p>Dear ${studName},</p>
+        <p>We hope this message finds you well. As your educational journey continues, we want to ensure you're fully prepared and excited for what's ahead. This email serves as a friendly reminder about the upcoming session you've enrolled in, an opportunity we believe will significantly enrich your learning experience. Please find the details below:</p>
+  
+        <ul>
+          <li><strong>Session Title:</strong> ${sessionName}</li>
+          <li><strong>Date:</strong> ${date}</li>
+          <li><strong>Time:</strong> ${time}</li>
+          <li><strong>Meeting Link:</strong> ${venueORlink}</li>
+        </ul>
+  
+        <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!</p>
+  
+        <p>For the full session schedule and any changes, please check our online student portal or mobile app.</p>
+  
+        <p>If you have any questions, feel free to reach out to us!</p>
+  
+        <p>We look forward to seeing you there!</p>
+  
+        <p>Best regards,</p>
+        <p>The Link Ur Codes Team</p>
+      </div>
+  
+      <div class="footer">
+        <p>© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function SessionRemainderRecordedHTMLContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html>
+  
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+  
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+      }
+  
+      .header {
+        color: #333333;
+        text-align: center;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      .content {
+        color: #333333;
+        line-height: 1.6;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.8em;
+        color: #666666;
+      }
+  
+      a {
+        color: #007bff;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="center">
+            <img src="https://linkurcodes.com/imgs/nextClass.jpg" alt="Next Class" width="300"
+              style="width: 300px; max-width: 100%; height: auto; border: none; outline: none;">
+          </td>
+        </tr>
+      </table>
+      <div class="header">
+        <h2>Upcoming Session Remainder: Dive Deeper with Our Next Recorded Lesson!</h2>
+      </div>
+      <div class="content">
+        <p>Dear ${studName},</p>
+        <p>We hope this message finds you well. As your educational journey continues, we want to ensure you're fully
+          prepared and excited for what's ahead. This email serves as a friendly reminder about the upcoming session
+          you've enrolled in, an opportunity we believe will significantly enrich your learning experience. Please find
+          the details below:</p>
+        <p><strong>Next Session: ${sessionName}</strong><br>
+          <strong>Available From:</strong> ${date}, ${time}<br>
+          <strong>Where:</strong> <a href=${venueORlink}>Access the Video Here</a>
+        </p>
+        <p>This session is specially recorded for you! Dive deep into the Session Content.</p>
+        <h3>Your Task</h3>
+        <p>After watching the video, we encourage you to put your knowledge to the test by completing the tasks
+          mentioned towards the end of the session. This is a fantastic opportunity to apply what you've learned
+          and receive feedback on your work.</p>
+  
+        <p>Happy Learning,</p>
+        Link Ur Codes Team</p>
+      </div>
+      <div class="footer">
+        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function SessionRemainderOfflineTextContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${studName},
+
+  We hope this message finds you well. As your educational journey continues, we want to ensure you're fully prepared and
+  excited for what's ahead. This email serves as a friendly reminder about the upcoming session you've enrolled in, an
+  opportunity we believe will significantly enrich your learning experience. Please find the details below:
+  
+  Session Title: ${sessionName}
+  Date: ${date}
+  Time: ${time}
+  Location: ${venueORlink}
+  It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!
+  
+  For the full session schedule and any changes, please check our online student portal or mobile app.
+  
+  If you have any questions, feel free to reach out to us!
+  
+  We look forward to seeing you there!
+  
+  Best regards,
+  
+  The Link Ur Codes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+
+  return content
+}
+
+function SessionRemainderOnlineTextContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${studName},
+
+  We hope this message finds you well. As your educational journey continues, we want to ensure you're fully prepared and
+  excited for what's ahead. This email serves as a friendly reminder about the upcoming session you've enrolled in, an
+  opportunity we believe will significantly enrich your learning experience. Please find the details below:
+  
+  Session Title: ${sessionName}
+  Date: ${date}
+  Time: ${time}
+  Meeting Link: ${VenueORlink}
+  It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!
+  
+  For the full session schedule and any changes, please check our online student portal or mobile app.
+  
+  If you have any questions, feel free to reach out to us!
+  
+  We look forward to seeing you there!
+  
+  Best regards,
+  
+  The Link Ur Codes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+
+  return content
+}
+
+function SessionRemainderRecordedTextContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${studName},
+
+  We hope this message finds you well. As your educational journey continues, we want to ensure you're fully prepared and
+  excited for what's ahead. This email serves as a friendly reminder about the upcoming session you've enrolled in, an
+  opportunity we believe will significantly enrich your learning experience. Please find the details below:
+  
+  Next Session: ${sessionName}
+  Available From: ${date}
+  Where: ${venueORlink}
+  This session is specially recorded for you! Dive deep into the Session Content.
+  
+  Your Task
+  
+  After watching the video, we encourage you to put your knowledge to the test by completing the tasks mentioned towards
+  the end of the session. This is a fantastic opportunity to apply what you've learned and receive feedback on your work.
+  
+  Happy Learning,
+  
+  Link Ur Codes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+
+  return content
+}
+
 
 
 module.exports = {
@@ -2645,6 +3012,13 @@ module.exports = {
   reschedulingSessionRecordedTextContent,
   reschedulingSessionClgStaffTextContent,
   emailverifyStudentOTPHtmlContent,
-  emailverifyStudentOTPTextContent
+  emailverifyStudentOTPTextContent,
+  SessionRemainderOfflineHTMLContent,
+  SessionRemainderOnlineHTMLContent,
+  SessionRemainderRecordedHTMLContent,
+  SessionRemainderOfflineTextContent,
+  SessionRemainderOnlineTextContent,
+  SessionRemainderRecordedTextContent
+
 };
 

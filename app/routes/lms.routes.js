@@ -330,5 +330,8 @@ router.post('/emailverifypwdchangestud', StudentController.emailVerifyAndPasswor
 
 router.post('/sendFirebaseNotificationByStudId',FirebaseController.sendNotificationByStudId)
 
+router.post('/sendSessionRemainderEmail',SessionsController.sendRemainderMail)
+
+
 
 module.exports = router
