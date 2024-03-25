@@ -504,6 +504,63 @@ exports.viewOneSession = (request, response) => {
     });
 };
 
+exports.sendRemainderMail = (request, response) => {
+    const token = request.headers.token;
+    const key = request.headers.key; // Provide the respective keys for admin and admin staff
+    const batchId = request.body.batchId;
+    const sessionId = request.body.id;
+
+    if (!batchId) {
+        return response.json({ "status": "Batch ID Required." })
+    }
+
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Session.viewOneSession(sessionId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (!data || data.length === 0) {
+                    return response.json({ "status": "No session found with the provided ID" });
+                } else {
+                    let sessionName = data[0].sessionName
+                    let sessionDate = data[0].date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
+                    let sessionTime = formatTime(data[0].time)
+                    let venueORlink = data[0].venueORlink
+                    let type = data[0].type
+                    Student.searchStudentByBatch(batchId, (err, res) => {
+                        if (err) {
+                            return response.json({ "status": err });
+                        } else {
+                            res.forEach(element => {
+                                let studentEmail = element.studEmail
+                                let studentName = element.studName
+                                if (type === "Offline") {
+                                    const SessionRemainderHtmlContent = mailContents.SessionRemainderOfflineHTMLContent(studentName, sessionName, sessionDate, sessionTime, venueORlink);
+                                    const SessionRemainderTextContent = mailContents.SessionRemainderOfflineTextContent(studentName, sessionName, sessionDate, sessionTime, venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Remainder', SessionRemainderHtmlContent, SessionRemainderTextContent);
+                                } else if (type === "Online") {
+                                    const SessionRemainderHtmlContent = mailContents.SessionRemainderOnlineHTMLContent(studentName, sessionName, sessionDate, sessionTime, venueORlink);
+                                    const SessionRemainderTextContent = mailContents.SessionRemainderOnlineTextContent(studentName, sessionName, sessionDate, sessionTime, venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Remainder', SessionRemainderHtmlContent, SessionRemainderTextContent);
+                                } else {
+                                    const SessionRemainderHtmlContent = mailContents.SessionRemainderRecordedHTMLContent(studentName, sessionName, sessionDate, sessionTime, venueORlink);
+                                    const SessionRemainderTextContent = mailContents.SessionRemainderRecordedTextContent(studentName, sessionName, sessionDate, sessionTime, venueORlink);
+                                    mail.sendEmail(studentEmail, 'Session Remainder', SessionRemainderHtmlContent, SessionRemainderTextContent);
+                                }
+                            })
+                            return response.json({ "status": "success" });
+                        }
+                    });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+
+}
+
 
 
 
