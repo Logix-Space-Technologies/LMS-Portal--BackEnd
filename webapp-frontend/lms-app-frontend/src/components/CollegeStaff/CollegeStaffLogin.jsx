@@ -10,9 +10,12 @@ const CollegeStaffLogin = () => {
     });
 
     const [updateField, setUpdateField] = useState({
+        email: "",
         otp: ""
     })
 
+    const [state, setState] = useState(false)
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +25,8 @@ const CollegeStaffLogin = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/clgStaffLogin";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/clgstaffemailverificationotpsend";
     const apiUrl3 = global.config.urls.api.server + "/api/lms/clgstaffemailverifyotp";
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/clgstaffotpsend"
+    const apiUrl5 = global.config.urls.api.server + "/api/lms/clgstaffotpverification"
 
     const navigate = useNavigate();
 
