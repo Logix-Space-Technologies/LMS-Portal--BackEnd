@@ -10,6 +10,9 @@ const StudentValidityRenewal = () => {
     const [showModal, setShowModal] = useState(false);
     let [key, setKey] = useState('');
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studRenewalDataFetch";
@@ -37,6 +40,11 @@ const StudentValidityRenewal = () => {
                 }
             }
         )
+    }
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
     }
 
     const loadRazorpayScript = async () => {
@@ -77,13 +85,21 @@ const StudentValidityRenewal = () => {
                             "Access-Control-Allow-Origin": "*"
                         }
                     };
+                    setShowOverlay(true)
+                    setShowWaitingModal(true)
                     axios.post(apiUrl2, data2, axiosConfig2).then(
                         (response) => {
                             if (response.data.status === "success") {
-                                alert("Validity Renewed Successfully !!!")
-                                closeModal()
+                                closeWaitingModal()
+                                setTimeout(() => {
+                                    alert("Validity Renewed Successfully !!!")
+                                    closeModal()
+                                }, 500)
                             } else {
-                                alert(response.data.status)
+                                closeWaitingModal()
+                                setTimeout(() => {
+                                    alert(response.data.status)
+                                }, 500)
                             }
                         }
                     )
@@ -324,6 +340,44 @@ const StudentValidityRenewal = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }

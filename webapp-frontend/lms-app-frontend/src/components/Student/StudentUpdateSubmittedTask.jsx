@@ -22,15 +22,16 @@ const StudentUpdateSubmittedTask = () => {
     const apiUrl = global.config.urls.api.server + '/api/lms/studentviewsubmittedtask';
     const apiUrl2 = global.config.urls.api.server + '/api/lms/studupdatesubmittedtask';
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    };
+
     const updateSubTaskHandler = (event) => {
         setErrors({})
         setUpdateSubTaskField({ ...updateSubTaskField, [event.target.name]: event.target.value });
     };
 
-    const closeWaitingModal = () => {
-        setShowOverlay(false)
-        setShowWaitingModal(false)
-    };
 
     const getData = () => {
         let data = { id: sessionStorage.getItem('subtaskId') };
@@ -60,8 +61,8 @@ const StudentUpdateSubmittedTask = () => {
     const updateSubmittedTask = (e) => {
         e.preventDefault();
         const validationErrors = validateForm(updateSubTaskField);
-        setShowOverlay(false)
-        setShowWaitingModal(false)
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -88,6 +89,7 @@ const StudentUpdateSubmittedTask = () => {
                         navigate('/studentLogin');
                         sessionStorage.clear();
                     } else {
+                        setShowWaitingModal()
                         if (response.data.status === 'Validation failed' && response.data.data.gitLink) {
                             alert(response.data.data.gitLink);
                         } else if (response.data.status === 'Validation failed' && response.data.data.Remarks) {
