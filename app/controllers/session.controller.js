@@ -118,15 +118,15 @@ exports.createSession = (request, response) => {
                                 if (newSession.type === "Offline") {
                                     const upcomingSessionHtmlContent = mailContents.upcomingSessionOfflineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     const upcomingSessionTextContent = mailContents.upcomingSessionOfflineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
-                                    mail.sendEmail(studentEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    mail.sendEmail(studentEmail, `Announcement Regarding Upcoming Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 } else if (newSession.type === "Online") {
                                     const upcomingSessionHtmlContent = mailContents.upcomingSessionOnlineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     const upcomingSessionTextContent = mailContents.upcomingSessionOnlineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
-                                    mail.sendEmail(studentEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    mail.sendEmail(studentEmail, `Announcement Regarding Upcoming Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 } else {
                                     const upcomingSessionHtmlContent = mailContents.upcomingSessionRecordedHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     const upcomingSessionTextContent = mailContents.upcomingSessionRecordedTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
-                                    mail.sendEmail(studentEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    mail.sendEmail(studentEmail, `Announcement Regarding Upcoming Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 }
                                 if (key == "lmsapp") {
                                     logAdminStaff(0, "Admin Created new Session")
@@ -150,7 +150,7 @@ exports.createSession = (request, response) => {
                                     const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
                                     const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName);
                                     const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName);
-                                    mail.sendEmail(clgstaffEmail, 'Session Schedule Announcement', upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    mail.sendEmail(clgstaffEmail, `Announcement Regarding Upcoming Session Scheduled On ${clgstaffsessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
 
                                 }
                             })
