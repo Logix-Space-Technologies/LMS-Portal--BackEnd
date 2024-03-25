@@ -44,18 +44,18 @@ const StudentChangePassword = () => {
 
         setShowOverlay(true)
         setShowWaitingModal(true)
-     
+
         if (Object.keys(validationErrors).length === 0) {
             axios.post(APIurl, updateField, axiosConfig).then(
                 (Response) => {
                     if (Response.data.status === "success") {
-                      closeWaitingModal()
-                        setTimeout(()=>{
+                        closeWaitingModal()
+                        setTimeout(() => {
                             alert("Password Changed Successfully");
                             navigate("/studentLogin");
                             sessionStorage.clear()
                         }, 500)
-                        
+
                     } else if (Response.data.status === "Validation failed" && Response.data.data.oldPassword) {
                         closeWaitingModal()
                         alert(Response.data.data.oldPassword);
@@ -69,16 +69,17 @@ const StudentChangePassword = () => {
                         navigate("/studentLogin")
                         sessionStorage.clear()
                     } else {
-                      
-                       closeWaitingModal()
-                                        setTimeout(() => {
-                                            alert(Response.data.status)
-                                        }, 500)
+
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(Response.data.status)
+                        }, 500)
 
                     }
 
                 });
         } else {
+            closeWaitingModal()
             setErrors(validationErrors);
         }
     };
@@ -119,7 +120,7 @@ const StudentChangePassword = () => {
                                     <ul className="list-unstyled mb-1-9">
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label htmlFor="" className="form-label">Old Password :</label>
-                                            <div style={{display:'flex', alignItems:'center'}}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <input onChange={updateHandler} type={showPassword ? "text" : "password"} className="form-control" name="oldPassword" value={updateField.oldPassword} />
                                                 <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
                                                     <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
@@ -129,7 +130,7 @@ const StudentChangePassword = () => {
                                         </div>
                                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                             <label htmlFor="" className="form-label">New Password :</label>
-                                            <div style={{display:'flex', alignItems:'center'}}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <input onChange={updateHandler} type={showConfirmPassword ? "text" : "password"} className="form-control" name="newPassword" value={updateField.newPassword} />
                                                 <span className="input-group-text" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                                                     <i className={showConfirmPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="toggleConfirmPassword"></i>
