@@ -289,7 +289,7 @@ function upcomingSessionRecordedHTMLContent(studName, sessionName, date, time, v
   return content;
 }
 
-function upcomingSessionClgStaffHTMLContent(sessionName, date, time, venueORlink, type, batchName) {
+function upcomingSessionClgStaffHTMLContent(sessionName, date, time, venueORlink, type, batchName, collegeStaffName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -345,7 +345,7 @@ function upcomingSessionClgStaffHTMLContent(sessionName, date, time, venueORlink
   <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
   </div>
       <h2>Upcoming Session Details</h2>
-      <p>Dear College Staff,</p>
+      <p>Dear ${collegeStaffName},</p>
       <p>We hope this email finds you well. We are writing to inform you about the upcoming session details for our coding platform, Link Ur Codes.</p>
       <p>The next session is scheduled for:</p>
       <ul>
@@ -507,11 +507,11 @@ function upcomingSessionOfflineTextContent(studName, sessionName, date, time, ve
 
 }
 
-function upcomingSessionClgStaffTextContent(sessionName, date, time, venueORlink, type, batchName) {
+function upcomingSessionClgStaffTextContent(sessionName, date, time, venueORlink, type, batchName, collegeStaffName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   textContent = `
-  Dear College Staff,
+  Dear ${collegeStaffName},
   
   We hope this email finds you well. We are writing to inform you about the upcoming session details for our coding platform, Link Ur Codes.
   
@@ -888,7 +888,87 @@ function cancelSessionContent(participantName, date, time) {
         <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
       </div>
       <div class="content">
-        <h2>Session Cancellation</h2>
+        <h2>Session Cancellation Announcement</h2>
+  
+        <p>Dear ${participantName},</p>
+        <p>We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for
+          any inconvenience this may cause.</p>
+        <p>A new date for the session will be announced soon. We will keep you updated with the new schedule.</p>
+        <p>Thank you for your understanding.</p>
+        <p>Best Regards,</p>
+        <p>The LinkUrCodes Team</p>
+      </div>
+      <div class="footer">
+        <p>© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  
+  </body>
+  
+  </html>`
+  return content;
+
+}
+
+function cancelSessionClgStaffHTMLContent(participantName, date, time) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html>
+  
+  <head>
+    <title>Session Cancellation</title>
+    <style>
+      body {
+        background-color: #faf4f4;
+        color: #140101;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+  
+      .container {
+        border-radius: 8px;
+        background-color: #ece9e9;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 600px;
+      }
+  
+      h2 {
+        text-align: center;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      .content {
+        margin-top: 20px;
+        border: 2px solid #a3a0a0;
+        /* Added a border to content */
+        padding: 20px;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: smaller;
+        color: grey;
+      }
+    </style>
+  </head>
+  
+  <body>
+  
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <div class="content">
+        <h2>Session Cancellation Announcement</h2>
   
         <p>Dear ${participantName},</p>
         <p>We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for
@@ -911,6 +991,25 @@ function cancelSessionContent(participantName, date, time) {
 }
 
 function cancelSessionTextContent(participantName, date, time) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${participantName},
+
+    We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for any inconvenience this may cause.
+    
+    A new date for the session will be announced soon. We will keep you updated with the new schedule.
+    
+    Thank you for your understanding.
+    
+    Best Regards,
+
+    The LinkUrCodes Team
+    
+    © ${currentYear} Link Ur Codes. All rights reserved.`
+  return content;
+}
+
+function cancelSessionClgStaffTextContent(participantName, date, time) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `Dear ${participantName},
@@ -2183,7 +2282,7 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
   return content;
 }
 
-function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName) {
+function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeStaffName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -2244,7 +2343,7 @@ function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessi
         <h2>Session Reschedule Announcement</h2>
       </div>
       <div class="content">
-        <p>Dear College Staff,</p>
+        <p>Dear ${collegeStaffName},</p>
         <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming
           session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any
           inconvenience this may cause and appreciate your understanding.</p>
@@ -2348,10 +2447,10 @@ function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessi
   return content
 }
 
-function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName) {
+function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeStaffName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
-  content = `Dear College Staff,
+  content = `Dear ${collegeStaffName},
 
     We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
     
@@ -3026,7 +3125,9 @@ module.exports = {
   SessionRemainderRecordedHTMLContent,
   SessionRemainderOfflineTextContent,
   SessionRemainderOnlineTextContent,
-  SessionRemainderRecordedTextContent
+  SessionRemainderRecordedTextContent,
+  cancelSessionClgStaffHTMLContent,
+  cancelSessionClgStaffTextContent
 
 };
 

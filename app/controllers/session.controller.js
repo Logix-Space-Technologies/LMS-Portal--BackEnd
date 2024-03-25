@@ -139,19 +139,20 @@ exports.createSession = (request, response) => {
                                         // console.log({ "status": "success", "data": res });
                                     }
                                 })
+
                             });
-                            CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
+                            CollegeStaff.searchClgStaffByCollege(newSession.batchId, (err, res) => {
                                 if (err) {
                                     return response.json({ "status": err });
                                 } else {
                                     let clgstaffEmail = res[0].email
                                     let batchName = res[0].batchName
+                                    let collegeStaffName = res[0].collegeStaffName
                                     const clgstaffsessionTime = formatTime(newSession.time)
                                     const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
-                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName);
-                                    const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName);
+                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
+                                    const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
                                     mail.sendEmail(clgstaffEmail, `Announcement Regarding Upcoming Session Scheduled On ${clgstaffsessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
-
                                 }
                             })
 
@@ -239,7 +240,7 @@ exports.sessionUpdate = (request, response) => {
                         if (err) {
                             return response.json({ "status": err });
                         }
-                        const batchId = sessionres[0].batchId;
+                        let batchId = sessionres[0].batchId;
 
                         Student.searchStudentByBatch(batchId, (err, res) => {
                             if (err) {
@@ -269,7 +270,6 @@ exports.sessionUpdate = (request, response) => {
                                     mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 }
                             });
-
                             CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
                                 if (err) {
                                     return response.json({ "status": err });
@@ -429,7 +429,7 @@ exports.cancelSession = (request, response) => {
                         return response.json({ "status": err });
                     }
                     const batchId = sessionres[0].batchId;
-                    const sessionDate = sessionres[0].date.toLocaleDateString();
+                    const sessionDate = sessionres[0].date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
                     const sessiontype = sessionres[0].type;
                     const sessiontime = formatTime(sessionres[0].time);
 
@@ -450,9 +450,21 @@ exports.cancelSession = (request, response) => {
                             });
                             const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime);
                             const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime);
-                            mail.sendEmail(studentEmail, 'Cancel Session Announcement', cancelSessionHtmlContent, cancelSessionTextContent);
+                            mail.sendEmail(studentEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, cancelSessionHtmlContent, cancelSessionTextContent);
                             whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, studentPhno)
                         });
+                        CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
+                            if (err) {
+                                return response.json({ "status": err });
+                            } else {
+                                let clgstaffEmail = res[0].email
+                                let clgstaffName = res[0].collegeStaffName
+                                const cancelSessionClgStaffHtmlContent = mailContents.cancelSessionClgStaffHTMLContent(clgstaffName, sessionDate, sessiontime);
+                                const cancelSessionClgStaffTextContent = mailContents.cancelSessionClgStaffTextContent(clgstaffName, sessionDate, sessiontime);
+                                mail.sendEmail(clgstaffEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, cancelSessionClgStaffHtmlContent, cancelSessionClgStaffTextContent);
+
+                            }
+                        })
                         return response.json({ "status": "success" });
                     });
                 });
