@@ -297,7 +297,43 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
     });
 };
 
+CollegeStaff.collegeStaffForgotPassword = (college_staff, result) => {
+    const getclgstaffQuery = `SELECT * FROM college_staff WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1`;
 
+    db.query(getclgstaffQuery, [college_staff.email], (err, clgstaff) => {
+        if (err) {
+            console.error("Error: ", err);
+            result(err, null);
+            return;
+        } else if (clgstaff.length === 0) {
+            result("College Staff not found!!!", null);
+            return;
+        }
+
+        const clgstaffData = clgstaff[0];
+
+        const updateCollegeStaffPasswordQuery = `UPDATE college_Staff SET password = ?, pwdUpdateStatus = 1 WHERE email = ? AND deleteStatus = 0 AND isActive = 1 `;
+
+        bcrypt.hash(college_staff.password, 10, (err, hashedNewPassword) => {
+            if (err) {
+                console.error("Error: ", err);
+                result(err, null);
+                return;
+            }
+
+            db.query(updateCollegeStaffPasswordQuery, [hashedNewPassword, college_staff.email], (updateErr) => {
+                if (updateErr) {
+                    console.error("Error : ", updateErr);
+                    result(updateErr, null);
+                } else {
+                    // Ensure the `id` or equivalent unique identifier is correctly referenced
+                    logCollegeStaff(clgstaffData.id, "password changed");
+                    result(null, null);
+                }
+            });
+        });
+    });
+};
 
 //College Staff to view Student
 
