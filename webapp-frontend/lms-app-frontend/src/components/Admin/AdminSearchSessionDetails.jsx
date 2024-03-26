@@ -278,7 +278,7 @@ const AdminSearchSessionDetails = () => {
                         {isLoading ? (
                             <div className="col-12 text-center"><p>Loading...</p></div>
                         ) : (
-                            updateField.length > 0 ? (
+                            currentSession.length > 0 ? (
                                 <div>
                                     <strong>Session Details</strong>
                                     <br /><br />
