@@ -69,8 +69,9 @@ Material.searchMaterial = (searchString, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Materials: ", res);
-                result(null, res);
+                const formattedMaterials = res.map(materials => ({ ...materials, addedDate: materials.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); 
+                console.log("Materials: ", formattedMaterials);
+                result(null, formattedMaterials);
             }
         });
 }
