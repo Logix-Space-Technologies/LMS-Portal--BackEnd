@@ -22,7 +22,7 @@ const logStudent = (studentId, action) => {
 
 
 StudentLog.getAll = async (result) => {
-    let query = "SELECT s.studName, stl.* FROM studentlogs stl JOIN student s ON stl.StudentId = s.id WHERE s.deleteStatus = 0 AND s.isActive = 1"
+    let query = "SELECT s.studName, stl.* FROM studentlogs stl JOIN student s ON stl.StudentId = s.id WHERE s.deleteStatus = 0 AND s.isActive = 1 ORDER BY stl.DateTime DESC"
     db.query(query, (err, response) => {
         if (err) {
             console.log("Error : ", err)
