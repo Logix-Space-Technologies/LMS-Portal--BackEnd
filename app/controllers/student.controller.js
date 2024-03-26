@@ -755,7 +755,7 @@ exports.generateListOfBatchWiseStudents = (request, response) => {
 // Generate Batch-Wise Student List BY College Staff
 function generatePDF(data, callback) {
     const pdfPath = 'pdfFolder/batch_wise_students_list.pdf';
-    const doc = new PDFDocument();
+    let doc = new PDFDocument({ margin: 30, size: 'A4' });
     const stream = fs.createWriteStream(pdfPath);
 
     doc.pipe(stream);
@@ -781,7 +781,7 @@ function generatePDF(data, callback) {
         120, // College
         80, // Department
         60, // Course
-        250 // Email
+        180 // Email
     ];
 
     // Add content to the PDF using grouped data
