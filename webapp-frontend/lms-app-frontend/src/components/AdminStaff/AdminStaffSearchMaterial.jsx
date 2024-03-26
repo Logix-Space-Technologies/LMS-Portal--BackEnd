@@ -140,7 +140,6 @@ const AdminStaffSearchMaterial = () => {
                 <th scope="col" className="px-6 py-3">
                   Remarks
                 </th>
-
                 <th scope="col" className="px-6 py-3">
                   Batch Name
                 </th>
