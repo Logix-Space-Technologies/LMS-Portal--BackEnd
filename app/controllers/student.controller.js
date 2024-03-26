@@ -959,7 +959,7 @@ function generateAttendancePDF(data, callback) {
                 headers: tableHeaders,
                 rows: tableData,
                 widths: columnWidths,
-                align: ['left', 'left', 'left', 'left', 'left', 'left', 'left', 'left', 'left', 'left'],
+                align: ['left', 'left', 'left', 'left', 'left', 'left', 'left'],
             });
 
             doc.moveDown(); // Add a newline between sessions
