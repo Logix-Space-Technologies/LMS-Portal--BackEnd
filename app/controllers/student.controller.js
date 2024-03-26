@@ -781,7 +781,7 @@ function generatePDF(data, callback) {
         120, // College
         80, // Department
         60, // Course
-        120 // Email
+        180 // Email
     ];
 
     // Add content to the PDF using grouped data
