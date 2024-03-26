@@ -165,7 +165,7 @@ function isDateGreaterThanToday(date) {
 function isDateGreaterThanOrEqualToToday(date) {
     const inputDate = new Date(date);
     const currentDate = new Date();
-    
+    currentDate.setHours(0, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to 0 for comparison
 
     return {
         isValid: inputDate >= currentDate,
