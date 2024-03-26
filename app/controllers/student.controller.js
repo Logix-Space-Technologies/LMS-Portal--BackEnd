@@ -778,7 +778,7 @@ function generatePDF(data, callback) {
     const columnWidths = [
         70, // Membership No.
         120, // Name
-        120, // College
+        180, // College
         80, // Department
         60, // Course
         180 // Email
