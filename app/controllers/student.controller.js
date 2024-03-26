@@ -920,13 +920,13 @@ function generateAttendancePDF(data, callback) {
     const groupedData = groupAttendanceBySession(data);
 
     const columnWidths = [
-        20, // Date 
-        120, // Membership No. 
-        50, // Admission No 
-        120, // Student Name 
-        70, // Department 
-        60, // Course 
-        80 // Attendance Status 
+        20,  // Date
+        130, // Membership No. 
+        50,  // Admission No 
+        110, // Student Name 
+        70,  // Department
+        60,  // Course
+        80   // Attendance Status
     ];
 
     // Add content to the PDF using grouped data
