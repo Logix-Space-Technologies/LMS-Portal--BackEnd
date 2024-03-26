@@ -242,9 +242,22 @@ const AdminViewAllSession = () => {
         const timeDifference = sessionDateTime.getTime() - currentDate.getTime();
         const isFutureSession = timeDifference > 0;
         const isWithin24Hours = timeDifference <= oneDay;
-        console.log(isWithin24Hours)
+        // console.log(isWithin24Hours)
 
         return isFutureSession && isWithin24Hours;
+    };
+
+    const isSessionInPast = (dateString, timeString) => {
+        const now = new Date();
+
+        const dateParts = dateString.split('/');
+        const timeParts = timeString.split(':');
+        // Assuming timeString is in HH:MM format; adjust if it includes seconds or is in 12-hour format
+
+        // Convert session date and time from strings to a Date object
+        const sessionDateTime = new Date(dateParts[2], dateParts[1] - 1, dateParts[0], timeParts[0], timeParts[1]);
+
+        return sessionDateTime < now;
     };
 
 
@@ -359,21 +372,21 @@ const AdminViewAllSession = () => {
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {value.cancelStatus === "ACTIVE" && (
+                                    {!isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => cancelClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none" data-bs-toggle="modal" data-bs-target="#cancelModal">
                                             Cancel Session
                                         </button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {value.cancelStatus === "ACTIVE" && (
+                                    {!isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
                                             Reschedule Session
                                         </button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {key === "lmsapp" && value.cancelStatus === "ACTIVE" && (
+                                    {key === "lmsapp" && !isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => deleteClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
                                             Delete Session
                                         </button>
