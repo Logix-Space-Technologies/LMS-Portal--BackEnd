@@ -32,18 +32,68 @@ const AdminSearchSessionDetails = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [qrCodeAttendance, setQrCodeAttendance] = useState(null);
     const [showQRModal, setShowQRModal] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [currentPage, setCurrentPage] = useState(1);
     const [SessionPerPage] = useState(10); // Number of sessions per page
     const [isSearchPerformed, setIsSearchPerformed] = useState(false);
     const [key, setKey] = useState('')
     const navigate = useNavigate()
+    const [cancelId, setCancelId] = useState(null);
+
 
     // Assign the API links as searchApiLink and deleteApiLink
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchSession";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deleteSessions";
+    const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession";
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
+    };
+
+    const cancelClick = (id) => {
+        setCancelId(id)
+        setShowModal(true)
+        setShowOverlay(true)
+    }
+
+    // Function to close both modal and overlay
+    const closeModal = () => {
+        setShowModal(false);
+        setShowOverlay(false);
+    };
+
+    const handleClick = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let data = { "id": cancelId };
+        let axiosConfigTwo = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+        axios.post(apiUrlTwo, data, axiosConfigTwo).then(
+            (response) => {
+                if (response.data.status === "success") {
+                    closeModal()
+                    setUpdateField([])
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status);
+                    }
+                }
+            })
     };
 
     const readValue = () => {
@@ -191,6 +241,19 @@ const AdminSearchSessionDetails = () => {
         setShowQRModal(false);
     };
 
+    const isSessionInPast = (dateString, timeString) => {
+        const now = new Date();
+
+        const dateParts = dateString.split('/');
+        const timeParts = timeString.split(':');
+        // Assuming timeString is in HH:MM format; adjust if it includes seconds or is in 12-hour format
+
+        // Convert session date and time from strings to a Date object
+        const sessionDateTime = new Date(dateParts[2], dateParts[1] - 1, dateParts[0], timeParts[0], timeParts[1]);
+
+        return sessionDateTime < now;
+    };
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
@@ -277,14 +340,21 @@ const AdminSearchSessionDetails = () => {
                                                             )}
                                                         </td>
                                                         <td className="px-6 py-4">{value.cancelStatus}</td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            {key === "lmsapp" && value.cancelStatus === "ACTIVE" && (
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            {key === "lmsapp" && !isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
                                                                 <button onClick={() => handleDeleteClick(value.id)} className="btn btn-danger mt-3">Delete</button>
                                                             )}
                                                         </td>
-                                                        <td className="p-4 whitespace-nowrap">
-                                                            {key === "lmsapp" && value.cancelStatus === "ACTIVE" && (
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            {key === "lmsapp" && !isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
                                                                 <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Reschedule</button>
+                                                            )}
+                                                        </td>
+                                                        <td>
+                                                            {!isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
+                                                                <button type="button" onClick={() => cancelClick(value.id)} className="btn btn-danger mt-3">
+                                                                    Cancel Session
+                                                                </button>
                                                             )}
                                                         </td>
                                                     </tr>
@@ -356,6 +426,46 @@ const AdminSearchSessionDetails = () => {
                     </div>
                 </div>
             </div>
+            {/* Cancel Confirmation Modal */}
+            {showModal && (
+                <div className="row">
+                    <div className="modal show d-block" tabIndex={-1}>
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to cancel this session?</h5>
+                                    <button type="button" className="btn-close" onClick={() => closeModal()}></button>
+                                </div>
+                                <div className="modal-body">
+                                    <p>This action cannot be undone.</p>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" onClick={() => closeModal()}>No, cancel</button>
+                                    <button onClick={() => handleClick()} type="button" className="btn btn-danger" >Yes, I'm sure</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     );
 };
