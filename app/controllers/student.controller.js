@@ -775,6 +775,15 @@ function generatePDF(data, callback) {
     // Group data by batch
     const groupedData = groupDataByBatch(data);
 
+    const columnWidths = [
+        70, // Membership No.
+        120, // Name
+        120, // College
+        80, // Department
+        60, // Course
+        120 // Email
+    ];
+
     // Add content to the PDF using grouped data
     for (const batchName in groupedData) {
         if (groupedData.hasOwnProperty(batchName)) {
