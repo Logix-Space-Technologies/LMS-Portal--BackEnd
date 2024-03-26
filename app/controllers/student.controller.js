@@ -807,7 +807,7 @@ function generatePDF(data, callback) {
             ];
             const tableData = students.map(student => [student.membership_no, student.studName, student.collegeName, student.studDept, student.course, student.studEmail]);
 
-            const tableWidth = 1000;
+            
             // Draw the table
             doc.table({
                 headers: tableHeaders,
