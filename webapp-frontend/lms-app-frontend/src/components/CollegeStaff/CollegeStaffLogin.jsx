@@ -10,9 +10,12 @@ const CollegeStaffLogin = () => {
     });
 
     const [updateField, setUpdateField] = useState({
+        email: "",
         otp: ""
     })
 
+    const [state, setState] = useState(false)
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +25,8 @@ const CollegeStaffLogin = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/clgStaffLogin";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/clgstaffemailverificationotpsend";
     const apiUrl3 = global.config.urls.api.server + "/api/lms/clgstaffemailverifyotp";
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/clgstaffotpsend"
+    const apiUrl5 = global.config.urls.api.server + "/api/lms/clgstaffotpverification"
 
     const navigate = useNavigate();
 
@@ -44,6 +49,22 @@ const CollegeStaffLogin = () => {
             otp: ""
         });
     };
+
+    //Function To Close Forgot Password Modal And Overlay
+    const closeWaitingModel = () => {
+        setShowWaitingModal(false)
+        setShowOverlay(false)
+        setErrors({})
+        setUpdateField({
+            email: "",
+            otp: ""
+        });
+    }
+
+    const forgotPassword = () => {
+        setShowWaitingModal(true)
+        setShowOverlay(true)
+    }
 
     const readValue = () => {
         let newErrors = {};
@@ -128,6 +149,66 @@ const CollegeStaffLogin = () => {
         )
     }
 
+    const otpForgotPasswordSend = () => {
+        let newErrors = {};
+        if (!updateField.email) {
+            newErrors.forgotPassEmail = "Email is required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        let data = { "email": updateField.email }
+        axios.post(apiUrl4, data).then(
+            (response) => {
+                if (response.data.status === "OTP sent to email.") {
+                    setShowWaitingModal(true)
+                    setShowOverlay(true);
+                    setState(true)
+                } else {
+                    alert(response.data.status)
+                    setShowModal(true)
+                    setShowOverlay(true);
+                }
+            }
+        )
+    }
+
+    const otpForgotPasswordVerify = () => {
+        let newErrors = {};
+        if (!updateField.email) {
+            newErrors.forgotpassotp = "Email is required!";
+        }
+        if (!updateField.otp) {
+            newErrors.forgotpassotp = "OTP is required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        let data = { "email": updateField.email, "otp": updateField.otp }
+        axios.post(apiUrl5, data).then(
+            (response) => {
+                if (response.data.status === "OTP verified successfully") {
+                    setShowWaitingModal(false)
+                    setShowOverlay(false); // Close the overlay
+                    setState(false)
+                    navigate("/collegestaffforgotpass")
+                    // alert("OTP Verified Successfully !!!")
+                    sessionStorage.setItem("clgstaffemail", updateField.email)
+                    setUpdateField({
+                        email: "",
+                        otp: ""
+                    });
+                } else {
+                    alert(response.data.status)
+                    setShowWaitingModal(false)
+                    setShowOverlay(false);
+                }
+            }
+        )
+    }
+
     return (
         <div className="container">
             <div className="row justify-content-center align-items-center min-vh-100">
@@ -148,8 +229,11 @@ const CollegeStaffLogin = () => {
                                     {errors.email && <span style={{ color: 'red' }} className="error">{errors.email}</span>}
                                 </div>
                                 <div className="mb-3 text-start">
-                                    <label htmlFor="" className="form-label">Password</label>
-                                    <div style={{display:'flex', alignItems:'center'}}>
+                                    <div style={{ display: 'flex', alignItems: 'right', justifyContent: 'flex-start' }}>
+                                        <label for="" class="form-label" style={{ marginRight: '740px' }}>Password</label>
+                                        <Link onClick={forgotPassword} style={{ textDecoration: 'underline', color: 'blue' }}>Forgot Password?</Link>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
                                         <input type={showPassword ? "text" : "password"} name="password" value={inputField.password} onChange={inputHandler} className="form-control" />
                                         <span className="input-group-text" onClick={() => setShowPassword(!showPassword)}>
                                             <i className={showPassword ? "bi bi-eye" : "bi bi-eye-slash"} id="togglePassword"></i>
@@ -198,6 +282,50 @@ const CollegeStaffLogin = () => {
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
                                 <button type="button" onClick={() => otpVerify()} className="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel">Reset Password</h1>
+                                <button type="button" className="btn-close" onClick={closeWaitingModel} />
+                            </div>
+                            <div className="modal-body">
+                                {state === true && (
+                                    <div>
+                                        <p style={{ fontSize: "15px" }}>Enter OTP Send To Email For Verification.</p><br />
+                                    </div>
+                                )}
+                                <form>
+                                    {state === false && (
+                                        <div className="mb-3">
+                                            <label htmlFor="recipient-name" className="col-form-label">Email:</label>
+                                            <input type="text" name="email" className="form-control" value={updateField.email} onChange={updateHandler} />
+                                            {errors.forgotPassEmail && <span style={{ color: 'red' }} className="error">{errors.forgotPassEmail}</span>}
+                                        </div>
+                                    )}
+                                    {state === true && (
+                                        <div className="mb-3">
+                                            <label htmlFor="recipient-name" className="col-form-label">OTP:</label>
+                                            <input type="text" name="otp" className="form-control" value={updateField.otp} onChange={updateHandler} />
+                                            {errors.otp && <span style={{ color: 'red' }} className="error">{errors.otp}</span>}
+                                        </div>
+                                    )}
+                                </form>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={closeWaitingModel}>Close</button>
+                                {state === false && (
+                                    <button type="button" onClick={() => otpForgotPasswordSend()} className="btn btn-primary">Submit</button>
+                                )}
+                                {state === true && (
+                                    <button type="button" onClick={() => otpForgotPasswordVerify()} className="btn btn-primary">Submit</button>
+                                )}
                             </div>
                         </div>
                     </div>

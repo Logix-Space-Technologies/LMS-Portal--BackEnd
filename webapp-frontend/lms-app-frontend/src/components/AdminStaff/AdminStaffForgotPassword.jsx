@@ -63,9 +63,6 @@ const AdminStaffForgotPassword = () => {
                         alert(response.data.data.Email);
                     } else if (response.data.status === "Validation failed" && response.data.data.Password) {
                         alert(response.data.data.Password);
-                    } else if (response.data.status === "Unauthorized User!!") {
-                        navigate("/admstafflogin")
-                        sessionStorage.clear()
                     } else {
                         alert(response.data.status)
                     }
@@ -140,7 +137,7 @@ const AdminStaffForgotPassword = () => {
                                             </div>
                                             <br></br>
                                             <div className="mb-3">
-                                                <Link className="btn btn-danger" onClick={() => backFunc()}>Back</Link>
+                                            <button className="btn btn-danger" onClick={() => backFunc()}>Back</button>
                                             </div>
                                         </ul>
                                     </div>

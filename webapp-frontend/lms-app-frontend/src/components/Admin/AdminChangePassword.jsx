@@ -46,9 +46,6 @@ const AdminChangePassword = () => {
                         alert(response.data.data.oldPassword);
                     } else if (response.data.status === "Validation failed" && response.data.data.newPassword) {
                         alert(response.data.data.newPassword);
-                    } else if (response.data.status === "Unauthorized User!!") {
-                        navigate("/")
-                        sessionStorage.clear()
                     } else {
                         alert(response.data.status)
                     }

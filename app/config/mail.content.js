@@ -5,85 +5,89 @@ function upcomingSessionOfflineHTMLContent(studName, sessionName, date, time, ve
   <html>
   
   <head>
-    <title>Session Created</title>
-    <style>
-      body {
-        background-color: #faf4f4;
-        color: #140101;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 20px;
-      }
+      <title>Session Created</title>
+      <style>
+          body {
+              background-color: #faf4f4;
+              color: #140101;
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 20px;
+          }
   
-      .container {
-        border-radius: 8px;
+          .container {
+              border-radius: 8px;
   
-        background-color: #ece9e9;
-        border-radius: 8px;
-        padding: 20px;
-        margin: 20px auto;
-        max-width: 600px;
-      }
+              background-color: #ece9e9;
+              border-radius: 8px;
+              padding: 20px;
+              margin: 20px auto;
+              max-width: 600px;
+          }
   
-      .logo-header img {
-        max-width: 30%;
-        height: auto;
-      }
+          .logo-header img {
+              max-width: 30%;
+              height: auto;
+          }
   
-      .content {
-        margin-top: 20px;
-        border: 2px solid #a3a0a0;
-        /* Added a border to content */
-        padding: 20px;
-      }
+          .content {
+              margin-top: 20px;
+              border: 2px solid #a3a0a0;
+              /* Added a border to content */
+              padding: 20px;
+          }
   
-      .footer {
-        text-align: center;
-        margin-top: 30px;
-        font-size: smaller;
-        color: grey;
-      }
-    </style>
+          h2 {
+              text-align: center;
+          }
+  
+          .footer {
+              text-align: center;
+              margin-top: 30px;
+              font-size: smaller;
+              color: grey;
+          }
+      </style>
   </head>
   
   <body>
   
-    <div class="container">
-      <div class="logo-header">
-        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      <div class="container">
+          <div class="logo-header">
+              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+          </div>
+          <div class="content">
+              <h2>New Session Schedule Announcement</h2>
+  
+              <p>Dear ${studName},</p>
+              <p>We are excited to announce the schedule for the upcoming session! Please find the details below:</p>
+  
+              <!-- Replace the following placeholder content with actual schedule details -->
+              <ul>
+                  <li><strong>Session Title :</strong> ${sessionName} </li>
+                  <li><strong>Date :</strong> ${date}</li>
+                  <li><strong>Time :</strong> ${time}</li>
+                  <li><strong>Location :</strong> ${venueORlink}</li>
+              </ul>
+  
+              <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your
+                  calendars!</p>
+  
+              <p>For the full session schedule and any changes, please check our online student portal or mobile app.</p>
+  
+              <p>If you have any questions, feel free to reach out to us !! </p>
+  
+              <p>We look forward to seeing you there!</p>
+  
+              <p>Best regards,</p>
+              <p>Link Ur Codes Team</p>
+              <br>
+          </div>
+  
+          <div class="footer">
+              <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+          </div>
       </div>
-      <div class="content">
-        <h2>New Session Schedule Announcement</h2>
-  
-        <p>Dear ${studName},</p>
-        <p>We are excited to announce the schedule for the upcoming session! Please find the details below:</p>
-  
-        <!-- Replace the following placeholder content with actual schedule details -->
-        <ul>
-          <li>Session Title : ${sessionName} </li>
-          <li>Date : ${date}</li>
-          <li>Time : ${time}</li>
-          <li>Location : ${venueORlink}</li>
-        </ul>
-  
-        <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your
-          calendars!</p>
-  
-        <p>For the full session schedule and any changes, please check our online student portal or mobile app.</p>
-  
-        <p>If you have any questions, feel free to reach out to us !! </p>
-  
-        <p>We look forward to seeing you there!</p>
-  
-        <p>Best regards,</p>
-        <p>Link Ur Codes Team</p>
-        <br>
-      </div>
-  
-      <div class="footer">
-        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
-      </div>
-    </div>
   
   </body>
   
@@ -98,85 +102,89 @@ function upcomingSessionOnlineHTMLContent(studName, sessionName, date, time, ven
   <html>
   
   <head>
-    <title>Session Created</title>
-    <style>
-      body {
-        background-color: #faf4f4;
-        color: #140101;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 20px;
-      }
+      <title>Session Created</title>
+      <style>
+          body {
+              background-color: #faf4f4;
+              color: #140101;
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 20px;
+          }
   
-      .container {
-        border-radius: 8px;
+          .container {
+              border-radius: 8px;
   
-        background-color: #ece9e9;
-        border-radius: 8px;
-        padding: 20px;
-        margin: 20px auto;
-        max-width: 600px;
-      }
+              background-color: #ece9e9;
+              border-radius: 8px;
+              padding: 20px;
+              margin: 20px auto;
+              max-width: 600px;
+          }
   
-      .logo-header img {
-        max-width: 30%;
-        height: auto;
-      }
+          .logo-header img {
+              max-width: 30%;
+              height: auto;
+          }
   
-      .content {
-        margin-top: 20px;
-        border: 2px solid #a3a0a0;
-        /* Added a border to content */
-        padding: 20px;
-      }
+          .content {
+              margin-top: 20px;
+              border: 2px solid #a3a0a0;
+              /* Added a border to content */
+              padding: 20px;
+          }
   
-      .footer {
-        text-align: center;
-        margin-top: 30px;
-        font-size: smaller;
-        color: grey;
-      }
-    </style>
+          h2 {
+              text-align: center;
+          }
+  
+          .footer {
+              text-align: center;
+              margin-top: 30px;
+              font-size: smaller;
+              color: grey;
+          }
+      </style>
   </head>
   
   <body>
   
-    <div class="container">
-      <div class="logo-header">
-        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      <div class="container">
+          <div class="logo-header">
+              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+          </div>
+          <div class="content">
+              <h2>New Session Schedule Announcement</h2>
+  
+              <p>Dear ${studName},</p>
+              <p>We are excited to announce the schedule for the upcoming session! Please find the details below:</p>
+  
+              <!-- Replace the following placeholder content with actual schedule details -->
+              <ul>
+                  <li><strong>Session Title :</strong> ${sessionName} </li>
+                  <li><strong>Date :</strong> ${date}</li>
+                  <li><strong>Time :</strong> ${time}</li>
+                  <li><strong>Meeting Link :</strong> ${venueORlink}</li>
+              </ul>
+  
+              <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your
+                  calendars!</p>
+  
+              <p>For the full session schedule and any changes, please check our online student portal or mobile app.</p>
+  
+              <p>If you have any questions, feel free to reach out to us !! </p>
+  
+              <p>We look forward to seeing you there!</p>
+  
+              <p>Best regards,</p>
+              <p>Link Ur Codes Team</p>
+              <br>
+          </div>
+  
+          <div class="footer">
+              <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+          </div>
       </div>
-      <div class="content">
-        <h2>New Session Schedule Announcement</h2>
-  
-        <p>Dear ${studName},</p>
-        <p>We are excited to announce the schedule for the upcoming session! Please find the details below:</p>
-  
-        <!-- Replace the following placeholder content with actual schedule details -->
-        <ul>
-          <li>Session Title : ${sessionName} </li>
-          <li>Date : ${date}</li>
-          <li>Time : ${time}</li>
-          <li>Meeting Link : ${venueORlink}</li>
-        </ul>
-  
-        <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your
-          calendars!</p>
-  
-        <p>For the full session schedule and any changes, please check our online student portal or mobile app.</p>
-  
-        <p>If you have any questions, feel free to reach out to us !! </p>
-  
-        <p>We look forward to seeing you there!</p>
-  
-        <p>Best regards,</p>
-        <p>Link Ur Codes Team</p>
-        <br>
-      </div>
-  
-      <div class="footer">
-        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
-      </div>
-    </div>
   
   </body>
   
@@ -281,7 +289,7 @@ function upcomingSessionRecordedHTMLContent(studName, sessionName, date, time, v
   return content;
 }
 
-function upcomingSessionClgStaffHTMLContent(sessionName, date, time, venueORlink, type, batchName) {
+function upcomingSessionClgStaffHTMLContent(sessionName, date, time, venueORlink, type, batchName, collegeStaffName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -337,7 +345,7 @@ function upcomingSessionClgStaffHTMLContent(sessionName, date, time, venueORlink
   <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
   </div>
       <h2>Upcoming Session Details</h2>
-      <p>Dear College Staff,</p>
+      <p>Dear ${collegeStaffName},</p>
       <p>We hope this email finds you well. We are writing to inform you about the upcoming session details for our coding platform, Link Ur Codes.</p>
       <p>The next session is scheduled for:</p>
       <ul>
@@ -499,11 +507,11 @@ function upcomingSessionOfflineTextContent(studName, sessionName, date, time, ve
 
 }
 
-function upcomingSessionClgStaffTextContent(sessionName, date, time, venueORlink, type, batchName) {
+function upcomingSessionClgStaffTextContent(sessionName, date, time, venueORlink, type, batchName, collegeStaffName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   textContent = `
-  Dear College Staff,
+  Dear ${collegeStaffName},
   
   We hope this email finds you well. We are writing to inform you about the upcoming session details for our coding platform, Link Ur Codes.
   
@@ -880,7 +888,87 @@ function cancelSessionContent(participantName, date, time) {
         <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
       </div>
       <div class="content">
-        <h2>Session Cancellation</h2>
+        <h2>Session Cancellation Announcement</h2>
+  
+        <p>Dear ${participantName},</p>
+        <p>We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for
+          any inconvenience this may cause.</p>
+        <p>A new date for the session will be announced soon. We will keep you updated with the new schedule.</p>
+        <p>Thank you for your understanding.</p>
+        <p>Best Regards,</p>
+        <p>The LinkUrCodes Team</p>
+      </div>
+      <div class="footer">
+        <p>© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  
+  </body>
+  
+  </html>`
+  return content;
+
+}
+
+function cancelSessionClgStaffHTMLContent(participantName, date, time) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html>
+  
+  <head>
+    <title>Session Cancellation</title>
+    <style>
+      body {
+        background-color: #faf4f4;
+        color: #140101;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+  
+      .container {
+        border-radius: 8px;
+        background-color: #ece9e9;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 600px;
+      }
+  
+      h2 {
+        text-align: center;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      .content {
+        margin-top: 20px;
+        border: 2px solid #a3a0a0;
+        /* Added a border to content */
+        padding: 20px;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: smaller;
+        color: grey;
+      }
+    </style>
+  </head>
+  
+  <body>
+  
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <div class="content">
+        <h2>Session Cancellation Announcement</h2>
   
         <p>Dear ${participantName},</p>
         <p>We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for
@@ -903,6 +991,25 @@ function cancelSessionContent(participantName, date, time) {
 }
 
 function cancelSessionTextContent(participantName, date, time) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${participantName},
+
+    We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for any inconvenience this may cause.
+    
+    A new date for the session will be announced soon. We will keep you updated with the new schedule.
+    
+    Thank you for your understanding.
+    
+    Best Regards,
+
+    The LinkUrCodes Team
+    
+    © ${currentYear} Link Ur Codes. All rights reserved.`
+  return content;
+}
+
+function cancelSessionClgStaffTextContent(participantName, date, time) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `Dear ${participantName},
@@ -1907,7 +2014,7 @@ function clgstaffEmailVerificationOTPTextContent(clgstaffName, clgstaffotp) {
   return content
 }
 
-function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -1970,7 +2077,7 @@ function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessio
       <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
   
       <h2>Session Reschedule Announcement</h2>
-      <p>Dear LinkUrCodes Member,</p>
+      <p>Dear ${studName},</p>
       <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session
         originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this
         may cause and appreciate your understanding.</p>
@@ -1998,7 +2105,7 @@ function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessio
   return content;
 }
 
-function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -2061,7 +2168,7 @@ function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, session
       <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
   
       <h2>Session Reschedule Announcement</h2>
-      <p>Dear LinkUrCodes Member,</p>
+      <p>Dear ${studName},</p>
       <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session
         originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this
         may cause and appreciate your understanding.</p>
@@ -2089,7 +2196,7 @@ function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, session
   return content;
 }
 
-function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -2150,7 +2257,7 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
         <h2>Session Reschedule Announcement</h2>
       </div>
       <div class="content">
-        <p>Dear LinkUrCodes Member,</p>
+        <p>Dear ${studName},</p>
         <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming
           session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any
           inconvenience this may cause and appreciate your understanding.</p>
@@ -2175,7 +2282,7 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
   return content;
 }
 
-function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName) {
+function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeStaffName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -2236,7 +2343,7 @@ function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessi
         <h2>Session Reschedule Announcement</h2>
       </div>
       <div class="content">
-        <p>Dear College Staff,</p>
+        <p>Dear ${collegeStaffName},</p>
         <p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming
           session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any
           inconvenience this may cause and appreciate your understanding.</p>
@@ -2262,10 +2369,10 @@ function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessi
   return content;
 }
 
-function reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
-  content = `Dear LinkUrCodes Member,
+  content = `Dear ${studName},
 
     We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
     
@@ -2288,10 +2395,10 @@ function reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessio
   return content
 }
 
-function reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
-  content = `Dear LinkUrCodes Member,
+  content = `Dear ${studName},
 
     We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
     
@@ -2314,10 +2421,10 @@ function reschedulingSessionOnlineTextContent(originaldate, sessionDate, session
   return content
 }
 
-function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, type, venueORlink) {
+function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
-  content = `Dear LinkUrCodes Member,
+  content = `Dear ${studName},
 
     We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
     
@@ -2340,10 +2447,10 @@ function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessi
   return content
 }
 
-function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName) {
+function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeStaffName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
-  content = `Dear College Staff,
+  content = `Dear ${collegeStaffName},
 
     We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.
     
@@ -2597,6 +2704,494 @@ function emailverifyStudentOTPTextContent(studName, otp) {
   return content
 }
 
+function SessionRemainderOfflineHTMLContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html>
+  
+  <head>
+    <title>Session Reminder</title>
+    <style>
+      body {
+        background-color: #faf4f4;
+        color: #140101;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+  
+      .container {
+        background-color: #ece9e9;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 600px;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      .content {
+        margin-top: 20px;
+        border: 2px solid #a3a0a0;
+        padding: 20px;
+      }
+  
+      h2 {
+        text-align: center;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: smaller;
+        color: grey;
+      }
+    </style>
+  </head>
+  
+  <body>
+  
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <div class="content">
+        <h2>Reminder Regarding Upcoming Session</h2>
+  
+        <p>Dear ${studName},</p>
+        <p>We hope this message finds you well. As your educational journey continues, we want to ensure you're fully prepared and excited for what's ahead. This email serves as a friendly reminder about the upcoming session you've enrolled in, an opportunity we believe will significantly enrich your learning experience. Please find the details below:</p>
+  
+        <ul>
+          <li><strong>Session Title:</strong> ${sessionName}</li>
+          <li><strong>Date:</strong> ${date}</li>
+          <li><strong>Time:</strong> ${time}</li>
+          <li><strong>Location:</strong> ${venueORlink}</li>
+        </ul>
+  
+        <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!</p>
+  
+        <p>For the full session schedule and any changes, please check our online student portal or mobile app.</p>
+  
+        <p>If you have any questions, feel free to reach out to us!</p>
+  
+        <p>We look forward to seeing you there!</p>
+  
+        <p>Best regards,</p>
+        <p>The Link Ur Codes Team</p>
+      </div>
+  
+      <div class="footer">
+        <p>© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function SessionRemainderOnlineHTMLContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html>
+  
+  <head>
+    <title>Session Reminder</title>
+    <style>
+      body {
+        background-color: #faf4f4;
+        color: #140101;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+  
+      .container {
+        background-color: #ece9e9;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 600px;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      .content {
+        margin-top: 20px;
+        border: 2px solid #a3a0a0;
+        padding: 20px;
+      }
+  
+      h2 {
+        text-align: center;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: smaller;
+        color: grey;
+      }
+    </style>
+  </head>
+  
+  <body>
+  
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <div class="content">
+        <h2>Reminder Regarding Upcoming Session</h2>
+  
+        <p>Dear ${studName},</p>
+        <p>We hope this message finds you well. As your educational journey continues, we want to ensure you're fully prepared and excited for what's ahead. This email serves as a friendly reminder about the upcoming session you've enrolled in, an opportunity we believe will significantly enrich your learning experience. Please find the details below:</p>
+  
+        <ul>
+          <li><strong>Session Title:</strong> ${sessionName}</li>
+          <li><strong>Date:</strong> ${date}</li>
+          <li><strong>Time:</strong> ${time}</li>
+          <li><strong>Meeting Link:</strong> ${venueORlink}</li>
+        </ul>
+  
+        <p>It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!</p>
+  
+        <p>For the full session schedule and any changes, please check our online student portal or mobile app.</p>
+  
+        <p>If you have any questions, feel free to reach out to us!</p>
+  
+        <p>We look forward to seeing you there!</p>
+  
+        <p>Best regards,</p>
+        <p>The Link Ur Codes Team</p>
+      </div>
+  
+      <div class="footer">
+        <p>© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function SessionRemainderRecordedHTMLContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html>
+  
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+  
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+      }
+  
+      .header {
+        color: #333333;
+        text-align: center;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      .content {
+        color: #333333;
+        line-height: 1.6;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.8em;
+        color: #666666;
+      }
+  
+      a {
+        color: #007bff;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="center">
+            <img src="https://linkurcodes.com/imgs/nextClass.jpg" alt="Next Class" width="300"
+              style="width: 300px; max-width: 100%; height: auto; border: none; outline: none;">
+          </td>
+        </tr>
+      </table>
+      <div class="header">
+        <h2>Upcoming Session Remainder: Dive Deeper with Our Next Recorded Lesson!</h2>
+      </div>
+      <div class="content">
+        <p>Dear ${studName},</p>
+        <p>We hope this message finds you well. As your educational journey continues, we want to ensure you're fully
+          prepared and excited for what's ahead. This email serves as a friendly reminder about the upcoming session
+          you've enrolled in, an opportunity we believe will significantly enrich your learning experience. Please find
+          the details below:</p>
+        <p><strong>Next Session: ${sessionName}</strong><br>
+          <strong>Available From:</strong> ${date}, ${time}<br>
+          <strong>Where:</strong> <a href=${venueORlink}>Access the Video Here</a>
+        </p>
+        <p>This session is specially recorded for you! Dive deep into the Session Content.</p>
+        <h3>Your Task</h3>
+        <p>After watching the video, we encourage you to put your knowledge to the test by completing the tasks
+          mentioned towards the end of the session. This is a fantastic opportunity to apply what you've learned
+          and receive feedback on your work.</p>
+  
+        <p>Happy Learning,</p>
+        Link Ur Codes Team</p>
+      </div>
+      <div class="footer">
+        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function SessionRemainderClgStaffHTMLContent(collegeStaffName, date, time, venueORlink, type, batchName, sessionName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Upcoming Session Reminder</title>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              line-height: 1.6;
+              margin: 0;
+              padding: 0;
+          }
+  
+          .container {
+              max-width: 600px;
+              margin: auto;
+              padding: 20px;
+              border: 1px solid #ccc;
+              border-radius: 5px;
+              background-color: #f9f9f9;
+          }
+  
+          h2 {
+              color: #333;
+              text-align: center;
+          }
+  
+          .logo-header img {
+              max-width: 30%;
+              height: auto;
+          }
+  
+          p {
+              color: #555;
+          }
+  
+          .button {
+              display: inline-block;
+              background-color: #007bff;
+              color: #fff;
+              text-decoration: none;
+              padding: 10px 20px;
+              border-radius: 5px;
+          }
+  
+          .footer {
+              text-align: center;
+              font-size: 0.8em;
+              /* Reduced font size for the footer */
+          }
+      </style>
+  </head>
+  
+  <body>
+      <div class="container">
+          <div class="logo-header">
+              <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+          </div>
+          <h2>Reminder Regarding Upcoming Session</h2>
+          <p>Dear ${collegeStaffName},</p>
+          <p>This is a reminder regarding our upcoming session scheduled on ${date}.</p>
+          <p>Here are the details of the session:</p>
+          <ul>
+              <li><strong>Batch Name:</strong> ${batchName}</li>
+              <li><strong>Session Name:</strong> ${sessionName}</li>
+              <li><strong>Type:</strong> ${type}</li>
+              <li><strong>Date:</strong> ${date}</li>
+              <li><strong>Time:</strong> ${time}</li>
+              <li><strong>Link or Venue:</strong> ${venueORlink}</li>
+          </ul>
+          <p>Please ensure that this reminder reaches all students and encourage them to attend the session. We look
+              forward
+              to a session filled with learning and engagement.</p>
+          <p>If you have any questions, feel free to reach out to us !!</p>
+          <p>Regards,</p>
+          <p>The Link Ur Codes Team</p>
+          <br>
+          <div class="footer">
+              <p>© ${currentYear} Link Ur Codes. All rights reserved.</p>
+          </div>
+      </div>
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function SessionRemainderClgStaffTextContent(collegeStaffName, date, time, venueORlink, type, batchName, sessionName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${collegeStaffName},
+
+  This is a reminder regarding our upcoming session scheduled on ${date}.
+  
+  Here are the details of the session:
+  
+  Batch Name: ${batchName}
+  Session Name: ${sessionName}
+  Type: ${type}
+  Date: ${date}
+  Time: ${time}
+  Link or Venue: ${venueORlink}
+
+  Please ensure that this reminder reaches all students and encourage them to attend the session. We look forward to a session filled with learning and engagement.
+  
+  If you have any questions, feel free to reach out to us !!
+  
+  Regards,
+  
+  The Link Ur Codes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+  return content;
+}
+
+function SessionRemainderOfflineTextContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${studName},
+
+  We hope this message finds you well. As your educational journey continues, we want to ensure you're fully prepared and
+  excited for what's ahead. This email serves as a friendly reminder about the upcoming session you've enrolled in, an
+  opportunity we believe will significantly enrich your learning experience. Please find the details below:
+  
+  Session Title: ${sessionName}
+  Date: ${date}
+  Time: ${time}
+  Location: ${venueORlink}
+  It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!
+  
+  For the full session schedule and any changes, please check our online student portal or mobile app.
+  
+  If you have any questions, feel free to reach out to us!
+  
+  We look forward to seeing you there!
+  
+  Best regards,
+  
+  The Link Ur Codes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+
+  return content
+}
+
+function SessionRemainderOnlineTextContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${studName},
+
+  We hope this message finds you well. As your educational journey continues, we want to ensure you're fully prepared and
+  excited for what's ahead. This email serves as a friendly reminder about the upcoming session you've enrolled in, an
+  opportunity we believe will significantly enrich your learning experience. Please find the details below:
+  
+  Session Title: ${sessionName}
+  Date: ${date}
+  Time: ${time}
+  Meeting Link: ${venueORlink}
+  It's going to be an engaging and informative session that you wouldn't want to miss. Be sure to mark your calendars!
+  
+  For the full session schedule and any changes, please check our online student portal or mobile app.
+  
+  If you have any questions, feel free to reach out to us!
+  
+  We look forward to seeing you there!
+  
+  Best regards,
+  
+  The Link Ur Codes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+
+  return content
+}
+
+function SessionRemainderRecordedTextContent(studName, sessionName, date, time, venueORlink) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${studName},
+
+  We hope this message finds you well. As your educational journey continues, we want to ensure you're fully prepared and
+  excited for what's ahead. This email serves as a friendly reminder about the upcoming session you've enrolled in, an
+  opportunity we believe will significantly enrich your learning experience. Please find the details below:
+  
+  Next Session: ${sessionName}
+  Available From: ${date}
+  Where: ${venueORlink}
+  This session is specially recorded for you! Dive deep into the Session Content.
+  
+  Your Task
+  
+  After watching the video, we encourage you to put your knowledge to the test by completing the tasks mentioned towards
+  the end of the session. This is a fantastic opportunity to apply what you've learned and receive feedback on your work.
+  
+  Happy Learning,
+  
+  Link Ur Codes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+
+  return content
+}
+
 
 
 module.exports = {
@@ -2645,6 +3240,17 @@ module.exports = {
   reschedulingSessionRecordedTextContent,
   reschedulingSessionClgStaffTextContent,
   emailverifyStudentOTPHtmlContent,
-  emailverifyStudentOTPTextContent
+  emailverifyStudentOTPTextContent,
+  SessionRemainderOfflineHTMLContent,
+  SessionRemainderOnlineHTMLContent,
+  SessionRemainderRecordedHTMLContent,
+  SessionRemainderOfflineTextContent,
+  SessionRemainderOnlineTextContent,
+  SessionRemainderRecordedTextContent,
+  cancelSessionClgStaffHTMLContent,
+  cancelSessionClgStaffTextContent,
+  SessionRemainderClgStaffHTMLContent,
+  SessionRemainderClgStaffTextContent
+
 };
 

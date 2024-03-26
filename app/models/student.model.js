@@ -388,7 +388,7 @@ Student.StdChangePassword = (student, result) => {
             const hashedOldPassword = res[0].password;
             const id = res[0].id;
             if (bcrypt.compareSync(student.oldPassword, hashedOldPassword)) {
-                const updateStudentPasswordQuery = "UPDATE student SET password = ?, pwdUpdateStatus = 1 WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1 AND ispaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
+                const updateStudentPasswordQuery = "UPDATE student SET password = ?, pwdUpdateStatus = 1 WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1 AND isPaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
                 const hashedNewPassword = bcrypt.hashSync(student.newPassword, 10);
                 db.query(updateStudentPasswordQuery, [hashedNewPassword, student.studEmail], (updateErr) => {
                     if (updateErr) {
@@ -408,6 +408,50 @@ Student.StdChangePassword = (student, result) => {
         }
     });
 };
+
+Student.forgotPassword = (student, result) => {
+    const getStudentQuery = `
+        SELECT * FROM student 
+        WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1 AND isVerified = 1 AND isPaid = 1`;
+
+    db.query(getStudentQuery, [student.studEmail], (err, students) => {
+        if (err) {
+            console.error("Error: ", err);
+            result(err, null);
+            return;
+        } else if (students.length === 0) {
+            result("Student not found!!!", null);
+            return;
+        }
+
+        const studentData = students[0];
+
+        const updateStudentPasswordQuery = `
+            UPDATE student 
+            SET password = ?, pwdUpdateStatus = 1 
+            WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1 AND isVerified = 1 AND isPaid = 1 AND validity > CURRENT_DATE`;
+
+        bcrypt.hash(student.password, 10, (err, hashedNewPassword) => {
+            if (err) {
+                console.error("Error: ", err);
+                result(err, null);
+                return;
+            }
+
+            db.query(updateStudentPasswordQuery, [hashedNewPassword, student.studEmail], (updateErr) => {
+                if (updateErr) {
+                    console.error("Error : ", updateErr);
+                    result(updateErr, null);
+                } else {
+                    // Ensure the `id` or equivalent unique identifier is correctly referenced
+                    logStudent(studentData.id, "password changed"); 
+                    result(null, null);
+                }
+            });
+        });
+    });
+};
+
 
 
 Student.viewStudentProfile = (studId, result) => {

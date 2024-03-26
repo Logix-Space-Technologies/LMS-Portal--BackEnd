@@ -32,12 +32,12 @@ const AdminViewAllSession = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [sessionsPerPage] = useState(10); // Number of sessions per page
     const navigate = useNavigate();
-    const [updateField, setUpdateField] = useState([]);
     const [key, setKey] = useState('')
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deleteSessions";
+    const remainderApiLink = global.config.urls.api.server + "/api/lms/sendSessionRemainderEmail";
 
 
     const getData = () => {
@@ -61,6 +61,7 @@ const AdminViewAllSession = () => {
             (response) => {
                 if (response.data.Sessions) {
                     setSessionData(response.data.Sessions);
+                    console.log(response.data.Sessions)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
@@ -104,6 +105,7 @@ const AdminViewAllSession = () => {
             (response) => {
                 if (response.data.status === "success") {
                     alert("Session Cancelled Successfully.")
+                    setSessionData(sessionData.filter(session => session.id !== cancelId));
                     getData()
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
@@ -192,6 +194,61 @@ const AdminViewAllSession = () => {
         setShowConfirmation(true);
     };
 
+    const remainderClick = (batchId, sessionId) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let data = { "batchId": batchId, "id": sessionId }; // Assuming the API requires batchId
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+
+        // Make the API call to send the reminder
+        axios.post(remainderApiLink, data, axiosConfig).then(
+            (response) => {
+                if (response.data.status === "success") {
+                    alert("Reminder Sent Successfully.");
+                    // Optionally, you can update the UI or perform other actions after sending the reminder
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear();
+                    } else {
+                        alert(response.data.status);
+                    }
+                }
+            }
+        );
+    };
+    const canSendReminder = (sessionDate, sessionTime) => {
+        const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
+        const currentDate = new Date();
+        const [day, month, year] = sessionDate.split('/'); // Assuming date format is DD/MM/YYYY
+        const [hours, minutes] = sessionTime.split(':'); // Assuming time format is HH:mm
+
+        // Convert sessionDate and sessionTime into a Date object
+        const sessionDateTime = new Date(year, month - 1, day, hours, minutes);
+
+        // Check if session date/time is within next 24 hours and not in the past
+        const timeDifference = sessionDateTime.getTime() - currentDate.getTime();
+        const isFutureSession = timeDifference > 0;
+        const isWithin24Hours = timeDifference <= oneDay;
+        console.log(isWithin24Hours)
+
+        return isFutureSession && isWithin24Hours;
+    };
+
+
+
     const confirmDelete = () => {
         let axiosConfig = {
             headers: {
@@ -205,7 +262,7 @@ const AdminViewAllSession = () => {
         axios.post(deleteApiLink, { id: deleteId }, axiosConfig).then(response => {
             if (response.data.status === "success") {
                 alert("Session Deleted!!")
-                setUpdateField(updateField.filter(session => session.id !== deleteId));
+                setSessionData(sessionData.filter(session => session.id !== deleteId));
                 getData()
             } else {
                 if (response.data.status === "Unauthorized User!!") {
@@ -254,6 +311,7 @@ const AdminViewAllSession = () => {
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -272,7 +330,7 @@ const AdminViewAllSession = () => {
                                 <td className="px-6 py-4">
                                     <p className="text-sm text-gray-600">
                                         {isSpecialDomain(value.venueORlink) ? (
-                                            <Link to={value.venueORlink} target="_blank" rel="noopener noreferrer" style={{color: '#007bff', textDecoration: 'underline'}}>{value.venueORlink}</Link>
+                                            <Link to={value.venueORlink} target="_blank" rel="noopener noreferrer" style={{ color: '#007bff', textDecoration: 'underline' }}>{value.venueORlink}</Link>
                                         ) : (
                                             value.venueORlink
                                         )}
@@ -318,6 +376,13 @@ const AdminViewAllSession = () => {
                                     {key === "lmsapp" && value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => deleteClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
                                             Delete Session
+                                        </button>
+                                    )}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.cancelStatus === "ACTIVE" && canSendReminder(value.date, value.time) && (
+                                        <button onClick={() => remainderClick(value.batchId, value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
+                                            Send Remainder
                                         </button>
                                     )}
                                 </td>

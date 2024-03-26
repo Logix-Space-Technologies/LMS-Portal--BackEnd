@@ -112,6 +112,8 @@ import TestSidebar from './components/Student/TestStudent/TestSidebar';
 import TopHeader from './components/Student/TestStudent/TopHeader';
 import StudentEmailVerification from './components/Student/StudentEmailVerification';
 import AdminStaffForgotPassword from './components/AdminStaff/AdminStaffForgotPassword';
+import StudentForgotPassword from './components/Student/StudentForgotPassword';
+import CollegeStaffForgotPassword from './components/CollegeStaff/CollegeStaffForgotPassword';
 
 
 
@@ -225,6 +227,7 @@ function App() {
           <Route path='/clgstaffviewsession' element={<CollegeStaffViewSession/>}/>
           <Route path='/clgstaffviewNotifications' element={<CollegeStaffViewNotifications/>}/>
           <Route path='/CollegeStaffViewCollege' element={<CollegeStaffViewCollege/>}/>
+          <Route path='/collegestaffforgotpass' element={<CollegeStaffForgotPassword/>}/>
 
 
 
@@ -264,6 +267,7 @@ function App() {
           <Route path='/testSidebar' element={<TestSidebar/>}/>
           <Route path='/topHeader' element={<TopHeader/>}/>
           <Route path='/studEmailVerification' element={<StudentEmailVerification/>}/>
+          <Route path='/studforgotpass' element={<StudentForgotPassword/>}/>
 
 
 

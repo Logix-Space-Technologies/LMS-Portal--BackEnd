@@ -22,6 +22,9 @@ const StudentUpdateProfile = () => {
             "studProfilePic": file
         }
     )
+
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const apiURL = global.config.urls.api.server + "/api/lms/studentViewProfile";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/studentUpdateProfile";
     const navigate = useNavigate()
@@ -44,9 +47,16 @@ const StudentUpdateProfile = () => {
         }
     }
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
     const readNewValue = async (e) => {
         e.preventDefault()
         const validationErrors = validateForm(updateField)
+        setShowWaitingModal(true)
+        setShowOverlay(true)
 
         if (Object.keys(validationErrors).length === 0) {
             let data = {}
@@ -86,25 +96,31 @@ const StudentUpdateProfile = () => {
                 axios.post(apiUrl2, data, axiosConfig).then(
                     (Response) => {
                         if (Response.data.status === "success") {
-                            setUpdateField({
-                                "id": sessionStorage.getItem("studentId"),
-                                "studName": "",
-                                "admNo": "",
-                                "rollNo": "",
-                                "studDept": "",
-                                "course": "",
-                                "studPhNo": "",
-                                "aadharNo": "",
-                                "studProfilePic": ""
-                            })
-                            alert("Profile Updated Successfully")
-                            navigate("/studdashboard")
+                            closeWaitingModal()
+                            setTimeout(() => {
+                                setUpdateField({
+                                    "id": sessionStorage.getItem("studentId"),
+                                    "studName": "",
+                                    "admNo": "",
+                                    "rollNo": "",
+                                    "studDept": "",
+                                    "course": "",
+                                    "studPhNo": "",
+                                    "aadharNo": "",
+                                    "studProfilePic": ""
+                                })
+                                alert("Profile Updated Successfully")
+                                navigate("/studdashboard")
+                            }, 500)
                         } else {
                             if (Response.data.status === "Unauthorized User!!") {
                                 navigate("/studentLogin")
                                 sessionStorage.clear()
                             } else {
-                                alert(Response.data.status)
+                                closeWaitingModal()
+                                setTimeout(() => {
+                                    alert(Response.data.status)
+                                }, 500)
                             }
                         }
 
@@ -279,6 +295,44 @@ const StudentUpdateProfile = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div >
     );
 };

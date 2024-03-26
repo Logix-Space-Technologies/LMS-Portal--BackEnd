@@ -1,4 +1,5 @@
 const axios = require('axios');
+const db = require('../../models/db')
 
 function sendCancellationMessage(date, time, sessionType, destinationPhoneNumber) {
     const url = 'https://api.gupshup.io/wa/api/v1/template/msg';
@@ -21,6 +22,15 @@ function sendCancellationMessage(date, time, sessionType, destinationPhoneNumber
     axios.post(url, data, { headers: headers })
         .then(response => {
             console.log('Response:', response.data);
+            // db.query("INSERT INTO `whatsappmsgfeedback`(`studId`, `msgId`, `status`) VALUES (?,?,?)", [studentid, response.data.messageId, response.data.status],
+            //     (err, res) => {
+            //         if (err) {
+            //             console.log(err)
+            //         } else {
+            //             console.log(res)
+            //         }
+
+            //     })
         })
         .catch(error => {
             console.error('Error sending message:', error);
