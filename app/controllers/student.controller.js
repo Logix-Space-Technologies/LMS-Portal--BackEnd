@@ -1033,7 +1033,7 @@ exports.generateSessionWiseAttendanceList = (request, response) => {
 
 function generateSessionAttendancePDF(data, callback) {
     const pdfPath = 'pdfFolder/session_wise_attendance_list.pdf';
-    const doc = new PDFDocument();
+    let doc = new PDFDocument({ margin: 50, size: 'A4' });
     const stream = fs.createWriteStream(pdfPath);
 
     doc.pipe(stream);
