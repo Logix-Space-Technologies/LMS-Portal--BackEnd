@@ -173,6 +173,26 @@ function isDateGreaterThanOrEqualToToday(date) {
     };
 }
 
+function isTimeGreaterThanOrEqualToCurrentIfToday(date, time) {
+    const inputDateTime = new Date(date + 'T' + time);
+    const currentDateTime = new Date();
+
+    // Check if the input date is today
+    const isToday = inputDateTime.toDateString() === currentDateTime.toDateString();
+
+    // If it's today, we compare the times
+    if (isToday) {
+        return {
+            isValid: inputDateTime >= currentDateTime,
+            message: "For today's date, select a time greater than or equal to the current time."
+        };
+    }
+
+    // If it's not today, any time is valid
+    return { isValid: true };
+}
+
+
 
 function isValidTime(time) {
     return {
@@ -279,5 +299,6 @@ module.exports = {
     isValidGitLink,
     acceptOnlyCapitalLetters,
     isLaterDate,
-    isDateGreaterThanOrEqualToToday
+    isDateGreaterThanOrEqualToToday,
+    isTimeGreaterThanOrEqualToCurrentIfToday
 };

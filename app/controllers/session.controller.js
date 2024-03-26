@@ -51,6 +51,10 @@ exports.createSession = (request, response) => {
                 validationErrors.time = Validator.isValidTime(request.body.time).message;
             }
 
+            if (!Validator.isTimeGreaterThanOrEqualToCurrentIfToday(request.body.date, request.body.time).isValid) {
+                validationErrors.time = Validator.isTimeGreaterThanOrEqualToCurrentIfToday(request.body.date, request.body.time).message;
+            }
+
             if (Validator.isEmpty(request.body.type).isValid) {
                 validationErrors.type = Validator.isEmpty(request.body.type).message;
             }
