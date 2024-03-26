@@ -129,6 +129,9 @@ const AdminStaffSearchMaterial = () => {
                   S/N
                 </th>
                 <th scope="col" className="px-6 py-3">
+                  Batch Name
+                </th>
+                <th scope="col" className="px-6 py-3">
                   File Name
                 </th>
                 <th scope="col" className="px-6 py-3">
@@ -141,7 +144,10 @@ const AdminStaffSearchMaterial = () => {
                   Remarks
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Batch Name
+                  Added Date
+                </th>
+                <th scope="col" className="px-6 py-3">
+
                 </th>
                 <th scope="col" className="px-6 py-3">
 
@@ -156,19 +162,22 @@ const AdminStaffSearchMaterial = () => {
                       {calculateSerialNumber(index)}
                     </td>
                     <td className="px-6 py-4">
+                      {value.batchName}
+                    </td>
+                    <td className="px-6 py-4">
                       {value.fileName}
                     </td>
                     <td className="px-6 py-4">
                       {value.materialDesc}
                     </td>
                     <td className="px-6 py-4">
-                      {value.uploadFile}
+                      <Link target="_blank" to={value.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                     </td>
                     <td className="px-6 py-4">
                       {value.remarks}
                     </td>
                     <td className="px-6 py-4">
-                      {value.batchName}
+                      {value.addedDate}
                     </td>
                     <td className="p-4 whitespace-nowrap">
                       <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal3" onClick={() => handleClick(value.id)}>
