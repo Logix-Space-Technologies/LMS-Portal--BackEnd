@@ -162,6 +162,18 @@ function isDateGreaterThanToday(date) {
     };
 }
 
+function isDateGreaterThanOrEqualToToday(date) {
+    const inputDate = new Date(date);
+    const currentDate = new Date();
+    
+
+    return {
+        isValid: inputDate >= currentDate,
+        message: "Select a date greater than or equal to today."
+    };
+}
+
+
 function isValidTime(time) {
     return {
         isValid: /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/.test(time),
@@ -213,7 +225,7 @@ function isDate1GreaterThanDate2(date1, date2) {
 
     return {
         isValid: date2 >= oneYearLater,
-        message: "Select a date greater than or equal to one year after the previous date."
+        message: "Select a date greater than or equal to one year after the previous date."
     };
 
 }
@@ -266,5 +278,6 @@ module.exports = {
     isValidAadharNumberUpdate,
     isValidGitLink,
     acceptOnlyCapitalLetters,
-    isLaterDate
+    isLaterDate,
+    isDateGreaterThanOrEqualToToday
 };
