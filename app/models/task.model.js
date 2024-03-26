@@ -201,7 +201,7 @@ Tasks.taskView = (sessionId, result) => {
 
 
 Tasks.searchTasks = (searchString, result) => {
-    db.query("SELECT b.batchName, s.sessionName, t.id, t.taskTitle, t.batchId, t.sessionId, t.taskDesc, t.taskType, t.dueDate, t.totalScore, t.taskFileUpload FROM task t JOIN batches b ON t.batchId=b.id LEFT JOIN sessiondetails s ON t.sessionId = s.id WHERE t.deleteStatus=0 AND t.isActive=1 AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ? OR t.taskType LIKE ? OR b.batchName LIKE ? OR s.sessionName LIKE ?) ORDER BY t.addedDate DESC",
+    db.query("SELECT b.batchName, s.sessionName, t.id, t.taskTitle, t.batchId, t.sessionId, t.taskDesc, t.taskType, t.dueDate, t.totalScore, t.taskFileUpload FROM task t JOIN batches b ON t.batchId=b.id LEFT JOIN sessiondetails s ON t.sessionId = s.id WHERE t.deleteStatus=0 AND t.isActive=1 AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ? OR t.taskType LIKE ? OR b.batchName LIKE ? OR s.sessionName LIKE ?) ORDER BY t.dueDate DESC",
         [`%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`],
         (err, res) => {
             if (err) {
