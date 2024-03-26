@@ -231,9 +231,6 @@ const AdminAddSession = () => {
         if (!data.date.trim()) {
             errors.date = 'Date is required';
         }
-        if (!data.type.trim()) {
-            errors.type = 'Type is required';
-        }
         if (!data.venueORlink.trim()) {
             errors.venueORlink = 'Venue or Link is required';
         }
@@ -242,6 +239,35 @@ const AdminAddSession = () => {
         }
         if (!data.time.trim()) {
             errors.time = 'Time is required';
+        }
+        if (!data.type.trim()) {
+            errors.type = 'Type is required';
+        } else if (data.type === "Online") {
+            // If type is Online, ensure there's a link and it's either Google Meet or Zoom
+            if (!data.venueORlink.trim()) {
+                errors.venueORlink = 'Meeting Link is required';
+            } else {
+                const isGoogleMeetLink = data.venueORlink.includes('meet.google.com/');
+                const isZoomLink = data.venueORlink.includes('zoom.us/');
+
+                // Check if the link is not a Google Meet or Zoom link
+                if (!isGoogleMeetLink && !isZoomLink) {
+                    errors.venueORlink = 'Please provide a valid link';
+                }
+            }
+        } else if (data.type === "Recorded") {
+            if (!data.venueORlink.trim()) {
+                errors.venueORlink = 'Recorded Video Link is required';
+            } else {
+                const isYouTubeLink = data.venueORlink.includes('youtube.com/');
+                const isVimeoLink = data.venueORlink.includes('vimeo.com/');
+
+                if (!isYouTubeLink && !isVimeoLink) {
+                    errors.venueORlink = 'Please provide a valid link';
+                }
+            }
+        } else if (data.type === "Offline" && !data.venueORlink.trim()) {
+            errors.venueORlink = 'Please provide a valid venue';
         }
 
         return errors;
@@ -336,7 +362,6 @@ const AdminAddSession = () => {
                                         />
                                         {errors.sessionName && (<span style={{ color: 'red' }} className="error">{errors.sessionName}</span>)}
                                     </div>
-
                                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                         <label htmlFor="date" className="form-label">
                                             Date <span className="text-danger">*</span>
