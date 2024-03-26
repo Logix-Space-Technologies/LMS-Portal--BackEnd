@@ -755,7 +755,7 @@ exports.generateListOfBatchWiseStudents = (request, response) => {
 // Generate Batch-Wise Student List BY College Staff
 function generatePDF(data, callback) {
     const pdfPath = 'pdfFolder/batch_wise_students_list.pdf';
-    let doc = new PDFDocument({ margin: 20, size: 'A4' });
+    let doc = new PDFDocument({ margin: 50, size: 'A4' });
     const stream = fs.createWriteStream(pdfPath);
 
     doc.pipe(stream);
@@ -764,7 +764,7 @@ function generatePDF(data, callback) {
     const imageScale = 0.3;
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
 
-    doc.moveDown(2.5);
+    doc.moveDown(2.0);
     // Add main heading
     doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise List Of Students', {
         align: 'center',
