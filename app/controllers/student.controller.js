@@ -944,7 +944,7 @@ function generateAttendancePDF(data, callback) {
             // Create table headers
             const tableHeaders = [
                 { label: 'Date', padding: 5 },
-                { label: 'Membership No.', padding: 5 },
+                { label: 'Membership No.', padding: 3 },
                 { label: 'Admission No', padding: 5 },
                 { label: 'Student Name', padding: 5 },
                 { label: 'Department', padding: 5 },
