@@ -55,6 +55,11 @@ const AdminViewAllTasks = () => {
         );
     };
 
+    // Convert a date string from 'DD/MM/YYYY' to a JavaScript Date object
+    const parseDateString = (dateString) => {
+        const [day, month, year] = dateString.split('/');
+        return new Date(year, month - 1, day);
+    };
 
     // Logic for displaying current tasks
     const indexOfLastTask = currentPage * tasksPerPage;
@@ -162,6 +167,12 @@ const AdminViewAllTasks = () => {
                     <tbody>
                         {currentTasks.length > 0 ? (
                             currentTasks.map((value, index) => {
+                                // Convert dueDate and subDate to Date objects for comparison
+                                const dueDateObj = parseDateString(value.dueDate);
+                                const DateObj = new Date()
+
+                                // Determine if the task was submitted late
+                                const isLateSubmission = DateObj > dueDateObj;
                                 return (
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
@@ -170,7 +181,12 @@ const AdminViewAllTasks = () => {
                                         <td className="px-6 py-4">{value.taskDesc}</td>
                                         <td className="px-6 py-4">{value.taskType}</td>
                                         <td className="px-6 py-4">{value.totalScore}</td>
-                                        <td className="px-6 py-4">{value.dueDate}</td>
+                                        <td className="px-6 py-4" style={{ display: 'flex', alignItems: 'center' }}>
+                                            {value.dueDate}
+                                            {isLateSubmission && (
+                                                <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '10px' }} />
+                                            )}
+                                        </td>
                                         <td className="px-6 py-4">{value.addedDate}</td>
                                         {value.updatedDate !== null && (
                                             <td className="px-6 py-4">{value.updatedDate}</td>
