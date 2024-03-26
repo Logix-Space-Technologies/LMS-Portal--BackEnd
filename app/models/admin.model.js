@@ -260,7 +260,7 @@ Admin.adminDashBoard = (result) => {
 
 
 Admin.getAll = async (result) => {
-    let query = "SELECT * FROM adminstafflog WHERE AdmStaffId=0"
+    let query = "SELECT * FROM adminstafflog WHERE AdmStaffId=0 ORDER BY DateTime DESC"
     db.query(query, (err, response) => {
         if (err) {
             console.log("Error : ", err)
