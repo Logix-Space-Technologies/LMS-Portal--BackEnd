@@ -353,7 +353,7 @@ AdminStaff.viewOneAdminStaff = (id, result) => {
 }
 
 AdminStaff.AdmViewAllMaterial = async (result) => {
-    let query = "SELECT c.collegeName, b.batchName, m.* FROM materials m JOIN batches b ON m.batchId = b.id JOIN college c ON c.id = b.collegeId WHERE m.deleteStatus = 0 AND m.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 ORDER BY c.collegeName, b.batchName, m.id DESC";
+    let query = "SELECT c.collegeName, b.batchName, m.* FROM materials m JOIN batches b ON m.batchId = b.id JOIN college c ON c.id = b.collegeId WHERE m.deleteStatus = 0 AND m.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 ORDER BY m.addedDate DESC, c.collegeName, b.batchName, m.id";
     db.query(query, (err, res) => {
         if (err) {
             console.log("error: ", err);
