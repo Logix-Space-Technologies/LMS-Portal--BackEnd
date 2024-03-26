@@ -1041,6 +1041,8 @@ function generateSessionAttendancePDF(data, callback) {
     const logoImage = doc.openImage(imageLogo);
     const imageScale = 0.3;
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
+
+    doc.moveDown(2);
     // Add main heading
     doc.font('Helvetica-Bold').fontSize(14).text('Session-Wise Attendance List Of Students', {
         align: 'center',
