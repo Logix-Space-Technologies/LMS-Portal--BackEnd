@@ -887,7 +887,7 @@ exports.generateBatchWiseAttendanceList = (request, response) => {
 
 function generateAttendancePDF(data, callback) {
     const pdfPath = 'pdfFolder/batch_wise_attendance_list.pdf';
-    const doc = new PDFDocument();
+    let doc = new PDFDocument({ margin: 50, size: 'A4' });
     const stream = fs.createWriteStream(pdfPath);
 
     doc.pipe(stream);
@@ -895,6 +895,8 @@ function generateAttendancePDF(data, callback) {
     const logoImage = doc.openImage(imageLogo);
     const imageScale = 0.3;
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
+
+    doc.moveDown(2);
     // Add main heading
     doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise Attendance List Of Students', {
         align: 'center',
@@ -918,13 +920,13 @@ function generateAttendancePDF(data, callback) {
     const groupedData = groupAttendanceBySession(data);
 
     const columnWidths = [
-        50, // Date
-        70, // Membership No.
-        70, // Admission No
-        120, // Student Name
-        80, // Department
-        60, // Course
-        90 // Attendance Status
+        70, // Date
+        90, // Membership No.
+        90, // Admission No
+        130, // Student Name
+        100, // Department
+        80, // Course
+        110 // Attendance Status
     ];
 
     // Add content to the PDF using grouped data
@@ -941,13 +943,13 @@ function generateAttendancePDF(data, callback) {
 
             // Create table headers
             const tableHeaders = [
-                { label: 'Date', padding: 4 },
-                { label: 'Membership No.', padding: -10 },
-                { label: 'Admission No', padding: -5 },
-                { label: 'Student Name', padding: 0 },
-                { label: 'Department', padding: 10 },
-                { label: 'Course', padding: 15 },
-                { label: 'Attendance Status', padding: -6 }
+                { label: 'Date', padding: 5 },
+                { label: 'Membership No.', padding: 5 },
+                { label: 'Admission No', padding: 5 },
+                { label: 'Student Name', padding: 5 },
+                { label: 'Department', padding: 5 },
+                { label: 'Course', padding: 5 },
+                { label: 'Attendance Status', padding: 5 }
             ];
             const tableData = students.map(student => [student.attendanceDate, student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
 
