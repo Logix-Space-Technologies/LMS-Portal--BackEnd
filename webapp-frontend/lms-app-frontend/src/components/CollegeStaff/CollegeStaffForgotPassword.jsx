@@ -37,6 +37,7 @@ const CollegeStaffForgotPassword = () => {
         }, 500)
     }
 
+
     const readNewValue = () => {
         const validationErrors = validateForm(updateField);
         let axiosConfig = {
