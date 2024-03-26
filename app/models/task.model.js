@@ -184,7 +184,7 @@ Tasks.updateTask = (updatedTask, result) => {
 
 
 Tasks.taskView = (sessionId, result) => {
-    db.query("SELECT b.batchName, t.* FROM task t JOIN sessiondetails s ON t.sessionId = s.id LEFT JOIN batches b ON t.batchId = b.id AND s.batchId = b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND t.sessionId = ? ORDER BY t.addedDate DESC",
+    db.query("SELECT b.batchName, t.* FROM task t JOIN sessiondetails s ON t.sessionId = s.id LEFT JOIN batches b ON t.batchId = b.id AND s.batchId = b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND t.sessionId = ? ORDER BY t.dueDate DESC",
         [sessionId], (err, res) => {
             if (err) {
                 console.log("error: ", err);
