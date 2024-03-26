@@ -184,7 +184,7 @@ Tasks.updateTask = (updatedTask, result) => {
 
 
 Tasks.taskView = (sessionId, result) => {
-    db.query("SELECT b.batchName, t.* FROM task t JOIN sessiondetails s ON t.sessionId = s.id LEFT JOIN batches b ON t.batchId = b.id AND s.batchId = b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND t.sessionId = ?",
+    db.query("SELECT b.batchName, t.* FROM task t JOIN sessiondetails s ON t.sessionId = s.id LEFT JOIN batches b ON t.batchId = b.id AND s.batchId = b.id WHERE t.deleteStatus=0 AND t.isActive=1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND t.sessionId = ? ORDER BY t.addedDate DESC",
         [sessionId], (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -201,7 +201,7 @@ Tasks.taskView = (sessionId, result) => {
 
 
 Tasks.searchTasks = (searchString, result) => {
-    db.query("SELECT b.batchName, s.sessionName, t.id, t.taskTitle, t.batchId, t.sessionId, t.taskDesc, t.taskType, t.dueDate, t.totalScore, t.taskFileUpload FROM task t JOIN batches b ON t.batchId=b.id LEFT JOIN sessiondetails s ON t.sessionId = s.id WHERE t.deleteStatus=0 AND t.isActive=1 AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ? OR t.taskType LIKE ? OR b.batchName LIKE ? OR s.sessionName LIKE ?)",
+    db.query("SELECT b.batchName, s.sessionName, t.id, t.taskTitle, t.batchId, t.sessionId, t.taskDesc, t.taskType, t.dueDate, t.totalScore, t.taskFileUpload FROM task t JOIN batches b ON t.batchId=b.id LEFT JOIN sessiondetails s ON t.sessionId = s.id WHERE t.deleteStatus=0 AND t.isActive=1 AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ? OR t.taskType LIKE ? OR b.batchName LIKE ? OR s.sessionName LIKE ?) ORDER BY t.addedDate DESC",
         [`%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`],
         (err, res) => {
             if (err) {

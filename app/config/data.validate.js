@@ -183,8 +183,8 @@ function isTimeGreaterThanOrEqualToCurrentIfToday(date, time) {
     // If it's today, we compare the times
     if (isToday) {
         return {
-            isValid: inputDateTime >= currentDateTime,
-            message: "For today's date, select a time greater than or equal to the current time."
+            isValid: inputDateTime > currentDateTime,
+            message: "For today's date, select a time greater than current time."
         };
     }
 
