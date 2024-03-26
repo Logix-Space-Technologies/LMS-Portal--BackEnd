@@ -812,7 +812,7 @@ function generatePDF(data, callback) {
             doc.table({
                 headers: tableHeaders,
                 rows: tableData,
-                widths: new Array(tableHeaders.length).fill(tableWidth),
+                widths: columnWidths,
                 align: ['left', 'left', 'left', 'left', 'left', 'left'],
             });
 
