@@ -3,14 +3,35 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import '../../config/config';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import { QRCodeCanvas } from 'qrcode.react';
 import { Link, useNavigate } from 'react-router-dom';
+
+const QRCodeModal = ({ qrCodeAttendance, onClose }) => {
+    return (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50">
+            <div className="bg-white p-8 rounded-lg shadow-lg">
+                <div className="text-center mb-4">
+                    <h2 className="text-xl font-semibold">Attendance QR Code</h2>
+                </div>
+                <div className="flex justify-center">
+                    {/* Adjust size of QR code by setting width and height */}
+                    <QRCodeCanvas value={qrCodeAttendance} size={500} />
+                </div>
+                <div className="flex justify-center mt-4">
+                    <button onClick={onClose} className="btn btn-primary">Close</button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const AdminSearchSessionDetails = () => {
 
     const [inputField, setInputField] = useState({ "SessionSearchQuery": "" });
     const [updateField, setUpdateField] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-
+    const [qrCodeAttendance, setQrCodeAttendance] = useState(null);
+    const [showQRModal, setShowQRModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [SessionPerPage] = useState(10); // Number of sessions per page
     const [isSearchPerformed, setIsSearchPerformed] = useState(false);
@@ -148,6 +169,28 @@ const AdminSearchSessionDetails = () => {
         return domains.some(domain => venueLink.includes(domain));
     }
 
+    const isSessionToday = (date) => {
+        const today = new Date();
+        const dateParts = date.split('/');
+        const day = parseInt(dateParts[0], 10);
+        const month = parseInt(dateParts[1] - 1, 10);
+        const year = parseInt(dateParts[2], 10);
+        const sessionDate = new Date(year, month, day);
+        return (
+            today.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) ===
+            sessionDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })
+        );
+    };
+
+    const handleShowQRCode = (attendanceCode) => {
+        setQrCodeAttendance(attendanceCode);
+        setShowQRModal(true);
+    };
+
+    const handleCloseQRModal = () => {
+        setShowQRModal(false);
+    };
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
@@ -195,6 +238,7 @@ const AdminSearchSessionDetails = () => {
                                                     <th scope="col" className="px-6 py-3">Cancel Status</th>
                                                     <th scope="col" className="px-6 py-3"></th>
                                                     <th scope="col" className="px-6 py-3"></th>
+                                                    <th scope="col" className="px-6 py-3"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -208,6 +252,7 @@ const AdminSearchSessionDetails = () => {
                                                         <td className="px-6 py-4">{value.date}</td>
                                                         <td className="px-6 py-4">{formatTime(value.time)}</td>
                                                         <td className="px-6 py-4">{value.type}</td>
+                                                        <td className="px-6 py-4">{value.remarks}</td>
                                                         <td className="px-6 py-4">
                                                             <p className="text-sm text-gray-600">
                                                                 {isSpecialDomain(value.venueORlink) ? (
@@ -218,15 +263,29 @@ const AdminSearchSessionDetails = () => {
                                                             </p>
                                                         </td>
                                                         <td className="px-6 py-4">{value.trainerName}</td>
-                                                        <td className="px-6 py-4">{value.attendenceCode}</td>
+                                                        <td className="px-6 py-4">
+                                                            {isSessionToday(value.date) && value.cancelStatus === "ACTIVE" && (
+                                                                <button onClick={() => handleShowQRCode(value.attendenceCode)} className="btn btn-primary" style={{ whiteSpace: 'nowrap' }}>
+                                                                    Show QR
+                                                                </button>
+                                                            )}
+                                                            {!isSessionToday(value.date) && value.cancelStatus === "ACTIVE" && (
+                                                                <p>Not Available</p>
+                                                            )}
+                                                            {!isSessionToday(value.date) && value.cancelStatus !== "ACTIVE" && (
+                                                                <p>Not Available</p>
+                                                            )}
+                                                        </td>
                                                         <td className="px-6 py-4">{value.cancelStatus}</td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            {key === "lmsapp" && (
+                                                            {key === "lmsapp" && value.cancelStatus === "ACTIVE" && (
                                                                 <button onClick={() => handleDeleteClick(value.id)} className="btn btn-danger mt-3">Delete</button>
                                                             )}
                                                         </td>
                                                         <td className="p-4 whitespace-nowrap">
-                                                            <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Reschedule</button>
+                                                            {key === "lmsapp" && value.cancelStatus === "ACTIVE" && (
+                                                                <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Reschedule</button>
+                                                            )}
                                                         </td>
                                                     </tr>
                                                 })}
@@ -275,7 +334,10 @@ const AdminSearchSessionDetails = () => {
                     </div>
                 )}
             </div>
-
+            {/* QR Code Modal */}
+            {showQRModal && qrCodeAttendance && (
+                <QRCodeModal qrCodeAttendance={qrCodeAttendance} onClose={handleCloseQRModal} />
+            )}
             {/* Delete Confirmation Modal */}
             <div className={`modal ${deleteId !== null ? 'show' : ''}`} style={{ display: deleteId !== null ? 'block' : 'none' }}>
                 <div className="modal-dialog">
