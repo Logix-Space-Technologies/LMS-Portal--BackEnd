@@ -85,6 +85,7 @@ const AdminStaffViewAllMaterial = () => {
                                 <th scope="col" className="px-6 py-3">Material Description</th>
                                 <th scope="col" className="px-6 py-3">Remark</th>
                                 <th scope="col" className="px-6 py-3">Material Type</th>
+                                <th scope="col" className="px-6 py-3">Added Date</th>
                                 <th scope="col" className="px-6 py-3"></th>
                                 <th scope="col" className="px-6 py-3"></th>
                             </tr>
@@ -98,6 +99,7 @@ const AdminStaffViewAllMaterial = () => {
                                     <td className="px-6 py-4">{value.materialDesc}</td>
                                     <td className="px-6 py-4">{value.remarks}</td>
                                     <td className="px-6 py-4">{value.materialType}</td>
+                                    <td className="px-6 py-4">{value.addedDate}</td>
                                     <td className="px-6 py-4">
                                         <Link target="_blank" to={value.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                     </td>

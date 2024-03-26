@@ -39,8 +39,8 @@ exports.createSession = (request, response) => {
             if (!Validator.isValidDate(request.body.date).isValid) {
                 validationErrors.date = Validator.isValidDate(request.body.date).message;
             }
-            if (!Validator.isDateGreaterThanToday(request.body.date).isValid) {
-                validationErrors.date = Validator.isDateGreaterThanToday(request.body.date).message;
+            if (!Validator.isDateGreaterThanOrEqualToToday(request.body.date).isValid) {
+                validationErrors.date = Validator.isDateGreaterThanOrEqualToToday(request.body.date).message;
             }
 
             if (Validator.isEmpty(request.body.time).isValid) {
@@ -49,6 +49,10 @@ exports.createSession = (request, response) => {
 
             if (!Validator.isValidTime(request.body.time).isValid) {
                 validationErrors.time = Validator.isValidTime(request.body.time).message;
+            }
+
+            if (!Validator.isTimeGreaterThanOrEqualToCurrentIfToday(request.body.date, request.body.time).isValid) {
+                validationErrors.time = Validator.isTimeGreaterThanOrEqualToCurrentIfToday(request.body.date, request.body.time).message;
             }
 
             if (Validator.isEmpty(request.body.type).isValid) {
@@ -188,14 +192,17 @@ exports.sessionUpdate = (request, response) => {
             if (!Validator.isValidDate(request.body.date).isValid) {
                 validationErrors.date = Validator.isValidDate(request.body.date).message;
             }
-            if (!Validator.isDateGreaterThanToday(request.body.date).isValid) {
-                validationErrors.date = Validator.isDateGreaterThanToday(request.body.date).message;
+            if (!Validator.isDateGreaterThanOrEqualToToday(request.body.date).isValid) {
+                validationErrors.date = Validator.isDateGreaterThanOrEqualToToday(request.body.date).message;
             }
             if (Validator.isEmpty(request.body.time).isValid) {
                 validationErrors.time = Validator.isEmpty(request.body.time).message;
             }
             if (!Validator.isValidTime(request.body.time).isValid) {
                 validationErrors.time = Validator.isValidTime(request.body.time).message;
+            }
+            if (!Validator.isTimeGreaterThanOrEqualToCurrentIfToday(request.body.date, request.body.time).isValid) {
+                validationErrors.time = Validator.isTimeGreaterThanOrEqualToCurrentIfToday(request.body.date, request.body.time).message;
             }
             if (Validator.isEmpty(request.body.type).isValid) {
                 validationErrors.type = Validator.isEmpty(request.body.type).message;

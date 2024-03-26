@@ -192,7 +192,7 @@ exports.searchMaterial = async (request, response) => {
     const materialSearchToken = request.headers.token;
 
     try {
-        const decoded = await jwt.verify(materialSearchToken, "lmsappadmstaff");
+        const decoded = jwt.verify(materialSearchToken, "lmsappadmstaff");
 
         if (!materialQuery) {
             return response.json({ "status": "Provide a search query" });
@@ -201,7 +201,7 @@ exports.searchMaterial = async (request, response) => {
         if (decoded) {
             Material.searchMaterial(materialQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
                         return response.json({ "status": "No Search Items Found" });

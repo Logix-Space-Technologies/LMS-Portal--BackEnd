@@ -355,7 +355,7 @@ CollegeStaff.viewStudent = (batchId, result) => {
 };
 
 CollegeStaff.viewTask = (sessionId, result) => {
-    db.query("SELECT DISTINCT s.sessionName, t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, CASE WHEN t.dueDate < CURRENT_DATE() THEN 'Past Due Date' ELSE t.dueDate END AS dueDate, t.addedDate FROM task t LEFT JOIN sessiondetails s ON s.id = t.sessionId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.id = ?", [sessionId], (err, res) => {
+    db.query("SELECT DISTINCT s.sessionName, t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, CASE WHEN t.dueDate < CURRENT_DATE() THEN 'Past Due Date' ELSE t.dueDate END AS dueDate, t.addedDate FROM task t LEFT JOIN sessiondetails s ON s.id = t.sessionId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.id = ? ORDER BY t.dueDate DESC", [sessionId], (err, res) => {
         if (err) {
             console.log("error: ", err)
             result(err, null)
@@ -682,7 +682,7 @@ CollegeStaff.emailVerificationClgStaffOtpVerify = (email, otp, result) => {
 
 CollegeStaff.searchClgStaffByCollege = (searchKey, result) => {
     db.query(
-        "SELECT c.collegeStaffName, c.email, b.batchName FROM college_staff c JOIN batches b ON b.collegeId = c.collegeId WHERE b.id = ?",
+        "SELECT c.collegeStaffName, c.email, b.batchName FROM college_staff c JOIN batches b ON b.collegeId = c.collegeId WHERE b.id = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1",
         [searchKey],
         (err, res) => {
             if (err) {

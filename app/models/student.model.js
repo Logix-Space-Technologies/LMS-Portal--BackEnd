@@ -244,7 +244,7 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
 
 Student.searchStudentByBatch = (searchKey, result) => {
     db.query(
-        "SELECT `id`, `collegeId`, `batchId`, `membership_no`, `studName`, `admNo`, `rollNo`, `studDept`, `course`, `studEmail`, `studPhNo`, `studProfilePic`, `aadharNo`, `password`, `addedDate`, `updatedDate`, `validity`, `isPaid`, `isVerified`, `isActive`, `emailVerified`, `pwdUpdateStatus`, `updateStatus`, `deleteStatus` FROM `student` WHERE `batchId`= ? ",
+        "SELECT `id`, `collegeId`, `batchId`, `membership_no`, `studName`, `admNo`, `rollNo`, `studDept`, `course`, `studEmail`, `studPhNo`, `studProfilePic`, `aadharNo`, `password`, `addedDate`, `updatedDate`, `validity`, `isPaid`, `isVerified`, `isActive`, `emailVerified`, `pwdUpdateStatus`, `updateStatus`, `deleteStatus` FROM `student` WHERE `batchId`= ? AND `isVerified` = 1 AND `emailVerified` = 1 AND `deleteStatus` = 0 AND `isActive` = 1 AND `validity` > CURRENT_DATE",
         [searchKey],
         (err, res) => {
             if (err) {
