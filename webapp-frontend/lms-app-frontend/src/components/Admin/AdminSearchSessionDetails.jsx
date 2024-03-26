@@ -84,7 +84,7 @@ const AdminSearchSessionDetails = () => {
             (response) => {
                 if (response.data.status === "success") {
                     closeModal()
-                    setUpdateField([])
+                    setUpdateField(updateField.filter(session => session.id !== cancelId));
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
