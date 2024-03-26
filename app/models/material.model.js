@@ -61,7 +61,7 @@ Material.materialCreate = (newMaterial, result) => {
 }
 
 Material.searchMaterial = (searchString, result) => {
-    db.query("SELECT m.id,m.fileName,m.materialDesc,m.uploadFile,m.remarks,b.batchName FROM materials m JOIN batches b ON m.batchId = b.id WHERE m.deleteStatus=0 AND m.isActive=1 AND b.deleteStatus=0 AND b.isActive=1 AND (fileName LIKE ? OR materialDesc LIKE ? )",
+    db.query("SELECT m.id,m.fileName,m.materialDesc,m.uploadFile,m.remarks,m.addedDate,b.batchName FROM materials m JOIN batches b ON m.batchId = b.id WHERE m.deleteStatus=0 AND m.isActive=1 AND b.deleteStatus=0 AND b.isActive=1 AND (fileName LIKE ? OR materialDesc LIKE ? ) ORDER BY m.addedDate DESC",
         [`%${searchString}%`, `%${searchString}%`],
         (err, res) => {
             if (err) {
