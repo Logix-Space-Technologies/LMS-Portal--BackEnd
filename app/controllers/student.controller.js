@@ -763,6 +763,8 @@ function generatePDF(data, callback) {
     const logoImage = doc.openImage(imageLogo);
     const imageScale = 0.3;
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
+
+    doc.moveDown(2.5);
     // Add main heading
     doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise List Of Students', {
         align: 'center',
@@ -782,7 +784,7 @@ function generatePDF(data, callback) {
         100, // Department (Increased width)
         70, // Course (Increased width)
         200 // Email (Increased width)
-    ];    
+    ];
 
     // Add content to the PDF using grouped data
     for (const batchName in groupedData) {
@@ -804,10 +806,10 @@ function generatePDF(data, callback) {
                 { label: 'Department', padding: 5 },
                 { label: 'Course', padding: 5 },
                 { label: 'Email', padding: 5 },
-            ];            
+            ];
             const tableData = students.map(student => [student.membership_no, student.studName, student.collegeName, student.studDept, student.course, student.studEmail]);
 
-            
+
             // Draw the table
             doc.table({
                 headers: tableHeaders,
