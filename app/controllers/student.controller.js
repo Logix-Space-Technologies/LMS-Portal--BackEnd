@@ -1073,6 +1073,16 @@ function generateSessionAttendancePDF(data, callback) {
     // Group data by session
     const groupedData = groupAttendanceBySessionStudent(data);
 
+    const columnWidths = [
+        20, // Date 
+        100, // Membership No. 
+        70, // Admission No 
+        120, // Student Name 
+        70, // Department 
+        60, // Course 
+        80 // Attendance Status 
+    ];
+
     // Add content to the PDF using grouped data
     for (const sessionName in groupedData) {
         if (groupedData.hasOwnProperty(sessionName)) {
@@ -1096,7 +1106,7 @@ function generateSessionAttendancePDF(data, callback) {
             doc.table({
                 headers: tableHeaders,
                 rows: tableData,
-                widths: new Array(tableHeaders.length).fill(tableWidth),
+                widths: columnWidths,
                 align: ['left', 'left', 'left', 'left', 'left', 'left', 'left'],
             });
 
