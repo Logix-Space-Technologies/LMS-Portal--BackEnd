@@ -54,7 +54,7 @@ function handleEnqueuedMessage(payload) {
    
 
 
-    db.query("UPDATE whatsappmsgfeedback SET queuedStatus = 1 WHERE msgId = ?", [payload.payload.whatsappMessageId], function(err) {
+    db.query("UPDATE whatsappmsgfeedback SET queuedStatus = 1 WHERE msgId = ?", [payload.id], function(err) {
         if (err) {
             console.error('Error updating Queued status for msgId:', payload.id, '; Error:', err);
         } else {
