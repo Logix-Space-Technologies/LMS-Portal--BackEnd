@@ -145,7 +145,7 @@ function convertToMySQLTimestamp(timestamp) {
 
 
 function handleMessageReceived(data) {
-    console.log('Handling message received event:', data.payload);
+   // console.log('Handling message received event:', data.payload);
     // Convert timestamp to MySQL TIMESTAMP format
     const mysqlTimestamp = convertToMySQLTimestamp(data.timestamp);
 
