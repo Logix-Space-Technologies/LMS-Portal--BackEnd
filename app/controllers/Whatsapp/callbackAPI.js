@@ -1,4 +1,4 @@
-// POST route to handle incoming message events
+// Function to handle incoming message events
 const callbackCheck = (req, res) => {
     const data = req.body;
     console.log('Received event:', data.type);
@@ -64,6 +64,12 @@ function handleDeliveredMessage(payload) {
 function handleReadMessage(payload) {
     console.log('Handling read message:', payload);
     // Implement your logic for read messages here
+}
+
+// Function to handle billing-event types
+function handleBillingEvent(data) {
+    console.log('Handling billing event:', data.payload);
+    // Implement your logic for billing events here
 }
 
 
