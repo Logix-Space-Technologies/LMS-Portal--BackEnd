@@ -51,33 +51,63 @@ function handleMessageEvent(data) {
 function handleEnqueuedMessage(payload) {
     console.log('Handling enqueued message:', payload);
     // Example: Update queuedStatus for the message in whatsappmsgfeedback
-    db.query("UPDATE whatsappmsgfeedback SET queuedStatus = 1 WHERE msgId = ?", [payload.payload.whatsappMessageId], (err) => {
-        if (err) console.error('Error updating queuedStatus:', err);
+   
+
+
+    db.query("UPDATE whatsappmsgfeedback SET queuedStatus = 1 WHERE msgId = ?", [payload.id], function(err) {
+        if (err) {
+            console.error('Error updating Queued status for msgId:', payload.id, '; Error:', err);
+        } else {
+            console.log('Queued status updated successfully for msgId:', payload.id);
+        }
     });
 }
 
 function handleSentMessage(payload) {
     console.log('Handling sent message:', payload);
-    // Example: Update sentStatus for the message
-    db.query("UPDATE whatsappmsgfeedback SET sentStatus = 1, sentDate = NOW() WHERE msgId = ?", [payload.id], (err) => {
-        if (err) console.error('Error updating sentStatus:', err);
+    console.log('Handling sent message:', payload.gsId);
+
+
+    db.query("UPDATE whatsappmsgfeedback SET sentStatus = 1, sentDate = NOW() WHERE msgId = ?", [payload.gsId], function(err) {
+        if (err) {
+            console.error('Error updating sent statsus for msgId:', payload.gsId, '; Error:', err);
+        } else {
+            console.log('Sent status updated successfully for msgId:', payload.gsId);
+        }
     });
+   
 }
 
 function handleDeliveredMessage(payload) {
     console.log('Handling delivered message:', payload);
+    console.log('Handling sent message:', payload.gsId);
+
     // Example: Update deliveryStatus for the message
-    db.query("UPDATE whatsappmsgfeedback SET deliveryStatus = 1, deliveryDate = NOW() WHERE msgId = ?", [payload.id], (err) => {
-        if (err) console.error('Error updating deliveryStatus:', err);
+    db.query("UPDATE whatsappmsgfeedback SET deliveryStatus = 1, deliveryDate = NOW() WHERE msgId = ?", [payload.gsId], function(err) {
+        if (err) {
+            console.error('Error updating deliveryStatus for msgId:', payload.gsId, '; Error:', err);
+        } else {
+            console.log('Delivery status updated successfully for msgId:', payload.gsId);
+        }
     });
 }
 
 function handleReadMessage(payload) {
     console.log('Handling read message:', payload);
+    console.log('Handling sent message:', payload.gsId);
+
     // Example: Update readStatus for the message
-    db.query("UPDATE whatsappmsgfeedback SET readStatus = 1, readDateTime = NOW() WHERE msgId = ?", [payload.id], (err) => {
-        if (err) console.error('Error updating readStatus:', err);
+ 
+
+    db.query("UPDATE whatsappmsgfeedback SET readStatus = 1, readDateTime = NOW() WHERE msgId = ?", [payload.gsId], function(err) {
+        if (err) {
+            console.error('Error updating read Status for msgId:', payload.gsId, '; Error:', err);
+        } else {
+            console.log('Read status updated successfully for msgId:', payload.gsId);
+        }
     });
+
+
 }
 
 function handleBillingEvent(data) {
