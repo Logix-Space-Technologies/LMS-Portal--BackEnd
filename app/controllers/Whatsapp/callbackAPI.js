@@ -123,6 +123,8 @@ function handleBillingEvent(data) {
 //     return formatted;
 // }
 function convertToMySQLTimestamp(timestamp) {
+    console.log('iNSIDE  tIME STAMP ');
+
     console.log("Original timestamp: " , timestamp);
 
     // Create a Date object from the timestamp
@@ -145,6 +147,8 @@ function convertToMySQLTimestamp(timestamp) {
 
 
 function handleMessageReceived(data) {
+    console.log('tEST tIME STAMP ');
+
    console.log('Handling message received event:', data.timestamp);
     // Convert timestamp to MySQL TIMESTAMP format
     const mysqlTimestamp = convertToMySQLTimestamp(data.timestamp);
