@@ -131,6 +131,8 @@ const StudentLogin = () => {
                             }
                         }
                     )
+                } else if (Response.data.status === "Account Under Verification Process.Please Contact Your Batch-In-Charge.") {
+                    alert("Account Under Verification Process.\nPlease Contact Your Batch-In-Charge.")
                 } else if (Response.data.status === "Account expired. Please Renew Your Plan") {
                     alert("Account expired. Please Renew Your Plan")
                     let studemail = inputField.studEmail
