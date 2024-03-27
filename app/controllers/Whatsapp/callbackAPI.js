@@ -54,7 +54,7 @@ function handleEnqueuedMessage(payload) {
    
 
 
-    db.query("UPDATE whatsappmsgfeedback SET queuedStatus = 1 WHERE msgId = ?", [payload.id], function(err) {
+    db.query("UPDATE whatsappmsgfeedback SET queuedStatus = 1 WHERE msgId = ?", [payload.payload.whatsappMessageId], function(err) {
         if (err) {
             console.error('Error updating Queued status for msgId:', payload.id, '; Error:', err);
         } else {
@@ -65,6 +65,8 @@ function handleEnqueuedMessage(payload) {
 
 function handleSentMessage(payload) {
     console.log('Handling sent message:', payload);
+    console.log('Handling sent message:', payload.id);
+
 
     db.query("UPDATE whatsappmsgfeedback SET sentStatus = 1, sentDate = NOW() WHERE msgId = ?", [payload.id], function(err) {
         if (err) {
@@ -78,6 +80,8 @@ function handleSentMessage(payload) {
 
 function handleDeliveredMessage(payload) {
     console.log('Handling delivered message:', payload);
+    console.log('Handling sent message:', payload.id);
+
     // Example: Update deliveryStatus for the message
     db.query("UPDATE whatsappmsgfeedback SET deliveryStatus = 1, deliveryDate = NOW() WHERE msgId = ?", [payload.id], function(err) {
         if (err) {
@@ -90,6 +94,8 @@ function handleDeliveredMessage(payload) {
 
 function handleReadMessage(payload) {
     console.log('Handling read message:', payload);
+    console.log('Handling sent message:', payload.id);
+
     // Example: Update readStatus for the message
  
 
