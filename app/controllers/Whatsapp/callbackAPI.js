@@ -1,4 +1,4 @@
-// Function to handle incoming message events
+// POST route to handle incoming message events
 const callbackCheck = (req, res) => {
     const data = req.body;
     console.log('Received event:', data.type);
@@ -65,3 +65,6 @@ function handleReadMessage(payload) {
     console.log('Handling read message:', payload);
     // Implement your logic for read messages here
 }
+
+
+module.exports.sendfn = callbackCheck
