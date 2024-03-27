@@ -115,23 +115,32 @@ function handleBillingEvent(data) {
     // Implement your logic for billing events here
 }
 
+// function convertToMySQLTimestamp(timestamp) {
+//     // Create a Date object from the timestamp (assumed to be in milliseconds)
+//     const date = new Date(timestamp);
+//     // Format the date to MySQL TIMESTAMP format: YYYY-MM-DD HH:MM:SS
+//     const formatted = date.toISOString().slice(0, 19).replace('T', ' ');
+//     return formatted;
+// }
+
 function convertToMySQLTimestamp(timestamp) {
-    // Create a Date object from the timestamp (assumed to be in milliseconds)
-    var date = new Date(timestamp);
 
-    // Manually adjust the date for GMT+5:30
-    date.setMinutes(date.getMinutes() + date.getTimezoneOffset() + 330); // Offset is 330 minutes for GMT+5:30
+    // Create a Date object from the timestamp
+    const date = new Date(timestamp);
 
-    // Manually construct the date string
-    var year = date.getFullYear();
-    var month = ('0' + (date.getMonth() + 1)).slice(-2); // months are 0-based
-    var day = ('0' + date.getDate()).slice(-2);
-    var hour = ('0' + date.getHours()).slice(-2);
-    var minute = ('0' + date.getMinutes()).slice(-2);
-    var second = ('0' + date.getSeconds()).slice(-2);
+    // Calculate the timezone offset for GMT+5:30 (5 hours and 30 minutes)
+    const offsetHours = 5;
+    const offsetMinutes = 30;
+    const offset = (offsetHours * 60 + offsetMinutes) * 60000; // convert offset to milliseconds
+
+    // Adjust the date for the timezone offset
+    const adjustedDate = new Date(date.getTime() + offset);
 
     // Format the date to MySQL TIMESTAMP format: YYYY-MM-DD HH:MM:SS
-    var formatted = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+    // Note: toISOString returns the date in UTC, but since we've adjusted the date for the timezone,
+    // it will effectively be in GMT+5:30
+    const formatted = adjustedDate.toISOString().slice(0, 19).replace('T', ' ');
+
     return formatted;
 }
 
