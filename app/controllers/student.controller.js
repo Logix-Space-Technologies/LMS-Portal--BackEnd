@@ -167,7 +167,8 @@ exports.createStudent = (req, res) => {
                                 const otpVerificationTextContent = mailContents.StudentRegistrationSuccessfulMailTextContent(membershipNo);
                                 mail.sendEmail(email, 'Welcome To LinkUrCodes!', otpVerificationHTMLContent, otpVerificationTextContent)
                                 // Send Whatsapp Message
-                                whatsApp.sendfn(data.studPhNo, data.studName);
+                                let formattedPhoneNumber = studPhNo.startsWith('91') ? studPhNo : `91${studPhNo}`;
+                                whatsApp.sendfn(formattedPhoneNumber, data.studName);
                                 return res.json({ "status": "success", "data": data, "paymentData": paymentData });
                             }
                         });
