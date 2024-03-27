@@ -124,6 +124,7 @@ function handleBillingEvent(data) {
 // }
 
 function convertToMySQLTimestamp(timestamp) {
+
     // Create a Date object from the timestamp
     const date = new Date(timestamp);
 
@@ -139,8 +140,11 @@ function convertToMySQLTimestamp(timestamp) {
     // Note: toISOString returns the date in UTC, but since we've adjusted the date for the timezone,
     // it will effectively be in GMT+5:30
     const formatted = adjustedDate.toISOString().slice(0, 19).replace('T', ' ');
+
     return formatted;
 }
+
+
 
 function handleMessageReceived(data) {
     console.log('Handling message received event:', data.payload);
