@@ -67,8 +67,21 @@ function handleSentMessage(payload) {
     // console.log('Handling sent message:', payload);
    // console.log('Handling sent message:', payload.gsId);
 
+   function getCurrentTimeForGMT530() {
+    // Get current UTC time in milliseconds
+    const now = new Date();
+    // Convert to GMT+5:30
+    const offset = (5 * 60 + 30) * 60000; // 5 hours and 30 minutes in milliseconds
+    const gmt530Time = new Date(now.getTime() + offset);
+    // Format to MySQL datetime format
+    return gmt530Time.toISOString().slice(0, 19).replace('T', ' ');
+}
 
-    db.query("UPDATE whatsappmsgfeedback SET sentStatus = 1, sentDate = NOW() WHERE msgId = ?", [payload.gsId], function(err) {
+const mysqlTimestamp = getCurrentTimeForGMT530();
+   
+
+
+    db.query("UPDATE whatsappmsgfeedback SET sentStatus = 1, sentDate = ? WHERE msgId = ?", [mysqlTimestamp,payload.gsId], function(err) {
         if (err) {
             console.error('Error updating sent statsus for msgId:', payload.gsId, '; Error:', err);
         } else {
@@ -82,8 +95,21 @@ function handleDeliveredMessage(payload) {
    // console.log('Handling delivered message:', payload);
   //  console.log('Handling sent message:', payload.gsId);
 
+  function getCurrentTimeForGMT530() {
+    // Get current UTC time in milliseconds
+    const now = new Date();
+    // Convert to GMT+5:30
+    const offset = (5 * 60 + 30) * 60000; // 5 hours and 30 minutes in milliseconds
+    const gmt530Time = new Date(now.getTime() + offset);
+    // Format to MySQL datetime format
+    return gmt530Time.toISOString().slice(0, 19).replace('T', ' ');
+}
+
+const mysqlTimestamp = getCurrentTimeForGMT530();
+
+
     // Example: Update deliveryStatus for the message
-    db.query("UPDATE whatsappmsgfeedback SET deliveryStatus = 1, deliveryDate = NOW() WHERE msgId = ?", [payload.gsId], function(err) {
+    db.query("UPDATE whatsappmsgfeedback SET deliveryStatus = 1, deliveryDate = ? WHERE msgId = ?", [mysqlTimestamp,payload.gsId], function(err) {
         if (err) {
             console.error('Error updating deliveryStatus for msgId:', payload.gsId, '; Error:', err);
         } else {
@@ -97,9 +123,21 @@ function handleReadMessage(payload) {
    // console.log('Handling sent message:', payload.gsId);
 
     // Example: Update readStatus for the message
+
+    function getCurrentTimeForGMT530() {
+        // Get current UTC time in milliseconds
+        const now = new Date();
+        // Convert to GMT+5:30
+        const offset = (5 * 60 + 30) * 60000; // 5 hours and 30 minutes in milliseconds
+        const gmt530Time = new Date(now.getTime() + offset);
+        // Format to MySQL datetime format
+        return gmt530Time.toISOString().slice(0, 19).replace('T', ' ');
+    }
+    
+    const mysqlTimestamp = getCurrentTimeForGMT530();
  
 
-    db.query("UPDATE whatsappmsgfeedback SET readStatus = 1, readDateTime = NOW() WHERE msgId = ?", [payload.gsId], function(err) {
+    db.query("UPDATE whatsappmsgfeedback SET readStatus = 1, readDateTime = ? WHERE msgId = ?", [mysqlTimestamp,payload.gsId], function(err) {
         if (err) {
             console.error('Error updating read Status for msgId:', payload.gsId, '; Error:', err);
         } else {
@@ -147,9 +185,11 @@ function convertToMySQLTimestamp(timestamp) {
 
 
 function handleMessageReceived(data) {
-    console.log('tEST tIME STAMP ');
+    //console.log('tEST tIME STAMP ');
 
-   console.log('Handling message received event:', data.timestamp);
+   //console.log('Handling message received event:', data.timestamp);
+   console.log("Before calling convertToMySQLTimestamp");
+
     // Convert timestamp to MySQL TIMESTAMP format
     const mysqlTimestamp = convertToMySQLTimestamp(data.timestamp);
 
