@@ -503,7 +503,7 @@ CollegeStaff.viewOneClgStaff = (id, result) => {
 }
 
 CollegeStaff.viewSession = (batchId, result) => {
-    db.query("SELECT DISTINCT b. id AS batchId, s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, CASE WHEN s.cancelStatus = 0 THEN 'ACTIVE' WHEN s.cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN batches b ON b.id = s.batchId LEFT JOIN college_staff cs ON cs.collegeId = b.collegeId   WHERE s.deleteStatus = 0 AND s.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;", batchId,
+    db.query("SELECT DISTINCT b. id AS batchId, s.id,s.sessionName, s.date, s.time, s.type, s.remarks, t.trainerName, s.venueORlink, CASE WHEN s.cancelStatus = 0 THEN 'ACTIVE' WHEN s.cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN batches b ON b.id = s.batchId LEFT JOIN college_staff cs ON cs.collegeId = b.collegeId JOIN trainersinfo t ON s.trainerId = t.id  WHERE s.deleteStatus = 0 AND s.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;", batchId,
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
