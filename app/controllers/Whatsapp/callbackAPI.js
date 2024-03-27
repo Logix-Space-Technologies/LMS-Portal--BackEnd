@@ -122,32 +122,25 @@ function handleBillingEvent(data) {
 //     const formatted = date.toISOString().slice(0, 19).replace('T', ' ');
 //     return formatted;
 // }
-
 function convertToMySQLTimestamp(timestamp) {
-
-    console.log("timestamp"+timestamp)
-
+    console.log("Original timestamp: " + timestamp);
 
     // Create a Date object from the timestamp
     const date = new Date(timestamp);
 
     // Calculate the timezone offset for GMT+5:30 (5 hours and 30 minutes)
-    const offsetHours = 5;
-    const offsetMinutes = 30;
-    const offset = (offsetHours * 60 + offsetMinutes) * 60000; // convert offset to milliseconds
+    const offset = (5 * 60 + 30) * 60000; // Convert offset to milliseconds
 
     // Adjust the date for the timezone offset
-    const adjustedDate = new Date(date.getTime() + offset);
+    const adjustedDate = new Date(date.getTime() + offset - date.getTimezoneOffset() * 60000);
 
     // Format the date to MySQL TIMESTAMP format: YYYY-MM-DD HH:MM:SS
-    // Note: toISOString returns the date in UTC, but since we've adjusted the date for the timezone,
-    // it will effectively be in GMT+5:30
     const formatted = adjustedDate.toISOString().slice(0, 19).replace('T', ' ');
-    console.log("formatted => "+timestamp)
+    console.log("Formatted for GMT+5:30 => " + formatted);
 
     return formatted;
-
 }
+
 
 
 
