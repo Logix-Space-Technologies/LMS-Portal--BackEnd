@@ -90,4 +90,4 @@ function handleMessageReceived(data) {
     // Implement your logic for billing events here
 }
 
-module.exports = { callbackCheck };
+module.exports.sendfn = callbackCheck ;
