@@ -156,6 +156,10 @@ function handleMessageReceived(data) {
     // Convert timestamp to MySQL TIMESTAMP format
     const mysqlTimestamp = convertToMySQLTimestamp(data.timestamp);
 
+    console.log("formatted timestamp => "+ mysqlTimestamp)
+    console.log(mysqlTimestamp)
+
+
     let studentPhno = data.payload.sender.phone.replace(/^\+91\s?|^\91\s?/, '');
     db.query("SELECT * FROM `student` WHERE `studPhNo` = ?", [studentPhno], (err, res) => {
         if (err) {
