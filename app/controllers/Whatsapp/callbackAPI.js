@@ -67,8 +67,12 @@ function handleSentMessage(payload) {
 function handleDeliveredMessage(payload) {
     console.log('Handling delivered message:', payload);
     // Example: Update deliveryStatus for the message
-    db.query("UPDATE whatsappmsgfeedback SET deliveryStatus = 1, deliveryDate = NOW() WHERE msgId = ?", [payload.id], (err) => {
-        if (err) console.error('Error updating deliveryStatus:', err);
+    db.query("UPDATE whatsappmsgfeedback SET deliveryStatus = 1, deliveryDate = NOW() WHERE msgId = ?", [payload.id], function(err) {
+        if (err) {
+            console.error('Error updating deliveryStatus for msgId:', payload.id, '; Error:', err);
+        } else {
+            console.log('Delivery status updated successfully for msgId:', payload.id);
+        }
     });
 }
 
