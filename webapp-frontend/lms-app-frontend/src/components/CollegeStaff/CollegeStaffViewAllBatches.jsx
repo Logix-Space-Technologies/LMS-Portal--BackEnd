@@ -81,7 +81,11 @@ const CollegeStaffViewBatch = () => {
         responseType: 'blob', // Set responseType to 'blob' for PDF
       };
 
-      const response = await axios.post(apiUrl2, {}, axiosConfig2);
+      let data = {
+        "collegeId": collegeId
+      }
+
+      const response = await axios.post(apiUrl2, data, axiosConfig2);
 
       if (response.data) {
         // Use window.open directly with response.data
