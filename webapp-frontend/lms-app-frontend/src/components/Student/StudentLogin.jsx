@@ -112,7 +112,7 @@ const StudentLogin = () => {
                     sessionStorage.setItem("refundreqstatus", refundreqstatus);
 
                     navigate("/studViewRefundReq")
-                } else if (Response.data.status === "Email Not Verified" && inputField.password === "0") {
+                } else if (inputField.password === "0") {
                     let data = { "studEmail": inputField.studEmail }
                     axios.post(apiUrl2, data).then(
                         (Response) => {
