@@ -91,24 +91,23 @@ const StudHeader = () => {
         <div>
 
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-                <Link to="#" className="navbar-brand d-flex d-lg-none me-4">
-                    <h2 className="text-primary mb-0">
-                        <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
-                    </h2>
-                </Link>
-                {sessionData && sessionData.length > 0 ? (
-                    sessionData.map((value, index) => {
-                        return (
-                            <div className="session-name" key={index}>
-                                <p>Next Session: {value.date}, {formatTime(value.time)}</p>
-                            </div>
-                        );
-                    })
-                ) : (
-                    <div className="session-name">
-                        <p>Next Session: No Upcoming Session</p>
-                    </div>
-                )}
+                <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
+                <div className="ms-auto d-flex justify-content-end w-100">
+                    
+                    {sessionData && sessionData.length > 0 ? (
+                        sessionData.map((value, index) => {
+                            return (
+                                <div className="session-name text-end" key={index}>
+                                    <p>Next Session: {value.date}, {formatTime(value.time)}</p>
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <div className="session-name text-end">
+                            <p>Next Session: No Upcoming Session</p>
+                        </div>
+                    )}
+                </div>
 
 
                 <div className="navbar-nav align-items-center ms-auto">
