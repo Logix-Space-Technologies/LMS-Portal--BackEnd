@@ -166,10 +166,11 @@ const AdminUpdateSession = () => {
       } else {
         const isGoogleMeetLink = data.venueORlink.includes('meet.google.com/');
         const isZoomLink = data.venueORlink.includes('zoom.us/');
+        const isTeamsLink = data.venueORlink.includes('teams.microsoft.com/');
 
         // Check if the link is not a Google Meet or Zoom link
-        if (!isGoogleMeetLink && !isZoomLink) {
-          errors.venueORlink = 'Please provide a valid link';
+        if (!isGoogleMeetLink && !isZoomLink && !isTeamsLink) {
+          errors.venueORlink = 'Please provide a valid google meet, zoom or teams link';
         }
       }
     } else if (data.type === "Recorded") {
