@@ -1,3 +1,4 @@
+const db = require('../../models/db')
 // Function to handle incoming message events
 const callbackCheck = (req, res) => {
     const data = req.body;
