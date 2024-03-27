@@ -168,7 +168,7 @@ exports.createStudent = (req, res) => {
                                 mail.sendEmail(email, 'Welcome To LinkUrCodes!', otpVerificationHTMLContent, otpVerificationTextContent)
                                 // Send Whatsapp Message
                                 let formattedPhoneNumber = studPhNo.startsWith('91') ? studPhNo : `91${studPhNo}`;
-                                whatsApp.sendfn(formattedPhoneNumber, data.studName);
+                                whatsApp.sendfn(formattedPhoneNumber, data.studName, data.id);
                                 return res.json({ "status": "success", "data": data, "paymentData": paymentData });
                             }
                         });

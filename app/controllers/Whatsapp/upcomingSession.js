@@ -1,5 +1,6 @@
 const axios = require('axios');
 const db = require('../../models/db')
+require('dotenv').config({ path: '../../.env' });
 
 // Function to send a WhatsApp message via Gupshup
 function sendUpcomingSessionWhatsAppMessage(date, time, link, sessionType, destinationPhoneNumber, studId) {
