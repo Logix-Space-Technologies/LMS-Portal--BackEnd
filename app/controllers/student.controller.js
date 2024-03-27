@@ -730,10 +730,11 @@ exports.studregCollegeAllView = (request, response) => {
 exports.generateListOfBatchWiseStudents = (request, response) => {
     const token = request.headers.token;
     const key = request.headers.key;
+    const collegeId = request.body.collegeId;
 
     jwt.verify(token, key, (err, decoded) => {
         if (decoded) {
-            Student.generateAllBatchWiseList((err, data) => {
+            Student.generateAllBatchWiseList(collegeId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
