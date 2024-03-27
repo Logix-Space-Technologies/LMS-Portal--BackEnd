@@ -20,6 +20,7 @@ const curriculumController = require("../controllers/curriculum.controller")
 const AttendenceController = require("../controllers/attendence.controller")
 const CommunityManagerController = require("../controllers/communityManager.controller")
 const FirebaseController = require("../controllers/firebaseToken.controller")
+const WhatsappController = require("../controllers/Whatsapp/callbackAPI")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -331,6 +332,8 @@ router.post('/emailverifypwdchangestud', StudentController.emailVerifyAndPasswor
 router.post('/sendFirebaseNotificationByStudId',FirebaseController.sendNotificationByStudId)
 
 router.post('/sendSessionRemainderEmail',SessionsController.sendRemainderMail)
+
+router.post('/whatsapp-callback',WhatsappController.sendfn)
 
 
 
