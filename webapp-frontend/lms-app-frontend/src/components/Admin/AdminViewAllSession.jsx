@@ -300,7 +300,7 @@ const AdminViewAllSession = () => {
     };
 
     function isSpecialDomain(venueLink) {
-        const domains = ["meet.google.com", "zoom.us", "youtube.com", "vimeo.com"];
+        const domains = ["meet.google.com", "zoom.us", "youtube.com", "vimeo.com", "teams.microsoft.com"];
         return domains.some(domain => venueLink.includes(domain));
     }
 
