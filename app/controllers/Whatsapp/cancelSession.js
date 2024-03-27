@@ -1,5 +1,6 @@
 const axios = require('axios');
 const db = require('../../models/db')
+require('dotenv').config({ path: '../../.env' });
 
 function sendCancellationMessage(date, time,sessionType, destinationPhoneNumber,studId) {
     const url = 'https://api.gupshup.io/wa/api/v1/template/msg';
