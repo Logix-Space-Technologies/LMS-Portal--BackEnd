@@ -85,9 +85,38 @@ function handleBillingEvent(data) {
     // Implement your logic for billing events here
 }
 
-function handleMessageReceived(data) {
-    console.log('Handling billing event:', data.payload);
-    // Implement your logic for billing events here
+function convertToMySQLTimestamp(timestamp) {
+    // Create a Date object from the timestamp (assumed to be in milliseconds)
+    const date = new Date(timestamp);
+    // Format the date to MySQL TIMESTAMP format: YYYY-MM-DD HH:MM:SS
+    const formatted = date.toISOString().slice(0, 19).replace('T', ' ');
+    return formatted;
 }
 
-module.exports.sendfn = callbackCheck ;
+function handleMessageReceived(data) {
+    console.log('Handling billing event:', data.payload);
+    // Convert timestamp to MySQL TIMESTAMP format
+    const mysqlTimestamp = convertToMySQLTimestamp(data.timestamp);
+
+    let studentPhno = data.payload.sender.phone.replace(/^\+91\s?|^\91\s?/, '');
+    db.query("SELECT * FROM `student` WHERE `studPhNo` = ?", [studentPhno], (err, res) => {
+        if (err) {
+            console.error('Error updating readStatus:', err);
+        } else {
+            let studId = res[0].id;
+            // Use the converted timestamp
+            db.query("INSERT INTO `wtsappmsgreceivedfromstudent`(`messageId`, `studId`, `message`, `dateTime`) VALUES (?,?,?,?)", [data.payload.id, studId, data.payload.payload.text, mysqlTimestamp], (err) => {
+                if (err) console.error('Error updating readStatus:', err);
+            });
+            // Use the converted timestamp
+            db.query("INSERT INTO `wtsappmsgcommon`(`messageId`, `dateTime`, `name`, `phone`, `country_code`, `dial_code`, `text`) VALUES (?,?,?,?,?,?,?)", [data.payload.id, mysqlTimestamp, data.payload.sender.name, data.payload.sender.phone, data.payload.sender.country_code, data.payload.sender.dial_code, data.payload.payload.text], (err) => {
+                if (err) console.error('Error updating readStatus:', err);
+            });
+        }
+    });
+}
+
+
+
+
+module.exports.sendfn = callbackCheck;
