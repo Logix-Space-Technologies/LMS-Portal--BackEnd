@@ -9,6 +9,7 @@ const AdminUpdateSession = () => {
 
   const [sessionData, setSessionData] = useState([]);
   const [trainers, setTrainers] = useState([])
+  const [errors, setErrors] = useState({})
   const [updateField, setUpdateField] = useState({
     "id": sessionStorage.getItem('sessionId'),
     "sessionName": '',
@@ -26,6 +27,7 @@ const AdminUpdateSession = () => {
   const [key, setKey] = useState('')
 
   const updateHandler = (event) => {
+    setErrors({})
     setUpdateField({ ...updateField, [event.target.name]: event.target.value })
   }
 
@@ -73,76 +75,120 @@ const AdminUpdateSession = () => {
       token = sessionStorage.getItem("admstaffLogintoken");
       setKey(currentKey); // Update the state if needed
     }
-    let axiosConfig = {
-      headers: {
-        'content-type': 'application/json;charset=UTF-8',
-        'Access-Control-Allow-Origin': '*',
-        "token": token,
-        "key": currentKey,
-      }
-    }
-    let data = {
-      "id": sessionStorage.getItem('sessionId'),
-      "sessionName": updateField.sessionName,
-      "date": updateField.date,
-      "time": updateField.time,
-      "type": updateField.type,
-      "remarks": updateField.remarks,
-      "venueORlink": updateField.venueORlink,
-      "trainerId": updateField.trainerId,
-    }
-    axios.post(apiUrl2, data, axiosConfig).then((Response) => {
-      if (Response.data.status === 'success') {
-        setUpdateField({
-          "id": sessionStorage.getItem('sessionId'),
-          "sessionName": '',
-          "date": '',
-          "time": '',
-          "type": '',
-          "remarks": '',
-          "venueORlink": '',
-          "trainerId": '',
-        });
-        alert('Session Updated Successfully');
-        navigate(-1);
-      } else {
-        if (Response.data.status === "Validation failed" && Response.data.data.sessionName) {
-          alert(Response.data.data.sessionName)
-        } else {
-          if (Response.data.status === "Validation failed" && Response.data.data.date) {
-            alert(Response.data.data.date)
-          } else {
-            if (Response.data.status === "Validation failed" && Response.data.data.time) {
-              alert(Response.data.data.time)
-            } else {
-              if (Response.data.status === "Validation failed" && Response.data.data.type) {
-                alert(Response.data.data.type)
-              } else {
-                if (Response.data.status === "Validation failed" && Response.data.data.remarks) {
-                  alert(Response.data.data.remarks)
-                } else {
-                  if (Response.data.status === "Validation failed" && Response.data.data.venueORlink) {
-                    alert(Response.data.data.venueORlink)
-                  } else {
-                    if (Response.data.status === "Validation failed" && Response.data.data.trainerId) {
-                      alert(Response.data.data.trainerId)
-                    } else {
-                      if (Response.data.status === "Unauthorized User!!") {
-                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
-                        sessionStorage.clear()
-                      } else {
-                        alert(Response.data.status)
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+    const validationErrors = validateForm(updateField);
+    if (Object.keys(validationErrors).length === 0) {
+      let axiosConfig = {
+        headers: {
+          'content-type': 'application/json;charset=UTF-8',
+          'Access-Control-Allow-Origin': '*',
+          "token": token,
+          "key": currentKey,
         }
       }
-    });
+      let data = {
+        "id": sessionStorage.getItem('sessionId'),
+        "sessionName": updateField.sessionName,
+        "date": updateField.date,
+        "time": updateField.time,
+        "type": updateField.type,
+        "remarks": updateField.remarks,
+        "venueORlink": updateField.venueORlink,
+        "trainerId": updateField.trainerId,
+      }
+      axios.post(apiUrl2, data, axiosConfig).then((Response) => {
+        if (Response.data.status === 'success') {
+          setUpdateField({
+            "id": sessionStorage.getItem('sessionId'),
+            "sessionName": '',
+            "date": '',
+            "time": '',
+            "type": '',
+            "remarks": '',
+            "venueORlink": '',
+            "trainerId": '',
+          });
+          alert('Session Updated Successfully');
+          navigate(-1);
+        } else if (Response.data.status === "Validation failed" && Response.data.data.sessionName) {
+          alert(Response.data.data.sessionName)
+        } else if (Response.data.status === "Validation failed" && Response.data.data.date) {
+          alert(Response.data.data.date)
+        } else if (Response.data.status === "Validation failed" && Response.data.data.time) {
+          alert(Response.data.data.time)
+        } else if (Response.data.status === "Validation failed" && Response.data.data.type) {
+          alert(Response.data.data.type)
+        } else if (Response.data.status === "Validation failed" && Response.data.data.remarks) {
+          alert(Response.data.data.remarks)
+        } else if (Response.data.status === "Validation failed" && Response.data.data.venueORlink) {
+          alert(Response.data.data.venueORlink)
+        } else if (Response.data.status === "Validation failed" && Response.data.data.trainerId) {
+          alert(Response.data.data.trainerId)
+        } else if (Response.data.status === "Unauthorized User!!") {
+          { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+          sessionStorage.clear()
+        } else {
+          alert(Response.data.status)
+        }
+
+      });
+    } else {
+      setErrors(validationErrors)
+    }
   };
+
+  const validateForm = (data) => {
+    let errors = {};
+
+    if (!data.sessionName.trim()) {
+      errors.sessionName = 'Session name is required';
+    }
+    if (!data.remarks.trim()) {
+      errors.remarks = 'Remark is required';
+    }
+    if (!data.date.trim()) {
+      errors.date = 'Date is required';
+    }
+    if (!data.venueORlink.trim()) {
+      errors.venueORlink = 'Venue or Link is required';
+    }
+    if (!data.trainerId.trim()) {
+      errors.trainerId = 'Trainer Name is required';
+    }
+    if (!data.time.trim()) {
+      errors.time = 'Time is required';
+    }
+    if (!data.type.trim()) {
+      errors.type = 'Type is required';
+    } else if (data.type === "Online") {
+      // If type is Online, ensure there's a link and it's either Google Meet or Zoom
+      if (!data.venueORlink.trim()) {
+        errors.venueORlink = 'Meeting Link is required';
+      } else {
+        const isGoogleMeetLink = data.venueORlink.includes('meet.google.com/');
+        const isZoomLink = data.venueORlink.includes('zoom.us/');
+
+        // Check if the link is not a Google Meet or Zoom link
+        if (!isGoogleMeetLink && !isZoomLink) {
+          errors.venueORlink = 'Please provide a valid link';
+        }
+      }
+    } else if (data.type === "Recorded") {
+      if (!data.venueORlink.trim()) {
+        errors.venueORlink = 'Recorded Video Link is required';
+      } else {
+        const isYouTubeLink = data.venueORlink.includes('youtube.com/');
+        const isVimeoLink = data.venueORlink.includes('vimeo.com/');
+
+        if (!isYouTubeLink && !isVimeoLink) {
+          errors.venueORlink = 'Please provide a valid link';
+        }
+      }
+    } else if (data.type === "Offline" && !data.venueORlink.trim()) {
+      errors.venueORlink = 'Please provide a valid venue';
+    }
+
+    return errors;
+  }
 
   const getData = () => {
     let currentKey = sessionStorage.getItem("admkey");
@@ -247,6 +293,7 @@ const AdminUpdateSession = () => {
                         name="sessionName"
                         value={updateField.sessionName}
                       />
+                      {errors.sessionName && (<span style={{ color: 'red' }} className="error">{errors.sessionName}</span>)}
                     </div>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                       <label htmlFor="" className="form-label">
@@ -259,6 +306,7 @@ const AdminUpdateSession = () => {
                         name="date"
                         value={updateField.date}
                       />
+                      {errors.date && (<span style={{ color: 'red' }} className="error">{errors.date}</span>)}
                     </div>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                       <label htmlFor="" className="form-label">
@@ -271,6 +319,7 @@ const AdminUpdateSession = () => {
                         name="time"
                         value={updateField.time}
                       />
+                      {errors.time && (<span style={{ color: 'red' }} className="error">{errors.time}</span>)}
                     </div>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                       <label htmlFor="" className="form-label">
@@ -288,6 +337,7 @@ const AdminUpdateSession = () => {
                         <option value="Offline">Offline</option>
                         <option value="Recorded">Recorded</option>
                       </select>
+                      {errors.type && (<span style={{ color: 'red' }} className="error">{errors.type}</span>)}
                     </div>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                       <label htmlFor="" className="form-label">
@@ -300,6 +350,7 @@ const AdminUpdateSession = () => {
                         name="remarks"
                         value={updateField.remarks}
                       />
+                      {errors.remarks && (<span style={{ color: 'red' }} className="error">{errors.remarks}</span>)}
                     </div>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                       <label htmlFor="" className="form-label">
@@ -312,6 +363,7 @@ const AdminUpdateSession = () => {
                         name="venueORlink"
                         value={updateField.venueORlink}
                       />
+                      {errors.venueORlink && (<span style={{ color: 'red' }} className="error">{errors.venueORlink}</span>)}
                     </div>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                       <label htmlFor="" className="form-label">
@@ -331,6 +383,7 @@ const AdminUpdateSession = () => {
                           </option>
                         })}
                       </select>
+                      {errors.trainerId && (<span style={{ color: 'red' }} className="error">{errors.trainerId}</span>)}
                     </div>
                     <br></br>
                     <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">

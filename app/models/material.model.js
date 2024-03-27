@@ -61,7 +61,7 @@ Material.materialCreate = (newMaterial, result) => {
 }
 
 Material.searchMaterial = (searchString, result) => {
-    db.query("SELECT m.id,m.fileName,m.materialDesc,m.uploadFile,m.remarks,b.batchName FROM materials m JOIN batches b ON m.batchId = b.id WHERE m.deleteStatus=0 AND m.isActive=1 AND b.deleteStatus=0 AND b.isActive=1 AND (fileName LIKE ? OR materialDesc LIKE ? )",
+    db.query("SELECT m.id,m.fileName,m.materialDesc,m.uploadFile,m.remarks,m.addedDate,b.batchName FROM materials m JOIN batches b ON m.batchId = b.id WHERE m.deleteStatus=0 AND m.isActive=1 AND b.deleteStatus=0 AND b.isActive=1 AND (fileName LIKE ? OR materialDesc LIKE ? ) ORDER BY m.addedDate DESC",
         [`%${searchString}%`, `%${searchString}%`],
         (err, res) => {
             if (err) {
@@ -69,8 +69,9 @@ Material.searchMaterial = (searchString, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Materials: ", res);
-                result(null, res);
+                const formattedMaterials = res.map(materials => ({ ...materials, addedDate: materials.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); 
+                console.log("Materials: ", formattedMaterials);
+                result(null, formattedMaterials);
             }
         });
 }
@@ -148,7 +149,7 @@ Material.updateMaterial = (materialUpdate, result) => {
 
 
 Material.viewBatchMaterials = (batchId, result) => {
-    db.query("SELECT b.batchName,m.* FROM materials m JOIN batches b ON m.batchId = b.id WHERE m.batchId = ? AND m.deleteStatus = 0 AND m.isActive = 1", [batchId], (err, res) => {
+    db.query("SELECT b.batchName,m.* FROM materials m JOIN batches b ON m.batchId = b.id WHERE m.batchId = ? AND m.deleteStatus = 0 AND m.isActive = 1 ORDER BY m.addedDate DESC", [batchId], (err, res) => {
         if (err) {
             console.error("Error viewing batch materials: ", err);
             result(err, null);

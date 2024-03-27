@@ -23,7 +23,7 @@ const logAdminStaff = (admStaffId, action) => {
 };
 
 AdminStaffLog.getAll = async(result) => {
-    let query = "SELECT asg.AdStaffName,asl.* FROM adminstafflog asl JOIN admin_staff asg ON asl.AdmStaffId=asg.id WHERE asg.deleteStatus=0 AND asg.isActive=1"
+    let query = "SELECT asg.AdStaffName,asl.* FROM adminstafflog asl JOIN admin_staff asg ON asl.AdmStaffId=asg.id WHERE asg.deleteStatus=0 AND asg.isActive=1 ORDER BY asl.DateTime DESC"
     db.query(query, (err, response) => {
         if (err) {
             console.log("Error : ",err)

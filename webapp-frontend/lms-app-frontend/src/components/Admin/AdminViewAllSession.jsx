@@ -29,6 +29,8 @@ const AdminViewAllSession = () => {
     const [sessionData, setSessionData] = useState([]);
     const [qrCodeAttendance, setQrCodeAttendance] = useState(null);
     const [showQRModal, setShowQRModal] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [currentPage, setCurrentPage] = useState(1);
     const [sessionsPerPage] = useState(10); // Number of sessions per page
     const navigate = useNavigate();
@@ -81,8 +83,16 @@ const AdminViewAllSession = () => {
     const [cancelId, setCancelId] = useState(null);
 
     const cancelClick = (id) => {
+        setShowModal(true)
+        setShowOverlay(true)
         setCancelId(id)
     }
+
+    // Function to close both modal and overlay
+    const closeModal = () => {
+        setShowModal(false);
+        setShowOverlay(false);
+    };
 
     const handleClick = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -104,8 +114,7 @@ const AdminViewAllSession = () => {
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "success") {
-                    alert("Session Cancelled Successfully.")
-                    setSessionData(sessionData.filter(session => session.id !== cancelId));
+                    closeModal()
                     getData()
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
@@ -242,9 +251,22 @@ const AdminViewAllSession = () => {
         const timeDifference = sessionDateTime.getTime() - currentDate.getTime();
         const isFutureSession = timeDifference > 0;
         const isWithin24Hours = timeDifference <= oneDay;
-        console.log(isWithin24Hours)
+        // console.log(isWithin24Hours)
 
         return isFutureSession && isWithin24Hours;
+    };
+
+    const isSessionInPast = (dateString, timeString) => {
+        const now = new Date();
+
+        const dateParts = dateString.split('/');
+        const timeParts = timeString.split(':');
+        // Assuming timeString is in HH:MM format; adjust if it includes seconds or is in 12-hour format
+
+        // Convert session date and time from strings to a Date object
+        const sessionDateTime = new Date(dateParts[2], dateParts[1] - 1, dateParts[0], timeParts[0], timeParts[1]);
+
+        return sessionDateTime < now;
     };
 
 
@@ -359,21 +381,21 @@ const AdminViewAllSession = () => {
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {value.cancelStatus === "ACTIVE" && (
-                                        <button onClick={() => cancelClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                    {!isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
+                                        <button onClick={() => cancelClick(value.id)} type="button" className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                             Cancel Session
                                         </button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {value.cancelStatus === "ACTIVE" && (
+                                    {!isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
                                             Reschedule Session
                                         </button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {key === "lmsapp" && value.cancelStatus === "ACTIVE" && (
+                                    {key === "lmsapp" && !isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => deleteClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
                                             Delete Session
                                         </button>
@@ -456,25 +478,45 @@ const AdminViewAllSession = () => {
             )}
 
             {/* Cancel Confirmation Modal */}
-            <div className="row">
-                <div className="modal fade" id="cancelModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to cancel this session?</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                <p>This action cannot be undone.</p>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No, cancel</button>
-                                <button onClick={() => handleClick()} type="button" className="btn btn-danger" data-bs-dismiss="modal">Yes, I'm sure</button>
+            {showModal && (
+                <div className="row">
+                    <div className="modal show d-block" tabIndex={-1}>
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to cancel this session?</h5>
+                                    <button type="button" className="btn-close" onClick={() => closeModal()}></button>
+                                </div>
+                                <div className="modal-body">
+                                    <p>This action cannot be undone.</p>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" onClick={() => closeModal()}>No, cancel</button>
+                                    <button onClick={() => handleClick()} type="button" className="btn btn-danger" >Yes, I'm sure</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     );
 };

@@ -167,7 +167,8 @@ exports.createStudent = (req, res) => {
                                 const otpVerificationTextContent = mailContents.StudentRegistrationSuccessfulMailTextContent(membershipNo);
                                 mail.sendEmail(email, 'Welcome To LinkUrCodes!', otpVerificationHTMLContent, otpVerificationTextContent)
                                 // Send Whatsapp Message
-                                whatsApp.sendfn(data.studPhNo, data.studName);
+                                let formattedPhoneNumber = studPhNo.startsWith('91') ? studPhNo : `91${studPhNo}`;
+                                whatsApp.sendfn(formattedPhoneNumber, data.studName);
                                 return res.json({ "status": "success", "data": data, "paymentData": paymentData });
                             }
                         });
@@ -755,7 +756,7 @@ exports.generateListOfBatchWiseStudents = (request, response) => {
 // Generate Batch-Wise Student List BY College Staff
 function generatePDF(data, callback) {
     const pdfPath = 'pdfFolder/batch_wise_students_list.pdf';
-    const doc = new PDFDocument();
+    let doc = new PDFDocument({ margin: 50, size: 'A4' });
     const stream = fs.createWriteStream(pdfPath);
 
     doc.pipe(stream);
@@ -763,6 +764,8 @@ function generatePDF(data, callback) {
     const logoImage = doc.openImage(imageLogo);
     const imageScale = 0.3;
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
+
+    doc.moveDown(2.0);
     // Add main heading
     doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise List Of Students', {
         align: 'center',
@@ -774,6 +777,15 @@ function generatePDF(data, callback) {
 
     // Group data by batch
     const groupedData = groupDataByBatch(data);
+
+    const columnWidths = [
+        90, // Membership No. (Increased width)
+        120, // Name (Increased width)
+        140, // College (Decreased width)
+        100, // Department (Increased width)
+        70, // Course (Increased width)
+        200 // Email (Increased width)
+    ];
 
     // Add content to the PDF using grouped data
     for (const batchName in groupedData) {
@@ -790,20 +802,20 @@ function generatePDF(data, callback) {
             // Create table headers
             const tableHeaders = [
                 { label: 'Membership No', padding: 5 },
-                { label: 'Name', padding: 0 },
-                { label: 'College', padding: 0 },
-                { label: 'Department', padding: 0 },
+                { label: 'Name', padding: 5 },
+                { label: 'College', padding: 5 },
+                { label: 'Department', padding: 5 },
                 { label: 'Course', padding: 5 },
-                { label: 'Email', padding: 0 },
+                { label: 'Email', padding: 5 },
             ];
             const tableData = students.map(student => [student.membership_no, student.studName, student.collegeName, student.studDept, student.course, student.studEmail]);
 
-            const tableWidth = 1000;
+
             // Draw the table
             doc.table({
                 headers: tableHeaders,
                 rows: tableData,
-                widths: new Array(tableHeaders.length).fill(tableWidth),
+                widths: columnWidths,
                 align: ['left', 'left', 'left', 'left', 'left', 'left'],
             });
 
@@ -876,7 +888,7 @@ exports.generateBatchWiseAttendanceList = (request, response) => {
 
 function generateAttendancePDF(data, callback) {
     const pdfPath = 'pdfFolder/batch_wise_attendance_list.pdf';
-    const doc = new PDFDocument();
+    let doc = new PDFDocument({ margin: 50, size: 'A4' });
     const stream = fs.createWriteStream(pdfPath);
 
     doc.pipe(stream);
@@ -884,6 +896,8 @@ function generateAttendancePDF(data, callback) {
     const logoImage = doc.openImage(imageLogo);
     const imageScale = 0.3;
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
+
+    doc.moveDown(2);
     // Add main heading
     doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise Attendance List Of Students', {
         align: 'center',
@@ -906,6 +920,16 @@ function generateAttendancePDF(data, callback) {
     // Group data by session
     const groupedData = groupAttendanceBySession(data);
 
+    const columnWidths = [
+        20,  // Date
+        130, // Membership No. 
+        50,  // Admission No 
+        110, // Student Name 
+        70,  // Department
+        60,  // Course
+        80   // Attendance Status
+    ];
+
     // Add content to the PDF using grouped data
     for (const sessionName in groupedData) {
         if (groupedData.hasOwnProperty(sessionName)) {
@@ -920,23 +944,23 @@ function generateAttendancePDF(data, callback) {
 
             // Create table headers
             const tableHeaders = [
-                { label: 'Date', padding: 4 },
-                { label: 'Membership No.', padding: -10 },
-                { label: 'Admission No', padding: -5 },
-                { label: 'Student Name', padding: 0 },
-                { label: 'Department', padding: 10 },
-                { label: 'Course', padding: 15 },
-                { label: 'Attendance Status', padding: -6 }
+                { label: 'Date', padding: 5 },
+                { label: 'Membership No.', padding: 3 },
+                { label: 'Admission No', padding: 5 },
+                { label: 'Student Name', padding: 5 },
+                { label: 'Department', padding: 5 },
+                { label: 'Course', padding: 5 },
+                { label: 'Attendance Status', padding: 5 }
             ];
             const tableData = students.map(student => [student.attendanceDate, student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
 
-            const tableWidth = 100;
+            // const tableWidth = 100;
             // Draw the table
             doc.table({
                 headers: tableHeaders,
                 rows: tableData,
-                widths: new Array(tableHeaders.length).fill(tableWidth),
-                align: ['left', 'left', 'left', 'left', 'left', 'left', 'left', 'left', 'left', 'left'],
+                widths: columnWidths,
+                align: ['left', 'left', 'left', 'left', 'left', 'left', 'left'],
             });
 
             doc.moveDown(); // Add a newline between sessions
@@ -1010,7 +1034,7 @@ exports.generateSessionWiseAttendanceList = (request, response) => {
 
 function generateSessionAttendancePDF(data, callback) {
     const pdfPath = 'pdfFolder/session_wise_attendance_list.pdf';
-    const doc = new PDFDocument();
+    let doc = new PDFDocument({ margin: 50, size: 'A4' });
     const stream = fs.createWriteStream(pdfPath);
 
     doc.pipe(stream);
@@ -1018,6 +1042,8 @@ function generateSessionAttendancePDF(data, callback) {
     const logoImage = doc.openImage(imageLogo);
     const imageScale = 0.3;
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
+
+    doc.moveDown(2);
     // Add main heading
     doc.font('Helvetica-Bold').fontSize(14).text('Session-Wise Attendance List Of Students', {
         align: 'center',
@@ -1048,6 +1074,16 @@ function generateSessionAttendancePDF(data, callback) {
     // Group data by session
     const groupedData = groupAttendanceBySessionStudent(data);
 
+    const columnWidths = [
+        20, // Date 
+        100, // Membership No. 
+        70, // Admission No 
+        120, // Student Name 
+        70, // Department 
+        60, // Course 
+        80 // Attendance Status 
+    ];
+
     // Add content to the PDF using grouped data
     for (const sessionName in groupedData) {
         if (groupedData.hasOwnProperty(sessionName)) {
@@ -1071,7 +1107,7 @@ function generateSessionAttendancePDF(data, callback) {
             doc.table({
                 headers: tableHeaders,
                 rows: tableData,
-                widths: new Array(tableHeaders.length).fill(tableWidth),
+                widths: columnWidths,
                 align: ['left', 'left', 'left', 'left', 'left', 'left', 'left'],
             });
 
@@ -1080,7 +1116,7 @@ function generateSessionAttendancePDF(data, callback) {
     }
     // Add the generated date and time
     const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString() + ' ' + generatedDate.toLocaleTimeString(), {
+    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
         align: 'center',
     });
 

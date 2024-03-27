@@ -397,12 +397,12 @@ exports.collegeStaffSearchTasks = (request, response) => {
         if (decoded) {
             Tasks.collegeStaffSearchTasks(taskQuery, collegeId, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found" });
+                        return response.json({ "status": "No Search Items Found" });
                     } else {
-                        response.json({ "status": "success", "data": data });
+                        return response.json({ "status": "success", "data": data });
                     }
                 }
             });
