@@ -26,7 +26,7 @@ const callbackCheck = (req, res) => {
 
 // Function to handle message-event types
 function handleMessageEvent(data) {
-    console.log('Handling message event:', data.payload);
+   // console.log('Handling message event:', data.payload);
 
     const messageType = data.payload.type;
 
