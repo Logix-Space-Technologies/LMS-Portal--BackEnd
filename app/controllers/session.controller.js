@@ -461,7 +461,7 @@ exports.cancelSession = (request, response) => {
                             const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime);
                             mail.sendEmail(studentEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, cancelSessionHtmlContent, cancelSessionTextContent);
                             let formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
-                            whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, formattedPhoneNumber)
+                            whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, formattedPhoneNumber, studentid)
                         });
                         CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
                             if (err) {

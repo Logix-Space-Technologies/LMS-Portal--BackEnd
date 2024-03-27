@@ -178,6 +178,9 @@ const CollegeStaffViewSession = () => {
                                     Remarks
                                 </th>
                                 <th scope="col" className="px-6 py-3">
+                                    Trainer Name
+                                </th>
+                                <th scope="col" className="px-6 py-3">
                                     Venue Or Link
                                 </th>
                                 <th scope="col" className="px-6 py-3">
@@ -217,6 +220,9 @@ const CollegeStaffViewSession = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.remarks}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {value.trainerName}
                                         </td>
                                         <td className="px-6 py-4">
                                             {isSpecialDomain(value.venueORlink) ? (
