@@ -22,7 +22,7 @@ function sendCancellationMessage(date, time,sessionType, destinationPhoneNumber,
     axios.post(url, data, { headers: headers })
         .then(response => {
             console.log('Response:', response.data);
-            db.query("INSERT INTO `whatsappmsgfeedback`(`studId`, `msgId`, message) VALUES (?,?,'Session cancelled.')", [studId, response.data.messageId, response.data.status],
+            db.query("INSERT INTO `whatsappmsgfeedback`(`studId`, `msgId`, message) VALUES (?,?,'Session cancelled')", [studId, response.data.messageId, response.data.status],
                 (err, res) => {
                     if (err) {
                         console.log(err)

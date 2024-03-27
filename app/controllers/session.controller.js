@@ -119,7 +119,7 @@ exports.createSession = (request, response) => {
                                     }
                                 });
                                 let formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
-                                WhatsAppupcomingSession.sendfn(sessionDate, sessionTime, newSession.venueORlink, newSession.type, formattedPhoneNumber)
+                                WhatsAppupcomingSession.sendfn(sessionDate, sessionTime, newSession.venueORlink, newSession.type, formattedPhoneNumber, studentid)
                                 if (newSession.type === "Offline") {
                                     const upcomingSessionHtmlContent = mailContents.upcomingSessionOfflineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     const upcomingSessionTextContent = mailContents.upcomingSessionOfflineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
