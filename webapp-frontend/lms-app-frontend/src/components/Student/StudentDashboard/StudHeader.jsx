@@ -91,9 +91,22 @@ const StudHeader = () => {
         <div>
 
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-                <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
-                <div className="ms-auto d-flex justify-content-end w-100">
-                    
+                <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" style={{ marginRight: '20px' }} />
+
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Features
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><Link to='/studentViewTask' className="dropdown-item">View Assigned Tasks</Link></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div className="ms-auto d-flex justify-content-end w-100" style={{ marginRight: '20px' }}>
+
                     {sessionData && sessionData.length > 0 ? (
                         sessionData.map((value, index) => {
                             return (
