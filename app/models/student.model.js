@@ -272,54 +272,43 @@ Student.findByEmail = (Email, result) => {
                 console.log("Student Does Not Exist")
                 return result("Student Does Not Exist", null)
             } else {
-                db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND emailVerified = 1", [Email],
-                    (verifyEmailErr, verifyEmailRes) => {
-                        if (verifyEmailErr) {
-                            console.log("Error: ", verifyEmailErr)
-                            return result(verifyEmailErr, null)
-                        } else if (verifyEmailRes.length === 0) {
-                            console.log("Email Not Verified")
-                            return result("Email Not Verified", null)
+                db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND isVerified = 1", [Email],
+                    (err, res) => {
+                        if (err) {
+                            console.log("Error: ", err)
+                            return result(err, null)
+                        } else if (res.length === 0) {
+                            console.log("Account Under Verification Process.Please Contact Your Batch-In-Charge.")
+                            return result("Account Under Verification Process.Please Contact Your Batch-In-Charge.", null)
                         } else {
-                            db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND isVerified = 1", [Email],
-                                (err, res) => {
-                                    if (err) {
-                                        console.log("Error: ", err)
-                                        return result(err, null)
-                                    } else if (res.length === 0) {
-                                        console.log("Account Under Verification Progress/Not Verified")
-                                        return result("Account Under Verification Progress/Not Verified", null)
-                                    } else {
-                                        db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
-                                            (validityErr, validityRes) => {
-                                                if (validityErr) {
-                                                    console.log("Error: ", validityErr)
-                                                    return result(validityErr, null)
-                                                } else if (validityRes.length === 0) {
-                                                    console.log("Account expired. Please Renew Your Plan.")
-                                                    return result("Account expired. Please Renew Your Plan", null)
-                                                }
-
-                                                db.query("SELECT s.*, r.refundReqStatus, CASE WHEN cm.studentId IS NOT NULL THEN TRUE ELSE FALSE END AS communityManager FROM student s LEFT JOIN ( SELECT studId, CASE WHEN SUM(cancelStatus = 0) > 0 THEN 'Refund Request Active' ELSE 'No Refund Request' END AS refundReqStatus FROM refund GROUP BY studId ) r ON s.id = r.studId LEFT JOIN communitymanagers cm ON s.id = cm.studentId AND s.batchId = cm.batchId WHERE BINARY s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1", [Email],
-                                                    (err, res) => {
-                                                        if (err) {
-                                                            console.log("Error : ", err);
-                                                            return result(err, null);
-                                                        }
-
-                                                        if (res.length > 0) {
-                                                            // Log student login
-                                                            logStudent(res[0].id, "Student logged In");
-                                                            result(null, res[0]);
-                                                        }
-                                                    });
-
-                                            })
-
+                            db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
+                                (validityErr, validityRes) => {
+                                    if (validityErr) {
+                                        console.log("Error: ", validityErr)
+                                        return result(validityErr, null)
+                                    } else if (validityRes.length === 0) {
+                                        console.log("Account expired. Please Renew Your Plan.")
+                                        return result("Account expired. Please Renew Your Plan", null)
                                     }
 
+                                    db.query("SELECT s.*, r.refundReqStatus, CASE WHEN cm.studentId IS NOT NULL THEN TRUE ELSE FALSE END AS communityManager FROM student s LEFT JOIN ( SELECT studId, CASE WHEN SUM(cancelStatus = 0) > 0 THEN 'Refund Request Active' ELSE 'No Refund Request' END AS refundReqStatus FROM refund GROUP BY studId ) r ON s.id = r.studId LEFT JOIN communitymanagers cm ON s.id = cm.studentId AND s.batchId = cm.batchId WHERE BINARY s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1", [Email],
+                                        (err, res) => {
+                                            if (err) {
+                                                console.log("Error : ", err);
+                                                return result(err, null);
+                                            }
+
+                                            if (res.length > 0) {
+                                                // Log student login
+                                                logStudent(res[0].id, "Student logged In");
+                                                result(null, res[0]);
+                                            }
+                                        });
+
                                 })
+
                         }
+
                     })
 
             }
@@ -444,7 +433,7 @@ Student.forgotPassword = (student, result) => {
                     result(updateErr, null);
                 } else {
                     // Ensure the `id` or equivalent unique identifier is correctly referenced
-                    logStudent(studentData.id, "password changed"); 
+                    logStudent(studentData.id, "password changed");
                     result(null, null);
                 }
             });

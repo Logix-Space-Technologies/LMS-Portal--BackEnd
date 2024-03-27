@@ -112,7 +112,7 @@ const StudentLogin = () => {
                     sessionStorage.setItem("refundreqstatus", refundreqstatus);
 
                     navigate("/studViewRefundReq")
-                } else if (Response.data.status === "Email Not Verified" && inputField.password === "0") {
+                } else if (inputField.password === "0") {
                     let data = { "studEmail": inputField.studEmail }
                     axios.post(apiUrl2, data).then(
                         (Response) => {
@@ -131,6 +131,8 @@ const StudentLogin = () => {
                             }
                         }
                     )
+                } else if (Response.data.status === "Account Under Verification Process.Please Contact Your Batch-In-Charge.") {
+                    alert("Account Under Verification Process.\nPlease Contact Your Batch-In-Charge.")
                 } else if (Response.data.status === "Account expired. Please Renew Your Plan") {
                     alert("Account expired. Please Renew Your Plan")
                     let studemail = inputField.studEmail
