@@ -139,7 +139,7 @@ const SessionView = () => {
                   <p className="text-sm text-gray-600">Time: {formatTime(session.time)}</p>
                   <p className="text-sm text-gray-600">Type: {session.type}</p>
                   <p className="text-sm text-gray-600">Trainer Name: {session.trainerName}</p>
-                  {!session.venueORlink.includes("meet.google.com") && !session.venueORlink.includes("zoom.us") && !session.venueORlink.includes("youtube.com") && !session.venueORlink.includes("vimeo.com") && (
+                  {!session.venueORlink.includes("meet.google.com") && !session.venueORlink.includes("zoom.us") && !session.venueORlink.includes("youtube.com") && !session.venueORlink.includes("vimeo.com") && !session.venueORlink.includes("teams.microsoft.com") && (
                     <p className="text-sm text-gray-600">Venue: {session.venueORlink}</p>
                   )}
                   <div className="flex gap-4 mt-4">
@@ -154,6 +154,9 @@ const SessionView = () => {
                     )}
                     {session.venueORlink.includes("vimeo.com")  && (
                       <Link to={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Video Link</Link>
+                    )}
+                    {session.venueORlink.includes("teams.microsoft.com")  && (
+                      <Link to={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</Link>
                     )}
                     {isSessionAccessible(session.date) ? (
                       <>
