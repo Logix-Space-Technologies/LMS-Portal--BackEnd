@@ -117,19 +117,24 @@ function handleBillingEvent(data) {
 
 function convertToMySQLTimestamp(timestamp) {
     // Create a Date object from the timestamp (assumed to be in milliseconds)
-    const date = new Date(timestamp);
+    var date = new Date(timestamp);
 
-    // Offset for GMT+5:30 in milliseconds (5 hours and 30 minutes)
-    const offset = (5 * 60 * 60 * 1000) + (30 * 60 * 1000); // 5 hours and 30 minutes in milliseconds
+    // Manually adjust the date for GMT+5:30
+    date.setMinutes(date.getMinutes() + date.getTimezoneOffset() + 330); // Offset is 330 minutes for GMT+5:30
 
-    // Adjust the date by the offset
-    const localDate = new Date(date.getTime() + offset);
+    // Manually construct the date string
+    var year = date.getFullYear();
+    var month = ('0' + (date.getMonth() + 1)).slice(-2); // months are 0-based
+    var day = ('0' + date.getDate()).slice(-2);
+    var hour = ('0' + date.getHours()).slice(-2);
+    var minute = ('0' + date.getMinutes()).slice(-2);
+    var second = ('0' + date.getSeconds()).slice(-2);
 
     // Format the date to MySQL TIMESTAMP format: YYYY-MM-DD HH:MM:SS
-    // Note: This does not change the internal UTC representation of the date object.
-    const formatted = localDate.toISOString().slice(0, 19).replace('T', ' ');
+    var formatted = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
     return formatted;
 }
+
 
 
 function handleMessageReceived(data) {
