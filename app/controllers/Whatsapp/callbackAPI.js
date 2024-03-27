@@ -123,7 +123,7 @@ function handleBillingEvent(data) {
 //     return formatted;
 // }
 function convertToMySQLTimestamp(timestamp) {
-    console.log("Original timestamp: " + timestamp);
+    console.log("Original timestamp: " , timestamp);
 
     // Create a Date object from the timestamp
     const date = new Date(timestamp);
@@ -136,7 +136,7 @@ function convertToMySQLTimestamp(timestamp) {
 
     // Format the date to MySQL TIMESTAMP format: YYYY-MM-DD HH:MM:SS
     const formatted = adjustedDate.toISOString().slice(0, 19).replace('T', ' ');
-    console.log("Formatted for GMT+5:30 => " + formatted);
+    console.log("Formatted for GMT+5:30 => ", formatted);
 
     return formatted;
 }
@@ -145,11 +145,11 @@ function convertToMySQLTimestamp(timestamp) {
 
 
 function handleMessageReceived(data) {
-   // console.log('Handling message received event:', data.payload);
+   console.log('Handling message received event:', data.timestamp);
     // Convert timestamp to MySQL TIMESTAMP format
     const mysqlTimestamp = convertToMySQLTimestamp(data.timestamp);
 
-    console.log("formatted timestamp => "+ mysqlTimestamp)
+    console.log("formatted timestamp => ", mysqlTimestamp)
     console.log(mysqlTimestamp)
 
 
