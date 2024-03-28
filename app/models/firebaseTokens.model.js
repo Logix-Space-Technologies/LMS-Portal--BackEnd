@@ -76,5 +76,18 @@ firebasetokens.sendNotificationByStudId = (studId, payload, result) => {
     })
 }
 
+firebasetokens.viewTokens = (result) => {
+    db.query("SELECT * FROM firebaseTokens", (err, res) => {
+        if (err) {
+            console.error("Error fetching tokens: ", err);
+            result(err, null);
+            return;
+        }
+        console.log("Tokens fetched: ", res);
+        result(null, res);
+        return;
+    })
+}
+
 
 module.exports = firebasetokens;
