@@ -6,7 +6,7 @@ exports.createTokens = (request, response) => {
     const firebaseCreateToken = request.headers.token;
     // const key = request.headers.key;
 
-    if (!firebaseCreateToken) {
+    if (!firebaseCreateToken || firebaseCreateToken === "" || firebaseCreateToken === null) {
         return response.status(400).json({ "status": "Firebase token is required." });
     }
 
