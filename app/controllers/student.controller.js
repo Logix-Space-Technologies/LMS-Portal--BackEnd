@@ -773,7 +773,7 @@ function generatePDF(data, callback) {
         underline: true,
         margin: { top: 30, bottom: 30 },
     });
-    doc.moveDown(2)
+    doc.moveDown(1)
 
 
     // Group data by batch
@@ -797,7 +797,7 @@ function generatePDF(data, callback) {
                 align: 'center',
                 underline: true
             }).font('Helvetica').fontSize(6);
-            doc.text('\n');
+            doc.moveDown(1.5)
 
             const students = groupedData[batchName];
 
