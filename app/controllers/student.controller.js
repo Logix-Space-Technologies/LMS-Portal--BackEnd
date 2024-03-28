@@ -773,7 +773,7 @@ function generatePDF(data, callback) {
         underline: true,
         margin: { top: 30, bottom: 30 },
     });
-    doc.text('\n');
+    doc.moveDown(2)
 
 
     // Group data by batch
@@ -782,13 +782,13 @@ function generatePDF(data, callback) {
     const columnWidths = [
         90,   // Membership No.
         120,  // Name
-        140,  // College
+        140,  // Roll No
         100,  // Department
         70,   // Course
-        500   // Email (Increased width)
-    ];    
+        250   // Email (Increased width)
+    ];
 
-    
+
     // Add content to the PDF using grouped data
     for (const batchName in groupedData) {
         if (groupedData.hasOwnProperty(batchName)) {
@@ -804,8 +804,8 @@ function generatePDF(data, callback) {
             // Create table headers
             const tableHeaders = [
                 { label: 'Membership No', padding: 5 },
-                { label: 'Roll No', padding: 5 },
                 { label: 'Name', padding: 5 },
+                { label: 'Roll No', padding: 5 },
                 { label: 'Department', padding: 5 },
                 { label: 'Course', padding: 5 },
                 { label: 'Email', padding: 5 },
