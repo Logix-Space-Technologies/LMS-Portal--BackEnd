@@ -87,31 +87,27 @@ const CollegeStaffViewBatch = () => {
 
       const response = await axios.post(apiUrl2, data, axiosConfig2);
 
-      if (response.data) {
+      if (!response.data) {
+        alert("No Data Found!!");
+      } else if (response.data.status === "Unauthorized User!!") {
+        sessionStorage.clear();
+        navigate("/clgStafflogin");
+      } else {
         // Use window.open directly with response.data
         const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
         window.open(URL.createObjectURL(pdfBlob), '_blank');
-      } else {
-        if (response.data.status === "Unauthorized User!!") {
-          sessionStorage.clear()
-          navigate("/clgStafflogin")
-        } else {
-          if (!response.data) {
-            alert("No Data Found!!")
-          } else {
-            alert(response.data.status);
-          }
-        }
       }
+
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('Error generating PDF.');
     }
   };
 
+
   const attendancePdfGenerate = async (id) => {
     try {
-      const data = { "batchId": id }
+      const data = { "batchId": id };
       const axiosConfig3 = {
         headers: {
           "Content-Type": "application/json",
@@ -123,27 +119,23 @@ const CollegeStaffViewBatch = () => {
 
       const response = await axios.post(apiUrl3, data, axiosConfig3);
 
-      if (response.data) {
+      if (!response.data) {
+        alert("No Data Found !!");
+      } else if (response.data.status === "Unauthorized User!!") {
+        sessionStorage.clear();
+        navigate("/clgStafflogin");
+      } else {
         // Use window.open directly with response.data
         const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
         window.open(URL.createObjectURL(pdfBlob), '_blank');
-      } else {
-        if (response.data.status === "Unauthorized User!!") {
-          sessionStorage.clear()
-          navigate("/clgStafflogin")
-        } else {
-          if (!response.data) {
-            alert("No Data Found !!")
-          } else {
-            alert(response.data.status);
-          }
-        }
       }
+
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('Error generating PDF.');
     }
-  }
+  };
+
 
   const batchClick = (id) => {
     navigate("/clgstaffviewsession")
