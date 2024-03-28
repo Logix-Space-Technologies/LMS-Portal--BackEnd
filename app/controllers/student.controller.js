@@ -899,7 +899,6 @@ function generateAttendancePDF(data, callback) {
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
 
     doc.moveDown(2);
-    // Add main heading
     doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise Attendance List Of Students', {
         align: 'center',
         underline: true,
@@ -907,73 +906,106 @@ function generateAttendancePDF(data, callback) {
     });
     doc.text('\n');
 
-    // Include batchName after the main heading
-    const batchName = data.length > 0 ? data[0].batchName : ''; // Assuming batchName is available in the data
-    doc.font('Helvetica-Bold').fontSize(13).text(`Batch Name:   ${batchName}`, {
+    const batchName = data.length > 0 ? data[0].batchName : '';
+    doc.font('Helvetica-Bold').fontSize(11).text(`Batch Name: ${batchName}`, {
         align: 'center',
         underline: true,
         margin: { bottom: 10 },
     });
+    doc.moveDown(2);
 
-    doc.text('\n');
+    const pageSize = 680; // Adjust based on your requirement
 
+    let currentY = 0;
+    let currentPage = 0;
+    let remainingData = [...data];
 
-    // Group data by session
-    const groupedData = groupAttendanceBySession(data);
-
-    const columnWidths = [
-        20,  // Date
-        130, // Membership No. 
-        50,  // Admission No 
-        110, // Student Name 
-        70,  // Department
-        60,  // Course
-        80   // Attendance Status
-    ];
-
-    // Add content to the PDF using grouped data
-    for (const sessionName in groupedData) {
-        if (groupedData.hasOwnProperty(sessionName)) {
-            // Batch heading
-            doc.font('Helvetica-Bold').fontSize(12).text(`Session Name: ${sessionName}`, {
-                align: 'center',
-                underline: false,
-            }).font('Helvetica').fontSize(9);
-            doc.text('\n');
-
-            const students = groupedData[sessionName];
-
-            // Create table headers
-            const tableHeaders = [
-                { label: 'Date', padding: 5 },
-                { label: 'Membership No.', padding: 3 },
-                { label: 'Admission No', padding: 5 },
-                { label: 'Student Name', padding: 5 },
-                { label: 'Department', padding: 5 },
-                { label: 'Course', padding: 5 },
-                { label: 'Attendance Status', padding: 5 }
-            ];
-            const tableData = students.map(student => [student.attendanceDate, student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
-
-            // const tableWidth = 100;
-            // Draw the table
-            doc.table({
-                headers: tableHeaders,
-                rows: tableData,
-                widths: columnWidths,
-                align: ['left', 'left', 'left', 'left', 'left', 'left', 'left'],
-            });
-
-            doc.moveDown(); // Add a newline between sessions
+    while (remainingData.length > 0) {
+        currentPage++;
+        if (currentPage > 1) {
+            doc.addPage();
         }
+
+        // doc.font('Helvetica-Bold').fontSize(8).text(`Page ${currentPage}`, {
+        //     align: 'right',
+        //     underline: false,
+        //     margin: { bottom: 10 },
+        // });
+
+        const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
+        const pageData = remainingData.splice(0, getMaxRows(availableHeight));
+        const groupedData = groupAttendanceBySession(pageData);
+
+        for (const sessionName in groupedData) {
+            if (groupedData.hasOwnProperty(sessionName)) {
+                const sessionInfo = groupedData[sessionName];
+                const attendanceDate = sessionInfo[0].attendanceDate;
+
+                doc.font('Helvetica-Bold').fontSize(10).text('Session Name', {
+                    continued: true,  // Ensures the next text continues on the same line
+                    underline: true,
+                });
+                doc.font('Helvetica').fontSize(10).text(`: ${sessionName} - ${attendanceDate}`, {
+                    underline: false,
+                });
+                doc.text('\n');
+
+                const students = sessionInfo;
+                const columnWidths = [
+                    90,  // Membership No.
+                    50,  // Admission No
+                    110, // Student Name
+                    70,  // Department
+                    60,  // Course
+                    80   // Attendance Status
+                ];
+                const tableHeaders = [
+                    { label: 'Membership No.', padding: 3 },
+                    { label: 'Admission No', padding: 5 },
+                    { label: 'Student Name', padding: 5 },
+                    { label: 'Department', padding: 5 },
+                    { label: 'Course', padding: 5 },
+                    { label: 'Attendance Status', padding: 5 }
+                ];
+                const tableData = students.map(student => [student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
+
+                doc.table({
+                    headers: tableHeaders,
+                    rows: tableData,
+                    widths: columnWidths,
+                    align: ['left', 'left', 'left', 'left', 'left', 'left'],
+                    // Custom styles for all columns
+                    headerStyles: {
+                        0: { fontSize: 8 }, // Membership No.
+                        1: { fontSize: 8 }, // Admission No
+                        2: { fontSize: 8 }, // Student Name
+                        3: { fontSize: 8 }, // Department
+                        4: { fontSize: 8 }, // Course
+                        5: { fontSize: 8 }  // Attendance Status
+                    },
+                    bodyStyles: {
+                        0: { fontSize: 8 }, // Membership No.
+                        1: { fontSize: 8 }, // Admission No
+                        2: { fontSize: 8 }, // Student Name
+                        3: { fontSize: 8 }, // Department
+                        4: { fontSize: 8 }, // Course
+                        5: { fontSize: 8 }  // Attendance Status
+                    }
+                });
+
+                doc.moveDown(2);
+            }
+        }
+
+        currentY = doc.y;
     }
+
     const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
+    doc.font('Helvetica').fontSize(8).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
         align: 'center',
     });
 
     doc.end();
-
 
     stream.on('finish', () => {
         callback(pdfPath);
@@ -981,10 +1013,12 @@ function generateAttendancePDF(data, callback) {
 }
 
 
-function groupAttendanceBySession(data) {
-    // Group data by session name using a JavaScript object
-    const groupedData = {};
 
+
+
+
+function groupAttendanceBySession(data) {
+    const groupedData = {};
     data.forEach(student => {
         const sessionName = student.sessionName;
         if (!groupedData[sessionName]) {
@@ -992,9 +1026,14 @@ function groupAttendanceBySession(data) {
         }
         groupedData[sessionName].push(student);
     });
-
     return groupedData;
 }
+
+function getMaxRows(availableHeight) {
+    const rowHeight = 20; // Adjust based on your layout
+    return Math.floor(availableHeight / rowHeight);
+}
+
 
 
 
