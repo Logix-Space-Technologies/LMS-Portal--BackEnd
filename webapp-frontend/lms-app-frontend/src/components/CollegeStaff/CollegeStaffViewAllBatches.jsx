@@ -78,7 +78,7 @@ const CollegeStaffViewBatch = () => {
           "token": token,
           "key": sessionStorage.getItem("clgstaffkey")
         },
-        responseType: 'blob', // Set responseType to 'blob' for PDF
+        responseType: 'blob', // Important for PDF downloads
       };
 
       let data = {
@@ -87,17 +87,24 @@ const CollegeStaffViewBatch = () => {
 
       const response = await axios.post(apiUrl2, data, axiosConfig2);
 
-      if (!response.data) {
-        alert("No Data Found!!");
-      } else if (response.data.status === "Unauthorized User!!") {
-        sessionStorage.clear();
-        navigate("/clgStafflogin");
-      } else {
-        // Use window.open directly with response.data
-        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-        window.open(URL.createObjectURL(pdfBlob), '_blank');
-      }
-
+      // Attempt to read the response as a blob, but check for an error message
+      const reader = new FileReader();
+      reader.readAsText(response.data);
+      reader.onloadend = () => {
+        try {
+          const obj = JSON.parse(reader.result);
+          if (obj.status === "Unauthorized User!!") {
+            sessionStorage.clear();
+            navigate("/clgStafflogin");
+          } else {
+            alert(obj.status)
+          }
+        } catch (error) {
+          // If parsing throws, it's likely a PDF blob
+          const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+          window.open(URL.createObjectURL(pdfBlob), '_blank');
+        }
+      };
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('Error generating PDF.');
@@ -119,22 +126,31 @@ const CollegeStaffViewBatch = () => {
 
       const response = await axios.post(apiUrl3, data, axiosConfig3);
 
-      if (!response.data) {
-        alert("No Data Found !!");
-      } else if (response.data.status === "Unauthorized User!!") {
-        sessionStorage.clear();
-        navigate("/clgStafflogin");
-      } else {
-        // Use window.open directly with response.data
-        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-        window.open(URL.createObjectURL(pdfBlob), '_blank');
-      }
-
+      // Attempt to read the response as a blob, but check for an error message
+      const reader = new FileReader();
+      reader.readAsText(response.data);
+      reader.onloadend = () => {
+        try {
+          const obj = JSON.parse(reader.result);
+          // Check for unauthorized access or other errors based on your backend response structure
+          if (obj.status === "Unauthorized User!!") {
+            sessionStorage.clear();
+            navigate("/clgStafflogin");
+          } else {
+            alert(obj.status)
+          }
+        } catch (error) {
+          // If parsing throws, it's likely a PDF blob
+          const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+          window.open(URL.createObjectURL(pdfBlob), '_blank');
+        }
+      };
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      alert('Error generating PDF.');
+      console.error('Error generating attendance PDF:', error);
+      alert('Error generating attendance PDF.');
     }
   };
+
 
 
   const batchClick = (id) => {
