@@ -21,6 +21,7 @@ const AttendenceController = require("../controllers/attendence.controller")
 const CommunityManagerController = require("../controllers/communityManager.controller")
 const FirebaseController = require("../controllers/firebaseToken.controller")
 const WhatsappController = require("../controllers/Whatsapp/callbackAPI")
+const WhatsappMsgFeedbackController = require("../controllers/Whatsapp/whatsappmsgfeedbackview")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -337,6 +338,7 @@ router.post('/whatsapp-callback',WhatsappController.sendfn)
 
 router.get('/viewFirebaseTokens',FirebaseController.viewTokens)
 
+router.get('/viewwhatsappmsgfeedback',WhatsappMsgFeedbackController.sendfn)
 
 
 module.exports = router
