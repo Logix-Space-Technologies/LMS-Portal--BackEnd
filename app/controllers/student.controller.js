@@ -781,8 +781,8 @@ function generatePDF(data, callback) {
 
     const columnWidths = [
         90,   // Membership No.
-        120,  // Name
-        140,  // Roll No
+        120,  // Roll No
+        140,  // Name
         100,  // Department
         70,   // Course
         250   // Email (Increased width)
@@ -804,8 +804,8 @@ function generatePDF(data, callback) {
             // Create table headers
             const tableHeaders = [
                 { label: 'Membership No', padding: 5 },
-                { label: 'Name', padding: 5 },
                 { label: 'Roll No', padding: 5 },
+                { label: 'Name', padding: 5 },
                 { label: 'Department', padding: 5 },
                 { label: 'Course', padding: 5 },
                 { label: 'Email', padding: 5 },
