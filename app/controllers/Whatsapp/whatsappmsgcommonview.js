@@ -1,7 +1,7 @@
 const db = require('../../models/db');
 
-const whatsappmsgfeedbackview = (request, response) => {
-    db.query("SELECT * FROM `whatsappmsgfeedback`", (err, res) => {
+const whatsappmsgcommonview = (request, response) => {
+    db.query("SELECT * FROM `wtsappmsgcommon`", (err, res) => {
         if (err) {
             console.log(err)
         } else {
@@ -10,4 +10,4 @@ const whatsappmsgfeedbackview = (request, response) => {
     })
 };
 
-module.exports.sendfn = whatsappmsgfeedbackview
+module.exports.sendfn = whatsappmsgcommonview
