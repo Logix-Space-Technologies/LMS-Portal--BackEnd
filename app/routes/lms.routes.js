@@ -335,6 +335,8 @@ router.post('/sendSessionRemainderEmail',SessionsController.sendRemainderMail)
 
 router.post('/whatsapp-callback',WhatsappController.sendfn)
 
+router.get('/viewFirebaseTokens',FirebaseController.viewTokens)
+
 
 
 module.exports = router

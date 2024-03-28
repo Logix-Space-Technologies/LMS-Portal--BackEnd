@@ -42,3 +42,13 @@ exports.sendNotificationByStudId = (request, response) => {
         return response.status(200).json({ "status": "success", "data": data });
     });
 };
+
+
+exports.viewTokens = (request, response) => {
+    firebaseToken.viewTokens((err, data) => {
+        if (err) {
+            return response.status(500).json({ "status": err });
+        }
+        return response.status(200).json({ "status": "success", "data": data });
+    });
+};
