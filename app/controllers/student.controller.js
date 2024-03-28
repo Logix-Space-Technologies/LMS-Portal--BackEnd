@@ -795,7 +795,7 @@ function generatePDF(data, callback) {
             // Batch heading
             doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name: ${batchName}`, {
                 align: 'center',
-                underline: false,
+                underline: true
             }).font('Helvetica').fontSize(6);
             doc.text('\n');
 
