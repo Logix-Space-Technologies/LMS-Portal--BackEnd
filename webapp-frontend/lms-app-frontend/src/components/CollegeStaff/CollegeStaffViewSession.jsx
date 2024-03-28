@@ -51,40 +51,41 @@ const CollegeStaffViewSession = () => {
     };
 
     const attendancePdfGenerate = async (id) => {
-        try {
-            const data = { "sessionId": id }
-            const axiosConfig2 = {
-                headers: {
-                    "Content-Type": "application/json",
-                    "token": sessionStorage.getItem("clgstaffLogintoken"),
-                    "key": sessionStorage.getItem("clgstaffkey")
-                },
-                responseType: 'blob', // Set responseType to 'blob' for PDF
-            };
 
-            const response = await axios.post(apiUrl2, data, axiosConfig2);
+        const data = { "sessionId": id };
+        const axiosConfig2 = {
+            headers: {
+                "Content-Type": "application/json",
+                "token": sessionStorage.getItem("clgstaffLogintoken"),
+                "key": sessionStorage.getItem("clgstaffkey")
+            },
+            responseType: 'blob', // Set responseType to 'blob' for PDF
+        };
 
-            if (response.data) {
-                // Use window.open directly with response.data
+        const response = await axios.post(apiUrl2, data, axiosConfig2);
+
+        // Attempt to read the response as a blob, but check for an error message
+        const reader = new FileReader();
+        reader.readAsText(response.data);
+        reader.onloadend = () => {
+            try {
+                const obj = JSON.parse(reader.result);
+                // Check for unauthorized access or other errors based on your backend response structure
+                if (obj.status === "Unauthorized User!!") {
+                    sessionStorage.clear();
+                    navigate("/clgStafflogin");
+                } else {
+                    // If the backend sends a different type of JSON response, handle it here
+                    alert("Error: " + obj.status);
+                }
+            } catch (error) {
+                // If parsing throws, it's likely a PDF blob
                 const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
                 window.open(URL.createObjectURL(pdfBlob), '_blank');
-            } else {
-                if (response.data.status === "Unauthorized User!!") {
-                    sessionStorage.clear()
-                    navigate("/clgStafflogin")
-                } else {
-                    if (!response.data) {
-                        alert("No Data Found !!")
-                    } else {
-                        alert(response.data.status);
-                    }
-                }
             }
-        } catch (error) {
-            console.error('Error generating PDF:', error);
-            alert('Error generating PDF.');
-        }
-    }
+        };
+        reader.readAsText(response.data);
+    };
 
     function formatTime(timeString) {
         const options = { hour: '2-digit', minute: '2-digit', hour12: true };

@@ -773,20 +773,21 @@ function generatePDF(data, callback) {
         underline: true,
         margin: { top: 30, bottom: 30 },
     });
-    doc.text('\n');
+    doc.moveDown(1)
 
 
     // Group data by batch
     const groupedData = groupDataByBatch(data);
 
     const columnWidths = [
-        90, // Membership No. (Increased width)
-        120, // Name (Increased width)
-        140, // College (Decreased width)
-        100, // Department (Increased width)
-        70, // Course (Increased width)
-        200 // Email (Increased width)
+        90,   // Membership No.
+        120,  // Roll No
+        140,  // Name
+        100,  // Department
+        70,   // Course
+        250   // Email (Increased width)
     ];
+
 
     // Add content to the PDF using grouped data
     for (const batchName in groupedData) {
@@ -794,22 +795,22 @@ function generatePDF(data, callback) {
             // Batch heading
             doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name: ${batchName}`, {
                 align: 'center',
-                underline: false,
-            }).font('Helvetica').fontSize(9);
-            doc.text('\n');
+                underline: true
+            }).font('Helvetica').fontSize(6);
+            doc.moveDown(1.5)
 
             const students = groupedData[batchName];
 
             // Create table headers
             const tableHeaders = [
                 { label: 'Membership No', padding: 5 },
+                { label: 'Roll No', padding: 5 },
                 { label: 'Name', padding: 5 },
-                { label: 'College', padding: 5 },
                 { label: 'Department', padding: 5 },
                 { label: 'Course', padding: 5 },
                 { label: 'Email', padding: 5 },
             ];
-            const tableData = students.map(student => [student.membership_no, student.studName, student.collegeName, student.studDept, student.course, student.studEmail]);
+            const tableData = students.map(student => [student.membership_no, student.rollNo, student.studName, student.studDept, student.course, student.studEmail]);
 
 
             // Draw the table
