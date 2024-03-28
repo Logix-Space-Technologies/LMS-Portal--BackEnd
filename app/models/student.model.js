@@ -828,7 +828,7 @@ Student.collegeViewAll = async (result) => {
 
 Student.generateAllBatchWiseList = async (collegeId, result) => {
     let query = `
-    SELECT b.batchName, s.studName, c.collegeName, s.admNo, s.studDept, s.course, 
+    SELECT b.batchName, s.studName, s.rollNo, c.collegeName, s.admNo, s.studDept, s.course, 
     s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity,s.membership_no 
 FROM batches b 
 JOIN student s ON b.id = s.batchId 
