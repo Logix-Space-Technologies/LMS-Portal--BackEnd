@@ -48,15 +48,23 @@ const AdminStaffSearchSubmittedTask = () => {
         };
         axios.post(apiUrl, inputField, axiosConfig)
             .then(response => {
-                setInputField({ "subTaskSearchQuery": "" });
-                setSubTasks(response.data.data);
-                setIsLoading(false);
-                setSearchExecuted(true);
+                if (response.data.data) {
+                    setInputField({ "subTaskSearchQuery": "" });
+                    setSubTasks(response.data.data);
+                    setIsLoading(false);
+                    setSearchExecuted(true);
+                } else if (response.data.status === "Unauthorized access!!") {
+                    navigate("/admstafflogin")
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setInputField({ "subTaskSearchQuery": "" });
+                    setSubTasks([]);
+                    setIsLoading(false);
+                    setSearchExecuted(true);
+                } else {
+                    alert(response.data.status)
+                }
             })
-            .catch(error => {
-                console.error("Search failed:", error);
-                setIsLoading(false);
-            });
     };
 
     const evaluateTask = () => {
@@ -95,34 +103,29 @@ const AdminStaffSearchSubmittedTask = () => {
                         evaluatorRemarks: "",
                         score: ""
                     });
+                } else if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
+                    alert(response.data.data.evaluatorRemarks);
+                    setOutputField({
+                        evaluatorRemarks: "",
+                        score: ""
+                    });
+                } else if (response.data.status === "Validation failed" && response.data.data.score) {
+                    alert(response.data.data.score);
+                    setOutputField({
+                        evaluatorRemarks: "",
+                        score: ""
+                    });
+                } else if (response.data.status === "Unauthorized access!!") {
+                    navigate("/admstafflogin")
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
-                        alert(response.data.data.evaluatorRemarks);
-                        setOutputField({
-                            evaluatorRemarks: "",
-                            score: ""
-                        });
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.score) {
-                            alert(response.data.data.score);
-                            setOutputField({
-                                evaluatorRemarks: "",
-                                score: ""
-                            });
-                        } else {
-                            if (response.data.status === "Unauthorized access!!") {
-                                navigate("/admstafflogin")
-                                sessionStorage.clear()
-                            } else {
-                                alert(response.data.status);
-                                setOutputField({
-                                    evaluatorRemarks: "",
-                                    score: ""
-                                });
-                            }
-                        }
-                    }
+                    alert(response.data.status);
+                    setOutputField({
+                        evaluatorRemarks: "",
+                        score: ""
+                    });
                 }
+
             }
         )
     }
