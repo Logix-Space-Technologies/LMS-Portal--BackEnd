@@ -14,6 +14,7 @@ const { Upload } = require('@aws-sdk/lib-storage');
 const fs = require('fs');
 require('dotenv').config({ path: '../../.env' });
 const db = require('../models/db')
+const { CollegeStaffLog, logCollegeStaff } = require("../models/collegeStaffLog.model")
 
 
 
@@ -502,6 +503,7 @@ exports.collegeStaffLogin = (request, response) => {
             if (error) {
               return response.json({ "status": "Unauthorized User!!" })
             } else {
+              logCollegeStaff(clgstaff.id, "College Staff Logged In");
               return response.json({ "status": "Success", "data": clgstaff, "token": token })
             }
           })
