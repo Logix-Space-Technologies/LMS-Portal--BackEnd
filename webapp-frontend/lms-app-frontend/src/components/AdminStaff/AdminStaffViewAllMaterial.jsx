@@ -66,7 +66,6 @@ const AdminStaffViewAllMaterial = () => {
 
         axios.post(apiLink2, data, axiosConfig2).then((response) => {
             if (response.data.status === "Material Deleted Successfully.") {
-                alert("Material deleted!!");
                 // Remove the deleted material from updateField state
                 setMaterialData(materialData.filter(material => material.id !== deleteId));
             } else if (response.data.status === "Unauthorized User!!") {
