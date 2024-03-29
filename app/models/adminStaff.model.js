@@ -206,8 +206,6 @@ AdminStaff.findByEmail = (email, result) => {
                             console.log("Error : ", emailErr);
                             return result(emailErr, null);
                         } else if (emailRes.length > 0) {
-                            // Log the admin staff delete
-                            logAdminStaff(emailRes[0].id, "Admin Staff Logged In");
                             result(null, emailRes[0])
                         }
                     })

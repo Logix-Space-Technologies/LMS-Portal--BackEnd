@@ -4,6 +4,7 @@ const AdminStaff = require("../models/adminStaff.model");
 const Validator = require("../config/data.validate");
 const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
 const saltRounds = 10;
 
@@ -266,6 +267,8 @@ exports.adminStaffLogin = (request, response) => {
                         if (error) {
                             return response.json({ "status": "Unauthorized user!!" })
                         } else {
+                            // Log the admin staff sign in
+                            logAdminStaff(admin_staff.id, "Admin Staff Logged In");
                             return response.json({ "status": "Success", "data": admin_staff, "token": token })
                         }
                     }
