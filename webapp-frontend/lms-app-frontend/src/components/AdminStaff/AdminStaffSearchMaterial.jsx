@@ -76,7 +76,7 @@ const AdminStaffSearchMaterial = () => {
   };
 
   const handleDeleteClick = () => {
-    let data = { "id": deleteId };
+    let data = { "id": deleteId, "addedby": sessionStorage.getItem("admstaffId") };
     let axiosConfig2 = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
