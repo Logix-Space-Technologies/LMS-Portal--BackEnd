@@ -230,7 +230,7 @@ exports.studLog = (request, response) => {
                             console.log('Unknown type');
                         }
                         // Log student login
-                        logStudent(res[0].id, "Student logged In");
+                        logStudent(stud.id, "Student logged In");
                         return response.json({ "status": "Success", "data": stud, "token": token })
                     }
                 })
