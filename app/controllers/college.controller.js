@@ -73,7 +73,7 @@ exports.collegeCreate = (request, response) => {
             fs.unlinkSync(file.path);
             const collegeToken = request.headers.token;
 
-            const { collegeName, collegeCode, collegeAddress, website, email, collegePhNo, collegeMobileNumber } = request.body;
+            const { collegeName, collegeCode, collegeAddress, website, email, collegePhNo, collegeMobileNumber, addedby } = request.body;
             if (!request.file) {
                 return response.json({ "status": "Please upload an image" });
             }
@@ -159,6 +159,9 @@ exports.collegeCreate = (request, response) => {
                             mail.sendEmail(collegeEmail, 'Registration Successful!', collegeEmailContent, collegeTextContent);
                             if (key == "lmsapp") {
                                 logAdminStaff(0, "Admin Created College")
+                            }
+                            if (key !== "lmsapp") {
+                                logAdminStaff(addedby, "Admin Staff Created College")
                             }
                             return response.json({ "status": "success", "data": data });
                         }
@@ -290,6 +293,9 @@ exports.updateCollege = (request, response) => {
                             } else {
                                 if (key == "lmsapp") {
                                     logAdminStaff(0, "Admin Updated College");
+                                }
+                                if (key !== "lmsapp") {
+                                    logAdminStaff(request.body.addedby, "Admin Staff Updated College")
                                 }
                                 return response.json({ "status": "College Details Updated", "data": data });
                             }
