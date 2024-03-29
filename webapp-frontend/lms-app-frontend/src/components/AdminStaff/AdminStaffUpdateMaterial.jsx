@@ -251,9 +251,9 @@ const AdminStaffUpdateMaterial = () => {
         )
     }
 
-    useEffect(() => { getClg() }, [])
-
     useEffect(() => { getData() }, [])
+
+    useEffect(() => { getClg() }, [])
 
     useEffect(() => {
         if (updateField.collegeId) {
