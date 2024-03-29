@@ -71,7 +71,7 @@ const AdminStaffViewAllMaterial = () => {
             if (response.data.status === "Material Deleted Successfully.") {
                 alert("Material deleted!!");
                 // Remove the deleted material from updateField state
-                setUpdateField(updateField.filter(material => material.id !== deleteId));
+                setMaterialData(materialData.filter(material => material.id !== deleteId));
             } else {
                 alert(response.data.status);
             }
