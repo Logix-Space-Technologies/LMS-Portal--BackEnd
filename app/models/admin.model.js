@@ -267,7 +267,19 @@ Admin.getAll = async (result) => {
             result(err, null)
             return
         } else {
-            const formattedLog = response.map(log => ({ ...log, DateTime: log.DateTime.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
+            const formattedLog = response.map(log => ({
+                ...log,
+                DateTime: log.DateTime.toLocaleString('en-IN', {
+                  timeZone: 'Asia/Kolkata',
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit'
+                })
+              }));
+              
             console.log("Admin Staff Log : ", formattedLog)
             result(null, formattedLog)
         }
