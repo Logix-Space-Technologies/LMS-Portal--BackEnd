@@ -220,8 +220,6 @@ const AdminStaffUpdateMaterial = () => {
             errors.remarks = 'Remarks are required';
         } else if (!data.materialType) {
             errors.materialType = 'Material Type is required';
-        } else if (file && fileType !== "docx" && fileType !== "pdf") {
-            errors.file = "File must be in PDF or DOCX format";
         }
         return errors;
     }
