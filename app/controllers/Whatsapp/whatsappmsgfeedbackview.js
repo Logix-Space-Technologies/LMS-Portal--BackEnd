@@ -1,7 +1,7 @@
 const db = require('../../models/db');
 
 const whatsappmsgfeedbackview = (request, response) => {
-    db.query("SELECT * FROM `whatsappmsgfeedback`", (err, res) => {
+    db.query("SELECT s.studName,w.* FROM whatsappmsgfeedback w JOIN student s ON s.id = w.studId", (err, res) => {
         if (err) {
             console.log(err)
         } else {
