@@ -17,7 +17,7 @@ const AdminSearchCollege = () => {
     const [searchExecuted, setSearchExecuted] = useState(false);
     const [key, setKey] = useState('');
     const navigate = useNavigate()
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
     const [deleteCollege, setDeleteCollege] = useState({})
     const [currentPage, setCurrentPage] = useState(1);
     const [studentsPerPage] = useState(10); // Number of students per page
@@ -30,6 +30,7 @@ const AdminSearchCollege = () => {
     }
 
     const readValue = () => {
+        setIsLoading(true)
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
         if (currentKey !== 'lmsapp') {
@@ -69,6 +70,7 @@ const AdminSearchCollege = () => {
                     )
                     setSearchExecuted(true);
                 } else {
+                    setIsLoading(false)
                     alert(response.data.status)
                 }
             }
@@ -158,9 +160,9 @@ const AdminSearchCollege = () => {
                     </div>
                 </div>
                 <br />
-                {isLoading ? (
+                {isLoading && searchExecuted ? (
                     <div className="col-12 text-center">
-                        <p></p>
+                        <p>Loading...</p>
                     </div>
                 ) : (searchExecuted && updateField.length > 0 ? (
                     //start
