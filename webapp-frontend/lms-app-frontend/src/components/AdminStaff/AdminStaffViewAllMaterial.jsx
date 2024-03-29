@@ -72,6 +72,9 @@ const AdminStaffViewAllMaterial = () => {
                 alert("Material deleted!!");
                 // Remove the deleted material from updateField state
                 setMaterialData(materialData.filter(material => material.id !== deleteId));
+            } else if (response.data.status === "Unauthorized User!!") {
+                navigate("/admstafflogin")
+                sessionStorage.clear()
             } else {
                 alert(response.data.status);
             }
