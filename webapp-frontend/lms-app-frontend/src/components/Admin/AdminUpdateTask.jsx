@@ -47,10 +47,16 @@ const AdminUpdateTask = () => {
     const readNewValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let updatedby;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            updatedby = 0
+        } else {
+            updatedby = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault();
         const validationErrors = validateForm(updateField);
@@ -73,7 +79,8 @@ const AdminUpdateTask = () => {
                     "taskType": updateField.taskType,
                     "totalScore": updateField.totalScore,
                     "dueDate": updateField.dueDate,
-                    "taskFileUpload": file
+                    "taskFileUpload": file,
+                    "updatedby": updatedby
                 }
             } else {
                 data = {
@@ -83,7 +90,8 @@ const AdminUpdateTask = () => {
                     "taskDesc": updateField.taskDesc,
                     "taskType": updateField.taskType,
                     "totalScore": updateField.totalScore,
-                    "dueDate": updateField.dueDate
+                    "dueDate": updateField.dueDate,
+                    "updatedby": updatedby
                 }
             }
             axios.post(apiUrl2, data, axiosConfig2).then(
