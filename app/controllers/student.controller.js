@@ -133,6 +133,9 @@ exports.createStudent = (req, res) => {
                 if (err) {
                     return res.json({ "status": err });
                 }
+
+                let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(studPhNo) ? studPhNo.replace(/^(\+91\s?|91\s?)/, '') : studPhNo;
+
                 const newStudent = new Student({
                     collegeId: collegeId,
                     batchId: batchId,
@@ -142,7 +145,7 @@ exports.createStudent = (req, res) => {
                     studDept: studDept,
                     course: course,
                     studEmail: studEmail,
-                    studPhNo: studPhNo,
+                    studPhNo: formattedPhoneNumber,
                     studProfilePic: imageUrl,
                     aadharNo: aadharNo,
                     password: hashedPassword
@@ -428,6 +431,8 @@ exports.profileUpdateStudent = (request, response) => {
 
                         const studProfilePic = imageUrl;
 
+                        let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(studPhNo) ? studPhNo.replace(/^(\+91\s?|91\s?)/, '') : studPhNo;
+
                         const newStudent = {
                             'id': request.body.id,
                             studName,
@@ -435,11 +440,11 @@ exports.profileUpdateStudent = (request, response) => {
                             rollNo,
                             studDept,
                             course,
-                            studPhNo,
+                            formattedPhoneNumber,
                             studProfilePic,
                             aadharNo
                         };
-                        console.log(newStudent)
+                        
                         Student.updateStudentProfile(newStudent, (err, data) => {
                             if (err) {
                                 if (err.kind === "not_found") {

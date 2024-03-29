@@ -115,12 +115,14 @@ exports.createTrainer = (request, response) => {
                         return response.json({ "status": "Validation failed", "data": validationErrors });
                     }
 
+                    let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(request.body.phoneNumber) ? request.body.phoneNumber.replace(/^(\+91\s?|91\s?)/, '') : request.body.phoneNumber;
+
                     const trainer = new Trainers({
                         trainerName: request.body.trainerName,
                         about: request.body.about,
                         email: request.body.email,
                         password: request.body.password,
-                        phoneNumber: request.body.phoneNumber,
+                        phoneNumber: formattedPhoneNumber,
                         profilePicture: imageUrl,
                     });
 
@@ -300,11 +302,13 @@ exports.trainerDetailsUpdate = (request, response) => {
                     }
                 }
 
+                let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(phoneNumber) ? phoneNumber.replace(/^(\+91\s?|91\s?)/, '') : phoneNumber;
+
                 const trainerUpdate = {
                     'id': request.body.id,
                     trainerName,
                     about,
-                    phoneNumber,
+                    formattedPhoneNumber,
                     profilePicture,
                 };
 
