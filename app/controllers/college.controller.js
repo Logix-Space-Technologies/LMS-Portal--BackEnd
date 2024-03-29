@@ -136,6 +136,8 @@ exports.collegeCreate = (request, response) => {
 
                     const collegeImage = request.file ? request.file.filename : null;
 
+                    let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(collegeMobileNumber) ? collegeMobileNumber.replace(/^(\+91\s?|91\s?)/, '') : collegeMobileNumber;
+
                     const college = new College({
                         collegeName: collegeName,
                         collegeCode: collegeCode,
@@ -143,7 +145,7 @@ exports.collegeCreate = (request, response) => {
                         website: website,
                         email: email,
                         collegePhNo: collegePhNo,
-                        collegeMobileNumber: collegeMobileNumber,
+                        collegeMobileNumber: formattedPhoneNumber,
                         collegeImage: imageUrl
                     });
 
@@ -273,13 +275,15 @@ exports.updateCollege = (request, response) => {
                             return response.json({ "status": "Validation Failed", "data": validationErrors });
                         }
 
+                        let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(request.body.collegeMobileNumber) ? request.body.collegeMobileNumber.replace(/^(\+91\s?|91\s?)/, '') : request.body.collegeMobileNumber;
+
                         const clgUpdate = new College({
                             'id': request.body.id,
                             collegeName: request.body.collegeName,
                             collegeAddress: request.body.collegeAddress,
                             website: request.body.website,
                             collegePhNo: request.body.collegePhNo,
-                            collegeMobileNumber: request.body.collegeMobileNumber,
+                            collegeMobileNumber: formattedPhoneNumber,
                             collegeImage: imageUrl
                         });
 
