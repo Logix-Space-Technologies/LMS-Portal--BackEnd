@@ -70,10 +70,16 @@ const AdminUpdateSession = () => {
   const readNewValue = () => {
     let currentKey = sessionStorage.getItem("admkey");
     let token = sessionStorage.getItem("admtoken");
+    let updatedBy;
     if (currentKey !== 'lmsapp') {
       currentKey = sessionStorage.getItem("admstaffkey");
       token = sessionStorage.getItem("admstaffLogintoken");
       setKey(currentKey); // Update the state if needed
+    }
+    if (currentKey === 'lmsapp') {
+      updatedBy = 0
+    } else {
+      updatedBy = sessionStorage.getItem("admstaffId")
     }
     const validationErrors = validateForm(updateField);
     if (Object.keys(validationErrors).length === 0) {
@@ -94,6 +100,7 @@ const AdminUpdateSession = () => {
         "remarks": updateField.remarks,
         "venueORlink": updateField.venueORlink,
         "trainerId": updateField.trainerId,
+        "updatedby": updatedBy
       }
       axios.post(apiUrl2, data, axiosConfig).then((Response) => {
         if (Response.data.status === 'success') {

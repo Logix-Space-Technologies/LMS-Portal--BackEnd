@@ -133,8 +133,11 @@ exports.createSession = (request, response) => {
                                     const upcomingSessionTextContent = mailContents.upcomingSessionRecordedTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     mail.sendEmail(studentEmail, `Announcement Regarding Upcoming Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 }
-                                if (key == "lmsapp") {
+                                if (key === "lmsapp") {
                                     logAdminStaff(0, "Admin Created new Session")
+                                }
+                                if (key !== "lmsapp") {
+                                    logAdminStaff(request.body.addedby, "Admin Staff Created new Session")
                                 }
                                 Attendence.create(newAttendence, (err, res) => {
                                     if (err) {
@@ -292,8 +295,11 @@ exports.sessionUpdate = (request, response) => {
                                 }
                             })
 
-                            if (key == "lmsapp") {
+                            if (key === "lmsapp") {
                                 logAdminStaff(0, "Admin Updated Session Details");
+                            }
+                            if (key !== "lmsapp") {
+                                logAdminStaff(request.body.updatedby, "Admin Staff Updated Session Details")
                             }
                             return response.json({ "status": "success", "data": data });
                         });
@@ -417,6 +423,7 @@ exports.cancelSession = (request, response) => {
     const sessionCancelToken = request.headers.token;
     const key = request.headers.key;
     const sessionId = request.body.id;
+    const addedby = request.body.addedby;
 
     jwt.verify(sessionCancelToken, key, (err, decoded) => {
         if (err || !decoded) {
@@ -431,6 +438,9 @@ exports.cancelSession = (request, response) => {
             } else {
                 if (key === "lmsapp") {
                     logAdminStaff(0, "Admin Cancelled Session")
+                }
+                if (key === "lmsapp") {
+                    logAdminStaff(cancelledby, "Admin Cancelled Session")
                 }
                 console.log(data)
                 db.query("SELECT * FROM sessiondetails WHERE id = ?", [data], (err, sessionres) => {
