@@ -68,9 +68,11 @@ exports.create = (request, response) => {
                 return response.json({ "status": hashError });
             }
 
+            let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(PhNo) ? PhNo.replace(/^(\+91\s?|91\s?)/, '') : PhNo;
+
             const newAdminStaff = new AdminStaff({
                 AdStaffName: AdStaffName,
-                PhNo: PhNo,
+                PhNo: formattedPhoneNumber,
                 Address: Address,
                 AadharNo: AadharNo,
                 Email: Email,
@@ -154,10 +156,12 @@ exports.adminStaffUpdate = (request, res) => {
             return res.json({ "status": "Validation failed", "data": validationErrors });
         }
 
+        let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(PhNo) ? PhNo.replace(/^(\+91\s?|91\s?)/, '') : PhNo;
+
         const admStaff = new AdminStaff({
             'id': request.body.id,
             AdStaffName: AdStaffName,
-            PhNo: PhNo,
+            PhNo: formattedPhoneNumber,
             Address: Address,
             AadharNo: AadharNo,
 
@@ -439,7 +443,7 @@ exports.AdmViewAllMaterial = (request, response) => {
                     console.log(err)
                     return response.json({ "status": err })
                 } else {
-                    return response.json({"status":"success", "data": data})
+                    return response.json({ "status": "success", "data": data })
                 }
             })
         } else {
