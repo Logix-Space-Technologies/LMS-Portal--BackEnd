@@ -36,11 +36,24 @@ const AdminStaffSearchMaterial = () => {
     };
 
     axios.post(apiLink, inputField, axiosConfig).then((response) => {
-      setUpdateField(response.data.data);
-      setIsLoading(false);
-      setInputField({
-        "materialQuery": ""
-      });
+      if (response.data.data) {
+        setUpdateField(response.data.data);
+        setIsLoading(false);
+        setInputField({
+          "materialQuery": ""
+        });
+      } else if (response.data.status === "Unauthorized User!!") {
+        sessionStorage.clear()
+        navigate("/admstafflogin")
+      } else if (!response.data.data) {
+        setUpdateField([]);
+        setIsLoading(false);
+        setInputField({
+          "materialQuery": ""
+        });
+      } else {
+        alert(response.data.status)
+      }
     });
   };
 
@@ -78,6 +91,9 @@ const AdminStaffSearchMaterial = () => {
         alert("Material deleted!!");
         // Remove the deleted material from updateField state
         setUpdateField(updateField.filter(material => material.id !== deleteId));
+      } else if (response.data.status === "Unauthorized User!!") {
+        navigate("/admstafflogin")
+        sessionStorage.clear()
       } else {
         alert(response.data.status);
       }
