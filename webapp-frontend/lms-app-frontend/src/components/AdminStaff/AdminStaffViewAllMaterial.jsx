@@ -136,7 +136,7 @@ const AdminStaffViewAllMaterial = () => {
                                         <Link to="/AdminStaffUpdateMaterial" onClick={() => { updateClick(value.id); }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</Link>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal3" onClick={() => handleClick(value.id)}>
+                                        <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal4" onClick={() => handleClick(value.id)}>
                                             Delete
                                         </button>
                                     </td>
@@ -186,7 +186,7 @@ const AdminStaffViewAllMaterial = () => {
                 </div>
             </div>
             {/* Delete Confirmation Modal */}
-            <div className="modal fade" id="deleteConfirmationModal3" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+            <div className="modal fade" id="deleteConfirmationModal4" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
