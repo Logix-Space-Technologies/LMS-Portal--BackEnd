@@ -95,7 +95,7 @@ const AdminUpdateCurriculum = () => {
                             "id": sessionStorage.getItem("curriculumId"),
                             "curriculumTitle": "",
                             "curriculumDesc": "",
-                            "updatedBy": sessionStorage.getItem("adminId"),
+                            "updatedBy": "",
                             "curriculumFileLink": ""
                         })
                         alert("Curriculum Updated Successfully")
