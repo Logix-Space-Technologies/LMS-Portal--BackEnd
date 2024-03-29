@@ -291,7 +291,7 @@ exports.updateCollege = (request, response) => {
                                     return response.json({ "status": err });
                                 }
                             } else {
-                                if (key == "lmsapp") {
+                                if (key === "lmsapp") {
                                     logAdminStaff(0, "Admin Updated College");
                                 }
                                 if (key !== "lmsapp") {
@@ -371,8 +371,11 @@ exports.updateCollege = (request, response) => {
                                 return response.json({ "status": err });
                             }
                         } else {
-                            if (key == "lmsapp") {
+                            if (key === "lmsapp") {
                                 logAdminStaff(0, "Admin Updated College");
+                            }
+                            if (key !== "lmsapp") {
+                                logAdminStaff(request.body.addedby, "Admin Staff Updated College")
                             }
                             return response.json({ "status": "College Details Updated", "data": data });
                         }
