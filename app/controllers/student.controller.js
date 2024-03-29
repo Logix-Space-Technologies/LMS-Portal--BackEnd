@@ -13,6 +13,7 @@ const { Upload } = require('@aws-sdk/lib-storage');
 require('dotenv').config({ path: '../../.env' });
 const path = require("path");
 const whatsApp = require("./Whatsapp/sendWhatsappMessage")
+const { StudentLog, logStudent } = require("../models/studentLog.model");
 // const { Session } = require("inspector");
 
 // AWS S3 Client Configuration
@@ -228,6 +229,8 @@ exports.studLog = (request, response) => {
                         } else {
                             console.log('Unknown type');
                         }
+                        // Log student login
+                        logStudent(res[0].id, "Student logged In");
                         return response.json({ "status": "Success", "data": stud, "token": token })
                     }
                 })

@@ -299,8 +299,6 @@ Student.findByEmail = (Email, result) => {
                                             }
 
                                             if (res.length > 0) {
-                                                // Log student login
-                                                logStudent(res[0].id, "Student logged In");
                                                 result(null, res[0]);
                                             }
                                         });
