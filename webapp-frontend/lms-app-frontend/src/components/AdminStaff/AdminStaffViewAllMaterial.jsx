@@ -8,6 +8,8 @@ const AdminStaffViewAllMaterial = () => {
     const [materialData, setMaterialData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [materialPerPage] = useState(10);
+    const [deleteId, setDeleteId] = useState(null);
+
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(materialData.length / materialPerPage); // Calculate the total number of pages
@@ -15,6 +17,7 @@ const AdminStaffViewAllMaterial = () => {
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
     const apiUrl = global.config.urls.api.server + "/api/lms/AdmViewAllMaterial";
+    const apiLink2 = global.config.urls.api.server + "/api/lms/adminStaffDeleteMaterial";
     const navigate = useNavigate();
 
     const getData = () => {
@@ -47,6 +50,32 @@ const AdminStaffViewAllMaterial = () => {
     const updateClick = (id) => {
         let data = id;
         sessionStorage.setItem("materialId", data);
+    };
+
+    const handleClick = (id) => {
+        setDeleteId(id);
+    };
+
+    const handleDeleteClick = () => {
+        let data = { "id": deleteId };
+        let axiosConfig2 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admstaffLogintoken"),
+                "key": sessionStorage.getItem("admstaffkey")
+            }
+        };
+
+        axios.post(apiLink2, data, axiosConfig2).then((response) => {
+            if (response.data.status === "Material Deleted Successfully.") {
+                alert("Material deleted!!");
+                // Remove the deleted material from updateField state
+                setUpdateField(updateField.filter(material => material.id !== deleteId));
+            } else {
+                alert(response.data.status);
+            }
+        });
     };
 
     // Logic for displaying current curriculum
@@ -106,6 +135,11 @@ const AdminStaffViewAllMaterial = () => {
                                     <td className="px-6 py-4">
                                         <Link to="/AdminStaffUpdateMaterial" onClick={() => { updateClick(value.id); }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</Link>
                                     </td>
+                                    <td className="px-6 py-4">
+                                        <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal3" onClick={() => handleClick(value.id)}>
+                                            Delete
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -147,6 +181,24 @@ const AdminStaffViewAllMaterial = () => {
                                     </svg>
                                 </button>
                             </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* Delete Confirmation Modal */}
+            <div className="modal fade" id="deleteConfirmationModal3" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            Are you sure you want to delete this Material?
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleDeleteClick}>Delete</button>
                         </div>
                     </div>
                 </div>
