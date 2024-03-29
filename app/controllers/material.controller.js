@@ -406,7 +406,7 @@ exports.viewBatchMaterials = (request, response) => {
 
 exports.deleteMaterial = (request, response) => {
     const deleteToken = request.headers.token
-    const addedby = request.body.addedby
+    const deletedby = request.body.addedby
     const material = new Material({
         'id': request.body.id
     });
@@ -425,7 +425,7 @@ exports.deleteMaterial = (request, response) => {
                     return response.json({ "status": err });
                 }
             } else {
-                logAdminStaff(addedby, "Material Deleted")
+                logAdminStaff(deletedby, "Material Deleted")
                 return response.json({ "status": "Material Deleted Successfully." });
             }
         })
