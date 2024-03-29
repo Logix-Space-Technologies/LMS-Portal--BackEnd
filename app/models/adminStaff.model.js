@@ -157,6 +157,8 @@ AdminStaff.admStaffDelete = async (admStaffId, result) => {
                 result({ kind: "not_found" }, null)
                 return
             }
+            // Log the admin staff delete
+            logAdminStaff(0, "Admin Staff Deleted");
 
             console.log("Delete admin staff with id: ", { id: admStaffId.id })
             result(null, { id: admStaffId.id })
@@ -204,6 +206,8 @@ AdminStaff.findByEmail = (email, result) => {
                             console.log("Error : ", emailErr);
                             return result(emailErr, null);
                         } else if (emailRes.length > 0) {
+                            // Log the admin staff delete
+                            logAdminStaff(emailRes[0].id, "Admin Staff Logged In");
                             result(null, emailRes[0])
                         }
                     })
