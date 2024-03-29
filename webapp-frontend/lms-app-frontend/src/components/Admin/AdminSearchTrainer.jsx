@@ -14,6 +14,7 @@ const AdminSearchTrainer = () => {
     )
 
     const [updateField, setUpdateField] = useState([])
+    const [searchExecuted, setSearchExecuted] = useState(false);
 
     const [key, setKey] = useState('');
 
@@ -22,7 +23,7 @@ const AdminSearchTrainer = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [TrainerPerPage] = useState(10); // Number of students per page
 
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
     const [deleteId, setDeleteId] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -35,6 +36,7 @@ const AdminSearchTrainer = () => {
     }
 
     const readValue = () => {
+        setIsLoading(true)
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
         if (currentKey !== 'lmsapp') {
@@ -53,6 +55,7 @@ const AdminSearchTrainer = () => {
         axios.post(apiUrl, inputField, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
+                    setSearchExecuted(true)
                     setUpdateField(response.data.data)
                     setIsLoading(false)
                     setInputField(
@@ -64,6 +67,7 @@ const AdminSearchTrainer = () => {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else if (!response.data.data) {
+                    setSearchExecuted(true)
                     setUpdateField([])
                     setIsLoading(false)
                     setInputField(
@@ -72,6 +76,8 @@ const AdminSearchTrainer = () => {
                         }
                     )
                 } else {
+                    setSearchExecuted(true)
+                    setIsLoading(false)
                     alert(response.data.status)
                 }
             }
@@ -168,11 +174,11 @@ const AdminSearchTrainer = () => {
                         </div>
                     </div>
                 </div>
-                {isLoading ? (
+                {isLoading && searchExecuted ? (
                     <div className="col-12 text-center">
-                        <p></p>
+                        <p>Loading...</p>
                     </div>
-                ) : (updateField.length > 0 ? (
+                ) : (searchExecuted && updateField.length > 0 ? (
 
                     //start
                     <div>
@@ -235,7 +241,7 @@ const AdminSearchTrainer = () => {
                     </div>
                     //end
 
-                ) : (
+                ) : searchExecuted && updateField.length === 0 && (
 
                     <div className="col-12 text-center">No Trainers Found!!</div>
 
