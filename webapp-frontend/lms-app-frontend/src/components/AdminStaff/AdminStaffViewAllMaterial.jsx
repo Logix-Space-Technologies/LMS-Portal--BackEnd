@@ -9,6 +9,7 @@ const AdminStaffViewAllMaterial = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [materialPerPage] = useState(10);
     const [deleteId, setDeleteId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
 
     const rangeSize = 5; // Number of pages to display in the pagination
@@ -31,13 +32,16 @@ const AdminStaffViewAllMaterial = () => {
         };
         axios.post(apiUrl, {}, axiosConfig).then((response) => {
             if (response.data.data) {
+                setIsLoading(false)
                 setMaterialData(response.data.data);
             } else if (response.data.status === "Unauthorized User!!") {
                 navigate("/admstafflogin");
                 sessionStorage.clear();
             } else if (!response.data.data) {
+                setIsLoading(false)
                 setMaterialData([]);
             } else {
+                setIsLoading(false)
                 alert(response.data.status);
             }
 
@@ -63,7 +67,7 @@ const AdminStaffViewAllMaterial = () => {
                 "key": sessionStorage.getItem("admstaffkey")
             }
         };
-        
+
         axios.post(apiLink2, data, axiosConfig2).then((response) => {
             if (response.data.status === "Material Deleted Successfully.") {
                 // Remove the deleted material from updateField state
@@ -102,7 +106,11 @@ const AdminStaffViewAllMaterial = () => {
             <br />
             <strong>AdminStaff View All Materials</strong>
             <br /><br />
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            {isLoading ? <div className="flex justify-center items-center h-full">
+                <div className="text-center py-20">
+                    <div>Loading...</div>
+                </div>
+            </div> : (<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 {currentMaterial.length > 0 ? (
                     <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -188,7 +196,8 @@ const AdminStaffViewAllMaterial = () => {
                         </div>
                     </div>
                 )}
-            </div>
+            </div>)}
+
             {/* Delete Confirmation Modal */}
             <div className="modal fade" id="deleteConfirmationModal4" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
