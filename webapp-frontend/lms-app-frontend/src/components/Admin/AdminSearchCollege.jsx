@@ -254,7 +254,7 @@ const AdminSearchCollege = () => {
                     </div>
                 ) : null))}
             </div>
-            {currentColleges.length > 0 && (
+            {searchExecuted && currentColleges.length > 0 && (
                 <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
                     <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                         <div>
