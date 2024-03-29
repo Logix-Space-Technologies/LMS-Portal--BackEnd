@@ -170,7 +170,7 @@ exports.createTask = (request, response) => {
                                     res.forEach(element => {
                                         const studName = element.studName
                                         const studEmail = element.studEmail
-                                        const dueDate = request.body.dueDate
+                                        const dueDate = request.body.dueDate.split('-').reverse().join('/')
                                         const newTaskHtmlContent = mailContents.newTaskHtmlContent(studName, dueDate);
                                         const newTaskTextContent = mailContents.newTaskTextContent(studName, dueDate);
                                         mail.sendEmail(studEmail, "New Task Assigned", newTaskHtmlContent, newTaskTextContent);
