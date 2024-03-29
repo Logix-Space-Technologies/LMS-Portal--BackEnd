@@ -423,7 +423,7 @@ exports.cancelSession = (request, response) => {
     const sessionCancelToken = request.headers.token;
     const key = request.headers.key;
     const sessionId = request.body.id;
-    const addedby = request.body.addedby;
+    const cancelledby = request.body.cancelledby;
 
     jwt.verify(sessionCancelToken, key, (err, decoded) => {
         if (err || !decoded) {

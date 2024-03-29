@@ -66,12 +66,18 @@ const AdminSearchSessionDetails = () => {
     const handleClick = () => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let cancelledby;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        let data = { "id": cancelId };
+        if (currentKey === 'lmsapp') {
+            cancelledby = 0
+        } else {
+            cancelledby = sessionStorage.getItem("admstaffId")
+        }
+        let data = { "id": cancelId, "cancelledby": cancelledby};
         let axiosConfigTwo = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
