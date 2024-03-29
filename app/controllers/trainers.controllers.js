@@ -134,8 +134,11 @@ exports.createTrainer = (request, response) => {
                             if (err) {
                                 return response.json({ "status": err });
                             }
-                            if (key == "lmsapp") {
+                            if (key === "lmsapp") {
                                 logAdminStaff(0, "Admin Created Trainer")
+                            }
+                            if (key !== "lmsapp") {
+                                logAdminStaff(request.body.addedby, "Admin Staff Created Trainer")
                             }
                             return response.json({ "status": "success", "data": data });
                         });
@@ -241,7 +244,7 @@ exports.trainerDetailsUpdate = (request, response) => {
             return response.status(500).json({ "status": error.message });
         }
 
-        const { trainerName, about, phoneNumber } = request.body;
+        const { trainerName, about, phoneNumber, updatedby } = request.body;
         const updateProfileToken = request.headers.token;
         const key = request.headers.key;
 
@@ -313,6 +316,12 @@ exports.trainerDetailsUpdate = (request, response) => {
                             return response.json({ "status": err.message });
                         }
                     } else {
+                        if (key === "lmsapp") {
+                            logAdminStaff(0, "Admin Updated Trainer")
+                        }
+                        if (key !== "lmsapp") {
+                            logAdminStaff(updatedby, "Admin Staff Updated Trainer")
+                        }
                         return response.json({ "status": "Trainer Details Updated", "data": data });
                     }
                 });
