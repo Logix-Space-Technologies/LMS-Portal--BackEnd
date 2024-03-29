@@ -54,7 +54,7 @@ const AdminStaffViewAllMaterial = () => {
     };
 
     const handleDeleteClick = () => {
-        let data = { "id": deleteId };
+        let data = { "id": deleteId, "addedby": sessionStorage.getItem("admstaffId") };
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -63,7 +63,7 @@ const AdminStaffViewAllMaterial = () => {
                 "key": sessionStorage.getItem("admstaffkey")
             }
         };
-
+        
         axios.post(apiLink2, data, axiosConfig2).then((response) => {
             if (response.data.status === "Material Deleted Successfully.") {
                 // Remove the deleted material from updateField state
