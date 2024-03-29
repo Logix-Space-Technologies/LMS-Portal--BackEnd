@@ -113,7 +113,7 @@ const CollegeStaffSearchBatch = () => {
                     <div className="col-12 text-center">
                         <p>Loading...</p>
                     </div>
-                ) : (searchPerformed && currentBatch && currentBatch.length > 0 ? (
+                ) : (searchPerformed && !isLoading && currentBatch && currentBatch.length > 0 ? (
                     <>
                         <strong style={{ paddingLeft: '30px' }}>Batch Details</strong><br /><br /><br />
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
