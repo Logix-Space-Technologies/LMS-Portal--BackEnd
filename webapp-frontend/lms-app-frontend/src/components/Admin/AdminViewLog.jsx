@@ -73,7 +73,7 @@ const AdminViewLog = () => {
                             <th scope="col" className="px-6 py-3">S/N</th>
                             <th scope="col" className="px-6 py-3">Name</th>
                             <th scope="col" className="px-6 py-3">Action</th>
-                            <th scope="col" className="px-6 py-3">DateTime</th>
+                            <th scope="col" className="px-6 py-3">Date Time</th>
                         </tr>
                     </thead>
                     <tbody>

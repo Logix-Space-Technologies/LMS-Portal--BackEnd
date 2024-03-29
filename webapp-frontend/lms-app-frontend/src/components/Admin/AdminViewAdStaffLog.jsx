@@ -90,7 +90,7 @@ const AdminViewAdStaffLog = () => {
                                                     Action
                                                 </th>
                                                 <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                    Date
+                                                    Date Time
                                                 </th>
                                             </tr>
                                         </thead>
