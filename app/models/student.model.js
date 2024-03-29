@@ -299,8 +299,6 @@ Student.findByEmail = (Email, result) => {
                                             }
 
                                             if (res.length > 0) {
-                                                // Log student login
-                                                logStudent(res[0].id, "Student logged In");
                                                 result(null, res[0]);
                                             }
                                         });
@@ -385,7 +383,7 @@ Student.StdChangePassword = (student, result) => {
                         result(updateErr, null);
                     } else {
                         // Assuming logStudent function takes student ID as the first parameter
-                        logStudent(id, "password changed");
+                        logStudent(id, "Password changed");
                         result(null, null);
                     }
                 });
@@ -433,7 +431,7 @@ Student.forgotPassword = (student, result) => {
                     result(updateErr, null);
                 } else {
                     // Ensure the `id` or equivalent unique identifier is correctly referenced
-                    logStudent(studentData.id, "password changed");
+                    logStudent(studentData.id, "Password changed");
                     result(null, null);
                 }
             });

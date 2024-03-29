@@ -157,6 +157,8 @@ AdminStaff.admStaffDelete = async (admStaffId, result) => {
                 result({ kind: "not_found" }, null)
                 return
             }
+            // Log the admin staff delete
+            logAdminStaff(0, "Admin Staff Deleted");
 
             console.log("Delete admin staff with id: ", { id: admStaffId.id })
             result(null, { id: admStaffId.id })

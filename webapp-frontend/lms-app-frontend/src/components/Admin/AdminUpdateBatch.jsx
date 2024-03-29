@@ -31,10 +31,16 @@ const AdminUpdateBatch = () => {
     const readNewValue = () => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let addedBy;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
         }
         let axiosConfig = {
             headers: {
@@ -51,7 +57,8 @@ const AdminUpdateBatch = () => {
             "regStartDate": updateField.regStartDate,
             "regEndDate": updateField.regEndDate,
             "batchDesc": updateField.batchDesc,
-            "batchAmount": updateField.batchAmount
+            "batchAmount": updateField.batchAmount,
+            "addedby": addedBy
         }
         axios.post(apiUrl2, data, axiosConfig).then(
             (response) => {

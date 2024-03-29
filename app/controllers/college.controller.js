@@ -73,7 +73,7 @@ exports.collegeCreate = (request, response) => {
             fs.unlinkSync(file.path);
             const collegeToken = request.headers.token;
 
-            const { collegeName, collegeCode, collegeAddress, website, email, collegePhNo, collegeMobileNumber } = request.body;
+            const { collegeName, collegeCode, collegeAddress, website, email, collegePhNo, collegeMobileNumber, addedby } = request.body;
             if (!request.file) {
                 return response.json({ "status": "Please upload an image" });
             }
@@ -136,6 +136,8 @@ exports.collegeCreate = (request, response) => {
 
                     const collegeImage = request.file ? request.file.filename : null;
 
+                    let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(collegeMobileNumber) ? collegeMobileNumber.replace(/^(\+91\s?|91\s?)/, '') : collegeMobileNumber;
+
                     const college = new College({
                         collegeName: collegeName,
                         collegeCode: collegeCode,
@@ -143,7 +145,7 @@ exports.collegeCreate = (request, response) => {
                         website: website,
                         email: email,
                         collegePhNo: collegePhNo,
-                        collegeMobileNumber: collegeMobileNumber,
+                        collegeMobileNumber: formattedPhoneNumber,
                         collegeImage: imageUrl
                     });
 
@@ -159,6 +161,9 @@ exports.collegeCreate = (request, response) => {
                             mail.sendEmail(collegeEmail, 'Registration Successful!', collegeEmailContent, collegeTextContent);
                             if (key == "lmsapp") {
                                 logAdminStaff(0, "Admin Created College")
+                            }
+                            if (key !== "lmsapp") {
+                                logAdminStaff(addedby, "Admin Staff Created College")
                             }
                             return response.json({ "status": "success", "data": data });
                         }
@@ -270,13 +275,15 @@ exports.updateCollege = (request, response) => {
                             return response.json({ "status": "Validation Failed", "data": validationErrors });
                         }
 
+                        let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(request.body.collegeMobileNumber) ? request.body.collegeMobileNumber.replace(/^(\+91\s?|91\s?)/, '') : request.body.collegeMobileNumber;
+
                         const clgUpdate = new College({
                             'id': request.body.id,
                             collegeName: request.body.collegeName,
                             collegeAddress: request.body.collegeAddress,
                             website: request.body.website,
                             collegePhNo: request.body.collegePhNo,
-                            collegeMobileNumber: request.body.collegeMobileNumber,
+                            collegeMobileNumber: formattedPhoneNumber,
                             collegeImage: imageUrl
                         });
 
@@ -288,8 +295,11 @@ exports.updateCollege = (request, response) => {
                                     return response.json({ "status": err });
                                 }
                             } else {
-                                if (key == "lmsapp") {
+                                if (key === "lmsapp") {
                                     logAdminStaff(0, "Admin Updated College");
+                                }
+                                if (key !== "lmsapp") {
+                                    logAdminStaff(request.body.addedby, "Admin Staff Updated College")
                                 }
                                 return response.json({ "status": "College Details Updated", "data": data });
                             }
@@ -365,8 +375,11 @@ exports.updateCollege = (request, response) => {
                                 return response.json({ "status": err });
                             }
                         } else {
-                            if (key == "lmsapp") {
+                            if (key === "lmsapp") {
                                 logAdminStaff(0, "Admin Updated College");
+                            }
+                            if (key !== "lmsapp") {
+                                logAdminStaff(request.body.addedby, "Admin Staff Updated College")
                             }
                             return response.json({ "status": "College Details Updated", "data": data });
                         }

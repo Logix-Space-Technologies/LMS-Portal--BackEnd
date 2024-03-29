@@ -54,7 +54,8 @@ const AdminSearchAdminStaff = () => {
     };
 
     const readValue = () => {
-        setIsLoading(true);
+        setIsLoading(true); // Start loading before the request
+
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -66,25 +67,31 @@ const AdminSearchAdminStaff = () => {
 
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
+                // Always stop loading when you get a response
+                setIsLoading(false);
+
                 if (response.data.data) {
                     setUpdateField(response.data.data);
-                    setIsLoading(false);
                     setSearchExecuted(true);
                     setInputField({ "adminStaffSearchQuery": "" });
                 } else if (response.data.status === "Unauthorized User!!") {
-                    navigate("/")
-                    sessionStorage.clear()
+                    navigate("/");
+                    sessionStorage.clear();
                 } else if (!response.data.data) {
                     setUpdateField([]);
-                    setIsLoading(false);
                     setSearchExecuted(true);
                     setInputField({ "adminStaffSearchQuery": "" });
                 } else {
-                    alert(response.data.status)
+                    alert(response.data.status);
                 }
             }
-        );
+        ).catch(error => {
+            // Stop loading and handle error
+            setIsLoading(false);
+            console.error("There was an error!", error);
+        });
     };
+
 
     // Logic for displaying current items
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -122,6 +129,7 @@ const AdminSearchAdminStaff = () => {
                         <br /><br />
                     </div>
                 </div>
+                {isLoading && searchExecuted && <div>Loading...</div>}
                 {!isLoading && currentItems.length > 0 ? (
                     <div className="row">
                         <div className="col-12">

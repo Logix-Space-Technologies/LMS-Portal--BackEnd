@@ -17,7 +17,7 @@ const AdminUpdateCurriculum = () => {
             "id": sessionStorage.getItem("curriculumId"),
             "curriculumTitle": "",
             "curriculumDesc": "",
-            "updatedBy": sessionStorage.getItem("adminId"),
+            "updatedBy": "",
             "curriculumFileLink": file
         }
     )
@@ -47,10 +47,16 @@ const AdminUpdateCurriculum = () => {
     const readNewValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let updatedBy;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            updatedBy = 0
+        } else {
+            updatedBy = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault()
         const validationErrors = validateForm(updateField)
@@ -69,7 +75,7 @@ const AdminUpdateCurriculum = () => {
                     "id": sessionStorage.getItem("curriculumId"),
                     "curriculumTitle": updateField.curriculumTitle,
                     "curriculumDesc": updateField.curriculumDesc,
-                    "updatedBy": sessionStorage.getItem("adminId"),
+                    "updatedBy": updatedBy,
                     "curriculumFileLink": file
                 }
             } else {
@@ -77,7 +83,7 @@ const AdminUpdateCurriculum = () => {
                     "id": sessionStorage.getItem("curriculumId"),
                     "curriculumTitle": updateField.curriculumTitle,
                     "curriculumDesc": updateField.curriculumDesc,
-                    "updatedBy": sessionStorage.getItem("adminId"),
+                    "updatedBy": updatedBy,
 
                 }
             }
@@ -89,7 +95,7 @@ const AdminUpdateCurriculum = () => {
                             "id": sessionStorage.getItem("curriculumId"),
                             "curriculumTitle": "",
                             "curriculumDesc": "",
-                            "updatedBy": sessionStorage.getItem("adminId"),
+                            "updatedBy": "",
                             "curriculumFileLink": ""
                         })
                         alert("Curriculum Updated Successfully")

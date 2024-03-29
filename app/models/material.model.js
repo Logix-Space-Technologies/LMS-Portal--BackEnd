@@ -61,8 +61,8 @@ Material.materialCreate = (newMaterial, result) => {
 }
 
 Material.searchMaterial = (searchString, result) => {
-    db.query("SELECT m.id,m.fileName,m.materialDesc,m.uploadFile,m.remarks,m.addedDate,b.batchName FROM materials m JOIN batches b ON m.batchId = b.id WHERE m.deleteStatus=0 AND m.isActive=1 AND b.deleteStatus=0 AND b.isActive=1 AND (fileName LIKE ? OR materialDesc LIKE ? ) ORDER BY m.addedDate DESC",
-        [`%${searchString}%`, `%${searchString}%`],
+    db.query("SELECT m.id, m.fileName, m.materialType, m.materialDesc, m.uploadFile, m.remarks, m.addedDate, b.batchName, c.collegeName FROM materials m JOIN batches b ON m.batchId = b.id JOIN college c ON b.collegeId = c.id WHERE m.deleteStatus=0 AND m.isActive=1 AND b.deleteStatus=0 AND b.isActive=1 AND c.deleteStatus = 0 AND c.isActive = 1 AND (c.collegeName LIKE ? OR b.batchName LIKE ? OR m.fileName LIKE ? OR m.materialDesc LIKE ? ) ORDER BY m.addedDate DESC",
+        [`%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);

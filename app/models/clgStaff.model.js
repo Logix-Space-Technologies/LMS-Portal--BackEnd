@@ -268,7 +268,7 @@ CollegeStaff.viewBatch = (collegeId, result) => {
 
 
 CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
-    const collegeStaffPassword = "SELECT password FROM college_staff WHERE email=? AND deleteStatus = 0 AND isActive = 1 ";
+    const collegeStaffPassword = "SELECT id, password FROM college_staff WHERE email=? AND deleteStatus = 0 AND isActive = 1 ";
     db.query(collegeStaffPassword, [college_staff.email], (err, res) => {
         if (err) {
             console.log("Error:", err);
@@ -277,6 +277,7 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
         }
         if (res.length) {
             const hashedOldPassword = res[0].password;
+            let clgstaffid = res[0].id;
             if (bcrypt.compareSync(college_staff.oldPassword, hashedOldPassword)) {
                 const updateCollegeStaffPasswordQuery = "UPDATE college_Staff SET password = ?, pwdUpdateStatus = 1 WHERE email = ? AND deleteStatus = 0 AND isActive = 1 ";
                 const hashedNewPassword = bcrypt.hashSync(college_staff.newPassword, 10);
@@ -285,6 +286,7 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
                         console.log("Error : ", updateErr);
                         result(updateErr, null);
                     } else {
+                        logCollegeStaff(clgstaffid, "password changed");
                         result(null, null);
                     }
                 });

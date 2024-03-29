@@ -65,10 +65,16 @@ const AdminAddBatch = () => {
     const readValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let addedBy;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault();
         const validationErrors = validateForm(inputField);
@@ -87,7 +93,8 @@ const AdminAddBatch = () => {
                 "regStartDate": inputField.regStartDate,
                 "regEndDate": inputField.regEndDate,
                 "batchDesc": inputField.batchDesc,
-                "batchAmount": inputField.batchAmount
+                "batchAmount": inputField.batchAmount,
+                "addedby": addedBy
             };
             axios.post(apiUrl2, data, axiosConfig2).then((response) => {
                 if (response.data.status === 'success') {

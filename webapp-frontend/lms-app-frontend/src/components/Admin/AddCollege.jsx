@@ -50,10 +50,16 @@ const AddCollege = () => {
   const handleSubmit = (e) => {
     let currentKey = sessionStorage.getItem("admkey");
     let token = sessionStorage.getItem("admtoken");
+    let addedBy;
     if (currentKey !== 'lmsapp') {
       currentKey = sessionStorage.getItem("admstaffkey");
       token = sessionStorage.getItem("admstaffLogintoken");
       setKey(currentKey); // Update the state if needed
+    }
+    if (currentKey === 'lmsapp') {
+      addedBy = 0
+    } else {
+      addedBy = sessionStorage.getItem("admstaffId")
     }
     e.preventDefault()
     const validationErrors = validateForm(inputField)
@@ -74,7 +80,8 @@ const AddCollege = () => {
         "email": inputField.email,
         "collegePhNo": inputField.collegePhNo,
         "collegeMobileNumber": inputField.collegeMobileNumber,
-        "collegeImage": file
+        "collegeImage": file,
+        "addedby": addedBy
       }
       axios.post(apiUrl, data, axiosConfig).then(
         (response) => {

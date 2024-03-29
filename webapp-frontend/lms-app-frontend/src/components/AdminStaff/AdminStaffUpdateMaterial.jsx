@@ -117,6 +117,7 @@ const AdminStaffUpdateMaterial = () => {
                     "key": sessionStorage.getItem("admstaffkey")
                 }
             }
+            let addedBy = sessionStorage.getItem("admstaffId");
             let data = {}
             if (file) {
                 data = {
@@ -126,7 +127,8 @@ const AdminStaffUpdateMaterial = () => {
                     "materialDesc": updateField.materialDesc,
                     "remarks": updateField.remarks,
                     "materialType": updateField.materialType,
-                    "uploadFile": file
+                    "uploadFile": file,
+                    "addedby": addedBy
                 }
             } else {
                 data = {
@@ -136,7 +138,8 @@ const AdminStaffUpdateMaterial = () => {
                     "materialDesc": updateField.materialDesc,
                     "remarks": updateField.remarks,
                     "materialType": updateField.materialType,
-                    "uploadFile": updateField.uploadFile
+                    "uploadFile": updateField.uploadFile,
+                    "addedby": addedBy
                 }
             }
             axios.post(apiUrl2, data, axiosConfig2).then(
@@ -154,68 +157,49 @@ const AdminStaffUpdateMaterial = () => {
                         })
                         alert("Material Updated Successfully")
                         navigate(-1)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.batchId) {
+                        alert(Response.data.data.batchId)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.fileName) {
+                        alert(Response.data.data.fileName)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.remarks) {
+                        alert(Response.data.data.remarks)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.materialDesc) {
+                        alert(Response.data.data.materialDesc)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.materialType) {
+                        alert(Response.data.data.materialType)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.file) {
+                        alert(Response.data.data.file)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.website) {
+                        alert(Response.data.data.website)
+                    } else if (Response.data.status === "Unauthorized Access!!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
                     } else {
-                        if (Response.data.status === "Validation failed" && Response.data.data.batchId) {
-                            alert(Response.data.data.batchId)
+                        alert(Response.data.status)
+                    }
+
+                }).catch(error => {
+                    if (error.response) {
+                        // Extract the status code from the response
+                        const statusCode = error.response.status;
+
+                        if (statusCode === 400) {
+                            alert(error.response.data.status)
+                            // Additional logic for status 400
+                        } else if (statusCode === 500) {
+                            alert(error.response.data.status)
+                            // Additional logic for status 500
                         } else {
-                            if (Response.data.status === "Validation failed" && Response.data.data.fileName) {
-                                alert(Response.data.data.fileName)
-                            } else {
-                                if (Response.data.status === "Validation failed" && Response.data.data.remarks) {
-                                    alert(Response.data.data.remarks)
-                                } else {
-                                    if (Response.data.status === "Validation failed" && Response.data.data.materialDesc) {
-                                        alert(Response.data.data.materialDesc)
-                                    } else {
-                                        if (Response.data.status === "Validation failed" && Response.data.data.materialType) {
-                                            alert(Response.data.data.materialType)
-                                        } else {
-                                            if (Response.data.status === "Validation failed" && Response.data.data.file) {
-                                                alert(Response.data.data.file)
-                                            } else {
-                                                if (Response.data.status === "Validation failed" && Response.data.data.website) {
-                                                    alert(Response.data.data.website)
-                                                } else {
-                                                    if (Response.data.status === "Unauthorized Access!!!") {
-                                                        navigate("/admstafflogin")
-                                                        sessionStorage.clear()
-                                                    } else {
-                                                        alert(Response.data.status)
-                                                    }
-                                                }
-                                            }
-
-
-                                        }
-                                    }
-                                }
-                            }
+                            alert(error.response.data.status)
                         }
-                    }
-
-                }
-            ).catch(error => {
-                if (error.response) {
-                    // Extract the status code from the response
-                    const statusCode = error.response.status;
-
-                    if (statusCode === 400) {
-                        alert(error.response.data.status)
-                        // Additional logic for status 400
-                    } else if (statusCode === 500) {
-                        alert(error.response.data.status)
-                        // Additional logic for status 500
+                    } else if (error.request) {
+                        alert(error.request);
+                    } else if (error.message) {
+                        alert('Error', error.message);
                     } else {
-                        alert(error.response.data.status)
+                        console.log(error.config);
                     }
-                } else if (error.request) {
-                    alert(error.request);
-                } else if (error.message) {
-                    alert('Error', error.message);
-                } else {
-                    console.log(error.config);
-                }
-            })
+                })
         } else {
             setErrors(validationErrors);
         }
@@ -236,8 +220,6 @@ const AdminStaffUpdateMaterial = () => {
             errors.remarks = 'Remarks are required';
         } else if (!data.materialType) {
             errors.materialType = 'Material Type is required';
-        } else if (file && fileType !== "docx" && fileType !== "pdf") {
-            errors.file = "File must be in PDF or DOCX format";
         }
         return errors;
     }
@@ -269,9 +251,9 @@ const AdminStaffUpdateMaterial = () => {
         )
     }
 
-    useEffect(() => { getClg() }, [])
-
     useEffect(() => { getData() }, [])
+
+    useEffect(() => { getClg() }, [])
 
     useEffect(() => {
         if (updateField.collegeId) {

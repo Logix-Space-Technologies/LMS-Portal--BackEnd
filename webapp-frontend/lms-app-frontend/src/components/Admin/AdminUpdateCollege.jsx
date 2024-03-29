@@ -56,10 +56,16 @@ const AdminUpdateCollege = () => {
     const readNewValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let addedBy;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault()
         const validationErrors = validateForm(updateField)
@@ -83,7 +89,8 @@ const AdminUpdateCollege = () => {
                     "email": updateField.email,
                     "collegePhNo": updateField.collegePhNo,
                     "collegeMobileNumber": updateField.collegeMobileNumber,
-                    "collegeImage": file
+                    "collegeImage": file,
+                    "addedby": addedBy
                 }
             } else {
                 data = {
@@ -94,7 +101,8 @@ const AdminUpdateCollege = () => {
                     "website": updateField.website,
                     "email": updateField.email,
                     "collegePhNo": updateField.collegePhNo,
-                    "collegeMobileNumber": updateField.collegeMobileNumber
+                    "collegeMobileNumber": updateField.collegeMobileNumber,
+                    "addedby": addedBy
                 }
             }
             axios.post(apiUrl, data, axiosConfig).then(

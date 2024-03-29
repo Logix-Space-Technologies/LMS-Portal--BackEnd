@@ -36,7 +36,6 @@ Admin.findByUserName = (username, result) => {
         }
 
         if (res.length) {
-            logAdminStaff(0, "Admin logged in")
             result(null, res[0])
             return
         }

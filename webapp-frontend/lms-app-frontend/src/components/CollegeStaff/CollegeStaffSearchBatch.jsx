@@ -13,7 +13,7 @@ const CollegeStaffSearchBatch = () => {
     )
 
     const [updateField, setUpdateField] = useState([])
-
+    const [searchPerformed, setSearchPerformed] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [batchPerPage] = useState(10); // Number of batches per page
 
@@ -47,6 +47,7 @@ const CollegeStaffSearchBatch = () => {
             (response) => {
                 if (response.data.data) {
                     setUpdateField(response.data.data)
+                    setSearchPerformed(true)
                     setIsLoading(false)
                     setInputField({
                         "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
@@ -58,9 +59,12 @@ const CollegeStaffSearchBatch = () => {
                         navigate("/clgStafflogin")
                     } else {
                         if (!response.data.data) {
+                            setSearchPerformed(true)
                             setUpdateField([]); // Ensure the updateField is set to an empty array
                             setIsLoading(false);
                         } else {
+                            setSearchPerformed(true)
+                            setIsLoading(false);
                             alert(response.data.status)
                         }
                     }
@@ -105,11 +109,11 @@ const CollegeStaffSearchBatch = () => {
                         </div>
                     </div>
                 </div>
-                {isLoading ? (
+                {searchPerformed && isLoading ? (
                     <div className="col-12 text-center">
-                        <p></p>
+                        <p>Loading...</p>
                     </div>
-                ) : (currentBatch && currentBatch.length > 0 ? (
+                ) : (searchPerformed && !isLoading && currentBatch && currentBatch.length > 0 ? (
                     <>
                         <strong style={{ paddingLeft: '30px' }}>Batch Details</strong><br /><br /><br />
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -203,7 +207,7 @@ const CollegeStaffSearchBatch = () => {
                             </div>
                         </div>
                     </>
-                ) : (
+                ) : searchPerformed && !isLoading && currentBatch.length === 0 && (
                     <div className="col-12 text-center">No Batch Found!!</div>
                 ))}
                 <br></br>

@@ -48,10 +48,16 @@ const AdminUpdateTrainer = () => {
     const readNewValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let updatedby;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            updatedby = 0
+        } else {
+            updatedby = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault();
         const validationErrors = validateForm(updateField);
@@ -71,14 +77,16 @@ const AdminUpdateTrainer = () => {
                     "trainerName": updateField.trainerName,
                     "about": updateField.about,
                     "phoneNumber": updateField.phoneNumber,
-                    "profilePicture": file
+                    "profilePicture": file,
+                    "updatedby": updatedby
                 }
             } else {
                 data = {
                     "id": sessionStorage.getItem("trainerId"),
                     "trainerName": updateField.trainerName,
                     "about": updateField.about,
-                    "phoneNumber": updateField.phoneNumber
+                    "phoneNumber": updateField.phoneNumber,
+                    "updatedby": updatedby
                 }
             }
             axios.post(apiUrl2, data, axiosConfig).then(
