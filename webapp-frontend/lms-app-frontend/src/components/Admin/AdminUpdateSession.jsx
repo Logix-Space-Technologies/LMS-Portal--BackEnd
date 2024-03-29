@@ -158,7 +158,7 @@ const AdminUpdateSession = () => {
     if (!data.venueORlink.trim()) {
       errors.venueORlink = 'Venue or Link is required';
     }
-    if (!data.trainerId.trim()) {
+    if (!data.trainerId) {
       errors.trainerId = 'Trainer Name is required';
     }
     if (!data.time.trim()) {
