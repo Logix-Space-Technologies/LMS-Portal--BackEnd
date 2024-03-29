@@ -1,121 +1,114 @@
 import React, { useEffect, useState } from 'react';
-import '../../config/config';
 import axios from 'axios';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+import '../../config/config';
 
 const AdminViewAdStaffLog = () => {
-
     const [adStaffLog, setAdStaffLog] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [logsPerPage] = useState(10); // Number of logs per page
-
-    const navigate = useNavigate()
-
+    const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
     const apiUrl = global.config.urls.api.server + "/api/lms/viewalladmstafflog";
 
+    useEffect(() => {
+        getData();
+    }, []);
+
     const getData = () => {
-        let axiosConfig = {
+        setIsLoading(true);
+        const axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
                 "token": sessionStorage.getItem("admtoken")
             }
         };
-        axios.post(apiUrl, {}, axiosConfig).then(
-            (response) => {
+        axios.post(apiUrl, {}, axiosConfig)
+            .then((response) => {
                 if (response.data) {
                     setAdStaffLog(response.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/")
-                        sessionStorage.clear()
+                        navigate("/");
+                        sessionStorage.clear();
                     } else {
-                        if (!response.data) {
-                            setAdStaffLog([]);
-                        } else {
-                            alert(response.data.status)
+                        setAdStaffLog([]);
+                        if (response.data) {
+                            alert(response.data.status);
                         }
                     }
                 }
-            }
-        );
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            })
+            .finally(() => setIsLoading(false)); // Ensure isLoading is updated in every case
     };
 
-    // Logic for displaying current logs
     const indexOfLastLog = currentPage * logsPerPage;
     const indexOfFirstLog = indexOfLastLog - logsPerPage;
-    const currentLogs = adStaffLog ? adStaffLog.slice(indexOfFirstLog, indexOfLastLog) : [];
+    const currentLogs = adStaffLog.slice(indexOfFirstLog, indexOfLastLog);
 
-    // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
     const rangeSize = 5; // Number of pages to display in the pagination
-    const lastPage = Math.ceil(adStaffLog.length / logsPerPage); // Calculate the total number of pages
-    let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
-    let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
+    const lastPage = Math.ceil(adStaffLog.length / logsPerPage); // Total number of pages
+    let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1;
+    let endPage = Math.min(startPage + rangeSize - 1, lastPage);
 
     // Calculate total pages
     const totalPages = Math.ceil(adStaffLog.length / logsPerPage);
 
     const calculateSerialNumber = (index) => {
         return ((currentPage - 1) * logsPerPage) + index + 1;
-    }
-
-
-    useEffect(() => { getData() }, []);
+    };
 
     return (
         <div>
             <Navbar />
-            <div>
-                {/* ====== Table Section Start */}
-                <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
-                    <div className="container mx-auto">
-                        <div className="flex flex-wrap -mx-4">
-                            <div className="w-full px-4">
-                                <h1>Admin Staff Log</h1>
-                                <br />
+            <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
+                <div className="container mx-auto">
+                    <div className="flex flex-wrap -mx-4">
+                        <div className="w-full px-4">
+                            <h1>Admin Staff Log</h1>
+                            <br />
+                            {isLoading ? <div className="flex justify-center items-center h-full">
+                                <div className="text-center py-20">
+                                    <div>Loading...</div>
+                                </div>
+                            </div> : (
                                 <div className="max-w-full overflow-x-auto">
                                     <table className="w-full table-auto">
                                         <thead>
                                             <tr className="text-center bg-primary">
-                                                <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                    S/N
-                                                </th>
-                                                <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                    AdminStaff Name
-                                                </th>
-                                                <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                    Action
-                                                </th>
-                                                <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                    Date Time
-                                                </th>
+                                                <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">S/N</th>
+                                                <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">AdminStaff Name</th>
+                                                <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">Action</th>
+                                                <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">Date Time</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {currentLogs.map(
-                                                (value, index) => {
-                                                    return <tr key={index}>
-                                                        <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                            {calculateSerialNumber(index)}
-                                                        </td>
-                                                        <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                            {value.AdStaffName}
-                                                        </td>
-                                                        <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                            {value.Action}
-                                                        </td>
-                                                        <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                            {value.DateTime}
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            )}
+                                            {currentLogs.map((value, index) => (
+                                                <tr key={index}>
+                                                    <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                        {calculateSerialNumber(index)}
+                                                    </td>
+                                                    <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                        {value.AdStaffName}
+                                                    </td>
+                                                    <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                        {value.Action}
+                                                    </td>
+                                                    <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                        {value.DateTime}
+                                                    </td>
+                                                </tr>
+                                            ))}
                                         </tbody>
                                     </table>
-                                    <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+                                    {!isLoading && (<div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
                                         <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                                             <div>
                                                 <p className="text-sm text-gray-700">
@@ -145,14 +138,13 @@ const AdminViewAdStaffLog = () => {
                                                 </nav>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>)}
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
-                </section>
-                {/* ====== Table Section End */}
-            </div>
+                </div>
+            </section>
         </div>
     );
 };
