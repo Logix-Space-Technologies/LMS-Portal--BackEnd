@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 
 const CollegeStaffViewCollege = () => {
     const [collegeData, setCollegeData] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
     const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewClgStaffCollege"
@@ -22,12 +23,14 @@ const CollegeStaffViewCollege = () => {
         axios.post(apiUrl, collegeStaffId, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
+                    setIsLoading(false)
                     setCollegeData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/clgStafflogin")
                         sessionStorage.clear()
                     } else {
+                        setIsLoading(false)
                         alert(response.data.status)
                     }
                 }
@@ -42,11 +45,17 @@ const CollegeStaffViewCollege = () => {
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
+                        
+                        <br></br>
+                        <strong>View College Details</strong>
                         <br></br>
                         <br></br>
                         <br></br>
-                        <br></br>
-                        <div className="card card-style1 --bs-primary-border-subtle border-5">
+                        {isLoading ? <div className="flex justify-center items-center h-full">
+                            <div className="text-center py-20">
+                                <div>Loading...</div>
+                            </div>
+                        </div> : <div className="card card-style1 --bs-primary-border-subtle border-5">
                             <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
                                 {collegeData.map(
                                     (value, index) => {
@@ -77,7 +86,7 @@ const CollegeStaffViewCollege = () => {
                                         </div>
                                     })}
                             </div>
-                        </div>
+                        </div>}
                     </div>
                 </div>
             </div >
