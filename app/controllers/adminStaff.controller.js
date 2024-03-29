@@ -439,7 +439,7 @@ exports.AdmViewAllMaterial = (request, response) => {
                     console.log(err)
                     return response.json({ "status": err })
                 } else {
-                    return response.json(data)
+                    return response.json({"status":"success", "data": data})
                 }
             })
         } else {

@@ -30,12 +30,12 @@ const AdminStaffViewAllMaterial = () => {
             }
         };
         axios.post(apiUrl, {}, axiosConfig).then((response) => {
-            if (response.data) {
-                setMaterialData(response.data);
+            if (response.data.data) {
+                setMaterialData(response.data.data);
             } else if (response.data.status === "Unauthorized User!!") {
                 navigate("/admstafflogin");
                 sessionStorage.clear();
-            } else if (!response.data) {
+            } else if (!response.data.data) {
                 setMaterialData([]);
             } else {
                 alert(response.data.status);
