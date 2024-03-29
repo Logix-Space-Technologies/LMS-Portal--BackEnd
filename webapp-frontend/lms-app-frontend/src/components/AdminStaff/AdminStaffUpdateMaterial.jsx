@@ -117,6 +117,7 @@ const AdminStaffUpdateMaterial = () => {
                     "key": sessionStorage.getItem("admstaffkey")
                 }
             }
+            let addedBy = sessionStorage.getItem("admstaffId");
             let data = {}
             if (file) {
                 data = {
@@ -126,7 +127,8 @@ const AdminStaffUpdateMaterial = () => {
                     "materialDesc": updateField.materialDesc,
                     "remarks": updateField.remarks,
                     "materialType": updateField.materialType,
-                    "uploadFile": file
+                    "uploadFile": file,
+                    "addedby": addedBy
                 }
             } else {
                 data = {
@@ -136,7 +138,8 @@ const AdminStaffUpdateMaterial = () => {
                     "materialDesc": updateField.materialDesc,
                     "remarks": updateField.remarks,
                     "materialType": updateField.materialType,
-                    "uploadFile": updateField.uploadFile
+                    "uploadFile": updateField.uploadFile,
+                    "addedby": addedBy
                 }
             }
             axios.post(apiUrl2, data, axiosConfig2).then(
