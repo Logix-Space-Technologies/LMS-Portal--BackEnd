@@ -340,10 +340,10 @@ router.post('/whatsapp-callback',WhatsappController.sendfn)
 
 router.get('/viewFirebaseTokens',FirebaseController.viewTokens)
 
-router.get('/viewwhatsappmsgfeedback',WhatsappMsgFeedbackController.sendfn)
+router.post('/viewwhatsappmsgfeedback',WhatsappMsgFeedbackController.sendfn)
 
 router.get('/viewwhatsappmsgcommon',WhatsappMsgCommonController.sendfn)
 
-router.get('/viewwhatsappmsgreceivedfromstud',WhatsappMsgReceivedFromStudController.sendfn)
+router.post('/viewwhatsappmsgreceivedfromstud',WhatsappMsgReceivedFromStudController.sendfn)
 
 module.exports = router
