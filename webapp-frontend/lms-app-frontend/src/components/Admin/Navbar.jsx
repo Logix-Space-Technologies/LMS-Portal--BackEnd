@@ -60,6 +60,7 @@ const Navbar = () => {
                                 <li><Link className="dropdown-item" to="/adminviewadstafflog">View Admin Staff Log</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewallclgstaff">View College Staff</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewwhtsappfeedback">View Whatsapp Feedback Log</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewwhtsappmsgreceived">View Whatsapp Message Received Log</Link></li>
                             </ul>
                         </li>
                         <li className="nav-item dropdown">

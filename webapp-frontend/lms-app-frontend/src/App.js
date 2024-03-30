@@ -115,6 +115,7 @@ import AdminStaffForgotPassword from './components/AdminStaff/AdminStaffForgotPa
 import StudentForgotPassword from './components/Student/StudentForgotPassword';
 import CollegeStaffForgotPassword from './components/CollegeStaff/CollegeStaffForgotPassword';
 import AdminViewWhatsappFeedback from './components/Admin/AdminViewWhatsappFeedback';
+import AdminViewMsgReceived from './components/Admin/AdminViewMsgReceived';
 
 
 
@@ -177,6 +178,7 @@ function App() {
           <Route path='/adminUpdateclg' element={<AdminUpdateCollege/>}/>
           <Route path='/AdminUpdateSession' element={<AdminUpdateSession/>}/>
           <Route path='/adminviewwhtsappfeedback' element={<AdminViewWhatsappFeedback/>}/>
+          <Route path='/adminviewwhtsappmsgreceived' element={<AdminViewMsgReceived/>}/>
 
 
 
