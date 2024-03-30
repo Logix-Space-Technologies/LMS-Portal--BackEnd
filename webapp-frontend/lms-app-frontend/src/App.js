@@ -114,6 +114,7 @@ import StudentEmailVerification from './components/Student/StudentEmailVerificat
 import AdminStaffForgotPassword from './components/AdminStaff/AdminStaffForgotPassword';
 import StudentForgotPassword from './components/Student/StudentForgotPassword';
 import CollegeStaffForgotPassword from './components/CollegeStaff/CollegeStaffForgotPassword';
+import AdminViewWhatsappFeedback from './components/Admin/AdminViewWhatsappFeedback';
 
 
 
@@ -175,6 +176,7 @@ function App() {
           <Route path='/adminViewSuccessfulrefunds' element={<AdminViewSuccessfulRefunds/>}/>
           <Route path='/adminUpdateclg' element={<AdminUpdateCollege/>}/>
           <Route path='/AdminUpdateSession' element={<AdminUpdateSession/>}/>
+          <Route path='/adminviewwhtsappfeedback' element={<AdminViewWhatsappFeedback/>}/>
 
 
 
