@@ -5,7 +5,19 @@ const whatsappmsgreceivedfromstudview = (request, response) => {
         if (err) {
             console.log(err)
         } else {
-            return response.json({"status":"success", "data": res})
+            const formattedMessageReceivedLog = response.map(messagereceivedlog => ({
+                ...messagereceivedlog,
+                dateTime: messagereceivedlog.dateTime.toLocaleString('en-IN', {
+                    timeZone: 'Asia/Kolkata',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                })
+            }));
+            return response.json({"status":"success", "data": formattedMessageReceivedLog})
         }
     })
 };
