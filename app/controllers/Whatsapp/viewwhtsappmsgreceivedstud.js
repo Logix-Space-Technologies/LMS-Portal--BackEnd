@@ -11,7 +11,7 @@ const whatsappmsgreceivedfromstudview = (request, response) => {
                 if (err) {
                     console.log(err)
                 } else {
-                    const formattedMessageReceivedLog = response.map(messagereceivedlog => ({
+                    const formattedMessageReceivedLog = res.map(messagereceivedlog => ({
                         ...messagereceivedlog,
                         dateTime: messagereceivedlog.dateTime.toLocaleString('en-IN', {
                             timeZone: 'Asia/Kolkata',

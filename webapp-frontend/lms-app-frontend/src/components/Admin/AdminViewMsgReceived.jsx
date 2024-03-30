@@ -16,7 +16,7 @@ const AdminViewMsgReceived = () => {
     let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/viewwhatsappmsgfeedback";
+    const apiUrl = global.config.urls.api.server + "/api/lms/viewwhatsappmsgreceivedfromstud";
 
     const getData = () => {
         let axiosConfig = {
@@ -31,6 +31,7 @@ const AdminViewMsgReceived = () => {
             (response) => {
                 if (response.data.data) {
                     setIsLoading(false)
+                    console.log(response.data.data)
                     setMsgReceivedLogData(response.data.data);
                 } else if (response.data.status === "Unauthorized User!!") {
                     navigate("/")
@@ -83,6 +84,7 @@ const AdminViewMsgReceived = () => {
                                 <th scope="col" className="px-6 py-3">Student Name</th>
                                 <th scope="col" className="px-6 py-3">Message Id</th>
                                 <th scope="col" className="px-6 py-3">Message</th>
+                                <th scope="col" className="px-6 py-3">Sent Date Time</th>
                                 <th scope="col" className="px-6 py-3">Phone</th>
                                 <th scope="col" className="px-6 py-3">Country Code</th>
                                 <th scope="col" className="px-6 py-3">Dial Code</th>
@@ -96,8 +98,9 @@ const AdminViewMsgReceived = () => {
                                             <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                             <td className="px-6 py-4">{value.studId}</td>
                                             <td className="px-6 py-4">{value.studName}</td>
-                                            <td className="px-6 py-4">{value.msgId}</td>
+                                            <td className="px-6 py-4">{value.messageId}</td>
                                             <td className="px-6 py-4">{value.message}</td>
+                                            <td className="px-6 py-4">{value.dateTime}</td>
                                             <td className="px-6 py-4">{value.phone}</td>
                                             <td className="px-6 py-4">{value.country_code}</td>
                                             <td className="px-6 py-4">{value.dial_code}</td>
