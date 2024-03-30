@@ -196,6 +196,7 @@ const StudentViewTasks = () => {
             <StudNavBar />
             <br />
             <h1 style={{ marginLeft: "20px", marginBottom: "32px", textAlign: "center" }}>Student View Tasks</h1>
+            {loading && <div>Loading...</div>}
             {!loading && (<section className="flex flex-col justify-center items-center antialiased bg-gray-100 text-gray-600 p-4 pt-2 pb-2">
                 <div className="h-full">
                     {/* Cards */}

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 
 const StudentViewCollege = () => {
     const [collegeData, setCollegeData] = useState([])
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewCollegeStudent"
@@ -22,12 +23,14 @@ const StudentViewCollege = () => {
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 if (response.data.status === "College Found") {
+                    setLoading(false)
                     setCollegeData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
                         sessionStorage.clear()
                     } else {
+                        setLoading(false)
                         alert(response.data.status)
                     }
                 }
@@ -40,9 +43,11 @@ const StudentViewCollege = () => {
         <div>
             <StudNavBar />
             <div className="container">
-                <div className="row">
+                {loading && <div>Loading...</div>}
+                {!loading && <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
                         <br></br>
+                        <strong>View College Details</strong>
                         <br></br>
                         <br></br>
                         <br></br>
@@ -80,7 +85,7 @@ const StudentViewCollege = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>}
             </div >
         </div>
     )
