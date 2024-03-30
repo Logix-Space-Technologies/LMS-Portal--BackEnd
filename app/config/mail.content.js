@@ -1,5 +1,3 @@
-const { content } = require("pdfkit/js/page");
-
 function upcomingSessionOfflineHTMLContent(studName, sessionName, date, time, venueORlink) {
   // Get the current year
   const currentYear = new Date().getFullYear();
@@ -2297,8 +2295,7 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
   return content;
 }
 
-function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName,
-  collegeStaffName) {
+function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   let content = `
@@ -2371,8 +2368,9 @@ function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessi
           <li><strong>Original Date:</strong> ${originaldate}</li>
           <li><strong>New Date:</strong> ${sessionDate}</li>
           <li><strong>Time:</strong> ${sessionTime}</li>
+          <li><strong>Batch Name:</strong> ${batchName}</li>
           <li><strong>Session Type:</strong> ${type}</li>
-          <li><strong>Venue:</strong> ${venueORlink}</li>
+          <li><strong>Meeting Link/Venue:</strong> ${venueORlink}</li>
         </ul>`;
   } else {
     content += `<p>We hope this message finds you well. Please note that there has been a change in the meeting
@@ -2382,8 +2380,9 @@ function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessi
         <ul>
           <li><strong>Date:</strong> ${originaldate}</li>
           <li><strong>Time:</strong> ${sessionTime}</li>
+          <li><strong>Batch Name:</strong> ${batchName}</li>
           <li><strong>Session Type:</strong> ${type}</li>
-          <li><strong>Venue:</strong> ${venueORlink}</li>
+          <li><strong>Meeting Link/Venue:</strong> ${venueORlink}</li>
         </ul>`;
   }
   content += `<p>Best Regards,</p>
@@ -2483,7 +2482,7 @@ function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessi
   return content
 }
 
-function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeStaffName) {
+function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   let content = `Dear ${collegeStaffName},\n\n`;
@@ -2504,6 +2503,7 @@ function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessi
   }
 
   content += `Time: ${sessionTime}\n`;
+  content += `Batch Name: ${batchName}\n`;
   content += `Session Type: ${type}\n`;
   content += `Venue: ${venueORlink}\n\n`;
 
