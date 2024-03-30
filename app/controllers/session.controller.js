@@ -239,14 +239,21 @@ exports.sessionUpdate = (request, response) => {
             let originaldate = ""
             let sessionDate = ""
             let sessionTime = ""
+            // let isVenueOrLinkChangedOnly = false; 
 
             Session.updateSession(upSession, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
+                    console.log(data)
                     originaldate = data.originalDate;
                     sessionDate = upSession.date.split('-').reverse().join('/');
                     sessionTime = formatTime(upSession.time);
+
+                    // if (sessionDate === originaldate && data.time === request.body.newTime) {
+                    //     isVenueOrLinkChangedOnly = true;
+                    // }
+
                     db.query("SELECT * FROM sessiondetails WHERE id = ?", [upSession.id], (err, sessionres) => {
                         if (err) {
                             return response.json({ "status": err });
