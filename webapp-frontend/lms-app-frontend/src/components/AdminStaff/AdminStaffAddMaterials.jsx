@@ -22,6 +22,9 @@ const AdminStaffAddMaterials = () => {
 
     const [fileType, setFileType] = useState("");
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const fileUploadHandler = (event) => {
         setErrors({});
         const uploadedFile = event.target.files[0];
@@ -45,6 +48,11 @@ const AdminStaffAddMaterials = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/AddMaterials";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/viewallcolleges";
     const batchUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getData = () => {
         let axiosConfig = {
@@ -127,19 +135,25 @@ const AdminStaffAddMaterials = () => {
                 "uploadFile": file,
                 "addedby": addedBy
             }
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
                 if (response.data.status === 'success') {
-                    alert('Material Added Successfully !!');
-                    setInputField({
-                        collegeId: '',
-                        batchId: '',
-                        fileName: '',
-                        materialDesc: '',
-                        remarks: '',
-                        materialType: '',
-                        uploadFile: ''
-                    })
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert('Material Added Successfully !!');
+                        setInputField({
+                            collegeId: '',
+                            batchId: '',
+                            fileName: '',
+                            materialDesc: '',
+                            remarks: '',
+                            materialType: '',
+                            uploadFile: ''
+                        })
+                    }, 500)
                 } else {
+                    closeWaitingModal()
                     if (response.data.status === "Validation failed" && response.data.data.batchId) {
                         alert(response.data.data.batchId)
                     } else {
@@ -159,7 +173,10 @@ const AdminStaffAddMaterials = () => {
                                             navigate("/admstafflogin")
                                             sessionStorage.clear()
                                         } else {
-                                            alert(response.data.status)
+                                            closeWaitingModal()
+                                            setTimeout(() => {
+                                                alert(response.data.status)
+                                            }, 500)
                                         }
                                     }
                                 }
@@ -388,6 +405,44 @@ const AdminStaffAddMaterials = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }

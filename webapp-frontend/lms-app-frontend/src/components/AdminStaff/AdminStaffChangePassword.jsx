@@ -18,10 +18,17 @@ const AdminStaffChangePassword = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const apiurl = global.config.urls.api.server + "/api/lms/adminStaffChangePassword";
     const navigate = useNavigate();
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const updateHandler = (event) => {
         setErrors({})
         setUpdateField({ ...updateField, [event.target.name]: event.target.value });
+    }
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
     }
 
     const readNewValue = () => {
@@ -34,22 +41,32 @@ const AdminStaffChangePassword = () => {
             }
         };
 
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         if (Object.keys(validationErrors).length === 0) {
             axios.post(apiurl, updateField, axiosConfig).then(
                 (response) => {
                     if (response.data.status === "success") {
-                        alert("Password Changed Successfully");
-                        navigate("/admstafflogin");
-                        sessionStorage.clear()
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert("Password Changed Successfully");
+                            navigate("/admstafflogin");
+                            sessionStorage.clear()
+                        }, 500)
                     } else if (response.data.status === "Validation failed" && response.data.data.oldAdSfPassword) {
+                        closeWaitingModal()
                         alert(response.data.data.oldAdSfPassword);
                     } else if (response.data.status === "Validation failed" && response.data.data.newAdSfPassword) {
+                        closeWaitingModal()
                         alert(response.data.data.newAdSfPassword);
                     } else if (response.data.status === "Unauthorized User!!") {
                         navigate("/admstafflogin")
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status)
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status)
+                        }, 500)
                     }
 
                 }
@@ -131,6 +148,44 @@ const AdminStaffChangePassword = () => {
                     </div>
                 </div>
             </div >
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }
