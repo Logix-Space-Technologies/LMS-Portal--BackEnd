@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const StudentBatchInCharge = () => {
     const [staffData, setStaffData] = useState({});
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + '/api/lms/viewCollegeStaffofStudent';
@@ -22,12 +23,14 @@ const StudentBatchInCharge = () => {
         };
         axios.post(apiUrl, data, axiosConfig).then((response) => {
             if (response.data.data) {
+                setLoading(false)
                 setStaffData(response.data.data);
             } else {
                 if (response.data.status === "Invalid or expired token.") {
                     navigate("/studentLogin")
                     sessionStorage.clear()
                 } else {
+                    setLoading(false)
                     alert(response.data.status)
                 }
             }
@@ -39,30 +42,14 @@ const StudentBatchInCharge = () => {
     }, []);
 
     return (
-        //     <div className="d-flex justify-content-center align-items-center vh-100">
-        //     <div className="card mb-3" style={{ maxWidth: 540 }}>
-        //       <div className="row g-0">
-        //         <div className="col-md-2">
-        //           <img src={staffData.profilePic} alt="..." />
-        //         </div>
-        //         <div className="col-md-10">
-        //           <div className="card-body">
-        //             <p className="card-title">Name: {staffData.collegeStaffName}</p>
-        //             <p className="card-text">Department: {staffData.department}</p>
-        //             <p className="card-text">Phone: {staffData.phNo}</p>
-        //             <p className="card-text">Email: {staffData.email}</p>
-        //           </div>
-        //         </div>
-        //       </div>
-        //     </div>
-        //   </div>
         <div>
             <StudNavBar />
-            <div className="d-flex justify-content-center align-items-center vh-100">
+            <br />
+            <strong>View Batch-In Charge Details</strong>
+            {loading ? <div>Loading...</div> : <div className="d-flex justify-content-center align-items-center vh-100">
                 <div className="card" style={{ width: '18rem' }}>
                     <img src={staffData.profilePic} className="card-img-top" alt="..." />
                     <div className="card-body">
-                        <h6 className="card-title"><b>College Staff Details</b></h6>
                         <p className="card-text"><b>Name: </b>{staffData.collegeStaffName}</p>
                         <p className="card-text"><b>Department:</b> {staffData.department}</p>
                         <p className="card-text"><b>Phone: </b>{staffData.phNo}</p>
@@ -70,7 +57,7 @@ const StudentBatchInCharge = () => {
 
                     </div>
                 </div>
-            </div>
+            </div>}
         </div>
 
 
