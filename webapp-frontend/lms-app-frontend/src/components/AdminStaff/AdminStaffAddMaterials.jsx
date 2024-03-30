@@ -125,13 +125,15 @@ const AdminStaffAddMaterials = () => {
                     "key": sessionStorage.getItem("admstaffkey")
                 }
             }
+            let addedBy = sessionStorage.getItem("admstaffId");
             let data = {
                 "batchId": inputField.batchId,
                 "fileName": inputField.fileName,
                 "materialDesc": inputField.materialDesc,
                 "remarks": inputField.remarks,
                 "materialType": inputField.materialType,
-                "uploadFile": file
+                "uploadFile": file,
+                "addedby": addedBy
             }
             setShowWaitingModal(true)
             setShowOverlay(true)

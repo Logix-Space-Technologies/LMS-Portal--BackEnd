@@ -29,10 +29,13 @@ const AdminViewAllSession = () => {
     const [sessionData, setSessionData] = useState([]);
     const [qrCodeAttendance, setQrCodeAttendance] = useState(null);
     const [showQRModal, setShowQRModal] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [currentPage, setCurrentPage] = useState(1);
     const [sessionsPerPage] = useState(10); // Number of sessions per page
     const navigate = useNavigate();
     const [key, setKey] = useState('')
+    const [isLoading, setIsLoading] = useState(true);
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession";
@@ -60,16 +63,18 @@ const AdminViewAllSession = () => {
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 if (response.data.Sessions) {
+                    setIsLoading(false)
                     setSessionData(response.data.Sessions);
-                    console.log(response.data.Sessions)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         if (!response.data.Sessions) {
+                            setIsLoading(false)
                             setSessionData([])
                         } else {
+                            setIsLoading(false)
                             alert(response.data.status)
                         }
                     }
@@ -81,18 +86,32 @@ const AdminViewAllSession = () => {
     const [cancelId, setCancelId] = useState(null);
 
     const cancelClick = (id) => {
+        setShowModal(true)
+        setShowOverlay(true)
         setCancelId(id)
     }
+
+    // Function to close both modal and overlay
+    const closeModal = () => {
+        setShowModal(false);
+        setShowOverlay(false);
+    };
 
     const handleClick = () => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let cancelledby;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        let data = { "id": cancelId };
+        if (currentKey === 'lmsapp') {
+            cancelledby = 0
+        } else {
+            cancelledby = sessionStorage.getItem("admstaffId")
+        }
+        let data = { "id": cancelId, "cancelledby": cancelledby };
         let axiosConfigTwo = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -104,8 +123,7 @@ const AdminViewAllSession = () => {
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "success") {
-                    alert("Session Cancelled Successfully.")
-                    setSessionData(sessionData.filter(session => session.id !== cancelId));
+                    closeModal()
                     getData()
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
@@ -242,9 +260,22 @@ const AdminViewAllSession = () => {
         const timeDifference = sessionDateTime.getTime() - currentDate.getTime();
         const isFutureSession = timeDifference > 0;
         const isWithin24Hours = timeDifference <= oneDay;
-        console.log(isWithin24Hours)
+        // console.log(isWithin24Hours)
 
         return isFutureSession && isWithin24Hours;
+    };
+
+    const isSessionInPast = (dateString, timeString) => {
+        const now = new Date();
+
+        const dateParts = dateString.split('/');
+        const timeParts = timeString.split(':');
+        // Assuming timeString is in HH:MM format; adjust if it includes seconds or is in 12-hour format
+
+        // Convert session date and time from strings to a Date object
+        const sessionDateTime = new Date(dateParts[2], dateParts[1] - 1, dateParts[0], timeParts[0], timeParts[1]);
+
+        return sessionDateTime < now;
     };
 
 
@@ -278,7 +309,7 @@ const AdminViewAllSession = () => {
     };
 
     function isSpecialDomain(venueLink) {
-        const domains = ["meet.google.com", "zoom.us", "youtube.com", "vimeo.com"];
+        const domains = ["meet.google.com", "zoom.us", "youtube.com", "vimeo.com", "teams.microsoft.com"];
         return domains.some(domain => venueLink.includes(domain));
     }
 
@@ -293,7 +324,11 @@ const AdminViewAllSession = () => {
                 <div></div>
             </div>
             <br /><br />
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            {isLoading ? <div className="flex justify-center items-center h-full">
+                <div className="text-center py-20">
+                    <div>Loading...</div>
+                </div>
+            </div> : (<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -359,21 +394,21 @@ const AdminViewAllSession = () => {
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {value.cancelStatus === "ACTIVE" && (
-                                        <button onClick={() => cancelClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                    {!isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
+                                        <button onClick={() => cancelClick(value.id)} type="button" className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                             Cancel Session
                                         </button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {value.cancelStatus === "ACTIVE" && (
+                                    {!isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
                                             Reschedule Session
                                         </button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {key === "lmsapp" && value.cancelStatus === "ACTIVE" && (
+                                    {key === "lmsapp" && !isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => deleteClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
                                             Delete Session
                                         </button>
@@ -396,40 +431,43 @@ const AdminViewAllSession = () => {
                         )}
                     </tbody>
                 </table>
-            </div>
+            </div>)}
+
 
             {/* Pagination */}
-            <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
-                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                    <div>
-                        <p className="text-sm text-gray-700">
-                            Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > sessionData.length ? sessionData.length : indexOfLastSession}</span> of <span className="font-medium">{sessionData.length}</span> results
-                        </p>
-                    </div>
-                    <div>
-                        <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                            <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
-                                <span className="sr-only">Previous</span>
-                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-                                </svg>
-                            </button>
-                            {/* Dynamically generate Link components for each page number */}
-                            {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-                                <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
-                                    {startPage + index}
+            {!isLoading && currentSessions.length > 0 && (
+                <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+                    <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                        <div>
+                            <p className="text-sm text-gray-700">
+                                Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > sessionData.length ? sessionData.length : indexOfLastSession}</span> of <span className="font-medium">{sessionData.length}</span> results
+                            </p>
+                        </div>
+                        <div>
+                            <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
+                                    <span className="sr-only">Previous</span>
+                                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                                    </svg>
                                 </button>
-                            ))}
-                            <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
-                                <span className="sr-only">Next</span>
-                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                                </svg>
-                            </button>
-                        </nav>
+                                {/* Dynamically generate Link components for each page number */}
+                                {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                                    <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
+                                        {startPage + index}
+                                    </button>
+                                ))}
+                                <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
+                                    <span className="sr-only">Next</span>
+                                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                                    </svg>
+                                </button>
+                            </nav>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
 
             {/* QR Code Modal */}
@@ -456,25 +494,45 @@ const AdminViewAllSession = () => {
             )}
 
             {/* Cancel Confirmation Modal */}
-            <div className="row">
-                <div className="modal fade" id="cancelModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to cancel this session?</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                <p>This action cannot be undone.</p>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No, cancel</button>
-                                <button onClick={() => handleClick()} type="button" className="btn btn-danger" data-bs-dismiss="modal">Yes, I'm sure</button>
+            {showModal && (
+                <div className="row">
+                    <div className="modal show d-block" tabIndex={-1}>
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to cancel this session?</h5>
+                                    <button type="button" className="btn-close" onClick={() => closeModal()}></button>
+                                </div>
+                                <div className="modal-body">
+                                    <p>This action cannot be undone.</p>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" onClick={() => closeModal()}>No, cancel</button>
+                                    <button onClick={() => handleClick()} type="button" className="btn btn-danger" >Yes, I'm sure</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     );
 };

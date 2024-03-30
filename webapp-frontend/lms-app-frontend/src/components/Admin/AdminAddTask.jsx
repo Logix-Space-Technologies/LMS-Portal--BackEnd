@@ -168,10 +168,16 @@ const AdminAddTask = () => {
     const readValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let addedBy;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault();
         const validationErrors = validateForm(inputField);
@@ -192,7 +198,8 @@ const AdminAddTask = () => {
                 "taskType": inputField.taskType,
                 "totalScore": inputField.totalScore,
                 "dueDate": inputField.dueDate,
-                "taskFileUpload": file
+                "taskFileUpload": file,
+                "addedby": addedBy
             }
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
                 if (response.data.status === 'success') {

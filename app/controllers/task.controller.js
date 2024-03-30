@@ -74,7 +74,7 @@ exports.createTask = (request, response) => {
             // Remove the file from local storage
             fs.unlinkSync(file.path);
 
-            const { batchId, taskTitle, taskDesc, taskType, totalScore, sessionId } = request.body
+            const { batchId, taskTitle, taskDesc, taskType, totalScore, sessionId, addedby } = request.body
             const dueDate = request.body.dueDate
 
             const taskToken = request.headers.token
@@ -156,8 +156,11 @@ exports.createTask = (request, response) => {
                         if (err) {
                             return response.json({ "status": err });
                         } else {
-                            if (key == "lmsapp") {
+                            if (key === "lmsapp") {
                                 logAdminStaff(0, "Admin Created Task")
+                            }
+                            if (key !== "lmsapp") {
+                                logAdminStaff(addedby, "Admin Staff Created Task")
                             }
                             Student.searchStudentByBatch(addtask.batchId, (err, res) => {
                                 if (err) {
@@ -167,7 +170,7 @@ exports.createTask = (request, response) => {
                                     res.forEach(element => {
                                         const studName = element.studName
                                         const studEmail = element.studEmail
-                                        const dueDate = request.body.dueDate
+                                        const dueDate = request.body.dueDate.split('-').reverse().join('/')
                                         const newTaskHtmlContent = mailContents.newTaskHtmlContent(studName, dueDate);
                                         const newTaskTextContent = mailContents.newTaskTextContent(studName, dueDate);
                                         mail.sendEmail(studEmail, "New Task Assigned", newTaskHtmlContent, newTaskTextContent);
@@ -256,7 +259,7 @@ exports.taskUpdate = (request, response) => {
             }
         }
 
-        const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate } = request.body;
+        const { batchId, taskTitle, taskDesc, taskType, totalScore, dueDate, updatedby } = request.body;
 
         const updateTasktoken = request.headers.token;
         const key = request.headers.key;
@@ -324,6 +327,9 @@ exports.taskUpdate = (request, response) => {
                     } else {
                         if (key === "lmsapp") {
                             logAdminStaff(0, "Admin Updated Task")
+                        }
+                        if (key !== "lmsapp") {
+                            logAdminStaff(updatedby, "Admin Staff Updated Task")
                         }
                         return response.json({ "status": "success", "data": data });
                     }
@@ -397,12 +403,12 @@ exports.collegeStaffSearchTasks = (request, response) => {
         if (decoded) {
             Tasks.collegeStaffSearchTasks(taskQuery, collegeId, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Search Items Found" });
+                        return response.json({ "status": "No Search Items Found" });
                     } else {
-                        response.json({ "status": "success", "data": data });
+                        return response.json({ "status": "success", "data": data });
                     }
                 }
             });

@@ -7,6 +7,7 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 const fs = require('fs');
 require('dotenv').config({ path: '../../.env' });
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
 // AWS S3 Client Configuration
 const s3Client = new S3Client({
@@ -58,7 +59,7 @@ exports.createMaterial = (request, response) => {
                 // Remove the file from local storage
                 fs.unlinkSync(file.path);
 
-                const { batchId, fileName, materialDesc, remarks, materialType } = request.body
+                const { batchId, fileName, materialDesc, remarks, materialType, addedby } = request.body
                 const materialToken = request.headers.token
 
                 jwt.verify(materialToken, "lmsappadmstaff", (err, decoded) => {
@@ -109,6 +110,7 @@ exports.createMaterial = (request, response) => {
                             if (err) {
                                 return response.json({ "status": err });
                             } else {
+                                logAdminStaff(addedby, "New Material Added")
                                 return response.json({ "status": "success", "data": data });
                             }
                         })
@@ -122,7 +124,7 @@ exports.createMaterial = (request, response) => {
                 response.status(500).json({ "status": err.message });
             }
         } else {
-            const { batchId, fileName, materialDesc, remarks, materialType, uploadFile } = request.body
+            const { batchId, fileName, materialDesc, remarks, materialType, uploadFile, addedby } = request.body
             const materialToken = request.headers.token
 
             jwt.verify(materialToken, "lmsappadmstaff", (err, decoded) => {
@@ -173,6 +175,7 @@ exports.createMaterial = (request, response) => {
                         if (err) {
                             return response.json({ "status": err });
                         } else {
+                            logAdminStaff(addedby, "New Material Added")
                             return response.json({ "status": "success", "data": data });
                         }
                     })
@@ -192,7 +195,7 @@ exports.searchMaterial = async (request, response) => {
     const materialSearchToken = request.headers.token;
 
     try {
-        const decoded = await jwt.verify(materialSearchToken, "lmsappadmstaff");
+        const decoded = jwt.verify(materialSearchToken, "lmsappadmstaff");
 
         if (!materialQuery) {
             return response.json({ "status": "Provide a search query" });
@@ -201,7 +204,7 @@ exports.searchMaterial = async (request, response) => {
         if (decoded) {
             Material.searchMaterial(materialQuery, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
                         return response.json({ "status": "No Search Items Found" });
@@ -244,7 +247,7 @@ exports.updateMaterial = (request, response) => {
                 // Remove the file from local storage
                 fs.unlinkSync(file.path);
 
-                const { id, batchId, fileName, materialDesc, remarks, materialType } = request.body;
+                const { id, batchId, fileName, materialDesc, remarks, materialType, addedby } = request.body;
                 const materialUpdateToken = request.headers.token;
 
                 jwt.verify(materialUpdateToken, "lmsappadmstaff", (err, decoded) => {
@@ -300,6 +303,7 @@ exports.updateMaterial = (request, response) => {
                                     return response.json({ "status": err });
                                 }
                             } else {
+                                logAdminStaff(addedby, "Material Updated")
                                 return response.json({ "status": "Material Details Updated", "data": data });
                             }
                         });
@@ -312,7 +316,7 @@ exports.updateMaterial = (request, response) => {
                 return response.status(500).json({ "status": err.message });
             }
         } else {
-            const { id, batchId, fileName, materialDesc, remarks, materialType, uploadFile } = request.body;
+            const { id, batchId, fileName, materialDesc, remarks, materialType, uploadFile, addedby } = request.body;
             const materialUpdateToken = request.headers.token;
 
             jwt.verify(materialUpdateToken, "lmsappadmstaff", (err, decoded) => {
@@ -364,6 +368,7 @@ exports.updateMaterial = (request, response) => {
                                 return response.json({ "status": err });
                             }
                         } else {
+                            logAdminStaff(addedby, "Material Updated")
                             return response.json({ "status": "Material Details Updated", "data": data });
                         }
                     });
@@ -383,17 +388,17 @@ exports.viewBatchMaterials = (request, response) => {
         if (decoded) {
             Material.viewBatchMaterials(batchId, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     if (data.length === 0) {
-                        response.json({ "status": "No Materials Found" });
+                        return response.json({ "status": "No Materials Found" });
                     } else {
-                        response.json({ "status": "success", "data": data });
+                        return response.json({ "status": "success", "data": data });
                     }
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
@@ -401,6 +406,7 @@ exports.viewBatchMaterials = (request, response) => {
 
 exports.deleteMaterial = (request, response) => {
     const deleteToken = request.headers.token
+    const deletedby = request.body.addedby
     const material = new Material({
         'id': request.body.id
     });
@@ -419,6 +425,7 @@ exports.deleteMaterial = (request, response) => {
                     return response.json({ "status": err });
                 }
             } else {
+                logAdminStaff(deletedby, "Material Deleted")
                 return response.json({ "status": "Material Deleted Successfully." });
             }
         })

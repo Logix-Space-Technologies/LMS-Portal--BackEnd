@@ -115,8 +115,11 @@ exports.createCurriculum = (request, response) => {
                         if (err) {
                             return response.json({ "status": err });
                         } else {
-                            if (key == "lmsapp") {
+                            if (key === "lmsapp") {
                                 logAdminStaff(0, "Admin Created Curriculum")
+                            }
+                            if (key !== "lmsapp") {
+                                logAdminStaff(request.body.addedBy, "Admin Staff Created Curriculum")
                             }
                             return response.json({ "status": "success", "data": data });
                         }
@@ -202,6 +205,7 @@ exports.curriculumDelete = (request, response) => {
                     }
 
                 } else {
+                    logAdminStaff(0, "Curriculum Deleted")
                     return response.json({ "status": "success" })
                 }
             })
@@ -289,6 +293,12 @@ exports.updateCurriculum = (request, response) => {
                     if (err) {
                         return response.json({ "status": err });
                     } else {
+                        if (key === "lmsapp") {
+                            logAdminStaff(0, "Admin Updated Curriculum")
+                        }
+                        if (key !== "lmsapp") {
+                            logAdminStaff(request.body.updatedBy, "Admin Staff Updated Curriculum")
+                        }
                         return response.json({ "status": "success", "data": data });
                     }
                 });

@@ -244,7 +244,7 @@ Student.searchStudentByCollege = (searchKey, collegeId, result) => {
 
 Student.searchStudentByBatch = (searchKey, result) => {
     db.query(
-        "SELECT `id`, `collegeId`, `batchId`, `membership_no`, `studName`, `admNo`, `rollNo`, `studDept`, `course`, `studEmail`, `studPhNo`, `studProfilePic`, `aadharNo`, `password`, `addedDate`, `updatedDate`, `validity`, `isPaid`, `isVerified`, `isActive`, `emailVerified`, `pwdUpdateStatus`, `updateStatus`, `deleteStatus` FROM `student` WHERE `batchId`= ? ",
+        "SELECT `id`, `collegeId`, `batchId`, `membership_no`, `studName`, `admNo`, `rollNo`, `studDept`, `course`, `studEmail`, `studPhNo`, `studProfilePic`, `aadharNo`, `password`, `addedDate`, `updatedDate`, `validity`, `isPaid`, `isVerified`, `isActive`, `emailVerified`, `pwdUpdateStatus`, `updateStatus`, `deleteStatus` FROM `student` WHERE `batchId`= ? AND `isVerified` = 1 AND `emailVerified` = 1 AND `deleteStatus` = 0 AND `isActive` = 1 AND `validity` > CURRENT_DATE",
         [searchKey],
         (err, res) => {
             if (err) {
@@ -272,54 +272,41 @@ Student.findByEmail = (Email, result) => {
                 console.log("Student Does Not Exist")
                 return result("Student Does Not Exist", null)
             } else {
-                db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND emailVerified = 1", [Email],
-                    (verifyEmailErr, verifyEmailRes) => {
-                        if (verifyEmailErr) {
-                            console.log("Error: ", verifyEmailErr)
-                            return result(verifyEmailErr, null)
-                        } else if (verifyEmailRes.length === 0) {
-                            console.log("Email Not Verified")
-                            return result("Email Not Verified", null)
+                db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND isVerified = 1", [Email],
+                    (err, res) => {
+                        if (err) {
+                            console.log("Error: ", err)
+                            return result(err, null)
+                        } else if (res.length === 0) {
+                            console.log("Account Under Verification Process.Please Contact Your Batch-In-Charge.")
+                            return result("Account Under Verification Process.Please Contact Your Batch-In-Charge.", null)
                         } else {
-                            db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND isVerified = 1", [Email],
-                                (err, res) => {
-                                    if (err) {
-                                        console.log("Error: ", err)
-                                        return result(err, null)
-                                    } else if (res.length === 0) {
-                                        console.log("Account Under Verification Progress/Not Verified")
-                                        return result("Account Under Verification Progress/Not Verified", null)
-                                    } else {
-                                        db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
-                                            (validityErr, validityRes) => {
-                                                if (validityErr) {
-                                                    console.log("Error: ", validityErr)
-                                                    return result(validityErr, null)
-                                                } else if (validityRes.length === 0) {
-                                                    console.log("Account expired. Please Renew Your Plan.")
-                                                    return result("Account expired. Please Renew Your Plan", null)
-                                                }
-
-                                                db.query("SELECT s.*, r.refundReqStatus, CASE WHEN cm.studentId IS NOT NULL THEN TRUE ELSE FALSE END AS communityManager FROM student s LEFT JOIN ( SELECT studId, CASE WHEN SUM(cancelStatus = 0) > 0 THEN 'Refund Request Active' ELSE 'No Refund Request' END AS refundReqStatus FROM refund GROUP BY studId ) r ON s.id = r.studId LEFT JOIN communitymanagers cm ON s.id = cm.studentId AND s.batchId = cm.batchId WHERE BINARY s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1", [Email],
-                                                    (err, res) => {
-                                                        if (err) {
-                                                            console.log("Error : ", err);
-                                                            return result(err, null);
-                                                        }
-
-                                                        if (res.length > 0) {
-                                                            // Log student login
-                                                            logStudent(res[0].id, "Student logged In");
-                                                            result(null, res[0]);
-                                                        }
-                                                    });
-
-                                            })
-
+                            db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND validity > CURRENT_DATE OR validity = CURRENT_DATE", [Email],
+                                (validityErr, validityRes) => {
+                                    if (validityErr) {
+                                        console.log("Error: ", validityErr)
+                                        return result(validityErr, null)
+                                    } else if (validityRes.length === 0) {
+                                        console.log("Account expired. Please Renew Your Plan.")
+                                        return result("Account expired. Please Renew Your Plan", null)
                                     }
 
+                                    db.query("SELECT s.*, r.refundReqStatus, CASE WHEN cm.studentId IS NOT NULL THEN TRUE ELSE FALSE END AS communityManager FROM student s LEFT JOIN ( SELECT studId, CASE WHEN SUM(cancelStatus = 0) > 0 THEN 'Refund Request Active' ELSE 'No Refund Request' END AS refundReqStatus FROM refund GROUP BY studId ) r ON s.id = r.studId LEFT JOIN communitymanagers cm ON s.id = cm.studentId AND s.batchId = cm.batchId WHERE BINARY s.studEmail = ? AND s.deleteStatus = 0 AND s.isActive = 1", [Email],
+                                        (err, res) => {
+                                            if (err) {
+                                                console.log("Error : ", err);
+                                                return result(err, null);
+                                            }
+
+                                            if (res.length > 0) {
+                                                result(null, res[0]);
+                                            }
+                                        });
+
                                 })
+
                         }
+
                     })
 
             }
@@ -329,7 +316,7 @@ Student.findByEmail = (Email, result) => {
 
 
 Tasks.studentTaskView = (studId, result) => {
-    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, sd.sessionName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, asf.AdStaffName AS 'evaluatorName', st.score, st.lateSubDate, st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id LEFT JOIN sessiondetails sd ON t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND sd.date <= CURDATE() ORDER BY t.addeddate DESC", [studId],
+    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, sd.sessionName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, asf.AdStaffName AS 'evaluatorName', st.score, st.lateSubDate, st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id LEFT JOIN sessiondetails sd ON t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND sd.date <= CURDATE() ORDER BY t.dueDate DESC", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -396,7 +383,7 @@ Student.StdChangePassword = (student, result) => {
                         result(updateErr, null);
                     } else {
                         // Assuming logStudent function takes student ID as the first parameter
-                        logStudent(id, "password changed");
+                        logStudent(id, "Password changed");
                         result(null, null);
                     }
                 });
@@ -444,7 +431,7 @@ Student.forgotPassword = (student, result) => {
                     result(updateErr, null);
                 } else {
                     // Ensure the `id` or equivalent unique identifier is correctly referenced
-                    logStudent(studentData.id, "password changed"); 
+                    logStudent(studentData.id, "Password changed");
                     result(null, null);
                 }
             });
@@ -837,20 +824,20 @@ Student.collegeViewAll = async (result) => {
 }
 
 
-Student.generateAllBatchWiseList = async (result) => {
+Student.generateAllBatchWiseList = async (collegeId, result) => {
     let query = `
-        SELECT b.batchName, s.studName, c.collegeName, s.admNo, s.studDept, s.course, 
-               s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity,s.membership_no 
-        FROM batches b 
-        JOIN student s ON b.id = s.batchId 
-        JOIN college c ON s.collegeId = c.id 
-        WHERE s.isActive = 1 AND b.isActive = 1 AND s.emailVerified = 1 
-              AND s.isVerified = 1 AND s.isPaid = 1 AND s.deleteStatus = 0 AND b.deleteStatus = 0 
-              AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= s.addedDate
-        ORDER BY c.collegeName, b.id, s.id;
+    SELECT b.batchName, s.studName, s.rollNo, c.collegeName, s.admNo, s.studDept, s.course, 
+    s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.validity,s.membership_no 
+FROM batches b 
+JOIN student s ON b.id = s.batchId 
+JOIN college c ON s.collegeId = c.id 
+WHERE s.isActive = 1 AND b.isActive = 1 AND s.emailVerified = 1 
+   AND s.isVerified = 1 AND s.isPaid = 1 AND s.deleteStatus = 0 AND b.deleteStatus = 0 
+   AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= s.addedDate AND c.id = ?
+ORDER BY c.collegeName, b.id, s.id;
     `;
 
-    db.query(query, (err, response) => {
+    db.query(query, [collegeId], (err, response) => {
         if (err) {
             console.log("Error executing the query:", err);
             result(err, null);

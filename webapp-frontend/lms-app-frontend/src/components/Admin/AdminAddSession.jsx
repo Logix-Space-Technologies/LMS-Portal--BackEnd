@@ -145,10 +145,16 @@ const AdminAddSession = () => {
     const readValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let addedBy;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault();
         const validationErrors = validateForm(inputField);
@@ -169,7 +175,8 @@ const AdminAddSession = () => {
                 "type": inputField.type,
                 "remarks": inputField.remarks,
                 "venueORlink": inputField.venueORlink,
-                "trainerId": inputField.trainerId
+                "trainerId": inputField.trainerId,
+                "addedby": addedBy
             }
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
                 if (response.data.status === 'success') {
@@ -231,9 +238,6 @@ const AdminAddSession = () => {
         if (!data.date.trim()) {
             errors.date = 'Date is required';
         }
-        if (!data.type.trim()) {
-            errors.type = 'Type is required';
-        }
         if (!data.venueORlink.trim()) {
             errors.venueORlink = 'Venue or Link is required';
         }
@@ -242,6 +246,36 @@ const AdminAddSession = () => {
         }
         if (!data.time.trim()) {
             errors.time = 'Time is required';
+        }
+        if (!data.type.trim()) {
+            errors.type = 'Type is required';
+        } else if (data.type === "Online") {
+            // If type is Online, ensure there's a link and it's either Google Meet or Zoom
+            if (!data.venueORlink.trim()) {
+                errors.venueORlink = 'Meeting Link is required';
+            } else {
+                const isGoogleMeetLink = data.venueORlink.includes('meet.google.com/');
+                const isZoomLink = data.venueORlink.includes('zoom.us/');
+                const isTeamsLink = data.venueORlink.includes('teams.microsoft.com/');
+
+                // Check if the link is not a Google Meet or Zoom link
+                if (!isGoogleMeetLink && !isZoomLink && !isTeamsLink) {
+                    errors.venueORlink = 'Please provide a valid google meet, zoom or teams link';
+                }
+            }
+        } else if (data.type === "Recorded") {
+            if (!data.venueORlink.trim()) {
+                errors.venueORlink = 'Recorded Video Link is required';
+            } else {
+                const isYouTubeLink = data.venueORlink.includes('youtube.com/');
+                const isVimeoLink = data.venueORlink.includes('vimeo.com/');
+
+                if (!isYouTubeLink && !isVimeoLink) {
+                    errors.venueORlink = 'Please provide a valid link';
+                }
+            }
+        } else if (data.type === "Offline" && !data.venueORlink.trim()) {
+            errors.venueORlink = 'Please provide a valid venue';
         }
 
         return errors;
@@ -336,7 +370,6 @@ const AdminAddSession = () => {
                                         />
                                         {errors.sessionName && (<span style={{ color: 'red' }} className="error">{errors.sessionName}</span>)}
                                     </div>
-
                                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                         <label htmlFor="date" className="form-label">
                                             Date <span className="text-danger">*</span>

@@ -20,6 +20,10 @@ const curriculumController = require("../controllers/curriculum.controller")
 const AttendenceController = require("../controllers/attendence.controller")
 const CommunityManagerController = require("../controllers/communityManager.controller")
 const FirebaseController = require("../controllers/firebaseToken.controller")
+const WhatsappController = require("../controllers/Whatsapp/callbackAPI")
+const WhatsappMsgFeedbackController = require("../controllers/Whatsapp/whatsappmsgfeedbackview")
+const WhatsappMsgCommonController = require("../controllers/Whatsapp/whatsappmsgcommonview")
+const WhatsappMsgReceivedFromStudController = require("../controllers/Whatsapp/viewwhtsappmsgreceivedstud")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -332,6 +336,14 @@ router.post('/sendFirebaseNotificationByStudId',FirebaseController.sendNotificat
 
 router.post('/sendSessionRemainderEmail',SessionsController.sendRemainderMail)
 
+router.post('/whatsapp-callback',WhatsappController.sendfn)
 
+router.get('/viewFirebaseTokens',FirebaseController.viewTokens)
+
+router.get('/viewwhatsappmsgfeedback',WhatsappMsgFeedbackController.sendfn)
+
+router.get('/viewwhatsappmsgcommon',WhatsappMsgCommonController.sendfn)
+
+router.get('/viewwhatsappmsgreceivedfromstud',WhatsappMsgReceivedFromStudController.sendfn)
 
 module.exports = router

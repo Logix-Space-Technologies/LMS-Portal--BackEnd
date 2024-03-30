@@ -135,6 +135,11 @@ const AdminSearchTasks = () => {
     const startPage = currentPage > 2 ? currentPage - 2 : 1;
     const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
 
+    // Convert a date string from 'DD/MM/YYYY' to a JavaScript Date object
+    const parseDateString = (dateString) => {
+        const [day, month, year] = dateString.split('/');
+        return new Date(year, month - 1, day);
+    };
 
     // Update key state when component mounts
     useEffect(() => {
@@ -190,6 +195,12 @@ const AdminSearchTasks = () => {
                             </thead>
                             <tbody>
                                 {currentTasks.map((task, index) => {
+                                    // Convert dueDate and subDate to Date objects for comparison
+                                    const dueDateObj = parseDateString(task.dueDate);
+                                    const DateObj = new Date()
+
+                                    // Determine if the task was submitted late
+                                    const isLateSubmission = DateObj > dueDateObj;
                                     return <tr key={task.id}>
                                         <td>{calculateSerialNumber(index)}</td>
                                         <td>{task.batchName}</td>
@@ -197,7 +208,12 @@ const AdminSearchTasks = () => {
                                         <td>{task.taskTitle}</td>
                                         <td>{task.taskDesc}</td>
                                         <td>{task.taskType}</td>
-                                        <td>{task.dueDate}</td>
+                                        <td>
+                                            {task.dueDate}
+                                            {isLateSubmission && (
+                                                <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '10px' }} />
+                                            )}
+                                        </td>
                                         <td>{task.totalScore}</td>
                                         <td>
                                             <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white btn-sm me-2">View File</Link>

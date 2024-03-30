@@ -39,8 +39,8 @@ exports.createSession = (request, response) => {
             if (!Validator.isValidDate(request.body.date).isValid) {
                 validationErrors.date = Validator.isValidDate(request.body.date).message;
             }
-            if (!Validator.isDateGreaterThanToday(request.body.date).isValid) {
-                validationErrors.date = Validator.isDateGreaterThanToday(request.body.date).message;
+            if (!Validator.isDateGreaterThanOrEqualToToday(request.body.date).isValid) {
+                validationErrors.date = Validator.isDateGreaterThanOrEqualToToday(request.body.date).message;
             }
 
             if (Validator.isEmpty(request.body.time).isValid) {
@@ -49,6 +49,10 @@ exports.createSession = (request, response) => {
 
             if (!Validator.isValidTime(request.body.time).isValid) {
                 validationErrors.time = Validator.isValidTime(request.body.time).message;
+            }
+
+            if (!Validator.isTimeGreaterThanOrEqualToCurrentIfToday(request.body.date, request.body.time).isValid) {
+                validationErrors.time = Validator.isTimeGreaterThanOrEqualToCurrentIfToday(request.body.date, request.body.time).message;
             }
 
             if (Validator.isEmpty(request.body.type).isValid) {
@@ -114,7 +118,8 @@ exports.createSession = (request, response) => {
                                         return response.json({ "status": err });
                                     }
                                 });
-                                WhatsAppupcomingSession.sendfn(sessionDate, sessionTime, newSession.venueORlink, newSession.type, studentPhno)
+                                let formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
+                                WhatsAppupcomingSession.sendfn(sessionDate, sessionTime, newSession.venueORlink, newSession.type, formattedPhoneNumber, studentid)
                                 if (newSession.type === "Offline") {
                                     const upcomingSessionHtmlContent = mailContents.upcomingSessionOfflineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     const upcomingSessionTextContent = mailContents.upcomingSessionOfflineTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
@@ -128,8 +133,11 @@ exports.createSession = (request, response) => {
                                     const upcomingSessionTextContent = mailContents.upcomingSessionRecordedTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     mail.sendEmail(studentEmail, `Announcement Regarding Upcoming Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 }
-                                if (key == "lmsapp") {
+                                if (key === "lmsapp") {
                                     logAdminStaff(0, "Admin Created new Session")
+                                }
+                                if (key !== "lmsapp") {
+                                    logAdminStaff(request.body.addedby, "Admin Staff Created new Session")
                                 }
                                 Attendence.create(newAttendence, (err, res) => {
                                     if (err) {
@@ -188,14 +196,17 @@ exports.sessionUpdate = (request, response) => {
             if (!Validator.isValidDate(request.body.date).isValid) {
                 validationErrors.date = Validator.isValidDate(request.body.date).message;
             }
-            if (!Validator.isDateGreaterThanToday(request.body.date).isValid) {
-                validationErrors.date = Validator.isDateGreaterThanToday(request.body.date).message;
+            if (!Validator.isDateGreaterThanOrEqualToToday(request.body.date).isValid) {
+                validationErrors.date = Validator.isDateGreaterThanOrEqualToToday(request.body.date).message;
             }
             if (Validator.isEmpty(request.body.time).isValid) {
                 validationErrors.time = Validator.isEmpty(request.body.time).message;
             }
             if (!Validator.isValidTime(request.body.time).isValid) {
                 validationErrors.time = Validator.isValidTime(request.body.time).message;
+            }
+            if (!Validator.isTimeGreaterThanOrEqualToCurrentIfToday(request.body.date, request.body.time).isValid) {
+                validationErrors.time = Validator.isTimeGreaterThanOrEqualToCurrentIfToday(request.body.date, request.body.time).message;
             }
             if (Validator.isEmpty(request.body.type).isValid) {
                 validationErrors.type = Validator.isEmpty(request.body.type).message;
@@ -284,8 +295,11 @@ exports.sessionUpdate = (request, response) => {
                                 }
                             })
 
-                            if (key == "lmsapp") {
+                            if (key === "lmsapp") {
                                 logAdminStaff(0, "Admin Updated Session Details");
+                            }
+                            if (key !== "lmsapp") {
+                                logAdminStaff(request.body.updatedby, "Admin Staff Updated Session Details")
                             }
                             return response.json({ "status": "success", "data": data });
                         });
@@ -409,6 +423,7 @@ exports.cancelSession = (request, response) => {
     const sessionCancelToken = request.headers.token;
     const key = request.headers.key;
     const sessionId = request.body.id;
+    const cancelledby = request.body.cancelledby;
 
     jwt.verify(sessionCancelToken, key, (err, decoded) => {
         if (err || !decoded) {
@@ -423,6 +438,9 @@ exports.cancelSession = (request, response) => {
             } else {
                 if (key === "lmsapp") {
                     logAdminStaff(0, "Admin Cancelled Session")
+                }
+                if (key !== "lmsapp") {
+                    logAdminStaff(cancelledby, "Admin Staff Cancelled Session")
                 }
                 console.log(data)
                 db.query("SELECT * FROM sessiondetails WHERE id = ?", [data], (err, sessionres) => {
@@ -452,7 +470,8 @@ exports.cancelSession = (request, response) => {
                             const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime);
                             const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime);
                             mail.sendEmail(studentEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, cancelSessionHtmlContent, cancelSessionTextContent);
-                            whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, studentPhno)
+                            let formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
+                            whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, formattedPhoneNumber, studentid)
                         });
                         CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
                             if (err) {

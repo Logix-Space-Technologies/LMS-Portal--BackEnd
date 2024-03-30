@@ -13,6 +13,7 @@ const { Upload } = require('@aws-sdk/lib-storage');
 require('dotenv').config({ path: '../../.env' });
 const path = require("path");
 const whatsApp = require("./Whatsapp/sendWhatsappMessage")
+const { StudentLog, logStudent } = require("../models/studentLog.model");
 // const { Session } = require("inspector");
 
 // AWS S3 Client Configuration
@@ -132,6 +133,9 @@ exports.createStudent = (req, res) => {
                 if (err) {
                     return res.json({ "status": err });
                 }
+
+                let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(studPhNo) ? studPhNo.replace(/^(\+91\s?|91\s?)/, '') : studPhNo;
+
                 const newStudent = new Student({
                     collegeId: collegeId,
                     batchId: batchId,
@@ -141,7 +145,7 @@ exports.createStudent = (req, res) => {
                     studDept: studDept,
                     course: course,
                     studEmail: studEmail,
-                    studPhNo: studPhNo,
+                    studPhNo: formattedPhoneNumber,
                     studProfilePic: imageUrl,
                     aadharNo: aadharNo,
                     password: hashedPassword
@@ -167,7 +171,8 @@ exports.createStudent = (req, res) => {
                                 const otpVerificationTextContent = mailContents.StudentRegistrationSuccessfulMailTextContent(membershipNo);
                                 mail.sendEmail(email, 'Welcome To LinkUrCodes!', otpVerificationHTMLContent, otpVerificationTextContent)
                                 // Send Whatsapp Message
-                                whatsApp.sendfn(data.studPhNo, data.studName);
+                                let formattedPhoneNumber = studPhNo.startsWith('91') ? studPhNo : `91${studPhNo}`;
+                                whatsApp.sendfn(formattedPhoneNumber, data.studName, paymentData.studId);
                                 return res.json({ "status": "success", "data": data, "paymentData": paymentData });
                             }
                         });
@@ -227,6 +232,8 @@ exports.studLog = (request, response) => {
                         } else {
                             console.log('Unknown type');
                         }
+                        // Log student login
+                        logStudent(stud.id, "Student logged In");
                         return response.json({ "status": "Success", "data": stud, "token": token })
                     }
                 })
@@ -424,6 +431,8 @@ exports.profileUpdateStudent = (request, response) => {
 
                         const studProfilePic = imageUrl;
 
+                        let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(studPhNo) ? studPhNo.replace(/^(\+91\s?|91\s?)/, '') : studPhNo;
+
                         const newStudent = {
                             'id': request.body.id,
                             studName,
@@ -431,11 +440,11 @@ exports.profileUpdateStudent = (request, response) => {
                             rollNo,
                             studDept,
                             course,
-                            studPhNo,
+                            formattedPhoneNumber,
                             studProfilePic,
                             aadharNo
                         };
-                        console.log(newStudent)
+                        
                         Student.updateStudentProfile(newStudent, (err, data) => {
                             if (err) {
                                 if (err.kind === "not_found") {
@@ -729,10 +738,11 @@ exports.studregCollegeAllView = (request, response) => {
 exports.generateListOfBatchWiseStudents = (request, response) => {
     const token = request.headers.token;
     const key = request.headers.key;
+    const collegeId = request.body.collegeId;
 
     jwt.verify(token, key, (err, decoded) => {
         if (decoded) {
-            Student.generateAllBatchWiseList((err, data) => {
+            Student.generateAllBatchWiseList(collegeId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
@@ -755,7 +765,7 @@ exports.generateListOfBatchWiseStudents = (request, response) => {
 // Generate Batch-Wise Student List BY College Staff
 function generatePDF(data, callback) {
     const pdfPath = 'pdfFolder/batch_wise_students_list.pdf';
-    const doc = new PDFDocument();
+    let doc = new PDFDocument({ margin: 50, size: 'A4' });
     const stream = fs.createWriteStream(pdfPath);
 
     doc.pipe(stream);
@@ -763,17 +773,29 @@ function generatePDF(data, callback) {
     const logoImage = doc.openImage(imageLogo);
     const imageScale = 0.3;
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
+
+    doc.moveDown(2.0);
     // Add main heading
     doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise List Of Students', {
         align: 'center',
         underline: true,
         margin: { top: 30, bottom: 30 },
     });
-    doc.text('\n');
+    doc.moveDown(1)
 
 
     // Group data by batch
     const groupedData = groupDataByBatch(data);
+
+    const columnWidths = [
+        90,   // Membership No.
+        120,  // Roll No
+        140,  // Name
+        100,  // Department
+        70,   // Course
+        250   // Email (Increased width)
+    ];
+
 
     // Add content to the PDF using grouped data
     for (const batchName in groupedData) {
@@ -781,29 +803,29 @@ function generatePDF(data, callback) {
             // Batch heading
             doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name: ${batchName}`, {
                 align: 'center',
-                underline: false,
-            }).font('Helvetica').fontSize(9);
-            doc.text('\n');
+                underline: true
+            }).font('Helvetica').fontSize(6);
+            doc.moveDown(1.5)
 
             const students = groupedData[batchName];
 
             // Create table headers
             const tableHeaders = [
                 { label: 'Membership No', padding: 5 },
-                { label: 'Name', padding: 0 },
-                { label: 'College', padding: 0 },
-                { label: 'Department', padding: 0 },
+                { label: 'Roll No', padding: 5 },
+                { label: 'Name', padding: 5 },
+                { label: 'Department', padding: 5 },
                 { label: 'Course', padding: 5 },
-                { label: 'Email', padding: 0 },
+                { label: 'Email', padding: 5 },
             ];
-            const tableData = students.map(student => [student.membership_no, student.studName, student.collegeName, student.studDept, student.course, student.studEmail]);
+            const tableData = students.map(student => [student.membership_no, student.rollNo, student.studName, student.studDept, student.course, student.studEmail]);
 
-            const tableWidth = 1000;
+
             // Draw the table
             doc.table({
                 headers: tableHeaders,
                 rows: tableData,
-                widths: new Array(tableHeaders.length).fill(tableWidth),
+                widths: columnWidths,
                 align: ['left', 'left', 'left', 'left', 'left', 'left'],
             });
 
@@ -876,7 +898,7 @@ exports.generateBatchWiseAttendanceList = (request, response) => {
 
 function generateAttendancePDF(data, callback) {
     const pdfPath = 'pdfFolder/batch_wise_attendance_list.pdf';
-    const doc = new PDFDocument();
+    let doc = new PDFDocument({ margin: 50, size: 'A4' });
     const stream = fs.createWriteStream(pdfPath);
 
     doc.pipe(stream);
@@ -884,7 +906,8 @@ function generateAttendancePDF(data, callback) {
     const logoImage = doc.openImage(imageLogo);
     const imageScale = 0.3;
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
-    // Add main heading
+
+    doc.moveDown(2);
     doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise Attendance List Of Students', {
         align: 'center',
         underline: true,
@@ -892,63 +915,106 @@ function generateAttendancePDF(data, callback) {
     });
     doc.text('\n');
 
-    // Include batchName after the main heading
-    const batchName = data.length > 0 ? data[0].batchName : ''; // Assuming batchName is available in the data
-    doc.font('Helvetica-Bold').fontSize(13).text(`Batch Name:   ${batchName}`, {
+    const batchName = data.length > 0 ? data[0].batchName : '';
+    doc.font('Helvetica-Bold').fontSize(11).text(`Batch Name: ${batchName}`, {
         align: 'center',
         underline: true,
         margin: { bottom: 10 },
     });
+    doc.moveDown(2);
 
-    doc.text('\n');
+    const pageSize = 680; // Adjust based on your requirement
 
+    let currentY = 0;
+    let currentPage = 0;
+    let remainingData = [...data];
 
-    // Group data by session
-    const groupedData = groupAttendanceBySession(data);
-
-    // Add content to the PDF using grouped data
-    for (const sessionName in groupedData) {
-        if (groupedData.hasOwnProperty(sessionName)) {
-            // Batch heading
-            doc.font('Helvetica-Bold').fontSize(12).text(`Session Name: ${sessionName}`, {
-                align: 'center',
-                underline: false,
-            }).font('Helvetica').fontSize(9);
-            doc.text('\n');
-
-            const students = groupedData[sessionName];
-
-            // Create table headers
-            const tableHeaders = [
-                { label: 'Date', padding: 4 },
-                { label: 'Membership No.', padding: -10 },
-                { label: 'Admission No', padding: -5 },
-                { label: 'Student Name', padding: 0 },
-                { label: 'Department', padding: 10 },
-                { label: 'Course', padding: 15 },
-                { label: 'Attendance Status', padding: -6 }
-            ];
-            const tableData = students.map(student => [student.attendanceDate, student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
-
-            const tableWidth = 100;
-            // Draw the table
-            doc.table({
-                headers: tableHeaders,
-                rows: tableData,
-                widths: new Array(tableHeaders.length).fill(tableWidth),
-                align: ['left', 'left', 'left', 'left', 'left', 'left', 'left', 'left', 'left', 'left'],
-            });
-
-            doc.moveDown(); // Add a newline between sessions
+    while (remainingData.length > 0) {
+        currentPage++;
+        if (currentPage > 1) {
+            doc.addPage();
         }
+
+        // doc.font('Helvetica-Bold').fontSize(8).text(`Page ${currentPage}`, {
+        //     align: 'right',
+        //     underline: false,
+        //     margin: { bottom: 10 },
+        // });
+
+        const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
+        const pageData = remainingData.splice(0, getMaxRows(availableHeight));
+        const groupedData = groupAttendanceBySession(pageData);
+
+        for (const sessionName in groupedData) {
+            if (groupedData.hasOwnProperty(sessionName)) {
+                const sessionInfo = groupedData[sessionName];
+                const attendanceDate = sessionInfo[0].attendanceDate;
+
+                doc.font('Helvetica-Bold').fontSize(10).text('Session Name', {
+                    continued: true,  // Ensures the next text continues on the same line
+                    underline: true,
+                });
+                doc.font('Helvetica').fontSize(10).text(`: ${sessionName} - ${attendanceDate}`, {
+                    underline: false,
+                });
+                doc.text('\n');
+
+                const students = sessionInfo;
+                const columnWidths = [
+                    90,  // Membership No.
+                    50,  // Admission No
+                    110, // Student Name
+                    70,  // Department
+                    60,  // Course
+                    80   // Attendance Status
+                ];
+                const tableHeaders = [
+                    { label: 'Membership No.', padding: 3 },
+                    { label: 'Admission No', padding: 5 },
+                    { label: 'Student Name', padding: 5 },
+                    { label: 'Department', padding: 5 },
+                    { label: 'Course', padding: 5 },
+                    { label: 'Attendance Status', padding: 5 }
+                ];
+                const tableData = students.map(student => [student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
+
+                doc.table({
+                    headers: tableHeaders,
+                    rows: tableData,
+                    widths: columnWidths,
+                    align: ['left', 'left', 'left', 'left', 'left', 'left'],
+                    // Custom styles for all columns
+                    headerStyles: {
+                        0: { fontSize: 8 }, // Membership No.
+                        1: { fontSize: 8 }, // Admission No
+                        2: { fontSize: 8 }, // Student Name
+                        3: { fontSize: 8 }, // Department
+                        4: { fontSize: 8 }, // Course
+                        5: { fontSize: 8 }  // Attendance Status
+                    },
+                    bodyStyles: {
+                        0: { fontSize: 8 }, // Membership No.
+                        1: { fontSize: 8 }, // Admission No
+                        2: { fontSize: 8 }, // Student Name
+                        3: { fontSize: 8 }, // Department
+                        4: { fontSize: 8 }, // Course
+                        5: { fontSize: 8 }  // Attendance Status
+                    }
+                });
+
+                doc.moveDown(2);
+            }
+        }
+
+        currentY = doc.y;
     }
+
     const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
+    doc.font('Helvetica').fontSize(8).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
         align: 'center',
     });
 
     doc.end();
-
 
     stream.on('finish', () => {
         callback(pdfPath);
@@ -956,10 +1022,12 @@ function generateAttendancePDF(data, callback) {
 }
 
 
-function groupAttendanceBySession(data) {
-    // Group data by session name using a JavaScript object
-    const groupedData = {};
 
+
+
+
+function groupAttendanceBySession(data) {
+    const groupedData = {};
     data.forEach(student => {
         const sessionName = student.sessionName;
         if (!groupedData[sessionName]) {
@@ -967,9 +1035,14 @@ function groupAttendanceBySession(data) {
         }
         groupedData[sessionName].push(student);
     });
-
     return groupedData;
 }
+
+function getMaxRows(availableHeight) {
+    const rowHeight = 20; // Adjust based on your layout
+    return Math.floor(availableHeight / rowHeight);
+}
+
 
 
 
@@ -1010,7 +1083,7 @@ exports.generateSessionWiseAttendanceList = (request, response) => {
 
 function generateSessionAttendancePDF(data, callback) {
     const pdfPath = 'pdfFolder/session_wise_attendance_list.pdf';
-    const doc = new PDFDocument();
+    let doc = new PDFDocument({ margin: 50, size: 'A4' });
     const stream = fs.createWriteStream(pdfPath);
 
     doc.pipe(stream);
@@ -1018,6 +1091,8 @@ function generateSessionAttendancePDF(data, callback) {
     const logoImage = doc.openImage(imageLogo);
     const imageScale = 0.3;
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
+
+    doc.moveDown(2);
     // Add main heading
     doc.font('Helvetica-Bold').fontSize(14).text('Session-Wise Attendance List Of Students', {
         align: 'center',
@@ -1048,6 +1123,16 @@ function generateSessionAttendancePDF(data, callback) {
     // Group data by session
     const groupedData = groupAttendanceBySessionStudent(data);
 
+    const columnWidths = [
+        20, // Date 
+        100, // Membership No. 
+        70, // Admission No 
+        120, // Student Name 
+        70, // Department 
+        60, // Course 
+        80 // Attendance Status 
+    ];
+
     // Add content to the PDF using grouped data
     for (const sessionName in groupedData) {
         if (groupedData.hasOwnProperty(sessionName)) {
@@ -1071,7 +1156,7 @@ function generateSessionAttendancePDF(data, callback) {
             doc.table({
                 headers: tableHeaders,
                 rows: tableData,
-                widths: new Array(tableHeaders.length).fill(tableWidth),
+                widths: columnWidths,
                 align: ['left', 'left', 'left', 'left', 'left', 'left', 'left'],
             });
 
@@ -1080,7 +1165,7 @@ function generateSessionAttendancePDF(data, callback) {
     }
     // Add the generated date and time
     const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString() + ' ' + generatedDate.toLocaleTimeString(), {
+    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
         align: 'center',
     });
 

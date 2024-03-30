@@ -1,21 +1,21 @@
-import axios from 'axios'
-import '../../config/config'
-import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
+import axios from 'axios';
+import '../../config/config';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminStaffSearchMaterial = () => {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [inputField, setInputField] = useState({
-    "materialQuery": ""
-  })
+    materialQuery: "",
+  });
 
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [updateField, setUpdateField] = useState([])
+  const [updateField, setUpdateField] = useState([]);
   const [materialPerPage] = useState(10);
+  const [searchPerformed, setSearchPerformed] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const apiLink = global.config.urls.api.server + "/api/lms/searchMaterial";
   const apiLink2 = global.config.urls.api.server + "/api/lms/adminStaffDeleteMaterial";
@@ -26,34 +26,50 @@ const AdminStaffSearchMaterial = () => {
 
   const readValue = () => {
     setIsLoading(true);
+    setSearchPerformed(true);
     let axiosConfig = {
       headers: {
         "content-type": "application/json;charset=UTF-8",
         "Access-Control-Allow-Origin": "*",
         "token": sessionStorage.getItem("admstaffLogintoken"),
-        "key": sessionStorage.getItem("admstaffkey")
-      }
+        "key": sessionStorage.getItem("admstaffkey"),
+      },
     };
 
     axios.post(apiLink, inputField, axiosConfig).then((response) => {
-      setUpdateField(response.data.data);
-      setIsLoading(false);
-      setInputField({
-        "materialQuery": ""
-      });
+      if (response.data.data) {
+        setUpdateField(response.data.data);
+        setIsLoading(false);
+        setInputField({
+          materialQuery: "",
+        });
+      } else if (response.data.status === "Unauthorized User!!") {
+        sessionStorage.clear();
+        navigate("/admstafflogin");
+      } else if (!response.data.data) {
+        setUpdateField([]);
+        setIsLoading(false);
+        setInputField({
+          materialQuery: "",
+        });
+      } else {
+        alert(response.data.status);
+      }
     });
   };
 
   // Logic for displaying current materials
   const indexOfLastMaterial = currentPage * materialPerPage;
   const indexOfFirstMaterial = indexOfLastMaterial - materialPerPage;
-  const currentMaterial = updateField ? updateField.slice(indexOfFirstMaterial, indexOfLastMaterial) : [];
+  const currentMaterial = updateField
+    ? updateField.slice(indexOfFirstMaterial, indexOfLastMaterial)
+    : [];
 
   // Change page
-  const paginate = pageNumber => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // Total pages
-  let totalPages = []
+  let totalPages = [];
   if (updateField && updateField.length > 0) {
     totalPages = Math.ceil(updateField.length / materialPerPage);
   }
@@ -63,14 +79,14 @@ const AdminStaffSearchMaterial = () => {
   };
 
   const handleDeleteClick = () => {
-    let data = { "id": deleteId };
+    let data = { id: deleteId, addedby: sessionStorage.getItem("admstaffId") };
     let axiosConfig2 = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
         "Access-Control-Allow-Origin": "*",
         "token": sessionStorage.getItem("admstaffLogintoken"),
-        "key": sessionStorage.getItem("admstaffkey")
-      }
+        "key": sessionStorage.getItem("admstaffkey"),
+      },
     };
 
     axios.post(apiLink2, data, axiosConfig2).then((response) => {
@@ -78,6 +94,9 @@ const AdminStaffSearchMaterial = () => {
         alert("Material deleted!!");
         // Remove the deleted material from updateField state
         setUpdateField(updateField.filter(material => material.id !== deleteId));
+      } else if (response.data.status === "Unauthorized User!!") {
+        navigate("/admstafflogin");
+        sessionStorage.clear();
       } else {
         alert(response.data.status);
       }
@@ -85,13 +104,13 @@ const AdminStaffSearchMaterial = () => {
   };
 
   const UpdateClick = (id) => {
-    sessionStorage.setItem("materialId", id)
-    navigate("/AdminStaffUpdateMaterial")
-  }
+    sessionStorage.setItem("materialId", id);
+    navigate("/AdminStaffUpdateMaterial");
+  };
 
   const calculateSerialNumber = (index) => {
     return ((currentPage - 1) * materialPerPage) + index + 1;
-  }
+  };
 
   // Integration of new pagination logic
   const startPage = currentPage > 2 ? currentPage - 2 : 1;
@@ -118,9 +137,11 @@ const AdminStaffSearchMaterial = () => {
       <br /><br />
       {isLoading ? (
         <div className="col-12 text-center">
-          <p></p>
+          <p>Loading...</p>
         </div>
-      ) : (updateField ? (
+      ) : searchPerformed && updateField.length === 0 ? (
+        <div className="col-12 text-center">No Material Found!!</div>
+      ) : (updateField.length > 0 ? (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -129,20 +150,31 @@ const AdminStaffSearchMaterial = () => {
                   S/N
                 </th>
                 <th scope="col" className="px-6 py-3">
+                  College Name
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Batch Name
+                </th>
+                <th scope="col" className="px-6 py-3">
                   File Name
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Type
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Description
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Upload File
+                  Material
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Remarks
                 </th>
-
                 <th scope="col" className="px-6 py-3">
-                  Batch Name
+                  Added Date
+                </th>
+                <th scope="col" className="px-6 py-3">
+
                 </th>
                 <th scope="col" className="px-6 py-3">
 
@@ -150,76 +182,83 @@ const AdminStaffSearchMaterial = () => {
               </tr>
             </thead>
             <tbody>
-              {currentMaterial.map(
-                (value, index) => {
-                  return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <td className="px-6 py-4">
-                      {calculateSerialNumber(index)}
-                    </td>
-                    <td className="px-6 py-4">
-                      {value.fileName}
-                    </td>
-                    <td className="px-6 py-4">
-                      {value.materialDesc}
-                    </td>
-                    <td className="px-6 py-4">
-                      {value.uploadFile}
-                    </td>
-                    <td className="px-6 py-4">
-                      {value.remarks}
-                    </td>
-                    <td className="px-6 py-4">
-                      {value.batchName}
-                    </td>
-                    <td className="p-4 whitespace-nowrap">
-                      <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal3" onClick={() => handleClick(value.id)}>
-                        Delete
-                      </button>
-                    </td>
+              {currentMaterial.map((value, index) => (
+                <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  <td className="px-6 py-4">
+                    {calculateSerialNumber(index)}
+                  </td>
+                  <td className="px-6 py-4">
+                    {value.collegeName}
+                  </td>
+                  <td className="px-6 py-4">
+                    {value.batchName}
+                  </td>
+                  <td className="px-6 py-4">
+                    {value.fileName}
+                  </td>
+                  <td className="px-6 py-4">
+                    {value.materialType}
+                  </td>
+                  <td className="px-6 py-4">
+                    {value.materialDesc}
+                  </td>
+                  <td className="px-6 py-4">
+                    <Link target="_blank" to={value.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
+                  </td>
+                  <td className="px-6 py-4">
+                    {value.remarks}
+                  </td>
+                  <td className="px-6 py-4">
+                    {value.addedDate}
+                  </td>
+                  <td className="p-4 whitespace-nowrap">
+                    <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal3" onClick={() => handleClick(value.id)}>
+                      Delete
+                    </button>
+                  </td>
 
-                    <td className="px-6 py-4">
-                      <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500">Update Material</button>
-                    </td>
-                  </tr>
-                }
-              )}
+                  <td className="px-6 py-4">
+                    <button onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
-          <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
-            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Showing <span className="font-medium">{indexOfFirstMaterial + 1}</span> to <span className="font-medium">{indexOfLastMaterial > updateField.length ? updateField.length : indexOfLastMaterial}</span> of <span className="font-medium">{updateField.length}</span> results
-                </p>
-              </div>
-              <div>
-                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                  <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
-                    <span className="sr-only">Previous</span>
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                  {/* Dynamically generated page number buttons */}
-                  {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-                    <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
-                      {startPage + index}
+          {currentMaterial.length > 0 && (
+            <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+              <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm text-gray-700">
+                    Showing <span className="font-medium">{indexOfFirstMaterial + 1}</span> to <span className="font-medium">{indexOfLastMaterial > updateField.length ? updateField.length : indexOfLastMaterial}</span> of <span className="font-medium">{updateField.length}</span> results
+                  </p>
+                </div>
+                <div>
+                  <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                    <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
+                      <span className="sr-only">Previous</span>
+                      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                      </svg>
                     </button>
-                  ))}
-                  <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
-                    <span className="sr-only">Next</span>
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                </nav>
+                    {/* Dynamically generated page number buttons */}
+                    {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                      <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
+                        {startPage + index}
+                      </button>
+                    ))}
+                    <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
+                      <span className="sr-only">Next</span>
+                      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </nav>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
-      ) : (
-        <div className="col-12 text-center">No Material Found!!</div>
-      ))}
+      ) : null)}
 
       {/* Delete Confirmation Modal */}
       <div className="modal fade" id="deleteConfirmationModal3" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
@@ -240,7 +279,7 @@ const AdminStaffSearchMaterial = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AdminStaffSearchMaterial
+export default AdminStaffSearchMaterial;

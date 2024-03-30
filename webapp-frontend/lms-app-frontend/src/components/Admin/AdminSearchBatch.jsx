@@ -178,7 +178,10 @@ const AdminSearchBatch = () => {
                                         <td>{batch.batchDesc}</td>
                                         <td>{batch.regStartDate}</td>
                                         <td>{batch.regEndDate}</td>
-                                        <td>{batch.batchAmount}</td>
+                                        <td style={{ display: 'flex', alignItems: 'center' }}>
+                                            <img src="https://www.svgrepo.com/show/389251/indian-rupee.svg" alt="rupee" style={{ marginLeft: '24px', height: '14px', verticalAlign: 'middle' }} />
+                                            <td className="px-6 py-4">{batch.batchAmount}</td>
+                                        </td>
                                         <td>
                                             <button onClick={() => handleUpdateClick(batch.id)} className="btn btn-primary btn-sm me-2">Update</button>
                                             {key === "lmsapp" && (

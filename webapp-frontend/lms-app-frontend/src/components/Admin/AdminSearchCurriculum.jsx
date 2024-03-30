@@ -69,6 +69,7 @@ const AdminSearchCurriculum = () => {
                         "CurriculumSearchQuery": ""
                     });
                 } else {
+                    setIsLoading(false);
                     alert(response.data.status)
                 }
             }
@@ -155,9 +156,9 @@ const AdminSearchCurriculum = () => {
                 </div>
             </div>
             <br /><br />
-            {isLoading ? (
+            {isLoading && searchExecuted ? (
                 <div className="col-12 text-center">
-                    <p></p>
+                    <p>Loading...</p>
                 </div>
             ) : (searchExecuted && updateField.length > 0 ? (
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -241,7 +242,7 @@ const AdminSearchCurriculum = () => {
                     </div>
                 </div>
             ) : null))}
-            {currentCurriculum.length > 0 && (
+            {searchExecuted && currentCurriculum.length > 0 && (
                 <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
                     <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                         <div>

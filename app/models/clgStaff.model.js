@@ -268,7 +268,7 @@ CollegeStaff.viewBatch = (collegeId, result) => {
 
 
 CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
-    const collegeStaffPassword = "SELECT password FROM college_staff WHERE email=? AND deleteStatus = 0 AND isActive = 1 ";
+    const collegeStaffPassword = "SELECT id, password FROM college_staff WHERE email=? AND deleteStatus = 0 AND isActive = 1 ";
     db.query(collegeStaffPassword, [college_staff.email], (err, res) => {
         if (err) {
             console.log("Error:", err);
@@ -277,6 +277,7 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
         }
         if (res.length) {
             const hashedOldPassword = res[0].password;
+            let clgstaffid = res[0].id;
             if (bcrypt.compareSync(college_staff.oldPassword, hashedOldPassword)) {
                 const updateCollegeStaffPasswordQuery = "UPDATE college_Staff SET password = ?, pwdUpdateStatus = 1 WHERE email = ? AND deleteStatus = 0 AND isActive = 1 ";
                 const hashedNewPassword = bcrypt.hashSync(college_staff.newPassword, 10);
@@ -285,6 +286,7 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
                         console.log("Error : ", updateErr);
                         result(updateErr, null);
                     } else {
+                        logCollegeStaff(clgstaffid, "password changed");
                         result(null, null);
                     }
                 });
@@ -355,7 +357,7 @@ CollegeStaff.viewStudent = (batchId, result) => {
 };
 
 CollegeStaff.viewTask = (sessionId, result) => {
-    db.query("SELECT DISTINCT s.sessionName, t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, CASE WHEN t.dueDate < CURRENT_DATE() THEN 'Past Due Date' ELSE t.dueDate END AS dueDate, t.addedDate FROM task t LEFT JOIN sessiondetails s ON s.id = t.sessionId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.id = ?", [sessionId], (err, res) => {
+    db.query("SELECT DISTINCT s.sessionName, t.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, CASE WHEN t.dueDate < CURRENT_DATE() THEN 'Past Due Date' ELSE t.dueDate END AS dueDate, t.addedDate FROM task t LEFT JOIN sessiondetails s ON s.id = t.sessionId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.id = ? ORDER BY t.dueDate DESC", [sessionId], (err, res) => {
         if (err) {
             console.log("error: ", err)
             result(err, null)
@@ -503,7 +505,7 @@ CollegeStaff.viewOneClgStaff = (id, result) => {
 }
 
 CollegeStaff.viewSession = (batchId, result) => {
-    db.query("SELECT DISTINCT b. id AS batchId, s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, CASE WHEN s.cancelStatus = 0 THEN 'ACTIVE' WHEN s.cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN batches b ON b.id = s.batchId LEFT JOIN college_staff cs ON cs.collegeId = b.collegeId   WHERE s.deleteStatus = 0 AND s.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;", batchId,
+    db.query("SELECT DISTINCT b. id AS batchId, s.id,s.sessionName, s.date, s.time, s.type, s.remarks, t.trainerName, s.venueORlink, CASE WHEN s.cancelStatus = 0 THEN 'ACTIVE' WHEN s.cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN batches b ON b.id = s.batchId LEFT JOIN college_staff cs ON cs.collegeId = b.collegeId JOIN trainersinfo t ON s.trainerId = t.id  WHERE s.deleteStatus = 0 AND s.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;", batchId,
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -682,7 +684,7 @@ CollegeStaff.emailVerificationClgStaffOtpVerify = (email, otp, result) => {
 
 CollegeStaff.searchClgStaffByCollege = (searchKey, result) => {
     db.query(
-        "SELECT c.collegeStaffName, c.email, b.batchName FROM college_staff c JOIN batches b ON b.collegeId = c.collegeId WHERE b.id = ?",
+        "SELECT c.collegeStaffName, c.email, b.batchName FROM college_staff c JOIN batches b ON b.collegeId = c.collegeId WHERE b.id = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1",
         [searchKey],
         (err, res) => {
             if (err) {

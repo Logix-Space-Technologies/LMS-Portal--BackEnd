@@ -15,6 +15,7 @@ const CollegeStaffSearchTask = () => {
 
     const [updateField, setUpdateField] = useState([])
 
+    const [searchPerformed, setSearchPerformed] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of students per page
 
@@ -47,6 +48,7 @@ const CollegeStaffSearchTask = () => {
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
+                    setSearchPerformed(true)
                     setUpdateField(response.data.data)
                     setIsLoading(false)
                     setInputField({
@@ -59,9 +61,11 @@ const CollegeStaffSearchTask = () => {
                         navigate("/clgStafflogin")
                     } else {
                         if (!response.data.data) {
+                            setSearchPerformed(true)
                             setUpdateField([]); // Ensure the updateField is set to an empty array
                             setIsLoading(false);
                         } else {
+                            setSearchPerformed(true)
                             alert(response.data.status)
                         }
                     }
@@ -111,11 +115,11 @@ const CollegeStaffSearchTask = () => {
                         </div>
                     </div>
                 </div>
-                {isLoading ? (
+                {isLoading && searchPerformed ? (
                     <div className="col-12 text-center">
-                        <p></p>
+                        <p>Loading...</p>
                     </div>
-                ) : (updateField && updateField.length > 0 ? (
+                ) : (searchPerformed && !isLoading && updateField && updateField.length > 0 ? (
                     <>
                         <header className="px-5 py-4 border-b border-gray-100">
                             <h2 className="font-semibold text-2xl text-gray-800">List of Tasks</h2>
@@ -225,7 +229,7 @@ const CollegeStaffSearchTask = () => {
                             </div>
                         </div>
                     </>
-                ) : (
+                ) : searchPerformed && !isLoading && currentTasks.length === 0 && (
                     <div className="col-12 text-center">No Tasks Found!!</div>
                 ))}
                 <br></br>

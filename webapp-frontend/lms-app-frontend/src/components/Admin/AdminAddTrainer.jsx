@@ -52,10 +52,16 @@ const AdminAddTrainer = () => {
     const readValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let addedBy;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault();
         const validationErrors = validateForm(inputField);
@@ -75,7 +81,8 @@ const AdminAddTrainer = () => {
                 "password": inputField.password,
                 "phoneNumber": inputField.phoneNumber,
                 "profilePicture": file,
-                "confirmpassword": inputField.confirmpassword
+                "confirmpassword": inputField.confirmpassword,
+                "addedby": addedBy
             }
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
                 if (response.data.status === 'success') {
