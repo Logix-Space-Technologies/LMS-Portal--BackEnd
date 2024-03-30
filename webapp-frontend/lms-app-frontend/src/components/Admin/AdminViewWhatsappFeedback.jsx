@@ -27,10 +27,8 @@ const AdminViewWhatsappFeedback = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-        console.log(axiosConfig)
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
-                console.log(response.data)
                 if (response.data.data) {
                     setIsLoading(false)
                     setFeedbackLogData(response.data.data);
