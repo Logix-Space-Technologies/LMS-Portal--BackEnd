@@ -12,6 +12,9 @@ const AdminStaffUpdateMaterial = () => {
     const [fileType, setFileType] = useState("");
     const [batches, setBatches] = useState([])
     const [outputField, setOutputField] = useState([])
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
 
     const [updateField, setUpdateField] = useState(
         {
@@ -31,6 +34,10 @@ const AdminStaffUpdateMaterial = () => {
     const batchUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
     const navigate = useNavigate()
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getClg = () => {
         let axiosConfig = {
@@ -139,22 +146,28 @@ const AdminStaffUpdateMaterial = () => {
                     "uploadFile": updateField.uploadFile
                 }
             }
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl2, data, axiosConfig2).then(
                 (Response) => {
                     console.log(Response)
                     if (Response.data.status === "Material Details Updated") {
-                        setUpdateField({
-                            "id": sessionStorage.getItem("materialId"),
-                            "batchId": "",
-                            "fileName": "",
-                            "materialDesc": "",
-                            "remarks": "",
-                            "materialType": "",
-                            "uploadFile": ""
-                        })
-                        alert("Material Updated Successfully")
-                        navigate(-1)
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            setUpdateField({
+                                "id": sessionStorage.getItem("materialId"),
+                                "batchId": "",
+                                "fileName": "",
+                                "materialDesc": "",
+                                "remarks": "",
+                                "materialType": "",
+                                "uploadFile": ""
+                            })
+                            alert("Material Updated Successfully")
+                            navigate(-1)
+                        }, 500)
                     } else {
+                        closeWaitingModal()
                         if (Response.data.status === "Validation failed" && Response.data.data.batchId) {
                             alert(Response.data.data.batchId)
                         } else {
@@ -180,7 +193,10 @@ const AdminStaffUpdateMaterial = () => {
                                                         navigate("/admstafflogin")
                                                         sessionStorage.clear()
                                                     } else {
-                                                        alert(Response.data.status)
+                                                        closeWaitingModal()
+                                                        setTimeout(() => {
+                                                            alert(Response.data.status)
+                                                        }, 500)
                                                     }
                                                 }
                                             }
@@ -403,6 +419,44 @@ const AdminStaffUpdateMaterial = () => {
                     </div>
                 </div>
             </div >
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }
