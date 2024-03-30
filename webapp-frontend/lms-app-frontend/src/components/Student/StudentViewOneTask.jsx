@@ -5,6 +5,7 @@ import axios from 'axios';
 
 const StudentViewOneTask = () => {
     const [studViewTaskData, setStudViewTaskData] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState({});
     const [inputField, setInputField] = useState({
         "gitLink": "",
@@ -40,12 +41,14 @@ const StudentViewOneTask = () => {
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
+                    setLoading(false)
                     setStudViewTaskData(response.data.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
                         sessionStorage.clear()
                     } else {
+                        setLoading(false)
                         alert(response.data.status)
                     }
                 }
@@ -170,7 +173,8 @@ const StudentViewOneTask = () => {
                 <h2 className="text-lg font-bold">Student View Tasks</h2>
                 <Link to="/studSessionView" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
             </div>
-            <section className="flex flex-col justify-center items-center antialiased bg-gray-100 text-gray-600 p-4 pt-2 pb-2">
+            {loading && <div>Loading...</div>}
+            {!loading && <section className="flex flex-col justify-center items-center antialiased bg-gray-100 text-gray-600 p-4 pt-2 pb-2">
                 <div className="h-full">
                     {/* Cards */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
@@ -355,8 +359,8 @@ const StudentViewOneTask = () => {
                         ></div>
                     )}
                 </div>
-            </section>
-            <div>
+            </section>}
+            {!loading && <div>
                 <div className="flex items-center justify-between bg-white px-4 py-3 sm:px-6">
                     <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                         <div>
@@ -388,7 +392,7 @@ const StudentViewOneTask = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>}
         </div>
     )
 }
