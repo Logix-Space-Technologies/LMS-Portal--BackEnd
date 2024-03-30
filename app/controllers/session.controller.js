@@ -296,8 +296,8 @@ exports.sessionUpdate = (request, response) => {
                                     let clgstaffEmail = res[0].email
                                     let batchName = res[0].batchName
                                     let collegeStaffName = res[0].collegeStaffName
-                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName);
-                                    const upcomingSessionTextContent = mailContents.reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName);
+                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly);
+                                    const upcomingSessionTextContent = mailContents.reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly);
                                     mail.sendEmail(clgstaffEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
 
                                 }
