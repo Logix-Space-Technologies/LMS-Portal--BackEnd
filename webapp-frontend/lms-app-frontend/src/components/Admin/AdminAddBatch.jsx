@@ -22,6 +22,8 @@ const AdminAddBatch = () => {
     const navigate = useNavigate()
 
     const [key, setKey] = useState('');
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const apiUrl = global.config.urls.api.server + '/api/lms/viewallcolleges';
     const apiUrl2 = global.config.urls.api.server + '/api/lms/addBatches';
@@ -56,6 +58,12 @@ const AdminAddBatch = () => {
             }
         });
     };
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
 
     const inputHandler = (event) => {
         setErrors({});
@@ -96,34 +104,48 @@ const AdminAddBatch = () => {
                 "batchAmount": inputField.batchAmount,
                 "addedby": addedBy
             };
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl2, data, axiosConfig2).then((response) => {
                 if (response.data.status === 'success') {
-                    alert('Batch Added Successfully !!');
-                    setInputField({
-                        collegeId: '',
-                        batchName: '',
-                        regStartDate: '',
-                        regEndDate: '',
-                        batchDesc: '',
-                        batchAmount: ''
-                    });
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert('Batch Added Successfully !!');
+                        setInputField({
+                            collegeId: '',
+                            batchName: '',
+                            regStartDate: '',
+                            regEndDate: '',
+                            batchDesc: '',
+                            batchAmount: ''
+                        });
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.collegeid) {
+                    closeWaitingModal()
                     alert(response.data.data.collegeid)
                 } else if (response.data.status === "Validation failed" && response.data.data.name) {
+                    closeWaitingModal()
                     alert(response.data.data.name)
                 } else if (response.data.status === "Validation failed" && response.data.data.regstartdate) {
+                    closeWaitingModal()
                     alert(response.data.data.regstartdate)
                 } else if (response.data.status === "Validation failed" && response.data.data.regenddate) {
+                    closeWaitingModal()
                     alert(response.data.data.regenddate)
                 } else if (response.data.status === "Validation failed" && response.data.data.description) {
+                    closeWaitingModal()
                     alert(response.data.data.description)
                 } else if (response.data.status === "Validation failed" && response.data.data.amount) {
+                    closeWaitingModal()
                     alert(response.data.data.amount)
                 } else if (response.data.status === "Unauthorized User!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
-                    alert(response.data.status)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.status)
+                    }, 500)
                 }
             })
         }
@@ -319,6 +341,44 @@ const AdminAddBatch = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     );
 };
