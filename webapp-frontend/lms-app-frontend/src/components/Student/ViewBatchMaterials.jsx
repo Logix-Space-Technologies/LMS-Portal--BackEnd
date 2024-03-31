@@ -46,6 +46,7 @@ const MaterialView = () => {
               setMaterials([])
               setLoading(false)
             } else {
+              setLoading(false)
               alert(response.data.status);
             }
           }
