@@ -271,6 +271,9 @@ exports.adminStaffLogin = (request, response) => {
                         if (error) {
                             return response.json({ "status": "Unauthorized user!!" })
                         } else {
+                            if (admin_staff.emailVerified !== 1) {
+                                return response.json({ "status": "Email Not Verified" })
+                            }
                             // Log the admin staff sign in
                             logAdminStaff(admin_staff.id, "Admin Staff Logged In");
                             return response.json({ "status": "Success", "data": admin_staff, "token": token })

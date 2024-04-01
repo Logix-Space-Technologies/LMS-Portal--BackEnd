@@ -193,24 +193,7 @@ AdminStaff.findByEmail = (email, result) => {
             result("Admin Staff Does Not Exist", null)
             return
         } else {
-            db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND emailVerified = 1", email, (verifyErr, verifyRes) => {
-                if (verifyErr) {
-                    console.log("Error: ", verifyEmailErr)
-                    return result(verifyEmailErr, null)
-                } else if (verifyRes.length === 0) {
-                    console.log("Email Not Verified")
-                    return result("Email Not Verified", null)
-                } else {
-                    db.query("SELECT * FROM admin_staff WHERE BINARY Email = ? AND isActive = 1 AND deleteStatus = 0 AND emailVerified = 1", email, (emailErr, emailRes) => {
-                        if (emailErr) {
-                            console.log("Error : ", emailErr);
-                            return result(emailErr, null);
-                        } else if (emailRes.length > 0) {
-                            result(null, emailRes[0])
-                        }
-                    })
-                }
-            })
+            return result(null, res[0])
         }
     })
 }
