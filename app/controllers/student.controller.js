@@ -225,6 +225,9 @@ exports.studLog = (request, response) => {
                     if (error) {
                         return response.json({ "status": "Unauthorized User!!" })
                     } else {
+                        if (stud.isVerified !== "1") {
+                            return response.json({ "status": "Account Under Verification Process.Please Contact Your Batch-In-Charge." })
+                        }
                         if (type === 'web') {
                             // Code for web app
                             console.log('Accessed from web app');
