@@ -112,7 +112,7 @@ const StudentLogin = () => {
                     sessionStorage.setItem("refundreqstatus", refundreqstatus);
 
                     navigate("/studViewRefundReq")
-                } else if (inputField.password === "0") {
+                } else if (Response.data.status === "Password Is Default Password. Please Change.") {
                     let data = { "studEmail": inputField.studEmail }
                     axios.post(apiUrl2, data).then(
                         (Response) => {
