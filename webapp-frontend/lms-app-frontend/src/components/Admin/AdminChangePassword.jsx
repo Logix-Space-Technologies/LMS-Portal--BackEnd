@@ -19,10 +19,18 @@ const AdminChangePassword = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
 
     const updateHandler = (event) => {
         setErrors({})
         setUpdateField({ ...updateField, [event.target.name]: event.target.value });
+    }
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
     }
 
     const readNewValue = () => {
@@ -36,17 +44,25 @@ const AdminChangePassword = () => {
         };
 
         if (Object.keys(validationErrors).length === 0) {
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiurl, updateField, axiosConfig).then(
                 (response) => {
                     if (response.data.status === "success") {
-                        alert("Password Changed Successfully");
-                        navigate("/");
-                        sessionStorage.clear()
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert("Password Changed Successfully");
+                            navigate("/");
+                            sessionStorage.clear()
+                        }, 500)
                     } else if (response.data.status === "Validation failed" && response.data.data.oldPassword) {
+                        closeWaitingModal()
                         alert(response.data.data.oldPassword);
                     } else if (response.data.status === "Validation failed" && response.data.data.newPassword) {
+                        closeWaitingModal()
                         alert(response.data.data.newPassword);
                     } else {
+                        closeWaitingModal()
                         alert(response.data.status)
                     }
                 }
@@ -128,6 +144,44 @@ const AdminChangePassword = () => {
                     </div>
                 </div>
             </div >
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }
