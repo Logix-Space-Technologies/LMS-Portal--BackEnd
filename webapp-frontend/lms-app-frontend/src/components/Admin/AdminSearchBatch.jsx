@@ -11,6 +11,8 @@ const AdminSearchBatch = () => {
         "batchQuery": ""
     });
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [batches, setBatches] = useState([]);
     const [searchExecuted, setSearchExecuted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -27,6 +29,11 @@ const AdminSearchBatch = () => {
         const { name, value } = event.target;
         setInputField({ ...inputField, [name]: value });
     };
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const searchBatches = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -74,19 +81,31 @@ const AdminSearchBatch = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(deleteUrl, { id: deleteId }, axiosConfig)
             .then((response) => {
                 if (response.data.status === "Batch Deleted.") {
-                    setBatches(batches.filter(batch => batch.id !== deleteId))
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Batch Deleted Successfully !!!")
+                        setBatches(batches.filter(batch => batch.id !== deleteId))
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User!!") {
                     navigate("/")
                     sessionStorage.clear()
                 } else {
-                    alert(response.data.status);
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.status);
+                    }, 500)
                 }
             })
             .catch(error => {
-                alert(error)
+                closeWaitingModal()
+                setTimeout(() => {
+                    alert(error)
+                }, 500)
             })
             .finally(() => setIsLoading(false));
     };
@@ -249,6 +268,44 @@ const AdminSearchBatch = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     );
 };

@@ -10,6 +10,8 @@ const AdminStaffViewAllMaterial = () => {
     const [materialPerPage] = useState(10);
     const [deleteId, setDeleteId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
 
     const rangeSize = 5; // Number of pages to display in the pagination
@@ -20,6 +22,11 @@ const AdminStaffViewAllMaterial = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/AdmViewAllMaterial";
     const apiLink2 = global.config.urls.api.server + "/api/lms/adminStaffDeleteMaterial";
     const navigate = useNavigate();
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getData = () => {
         let axiosConfig = {
@@ -67,16 +74,24 @@ const AdminStaffViewAllMaterial = () => {
                 "key": sessionStorage.getItem("admstaffkey")
             }
         };
-
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiLink2, data, axiosConfig2).then((response) => {
             if (response.data.status === "Material Deleted Successfully.") {
-                // Remove the deleted material from updateField state
-                setMaterialData(materialData.filter(material => material.id !== deleteId));
+                closeWaitingModal()
+                setTimeout(() => {
+                    alert("Material Deleted Successfully.")
+                    // Remove the deleted material from updateField state
+                    setMaterialData(materialData.filter(material => material.id !== deleteId));
+                }, 500)
             } else if (response.data.status === "Unauthorized User!!") {
                 navigate("/admstafflogin")
                 sessionStorage.clear()
             } else {
-                alert(response.data.status);
+                closeWaitingModal()
+                setTimeout(() => {
+                    alert(response.data.status);
+                }, 500)
             }
         });
     };
@@ -216,6 +231,44 @@ const AdminStaffViewAllMaterial = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     );
 };

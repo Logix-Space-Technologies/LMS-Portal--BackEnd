@@ -11,8 +11,6 @@ const AdminStaffViewSubmittedTask = () => {
 
     const navigate = useNavigate()
 
-    const [isLoading, setIsLoading] = useState(true);
-
     let [submittedTaskId, setSubmittedTaskId] = useState("")
 
     const [taskData, setTaskData] = useState([])
@@ -25,6 +23,9 @@ const AdminStaffViewSubmittedTask = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of students per page
+
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(taskData.length / tasksPerPage); // Calculate the total number of pages
@@ -46,7 +47,6 @@ const AdminStaffViewSubmittedTask = () => {
         axios.post(apiUrl, {}, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
-                    setIsLoading(false)
                     setTaskData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
@@ -54,16 +54,19 @@ const AdminStaffViewSubmittedTask = () => {
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
-                            setIsLoading(false)
                             setTaskData([])
                         } else {
-                            setIsLoading(false)
                             alert(response.data.status)
                         }
                     }
                 }
             }
         )
+    }
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
     }
 
     const inputHandler = (event) => {
@@ -98,15 +101,21 @@ const AdminStaffViewSubmittedTask = () => {
             "evaluatorRemarks": inputField.evaluatorRemarks,
             "score": inputField.score
         }
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Task evaluated successfully") {
-                    alert("Task evaluated successfully")
-                    getData()
-                    setInputField({
-                        evaluatorRemarks: "",
-                        score: ""
-                    });
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert("Task evaluated successfully")
+                        getData()
+                        setInputField({
+                            evaluatorRemarks: "",
+                            score: ""
+                        });
+                    }, 500)
+                    
                 } else {
                     if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
                         alert(response.data.data.evaluatorRemarks);
@@ -115,6 +124,7 @@ const AdminStaffViewSubmittedTask = () => {
                             score: ""
                         });
                     } else {
+                        closeWaitingModal()
                         if (response.data.status === "Validation failed" && response.data.data.score) {
                             alert(response.data.data.score);
                             setInputField({
@@ -176,11 +186,7 @@ const AdminStaffViewSubmittedTask = () => {
                 <AdmStaffNavBar />
                 <br />
                 <strong>Admin Staff View Submitted Tasks</strong><br /><br />
-                {isLoading ? <div className="flex justify-center items-center h-full">
-                    <div className="text-center py-20">
-                        <div>Loading...</div>
-                    </div>
-                </div> : (<div className="relative overflow-x shadow-md sm:rounded-lg">
+                <div className="relative overflow-x shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
@@ -361,42 +367,39 @@ const AdminStaffViewSubmittedTask = () => {
                             }
                         </tbody>
                     </table>
-                </div>)}
-
+                </div>
             </div>
-            {!isLoading && currentTasks.length > 0 && (
-                <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
-                    <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                        <div>
-                            <p className="text-sm text-gray-700">
-                                Showing <span className="font-medium">{indexOfFirstTask + 1}</span> to <span className="font-medium">{indexOfLastTask > taskData.length ? taskData.length : indexOfLastTask}</span> of <span className="font-medium">{taskData.length}</span> results
-                            </p>
-                        </div>
-                        <div>
-                            <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                                <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
-                                    <span className="sr-only">Previous</span>
-                                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                        <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-                                    </svg>
+            <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                    <div>
+                        <p className="text-sm text-gray-700">
+                            Showing <span className="font-medium">{indexOfFirstTask + 1}</span> to <span className="font-medium">{indexOfLastTask > taskData.length ? taskData.length : indexOfLastTask}</span> of <span className="font-medium">{taskData.length}</span> results
+                        </p>
+                    </div>
+                    <div>
+                        <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                            <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
+                                <span className="sr-only">Previous</span>
+                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                                </svg>
+                            </button>
+                            {/* Dynamically generate Link components for each page number */}
+                            {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                                <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
+                                    {startPage + index}
                                 </button>
-                                {/* Dynamically generate Link components for each page number */}
-                                {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-                                    <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
-                                        {startPage + index}
-                                    </button>
-                                ))}
-                                <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
-                                    <span className="sr-only">Next</span>
-                                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                        <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                                    </svg>
-                                </button>
-                            </nav>
-                        </div>
+                            ))}
+                            <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
+                                <span className="sr-only">Next</span>
+                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                                </svg>
+                            </button>
+                        </nav>
                     </div>
                 </div>
-            )}
+            </div>
             <div className="flex justify-end">
                 <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div className="modal-dialog">
@@ -428,6 +431,44 @@ const AdminStaffViewSubmittedTask = () => {
                         </div>
                     </div>
                 </div>
+                {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
             </div>
         </>
     )

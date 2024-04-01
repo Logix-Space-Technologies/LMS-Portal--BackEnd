@@ -20,6 +20,14 @@ const AdminStaffSearchSubmittedTask = () => {
         setOutputField({ ...outputField, [event.target.name]: event.target.value });
     };
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
     const [subtasks, setSubTasks] = useState([]);
     const [errors, setErrors] = useState({});
     let [submittedTaskId, setSubmittedTaskId] = useState("")
@@ -80,6 +88,8 @@ const AdminStaffSearchSubmittedTask = () => {
             setErrors(newErrors);
             return;
         }
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -97,33 +107,45 @@ const AdminStaffSearchSubmittedTask = () => {
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Task evaluated successfully") {
-                    alert("Task evaluated successfully")
-                    searchSubmittedTasks()
-                    setOutputField({
-                        evaluatorRemarks: "",
-                        score: ""
-                    });
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Task evaluated successfully")
+                        searchSubmittedTasks()
+                        setOutputField({
+                            evaluatorRemarks: "",
+                            score: ""
+                        });
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
-                    alert(response.data.data.evaluatorRemarks);
-                    setOutputField({
-                        evaluatorRemarks: "",
-                        score: ""
-                    });
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.evaluatorRemarks);
+                        setOutputField({
+                            evaluatorRemarks: "",
+                            score: ""
+                        });
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.score) {
-                    alert(response.data.data.score);
-                    setOutputField({
-                        evaluatorRemarks: "",
-                        score: ""
-                    });
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.score);
+                        setOutputField({
+                            evaluatorRemarks: "",
+                            score: ""
+                        });
+                    }, 500)
                 } else if (response.data.status === "Unauthorized access!!") {
                     navigate("/admstafflogin")
                     sessionStorage.clear()
                 } else {
-                    alert(response.data.status);
-                    setOutputField({
-                        evaluatorRemarks: "",
-                        score: ""
-                    });
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.status);
+                        setOutputField({
+                            evaluatorRemarks: "",
+                            score: ""
+                        });
+                    }, 500)
                 }
 
             }
@@ -324,6 +346,44 @@ const AdminStaffSearchSubmittedTask = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }
