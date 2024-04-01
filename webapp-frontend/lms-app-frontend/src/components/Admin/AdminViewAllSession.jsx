@@ -30,6 +30,7 @@ const AdminViewAllSession = () => {
     const [qrCodeAttendance, setQrCodeAttendance] = useState(null);
     const [showQRModal, setShowQRModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [currentPage, setCurrentPage] = useState(1);
     const [sessionsPerPage] = useState(10); // Number of sessions per page
@@ -42,6 +43,10 @@ const AdminViewAllSession = () => {
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deleteSessions";
     const remainderApiLink = global.config.urls.api.server + "/api/lms/sendSessionRemainderEmail";
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -120,17 +125,26 @@ const AdminViewAllSession = () => {
                 "key": currentKey
             }
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "success") {
                     closeModal()
-                    getData()
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        getData()
+                    }, 500)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status);
+                        closeModal()
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status);
+                        }, 500)
                     }
                 }
             })
@@ -229,19 +243,25 @@ const AdminViewAllSession = () => {
                 "key": currentKey
             }
         };
-
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         // Make the API call to send the reminder
         axios.post(remainderApiLink, data, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    alert("Reminder Sent Successfully.");
-                    // Optionally, you can update the UI or perform other actions after sending the reminder
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Reminder Sent Successfully.");
+                    }, 500)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear();
                     } else {
-                        alert(response.data.status);
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status);
+                        }, 500)
                     }
                 }
             }
@@ -289,23 +309,29 @@ const AdminViewAllSession = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-
+        setShowConfirmation(false);
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(deleteApiLink, { id: deleteId }, axiosConfig).then(response => {
             if (response.data.status === "success") {
-                alert("Session Deleted!!")
-                setSessionData(sessionData.filter(session => session.id !== deleteId));
-                getData()
+                closeWaitingModal()
+                setTimeout(() => {
+                    alert("Session Deleted!!")
+                    setSessionData(sessionData.filter(session => session.id !== deleteId));
+                    getData()
+                }, 500)
             } else {
                 if (response.data.status === "Unauthorized User!!") {
                     navigate("/")
                     sessionStorage.clear()
                 } else {
-                    alert(response.data.status)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.status)
+                    }, 500)
                 }
             }
         })
-
-        setShowConfirmation(false);
     };
 
     function isSpecialDomain(venueLink) {
@@ -510,6 +536,26 @@ const AdminViewAllSession = () => {
                                     <button type="button" className="btn btn-secondary" onClick={() => closeModal()}>No, cancel</button>
                                     <button onClick={() => handleClick()} type="button" className="btn btn-danger" >Yes, I'm sure</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
                             </div>
                         </div>
                     </div>
