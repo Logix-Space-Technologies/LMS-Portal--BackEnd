@@ -22,6 +22,9 @@ const AdminAddTrainer = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const [fileType, setFileType] = useState("");
 
     const [key, setKey] = useState('');
@@ -48,6 +51,11 @@ const AdminAddTrainer = () => {
         setErrors({})
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const readValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -84,37 +92,50 @@ const AdminAddTrainer = () => {
                 "confirmpassword": inputField.confirmpassword,
                 "addedby": addedBy
             }
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
                 if (response.data.status === 'success') {
-                    alert('Trainer Added Successfully !!');
-                    setInputField({
-                        trainerName: '',
-                        about: '',
-                        email: '',
-                        password: '',
-                        phoneNumber: '',
-                        confirmpassword: '',
-                        profilePicture: ''
-                    })
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert('Trainer Added Successfully !!');
+                        setInputField({
+                            trainerName: '',
+                            about: '',
+                            email: '',
+                            password: '',
+                            phoneNumber: '',
+                            confirmpassword: '',
+                            profilePicture: ''
+                        })
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.trainerName) {
+                    closeWaitingModal()
                     alert(response.data.data.trainerName)
                 } else if (response.data.status === "Validation failed" && response.data.data.about) {
+                    closeWaitingModal()
                     alert(response.data.data.about)
                 } else if (response.data.status === "Validation failed" && response.data.data.email) {
+                    closeWaitingModal()
                     alert(response.data.data.email)
                 } else if (response.data.status === "Validation failed" && response.data.data.phoneNumber) {
+                    closeWaitingModal()
                     alert(response.data.data.phoneNumber)
                 } else if (response.data.status === "Validation failed" && response.data.data.password) {
+                    closeWaitingModal()
                     alert(response.data.data.password)
                 } else if (response.data.status === "Validation failed" && response.data.data.date) {
+                    closeWaitingModal()
                     alert(response.data.data.date)
                 } else if (response.data.status === "Unauthorized access!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
+                    closeWaitingModal()
                     alert(response.data.status)
                 }
             }).catch(error => {
+                closeWaitingModal()
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
@@ -323,6 +344,44 @@ const AdminAddTrainer = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }
