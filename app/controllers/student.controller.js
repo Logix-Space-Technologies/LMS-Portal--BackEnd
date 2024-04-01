@@ -213,7 +213,9 @@ exports.studLog = (request, response) => {
         if (err) {
             return response.json({ "status": err })
         }
-
+        if(password==="0" && stud.password==="0"){
+            return response.json({ "status": "Password Is Default Password. Please Change." })
+        }
         const passwordMatch = bcrypt.compareSync(password, stud.password)
         if (passwordMatch) {
             jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsappstud", {
