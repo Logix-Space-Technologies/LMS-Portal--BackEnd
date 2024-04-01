@@ -10,6 +10,8 @@ const AdminSearchAdminStaff = () => {
         "adminStaffSearchQuery": ""
     });
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [updateField, setUpdateField] = useState([]);
     const [searchExecuted, setSearchExecuted] = useState(false);
     const navigate = useNavigate();
@@ -25,6 +27,11 @@ const AdminSearchAdminStaff = () => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
     const handleDeleteClick = () => {
         const axiosConfig = {
             headers: {
@@ -35,15 +42,25 @@ const AdminSearchAdminStaff = () => {
             },
         };
 
+        setShowWaitingModal(true)
+        setShowOverlay(true)
+
         axios.post(deleteUrl, { id: deleteId }, axiosConfig).then((response) => {
             if (response.data.status === "Admin Staff Deleted.") {
-                // Refresh the data after deletion
-                setUpdateField(updateField.filter(admstaff => admstaff.id !== deleteId))
+                closeWaitingModal()
+                setTimeout(() => {
+                    alert("Admin Staff Deleted Successfully !!!")
+                    // Refresh the data after deletion
+                    setUpdateField(updateField.filter(admstaff => admstaff.id !== deleteId))
+                }, 500)
             } else if (response.data.status === "Unauthorized User!!") {
                 navigate("/")
                 sessionStorage.clear()
             } else {
-                alert(response.data.status)
+                closeWaitingModal()
+                setTimeout(() => {
+                    alert(response.data.status)
+                }, 500)
             }
         })
     };
