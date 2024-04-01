@@ -328,7 +328,7 @@ const AdminSearchTasks = () => {
                 <div
                     className="modal-backdrop fade show"
                     onClick={() => {
-                        setShowModal(false);
+                        setShowWaitingModal(false);
                         setShowOverlay(false);
                     }}
                     style={{
