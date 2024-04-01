@@ -14,6 +14,7 @@ require('dotenv').config({ path: '../../.env' });
 const path = require("path");
 const whatsApp = require("./Whatsapp/sendWhatsappMessage")
 const { StudentLog, logStudent } = require("../models/studentLog.model");
+
 // const { Session } = require("inspector");
 
 // AWS S3 Client Configuration
@@ -225,8 +226,11 @@ exports.studLog = (request, response) => {
                     if (error) {
                         return response.json({ "status": "Unauthorized User!!" })
                     } else {
-                        if (stud.isVerified !== "1") {
+                        if (stud.isVerified !== 1) {
                             return response.json({ "status": "Account Under Verification Process.Please Contact Your Batch-In-Charge." })
+                        }
+                        if (stud.validity <= new Date() ) {
+                            return response.json({ "status": "Account expired. Please Renew Your Plan" })
                         }
                         if (type === 'web') {
                             // Code for web app
