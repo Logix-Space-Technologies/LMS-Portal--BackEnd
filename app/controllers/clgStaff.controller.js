@@ -504,6 +504,9 @@ exports.collegeStaffLogin = (request, response) => {
             if (error) {
               return response.json({ "status": "Unauthorized User!!" })
             } else {
+              if (clgstaff.emailVerified !== 1) {
+                return response.json({ "status": "Email Not Verified" })
+              }
               logCollegeStaff(clgstaff.id, "College Staff Logged In");
               return response.json({ "status": "Success", "data": clgstaff, "token": token })
             }
