@@ -67,7 +67,7 @@ const AddAdminStaff = () => {
                 (response) => {
                     if (response.data.status === 'success') {
                         closeWaitingModal()
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             alert("AdminStaff Added Successfully.");
                             setInputField({
                                 AdStaffName: "",
@@ -79,7 +79,7 @@ const AddAdminStaff = () => {
                                 confirmpassword: ""
                             });
                         }, 500)
-                        
+
                     } else {
                         closeWaitingModal()
                         if (response.data.status === 'Validation failed' && response.data.data.name) {
@@ -119,6 +119,8 @@ const AddAdminStaff = () => {
         }
         if (!data.PhNo.trim()) {
             errors.PhNo = 'Mobile number is required';
+        } else if (!/^\+91[6-9]\d{9}$|^\+91\s?[6-9]\d{9}$|^[6-9]\d{9}$/.test(data.PhNo)) {
+            errors.PhNo = 'Invalid Mobile Number'
         }
 
         if (!data.Address.trim()) {

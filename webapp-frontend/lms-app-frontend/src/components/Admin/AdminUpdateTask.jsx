@@ -25,9 +25,17 @@ const AdminUpdateTask = () => {
     const apiUrl2 = global.config.urls.api.server + '/api/lms/updateTask';
     const navigate = useNavigate();
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const updateHandler = (event) => {
         setErrors({});
         setUpdateField({ ...updateField, [event.target.name]: event.target.value });
+    }
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
     }
 
     const fileUploadHandler = (event) => {
@@ -94,45 +102,54 @@ const AdminUpdateTask = () => {
                     "updatedby": updatedby
                 }
             }
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl2, data, axiosConfig2).then(
                 (Response) => {
                     if (Response.data.status === "success") {
-                        setUpdateField({
-                            "id": sessionStorage.getItem('taskId'),
-                            "batchId": '',
-                            "taskTitle": '',
-                            "taskDesc": '',
-                            "taskType": '',
-                            "totalScore": '',
-                            "dueDate": '',
-                            "taskFileUpload": null,
-                        })
-                        alert("Task Updated Successfully")
-                        navigate(-1)
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            setUpdateField({
+                                "id": sessionStorage.getItem('taskId'),
+                                "batchId": '',
+                                "taskTitle": '',
+                                "taskDesc": '',
+                                "taskType": '',
+                                "totalScore": '',
+                                "dueDate": '',
+                                "taskFileUpload": null,
+                            })
+                            alert("Task Updated Successfully")
+                            navigate(-1)
+                        }, 500)
                     } else {
+                        closeWaitingModal()
                         if (Response.data.status === "Validation failed" && Response.data.data.value) {
-                            alert(Response.data.data.value)
+                            setTimeout(() => {alert(Response.data.data.value)}, 500) 
                         } else {
                             if (Response.data.status === "Validation failed" && Response.data.data.name) {
-                                alert(Response.data.data.name)
+                                setTimeout(() => {alert(Response.data.data.name)}, 500)
                             } else {
                                 if (Response.data.status === "Validation failed" && Response.data.data.desc) {
-                                    alert(Response.data.data.desc)
+                                    setTimeout(() => {alert(Response.data.data.desc)}, 500)
                                 } else {
                                     if (Response.data.status === "Validation failed" && Response.data.data.type) {
-                                        alert(Response.data.data.type)
+                                        setTimeout(() => {alert(Response.data.data.type)}, 500)
                                     } else {
                                         if (Response.data.status === "Validation failed" && Response.data.data.score) {
-                                            alert(Response.data.data.score)
+                                            setTimeout(() => {alert(Response.data.data.score)}, 500)
                                         } else {
                                             if (Response.data.status === "Validation failed" && Response.data.data.date) {
-                                                alert(Response.data.data.date)
+                                                setTimeout(() => {alert(Response.data.data.date)}, 500)
                                             } else {
                                                 if (Response.data.status === "Unauthorized access!!") {
                                                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                                                     sessionStorage.clear()
                                                 } else {
-                                                    alert(Response.data.status)
+                                                    closeWaitingModal()
+                                                    setTimeout(() => {
+                                                        alert(Response.data.status)
+                                                    }, 500)
                                                 }
                                             }
                                         }
@@ -391,6 +408,44 @@ const AdminUpdateTask = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }
