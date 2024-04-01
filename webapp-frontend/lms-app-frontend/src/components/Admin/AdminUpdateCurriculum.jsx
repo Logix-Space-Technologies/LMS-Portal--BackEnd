@@ -26,8 +26,17 @@ const AdminUpdateCurriculum = () => {
     const navigate = useNavigate()
     const [key, setKey] = useState('');
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const updateHandler = (event) => {
+        setErrors({})
         setUpdateField({ ...updateField, [event.target.name]: event.target.value })
+    }
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
     }
 
     const fileUploadHandler = (event) => {
@@ -87,29 +96,33 @@ const AdminUpdateCurriculum = () => {
 
                 }
             }
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl2, data, axiosConfig2).then(
                 (Response) => {
-                    console.log(Response)
                     if (Response.data.status === "success") {
-                        setUpdateField({
-                            "id": sessionStorage.getItem("curriculumId"),
-                            "curriculumTitle": "",
-                            "curriculumDesc": "",
-                            "updatedBy": "",
-                            "curriculumFileLink": ""
-                        })
-                        alert("Curriculum Updated Successfully")
-                        setFile(null)
-                        navigate(-1)
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            setUpdateField({
+                                "id": sessionStorage.getItem("curriculumId"),
+                                "curriculumTitle": "",
+                                "curriculumDesc": "",
+                                "updatedBy": "",
+                                "curriculumFileLink": ""
+                            })
+                            alert("Curriculum Updated Successfully")
+                            setFile(null)
+                            navigate(-1)
+                        }, 500)
                     } else {
                         if (Response.data.status === "Validation failed" && Response.data.data.curriculumTitle) {
-                            alert(Response.data.data.curriculumTitle)
+                            setTimeout(() => {alert(Response.data.data.curriculumTitle)}, 500) 
                         } else {
                             if (Response.data.status === "Validation failed" && Response.data.data.curriculumDesc) {
-                                alert(Response.data.data.curriculumDesc)
+                                setTimeout(() => {alert(Response.data.data.curriculumDesc)}, 500)
                             } else {
                                 if (Response.data.status === "Validation failed" && Response.data.data.updatedBy) {
-                                    alert(Response.data.data.updatedBy)
+                                    setTimeout(() => {alert(Response.data.data.updatedBy)}, 500)
                                 } else {
                                     if (Response.data.status === "Unauthorized User!!") {
                                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
@@ -269,7 +282,45 @@ const AdminUpdateCurriculum = () => {
                         </div>
                     </div>
                 </div>
-            </div >
+            </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }

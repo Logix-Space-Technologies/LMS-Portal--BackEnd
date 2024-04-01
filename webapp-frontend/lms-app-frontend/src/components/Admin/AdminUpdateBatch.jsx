@@ -23,9 +23,19 @@ const AdminUpdateBatch = () => {
     const apiUrl2 = global.config.urls.api.server + "/api/lms/updateBatch";
 
     const navigate = useNavigate()
+    const [errors, setErrors] = useState({});
+
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const updateHandler = (event) => {
+        setErrors({})
         setUpdateField({ ...updateField, [event.target.name]: event.target.value })
+    }
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
     }
 
     const readNewValue = () => {
@@ -42,59 +52,71 @@ const AdminUpdateBatch = () => {
         } else {
             addedBy = sessionStorage.getItem("admstaffId")
         }
-        let axiosConfig = {
-            headers: {
-                'content-type': 'application/json;charset=UTF-8',
-                "Access-Control-Allow-Origin": "*",
-                "token": token,
-                "key": currentKey
+        const validationErrors = validateForm(updateField);
+        if (Object.keys(validationErrors).length === 0) {
+            let axiosConfig = {
+                headers: {
+                    'content-type': 'application/json;charset=UTF-8',
+                    "Access-Control-Allow-Origin": "*",
+                    "token": token,
+                    "key": currentKey
+                }
             }
-        }
-        let data = {
-            "id": sessionStorage.getItem("batchId"),
-            "collegeId": updateField.collegeId,
-            "batchName": updateField.batchName,
-            "regStartDate": updateField.regStartDate,
-            "regEndDate": updateField.regEndDate,
-            "batchDesc": updateField.batchDesc,
-            "batchAmount": updateField.batchAmount,
-            "addedby": addedBy
-        }
-        axios.post(apiUrl2, data, axiosConfig).then(
-            (response) => {
-                if (response.data.status === "Updated Batch Details") {
-                    setUpdateField({
-                        "id": sessionStorage.getItem("batchId"),
-                        "collegeId": "",
-                        "batchName": "",
-                        "regStartDate": "",
-                        "regEndDate": "",
-                        "batchDesc": "",
-                        "batchAmount": ""
-                    })
-                    alert("Batch Updated!")
-                    navigate(-1)
-                } else {
-                    if (response.data.status === "Validation Failed" && response.data.data.batchName) {
-                        alert(response.data.data.batchName)
+            let data = {
+                "id": sessionStorage.getItem("batchId"),
+                "collegeId": updateField.collegeId,
+                "batchName": updateField.batchName,
+                "regStartDate": updateField.regStartDate,
+                "regEndDate": updateField.regEndDate,
+                "batchDesc": updateField.batchDesc,
+                "batchAmount": updateField.batchAmount,
+                "addedby": addedBy
+            }
+            setShowWaitingModal(true)
+            setShowOverlay(true)
+            axios.post(apiUrl2, data, axiosConfig).then(
+                (response) => {
+                    if (response.data.status === "Updated Batch Details") {
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            setUpdateField({
+                                "id": sessionStorage.getItem("batchId"),
+                                "collegeId": "",
+                                "batchName": "",
+                                "regStartDate": "",
+                                "regEndDate": "",
+                                "batchDesc": "",
+                                "batchAmount": ""
+                            })
+                            alert("Batch Updated!")
+                            navigate(-1)
+                        }, 500)
                     } else {
-                        if (response.data.status === "Validation Failed" && response.data.data.regStartDate) {
-                            alert(response.data.data.regStartDate)
+                        closeWaitingModal()
+                        if (response.data.status === "Validation Failed" && response.data.data.batchName) {
+                            setTimeout(() => {alert(response.data.data.batchName)}, 500) 
                         } else {
-                            if (response.data.status === "Validation Failed" && response.data.data.regEndDate) {
-                                alert(response.data.data.regEndDate)
+                            if (response.data.status === "Validation Failed" && response.data.data.regStartDate) {
+                                setTimeout(() => {alert(response.data.data.regStartDate)}, 500)
                             } else {
-                                if (response.data.status === "Validation Failed" && response.data.data.batchDesc) {
-                                    alert(response.data.data.batchDesc)
+                                if (response.data.status === "Validation Failed" && response.data.data.regEndDate) {
+                                    setTimeout(() => {alert(response.data.data.regEndDate)}, 500)
                                 } else {
-                                    if (response.data.status === "Validation Failed" && response.data.data.batchAmount) {
-                                        alert("batch amount: ", response.data.data.batchAmount)
+                                    if (response.data.status === "Validation Failed" && response.data.data.batchDesc) {
+                                        setTimeout(() => {alert(response.data.data.batchDesc)}, 500)
                                     } else {
-                                        if (response.data.status === "Unauthorized User!!") {
-                                            { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
-                                            sessionStorage.clear()
+                                        if (response.data.status === "Validation Failed" && response.data.data.batchAmount) {
+                                            setTimeout(() => {alert("batch amount: ", response.data.data.batchAmount)}, 500)
                                         } else {
-                                            alert(response.data.status)
+                                            if (response.data.status === "Unauthorized User!!") {
+                                                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                                                sessionStorage.clear()
+                                            } else {
+                                                closeWaitingModal()
+                                                setTimeout(() => {
+                                                    alert(response.data.status)
+                                                }, 500)
+                                            }
                                         }
                                     }
                                 }
@@ -102,8 +124,10 @@ const AdminUpdateBatch = () => {
                         }
                     }
                 }
-            }
-        )
+            )
+        } else {
+            setErrors(validationErrors);
+        }
     }
 
     const getData = () => {
@@ -155,6 +179,29 @@ const AdminUpdateBatch = () => {
         )
     }
 
+    const validateForm = (data) => {
+        let errors = {};
+
+        if (!data.batchName.trim()) {
+            errors.batchName = 'Name is required';
+        }
+        if (!data.batchDesc.trim()) {
+            errors.batchDesc = 'Description is required';
+        }
+        if (!(data.batchAmount > 0)) {
+            errors.batchAmount = 'Amount must be greater than zero';
+        }
+        if (!data.regStartDate.trim()) {
+            errors.regStartDate = 'Date is required';
+        }
+        if (!data.regEndDate.trim()) {
+            errors.regEndDate = 'Date is required';
+        } else if (new Date(data.regEndDate) <= new Date(data.regStartDate)) {
+            errors.regEndDate = 'End date must be greater than start date';
+        }
+        return errors;
+    };
+
     const handleBack = () => {
         navigate(-1); // Navigate back to the previous page
     };
@@ -203,6 +250,7 @@ const AdminUpdateBatch = () => {
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Batch Name</label>
                                                 <input type="text" className="form-control" name="batchName" onChange={updateHandler} value={updateField.batchName} />
+                                                {errors.batchName && (<span style={{ color: 'red' }} className="error">{errors.batchName}</span>)}
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Registration Start Date</label>
@@ -213,8 +261,7 @@ const AdminUpdateBatch = () => {
                                                     onChange={updateHandler}
                                                     value={updateField.regStartDate}
                                                 />
-
-                                                {/* {errors.regStartDate && <span style={{ color: 'red' }} className="error">{errors.regStartDate}</span>} */}
+                                                {errors.regStartDate && <span style={{ color: 'red' }} className="error">{errors.regStartDate}</span>}
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Registration End Date</label>
@@ -225,15 +272,17 @@ const AdminUpdateBatch = () => {
                                                     onChange={updateHandler}
                                                     value={updateField.regEndDate}
                                                 />
-                                                {/* {errors.regEndDate && <span style={{ color: 'red' }} className="error">{errors.regEndDate}</span>} */}
+                                                {errors.regEndDate && <span style={{ color: 'red' }} className="error">{errors.regEndDate}</span>}
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Description</label>
                                                 <input type="text" className="form-control" name="batchDesc" onChange={updateHandler} value={updateField.batchDesc} />
+                                                {errors.batchDesc && (<span style={{ color: 'red' }} className="error">{errors.batchDesc}</span>)}
                                             </div>
                                             <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                                 <label htmlFor="" className="form-label">Amount</label>
                                                 <input type="text" className="form-control" name="batchAmount" onChange={updateHandler} value={updateField.batchAmount} />
+                                                {errors.batchAmount && (<span style={{ color: 'red' }} className="error">{errors.batchAmount}</span>)}
                                             </div>
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
@@ -250,6 +299,44 @@ const AdminUpdateBatch = () => {
                         </div>
                     </div>
                 </div>
+                {showWaitingModal && (
+                    <div className="modal show d-block" tabIndex={-1}>
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                                </div>
+                                <div className="modal-body">
+                                    <>
+                                        <div className="mb-3">
+                                            <p>Processing Request. Do Not Refresh.</p>
+                                        </div>
+                                    </>
+                                </div>
+                                <div className="modal-footer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {showOverlay && (
+                    <div
+                        className="modal-backdrop fade show"
+                        onClick={() => {
+                            setShowWaitingModal(false);
+                            setShowOverlay(false);
+                        }}
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            zIndex: 1040, // Ensure this is below your modal's z-index
+                        }}
+                    ></div>
+                )}
             </div >
         </>
     )

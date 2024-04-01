@@ -184,9 +184,9 @@ exports.batchUpdate = (request, response) => {
             const validationErrors = {};
 
 
-            if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
-                validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
-            }
+            // if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
+            //     validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
+            // }
             // if (!Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).isValid) {
             //     validationErrors.regEndDate = Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).message
             // }
