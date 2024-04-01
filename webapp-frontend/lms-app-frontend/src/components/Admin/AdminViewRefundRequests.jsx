@@ -13,6 +13,8 @@ const AdminViewRefundRequests = () => {
   const [reject, setReject] = useState({})
   const [approve, setApprove] = useState({})
   const [isLoading, setIsLoading] = useState(true);
+  const [showWaitingModal, setShowWaitingModal] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
   const navigate = useNavigate()
 
@@ -35,6 +37,11 @@ const AdminViewRefundRequests = () => {
   const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/rejectRefund"
   const apiUrl3 = global.config.urls.api.server + "/api/lms/admStaffRefundApproval"
+
+  const closeWaitingModal = () => {
+    setShowOverlay(false)
+    setShowWaitingModal(false)
+  }
 
   const getData = () => {
     let currentKey = sessionStorage.getItem("admkey");
@@ -132,20 +139,28 @@ const AdminViewRefundRequests = () => {
         "admStaffId": sessionStorage.getItem("admstaffId"),
         "adminRemarks": inputField.adminRemarks
       }
+      setShowWaitingModal(true)
+      setShowOverlay(true)
       axios.post(apiUrl2, data2, axiosConfig2).then(
         (response) => {
           if (response.data.status === "Refund Request Cancelled.") {
-            alert("Refund Request Rejected")
-            getData()
-            setInputField({
-              adminRemarks: ""
-            });
+            closeWaitingModal()
+            setTimeout(() => {
+              alert("Refund Request Rejected")
+              getData()
+              setInputField({
+                adminRemarks: ""
+              });
+            }, 500)
           } else {
             if (response.data.status === "Unauthorized User!!") {
               { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
               sessionStorage.clear()
             } else {
-              alert(response.data.status)
+              closeWaitingModal()
+              setTimeout(() => {
+                alert(response.data.status)
+              }, 500)
             }
           }
         }
@@ -180,31 +195,48 @@ const AdminViewRefundRequests = () => {
         "transactionNo": approveField.transactionNo,
         "approvedAmnt": approveField.approvedAmnt
       }
+      setShowWaitingModal(true)
+      setShowOverlay(true)
       axios.post(apiUrl3, data3, axiosConfig3).then(
         (response) => {
           if (response.data.status === "success") {
-            alert("Refund Request Approved Successfully")
-            getData()
-            setApproveField({
-              adminRemarks: "",
-              refundAmnt: "",
-              transactionNo: ""
-            });
+            closeWaitingModal()
+            setTimeout(() => {
+              alert("Refund Request Approved Successfully")
+              getData()
+              setApproveField({
+                adminRemarks: "",
+                refundAmnt: "",
+                transactionNo: ""
+              });
+            }, 500)
           } else {
             if (response.data.status === "Validation failed" && response.data.data.adminRemarks) {
-              alert(response.data.data.adminRemarks)
+              closeWaitingModal()
+              setTimeout(() => {
+                alert(response.data.data.adminRemarks)
+              }, 500)
             } else {
               if (response.data.status === "Validation failed" && response.data.data.transactionNo) {
-                alert(response.data.data.transactionNo)
+                closeWaitingModal()
+                setTimeout(() => {
+                  alert(response.data.data.transactionNo)
+                }, 500)
               } else {
                 if (response.data.status === "Validation failed" && response.data.data.approvedAmnt) {
-                  alert(response.data.data.approvedAmnt)
+                  closeWaitingModal()
+                  setTimeout(() => {
+                    alert(response.data.data.approvedAmnt)
+                  }, 500)
                 } else {
                   if (response.data.status === "Unauthorized User!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                   } else {
-                    alert(response.data.status)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                      alert(response.data.status)
+                    }, 500)
                   }
                 }
               }
