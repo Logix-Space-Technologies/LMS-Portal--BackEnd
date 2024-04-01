@@ -11,6 +11,7 @@ const AdminSearchBatch = () => {
         "batchQuery": ""
     });
 
+    
     const [batches, setBatches] = useState([]);
     const [searchExecuted, setSearchExecuted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
