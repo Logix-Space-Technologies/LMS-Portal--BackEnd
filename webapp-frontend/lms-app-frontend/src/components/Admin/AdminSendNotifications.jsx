@@ -20,6 +20,8 @@ const AdminSendNotification = () => {
     const [batches, setBatches] = useState([])
     const [key, setKey] = useState('');
     const navigate = useNavigate()
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const apiUrl2 = global.config.urls.api.server + "/api/lms/viewallcolleges";
     const batchUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
@@ -28,6 +30,11 @@ const AdminSendNotification = () => {
     const handleChange = (event) => {
         setNotificationData({ ...notificationData, [event.target.name]: event.target.value });
     };
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -134,23 +141,33 @@ const AdminSendNotification = () => {
             "sendby": sendby,
             "title": notificationData.title
         }
-
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         try {
             const response = await axios.post(apiUrl, data, axiosConfig);
             if (response.data.status === 'Success') {
-                alert(response.data.message)
-                // Reset the text fields to their initial empty state
-                setNotificationData(initialNotificationData);
+                closeWaitingModal()
+                setTimeout(() => {
+                    alert(response.data.message)
+                    // Reset the text fields to their initial empty state
+                    setNotificationData(initialNotificationData);
+                }, 500)
             } else {
                 if (response.data.message === "Invalid token") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
-                    alert(response.data.message)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.message)
+                    }, 500)
                 }
             }
         } catch (error) {
-            alert(error.message)
+            closeWaitingModal()
+            setTimeout(() => {
+                alert(error.message)
+            }, 500)
         }
     };
 

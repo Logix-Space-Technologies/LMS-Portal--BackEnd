@@ -33,6 +33,7 @@ const AdminSearchSessionDetails = () => {
     const [qrCodeAttendance, setQrCodeAttendance] = useState(null);
     const [showQRModal, setShowQRModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [currentPage, setCurrentPage] = useState(1);
     const [SessionPerPage] = useState(10); // Number of sessions per page
@@ -63,6 +64,11 @@ const AdminSearchSessionDetails = () => {
         setShowOverlay(false);
     };
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
     const handleClick = () => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
@@ -77,7 +83,7 @@ const AdminSearchSessionDetails = () => {
         } else {
             cancelledby = sessionStorage.getItem("admstaffId")
         }
-        let data = { "id": cancelId, "cancelledby": cancelledby};
+        let data = { "id": cancelId, "cancelledby": cancelledby };
         let axiosConfigTwo = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -86,17 +92,28 @@ const AdminSearchSessionDetails = () => {
                 "key": currentKey
             }
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "success") {
                     closeModal()
-                    setUpdateField(updateField.filter(session => session.id !== cancelId));
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Session Cancelled.")
+                        setUpdateField(updateField.filter(session => session.id !== cancelId));
+                    }, 500)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
+                        closeModal()
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status);
+                        closeModal()
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status);
+                        }, 500)
                     }
                 }
             })
@@ -149,20 +166,31 @@ const AdminSearchSessionDetails = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(deleteApiLink, { id: sessionId }, axiosConfig)
             .then(response => {
                 if (response.data.status === "success") {
-                    setUpdateField(updateField.filter(session => session.id !== sessionId));
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Session Deleted Successfully !!!")
+                        setUpdateField(updateField.filter(session => session.id !== sessionId));
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User!!") {
                     navigate("/")
                     sessionStorage.clear()
                 } else {
-                    alert(response.data.status)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.status)
+                    }, 500)
                 }
             })
             .catch(error => {
-                console.error("Error during API call:", error);
+                closeWaitingModal()
+                setTimeout(() => {
+                    console.error("Error during API call:", error);
+                }, 500)
             });
     };
 
@@ -448,6 +476,26 @@ const AdminSearchSessionDetails = () => {
                                     <button type="button" className="btn btn-secondary" onClick={() => closeModal()}>No, cancel</button>
                                     <button onClick={() => handleClick()} type="button" className="btn btn-danger" >Yes, I'm sure</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
                             </div>
                         </div>
                     </div>
