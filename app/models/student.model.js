@@ -271,6 +271,9 @@ Student.findByEmail = (Email, result) => {
             } else if (verifyRes.length === 0) {
                 console.log("Student Does Not Exist")
                 return result("Student Does Not Exist", null)
+            } else if (verifyRes[0].length === "0") {
+                console.log("Password Is Default Password. Please Change.")
+                return result("Password Is Default Password. Please Change.", null)
             } else {
                 db.query("SELECT * FROM student WHERE BINARY studEmail = ? AND isVerified = 1", [Email],
                     (err, res) => {
