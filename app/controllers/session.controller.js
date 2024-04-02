@@ -457,10 +457,11 @@ exports.cancelSession = (request, response) => {
                 if (key !== "lmsapp") {
                     logAdminStaff(cancelledby, "Admin Staff Cancelled Session")
                 }
-                db.query("SELECT * FROM sessiondetails WHERE id = ?", [data], (err, sessionres) => {
+                db.query("SELECT b.batchName, s.* FROM sessiondetails s JOIN batches b ON b.id = s.batchId WHERE s.id = ?", [data], (err, sessionres) => {
                     if (err) {
                         return response.json({ "status": err });
                     }
+                    let batchName = sessionres[0].batchName;
                     let batchId = sessionres[0].batchId;
                     let sessionName = sessionres[0].sessionName;
                     const sessionDate = sessionres[0].date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -498,8 +499,8 @@ exports.cancelSession = (request, response) => {
                             res.forEach(element => {
                                 let clgstaffEmail = element.email
                                 let clgstaffName = element.collegeStaffName
-                                const cancelSessionClgStaffHtmlContent = mailContents.cancelSessionClgStaffHTMLContent(clgstaffName, sessionDate, sessiontime, sessionName);
-                                const cancelSessionClgStaffTextContent = mailContents.cancelSessionClgStaffTextContent(clgstaffName, sessionDate, sessiontime, sessionName);
+                                const cancelSessionClgStaffHtmlContent = mailContents.cancelSessionClgStaffHTMLContent(clgstaffName, sessionDate, sessiontime, sessionName, batchName);
+                                const cancelSessionClgStaffTextContent = mailContents.cancelSessionClgStaffTextContent(clgstaffName, sessionDate, sessiontime, sessionName, batchName);
                                 mail.sendEmail(clgstaffEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, cancelSessionClgStaffHtmlContent, cancelSessionClgStaffTextContent);
                             })
                         }
