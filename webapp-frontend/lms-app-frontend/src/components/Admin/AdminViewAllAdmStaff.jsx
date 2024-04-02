@@ -12,9 +12,16 @@ const AdminViewAllAdminStaff = () => {
   const navigate = useNavigate();
   const [deleteClgStaff, setDeleteClgStaff] = useState({})
   const [isLoading, setIsLoading] = useState(true);
+  const [showWaitingModal, setShowWaitingModal] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
   const apiUrl = global.config.urls.api.server + "/api/lms/viewalladmstaff";
   const deleteUrl = global.config.urls.api.server + "/api/lms/deleteadmstaff";
+
+  const closeWaitingModal = () => {
+    setShowOverlay(false)
+    setShowWaitingModal(false)
+  }
 
   const getData = () => {
     let axiosConfig = {
@@ -56,17 +63,25 @@ const AdminViewAllAdminStaff = () => {
         "token": sessionStorage.getItem("admtoken"),
       },
     };
+    setShowWaitingModal(true)
+    setShowOverlay(true)
     axios.post(deleteUrl, { id }, axiosConfig).then((response) => {
       if (response.data.status === "Admin Staff Deleted.") {
-        alert("Admin staff deleted!")
-        // Refresh the data after deletion
-        getData();
+        closeWaitingModal()
+        setTimeout(() => {
+          alert("Admin staff deleted!")
+          // Refresh the data after deletion
+          getData();
+        }, 500)
       } else {
         if (response.data.status === "Unauthorized User!!") {
           navigate("/")
           sessionStorage.clear()
         } else {
-          alert(response.data.status)
+          closeWaitingModal()
+          setTimeout(() => {
+            alert(response.data.status)
+          }, 500)
         }
       }
     })
@@ -214,6 +229,44 @@ const AdminViewAllAdminStaff = () => {
           )}
         </div>
       </section>
+      {showWaitingModal && (
+        <div className="modal show d-block" tabIndex={-1}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+              </div>
+              <div className="modal-body">
+                <>
+                  <div className="mb-3">
+                    <p>Processing Request. Do Not Refresh.</p>
+                  </div>
+                </>
+              </div>
+              <div className="modal-footer">
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showOverlay && (
+        <div
+          className="modal-backdrop fade show"
+          onClick={() => {
+            setShowWaitingModal(false);
+            setShowOverlay(false);
+          }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 1040, // Ensure this is below your modal's z-index
+          }}
+        ></div>
+      )}
     </div>
   );
 };

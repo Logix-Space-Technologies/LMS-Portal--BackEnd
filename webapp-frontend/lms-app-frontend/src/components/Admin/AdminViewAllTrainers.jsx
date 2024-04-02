@@ -14,9 +14,16 @@ const AdminViewAllTrainers = () => {
     const [key, setKey] = useState('');
     const [deleteTrainer, setDeleteTrainer] = useState({})
     const [isLoading, setIsLoading] = useState(true);
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewAllTrainer";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteTrainer";
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -90,17 +97,26 @@ const AdminViewAllTrainers = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "success") {
-                    // Reload the page after deleting trainer
-                    getData()
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Trainer deleted!")
+                        // Refresh the data after deletion
+                        getData();
+                    }, 500)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status);
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status)
+                        }, 500)
                     }
                 }
             }
@@ -260,6 +276,44 @@ const AdminViewAllTrainers = () => {
                         </div>
                     </div>
                 </div>
+            )}
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
             )}
         </div>
     );
