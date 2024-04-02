@@ -20,8 +20,23 @@ const menuItems = [
     { name: 'College Details', path: '#', icon: 'bx bxs-school side-menu__icon' },
 
     { name: 'Notification', path: '#', icon: 'bx bxs-bell side-menu__icon' },
-    
-    { name: 'Materials', path: '#', icon: 'bx bx-file side-menu__icon' }
+
+    { name: 'Materials', path: '#', icon: 'bx bx-file side-menu__icon' },
+
+    {
+        name: 'Test Design',
+        path: '#', icon: 'bx bx-group side-menu__icon',
+        subItems: [
+            { name: 'Home', path: '/home' },
+            { name: 'Test-Task View', path: '/testTaskView' },
+            { name: 'Test-Student Profile', path: '/testStudProfile' },
+            { name: 'Test-Student Input', path: '/testStudInput' },
+            { name: 'Test-Student Table', path: '/testStudTable' },
+            { name: 'Test-Stud View Upcoming Session', path: '/testStudViewUpcomingSession' },
+            { name: 'Test-Login', path: '/testlogin' },
+            { name: 'Test-Sign Up', path: '/testSignUp' },
+        ]
+    }
 
 ];
 
