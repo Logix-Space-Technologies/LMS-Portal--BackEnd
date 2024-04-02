@@ -208,13 +208,11 @@ const AdminAddCurriculum = () => {
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        console.log("Status 400:", error.response.data);
                         setTimeout(() => {
                             alert(error.response.data.status)
                         }, 500)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        console.log("Status 500:", error.response.data);
                         setTimeout(() => {
                             alert(error.response.data.status)
                         }, 500)
@@ -225,17 +223,14 @@ const AdminAddCurriculum = () => {
                         }, 500)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
                     setTimeout(() => {
                         alert(error.request);
                     }, 500)
                 } else if (error.message) {
-                    console.log('Error', error.message);
                     setTimeout(() => {
                         alert('Error', error.message);
                     }, 500)
                 } else {
-                    console.log(error.config);
                     setTimeout(() => {
                         alert(error.config);
                     }, 500)
