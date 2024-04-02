@@ -150,25 +150,36 @@ const AdminUpdateCollegeStaff = () => {
 
                     }
                 }).catch(error => {
+                    closeWaitingModal()
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        alert(error.response.data.status)
-                        // Additional logic for status 400
+                        setTimeout(()=>{
+                            alert(error.response.data.status)
+                        }, 500)
                     } else if (statusCode === 500) {
-                        alert(error.response.data.status)
-                        // Additional logic for status 500
+                        setTimeout(()=>{
+                            alert(error.response.data.status)
+                        }, 500)
                     } else {
-                        alert(error.response.data.status)
+                        setTimeout(()=>{
+                            alert(error.response.data.status)
+                        }, 500)
                     }
                 } else if (error.request) {
-                    alert(error.request);
+                    setTimeout(()=>{
+                        alert(error.request);
+                    }, 500)
                 } else if (error.message) {
-                    alert('Error', error.message);
+                    setTimeout(()=>{
+                        alert('Error', error.message);
+                    }, 500)
                 } else {
-                    alert(error.config);
+                    setTimeout(()=>{
+                        alert(error.config);
+                    }, 500)
                 }
             })
         } else {
