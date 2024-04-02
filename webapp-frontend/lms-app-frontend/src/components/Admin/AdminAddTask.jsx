@@ -141,7 +141,9 @@ const AdminAddTask = () => {
         };
         axios.post(apiUrl3, { batchId }, axiosConfig3).then((response) => {
             if (response.data.Sessions) {
-                setSessions(response.data.Sessions);
+                // Filter out sessions with cancelStatus === "CANCELLED"
+                const activeSessions = response.data.Sessions.filter(session => session.cancelStatus === "ACTIVE");
+                setSessions(activeSessions);
             } else if (response.data.status === "Unauthorized access!!") {
                 { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                 sessionStorage.clear()
