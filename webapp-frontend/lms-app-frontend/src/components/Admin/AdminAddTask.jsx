@@ -230,28 +230,42 @@ const AdminAddTask = () => {
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.batchId) {
                     closeWaitingModal()
-                    alert(response.data.data.batchId)
+                    setTimeout(() => {
+                        alert(response.data.data.batchId)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.taskTitle) {
                     closeWaitingModal()
-                    alert(response.data.data.taskTitle)
+                    setTimeout(() => {
+                        alert(response.data.data.taskTitle)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.taskDesc) {
                     closeWaitingModal()
-                    alert(response.data.data.taskDesc)
+                    setTimeout(() => {
+                        alert(response.data.data.taskDesc)
+                    })
                 } else if (response.data.status === "Validation failed" && response.data.data.taskType) {
                     closeWaitingModal()
-                    alert(response.data.data.taskType)
+                    setTimeout(() => {
+                        alert(response.data.data.taskType)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.totalScore) {
                     closeWaitingModal()
-                    alert(response.data.data.totalScore)
+                    setTimeout(() => {
+                        alert(response.data.data.totalScore)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.dueDate) {
                     closeWaitingModal()
-                    alert(response.data.data.dueDate)
+                    setTimeout(() => {
+                        alert(response.data.data.dueDate)
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
                     closeWaitingModal()
-                    alert(response.data.status)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                    }, 500)
                 }
 
             }
@@ -263,24 +277,36 @@ const AdminAddTask = () => {
 
                     if (statusCode === 400) {
                         console.log("Status 400:", error.response.data);
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
                         console.log("Status 500:", error.response.data);
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 500
                     } else {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     }
                 } else if (error.request) {
                     console.log(error.request);
-                    alert(error.request);
+                    setTimeout(() => {
+                        alert(error.request);
+                    }, 500)
                 } else if (error.message) {
                     console.log('Error', error.message);
-                    alert('Error', error.message);
+                    setTimeout(() => {
+                        alert('Error', error.message);
+                    }, 500)
                 } else {
-                    alert(error.config);
                     console.log(error.config);
+                    setTimeout(() => {
+                        alert(error.config);
+                    }, 500)
                 }
             })
         } else {
