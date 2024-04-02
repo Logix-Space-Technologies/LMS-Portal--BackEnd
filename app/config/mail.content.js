@@ -2016,7 +2016,7 @@ function clgstaffEmailVerificationOTPTextContent(clgstaffName, clgstaffotp) {
   return content
 }
 
-function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName, isVenueOrLinkChangedOnly) {
+function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   let content = `
@@ -2081,7 +2081,7 @@ function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessio
       <h2>Session Reschedule Announcement</h2>
       <p>Dear ${studName},</p>`;
 
-  if (isVenueOrLinkChangedOnly === false) {
+  if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === false) {
     content += `<p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the
         upcoming session
         originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this
@@ -2094,7 +2094,18 @@ function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessio
         <li><strong>Session Type:</strong> ${type}</li>
         <li><strong>Venue:</strong> ${venueORlink}</li>
       </ul>`;
-  } else {
+  } else if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === true) {
+    content += `<p>We hope this message finds you well. Please note that there has been a change in the timing of the session scheduled on <b>${originaldate}</b>. However, the date and venue of the
+        session remain unchanged. We apologize for any inconvenience this
+        may cause and appreciate your understanding.</p>
+      <p>Details of the session:</p>
+      <ul>
+        <li><strong>Date:</strong> ${originaldate}</li>
+        <li><strong>Time:</strong> ${sessionTime}</li>
+        <li><strong>Session Type:</strong> ${type}</li>
+        <li><strong>Venue:</strong> ${venueORlink}</li>
+      </ul>`;
+  } else if (isVenueOrLinkChangedOnly === true && isTimeChangeOnly === false) {
     content += `<p>We hope this message finds you well. Please note that there has been a change in the venue. However, the date and time of the
         session remain unchanged. We apologize for any inconvenience this
         may cause and appreciate your understanding.</p>
@@ -2121,7 +2132,7 @@ function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessio
   return content;
 }
 
-function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName, isVenueOrLinkChangedOnly) {
+function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   let content = `
@@ -2186,31 +2197,41 @@ function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, session
       <h2>Session Reschedule Announcement</h2>
       <p>Dear ${studName},</p>`;
 
-  if (isVenueOrLinkChangedOnly === false) {
+  if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === false) {
     content += `<p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the
-        upcoming session
-        originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this
-        may cause and appreciate your understanding.</p>
-      <p>Details of the rescheduled session:</p>
-      <ul>
-        <li><strong>Original Date:</strong> ${originaldate}</li>
-        <li><strong>New Date:</strong> ${sessionDate}</li>
-        <li><strong>Time:</strong> ${sessionTime}</li>
-        <li><strong>Session Type:</strong> ${type}</li>
-        <li><strong>Meeting Link:</strong> ${venueORlink}</li>
-      </ul>`;
-  } else {
-    content += `<p>We hope this message finds you well. Please note that there has been a change in the meeting
-        link. However, the date and time of the
-        session remain unchanged. We apologize for any inconvenience this
-        may cause and appreciate your understanding.</p>
-      <p>Details of the session:</p>
-      <ul>
-        <li><strong>Date:</strong> ${originaldate}</li>
-        <li><strong>Time:</strong> ${sessionTime}</li>
-        <li><strong>Session Type:</strong> ${type}</li>
-        <li><strong>Meeting Link:</strong> ${venueORlink}</li>
-      </ul>`;
+            upcoming session
+            originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this
+            may cause and appreciate your understanding.</p>
+          <p>Details of the rescheduled session:</p>
+          <ul>
+            <li><strong>Original Date:</strong> ${originaldate}</li>
+            <li><strong>New Date:</strong> ${sessionDate}</li>
+            <li><strong>Time:</strong> ${sessionTime}</li>
+            <li><strong>Session Type:</strong> ${type}</li>
+            <li><strong>Meeting Link:</strong> ${venueORlink}</li>
+          </ul>`;
+  } else if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === true) {
+    content += `<p>We hope this message finds you well. Please note that there has been a change in the timing of the session scheduled on <b>${originaldate}</b>. However, the date and meeting link of the
+            session remain unchanged. We apologize for any inconvenience this
+            may cause and appreciate your understanding.</p>
+          <p>Details of the session:</p>
+          <ul>
+            <li><strong>Date:</strong> ${originaldate}</li>
+            <li><strong>Time:</strong> ${sessionTime}</li>
+            <li><strong>Session Type:</strong> ${type}</li>
+            <li><strong>Meeting Link:</strong> ${venueORlink}</li>
+          </ul>`;
+  } else if (isVenueOrLinkChangedOnly === true && isTimeChangeOnly === false) {
+    content += `<p>We hope this message finds you well. Please note that there has been a change in the meeting link. However, the date and time of the
+            session remain unchanged. We apologize for any inconvenience this
+            may cause and appreciate your understanding.</p>
+          <p>Details of the session:</p>
+          <ul>
+            <li><strong>Date:</strong> ${originaldate}</li>
+            <li><strong>Time:</strong> ${sessionTime}</li>
+            <li><strong>Session Type:</strong> ${type}</li>
+            <li><strong>Meeting Link:</strong> ${venueORlink}</li>
+          </ul>`;
   }
 
   content += `<p>Best Regards,</p>
@@ -2292,7 +2313,7 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
       <h2>Session Reschedule Announcement</h2>
       <p>Dear ${studName},</p>`;
 
-  if (isVenueOrLinkChangedOnly === false) {
+  if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === false) {
     content += `<p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the
         upcoming session
         originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this
@@ -2305,7 +2326,18 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
         <li><strong>Session Type:</strong> ${type}</li>
         <li><strong>Where:</strong> <a href=${venueORlink} target="_blank">Access the Recorded Video Here</a></li>
       </ul>`;
-  } else {
+  } else if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === true) {
+    content += `<p>We hope this message finds you well. Please note that there has been a change in the timing of the session scheduled on <b>${originaldate}</b>. However, the date and the recorded video
+        link of the session remain unchanged. We apologize for any inconvenience this
+        may cause and appreciate your understanding.</p>
+      <p>Details of the session:</p>
+      <ul>
+        <li><strong>Date:</strong> ${originaldate}</li>
+        <li><strong>Time:</strong> ${sessionTime}</li>
+        <li><strong>Session Type:</strong> ${type}</li>
+        <li><strong>Where:</strong> <a href=${venueORlink} target="_blank">Access the Recorded Video Here</a></li>
+      </ul>`;
+  } else if (isVenueOrLinkChangedOnly === true && isTimeChangeOnly === false) {
     content += `<p>We hope this message finds you well. Please note that there has been a change in the recorded video
         link. However, the date and time of the
         session remain unchanged. We apologize for any inconvenience this
@@ -2318,7 +2350,6 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
         <li><strong>Where:</strong> <a href=${venueORlink} target="_blank">Access the Recorded Video Here</a></li>
       </ul>`;
   }
-
   content += `<p>Best Regards,</p>
       <p>LinkUrCodes Team</p>
       <a class="button" href="https://www.linkurcodes.com" style="color: white;" target="_blank">Visit LinkUrCodes
@@ -2333,7 +2364,7 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
   return content;
 }
 
-function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly) {
+function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly, isTimeChangeOnly) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   let content = `
@@ -2396,7 +2427,7 @@ function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessi
       </div>
       <div class="content">
         <p>Dear ${collegeStaffName},</p>`;
-  if (isVenueOrLinkChangedOnly === false) {
+  if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === false) {
     content += `<p>We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the
           upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this
           may cause and appreciate your understanding.</p>
@@ -2409,7 +2440,19 @@ function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessi
           <li><strong>Session Type:</strong> ${type}</li>
           <li><strong>Meeting Link/Venue:</strong> ${venueORlink}</li>
         </ul>`;
-  } else {
+  } else if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === true) {
+    content += `<p>We hope this message finds you well. Please note that there has been a change in the timing of the session scheduled on <b>${originaldate}</b>. However, the date and venue/link of the
+        session remain unchanged. We apologize for any inconvenience this
+        may cause and appreciate your understanding.</p>
+      <p>Details of the session:</p>
+      <ul>
+        <li><strong>Date:</strong> ${originaldate}</li>
+        <li><strong>Time:</strong> ${sessionTime}</li>
+        <li><strong>Batch Name:</strong> ${batchName}</li>
+        <li><strong>Session Type:</strong> ${type}</li>
+        <li><strong>Meeting Link/Venue:</strong> ${venueORlink}</li>
+      </ul>`;
+  } else if (isVenueOrLinkChangedOnly === true && isTimeChangeOnly === false) {
     content += `<p>We hope this message finds you well. Please note that there has been a change in the meeting link/venue. However, the date and time of the
           session remain unchanged. We apologize for any inconvenience this
           may cause and appreciate your understanding.</p>
