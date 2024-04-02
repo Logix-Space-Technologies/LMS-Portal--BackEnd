@@ -20,6 +20,7 @@ const AdminStaffSearchSubmittedTask = () => {
         setOutputField({ ...outputField, [event.target.name]: event.target.value });
     };
 
+    const [showModal, setShowModal] = useState(false);
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
@@ -27,6 +28,16 @@ const AdminStaffSearchSubmittedTask = () => {
         setShowOverlay(false)
         setShowWaitingModal(false)
     }
+
+    const closeModal = () => {
+        setShowModal(false);
+        setShowOverlay(false);
+        setErrors({})
+        setOutputField({
+            "evaluatorRemarks": "",
+            "score": ""
+        });
+    };
 
     const [subtasks, setSubTasks] = useState([]);
     const [errors, setErrors] = useState({});
@@ -86,8 +97,11 @@ const AdminStaffSearchSubmittedTask = () => {
         }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
+            setShowModal(true)
+            setShowOverlay(true)
             return;
         }
+        setShowModal(false)
         setShowWaitingModal(true)
         setShowOverlay(true)
         let axiosConfig = {
@@ -108,43 +122,48 @@ const AdminStaffSearchSubmittedTask = () => {
             (response) => {
                 if (response.data.status === "Task evaluated successfully") {
                     closeWaitingModal()
+                    setOutputField({
+                        evaluatorRemarks: "",
+                        score: ""
+                    });
                     setTimeout(() => {
                         alert("Task evaluated successfully")
-                        searchSubmittedTasks()
-                        setOutputField({
-                            evaluatorRemarks: "",
-                            score: ""
-                        });
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
                     closeWaitingModal()
+                    setOutputField({
+                        evaluatorRemarks: "",
+                        score: ""
+                    });
                     setTimeout(() => {
                         alert(response.data.data.evaluatorRemarks);
-                        setOutputField({
-                            evaluatorRemarks: "",
-                            score: ""
-                        });
+                        setShowModal(true)
+                        setShowOverlay(true)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.score) {
                     closeWaitingModal()
+                    setOutputField({
+                        evaluatorRemarks: "",
+                        score: ""
+                    });
                     setTimeout(() => {
                         alert(response.data.data.score);
-                        setOutputField({
-                            evaluatorRemarks: "",
-                            score: ""
-                        });
+                        setShowModal(true)
+                        setShowOverlay(true)
                     }, 500)
                 } else if (response.data.status === "Unauthorized access!!") {
                     navigate("/admstafflogin")
                     sessionStorage.clear()
                 } else {
                     closeWaitingModal()
+                    setOutputField({
+                        evaluatorRemarks: "",
+                        score: ""
+                    });
                     setTimeout(() => {
                         alert(response.data.status);
-                        setOutputField({
-                            evaluatorRemarks: "",
-                            score: ""
-                        });
+                        setShowModal(true)
+                        setShowOverlay(true)
                     }, 500)
                 }
 
@@ -171,6 +190,8 @@ const AdminStaffSearchSubmittedTask = () => {
     }
 
     const readValue = (id) => {
+        setShowModal(true)
+        setShowOverlay(true)
         setSubmittedTaskId(id)
     }
 
@@ -268,7 +289,7 @@ const AdminStaffSearchSubmittedTask = () => {
                                         )}
                                         <td>{task.totalScore}</td>
                                         <td>
-                                            <button onClick={() => readValue(task.submitTaskId)} type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" disabled={task.evalDate !== null}>Evaluate Task</button>
+                                            <button onClick={() => readValue(task.submitTaskId)} type="button" className="btn btn-primary btn-sm me-2" disabled={task.evalDate !== null}>Evaluate Task</button>
                                         </td>
                                     </tr>
                                 })}
@@ -313,13 +334,13 @@ const AdminStaffSearchSubmittedTask = () => {
                 ) : null))}
             </div>
             <div>
-                <div className="flex justify-end">
-                    <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                {showModal && <div className="flex justify-end">
+                    <div className="modal show d-block" tabIndex={-1}>
                         <div className="modal-dialog">
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h1 className="modal-title fs-5" id="exampleModalLabel">Evaluate Task</h1>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                                    <button type="button" className="btn-close" onClick={closeModal} />
                                 </div>
                                 <div className="modal-body">
                                     <form>
@@ -336,7 +357,7 @@ const AdminStaffSearchSubmittedTask = () => {
                                     </form>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
                                     <button onClick={() => evaluateTask()} type="button" className="btn btn-primary">
                                         Submit
                                     </button>
@@ -344,7 +365,7 @@ const AdminStaffSearchSubmittedTask = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>}
             </div>
             {showWaitingModal && (
                 <div className="modal show d-block" tabIndex={-1}>
