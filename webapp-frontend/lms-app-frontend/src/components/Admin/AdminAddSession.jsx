@@ -207,34 +207,52 @@ const AdminAddSession = () => {
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.batchId) {
                     closeWaitingModal()
-                    alert(response.data.data.batchId)
+                    setTimeout(()=>{
+                        alert(response.data.data.batchId)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.sessionName) {
                     closeWaitingModal()
-                    alert(response.data.data.sessionName)
+                    setTimeout(()=>{
+                        alert(response.data.data.sessionName)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.date) {
                     closeWaitingModal()
-                    alert(response.data.data.date)
+                    setTimeout(()=>{
+                        alert(response.data.data.date)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.time) {
                     closeWaitingModal()
-                    alert(response.data.data.time)
+                    setTimeout(()=>{
+                        alert(response.data.data.time)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.type) {
                     closeWaitingModal()
-                    alert(response.data.data.type)
+                    setTimeout(()=>{
+                        alert(response.data.data.type)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.remarks) {
                     closeWaitingModal()
-                    alert(response.data.data.remarks)
+                    setTimeout(()=>{
+                        alert(response.data.data.remarks)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.venueORlink) {
                     closeWaitingModal()
-                    alert(response.data.data.venueORlink)
+                    setTimeout(()=>{
+                        alert(response.data.data.venueORlink)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.trainerId) {
                     closeWaitingModal()
-                    alert(response.data.data.trainerId)
+                    setTimeout(()=>{
+                        alert(response.data.data.trainerId)
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
                     closeWaitingModal()
-                    alert(response.data.status)
+                    setTimeout(()=>{
+                        alert(response.data.status)
+                    }, 500)
                 }
             })
         } else {
