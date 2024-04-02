@@ -33,6 +33,7 @@ const AdminSearchSessionDetails = () => {
     const [qrCodeAttendance, setQrCodeAttendance] = useState(null);
     const [showQRModal, setShowQRModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [currentPage, setCurrentPage] = useState(1);
     const [SessionPerPage] = useState(10); // Number of sessions per page
@@ -46,6 +47,7 @@ const AdminSearchSessionDetails = () => {
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchSession";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deleteSessions";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession";
+    const remainderApiLink = global.config.urls.api.server + "/api/lms/sendSessionRemainderEmail";
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
@@ -63,15 +65,26 @@ const AdminSearchSessionDetails = () => {
         setShowOverlay(false);
     };
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
     const handleClick = () => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let cancelledby;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        let data = { "id": cancelId };
+        if (currentKey === 'lmsapp') {
+            cancelledby = 0
+        } else {
+            cancelledby = sessionStorage.getItem("admstaffId")
+        }
+        let data = { "id": cancelId, "cancelledby": cancelledby };
         let axiosConfigTwo = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -80,17 +93,28 @@ const AdminSearchSessionDetails = () => {
                 "key": currentKey
             }
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "success") {
                     closeModal()
-                    setUpdateField(updateField.filter(session => session.id !== cancelId));
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Session Cancelled.")
+                        setUpdateField(updateField.filter(session => session.id !== cancelId));
+                    }, 500)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
+                        closeModal()
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status);
+                        closeModal()
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status);
+                        }, 500)
                     }
                 }
             })
@@ -143,20 +167,31 @@ const AdminSearchSessionDetails = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(deleteApiLink, { id: sessionId }, axiosConfig)
             .then(response => {
                 if (response.data.status === "success") {
-                    setUpdateField(updateField.filter(session => session.id !== sessionId));
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Session Deleted Successfully !!!")
+                        setUpdateField(updateField.filter(session => session.id !== sessionId));
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User!!") {
                     navigate("/")
                     sessionStorage.clear()
                 } else {
-                    alert(response.data.status)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.status)
+                    }, 500)
                 }
             })
             .catch(error => {
-                console.error("Error during API call:", error);
+                closeWaitingModal()
+                setTimeout(() => {
+                    console.error("Error during API call:", error);
+                }, 500)
             });
     };
 
@@ -192,11 +227,6 @@ const AdminSearchSessionDetails = () => {
         sessionStorage.setItem("sessionId", data)
         navigate("/AdminUpdateSession")
     }
-
-    // Update key state when component mounts
-    useEffect(() => {
-        setKey(sessionStorage.getItem("admkey") || '');
-    }, []);
 
     // Delete confirmation modal
     const [deleteId, setDeleteId] = useState(null);
@@ -241,6 +271,71 @@ const AdminSearchSessionDetails = () => {
         setShowQRModal(false);
     };
 
+    const sessionClick = (id) => {
+        sessionStorage.setItem("viewtaskId", id)
+        navigate("/AdminViewAllTasks")
+    }
+
+    const remainderClick = (batchId, sessionId) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let data = { "batchId": batchId, "id": sessionId }; // Assuming the API requires batchId
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
+        // Make the API call to send the reminder
+        axios.post(remainderApiLink, data, axiosConfig).then(
+            (response) => {
+                if (response.data.status === "success") {
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Reminder Sent Successfully.");
+                    }, 500)
+                } else {
+                    if (response.data.status === "Unauthorized access!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear();
+                    } else {
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status);
+                        }, 500)
+                    }
+                }
+            }
+        );
+    };
+
+    const canSendReminder = (sessionDate, sessionTime) => {
+        const oneDay = 72 * 60 * 60 * 1000; // 1 day in milliseconds
+        const currentDate = new Date();
+        const [day, month, year] = sessionDate.split('/'); // Assuming date format is DD/MM/YYYY
+        const [hours, minutes] = sessionTime.split(':'); // Assuming time format is HH:mm
+
+        // Convert sessionDate and sessionTime into a Date object
+        const sessionDateTime = new Date(year, month - 1, day, hours, minutes);
+
+        // Check if session date/time is within next 24 hours and not in the past
+        const timeDifference = sessionDateTime.getTime() - currentDate.getTime();
+        const isFutureSession = timeDifference > 0;
+        const isWithin72Hours = timeDifference <= oneDay;
+        // console.log(isWithin72Hours)
+
+        return isFutureSession && isWithin72Hours;
+    };
+
     const isSessionInPast = (dateString, timeString) => {
         const now = new Date();
 
@@ -253,6 +348,11 @@ const AdminSearchSessionDetails = () => {
 
         return sessionDateTime < now;
     };
+
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
 
     return (
         <div>
@@ -302,6 +402,8 @@ const AdminSearchSessionDetails = () => {
                                                     <th scope="col" className="px-6 py-3"></th>
                                                     <th scope="col" className="px-6 py-3"></th>
                                                     <th scope="col" className="px-6 py-3"></th>
+                                                    <th scope="col" className="px-6 py-3"></th>
+                                                    <th scope="col" className="px-6 py-3"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -340,20 +442,34 @@ const AdminSearchSessionDetails = () => {
                                                             )}
                                                         </td>
                                                         <td className="px-6 py-4">{value.cancelStatus}</td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
-                                                            {key === "lmsapp" && !isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
-                                                                <button onClick={() => handleDeleteClick(value.id)} className="btn btn-danger mt-3">Delete</button>
+                                                        <td className="px-6 py-4">
+                                                            {value.cancelStatus === "ACTIVE" && (
+                                                                <button onClick={() => sessionClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                                                    View Tasks
+                                                                </button>
                                                             )}
                                                         </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                        <td className="px-6 py-4">
                                                             {key === "lmsapp" && !isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
-                                                                <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Reschedule</button>
+                                                                <button onClick={() => handleDeleteClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">Delete Session</button>
                                                             )}
                                                         </td>
-                                                        <td>
+                                                        <td className="px-6 py-4">
+                                                            {key === "lmsapp" && !isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
+                                                                <button onClick={() => UpdateClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">Reschedule Session</button>
+                                                            )}
+                                                        </td>
+                                                        <td className="px-6 py-4">
                                                             {!isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
-                                                                <button type="button" onClick={() => cancelClick(value.id)} className="btn btn-danger mt-3">
+                                                                <button type="button" onClick={() => cancelClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                                                     Cancel Session
+                                                                </button>
+                                                            )}
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            {value.cancelStatus === "ACTIVE" && canSendReminder(value.date, value.time) && (
+                                                                <button onClick={() => remainderClick(value.batchId, value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" type="button">
+                                                                    Send Remainder
                                                                 </button>
                                                             )}
                                                         </td>
@@ -442,6 +558,26 @@ const AdminSearchSessionDetails = () => {
                                     <button type="button" className="btn btn-secondary" onClick={() => closeModal()}>No, cancel</button>
                                     <button onClick={() => handleClick()} type="button" className="btn btn-danger" >Yes, I'm sure</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
                             </div>
                         </div>
                     </div>

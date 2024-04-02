@@ -20,6 +20,25 @@ const AdminStaffSearchSubmittedTask = () => {
         setOutputField({ ...outputField, [event.target.name]: event.target.value });
     };
 
+    const [showModal, setShowModal] = useState(false);
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
+    const closeModal = () => {
+        setShowModal(false);
+        setShowOverlay(false);
+        setErrors({})
+        setOutputField({
+            "evaluatorRemarks": "",
+            "score": ""
+        });
+    };
+
     const [subtasks, setSubTasks] = useState([]);
     const [errors, setErrors] = useState({});
     let [submittedTaskId, setSubmittedTaskId] = useState("")
@@ -48,15 +67,23 @@ const AdminStaffSearchSubmittedTask = () => {
         };
         axios.post(apiUrl, inputField, axiosConfig)
             .then(response => {
-                setInputField({ "subTaskSearchQuery": "" });
-                setSubTasks(response.data.data);
-                setIsLoading(false);
-                setSearchExecuted(true);
+                if (response.data.data) {
+                    setInputField({ "subTaskSearchQuery": "" });
+                    setSubTasks(response.data.data);
+                    setIsLoading(false);
+                    setSearchExecuted(true);
+                } else if (response.data.status === "Unauthorized access!!") {
+                    navigate("/admstafflogin")
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setInputField({ "subTaskSearchQuery": "" });
+                    setSubTasks([]);
+                    setIsLoading(false);
+                    setSearchExecuted(true);
+                } else {
+                    alert(response.data.status)
+                }
             })
-            .catch(error => {
-                console.error("Search failed:", error);
-                setIsLoading(false);
-            });
     };
 
     const evaluateTask = () => {
@@ -70,8 +97,13 @@ const AdminStaffSearchSubmittedTask = () => {
         }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
+            setShowModal(true)
+            setShowOverlay(true)
             return;
         }
+        setShowModal(false)
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -89,40 +121,44 @@ const AdminStaffSearchSubmittedTask = () => {
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Task evaluated successfully") {
-                    alert("Task evaluated successfully")
-                    searchSubmittedTasks()
+                    closeWaitingModal()
                     setOutputField({
                         evaluatorRemarks: "",
                         score: ""
                     });
-                } else {
-                    if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
+                    setTimeout(() => {
+                        alert("Task evaluated successfully")
+                    }, 500)
+                } else if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
+                    closeWaitingModal()
+                    setTimeout(() => {
                         alert(response.data.data.evaluatorRemarks);
-                        setOutputField({
-                            evaluatorRemarks: "",
-                            score: ""
-                        });
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.score) {
-                            alert(response.data.data.score);
-                            setOutputField({
-                                evaluatorRemarks: "",
-                                score: ""
-                            });
-                        } else {
-                            if (response.data.status === "Unauthorized access!!") {
-                                navigate("/admstafflogin")
-                                sessionStorage.clear()
-                            } else {
-                                alert(response.data.status);
-                                setOutputField({
-                                    evaluatorRemarks: "",
-                                    score: ""
-                                });
-                            }
-                        }
-                    }
+                        setShowModal(true)
+                        setShowOverlay(true)
+                    }, 500)
+                } else if (response.data.status === "Validation failed" && response.data.data.score) {
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.score);
+                        setShowModal(true)
+                        setShowOverlay(true)
+                    }, 500)
+                } else if (response.data.status === "Unauthorized access!!") {
+                    navigate("/admstafflogin")
+                    sessionStorage.clear()
+                } else {
+                    closeWaitingModal()
+                    setOutputField({
+                        evaluatorRemarks: "",
+                        score: ""
+                    });
+                    setTimeout(() => {
+                        alert(response.data.status);
+                        setShowModal(true)
+                        setShowOverlay(true)
+                    }, 500)
                 }
+
             }
         )
     }
@@ -146,6 +182,8 @@ const AdminStaffSearchSubmittedTask = () => {
     }
 
     const readValue = (id) => {
+        setShowModal(true)
+        setShowOverlay(true)
         setSubmittedTaskId(id)
     }
 
@@ -243,7 +281,7 @@ const AdminStaffSearchSubmittedTask = () => {
                                         )}
                                         <td>{task.totalScore}</td>
                                         <td>
-                                            <button onClick={() => readValue(task.submitTaskId)} type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" disabled={task.evalDate !== null}>Evaluate Task</button>
+                                            <button onClick={() => readValue(task.submitTaskId)} type="button" className="btn btn-primary btn-sm me-2" disabled={task.evalDate !== null}>Evaluate Task</button>
                                         </td>
                                     </tr>
                                 })}
@@ -288,13 +326,13 @@ const AdminStaffSearchSubmittedTask = () => {
                 ) : null))}
             </div>
             <div>
-                <div className="flex justify-end">
-                    <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                {showModal && <div className="flex justify-end">
+                    <div className="modal show d-block" tabIndex={-1}>
                         <div className="modal-dialog">
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h1 className="modal-title fs-5" id="exampleModalLabel">Evaluate Task</h1>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                                    <button type="button" className="btn-close" onClick={closeModal} />
                                 </div>
                                 <div className="modal-body">
                                     <form>
@@ -311,7 +349,7 @@ const AdminStaffSearchSubmittedTask = () => {
                                     </form>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
                                     <button onClick={() => evaluateTask()} type="button" className="btn btn-primary">
                                         Submit
                                     </button>
@@ -319,8 +357,46 @@ const AdminStaffSearchSubmittedTask = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>}
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }

@@ -12,6 +12,9 @@ const AdminStaffUpdateMaterial = () => {
     const [fileType, setFileType] = useState("");
     const [batches, setBatches] = useState([])
     const [outputField, setOutputField] = useState([])
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
 
     const [updateField, setUpdateField] = useState(
         {
@@ -31,6 +34,10 @@ const AdminStaffUpdateMaterial = () => {
     const batchUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
     const navigate = useNavigate()
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getClg = () => {
         let axiosConfig = {
@@ -117,6 +124,7 @@ const AdminStaffUpdateMaterial = () => {
                     "key": sessionStorage.getItem("admstaffkey")
                 }
             }
+            let addedBy = sessionStorage.getItem("admstaffId");
             let data = {}
             if (file) {
                 data = {
@@ -126,7 +134,8 @@ const AdminStaffUpdateMaterial = () => {
                     "materialDesc": updateField.materialDesc,
                     "remarks": updateField.remarks,
                     "materialType": updateField.materialType,
-                    "uploadFile": file
+                    "uploadFile": file,
+                    "addedby": addedBy
                 }
             } else {
                 data = {
@@ -136,86 +145,111 @@ const AdminStaffUpdateMaterial = () => {
                     "materialDesc": updateField.materialDesc,
                     "remarks": updateField.remarks,
                     "materialType": updateField.materialType,
-                    "uploadFile": updateField.uploadFile
+                    "uploadFile": updateField.uploadFile,
+                    "addedby": addedBy
                 }
             }
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl2, data, axiosConfig2).then(
                 (Response) => {
                     console.log(Response)
                     if (Response.data.status === "Material Details Updated") {
-                        setUpdateField({
-                            "id": sessionStorage.getItem("materialId"),
-                            "batchId": "",
-                            "fileName": "",
-                            "materialDesc": "",
-                            "remarks": "",
-                            "materialType": "",
-                            "uploadFile": ""
-                        })
-                        alert("Material Updated Successfully")
-                        navigate(-1)
-                    } else {
-                        if (Response.data.status === "Validation failed" && Response.data.data.batchId) {
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            setUpdateField({
+                                "id": sessionStorage.getItem("materialId"),
+                                "batchId": "",
+                                "fileName": "",
+                                "materialDesc": "",
+                                "remarks": "",
+                                "materialType": "",
+                                "uploadFile": ""
+                            })
+                            alert("Material Updated Successfully")
+                            navigate(-1)
+                        }, 500)
+
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.batchId) {
+                        closeWaitingModal()
+                        setTimeout(()=>{
                             alert(Response.data.data.batchId)
-                        } else {
-                            if (Response.data.status === "Validation failed" && Response.data.data.fileName) {
-                                alert(Response.data.data.fileName)
-                            } else {
-                                if (Response.data.status === "Validation failed" && Response.data.data.remarks) {
-                                    alert(Response.data.data.remarks)
-                                } else {
-                                    if (Response.data.status === "Validation failed" && Response.data.data.materialDesc) {
-                                        alert(Response.data.data.materialDesc)
-                                    } else {
-                                        if (Response.data.status === "Validation failed" && Response.data.data.materialType) {
-                                            alert(Response.data.data.materialType)
-                                        } else {
-                                            if (Response.data.status === "Validation failed" && Response.data.data.file) {
-                                                alert(Response.data.data.file)
-                                            } else {
-                                                if (Response.data.status === "Validation failed" && Response.data.data.website) {
-                                                    alert(Response.data.data.website)
-                                                } else {
-                                                    if (Response.data.status === "Unauthorized Access!!!") {
-                                                        navigate("/admstafflogin")
-                                                        sessionStorage.clear()
-                                                    } else {
-                                                        alert(Response.data.status)
-                                                    }
-                                                }
-                                            }
-
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                }
-            ).catch(error => {
-                if (error.response) {
-                    // Extract the status code from the response
-                    const statusCode = error.response.status;
-
-                    if (statusCode === 400) {
-                        alert(error.response.data.status)
-                        // Additional logic for status 400
-                    } else if (statusCode === 500) {
-                        alert(error.response.data.status)
-                        // Additional logic for status 500
+                        }, 500)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.fileName) {
+                        closeWaitingModal()
+                        setTimeout(()=>{
+                            alert(Response.data.data.fileName)
+                        }, 500)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.remarks) {
+                        closeWaitingModal()
+                        setTimeout(()=>{
+                            alert(Response.data.data.remarks)
+                        }, 500)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.materialDesc) {
+                        closeWaitingModal()
+                        setTimeout(()=>{
+                            alert(Response.data.data.materialDesc)
+                        }, 500)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.materialType) {
+                        closeWaitingModal()
+                        setTimeout(()=>{
+                            alert(Response.data.data.materialType)
+                        }, 500)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.file) {
+                        closeWaitingModal()
+                        setTimeout(()=>{
+                            alert(Response.data.data.file)
+                        }, 500)
+                    } else if (Response.data.status === "Validation failed" && Response.data.data.website) {
+                        closeWaitingModal()
+                        setTimeout(()=>{
+                            alert(Response.data.data.website)
+                        }, 500)
+                    } else if (Response.data.status === "Unauthorized Access!!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
                     } else {
-                        alert(error.response.data.status)
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(Response.data.status)
+                        }, 500)
                     }
-                } else if (error.request) {
-                    alert(error.request);
-                } else if (error.message) {
-                    alert('Error', error.message);
-                } else {
-                    console.log(error.config);
-                }
-            })
+
+                }).catch(error => {
+                    closeWaitingModal()
+                    if (error.response) {
+                        // Extract the status code from the response
+                        const statusCode = error.response.status;
+
+                        if (statusCode === 400) {
+                            setTimeout(() => {
+                                alert(error.response.data.status)
+                            }, 500)
+                            // Additional logic for status 400
+                        } else if (statusCode === 500) {
+                            setTimeout(() => {
+                                alert(error.response.data.status)
+                            }, 500)
+                            // Additional logic for status 500
+                        } else {
+                            setTimeout(() => {
+                                alert(error.response.data.status)
+                            }, 500)
+                        }
+                    } else if (error.request) {
+                        setTimeout(() => {
+                            alert(error.request);
+                        }, 500)
+                    } else if (error.message) {
+                        setTimeout(() => {
+                            alert('Error', error.message);
+                        }, 500)
+                    } else {
+                        setTimeout(() => {
+                            alert(error.config);
+                        }, 500)
+                    }
+                })
         } else {
             setErrors(validationErrors);
         }
@@ -236,8 +270,6 @@ const AdminStaffUpdateMaterial = () => {
             errors.remarks = 'Remarks are required';
         } else if (!data.materialType) {
             errors.materialType = 'Material Type is required';
-        } else if (file && fileType !== "docx" && fileType !== "pdf") {
-            errors.file = "File must be in PDF or DOCX format";
         }
         return errors;
     }
@@ -269,9 +301,9 @@ const AdminStaffUpdateMaterial = () => {
         )
     }
 
-    useEffect(() => { getClg() }, [])
-
     useEffect(() => { getData() }, [])
+
+    useEffect(() => { getClg() }, [])
 
     useEffect(() => {
         if (updateField.collegeId) {
@@ -403,6 +435,44 @@ const AdminStaffUpdateMaterial = () => {
                     </div>
                 </div>
             </div >
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }

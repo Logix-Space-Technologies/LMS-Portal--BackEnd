@@ -188,9 +188,9 @@ const CollegeStaffViewBatch = () => {
                       <h1 style={{ fontWeight: 'bold', fontSize: '40px' }}>Batch Details</h1>
                     </div>
                     <div className="col-6 text-end">
-                      <button className='btn btn-primary' onClick={pdfGenerate} disabled={studentCount === 0}>
+                      {!loading && currentBatch.length > 0 && <button className='btn btn-primary' onClick={pdfGenerate} disabled={studentCount === 0}>
                         Download Batch-Wise Student List PDF
-                      </button>
+                      </button>}
                     </div>
                   </div>
                   {loading ? (
@@ -238,7 +238,7 @@ const CollegeStaffViewBatch = () => {
                       })
                     )
                   )}
-                  <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+                  {!loading && currentBatch.length > 0 && <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
                     <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                       <div>
                         <p className="text-sm text-gray-700">
@@ -268,7 +268,7 @@ const CollegeStaffViewBatch = () => {
                         </nav>
                       </div>
                     </div>
-                  </div>
+                  </div>}
                 </div>
               </div>
             </div>

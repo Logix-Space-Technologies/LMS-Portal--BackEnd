@@ -27,8 +27,17 @@ const AdminUpdateTrainer = () => {
     const navigate = useNavigate()
     const [key, setKey] = useState('');
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const updateHandler = (event) => {
+        setErrors({})
         setUpdateField({ ...updateField, [event.target.name]: event.target.value })
+    }
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
     }
 
     const fileUploadHandler = (event) => {
@@ -48,10 +57,16 @@ const AdminUpdateTrainer = () => {
     const readNewValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let updatedby;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            updatedby = 0
+        } else {
+            updatedby = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault();
         const validationErrors = validateForm(updateField);
@@ -71,43 +86,54 @@ const AdminUpdateTrainer = () => {
                     "trainerName": updateField.trainerName,
                     "about": updateField.about,
                     "phoneNumber": updateField.phoneNumber,
-                    "profilePicture": file
+                    "profilePicture": file,
+                    "updatedby": updatedby
                 }
             } else {
                 data = {
                     "id": sessionStorage.getItem("trainerId"),
                     "trainerName": updateField.trainerName,
                     "about": updateField.about,
-                    "phoneNumber": updateField.phoneNumber
+                    "phoneNumber": updateField.phoneNumber,
+                    "updatedby": updatedby
                 }
             }
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl2, data, axiosConfig).then(
                 (Response) => {
                     if (Response.data.status === "Trainer Details Updated") {
-                        setUpdateField({
-                            "id": sessionStorage.getItem("trainerId"),
-                            "trainerName": "",
-                            "about": "",
-                            "phoneNumber": "",
-                            "profilePicture": ""
-                        })
-                        alert("Profile Updated Successfully")
-                        navigate(-1)
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            setUpdateField({
+                                "id": sessionStorage.getItem("trainerId"),
+                                "trainerName": "",
+                                "about": "",
+                                "phoneNumber": "",
+                                "profilePicture": ""
+                            })
+                            alert("Profile Updated Successfully")
+                            navigate(-1)
+                        }, 500)
                     } else {
+                        closeWaitingModal()
                         if (Response.data.status === "Validation failed" && Response.data.data.trainerName) {
-                            alert(Response.data.data.trainerName)
+                            setTimeout(() => { alert(Response.data.data.trainerName) }, 500)
                         } else {
                             if (Response.data.status === "Validation failed" && Response.data.data.about) {
-                                alert(Response.data.data.about)
+                                setTimeout(() => { alert(Response.data.data.about) }, 500)
                             } else {
                                 if (Response.data.status === "Validation failed" && Response.data.data.phoneNumber) {
-                                    alert(Response.data.data.phoneNumber)
+                                    setTimeout(() => { alert(Response.data.data.phoneNumber) }, 500)
                                 } else {
                                     if (Response.data.status === "Unauthorized Access!!!") {
                                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                                         sessionStorage.clear()
                                     } else {
-                                        alert(Response.data.status)
+                                        closeWaitingModal()
+                                        setTimeout(() => {
+                                            alert(Response.data.status)
+                                        }, 500)
                                     }
                                 }
                             }
@@ -116,27 +142,36 @@ const AdminUpdateTrainer = () => {
 
                 }
             ).catch(error => {
+                closeWaitingModal()
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        console.log("Status 400:", error.response.data);
-                        alert(error.response.data.status)
-                        // Additional logic for status 400
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     } else if (statusCode === 500) {
-                        console.log("Status 500:", error.response.data);
-                        alert(error.response.data.status)
-                        // Additional logic for status 500
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     } else {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     }
                 } else if (error.request) {
-                    alert(error.request);
+                    setTimeout(() => {
+                        alert(error.request);
+                    }, 500)
                 } else if (error.message) {
-                    alert('Error', error.message);
+                    setTimeout(() => {
+                        alert('Error', error.message);
+                    }, 500)
                 } else {
-                    alert(error.config);
+                    setTimeout(() => {
+                        alert(error.config);
+                    }, 500)
                 }
             })
         } else {
@@ -278,6 +313,44 @@ const AdminUpdateTrainer = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div >
     );
 };

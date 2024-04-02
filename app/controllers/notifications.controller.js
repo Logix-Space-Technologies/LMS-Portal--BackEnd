@@ -8,7 +8,7 @@ const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model"
 exports.createNotifications = (request, response) => {
     const notificationToken = request.headers.token;
     //add the appropriate key
-    key=request.headers.key;
+    key = request.headers.key;
     jwt.verify(notificationToken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
@@ -44,8 +44,11 @@ exports.createNotifications = (request, response) => {
                 if (err) {
                     return response.json({ "status": "Error", "message": err.message });
                 }
-                if(key=="lmsapp"){
-                    logAdminStaff(0,"Admin Sent Notification")
+                if (key === "lmsapp") {
+                    logAdminStaff(0, "Admin Sent Notification")
+                }
+                if (key !== "lmsapp") {
+                    logAdminStaff(request.body.sendby, "Admin Staff Sent Notification")
                 }
                 return response.json({ "status": "Success", "message": "Notification created successfully" });
             });

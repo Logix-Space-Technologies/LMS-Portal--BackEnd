@@ -5,6 +5,7 @@ import axios from 'axios';
 
 const StudentViewOneTask = () => {
     const [studViewTaskData, setStudViewTaskData] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState({});
     const [inputField, setInputField] = useState({
         "gitLink": "",
@@ -21,11 +22,17 @@ const StudentViewOneTask = () => {
 
     let [taskId, setTaskId] = useState({})
     const navigate = useNavigate()
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studViewTaskOfSessions";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getData = () => {
         let data = { "id": sessionStorage.getItem("studentId"), "sessionId": sessionStorage.getItem("SessionId") };
@@ -40,12 +47,14 @@ const StudentViewOneTask = () => {
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
+                    setLoading(false)
                     setStudViewTaskData(response.data.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
                         sessionStorage.clear()
                     } else {
+                        setLoading(false)
                         alert(response.data.status)
                     }
                 }
@@ -94,33 +103,44 @@ const StudentViewOneTask = () => {
             "gitLink": inputField.gitLink,
             "remarks": inputField.remarks
         };
+        setShowModal(false)
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    alert("Task Submitted Successfully !!");
-                    getData()
+                    closeWaitingModal()
                     setInputField({
                         "gitLink": "",
                         "remarks": ""
                     });
-                    setShowModal(false)
-                    setShowOverlay(false); // Close the overlay
+                    setTimeout(() => {
+                        alert("Task Submitted Successfully !!");
+                        getData()
+                    }, 500)
                 } else {
+                    closeWaitingModal()
                     if (response.data.status === "Validation failed" && response.data.data.gitLink) {
-                        alert(response.data.data.gitLink);
-                        setShowModal(true)
-                        setShowOverlay(true);
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.remarks) {
-                            alert(response.data.data.remarks);
+                        setTimeout(() => {
+                            alert(response.data.data.gitLink);
                             setShowModal(true)
                             setShowOverlay(true);
+                        }, 500)
+                    } else {
+                        if (response.data.status === "Validation failed" && response.data.data.remarks) {
+                            setTimeout(() => {
+                                alert(response.data.data.remarks);
+                                setShowModal(true)
+                                setShowOverlay(true);
+                            }, 500)
                         } else {
                             if (response.data.status === "Unauthorized Access!!") {
                                 navigate("/studentLogin")
                                 sessionStorage.clear()
                             } else {
-                                alert(response.data.status);
+                                setTimeout(()=>{
+                                    alert(response.data.status);
+                                }, 500)
                             }
                         }
                     }
@@ -170,7 +190,8 @@ const StudentViewOneTask = () => {
                 <h2 className="text-lg font-bold">Student View Tasks</h2>
                 <Link to="/studSessionView" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
             </div>
-            <section className="flex flex-col justify-center items-center antialiased bg-gray-100 text-gray-600 p-4 pt-2 pb-2">
+            {loading && <div>Loading...</div>}
+            {!loading && <section className="flex flex-col justify-center items-center antialiased bg-gray-100 text-gray-600 p-4 pt-2 pb-2">
                 <div className="h-full">
                     {/* Cards */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
@@ -355,8 +376,8 @@ const StudentViewOneTask = () => {
                         ></div>
                     )}
                 </div>
-            </section>
-            <div>
+            </section>}
+            {!loading && <div>
                 <div className="flex items-center justify-between bg-white px-4 py-3 sm:px-6">
                     <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                         <div>
@@ -388,7 +409,7 @@ const StudentViewOneTask = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>}
         </div>
     )
 }

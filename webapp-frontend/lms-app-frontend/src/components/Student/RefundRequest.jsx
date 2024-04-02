@@ -13,6 +13,9 @@ const RefundRequestForm = () => {
 
     const navigate = useNavigate()
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const apiUrl = global.config.urls.api.server + "/api/lms/refundRequest";
     useEffect(() => {
         const studentIdFromSession = sessionStorage.getItem("studentId");
@@ -20,6 +23,11 @@ const RefundRequestForm = () => {
             setInputField({ ...inputField, studId: studentIdFromSession });
         }
     }, []);
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const handleChange = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
@@ -43,34 +51,45 @@ const RefundRequestForm = () => {
                 studId: inputField.studId,
                 reason: inputField.reason,
             };
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl, data, axiosConfig).then(
                 (response) => {
                     if (response.data.status === 'success') {
-                        alert('Refund request successfully created');
-                        navigate("/studentLogin")
-                        sessionStorage.clear()
+                        closeWaitingModal()
                         setInputField((prevInputField) => ({
                             ...prevInputField,
                             reason: "",
                         }));
-                    } else {
-                        if (response.data.status === "Unauthorized User!!") {
+                        setTimeout(() => {
+                            alert('Refund request successfully sent');
                             navigate("/studentLogin")
                             sessionStorage.clear()
-                        } else if (response.data.status === "A refund request already exists for the student.") {
-                            alert("A refund request already exists for the student.");
-                        } else if (response.data.status === "No payment history found for the student.") {
-                            alert("No payment history found for the student.");
-                        } else if ("A refund request was recently cancelled. Please wait for one week before creating a new request.") {
-                            alert("A refund request was recently cancelled. Please wait for one week before creating a new request.")
-                            navigate(-1)
-                        } else if (response.data.status === "Failed to create refund request.") {
-                            alert("Failed to create refund request.");
-                        }
+                        }, 500)
+                    } else {
+                        closeWaitingModal()
                         setInputField((prevInputField) => ({
                             ...prevInputField,
                             reason: "",
                         }));
+                        if (response.data.status === "Unauthorized User!!") {
+                            setTimeout(() => {
+                                navigate("/studentLogin")
+                                sessionStorage.clear()
+                            }, 500)
+                        } else if (response.data.status === "A refund request already exists for the student.") {
+                            setTimeout(() => { alert("A refund request already exists for the student.") }, 500)
+                        } else if (response.data.status === "No payment history found for the student.") {
+                            setTimeout(() => { alert("No payment history found for the student.") }, 500)
+                        } else if ("A refund request was recently cancelled. Please wait for one week before creating a new request.") {
+                            setTimeout(() => {
+                                alert("A refund request was recently cancelled. Please wait for one week before creating a new request.")
+                                navigate(-1)
+                            }, 500)
+                        } else if (response.data.status === "Failed to create refund request.") {
+                            setTimeout(() => { alert("Failed to create refund request.") }, 500)
+                        }
+
                     }
                 }).catch((error) => {
                     alert('An error occurred while processing your request.');
@@ -145,6 +164,44 @@ const RefundRequestForm = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     );
 };

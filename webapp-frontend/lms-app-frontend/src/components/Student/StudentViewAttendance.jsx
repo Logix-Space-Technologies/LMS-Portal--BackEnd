@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const StudentViewAttendance = () => {
     const [studentViewAttendance, setStudentViewAttendance] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [inputField, setInputField] = useState(
         {
             "attendenceCode": "",
@@ -40,12 +41,14 @@ const StudentViewAttendance = () => {
 
         axios.post(apiUrl, data, axiosConfig).then((response) => {
             if (response.data.data) {
+                setLoading(false)
                 setStudentViewAttendance(response.data.data);
             } else {
                 if (response.data.status === "Unauthorized User!!") {
                     navigate("/studentLogin")
                     sessionStorage.clear()
                 } else {
+                    setLoading(false)
                     alert(response.data.status)
                 }
             }
@@ -144,7 +147,7 @@ const StudentViewAttendance = () => {
                 <h2 className="text-lg font-bold">Student View Attendance</h2>
                 <Link to="/studSessionView" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
             </div>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            {loading ? <div>Loading...</div> : <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -206,7 +209,7 @@ const StudentViewAttendance = () => {
                         })}
                     </tbody>
                 </table>
-            </div>
+            </div>}
             <div>
                 {/* Modal */}
                 <div>

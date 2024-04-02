@@ -14,6 +14,9 @@ const AdminSearchTrainer = () => {
     )
 
     const [updateField, setUpdateField] = useState([])
+    const [searchExecuted, setSearchExecuted] = useState(false);
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const [key, setKey] = useState('');
 
@@ -22,7 +25,7 @@ const AdminSearchTrainer = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [TrainerPerPage] = useState(10); // Number of students per page
 
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
     const [deleteId, setDeleteId] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -34,7 +37,13 @@ const AdminSearchTrainer = () => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
     }
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
     const readValue = () => {
+        setIsLoading(true)
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
         if (currentKey !== 'lmsapp') {
@@ -53,6 +62,7 @@ const AdminSearchTrainer = () => {
         axios.post(apiUrl, inputField, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
+                    setSearchExecuted(true)
                     setUpdateField(response.data.data)
                     setIsLoading(false)
                     setInputField(
@@ -64,6 +74,7 @@ const AdminSearchTrainer = () => {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else if (!response.data.data) {
+                    setSearchExecuted(true)
                     setUpdateField([])
                     setIsLoading(false)
                     setInputField(
@@ -72,6 +83,8 @@ const AdminSearchTrainer = () => {
                         }
                     )
                 } else {
+                    setSearchExecuted(true)
+                    setIsLoading(false)
                     alert(response.data.status)
                 }
             }
@@ -102,15 +115,24 @@ const AdminSearchTrainer = () => {
                 'key': sessionStorage.getItem('admkey')
             }
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, deletedata, axiosConfig2).then((response) => {
             if (response.data.status === 'success') {
-                // Remove the deleted Trainer from updateField state
-                setUpdateField(updateField.filter(trainer => trainer.id !== deleteId))
+                closeWaitingModal()
+                setTimeout(() => {
+                    alert("Trainer Deleted Successfully !!")
+                    // Remove the deleted Trainer from updateField state
+                    setUpdateField(updateField.filter(trainer => trainer.id !== deleteId))
+                }, 500)
             } else if (response.data.status === "Unauthorized User!!") {
                 navigate("/")
                 sessionStorage.clear()
             } else {
-                alert(response.data.status);
+                closeWaitingModal()
+                setTimeout(() => {
+                    alert(response.data.status);
+                }, 500)
             }
         });
 
@@ -168,11 +190,11 @@ const AdminSearchTrainer = () => {
                         </div>
                     </div>
                 </div>
-                {isLoading ? (
+                {isLoading && searchExecuted ? (
                     <div className="col-12 text-center">
-                        <p></p>
+                        <p>Loading...</p>
                     </div>
-                ) : (updateField.length > 0 ? (
+                ) : (searchExecuted && updateField.length > 0 ? (
 
                     //start
                     <div>
@@ -235,7 +257,7 @@ const AdminSearchTrainer = () => {
                     </div>
                     //end
 
-                ) : (
+                ) : searchExecuted && updateField.length === 0 && (
 
                     <div className="col-12 text-center">No Trainers Found!!</div>
 
@@ -295,6 +317,44 @@ const AdminSearchTrainer = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }

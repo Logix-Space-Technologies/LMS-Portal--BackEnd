@@ -4,6 +4,7 @@ const AdminStaff = require("../models/adminStaff.model");
 const Validator = require("../config/data.validate");
 const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
+const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 
 const saltRounds = 10;
 
@@ -67,9 +68,11 @@ exports.create = (request, response) => {
                 return response.json({ "status": hashError });
             }
 
+            let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(PhNo) ? PhNo.replace(/^(\+91\s?|91\s?)/, '') : PhNo;
+
             const newAdminStaff = new AdminStaff({
                 AdStaffName: AdStaffName,
-                PhNo: PhNo,
+                PhNo: formattedPhoneNumber,
                 Address: Address,
                 AadharNo: AadharNo,
                 Email: Email,
@@ -153,10 +156,12 @@ exports.adminStaffUpdate = (request, res) => {
             return res.json({ "status": "Validation failed", "data": validationErrors });
         }
 
+        let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(PhNo) ? PhNo.replace(/^(\+91\s?|91\s?)/, '') : PhNo;
+
         const admStaff = new AdminStaff({
             'id': request.body.id,
             AdStaffName: AdStaffName,
-            PhNo: PhNo,
+            PhNo: formattedPhoneNumber,
             Address: Address,
             AadharNo: AadharNo,
 
@@ -266,6 +271,11 @@ exports.adminStaffLogin = (request, response) => {
                         if (error) {
                             return response.json({ "status": "Unauthorized user!!" })
                         } else {
+                            if (admin_staff.emailVerified !== 1) {
+                                return response.json({ "status": "Email Not Verified" })
+                            }
+                            // Log the admin staff sign in
+                            logAdminStaff(admin_staff.id, "Admin Staff Logged In");
                             return response.json({ "status": "Success", "data": admin_staff, "token": token })
                         }
                     }
@@ -436,7 +446,7 @@ exports.AdmViewAllMaterial = (request, response) => {
                     console.log(err)
                     return response.json({ "status": err })
                 } else {
-                    return response.json(data)
+                    return response.json({ "status": "success", "data": data })
                 }
             })
         } else {

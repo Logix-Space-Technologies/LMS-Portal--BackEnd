@@ -14,6 +14,7 @@ const CollegeStaffSearchStudent = () => {
 
     const navigate = useNavigate()
 
+    const [searchPerformed, setSearchPerformed] = useState(false);
     const [updateField, setUpdateField] = useState([])
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -46,6 +47,7 @@ const CollegeStaffSearchStudent = () => {
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
+                    setSearchPerformed(true)
                     setUpdateField(response.data.data)
                     setIsLoading(false)
                     setInputField({
@@ -58,9 +60,12 @@ const CollegeStaffSearchStudent = () => {
                         navigate("/clgStafflogin")
                     } else {
                         if (!response.data.data) {
+                            setSearchPerformed(true)
                             setUpdateField([]); // Ensure the updateField is set to an empty array
                             setIsLoading(false);
                         } else {
+                            setSearchPerformed(true)
+                            setIsLoading(false);
                             alert(response.data.status)
                         }
                     }
@@ -104,11 +109,11 @@ const CollegeStaffSearchStudent = () => {
                         </div>
                     </div>
                 </div>
-                {isLoading ? (
+                {isLoading && searchPerformed ? (
                     <div className="col-12 text-center">
-                        <p></p>
+                        <p>Loading...</p>
                     </div>
-                ) : (currentStudents && currentStudents.length > 0 ? (
+                ) : (searchPerformed && !isLoading && currentStudents && currentStudents.length > 0 ? (
                     // start
                     <>
                         <strong style={{ paddingLeft: '30px' }}>Student Details</strong><br /><br /><br />
@@ -249,7 +254,7 @@ const CollegeStaffSearchStudent = () => {
                         </div>
                     </>
                     // end
-                ) : (
+                ) : searchPerformed && !isLoading && currentStudents.length === 0 && (
                     <div className="col-12 text-center">No Students Found!!</div>
                 ))}
 

@@ -14,6 +14,7 @@ const { Upload } = require('@aws-sdk/lib-storage');
 const fs = require('fs');
 require('dotenv').config({ path: '../../.env' });
 const db = require('../models/db')
+const { CollegeStaffLog, logCollegeStaff } = require("../models/collegeStaffLog.model")
 
 
 
@@ -96,7 +97,6 @@ exports.clgStaffCreate = (request, response) => {
       // });
       const clgStaffToken = request.headers.token
       key = request.headers.key;
-      console.log(clgStaffToken)
       jwt.verify(clgStaffToken, key, (err, decoded) => {
         if (decoded) {
           const profilePic = request.file ? request.file.filename : null
@@ -163,15 +163,14 @@ exports.clgStaffCreate = (request, response) => {
             return response.json({ "status": "Validation failed", "data": validationErrors });
           }
 
-
-
+          let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(request.body.phNo) ? request.body.phNo.replace(/^(\+91\s?|91\s?)/, '') : request.body.phNo;
 
           const clgstaff = new CollegeStaff({
 
             collegeId: request.body.collegeId,
             collegeStaffName: request.body.collegeStaffName,
             email: request.body.email,
-            phNo: request.body.phNo,
+            phNo: formattedPhoneNumber,
             aadharNo: request.body.aadharNo,
             clgStaffAddress: request.body.clgStaffAddress,
             profilePic: imageUrl,
@@ -345,11 +344,14 @@ exports.collegeStaffUpdate = (req, res) => {
             }
 
             const profilePic = req.file ? req.file.filename : null;
+
+            let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(req.body.phNo) ? req.body.phNo.replace(/^(\+91\s?|91\s?)/, '') : req.body.phNo;
+
             const clgstaff = new CollegeStaff({
               id: req.body.id,
               collegeId: req.body.collegeId,
               collegeStaffName: req.body.collegeStaffName,
-              phNo: req.body.phNo,
+              phNo: formattedPhoneNumber,
               clgStaffAddress: req.body.clgStaffAddress,
               profilePic: imageUrl,
               department: req.body.department,
@@ -502,6 +504,10 @@ exports.collegeStaffLogin = (request, response) => {
             if (error) {
               return response.json({ "status": "Unauthorized User!!" })
             } else {
+              if (clgstaff.emailVerified !== 1) {
+                return response.json({ "status": "Email Not Verified" })
+              }
+              logCollegeStaff(clgstaff.id, "College Staff Logged In");
               return response.json({ "status": "Success", "data": clgstaff, "token": token })
             }
           })

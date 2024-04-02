@@ -172,6 +172,9 @@ Session.updateSession = (sessionUpdate, result) => {
                 } else {
                     // Retrieve original date
                     const originalDate = sessionRes[0].date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
+                    const originalTime = sessionRes[0].time
+                    const originalVenueOrLink = sessionRes[0].venueORlink
+                    const originalTrainer = sessionRes[0].trainerId
 
                     db.query("UPDATE sessiondetails SET sessionName = ?, date = ?, time = ?, type = ?, remarks = ?, venueORlink = ?, trainerId = ?, updatedDate = CURRENT_DATE() WHERE id = ? AND deleteStatus = 0 AND isActive = 1",
                         [sessionUpdate.sessionName, sessionUpdate.date, sessionUpdate.time, sessionUpdate.type, sessionUpdate.remarks, sessionUpdate.venueORlink, sessionUpdate.trainerId, sessionUpdate.id],
@@ -181,8 +184,7 @@ Session.updateSession = (sessionUpdate, result) => {
                                 result(err, null);
                                 return;
                             }
-                            console.log("Updated Session Details : ", { id: sessionUpdate.id, ...sessionUpdate, originalDate });
-                            result(null, { id: sessionUpdate.id, ...sessionUpdate, originalDate });
+                            result(null, { id: sessionUpdate.id, ...sessionUpdate, originalDate, originalTime, originalVenueOrLink, originalTrainer });
                         });
                 }
             }
@@ -258,7 +260,7 @@ Session.searchSession = (search, result) => {
                 result
             } else {
                 // Format the date for each session
-                const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })}));
+                const formattedSessions = res.map(session => ({ ...session, date: session.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
                 console.log("Session  Details : ", formattedSessions)
                 result(null, formattedSessions)
             }

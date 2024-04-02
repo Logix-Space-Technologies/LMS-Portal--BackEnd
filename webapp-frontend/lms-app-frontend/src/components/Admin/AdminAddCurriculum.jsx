@@ -20,6 +20,9 @@ const AdminAddCurriculum = () => {
     const [key, setKey] = useState('');
     const [fileType, setFileType] = useState("");
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const fileUploadHandler = (event) => {
         setErrors({});
         const uploadedFile = event.target.files[0];
@@ -34,6 +37,10 @@ const AdminAddCurriculum = () => {
         }
     }
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
     const [errors, setErrors] = useState({})
 
     const [outputField, setOutputField] = useState([])
@@ -92,6 +99,7 @@ const AdminAddCurriculum = () => {
                 "key": currentKey
             }
         };
+
         axios.post(batchUrl, { collegeId }, axiosConfig2).then((response) => {
             if (response.data) {
                 setBatches(response.data)
@@ -149,55 +157,83 @@ const AdminAddCurriculum = () => {
                 "curriculumFileLink": file,
                 "addedBy": addedBy
             }
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
                 if (response.data.status === 'success') {
-                    alert('Curriculum Added Successfully !!');
-                    setInputField({
-                        collegeId: '',
-                        batchId: '',
-                        curriculumTitle: '',
-                        curriculumDesc: '',
-                        curriculumFileLink: '',
-                    })
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert('Curriculum Added Successfully !!');
+                        setInputField({
+                            collegeId: '',
+                            batchId: '',
+                            curriculumTitle: '',
+                            curriculumDesc: '',
+                            curriculumFileLink: '',
+                        })
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.addedBy) {
-                    alert(response.data.data.addedBy)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.addedBy)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.batchId) {
-                    alert(response.data.data.batchId)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.batchId)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.curriculumTitle) {
-                    alert(response.data.data.curriculumTitle)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.curriculumTitle)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.curriculumDesc) {
-                    alert(response.data.data.curriculumDesc)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.curriculumDesc)
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
-                    alert(response.data.status)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.status)
+                    }, 500)
                 }
             }).catch(error => {
+                closeWaitingModal()
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        console.log("Status 400:", error.response.data);
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        console.log("Status 500:", error.response.data);
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 500
                     } else {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
-                    alert(error.request);
+                    setTimeout(() => {
+                        alert(error.request);
+                    }, 500)
                 } else if (error.message) {
-                    console.log('Error', error.message);
-                    alert('Error', error.message);
+                    setTimeout(() => {
+                        alert('Error', error.message);
+                    }, 500)
                 } else {
-                    alert(error.config);
-                    console.log(error.config);
+                    setTimeout(() => {
+                        alert(error.config);
+                    }, 500)
                 }
             })
         } else {
@@ -355,6 +391,44 @@ const AdminAddCurriculum = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }

@@ -22,15 +22,26 @@ const logAdminStaff = (admStaffId, action) => {
     });
 };
 
-AdminStaffLog.getAll = async(result) => {
+AdminStaffLog.getAll = async (result) => {
     let query = "SELECT asg.AdStaffName,asl.* FROM adminstafflog asl JOIN admin_staff asg ON asl.AdmStaffId=asg.id WHERE asg.deleteStatus=0 AND asg.isActive=1 ORDER BY asl.DateTime DESC"
     db.query(query, (err, response) => {
         if (err) {
-            console.log("Error : ",err)
+            console.log("Error : ", err)
             result(err, null)
-            return           
+            return
         } else {
-            const formattedAdmStaffLog = response.map(admstafflog => ({ ...admstafflog, DateTime: admstafflog.DateTime.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })}));
+            const formattedAdmStaffLog = response.map(admstafflog => ({
+                ...admstafflog,
+                DateTime: admstafflog.DateTime.toLocaleString('en-IN', {
+                    timeZone: 'Asia/Kolkata',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                })
+            }));
             console.log("Admin Staff Log : ", formattedAdmStaffLog)
             result(null, formattedAdmStaffLog)
         }

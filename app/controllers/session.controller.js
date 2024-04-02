@@ -133,8 +133,11 @@ exports.createSession = (request, response) => {
                                     const upcomingSessionTextContent = mailContents.upcomingSessionRecordedTextContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
                                     mail.sendEmail(studentEmail, `Announcement Regarding Upcoming Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 }
-                                if (key == "lmsapp") {
+                                if (key === "lmsapp") {
                                     logAdminStaff(0, "Admin Created new Session")
+                                }
+                                if (key !== "lmsapp") {
+                                    logAdminStaff(request.body.addedby, "Admin Staff Created new Session")
                                 }
                                 Attendence.create(newAttendence, (err, res) => {
                                     if (err) {
@@ -146,21 +149,23 @@ exports.createSession = (request, response) => {
                                 })
 
                             });
+
                             CollegeStaff.searchClgStaffByCollege(newSession.batchId, (err, res) => {
                                 if (err) {
                                     return response.json({ "status": err });
                                 } else {
-                                    let clgstaffEmail = res[0].email
-                                    let batchName = res[0].batchName
-                                    let collegeStaffName = res[0].collegeStaffName
-                                    const clgstaffsessionTime = formatTime(newSession.time)
-                                    const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
-                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
-                                    const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
-                                    mail.sendEmail(clgstaffEmail, `Announcement Regarding Upcoming Session Scheduled On ${clgstaffsessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    res.forEach(element => {
+                                        let clgstaffEmail = element.email
+                                        let batchName = element.batchName
+                                        let collegeStaffName = element.collegeStaffName
+                                        const clgstaffsessionTime = formatTime(newSession.time)
+                                        const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
+                                        const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
+                                        const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
+                                        mail.sendEmail(clgstaffEmail, `Announcement Regarding Upcoming Session Scheduled On ${clgstaffsessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    })
                                 }
                             })
-
                             return response.json({ "status": "success", "data": data });
 
                         }
@@ -234,16 +239,39 @@ exports.sessionUpdate = (request, response) => {
             });
 
             let originaldate = ""
+            let originaltime = ""
             let sessionDate = ""
             let sessionTime = ""
+            let isVenueOrLinkChangedOnly = false;
+            let originalVenueOrLink = "";
+            let isTimeChangeOnly = false;
+            let isTrainerChanged = false;
+            let originalTrainer = ""
+            let updatedTrainer = ""
 
             Session.updateSession(upSession, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
                     originaldate = data.originalDate;
+                    originaltime = data.originalTime;
                     sessionDate = upSession.date.split('-').reverse().join('/');
                     sessionTime = formatTime(upSession.time);
+                    originalVenueOrLink = data.originalVenueOrLink;
+                    updatedVenueOrLink = upSession.venueORlink;
+                    originalTrainer = data.trainerId;
+                    updatedTrainer = upSession.trainerId;
+
+                    if (sessionDate === originaldate && originaltime === upSession.time && originalVenueOrLink !== updatedVenueOrLink) {
+                        isVenueOrLinkChangedOnly = true;
+                    }
+                    if (sessionDate === originaldate && originalVenueOrLink === updatedVenueOrLink && originaltime !== upSession.time) {
+                        isTimeChangeOnly = true;
+                    }
+                    if (sessionDate === originaldate && originalVenueOrLink === updatedVenueOrLink && originaltime === upSession.time && originalTrainer !== updatedTrainer) {
+                        isTrainerChanged = true;
+                    }
+
                     db.query("SELECT * FROM sessiondetails WHERE id = ?", [upSession.id], (err, sessionres) => {
                         if (err) {
                             return response.json({ "status": err });
@@ -264,36 +292,48 @@ exports.sessionUpdate = (request, response) => {
                                         return response.json({ "status": err });
                                     }
                                 });
-                                if (upSession.type === "Offline") {
-                                    const updateSessionHtmlContent = mailContents.reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName);
-                                    const updateSessionTextContent = mailContents.reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName);
-                                    mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, updateSessionHtmlContent, updateSessionTextContent);
-                                } else if (upSession.type === "Online") {
-                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName);
-                                    const upcomingSessionTextContent = mailContents.reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName);
-                                    mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
-                                } else {
-                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName);
-                                    const upcomingSessionTextContent = mailContents.reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName);
-                                    mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                if (isTrainerChanged === false) {
+                                    if (upSession.type === "Offline") {
+                                        const updateSessionHtmlContent = mailContents.reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                        const updateSessionTextContent = mailContents.reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                        mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, updateSessionHtmlContent, updateSessionTextContent);
+                                    } else if (upSession.type === "Online") {
+                                        const upcomingSessionHtmlContent = mailContents.reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                        const upcomingSessionTextContent = mailContents.reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                        mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    } else {
+                                        const upcomingSessionHtmlContent = mailContents.reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                        const upcomingSessionTextContent = mailContents.reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                        mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    }
                                 }
+
+
                             });
+
                             CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
                                 if (err) {
                                     return response.json({ "status": err });
                                 } else {
-                                    let clgstaffEmail = res[0].email
-                                    let batchName = res[0].batchName
-                                    let collegeStaffName = res[0].collegeStaffName
-                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName);
-                                    const upcomingSessionTextContent = mailContents.reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName);
-                                    mail.sendEmail(clgstaffEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    res.forEach(element => {
+                                        let clgstaffEmail = element.email
+                                        let batchName = element.batchName
+                                        let collegeStaffName = element.collegeStaffName
+                                        if (isTrainerChanged === false) {
+                                            const upcomingSessionHtmlContent = mailContents.reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                            const upcomingSessionTextContent = mailContents.reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                            mail.sendEmail(clgstaffEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                        }
+                                    })
 
                                 }
                             })
 
-                            if (key == "lmsapp") {
+                            if (key === "lmsapp") {
                                 logAdminStaff(0, "Admin Updated Session Details");
+                            }
+                            if (key !== "lmsapp") {
+                                logAdminStaff(request.body.updatedby, "Admin Staff Updated Session Details")
                             }
                             return response.json({ "status": "success", "data": data });
                         });
@@ -417,6 +457,7 @@ exports.cancelSession = (request, response) => {
     const sessionCancelToken = request.headers.token;
     const key = request.headers.key;
     const sessionId = request.body.id;
+    const cancelledby = request.body.cancelledby;
 
     jwt.verify(sessionCancelToken, key, (err, decoded) => {
         if (err || !decoded) {
@@ -432,12 +473,16 @@ exports.cancelSession = (request, response) => {
                 if (key === "lmsapp") {
                     logAdminStaff(0, "Admin Cancelled Session")
                 }
-                console.log(data)
-                db.query("SELECT * FROM sessiondetails WHERE id = ?", [data], (err, sessionres) => {
+                if (key !== "lmsapp") {
+                    logAdminStaff(cancelledby, "Admin Staff Cancelled Session")
+                }
+                db.query("SELECT b.batchName, s.* FROM sessiondetails s JOIN batches b ON b.id = s.batchId WHERE s.id = ?", [data], (err, sessionres) => {
                     if (err) {
                         return response.json({ "status": err });
                     }
-                    const batchId = sessionres[0].batchId;
+                    let batchName = sessionres[0].batchName;
+                    let batchId = sessionres[0].batchId;
+                    let sessionName = sessionres[0].sessionName;
                     const sessionDate = sessionres[0].date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
                     const sessiontype = sessionres[0].type;
                     const sessiontime = formatTime(sessionres[0].time);
@@ -457,26 +502,31 @@ exports.cancelSession = (request, response) => {
                                     return response.json({ "status": err });
                                 }
                             });
-                            const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime);
-                            const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime);
+                            const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime, sessionName);
+                            const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime, sessionName);
                             mail.sendEmail(studentEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, cancelSessionHtmlContent, cancelSessionTextContent);
                             let formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
                             whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, formattedPhoneNumber, studentid)
                         });
-                        CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
-                            if (err) {
-                                return response.json({ "status": err });
-                            } else {
-                                let clgstaffEmail = res[0].email
-                                let clgstaffName = res[0].collegeStaffName
-                                const cancelSessionClgStaffHtmlContent = mailContents.cancelSessionClgStaffHTMLContent(clgstaffName, sessionDate, sessiontime);
-                                const cancelSessionClgStaffTextContent = mailContents.cancelSessionClgStaffTextContent(clgstaffName, sessionDate, sessiontime);
-                                mail.sendEmail(clgstaffEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, cancelSessionClgStaffHtmlContent, cancelSessionClgStaffTextContent);
 
-                            }
-                        })
-                        return response.json({ "status": "success" });
                     });
+
+                    CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
+                        if (err) {
+                            return response.json({ "status": err });
+                        } else {
+                            res.forEach(element => {
+                                let clgstaffEmail = element.email
+                                let clgstaffName = element.collegeStaffName
+                                const cancelSessionClgStaffHtmlContent = mailContents.cancelSessionClgStaffHTMLContent(clgstaffName, sessionDate, sessiontime, sessionName, batchName);
+                                const cancelSessionClgStaffTextContent = mailContents.cancelSessionClgStaffTextContent(clgstaffName, sessionDate, sessiontime, sessionName, batchName);
+                                mail.sendEmail(clgstaffEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, cancelSessionClgStaffHtmlContent, cancelSessionClgStaffTextContent);
+                            })
+                        }
+                    })
+
+                    return response.json({ "status": "success" });
+
                 });
             }
         });

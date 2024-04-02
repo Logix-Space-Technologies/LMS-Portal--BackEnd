@@ -10,10 +10,17 @@ const StudentViewRefundRequest = () => {
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
     let currentRefundStatus = sessionStorage.getItem("refundreqstatus")
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewRefundStatus"
     const apiUrl1 = global.config.urls.api.server + "/api/lms/cancelRefundRequest"
     const apiUrl2 = global.config.urls.api.server + "/api/lms/refundamntrcvdstatus"
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
@@ -52,6 +59,8 @@ const StudentViewRefundRequest = () => {
 
     const cancelClick = (refundId) => {
         let data1 = { "refundId": refundId }
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -63,15 +72,19 @@ const StudentViewRefundRequest = () => {
         axios.post(apiUrl1, data1, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    alert("Your Refund Request Has Being Successfully Cancelled!!")
-                    navigate("/studentLogin")
-                    sessionStorage.clear()
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Your Refund Request Has Being Successfully Cancelled!!")
+                        navigate("/studentLogin")
+                        sessionStorage.clear()
+                    }, 500)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/studentLogin")
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status)
+                        closeWaitingModal()
+                        setTimeout(() => { alert(response.data.status) }, 500)
                     }
                 }
             }
@@ -106,7 +119,7 @@ const StudentViewRefundRequest = () => {
     }
 
     const handleClick = () => {
-      sessionStorage.clear()
+        sessionStorage.clear()
     }
 
     useEffect(() => { getData() }, [])
@@ -201,6 +214,44 @@ const StudentViewRefundRequest = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div >
     )
 }

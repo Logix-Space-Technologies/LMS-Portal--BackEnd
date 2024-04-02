@@ -30,17 +30,23 @@ const AdminViewAllSession = () => {
     const [qrCodeAttendance, setQrCodeAttendance] = useState(null);
     const [showQRModal, setShowQRModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [currentPage, setCurrentPage] = useState(1);
     const [sessionsPerPage] = useState(10); // Number of sessions per page
     const navigate = useNavigate();
     const [key, setKey] = useState('')
+    const [isLoading, setIsLoading] = useState(true);
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deleteSessions";
     const remainderApiLink = global.config.urls.api.server + "/api/lms/sendSessionRemainderEmail";
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -62,16 +68,18 @@ const AdminViewAllSession = () => {
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 if (response.data.Sessions) {
+                    setIsLoading(false)
                     setSessionData(response.data.Sessions);
-                    console.log(response.data.Sessions)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         if (!response.data.Sessions) {
+                            setIsLoading(false)
                             setSessionData([])
                         } else {
+                            setIsLoading(false)
                             alert(response.data.status)
                         }
                     }
@@ -97,12 +105,18 @@ const AdminViewAllSession = () => {
     const handleClick = () => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let cancelledby;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
         }
-        let data = { "id": cancelId };
+        if (currentKey === 'lmsapp') {
+            cancelledby = 0
+        } else {
+            cancelledby = sessionStorage.getItem("admstaffId")
+        }
+        let data = { "id": cancelId, "cancelledby": cancelledby };
         let axiosConfigTwo = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -111,17 +125,26 @@ const AdminViewAllSession = () => {
                 "key": currentKey
             }
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrlTwo, data, axiosConfigTwo).then(
             (response) => {
                 if (response.data.status === "success") {
                     closeModal()
-                    getData()
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        getData()
+                    }, 500)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status);
+                        closeModal()
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status);
+                        }, 500)
                     }
                 }
             })
@@ -220,26 +243,32 @@ const AdminViewAllSession = () => {
                 "key": currentKey
             }
         };
-
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         // Make the API call to send the reminder
         axios.post(remainderApiLink, data, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    alert("Reminder Sent Successfully.");
-                    // Optionally, you can update the UI or perform other actions after sending the reminder
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Reminder Sent Successfully.");
+                    }, 500)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear();
                     } else {
-                        alert(response.data.status);
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status);
+                        }, 500)
                     }
                 }
             }
         );
     };
     const canSendReminder = (sessionDate, sessionTime) => {
-        const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
+        const oneDay = 72 * 60 * 60 * 1000; // 1 day in milliseconds
         const currentDate = new Date();
         const [day, month, year] = sessionDate.split('/'); // Assuming date format is DD/MM/YYYY
         const [hours, minutes] = sessionTime.split(':'); // Assuming time format is HH:mm
@@ -250,10 +279,10 @@ const AdminViewAllSession = () => {
         // Check if session date/time is within next 24 hours and not in the past
         const timeDifference = sessionDateTime.getTime() - currentDate.getTime();
         const isFutureSession = timeDifference > 0;
-        const isWithin24Hours = timeDifference <= oneDay;
-        // console.log(isWithin24Hours)
+        const isWithin72Hours = timeDifference <= oneDay;
+        // console.log(isWithin72Hours)
 
-        return isFutureSession && isWithin24Hours;
+        return isFutureSession && isWithin72Hours;
     };
 
     const isSessionInPast = (dateString, timeString) => {
@@ -280,23 +309,29 @@ const AdminViewAllSession = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
-
+        setShowConfirmation(false);
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(deleteApiLink, { id: deleteId }, axiosConfig).then(response => {
             if (response.data.status === "success") {
-                alert("Session Deleted!!")
-                setSessionData(sessionData.filter(session => session.id !== deleteId));
-                getData()
+                closeWaitingModal()
+                setTimeout(() => {
+                    alert("Session Deleted!!")
+                    setSessionData(sessionData.filter(session => session.id !== deleteId));
+                    getData()
+                }, 500)
             } else {
                 if (response.data.status === "Unauthorized User!!") {
                     navigate("/")
                     sessionStorage.clear()
                 } else {
-                    alert(response.data.status)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.status)
+                    }, 500)
                 }
             }
         })
-
-        setShowConfirmation(false);
     };
 
     function isSpecialDomain(venueLink) {
@@ -315,7 +350,11 @@ const AdminViewAllSession = () => {
                 <div></div>
             </div>
             <br /><br />
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            {isLoading ? <div className="flex justify-center items-center h-full">
+                <div className="text-center py-20">
+                    <div>Loading...</div>
+                </div>
+            </div> : (<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -418,40 +457,43 @@ const AdminViewAllSession = () => {
                         )}
                     </tbody>
                 </table>
-            </div>
+            </div>)}
+
 
             {/* Pagination */}
-            <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
-                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                    <div>
-                        <p className="text-sm text-gray-700">
-                            Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > sessionData.length ? sessionData.length : indexOfLastSession}</span> of <span className="font-medium">{sessionData.length}</span> results
-                        </p>
-                    </div>
-                    <div>
-                        <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                            <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
-                                <span className="sr-only">Previous</span>
-                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-                                </svg>
-                            </button>
-                            {/* Dynamically generate Link components for each page number */}
-                            {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-                                <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
-                                    {startPage + index}
+            {!isLoading && currentSessions.length > 0 && (
+                <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+                    <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                        <div>
+                            <p className="text-sm text-gray-700">
+                                Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > sessionData.length ? sessionData.length : indexOfLastSession}</span> of <span className="font-medium">{sessionData.length}</span> results
+                            </p>
+                        </div>
+                        <div>
+                            <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
+                                    <span className="sr-only">Previous</span>
+                                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                                    </svg>
                                 </button>
-                            ))}
-                            <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
-                                <span className="sr-only">Next</span>
-                                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                                </svg>
-                            </button>
-                        </nav>
+                                {/* Dynamically generate Link components for each page number */}
+                                {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                                    <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
+                                        {startPage + index}
+                                    </button>
+                                ))}
+                                <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
+                                    <span className="sr-only">Next</span>
+                                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                                    </svg>
+                                </button>
+                            </nav>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
 
             {/* QR Code Modal */}
@@ -494,6 +536,26 @@ const AdminViewAllSession = () => {
                                     <button type="button" className="btn btn-secondary" onClick={() => closeModal()}>No, cancel</button>
                                     <button onClick={() => handleClick()} type="button" className="btn btn-danger" >Yes, I'm sure</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
                             </div>
                         </div>
                     </div>

@@ -20,6 +20,9 @@ const AdminAddTask = () => {
 
     const [file, setFile] = useState(null)
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const navigate = useNavigate()
 
     const [fileType, setFileType] = useState("");
@@ -52,6 +55,11 @@ const AdminAddTask = () => {
     const apiUrl2 = global.config.urls.api.server + "/api/lms/viewallcolleges";
     const batchUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
     const apiUrl3 = global.config.urls.api.server + "/api/lms/viewSessions";
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -133,7 +141,9 @@ const AdminAddTask = () => {
         };
         axios.post(apiUrl3, { batchId }, axiosConfig3).then((response) => {
             if (response.data.Sessions) {
-                setSessions(response.data.Sessions);
+                // Filter out sessions with cancelStatus === "CANCELLED"
+                const activeSessions = response.data.Sessions.filter(session => session.cancelStatus === "ACTIVE");
+                setSessions(activeSessions);
             } else if (response.data.status === "Unauthorized access!!") {
                 { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                 sessionStorage.clear()
@@ -168,10 +178,16 @@ const AdminAddTask = () => {
     const readValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let addedBy;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault();
         const validationErrors = validateForm(inputField);
@@ -192,67 +208,102 @@ const AdminAddTask = () => {
                 "taskType": inputField.taskType,
                 "totalScore": inputField.totalScore,
                 "dueDate": inputField.dueDate,
-                "taskFileUpload": file
+                "taskFileUpload": file,
+                "addedby": addedBy
             }
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
                 if (response.data.status === 'success') {
-                    alert('Task Added Successfully !!');
-                    setInputField({
-                        collegeId: '',
-                        batchId: '',
-                        sessionId: '',
-                        taskTitle: '',
-                        taskDesc: '',
-                        taskType: '',
-                        totalScore: '',
-                        dueDate: '',
-                        taskFileUpload: ''
-                    })
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert('Task Added Successfully !!');
+                        setInputField({
+                            collegeId: '',
+                            batchId: '',
+                            sessionId: '',
+                            taskTitle: '',
+                            taskDesc: '',
+                            taskType: '',
+                            totalScore: '',
+                            dueDate: '',
+                            taskFileUpload: ''
+                        })
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.batchId) {
-                    alert(response.data.data.batchId)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.batchId)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.taskTitle) {
-                    alert(response.data.data.taskTitle)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.taskTitle)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.taskDesc) {
-                    alert(response.data.data.taskDesc)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.taskDesc)
+                    })
                 } else if (response.data.status === "Validation failed" && response.data.data.taskType) {
-                    alert(response.data.data.taskType)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.taskType)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.totalScore) {
-                    alert(response.data.data.totalScore)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.totalScore)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.dueDate) {
-                    alert(response.data.data.dueDate)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.dueDate)
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
-                    alert(response.data.status)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.status)
+                    }, 500)
                 }
 
             }
             ).catch(error => {
+                closeWaitingModal()
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        console.log("Status 400:", error.response.data);
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        console.log("Status 500:", error.response.data);
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 500
                     } else {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     }
                 } else if (error.request) {
-                    console.log(error.request);
-                    alert(error.request);
+                    setTimeout(() => {
+                        alert(error.request);
+                    }, 500)
                 } else if (error.message) {
-                    console.log('Error', error.message);
-                    alert('Error', error.message);
+                    setTimeout(() => {
+                        alert('Error', error.message);
+                    }, 500)
                 } else {
-                    alert(error.config);
-                    console.log(error.config);
+                    setTimeout(() => {
+                        alert(error.config);
+                    }, 500)
                 }
             })
         } else {
@@ -493,6 +544,44 @@ const AdminAddTask = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }

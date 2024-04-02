@@ -23,6 +23,9 @@ const AddCollege = () => {
   const [key, setKey] = useState('');
   const [fileType, setFileType] = useState("");
   const navigate = useNavigate()
+  const [showWaitingModal, setShowWaitingModal] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
 
   const fileUploadHandler = (event) => {
     setErrors({});
@@ -47,13 +50,24 @@ const AddCollege = () => {
     setInputField({ ...inputField, [event.target.name]: event.target.value });
   }
 
+  const closeWaitingModal = () => {
+    setShowOverlay(false)
+    setShowWaitingModal(false)
+}
+
   const handleSubmit = (e) => {
     let currentKey = sessionStorage.getItem("admkey");
     let token = sessionStorage.getItem("admtoken");
+    let addedBy;
     if (currentKey !== 'lmsapp') {
       currentKey = sessionStorage.getItem("admstaffkey");
       token = sessionStorage.getItem("admstaffLogintoken");
       setKey(currentKey); // Update the state if needed
+    }
+    if (currentKey === 'lmsapp') {
+      addedBy = 0
+    } else {
+      addedBy = sessionStorage.getItem("admstaffId")
     }
     e.preventDefault()
     const validationErrors = validateForm(inputField)
@@ -74,12 +88,17 @@ const AddCollege = () => {
         "email": inputField.email,
         "collegePhNo": inputField.collegePhNo,
         "collegeMobileNumber": inputField.collegeMobileNumber,
-        "collegeImage": file
+        "collegeImage": file,
+        "addedby": addedBy
       }
+      setShowWaitingModal(true)
+      setShowOverlay(true)
       axios.post(apiUrl, data, axiosConfig).then(
         (response) => {
           if (response.data.status === "success") {
-            alert("College Details Added Successfully.")
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert("College Details Added Successfully.")
             setInputField({
               collegeName: '',
               collegeCode: '',
@@ -90,52 +109,85 @@ const AddCollege = () => {
               collegeMobileNumber: '',
               collegeImage: ''
             })
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.name) {
-            alert(response.data.data.name)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.name)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.address) {
-            alert(response.data.data.address)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.address)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.website) {
-            alert(response.data.data.website)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.website)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.email) {
-            alert(response.data.data.email)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.email)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.phone) {
-            alert(response.data.data.phone)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.phone)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.mobile) {
-            alert(response.data.data.mobile)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.mobile)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.code) {
-            alert(response.data.data.code)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.code)
+            }, 500)
           } else if (response.data.status === "Unauthorized User!!") {
             { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
             sessionStorage.clear()
           } else {
-            alert(response.data.status)
+            closeWaitingModal()
+            setTimeout(() => {
+                alert(response.data.status)
+            }, 500)
           }
         }
       ).catch(error => {
+        closeWaitingModal()
         if (error.response) {
           // Extract the status code from the response
           const statusCode = error.response.status;
 
           if (statusCode === 400) {
-            console.log("Status 400:", error.response.data);
-            alert(error.response.data.status)
+            setTimeout(()=>{
+              alert(error.response.data.status)
+            }, 500)
             // Additional logic for status 400
           } else if (statusCode === 500) {
-            console.log("Status 500:", error.response.data);
-            alert(error.response.data.status)
+            setTimeout(()=>{
+              alert(error.response.data.status)
+            }, 500)
             // Additional logic for status 500
           } else {
-            alert(error.response.data.status)
+            setTimeout(()=>{
+              alert(error.response.data.status)
+            }, 500)
           }
         } else if (error.request) {
-          console.log(error.request);
-          alert(error.request);
+          setTimeout(()=>{
+            alert(error.request);
+          }, 500)
         } else if (error.message) {
-          console.log('Error', error.message);
-          alert('Error', error.message);
+          setTimeout(()=>{
+            alert('Error', error.message);
+          }, 500)
         } else {
-          alert(error.config);
-          console.log(error.config);
+          setTimeout(()=>{
+            alert(error.config);
+          }, 500)
         }
       })
     } else {
@@ -255,6 +307,44 @@ const AddCollege = () => {
           </div>
         </div>
       </div>
+      {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
     </div>
   )
 }

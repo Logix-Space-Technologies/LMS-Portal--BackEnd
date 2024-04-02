@@ -24,6 +24,10 @@ const AdminStaffViewSubmittedTask = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of students per page
 
+    const [showModal, setShowModal] = useState(false);
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(taskData.length / tasksPerPage); // Calculate the total number of pages
     let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
@@ -31,6 +35,16 @@ const AdminStaffViewSubmittedTask = () => {
 
     const apiUrl = global.config.urls.api.server + "/api/lms/adSfViewSubmittedTask"
     const apiUrl2 = global.config.urls.api.server + "/api/lms/evaluateTask"
+
+    const closeModal = () => {
+        setShowModal(false);
+        setShowOverlay(false);
+        setErrors({})
+        setInputField({
+            "evaluatorRemarks": "",
+            "score": ""
+        });
+    };
 
     const getData = () => {
         let axiosConfig = {
@@ -61,6 +75,11 @@ const AdminStaffViewSubmittedTask = () => {
         )
     }
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
     const inputHandler = (event) => {
         setErrors({}); // Clear previous errors
         setInputField({ ...inputField, [event.target.name]: event.target.value });
@@ -77,6 +96,8 @@ const AdminStaffViewSubmittedTask = () => {
         }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
+            setShowModal(true)
+            setShowOverlay(true)
             return;
         }
         let axiosConfig = {
@@ -93,49 +114,60 @@ const AdminStaffViewSubmittedTask = () => {
             "evaluatorRemarks": inputField.evaluatorRemarks,
             "score": inputField.score
         }
+        setShowModal(false)
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Task evaluated successfully") {
-                    alert("Task evaluated successfully")
-                    getData()
+                    closeWaitingModal()
                     setInputField({
                         evaluatorRemarks: "",
                         score: ""
                     });
-                } else {
-                    if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
+                    setTimeout(() => {
+                        alert("Task evaluated successfully")
+                        getData()
+                    }, 500)
+
+                } else if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
+                    closeWaitingModal()
+                    setTimeout(() => {
                         alert(response.data.data.evaluatorRemarks);
-                        setInputField({
-                            evaluatorRemarks: "",
-                            score: ""
-                        });
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.score) {
-                            alert(response.data.data.score);
-                            setInputField({
-                                evaluatorRemarks: "",
-                                score: ""
-                            });
-                        } else {
-                            if (response.data.status === "Unauthorized access!!") {
-                                navigate("/admstafflogin")
-                                sessionStorage.clear()
-                            } else {
-                                alert(response.data.status);
-                                setInputField({
-                                    evaluatorRemarks: "",
-                                    score: ""
-                                });
-                            }
-                        }
-                    }
+                        setShowModal(true)
+                        setShowOverlay(true)
+                    }, 500)
+                } else if (response.data.status === "Validation failed" && response.data.data.score) {
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert(response.data.data.score);
+                        setShowModal(true)
+                        setShowOverlay(true)
+                    }, 500)
+                } else if (response.data.status === "Unauthorized access!!") {
+                    navigate("/admstafflogin")
+                    sessionStorage.clear()
+                } else {
+                    closeWaitingModal()
+                    setInputField({
+                        evaluatorRemarks: "",
+                        score: ""
+                    });
+                    setTimeout(()=>{
+                        alert(response.data.status);
+                        setShowModal(true)
+                        setShowOverlay(true)
+                    }, 500)
                 }
+
             }
         )
     }
 
     const readValue = (id) => {
         setSubmittedTaskId(id)
+        setShowModal(true)
+        setShowOverlay(true)
     }
 
     // Convert a date string from 'DD/MM/YYYY' to a JavaScript Date object
@@ -301,7 +333,7 @@ const AdminStaffViewSubmittedTask = () => {
                                             {value.totalScore}
                                         </td>
                                         <td className="px-6 py-4" style={{ whiteSpace: 'nowrap' }}>
-                                            <button onClick={() => readValue(value.submitTaskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Evaluate Task</button>
+                                            <button onClick={() => readValue(value.submitTaskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" disabled={value.evalDate !== null}>Evaluate Task</button>
                                         </td>
                                     </tr>
                                 }
@@ -385,13 +417,13 @@ const AdminStaffViewSubmittedTask = () => {
                     </div>
                 </div>
             </div>
-            <div className="flex justify-end">
-                <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+            {showModal && <div className="flex justify-end">
+                <div className="modal show d-block" tabIndex={-1}>
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h1 className="modal-title fs-5" id="exampleModalLabel">Evaluate Task</h1>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                                <button type="button" className="btn-close" onClick={closeModal} />
                             </div>
                             <div className="modal-body">
                                 <form>
@@ -408,15 +440,53 @@ const AdminStaffViewSubmittedTask = () => {
                                 </form>
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button data-bs-dismiss="modal" onClick={() => evaluateTask()} type="button" className="btn btn-primary">
+                                <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
+                                <button onClick={() => evaluateTask()} type="button" className="btn btn-primary">
                                     Submit
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>}
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </>
     )
 }

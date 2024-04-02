@@ -25,9 +25,17 @@ const AdminUpdateTask = () => {
     const apiUrl2 = global.config.urls.api.server + '/api/lms/updateTask';
     const navigate = useNavigate();
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const updateHandler = (event) => {
         setErrors({});
         setUpdateField({ ...updateField, [event.target.name]: event.target.value });
+    }
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
     }
 
     const fileUploadHandler = (event) => {
@@ -47,10 +55,16 @@ const AdminUpdateTask = () => {
     const readNewValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let updatedby;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            updatedby = 0
+        } else {
+            updatedby = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault();
         const validationErrors = validateForm(updateField);
@@ -73,7 +87,8 @@ const AdminUpdateTask = () => {
                     "taskType": updateField.taskType,
                     "totalScore": updateField.totalScore,
                     "dueDate": updateField.dueDate,
-                    "taskFileUpload": file
+                    "taskFileUpload": file,
+                    "updatedby": updatedby
                 }
             } else {
                 data = {
@@ -83,48 +98,58 @@ const AdminUpdateTask = () => {
                     "taskDesc": updateField.taskDesc,
                     "taskType": updateField.taskType,
                     "totalScore": updateField.totalScore,
-                    "dueDate": updateField.dueDate
+                    "dueDate": updateField.dueDate,
+                    "updatedby": updatedby
                 }
             }
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl2, data, axiosConfig2).then(
                 (Response) => {
                     if (Response.data.status === "success") {
-                        setUpdateField({
-                            "id": sessionStorage.getItem('taskId'),
-                            "batchId": '',
-                            "taskTitle": '',
-                            "taskDesc": '',
-                            "taskType": '',
-                            "totalScore": '',
-                            "dueDate": '',
-                            "taskFileUpload": null,
-                        })
-                        alert("Task Updated Successfully")
-                        navigate(-1)
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            setUpdateField({
+                                "id": sessionStorage.getItem('taskId'),
+                                "batchId": '',
+                                "taskTitle": '',
+                                "taskDesc": '',
+                                "taskType": '',
+                                "totalScore": '',
+                                "dueDate": '',
+                                "taskFileUpload": null,
+                            })
+                            alert("Task Updated Successfully")
+                            navigate(-1)
+                        }, 500)
                     } else {
+                        closeWaitingModal()
                         if (Response.data.status === "Validation failed" && Response.data.data.value) {
-                            alert(Response.data.data.value)
+                            setTimeout(() => { alert(Response.data.data.value) }, 500)
                         } else {
                             if (Response.data.status === "Validation failed" && Response.data.data.name) {
-                                alert(Response.data.data.name)
+                                setTimeout(() => { alert(Response.data.data.name) }, 500)
                             } else {
                                 if (Response.data.status === "Validation failed" && Response.data.data.desc) {
-                                    alert(Response.data.data.desc)
+                                    setTimeout(() => { alert(Response.data.data.desc) }, 500)
                                 } else {
                                     if (Response.data.status === "Validation failed" && Response.data.data.type) {
-                                        alert(Response.data.data.type)
+                                        setTimeout(() => { alert(Response.data.data.type) }, 500)
                                     } else {
                                         if (Response.data.status === "Validation failed" && Response.data.data.score) {
-                                            alert(Response.data.data.score)
+                                            setTimeout(() => { alert(Response.data.data.score) }, 500)
                                         } else {
                                             if (Response.data.status === "Validation failed" && Response.data.data.date) {
-                                                alert(Response.data.data.date)
+                                                setTimeout(() => { alert(Response.data.data.date) }, 500)
                                             } else {
                                                 if (Response.data.status === "Unauthorized access!!") {
                                                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                                                     sessionStorage.clear()
                                                 } else {
-                                                    alert(Response.data.status)
+                                                    closeWaitingModal()
+                                                    setTimeout(() => {
+                                                        alert(Response.data.status)
+                                                    }, 500)
                                                 }
                                             }
                                         }
@@ -137,25 +162,36 @@ const AdminUpdateTask = () => {
 
                 }
             ).catch(error => {
+                closeWaitingModal()
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        alert(error.response.data.status)
-                        // Additional logic for status 400
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     } else if (statusCode === 500) {
-                        alert(error.response.data.status)
-                        // Additional logic for status 500
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     } else {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     }
                 } else if (error.request) {
-                    alert(error.request);
+                    setTimeout(() => {
+                        alert(error.request);
+                    }, 500)
                 } else if (error.message) {
-                    alert('Error', error.message);
+                    setTimeout(() => {
+                        alert('Error', error.message);
+                    }, 500)
                 } else {
-                    alert(error.config);
+                    setTimeout(() => {
+                        alert(error.config);
+                    }, 500)
                 }
             })
         } else {
@@ -383,6 +419,44 @@ const AdminUpdateTask = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }

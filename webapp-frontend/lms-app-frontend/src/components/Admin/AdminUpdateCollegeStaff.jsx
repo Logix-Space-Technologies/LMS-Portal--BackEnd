@@ -29,8 +29,17 @@ const AdminUpdateCollegeStaff = () => {
     const apiUrl2 = global.config.urls.api.server + "/api/lms/viewonecollgestaff";
     const navigate = useNavigate()
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const updateHandler = (event) => {
+        setErrors({})
         setUpdateField({ ...updateField, [event.target.name]: event.target.value })
+    }
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
     }
 
     const fileUploadHandler = (event) => {
@@ -92,81 +101,85 @@ const AdminUpdateCollegeStaff = () => {
                     "department": updateField.department
                 }
             }
-
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl, data, axiosConfig).then(
                 (response) => {
                     if (response.data.status === "success") {
-                        setUpdateField({
-                            "id": sessionStorage.getItem("clgStaffId"),
-                            "collegeId": "",
-                            "collegeStaffName": "",
-                            "email": "",
-                            "phNo": "",
-                            "aadharNo": "",
-                            "clgStaffAddress": "",
-                            "department": ""
-                        })
-                        alert("Profile Updated Successfully")
-                        setFile(null)
-                        navigate(-1)
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            setUpdateField({
+                                "id": sessionStorage.getItem("clgStaffId"),
+                                "collegeId": "",
+                                "collegeStaffName": "",
+                                "email": "",
+                                "phNo": "",
+                                "aadharNo": "",
+                                "clgStaffAddress": "",
+                                "department": ""
+                            })
+                            alert("Profile Updated Successfully")
+                            setFile(null)
+                            navigate(-1)
+                        }, 500)
                     } else {
+                        closeWaitingModal()
                         if (response.data.status === "Validation failed" && response.data.data.name) {
-                            alert(response.data.data.name)
+                            setTimeout(() => { alert(response.data.data.name) }, 500)
+                        } else if (response.data.status === "Validation failed" && response.data.data.email) {
+                            setTimeout(() => { alert(response.data.data.email) }, 500)
+                        } else if (response.data.status === "Validation failed" && response.data.data.phNo) {
+                            setTimeout(() => { alert(response.data.data.phNo) }, 500)
+                        } else if (response.data.status === "Validation failed" && response.data.data.aadharnumber) {
+                            setTimeout(() => { alert(response.data.data.aadharnumber) }, 500)
+                        } else if (response.data.status === "Validation failed" && response.data.data.address) {
+                            setTimeout(() => { alert(response.data.data.address) }, 500)
+                        } else if (response.data.status === "Validation failed" && response.data.data.department) {
+                            setTimeout(() => { alert(response.data.data.department) }, 500)
+                        } else if (response.data.status === "Validation failed" && response.data.data.image) {
+                            setTimeout(() => { alert(response.data.data.image) }, 500)
+                        } else if (response.data.status === "Unauthorized User!!") {
+                            { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                            sessionStorage.clear()
                         } else {
-                            if (response.data.status === "Validation failed" && response.data.data.email) {
-                                alert(response.data.data.email)
-                            } else {
-                                if (response.data.status === "Validation failed" && response.data.data.phNo) {
-                                    alert(response.data.data.phNo)
-                                } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.aadharnumber) {
-                                        alert(response.data.data.aadharnumber)
-                                    } else {
-                                        if (response.data.status === "Validation failed" && response.data.data.address) {
-                                            alert(response.data.data.address)
-                                        } else {
-                                            if (response.data.status === "Validation failed" && response.data.data.department) {
-                                                alert(response.data.data.department)
-                                            } else {
-                                                if (response.data.status === "Validation failed" && response.data.data.image) {
-                                                    alert(response.data.data.image)
-                                                } else {
-                                                    if (response.data.status === "Unauthorized User!!") {
-                                                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
-                                                        sessionStorage.clear()
-                                                    } else {
-                                                        alert(response.data.status)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            closeWaitingModal()
+                            setTimeout(() => {
+                                alert(response.data.status)
+                            }, 500)
                         }
 
                     }
-                }
-            ).catch(error => {
+                }).catch(error => {
+                    closeWaitingModal()
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        alert(error.response.data.status)
-                        // Additional logic for status 400
+                        setTimeout(()=>{
+                            alert(error.response.data.status)
+                        }, 500)
                     } else if (statusCode === 500) {
-                        alert(error.response.data.status)
-                        // Additional logic for status 500
+                        setTimeout(()=>{
+                            alert(error.response.data.status)
+                        }, 500)
                     } else {
-                        alert(error.response.data.status)
+                        setTimeout(()=>{
+                            alert(error.response.data.status)
+                        }, 500)
                     }
                 } else if (error.request) {
-                    alert(error.request);
+                    setTimeout(()=>{
+                        alert(error.request);
+                    }, 500)
                 } else if (error.message) {
-                    alert('Error', error.message);
+                    setTimeout(()=>{
+                        alert('Error', error.message);
+                    }, 500)
                 } else {
-                    alert(error.config);
+                    setTimeout(()=>{
+                        alert(error.config);
+                    }, 500)
                 }
             })
         } else {
@@ -331,6 +344,44 @@ const AdminUpdateCollegeStaff = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div >
     )
 }

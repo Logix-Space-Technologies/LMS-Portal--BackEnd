@@ -12,6 +12,9 @@ const AdminViewRefundRequests = () => {
   const [errors, setErrors] = useState({});
   const [reject, setReject] = useState({})
   const [approve, setApprove] = useState({})
+  const [isLoading, setIsLoading] = useState(true);
+  const [showWaitingModal, setShowWaitingModal] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
   const navigate = useNavigate()
 
@@ -35,6 +38,11 @@ const AdminViewRefundRequests = () => {
   const apiUrl2 = global.config.urls.api.server + "/api/lms/rejectRefund"
   const apiUrl3 = global.config.urls.api.server + "/api/lms/admStaffRefundApproval"
 
+  const closeWaitingModal = () => {
+    setShowOverlay(false)
+    setShowWaitingModal(false)
+  }
+
   const getData = () => {
     let currentKey = sessionStorage.getItem("admkey");
     let token = sessionStorage.getItem("admtoken");
@@ -54,6 +62,7 @@ const AdminViewRefundRequests = () => {
     axios.post(apiUrl, {}, axiosConfig)
       .then((response) => {
         if (response.data.data) {
+          setIsLoading(false)
           setRefundRequests(response.data.data);
         } else {
           if (response.data.status === "Unauthorized User!!") {
@@ -61,8 +70,10 @@ const AdminViewRefundRequests = () => {
             sessionStorage.clear()
           } else {
             if (!response.data.data) {
+              setIsLoading(false)
               setRefundRequests([])
             } else {
+              setIsLoading(false)
               alert(response.data.status)
             }
           }
@@ -128,20 +139,28 @@ const AdminViewRefundRequests = () => {
         "admStaffId": sessionStorage.getItem("admstaffId"),
         "adminRemarks": inputField.adminRemarks
       }
+      setShowWaitingModal(true)
+      setShowOverlay(true)
       axios.post(apiUrl2, data2, axiosConfig2).then(
         (response) => {
           if (response.data.status === "Refund Request Cancelled.") {
-            alert("Refund Request Rejected")
-            getData()
-            setInputField({
-              adminRemarks: ""
-            });
+            closeWaitingModal()
+            setTimeout(() => {
+              alert("Refund Request Rejected")
+              getData()
+              setInputField({
+                adminRemarks: ""
+              });
+            }, 500)
           } else {
             if (response.data.status === "Unauthorized User!!") {
               { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
               sessionStorage.clear()
             } else {
-              alert(response.data.status)
+              closeWaitingModal()
+              setTimeout(() => {
+                alert(response.data.status)
+              }, 500)
             }
           }
         }
@@ -176,31 +195,48 @@ const AdminViewRefundRequests = () => {
         "transactionNo": approveField.transactionNo,
         "approvedAmnt": approveField.approvedAmnt
       }
+      setShowWaitingModal(true)
+      setShowOverlay(true)
       axios.post(apiUrl3, data3, axiosConfig3).then(
         (response) => {
           if (response.data.status === "success") {
-            alert("Refund Request Approved Successfully")
-            getData()
-            setApproveField({
-              adminRemarks: "",
-              refundAmnt: "",
-              transactionNo: ""
-            });
+            closeWaitingModal()
+            setTimeout(() => {
+              alert("Refund Request Approved Successfully")
+              getData()
+              setApproveField({
+                adminRemarks: "",
+                refundAmnt: "",
+                transactionNo: ""
+              });
+            }, 500)
           } else {
             if (response.data.status === "Validation failed" && response.data.data.adminRemarks) {
-              alert(response.data.data.adminRemarks)
+              closeWaitingModal()
+              setTimeout(() => {
+                alert(response.data.data.adminRemarks)
+              }, 500)
             } else {
               if (response.data.status === "Validation failed" && response.data.data.transactionNo) {
-                alert(response.data.data.transactionNo)
+                closeWaitingModal()
+                setTimeout(() => {
+                  alert(response.data.data.transactionNo)
+                }, 500)
               } else {
                 if (response.data.status === "Validation failed" && response.data.data.approvedAmnt) {
-                  alert(response.data.data.approvedAmnt)
+                  closeWaitingModal()
+                  setTimeout(() => {
+                    alert(response.data.data.approvedAmnt)
+                  }, 500)
                 } else {
                   if (response.data.status === "Unauthorized User!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                   } else {
-                    alert(response.data.status)
+                    closeWaitingModal()
+                    setTimeout(() => {
+                      alert(response.data.status)
+                    }, 500)
                   }
                 }
               }
@@ -264,7 +300,11 @@ const AdminViewRefundRequests = () => {
               <div className="w-full px-4">
                 <h1>Refund Requests</h1>
                 <br />
-                <div className="max-w-full overflow-x-auto">
+                {isLoading ? <div className="flex justify-center items-center h-full">
+                  <div className="text-center py-20">
+                    <div>Loading...</div>
+                  </div>
+                </div> : (<div className="max-w-full overflow-x-auto">
                   <table className="w-full table-auto">
                     <thead>
                       <tr className="text-center bg-primary">
@@ -356,7 +396,8 @@ const AdminViewRefundRequests = () => {
                       </td>}
                     </tbody>
                   </table>
-                </div>
+                </div>)}
+
               </div>
             </div>
           </div>
@@ -393,37 +434,39 @@ const AdminViewRefundRequests = () => {
         </div>
       )}
 
-      <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
-        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm text-gray-700">
-              Showing <span className="font-medium">{indexOfFirstStudent + 1}</span> to <span className="font-medium">{indexOfLastStudent > refundRequests.length ? refundRequests.length : indexOfLastStudent}</span> of <span className="font-medium">{refundRequests.length}</span> results
-            </p>
-          </div>
-          <div>
-            <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-              <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
-                <span className="sr-only">Previous</span>
-                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-                </svg>
-              </button>
-              {/* Dynamically generate Link components for each page number */}
-              {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-                <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
-                  {startPage + index}
+      {!isLoading && currentStudents.length > 0 && (
+        <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+          <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm text-gray-700">
+                Showing <span className="font-medium">{indexOfFirstStudent + 1}</span> to <span className="font-medium">{indexOfLastStudent > refundRequests.length ? refundRequests.length : indexOfLastStudent}</span> of <span className="font-medium">{refundRequests.length}</span> results
+              </p>
+            </div>
+            <div>
+              <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
+                  <span className="sr-only">Previous</span>
+                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                  </svg>
                 </button>
-              ))}
-              <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
-                <span className="sr-only">Next</span>
-                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </nav>
+                {/* Dynamically generate Link components for each page number */}
+                {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                  <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
+                    {startPage + index}
+                  </button>
+                ))}
+                <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
+                  <span className="sr-only">Next</span>
+                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </nav>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
 
       {key !== 'lmsapp' && (
@@ -464,6 +507,44 @@ const AdminViewRefundRequests = () => {
             </div>
           </div>
         </div>
+      )}
+      {showWaitingModal && (
+        <div className="modal show d-block" tabIndex={-1}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+              </div>
+              <div className="modal-body">
+                <>
+                  <div className="mb-3">
+                    <p>Processing Request. Do Not Refresh.</p>
+                  </div>
+                </>
+              </div>
+              <div className="modal-footer">
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showOverlay && (
+        <div
+          className="modal-backdrop fade show"
+          onClick={() => {
+            setShowWaitingModal(false);
+            setShowOverlay(false);
+          }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 1040, // Ensure this is below your modal's z-index
+          }}
+        ></div>
       )}
     </div>
   );

@@ -10,6 +10,8 @@ const AdminSearchAdminStaff = () => {
         "adminStaffSearchQuery": ""
     });
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     const [updateField, setUpdateField] = useState([]);
     const [searchExecuted, setSearchExecuted] = useState(false);
     const navigate = useNavigate();
@@ -25,6 +27,11 @@ const AdminSearchAdminStaff = () => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
     const handleDeleteClick = () => {
         const axiosConfig = {
             headers: {
@@ -35,15 +42,25 @@ const AdminSearchAdminStaff = () => {
             },
         };
 
+        setShowWaitingModal(true)
+        setShowOverlay(true)
+
         axios.post(deleteUrl, { id: deleteId }, axiosConfig).then((response) => {
             if (response.data.status === "Admin Staff Deleted.") {
-                // Refresh the data after deletion
-                setUpdateField(updateField.filter(admstaff => admstaff.id !== deleteId))
+                closeWaitingModal()
+                setTimeout(() => {
+                    alert("Admin Staff Deleted Successfully !!!")
+                    // Refresh the data after deletion
+                    setUpdateField(updateField.filter(admstaff => admstaff.id !== deleteId))
+                }, 500)
             } else if (response.data.status === "Unauthorized User!!") {
                 navigate("/")
                 sessionStorage.clear()
             } else {
-                alert(response.data.status)
+                closeWaitingModal()
+                setTimeout(() => {
+                    alert(response.data.status)
+                }, 500)
             }
         })
     };
@@ -54,7 +71,8 @@ const AdminSearchAdminStaff = () => {
     };
 
     const readValue = () => {
-        setIsLoading(true);
+        setIsLoading(true); // Start loading before the request
+
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -66,25 +84,31 @@ const AdminSearchAdminStaff = () => {
 
         axios.post(apiLink, inputField, axiosConfig).then(
             (response) => {
+                // Always stop loading when you get a response
+                setIsLoading(false);
+
                 if (response.data.data) {
                     setUpdateField(response.data.data);
-                    setIsLoading(false);
                     setSearchExecuted(true);
                     setInputField({ "adminStaffSearchQuery": "" });
                 } else if (response.data.status === "Unauthorized User!!") {
-                    navigate("/")
-                    sessionStorage.clear()
+                    navigate("/");
+                    sessionStorage.clear();
                 } else if (!response.data.data) {
                     setUpdateField([]);
-                    setIsLoading(false);
                     setSearchExecuted(true);
                     setInputField({ "adminStaffSearchQuery": "" });
                 } else {
-                    alert(response.data.status)
+                    alert(response.data.status);
                 }
             }
-        );
+        ).catch(error => {
+            // Stop loading and handle error
+            setIsLoading(false);
+            console.error("There was an error!", error);
+        });
     };
+
 
     // Logic for displaying current items
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -122,6 +146,7 @@ const AdminSearchAdminStaff = () => {
                         <br /><br />
                     </div>
                 </div>
+                {isLoading && searchExecuted && <div>Loading...</div>}
                 {!isLoading && currentItems.length > 0 ? (
                     <div className="row">
                         <div className="col-12">
@@ -215,6 +240,44 @@ const AdminSearchAdminStaff = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     );
 };

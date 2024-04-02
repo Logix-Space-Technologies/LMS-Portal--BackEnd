@@ -37,6 +37,11 @@ const CollegeStaffForgotPassword = () => {
         }, 500)
     }
 
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
 
     const readNewValue = () => {
         const validationErrors = validateForm(updateField);
@@ -50,31 +55,35 @@ const CollegeStaffForgotPassword = () => {
             "email": updateField.Email,
             "password": updateField.Password
         }
-        setShowWaitingModal(true)
-        setShowOverlay(true)
         if (Object.keys(validationErrors).length === 0) {
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiurl, data, axiosConfig).then(
                 (response) => {
                     if (response.data.status === "success") {
-                        setShowWaitingModal(false)
-                        setShowOverlay(false)
+                        closeWaitingModal()
+                        setUpdateField({
+                            "Email": "",
+                            "Password": "",
+                            "ConfirmPassword": ""
+                        })
                         setTimeout(() => {
                             alert("Password Changed Successfully\nKindly Login.");
                             navigate("/clgStafflogin");
-                            setUpdateField({
-                                "Email": "",
-                                "Password": "",
-                                "ConfirmPassword": ""
-                            })
                             sessionStorage.clear()
-                        }, 1000)
+                        }, 500)
                     } else if (response.data.status === "Validation failed" && response.data.data.Email) {
-                        alert(response.data.data.Email);
+                        closeWaitingModal()
+                        setTimeout(()=>{
+                            alert(response.data.data.Email);
+                        }, 500)
                     } else if (response.data.status === "Validation failed" && response.data.data.Password) {
-                        alert(response.data.data.Password);
+                        closeWaitingModal()
+                        setTimeout(()=>{
+                            alert(response.data.data.Password);
+                        }, 500)
                     } else {
-                        setShowWaitingModal(false)
-                        setShowOverlay(false)
+                        closeWaitingModal()
                         setTimeout(() => {
                             alert(response.data.status)
                         }, 1000)
@@ -83,8 +92,6 @@ const CollegeStaffForgotPassword = () => {
                 }
             )
         } else {
-            setShowWaitingModal(false)
-            setShowOverlay(false)
             setErrors(validationErrors);
         }
     }

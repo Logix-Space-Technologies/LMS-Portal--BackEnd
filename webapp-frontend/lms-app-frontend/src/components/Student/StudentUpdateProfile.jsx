@@ -55,9 +55,6 @@ const StudentUpdateProfile = () => {
     const readNewValue = async (e) => {
         e.preventDefault()
         const validationErrors = validateForm(updateField)
-        setShowWaitingModal(true)
-        setShowOverlay(true)
-
         if (Object.keys(validationErrors).length === 0) {
             let data = {}
             if (file) {
@@ -92,69 +89,72 @@ const StudentUpdateProfile = () => {
                     "key": sessionStorage.getItem("studentkey")
                 }
             };
-            try {
-                axios.post(apiUrl2, data, axiosConfig).then(
-                    (Response) => {
-                        if (Response.data.status === "success") {
+            setShowWaitingModal(true)
+            setShowOverlay(true)
+            axios.post(apiUrl2, data, axiosConfig).then(
+                (Response) => {
+                    if (Response.data.status === "success") {
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            setUpdateField({
+                                "id": sessionStorage.getItem("studentId"),
+                                "studName": "",
+                                "admNo": "",
+                                "rollNo": "",
+                                "studDept": "",
+                                "course": "",
+                                "studPhNo": "",
+                                "aadharNo": "",
+                                "studProfilePic": ""
+                            })
+                            alert("Profile Updated Successfully")
+                            navigate("/studdashboard")
+                        }, 500)
+                    } else {
+                        if (Response.data.status === "Unauthorized User!!") {
+                            navigate("/studentLogin")
+                            sessionStorage.clear()
+                        } else {
                             closeWaitingModal()
                             setTimeout(() => {
-                                setUpdateField({
-                                    "id": sessionStorage.getItem("studentId"),
-                                    "studName": "",
-                                    "admNo": "",
-                                    "rollNo": "",
-                                    "studDept": "",
-                                    "course": "",
-                                    "studPhNo": "",
-                                    "aadharNo": "",
-                                    "studProfilePic": ""
-                                })
-                                alert("Profile Updated Successfully")
-                                navigate("/studdashboard")
+                                alert(Response.data.status)
                             }, 500)
-                        } else {
-                            if (Response.data.status === "Unauthorized User!!") {
-                                navigate("/studentLogin")
-                                sessionStorage.clear()
-                            } else {
-                                closeWaitingModal()
-                                setTimeout(() => {
-                                    alert(Response.data.status)
-                                }, 500)
-                            }
                         }
-
                     }
-                ).catch(error => {
-                    if (error.response) {
-                        // Extract the status code from the response
-                        const statusCode = error.response.status;
+                }
+            ).catch(error => {
+                closeWaitingModal()
+                if (error.response) {
+                    // Extract the status code from the response
+                    const statusCode = error.response.status;
 
-                        if (statusCode === 400) {
-                            console.log("Status 400:", error.response.data);
+                    if (statusCode === 400) {
+                        setTimeout(() => {
                             alert(error.response.data.status)
-                            // Additional logic for status 400
-                        } else if (statusCode === 500) {
-                            console.log("Status 500:", error.response.data);
+                        }, 500)
+                    } else if (statusCode === 500) {
+                        setTimeout(() => {
                             alert(error.response.data.status)
-                            // Additional logic for status 500
-                        } else {
-                            alert(error.response.data.status)
-                        }
-                    } else if (error.request) {
-                        console.log(error.request);
-                        alert(error.request);
-                    } else if (error.message) {
-                        console.log('Error', error.message);
-                        alert('Error', error.message);
+                        }, 500)
                     } else {
-                        alert(error.config);
-                        console.log(error.config);
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     }
-                })
-            } catch (error) {
-                alert("An error occurred while updating the profile.");
-            }
+                } else if (error.request) {
+                    setTimeout(() => {
+                        alert(error.request);
+                    }, 500)
+                } else if (error.message) {
+                    setTimeout(() => {
+                        alert('Error: ', error.message);
+                    }, 500)
+                } else {
+                    setTimeout(() => {
+                        alert(error.config);
+                    }, 500)
+                }
+            })
         } else {
             setErrors(validationErrors);
         }

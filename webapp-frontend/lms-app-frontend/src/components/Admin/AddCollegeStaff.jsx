@@ -30,6 +30,9 @@ const AddCollegeStaff = () => {
 
   const [fileType, setFileType] = useState("");
 
+  const [showWaitingModal, setShowWaitingModal] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
   const fileUploadHandler = (event) => {
     setErrors({});
     const uploadedFile = event.target.files[0];
@@ -84,6 +87,11 @@ const AddCollegeStaff = () => {
     )
   }
 
+  const closeWaitingModal = () => {
+    setShowOverlay(false)
+    setShowWaitingModal(false)
+  }
+
   const inputHandler = (event) => {
     setErrors({})
     setInputField({ ...inputField, [event.target.name]: event.target.value })
@@ -120,67 +128,104 @@ const AddCollegeStaff = () => {
         "confirmpassword": inputField.confirmpassword,
         "profilePic": file
       }
+      setShowWaitingModal(true)
+      setShowOverlay(true)
       axios.post(apiUrl, data, axiosConfig).then(
         (response) => {
           if (response.data.status === "success") {
-            alert("College Staff Added Successfully !!")
-            setInputField({
-              collegeId: '',
-              collegeStaffName: '',
-              department: '',
-              clgStaffAddress: '',
-              email: '',
-              phNo: '',
-              aadharNo: '',
-              password: '',
-              confirmpassword: '',
-              profilePic: ''
-            })
+            closeWaitingModal()
+            setTimeout(() => {
+              alert("College Staff Added Successfully !!")
+              setInputField({
+                collegeId: '',
+                collegeStaffName: '',
+                department: '',
+                clgStaffAddress: '',
+                email: '',
+                phNo: '',
+                aadharNo: '',
+                password: '',
+                confirmpassword: '',
+                profilePic: ''
+              })
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.dept) {
-            alert(response.data.data.dept)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.dept)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.name) {
-            alert(response.data.data.name)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.name)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.address) {
-            alert(response.data.data.address)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.address)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.email) {
-            alert(response.data.data.email)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.email)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.mobile) {
-            alert(response.data.data.mobile)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.mobile)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.aadharnumber) {
-            alert(response.data.data.aadharnumber)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.aadharnumber)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.password) {
-            alert(response.data.data.password)
+            closeWaitingModal()
+            setTimeout(()=>{
+              alert(response.data.data.password)
+            }, 500)
           } else if (response.data.status === "Unauthorized access!!") {
             { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
             sessionStorage.clear()
           } else {
-            alert(response.data.status)
+            closeWaitingModal()
+            setTimeout(() => {
+              alert(response.data.status)
+            }, 500)
           }
         }).catch(error => {
+          closeWaitingModal()
           if (error.response) {
             // Extract the status code from the response
             const statusCode = error.response.status;
 
             if (statusCode === 400) {
-              console.log("Status 400:", error.response.data);
-              alert(error.response.data.status)
+              setTimeout(()=>{
+                alert(error.response.data.status)
+              }, 500)
               // Additional logic for status 400
             } else if (statusCode === 500) {
-              console.log("Status 500:", error.response.data);
-              alert(error.response.data.status)
+              setTimeout(()=>{
+                alert(error.response.data.status)
+              }, 500)
               // Additional logic for status 500
             } else {
-              alert(error.response.data.status)
+              setTimeout(()=>{
+                alert(error.response.data.status)
+              }, 500)
             }
           } else if (error.request) {
-            console.log(error.request);
-            alert(error.request);
+            setTimeout(()=>{
+              alert(error.request);
+            }, 500)
           } else if (error.message) {
-            console.log('Error', error.message);
-            alert('Error', error.message);
+            setTimeout(()=>{
+              alert('Error', error.message);
+            }, 500)
           } else {
-            alert(error.config);
-            console.log(error.config);
+            setTimeout(()=>{
+              alert(error.config);
+            }, 500)
           }
         })
     } else {
@@ -352,6 +397,44 @@ const AddCollegeStaff = () => {
           </div>
         </div>
       </div>
+      {showWaitingModal && (
+        <div className="modal show d-block" tabIndex={-1}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+              </div>
+              <div className="modal-body">
+                <>
+                  <div className="mb-3">
+                    <p>Processing Request. Do Not Refresh.</p>
+                  </div>
+                </>
+              </div>
+              <div className="modal-footer">
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showOverlay && (
+        <div
+          className="modal-backdrop fade show"
+          onClick={() => {
+            setShowWaitingModal(false);
+            setShowOverlay(false);
+          }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 1040, // Ensure this is below your modal's z-index
+          }}
+        ></div>
+      )}
     </div>
 
 

@@ -52,9 +52,15 @@ const CollegeStaffChangePassword = () => {
                             sessionStorage.clear()
                         }, 500)
                     } else if (response.data.status === "Validation failed" && response.data.data.oldPassword) {
-                        alert(response.data.data.oldPassword);
+                        closeWaitingModal()
+                        setTimeout(()=>{
+                            alert(response.data.data.oldPassword);
+                        }, 500)
                     } else if (response.data.status === "Validation failed" && response.data.data.newPassword) {
-                        alert(response.data.data.newPassword);
+                        closeWaitingModal()
+                        setTimeout(()=>{
+                            alert(response.data.data.newPassword);
+                        }, 500)
                     } else if (response.data.status === "Unauthorized User!!") {
                         navigate("/clgStafflogin")
                         sessionStorage.clear()

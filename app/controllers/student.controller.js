@@ -13,6 +13,8 @@ const { Upload } = require('@aws-sdk/lib-storage');
 require('dotenv').config({ path: '../../.env' });
 const path = require("path");
 const whatsApp = require("./Whatsapp/sendWhatsappMessage")
+const { StudentLog, logStudent } = require("../models/studentLog.model");
+
 // const { Session } = require("inspector");
 
 // AWS S3 Client Configuration
@@ -132,6 +134,9 @@ exports.createStudent = (req, res) => {
                 if (err) {
                     return res.json({ "status": err });
                 }
+
+                let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(studPhNo) ? studPhNo.replace(/^(\+91\s?|91\s?)/, '') : studPhNo;
+
                 const newStudent = new Student({
                     collegeId: collegeId,
                     batchId: batchId,
@@ -141,7 +146,7 @@ exports.createStudent = (req, res) => {
                     studDept: studDept,
                     course: course,
                     studEmail: studEmail,
-                    studPhNo: studPhNo,
+                    studPhNo: formattedPhoneNumber,
                     studProfilePic: imageUrl,
                     aadharNo: aadharNo,
                     password: hashedPassword
@@ -209,7 +214,9 @@ exports.studLog = (request, response) => {
         if (err) {
             return response.json({ "status": err })
         }
-
+        if(password==="0" && stud.password==="0"){
+            return response.json({ "status": "Password Is Default Password. Please Change." })
+        }
         const passwordMatch = bcrypt.compareSync(password, stud.password)
         if (passwordMatch) {
             jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsappstud", {
@@ -219,6 +226,12 @@ exports.studLog = (request, response) => {
                     if (error) {
                         return response.json({ "status": "Unauthorized User!!" })
                     } else {
+                        if (stud.isVerified !== 1) {
+                            return response.json({ "status": "Account Under Verification Process.Please Contact Your Batch-In-Charge." })
+                        }
+                        if (stud.validity <= new Date() ) {
+                            return response.json({ "status": "Account expired. Please Renew Your Plan" })
+                        }
                         if (type === 'web') {
                             // Code for web app
                             console.log('Accessed from web app');
@@ -228,6 +241,8 @@ exports.studLog = (request, response) => {
                         } else {
                             console.log('Unknown type');
                         }
+                        // Log student login
+                        logStudent(stud.id, "Student logged In");
                         return response.json({ "status": "Success", "data": stud, "token": token })
                     }
                 })
@@ -425,6 +440,8 @@ exports.profileUpdateStudent = (request, response) => {
 
                         const studProfilePic = imageUrl;
 
+                        let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(studPhNo) ? studPhNo.replace(/^(\+91\s?|91\s?)/, '') : studPhNo;
+
                         const newStudent = {
                             'id': request.body.id,
                             studName,
@@ -432,11 +449,11 @@ exports.profileUpdateStudent = (request, response) => {
                             rollNo,
                             studDept,
                             course,
-                            studPhNo,
+                            formattedPhoneNumber,
                             studProfilePic,
                             aadharNo
                         };
-                        console.log(newStudent)
+                        
                         Student.updateStudentProfile(newStudent, (err, data) => {
                             if (err) {
                                 if (err.kind === "not_found") {

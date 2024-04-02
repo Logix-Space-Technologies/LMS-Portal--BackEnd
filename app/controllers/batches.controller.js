@@ -73,6 +73,9 @@ exports.batchCreate = (request, response) => {
                     if (key === "lmsapp") {
                         logAdminStaff(0, "New Batch Created")
                     }
+                    if (key !== "lmsapp") {
+                        logAdminStaff(request.body.addedby, "New Batch Created")
+                    }
                     return response.json({ "status": "success", "data": data });
                 }
             });
@@ -170,6 +173,7 @@ exports.batchUpdate = (request, response) => {
         regEndDate,
         batchDesc,
         batchAmount,
+        addedby
     } = request.body;
 
     const batchUpdateToken = request.headers.token;
@@ -180,9 +184,9 @@ exports.batchUpdate = (request, response) => {
             const validationErrors = {};
 
 
-            if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
-                validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
-            }
+            // if (!Validator.isDateGreaterThanToday(regStartDate).isValid) {
+            //     validationErrors.regStartDate = Validator.isDateGreaterThanToday(regStartDate).message;
+            // }
             // if (!Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).isValid) {
             //     validationErrors.regEndDate = Validator.isDate1GreaterThanDate2(regStartDate, regEndDate).message
             // }
@@ -222,8 +226,11 @@ exports.batchUpdate = (request, response) => {
                     }
 
                 } else {
-                    if (key == "lmsapp") {
+                    if (key === "lmsapp") {
                         logAdminStaff(0, "Admin Updated Batch")
+                    }
+                    if (key !== "lmsapp") {
+                        logAdminStaff(addedby, "Admin Staff Updated Batch")
                     }
                     return response.json({ "status": "Updated Batch Details", "data": data });
                 }

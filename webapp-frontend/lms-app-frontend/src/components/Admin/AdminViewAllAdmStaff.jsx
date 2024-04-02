@@ -11,9 +11,17 @@ const AdminViewAllAdminStaff = () => {
   const [adminStaffPerPage] = useState(10); // Number of admin staff per page
   const navigate = useNavigate();
   const [deleteClgStaff, setDeleteClgStaff] = useState({})
+  const [isLoading, setIsLoading] = useState(true);
+  const [showWaitingModal, setShowWaitingModal] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
   const apiUrl = global.config.urls.api.server + "/api/lms/viewalladmstaff";
   const deleteUrl = global.config.urls.api.server + "/api/lms/deleteadmstaff";
+
+  const closeWaitingModal = () => {
+    setShowOverlay(false)
+    setShowWaitingModal(false)
+  }
 
   const getData = () => {
     let axiosConfig = {
@@ -27,6 +35,7 @@ const AdminViewAllAdminStaff = () => {
 
     axios.post(apiUrl, {}, axiosConfig).then((response) => {
       if (response.data) {
+        setIsLoading(false)
         setAdmStaffData(response.data);
       } else {
         if (response.data.status === "Unauthorized User!!") {
@@ -34,8 +43,10 @@ const AdminViewAllAdminStaff = () => {
           sessionStorage.clear()
         } else {
           if (!response.data) {
+            setIsLoading(false)
             setAdmStaffData([])
           } else {
+            setIsLoading(false)
             alert(response.data.status)
           }
         }
@@ -52,17 +63,25 @@ const AdminViewAllAdminStaff = () => {
         "token": sessionStorage.getItem("admtoken"),
       },
     };
+    setShowWaitingModal(true)
+    setShowOverlay(true)
     axios.post(deleteUrl, { id }, axiosConfig).then((response) => {
       if (response.data.status === "Admin Staff Deleted.") {
-        alert("Admin staff deleted!")
-        // Refresh the data after deletion
-        getData();
+        closeWaitingModal()
+        setTimeout(() => {
+          alert("Admin staff deleted!")
+          // Refresh the data after deletion
+          getData();
+        }, 500)
       } else {
         if (response.data.status === "Unauthorized User!!") {
           navigate("/")
           sessionStorage.clear()
         } else {
-          alert(response.data.status)
+          closeWaitingModal()
+          setTimeout(() => {
+            alert(response.data.status)
+          }, 500)
         }
       }
     })
@@ -112,7 +131,11 @@ const AdminViewAllAdminStaff = () => {
       <section className="bg-gray-100 min-h-screen p-4">
         <div className="container mx-auto">
           <h1 className="text-3xl font-semibold text-gray-800 mb-6">Admin Staff List</h1>
-          <table className="min-w-full divide-y divide-gray-200">
+          {isLoading ? <div className="flex justify-center items-center h-full">
+            <div className="text-center py-20">
+              <div>Loading...</div>
+            </div>
+          </div> : (<table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
@@ -149,7 +172,8 @@ const AdminViewAllAdminStaff = () => {
                 </tr>
               )}
             </tbody>
-          </table>
+          </table>)}
+
           <div className="row">
             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div className="modal-dialog modal-dialog-centered">
@@ -170,39 +194,79 @@ const AdminViewAllAdminStaff = () => {
             </div>
           </div>
           {/* Pagination */}
-          <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
-            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Showing <span className="font-medium">{indexOfFirstAdminStaff + 1}</span> to <span className="font-medium">{indexOfLastAdminStaff > admStaffData.length ? admStaffData.length : indexOfLastAdminStaff}</span> of <span className="font-medium">{admStaffData.length}</span> results
-                </p>
-              </div>
-              <div>
-                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                  <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
-                    <span className="sr-only">Previous</span>
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                  {/* Dynamically generate Link components for each page number */}
-                  {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-                    <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
-                      {startPage + index}
+          {!isLoading && currentAdminStaff.length > 0 && (
+            <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+              <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm text-gray-700">
+                    Showing <span className="font-medium">{indexOfFirstAdminStaff + 1}</span> to <span className="font-medium">{indexOfLastAdminStaff > admStaffData.length ? admStaffData.length : indexOfLastAdminStaff}</span> of <span className="font-medium">{admStaffData.length}</span> results
+                  </p>
+                </div>
+                <div>
+                  <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                    <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
+                      <span className="sr-only">Previous</span>
+                      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                      </svg>
                     </button>
-                  ))}
-                  <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
-                    <span className="sr-only">Next</span>
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                </nav>
+                    {/* Dynamically generate Link components for each page number */}
+                    {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                      <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
+                        {startPage + index}
+                      </button>
+                    ))}
+                    <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
+                      <span className="sr-only">Next</span>
+                      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+      {showWaitingModal && (
+        <div className="modal show d-block" tabIndex={-1}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+              </div>
+              <div className="modal-body">
+                <>
+                  <div className="mb-3">
+                    <p>Processing Request. Do Not Refresh.</p>
+                  </div>
+                </>
+              </div>
+              <div className="modal-footer">
               </div>
             </div>
           </div>
         </div>
-      </section>
+      )}
+      {showOverlay && (
+        <div
+          className="modal-backdrop fade show"
+          onClick={() => {
+            setShowWaitingModal(false);
+            setShowOverlay(false);
+          }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 1040, // Ensure this is below your modal's z-index
+          }}
+        ></div>
+      )}
     </div>
   );
 };

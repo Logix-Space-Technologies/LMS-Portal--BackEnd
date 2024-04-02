@@ -14,9 +14,17 @@ const AdminViewAllBatch = () => {
     const [key, setKey] = useState('');
     const [deleteId, setDeleteId] = useState(null);
     const [showConfirmation, setShowConfirmation] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const apiUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch";
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -38,15 +46,18 @@ const AdminViewAllBatch = () => {
         axios.post(apiUrl, data, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
+                    setIsLoading(false)
                     setBatchData(response.data.data);
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        {key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")}
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
                             setBatchData([])
+                            setIsLoading(false)
                         } else {
+                            setIsLoading(false)
                             alert(response.data.status)
                         }
                     }
@@ -70,17 +81,25 @@ const AdminViewAllBatch = () => {
                 "key": sessionStorage.getItem("admkey")
             }
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, deletedata, axiosConfig2).then(
             (response) => {
                 if (response.data.status === "Batch Deleted.") {
-                    alert("Batch Deleted Successfully!!");
-                    getData()
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Batch Deleted Successfully!!");
+                        getData()
+                    }, 500)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         navigate("/")
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status);
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status)
+                        }, 500)
                     }
                 }
             }
@@ -145,7 +164,11 @@ const AdminViewAllBatch = () => {
             </div>
             <br />
             <br /><br />
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            {isLoading ? <div className="flex justify-center items-center h-full">
+                <div className="text-center py-20">
+                    <div>Loading...</div>
+                </div>
+            </div> : (<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     {/* Table headers */}
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -207,9 +230,10 @@ const AdminViewAllBatch = () => {
                         )}
                     </tbody>
                 </table>
-            </div>
+            </div>)}
+
             {/* Pagination */}
-            <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+            {!isLoading && currentBatches.length > 0 && (<div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
                 <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                     <div>
                         <p className="text-sm text-gray-700">
@@ -239,7 +263,7 @@ const AdminViewAllBatch = () => {
                         </nav>
                     </div>
                 </div>
-            </div>
+            </div>)}
             {/* Delete Confirmation */}
             {showConfirmation && (
                 <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
@@ -251,6 +275,44 @@ const AdminViewAllBatch = () => {
                         </div>
                     </div>
                 </div>
+            )}
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
             )}
         </div>
     );

@@ -25,6 +25,9 @@ const AdminAddSession = () => {
 
     const [errors, setErrors] = useState({})
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const [batches, setBatches] = useState([])
 
     const [trainers, setTrainers] = useState([])
@@ -66,6 +69,11 @@ const AdminAddSession = () => {
                 }
             }
         )
+    }
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
     }
 
     const getData = () => {
@@ -145,10 +153,16 @@ const AdminAddSession = () => {
     const readValue = (e) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+        let addedBy;
         if (currentKey !== 'lmsapp') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
             setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault();
         const validationErrors = validateForm(inputField);
@@ -169,43 +183,76 @@ const AdminAddSession = () => {
                 "type": inputField.type,
                 "remarks": inputField.remarks,
                 "venueORlink": inputField.venueORlink,
-                "trainerId": inputField.trainerId
+                "trainerId": inputField.trainerId,
+                "addedby": addedBy
             }
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
                 if (response.data.status === 'success') {
-                    alert('Session Added Successfully !!');
-                    setInputField({
-                        collegeId: '',
-                        batchId: '',
-                        sessionName: '',
-                        date: '',
-                        time: '',
-                        type: '',
-                        remarks: '',
-                        venueORlink: '',
-                        trainerId: ''
-                    })
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert('Session Added Successfully !!');
+                        setInputField({
+                            collegeId: '',
+                            batchId: '',
+                            sessionName: '',
+                            date: '',
+                            time: '',
+                            type: '',
+                            remarks: '',
+                            venueORlink: '',
+                            trainerId: ''
+                        })
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.batchId) {
-                    alert(response.data.data.batchId)
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert(response.data.data.batchId)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.sessionName) {
-                    alert(response.data.data.sessionName)
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert(response.data.data.sessionName)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.date) {
-                    alert(response.data.data.date)
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert(response.data.data.date)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.time) {
-                    alert(response.data.data.time)
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert(response.data.data.time)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.type) {
-                    alert(response.data.data.type)
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert(response.data.data.type)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.remarks) {
-                    alert(response.data.data.remarks)
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert(response.data.data.remarks)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.venueORlink) {
-                    alert(response.data.data.venueORlink)
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert(response.data.data.venueORlink)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.trainerId) {
-                    alert(response.data.data.trainerId)
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert(response.data.data.trainerId)
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
-                    alert(response.data.status)
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert(response.data.status)
+                    }, 500)
                 }
             })
         } else {
@@ -484,6 +531,44 @@ const AdminAddSession = () => {
                     </div>
                 </div>
             </div>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     );
 }
