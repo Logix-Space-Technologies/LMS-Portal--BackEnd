@@ -291,21 +291,24 @@ exports.sessionUpdate = (request, response) => {
                                     mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
                                 }
 
-                                CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
-                                    if (err) {
-                                        return response.json({ "status": err });
-                                    } else {
-                                        let clgstaffEmail = res[0].email
-                                        let batchName = res[0].batchName
-                                        let collegeStaffName = res[0].collegeStaffName
+
+                            });
+
+                            CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
+                                if (err) {
+                                    return response.json({ "status": err });
+                                } else {
+                                    res.forEach(element => {
+                                        let clgstaffEmail = element.email
+                                        let batchName = element.batchName
+                                        let collegeStaffName = element.collegeStaffName
                                         const upcomingSessionHtmlContent = mailContents.reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly);
                                         const upcomingSessionTextContent = mailContents.reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly);
                                         mail.sendEmail(clgstaffEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    })
 
-                                    }
-                                })
-                            });
-
+                                }
+                            })
 
                             if (key === "lmsapp") {
                                 logAdminStaff(0, "Admin Updated Session Details");
