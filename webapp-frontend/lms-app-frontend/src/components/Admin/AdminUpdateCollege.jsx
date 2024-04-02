@@ -138,19 +138,19 @@ const AdminUpdateCollege = () => {
                     } else {
                         closeWaitingModal()
                         if (response.data.status === "Validation Failed" && response.data.data.name) {
-                            setTimeout(() => {alert(response.data.data.name)}, 500) 
+                            setTimeout(() => { alert(response.data.data.name) }, 500)
                         } else {
                             if (response.data.status === "Validation Failed" && response.data.data.address) {
-                                setTimeout(() => {alert(response.data.data.address)}, 500)
+                                setTimeout(() => { alert(response.data.data.address) }, 500)
                             } else {
                                 if (response.data.status === "Validation Failed" && response.data.data.website) {
-                                    setTimeout(() => {alert(response.data.data.website)}, 500)
+                                    setTimeout(() => { alert(response.data.data.website) }, 500)
                                 } else {
                                     if (response.data.status === "Validation Failed" && response.data.data.phone) {
-                                        setTimeout(() => {alert(response.data.data.phone)}, 500)
+                                        setTimeout(() => { alert(response.data.data.phone) }, 500)
                                     } else {
                                         if (response.data.status === "Validation Failed" && response.data.data.mobile) {
-                                            setTimeout(() => {alert(response.data.data.mobile)}, 500)
+                                            setTimeout(() => { alert(response.data.data.mobile) }, 500)
                                         } else {
                                             if (response.data.status === "Unauthorized Access!!!") {
                                                 { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
@@ -169,25 +169,38 @@ const AdminUpdateCollege = () => {
                     }
                 }
             ).catch(error => {
+                closeWaitingModal()
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 500
                     } else {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     }
                 } else if (error.request) {
-                    alert(error.request);
+                    setTimeout(() => {
+                        alert(error.request);
+                    }, 500)
                 } else if (error.message) {
-                    alert('Error', error.message);
+                    setTimeout(() => {
+                        alert('Error', error.message);
+                    }, 500)
                 } else {
-                    alert(error.config);
+                    setTimeout(() => {
+                        alert(error.config);
+                    }, 500)
                 }
             })
         } else {
