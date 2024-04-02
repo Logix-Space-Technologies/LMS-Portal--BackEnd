@@ -83,17 +83,29 @@ const AddAdminStaff = () => {
                     } else {
                         closeWaitingModal()
                         if (response.data.status === 'Validation failed' && response.data.data.name) {
-                            alert(response.data.data.name);
+                            setTimeout(()=>{
+                                alert(response.data.data.name);
+                            }, 500)
                         } else if (response.data.status === 'Validation failed' && response.data.data.mobile) {
-                            alert(response.data.data.mobile);
+                            setTimeout(()=>{
+                                alert(response.data.data.mobile);
+                            }, 500)
                         } else if (response.data.status === 'Validation failed' && response.data.data.address) {
-                            alert(response.data.data.address);
+                            setTimeout(()=>{
+                                alert(response.data.data.address);
+                            }, 500)
                         } else if (response.data.status === 'Validation failed' && response.data.data.aadharno) {
-                            alert(response.data.data.aadharno);
+                            setTimeout(()=>{
+                                alert(response.data.data.aadharno);
+                            }, 500)
                         } else if (response.data.status === 'Validation failed' && response.data.data.email) {
-                            alert(response.data.data.email);
+                            setTimeout(()=>{
+                                alert(response.data.data.email);
+                            }, 500)
                         } else if (response.data.status === 'Validation failed' && response.data.data.password) {
-                            alert(response.data.data.password);
+                            setTimeout(()=>{
+                                alert(response.data.data.password);
+                            }, 500)
                         } else if (response.data.status === "Unauthorized User !!!") {
                             navigate("/")
                             sessionStorage.clear()
