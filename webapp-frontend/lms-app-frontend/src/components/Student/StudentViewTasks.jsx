@@ -124,17 +124,17 @@ const StudentViewTasks = () => {
                             "remarks": ""
                         }, 500);
                     })
-                    setShowModal(false)
-                    setShowOverlay(false); // Close the overlay
+                    
                 } else {
-                    setShowWaitingModal()
+                    setShowWaitingModal(false)
+                    closeWaitingModal()
                     if (response.data.status === "Validation failed" && response.data.data.gitLink) {
-                        alert(response.data.data.gitLink);
+                        setTimeout(() => { alert(response.data.data.gitLink) }, 500)
                         setShowModal(true)
                         setShowOverlay(true);
                     } else {
                         if (response.data.status === "Validation failed" && response.data.data.remarks) {
-                            alert(response.data.data.remarks);
+                            setTimeout(() => { alert(response.data.data.remarks) }, 500)
                             setShowModal(true)
                             setShowOverlay(true);
                         } else {

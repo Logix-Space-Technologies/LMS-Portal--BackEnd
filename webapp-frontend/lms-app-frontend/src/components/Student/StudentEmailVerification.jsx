@@ -16,12 +16,20 @@ const StudentEmailVerification = () => {
 
     const navigate = useNavigate()
 
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+
     const apiUrl = global.config.urls.api.server + "/api/lms/emailverifypwdchangestud"
 
     const inputHandler = (event) => {
         setErrors({}); // Clear previous errors
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const readValue = () => {
         let newErrors = {};
@@ -49,15 +57,20 @@ const StudentEmailVerification = () => {
             "studEmail": sessionStorage.getItem("studemail"),
             "password": inputField.password
         }
-
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl, data).then(
             (Response) => {
                 if (Response.data.status === "Password Changed Successfully!!!") {
-                    alert("Email Verified And Password Updated.")
-                    sessionStorage.clear()
-                    navigate("/studentLogin")
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Your Password has been Updated.")
+                        sessionStorage.clear()
+                        navigate("/studentLogin")
+                    }, 500)
                 } else {
-                    alert(Response.data.status)
+                    closeWaitingModal()
+                    setTimeout(() => { alert(Response.data.status) }, 500)
                 }
             }
         )
@@ -117,6 +130,44 @@ const StudentEmailVerification = () => {
                     </div>
                 </div>
             </div >
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
         </div>
     )
 }

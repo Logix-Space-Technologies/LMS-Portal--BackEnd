@@ -61,8 +61,6 @@ const StudentUpdateSubmittedTask = () => {
     const updateSubmittedTask = (e) => {
         e.preventDefault();
         const validationErrors = validateForm(updateSubTaskField);
-        setShowWaitingModal(true)
-        setShowOverlay(true)
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -76,24 +74,27 @@ const StudentUpdateSubmittedTask = () => {
             gitLink: updateSubTaskField.gitLink,
             remarks: updateSubTaskField.remarks
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, data, axiosConfig2).then((response) => {
             if (Object.keys(validationErrors).length === 0) {
                 if (response.data.status === 'success') {
                     closeWaitingModal()
                     setTimeout(() => {
                         alert('Task Updated Successfully!!!');
-                        navigate('/studentViewTask');
+                        navigate(-1);
                     }, 500)
                 } else {
                     if (response.data.status === 'Unauthorized access!!') {
                         navigate('/studentLogin');
                         sessionStorage.clear();
                     } else {
-                        setShowWaitingModal()
                         if (response.data.status === 'Validation failed' && response.data.data.gitLink) {
-                            alert(response.data.data.gitLink);
+                            closeWaitingModal()
+                            setTimeout(() => { alert(response.data.data.gitLink) }, 500)
                         } else if (response.data.status === 'Validation failed' && response.data.data.Remarks) {
-                            alert(response.data.data.Remarks);
+                            closeWaitingModal()
+                            setTimeout(() => { alert(response.data.data.Remarks) }, 500)
                         } else {
                             closeWaitingModal()
                             setTimeout(() => {
@@ -103,6 +104,7 @@ const StudentUpdateSubmittedTask = () => {
                     }
                 }
             } else {
+                closeWaitingModal()
                 setErrors(validationErrors);
             }
         });
@@ -175,47 +177,47 @@ const StudentUpdateSubmittedTask = () => {
                         </button>
                     </div>
                 </div>
-                </section>
-                {showWaitingModal && (
-                    <div className="modal show d-block" tabIndex={-1}>
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
-                                </div>
-                                <div className="modal-body">
-                                    <>
-                                        <div className="mb-3">
-                                            <p>Processing Request. Do Not Refresh.</p>
-                                        </div>
-                                    </>
-                                </div>
-                                <div className="modal-footer">
-                                </div>
+            </section>
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
                             </div>
                         </div>
                     </div>
-                )}
-                {showOverlay && (
-                    <div
-                        className="modal-backdrop fade show"
-                        onClick={() => {
-                            setShowWaitingModal(false);
-                            setShowOverlay(false);
-                        }}
-                        style={{
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: 'rgba(0,0,0,0.5)',
-                            zIndex: 1040, // Ensure this is below your modal's z-index
-                        }}
-                    ></div>
-                )}
-            </div>
-        );
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
+            )}
+        </div>
+    );
 };
 
 export default StudentUpdateSubmittedTask;
