@@ -111,28 +111,42 @@ const AdminAddTrainer = () => {
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.trainerName) {
                     closeWaitingModal()
-                    alert(response.data.data.trainerName)
+                    setTimeout(() => {
+                        alert(response.data.data.trainerName)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.about) {
                     closeWaitingModal()
-                    alert(response.data.data.about)
+                    setTimeout(() => {
+                        alert(response.data.data.about)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.email) {
                     closeWaitingModal()
-                    alert(response.data.data.email)
+                    setTimeout(() => {
+                        alert(response.data.data.email)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.phoneNumber) {
                     closeWaitingModal()
-                    alert(response.data.data.phoneNumber)
+                    setTimeout(() => {
+                        alert(response.data.data.phoneNumber)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.password) {
                     closeWaitingModal()
-                    alert(response.data.data.password)
+                    setTimeout(() => {
+                        alert(response.data.data.password)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.date) {
                     closeWaitingModal()
-                    alert(response.data.data.date)
+                    setTimeout(() => {
+                        alert(response.data.data.date)
+                    }, 500)
                 } else if (response.data.status === "Unauthorized access!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
                     closeWaitingModal()
-                    alert(response.data.status)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                    }, 500)
                 }
             }).catch(error => {
                 closeWaitingModal()
@@ -141,20 +155,37 @@ const AdminAddTrainer = () => {
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        alert(error.response.data.status)
+                        console.log("Status 400:", error.response.data);
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        alert(error.response.data.status)
+                        console.log("Status 500:", error.response.data);
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 500
                     } else {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     }
                 } else if (error.request) {
-                    alert(error.request);
+                    console.log(error.request);
+                    setTimeout(() => {
+                        alert(error.request);
+                    }, 500)
                 } else if (error.message) {
-                    alert('Error', error.message);
+                    console.log('Error', error.message);
+                    setTimeout(() => {
+                        alert('Error', error.message);
+                    }, 500)
                 } else {
-                    alert(error.config);
+                    console.log(error.config);
+                    setTimeout(() => {
+                        alert(error.config);
+                    }, 500)
                 }
             })
         } else {

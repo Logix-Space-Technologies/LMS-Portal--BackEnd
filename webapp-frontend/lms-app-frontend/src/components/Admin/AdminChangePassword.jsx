@@ -57,13 +57,19 @@ const AdminChangePassword = () => {
                         }, 500)
                     } else if (response.data.status === "Validation failed" && response.data.data.oldPassword) {
                         closeWaitingModal()
-                        alert(response.data.data.oldPassword);
+                        setTimeout(()=>{
+                            alert(response.data.data.oldPassword);
+                        }, 500)
                     } else if (response.data.status === "Validation failed" && response.data.data.newPassword) {
                         closeWaitingModal()
-                        alert(response.data.data.newPassword);
+                        setTimeout(()=>{
+                            alert(response.data.data.newPassword);
+                        }, 500)
                     } else {
                         closeWaitingModal()
-                        alert(response.data.status)
+                        setTimeout(()=>{
+                            alert(response.data.status)
+                        }, 500)
                     }
                 }
             )
