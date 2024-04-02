@@ -61,20 +61,26 @@ const AdminStaffForgotPassword = () => {
                 (response) => {
                     if (response.data.status === "success") {
                         closeWaitingModal()
-                        setTimeout(()=>{
-                            alert("Password Changed Successfully\nKindly Login.");
-                        navigate("/admstafflogin");
                         setUpdateField({
                             "Email": "",
                             "Password": "",
                             "ConfirmPassword": ""
                         })
-                        sessionStorage.clear()
+                        setTimeout(() => {
+                            alert("Password Changed Successfully\nKindly Login.");
+                            navigate("/admstafflogin");
+                            sessionStorage.clear()
                         }, 500)
                     } else if (response.data.status === "Validation failed" && response.data.data.Email) {
-                        alert(response.data.data.Email);
+                        closeWaitingModal()
+                        setTimeout(()=>{
+                            alert(response.data.data.Email);
+                        }, 500)
                     } else if (response.data.status === "Validation failed" && response.data.data.Password) {
-                        alert(response.data.data.Password);
+                        closeWaitingModal()
+                        setTimeout(()=>{
+                            alert(response.data.data.Password);
+                        }, 500)
                     } else {
                         closeWaitingModal()
                         setTimeout(() => {
@@ -152,7 +158,7 @@ const AdminStaffForgotPassword = () => {
                                             </div>
                                             <br></br>
                                             <div className="mb-3">
-                                            <button className="btn btn-danger" onClick={() => backFunc()}>Back</button>
+                                                <button className="btn btn-danger" onClick={() => backFunc()}>Back</button>
                                             </div>
                                         </ul>
                                     </div>
