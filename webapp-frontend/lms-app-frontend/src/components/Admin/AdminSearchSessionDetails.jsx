@@ -402,6 +402,8 @@ const AdminSearchSessionDetails = () => {
                                                     <th scope="col" className="px-6 py-3"></th>
                                                     <th scope="col" className="px-6 py-3"></th>
                                                     <th scope="col" className="px-6 py-3"></th>
+                                                    <th scope="col" className="px-6 py-3"></th>
+                                                    <th scope="col" className="px-6 py-3"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -447,19 +449,19 @@ const AdminSearchSessionDetails = () => {
                                                                 </button>
                                                             )}
                                                         </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                        <td className="px-6 py-4">
                                                             {key === "lmsapp" && !isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
-                                                                <button onClick={() => handleDeleteClick(value.id)} className="btn btn-danger mt-3">Delete</button>
+                                                                <button onClick={() => handleDeleteClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">Delete Session</button>
                                                             )}
                                                         </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                        <td className="px-6 py-4">
                                                             {key === "lmsapp" && !isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
-                                                                <button onClick={() => UpdateClick(value.id)} className="btn btn-primary mt-3">Reschedule</button>
+                                                                <button onClick={() => UpdateClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">Reschedule Session</button>
                                                             )}
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             {!isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
-                                                                <button type="button" onClick={() => cancelClick(value.id)} className="btn btn-danger mt-3">
+                                                                <button type="button" onClick={() => cancelClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                                                     Cancel Session
                                                                 </button>
                                                             )}
