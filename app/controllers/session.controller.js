@@ -148,21 +148,23 @@ exports.createSession = (request, response) => {
                                     }
                                 })
 
+                                CollegeStaff.searchClgStaffByCollege(newSession.batchId, (err, res) => {
+                                    if (err) {
+                                        return response.json({ "status": err });
+                                    } else {
+                                        let clgstaffEmail = res[0].email
+                                        let batchName = res[0].batchName
+                                        let collegeStaffName = res[0].collegeStaffName
+                                        const clgstaffsessionTime = formatTime(newSession.time)
+                                        const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
+                                        const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
+                                        const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
+                                        mail.sendEmail(clgstaffEmail, `Announcement Regarding Upcoming Session Scheduled On ${clgstaffsessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    }
+                                })
+
                             });
-                            CollegeStaff.searchClgStaffByCollege(newSession.batchId, (err, res) => {
-                                if (err) {
-                                    return response.json({ "status": err });
-                                } else {
-                                    let clgstaffEmail = res[0].email
-                                    let batchName = res[0].batchName
-                                    let collegeStaffName = res[0].collegeStaffName
-                                    const clgstaffsessionTime = formatTime(newSession.time)
-                                    const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
-                                    const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
-                                    const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
-                                    mail.sendEmail(clgstaffEmail, `Announcement Regarding Upcoming Session Scheduled On ${clgstaffsessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
-                                }
-                            })
+
 
                             return response.json({ "status": "success", "data": data });
 
@@ -240,7 +242,7 @@ exports.sessionUpdate = (request, response) => {
             let originaltime = ""
             let sessionDate = ""
             let sessionTime = ""
-            let isVenueOrLinkChangedOnly = false; 
+            let isVenueOrLinkChangedOnly = false;
 
             Session.updateSession(upSession, (err, data) => {
                 if (err) {
