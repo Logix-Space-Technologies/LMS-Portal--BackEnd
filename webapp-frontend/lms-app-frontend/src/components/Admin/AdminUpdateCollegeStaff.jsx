@@ -125,46 +125,31 @@ const AdminUpdateCollegeStaff = () => {
                     } else {
                         closeWaitingModal()
                         if (response.data.status === "Validation failed" && response.data.data.name) {
-                            setTimeout(() => {alert(response.data.data.name)}, 500) 
+                            setTimeout(() => { alert(response.data.data.name) }, 500)
+                        } else if (response.data.status === "Validation failed" && response.data.data.email) {
+                            setTimeout(() => { alert(response.data.data.email) }, 500)
+                        } else if (response.data.status === "Validation failed" && response.data.data.phNo) {
+                            setTimeout(() => { alert(response.data.data.phNo) }, 500)
+                        } else if (response.data.status === "Validation failed" && response.data.data.aadharnumber) {
+                            setTimeout(() => { alert(response.data.data.aadharnumber) }, 500)
+                        } else if (response.data.status === "Validation failed" && response.data.data.address) {
+                            setTimeout(() => { alert(response.data.data.address) }, 500)
+                        } else if (response.data.status === "Validation failed" && response.data.data.department) {
+                            setTimeout(() => { alert(response.data.data.department) }, 500)
+                        } else if (response.data.status === "Validation failed" && response.data.data.image) {
+                            setTimeout(() => { alert(response.data.data.image) }, 500)
+                        } else if (response.data.status === "Unauthorized User!!") {
+                            { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                            sessionStorage.clear()
                         } else {
-                            if (response.data.status === "Validation failed" && response.data.data.email) {
-                                setTimeout(() => {alert(response.data.data.email)}, 500)
-                            } else {
-                                if (response.data.status === "Validation failed" && response.data.data.phNo) {
-                                    setTimeout(() => {alert(response.data.data.phNo)}, 500)
-                                } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.aadharnumber) {
-                                        setTimeout(() => {alert(response.data.data.aadharnumber)}, 500)
-                                    } else {
-                                        if (response.data.status === "Validation failed" && response.data.data.address) {
-                                            setTimeout(() => {alert(response.data.data.address)}, 500)
-                                        } else {
-                                            if (response.data.status === "Validation failed" && response.data.data.department) {
-                                                setTimeout(() => {alert(response.data.data.department)}, 500)
-                                            } else {
-                                                if (response.data.status === "Validation failed" && response.data.data.image) {
-                                                    setTimeout(() => {alert(response.data.data.image)}, 500)
-                                                } else {
-                                                    if (response.data.status === "Unauthorized User!!") {
-                                                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
-                                                        sessionStorage.clear()
-                                                    } else {
-                                                        closeWaitingModal()
-                                                        setTimeout(() => {
-                                                            alert(response.data.status)
-                                                        }, 500)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            closeWaitingModal()
+                            setTimeout(() => {
+                                alert(response.data.status)
+                            }, 500)
                         }
 
                     }
-                }
-            ).catch(error => {
+                }).catch(error => {
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
