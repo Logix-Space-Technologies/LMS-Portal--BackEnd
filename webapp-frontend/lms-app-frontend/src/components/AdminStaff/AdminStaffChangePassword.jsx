@@ -40,10 +40,9 @@ const AdminStaffChangePassword = () => {
                 "token": sessionStorage.getItem("admstaffLogintoken")
             }
         };
-
-        setShowWaitingModal(true)
-        setShowOverlay(true)
         if (Object.keys(validationErrors).length === 0) {
+            setShowWaitingModal(true)
+            setShowOverlay(true)
             axios.post(apiurl, updateField, axiosConfig).then(
                 (response) => {
                     if (response.data.status === "success") {
@@ -55,10 +54,14 @@ const AdminStaffChangePassword = () => {
                         }, 500)
                     } else if (response.data.status === "Validation failed" && response.data.data.oldAdSfPassword) {
                         closeWaitingModal()
-                        alert(response.data.data.oldAdSfPassword);
+                        setTimeout(() => {
+                            alert(response.data.data.oldAdSfPassword);
+                        }, 500)
                     } else if (response.data.status === "Validation failed" && response.data.data.newAdSfPassword) {
                         closeWaitingModal()
-                        alert(response.data.data.newAdSfPassword);
+                        setTimeout(() => {
+                            alert(response.data.data.newAdSfPassword);
+                        }, 500)
                     } else if (response.data.status === "Unauthorized User!!") {
                         navigate("/admstafflogin")
                         sessionStorage.clear()
