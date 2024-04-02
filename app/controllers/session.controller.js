@@ -257,10 +257,10 @@ exports.sessionUpdate = (request, response) => {
                     originalVenueOrLink = data.originalVenueOrLink;
                     updatedVenueOrLink = upSession.venueORlink;
 
-                    if (sessionDate === originaldate && originaltime === upSession.time) {
+                    if (sessionDate === originaldate && originaltime === upSession.time && originalVenueOrLink !== updatedVenueOrLink) {
                         isVenueOrLinkChangedOnly = true;
                     }
-                    if (sessionDate === originaldate && originalVenueOrLink === updatedVenueOrLink) {
+                    if (sessionDate === originaldate && originalVenueOrLink === updatedVenueOrLink && originaltime !== upSession.time) {
                         isTimeChangeOnly = true;
                     }
 
