@@ -111,7 +111,9 @@ const AdminStaffSearchMaterial = () => {
         sessionStorage.clear();
       } else {
         closeWaitingModal()
-        alert(response.data.status);
+        setTimeout(()=>{
+          alert(response.data.status);
+        }, 500)
       }
     });
   };
