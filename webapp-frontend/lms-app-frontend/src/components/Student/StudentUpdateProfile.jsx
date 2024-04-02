@@ -92,69 +92,58 @@ const StudentUpdateProfile = () => {
                     "key": sessionStorage.getItem("studentkey")
                 }
             };
-            try {
-                axios.post(apiUrl2, data, axiosConfig).then(
-                    (Response) => {
-                        if (Response.data.status === "success") {
+            axios.post(apiUrl2, data, axiosConfig).then(
+                (Response) => {
+                    if (Response.data.status === "success") {
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            setUpdateField({
+                                "id": sessionStorage.getItem("studentId"),
+                                "studName": "",
+                                "admNo": "",
+                                "rollNo": "",
+                                "studDept": "",
+                                "course": "",
+                                "studPhNo": "",
+                                "aadharNo": "",
+                                "studProfilePic": ""
+                            })
+                            alert("Profile Updated Successfully")
+                            navigate("/studdashboard")
+                        }, 500)
+                    } else {
+                        if (Response.data.status === "Unauthorized User!!") {
+                            navigate("/studentLogin")
+                            sessionStorage.clear()
+                        } else {
                             closeWaitingModal()
                             setTimeout(() => {
-                                setUpdateField({
-                                    "id": sessionStorage.getItem("studentId"),
-                                    "studName": "",
-                                    "admNo": "",
-                                    "rollNo": "",
-                                    "studDept": "",
-                                    "course": "",
-                                    "studPhNo": "",
-                                    "aadharNo": "",
-                                    "studProfilePic": ""
-                                })
-                                alert("Profile Updated Successfully")
-                                navigate("/studdashboard")
+                                alert(Response.data.status)
                             }, 500)
-                        } else {
-                            if (Response.data.status === "Unauthorized User!!") {
-                                navigate("/studentLogin")
-                                sessionStorage.clear()
-                            } else {
-                                closeWaitingModal()
-                                setTimeout(() => {
-                                    alert(Response.data.status)
-                                }, 500)
-                            }
                         }
-
                     }
-                ).catch(error => {
-                    if (error.response) {
-                        // Extract the status code from the response
-                        const statusCode = error.response.status;
 
-                        if (statusCode === 400) {
-                            console.log("Status 400:", error.response.data);
-                            alert(error.response.data.status)
-                            // Additional logic for status 400
-                        } else if (statusCode === 500) {
-                            console.log("Status 500:", error.response.data);
-                            alert(error.response.data.status)
-                            // Additional logic for status 500
-                        } else {
-                            alert(error.response.data.status)
-                        }
-                    } else if (error.request) {
-                        console.log(error.request);
-                        alert(error.request);
-                    } else if (error.message) {
-                        console.log('Error', error.message);
-                        alert('Error', error.message);
+                }
+            ).catch(error => {
+                if (error.response) {
+                    // Extract the status code from the response
+                    const statusCode = error.response.status;
+
+                    if (statusCode === 400) {
+                        alert(error.response.data.status)
+                    } else if (statusCode === 500) {
+                        alert(error.response.data.status)
                     } else {
-                        alert(error.config);
-                        console.log(error.config);
+                        alert(error.response.data.status)
                     }
-                })
-            } catch (error) {
-                alert("An error occurred while updating the profile.");
-            }
+                } else if (error.request) {
+                    alert(error.request);
+                } else if (error.message) {
+                    alert('Error: ', error.message);
+                } else {
+                    alert(error.config);
+                }
+            })
         } else {
             setErrors(validationErrors);
         }
