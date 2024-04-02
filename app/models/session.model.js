@@ -182,7 +182,6 @@ Session.updateSession = (sessionUpdate, result) => {
                                 result(err, null);
                                 return;
                             }
-                            console.log("Updated Session Details : ", { id: sessionUpdate.id, ...sessionUpdate, originalDate });
                             result(null, { id: sessionUpdate.id, ...sessionUpdate, originalDate, originalTime });
                         });
                 }
