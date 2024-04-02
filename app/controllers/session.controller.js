@@ -457,7 +457,6 @@ exports.cancelSession = (request, response) => {
                 if (key !== "lmsapp") {
                     logAdminStaff(cancelledby, "Admin Staff Cancelled Session")
                 }
-                console.log(data)
                 db.query("SELECT * FROM sessiondetails WHERE id = ?", [data], (err, sessionres) => {
                     if (err) {
                         return response.json({ "status": err });
