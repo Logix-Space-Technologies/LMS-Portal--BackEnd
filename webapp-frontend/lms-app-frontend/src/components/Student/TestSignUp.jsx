@@ -419,7 +419,7 @@ const TestSignUp = () => {
                                 </div>
                             </div>
                             <div className="text-center">
-                                <p className="text-[0.75rem] text-[#8c9097] dark:text-white/50 mt-4">Already have an account? <a href="/testSignUp" className="text-primary">Sign In</a></p>
+                                <p className="text-[0.75rem] text-[#8c9097] dark:text-white/50 mt-4">Already have an account? <a href="/testlogin" className="text-primary">Sign In</a></p>
                             </div>
                         </div>
                     </div>

@@ -410,7 +410,7 @@ const TestLogin = () => {
                                     </div>
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-[0.75rem] text-[#8c9097] dark:text-white/50 mt-4">Dont have an account? <a href="sign-up-cover.html" className="text-primary">Sign Up</a></p>
+                                    <p className="text-[0.75rem] text-[#8c9097] dark:text-white/50 mt-4">Dont have an account? <a href="/testSignUp" className="text-primary">Sign Up</a></p>
                                 </div>
                             </div>
                         </div>
