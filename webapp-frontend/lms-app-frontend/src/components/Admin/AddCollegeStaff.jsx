@@ -151,25 +151,39 @@ const AddCollegeStaff = () => {
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.dept) {
             closeWaitingModal()
-            alert(response.data.data.dept)
+            setTimeout(()=>{
+              alert(response.data.data.dept)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.name) {
             closeWaitingModal()
-            alert(response.data.data.name)
+            setTimeout(()=>{
+              alert(response.data.data.name)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.address) {
             closeWaitingModal()
-            alert(response.data.data.address)
+            setTimeout(()=>{
+              alert(response.data.data.address)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.email) {
             closeWaitingModal()
-            alert(response.data.data.email)
+            setTimeout(()=>{
+              alert(response.data.data.email)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.mobile) {
             closeWaitingModal()
-            alert(response.data.data.mobile)
+            setTimeout(()=>{
+              alert(response.data.data.mobile)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.aadharnumber) {
             closeWaitingModal()
-            alert(response.data.data.aadharnumber)
+            setTimeout(()=>{
+              alert(response.data.data.aadharnumber)
+            }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.password) {
             closeWaitingModal()
-            alert(response.data.data.password)
+            setTimeout(()=>{
+              alert(response.data.data.password)
+            }, 500)
           } else if (response.data.status === "Unauthorized access!!") {
             { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
             sessionStorage.clear()
@@ -180,30 +194,43 @@ const AddCollegeStaff = () => {
             }, 500)
           }
         }).catch(error => {
+          closeWaitingModal()
           if (error.response) {
             // Extract the status code from the response
             const statusCode = error.response.status;
 
             if (statusCode === 400) {
               console.log("Status 400:", error.response.data);
-              alert(error.response.data.status)
+              setTimeout(()=>{
+                alert(error.response.data.status)
+              }, 500)
               // Additional logic for status 400
             } else if (statusCode === 500) {
               console.log("Status 500:", error.response.data);
-              alert(error.response.data.status)
+              setTimeout(()=>{
+                alert(error.response.data.status)
+              }, 500)
               // Additional logic for status 500
             } else {
-              alert(error.response.data.status)
+              setTimeout(()=>{
+                alert(error.response.data.status)
+              }, 500)
             }
           } else if (error.request) {
             console.log(error.request);
-            alert(error.request);
+            setTimeout(()=>{
+              alert(error.request);
+            }, 500)
           } else if (error.message) {
             console.log('Error', error.message);
-            alert('Error', error.message);
+            setTimeout(()=>{
+              alert('Error', error.message);
+            }, 500)
           } else {
-            alert(error.config);
             console.log(error.config);
+            setTimeout(()=>{
+              alert(error.config);
+            }, 500)
           }
         })
     } else {
