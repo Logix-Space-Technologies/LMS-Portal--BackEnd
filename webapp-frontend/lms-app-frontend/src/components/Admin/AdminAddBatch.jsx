@@ -122,22 +122,34 @@ const AdminAddBatch = () => {
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.collegeid) {
                     closeWaitingModal()
-                    alert(response.data.data.collegeid)
+                    setTimeout(()=>{
+                        alert(response.data.data.collegeid)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.name) {
                     closeWaitingModal()
-                    alert(response.data.data.name)
+                    setTimeout(()=>{
+                        alert(response.data.data.name)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.regstartdate) {
                     closeWaitingModal()
-                    alert(response.data.data.regstartdate)
+                    setTimeout(()=>{
+                        alert(response.data.data.regstartdate)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.regenddate) {
                     closeWaitingModal()
-                    alert(response.data.data.regenddate)
+                    setTimeout(()=>{
+                        alert(response.data.data.regenddate)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.description) {
                     closeWaitingModal()
-                    alert(response.data.data.description)
+                    setTimeout(()=>{
+                        alert(response.data.data.description)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.amount) {
                     closeWaitingModal()
-                    alert(response.data.data.amount)
+                    setTimeout(()=>{
+                        alert(response.data.data.amount)
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
