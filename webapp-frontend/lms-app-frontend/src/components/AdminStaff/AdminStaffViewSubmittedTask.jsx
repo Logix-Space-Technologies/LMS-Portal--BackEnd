@@ -24,6 +24,7 @@ const AdminStaffViewSubmittedTask = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of students per page
 
+    const [showModal, setShowModal] = useState(false);
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
@@ -34,6 +35,16 @@ const AdminStaffViewSubmittedTask = () => {
 
     const apiUrl = global.config.urls.api.server + "/api/lms/adSfViewSubmittedTask"
     const apiUrl2 = global.config.urls.api.server + "/api/lms/evaluateTask"
+
+    const closeModal = () => {
+        setShowModal(false);
+        setShowOverlay(false);
+        setErrors({})
+        setInputField({
+            "evaluatorRemarks": "",
+            "score": ""
+        });
+    };
 
     const getData = () => {
         let axiosConfig = {
@@ -85,6 +96,8 @@ const AdminStaffViewSubmittedTask = () => {
         }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
+            setShowModal(true)
+            setShowOverlay(true)
             return;
         }
         let axiosConfig = {
@@ -101,56 +114,60 @@ const AdminStaffViewSubmittedTask = () => {
             "evaluatorRemarks": inputField.evaluatorRemarks,
             "score": inputField.score
         }
+        setShowModal(false)
         setShowWaitingModal(true)
         setShowOverlay(true)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Task evaluated successfully") {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setInputField({
+                        evaluatorRemarks: "",
+                        score: ""
+                    });
+                    setTimeout(() => {
                         alert("Task evaluated successfully")
                         getData()
-                        setInputField({
-                            evaluatorRemarks: "",
-                            score: ""
-                        });
                     }, 500)
-                    
-                } else {
-                    if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
+
+                } else if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
+                    closeWaitingModal()
+                    setTimeout(() => {
                         alert(response.data.data.evaluatorRemarks);
-                        setInputField({
-                            evaluatorRemarks: "",
-                            score: ""
-                        });
-                    } else {
-                        closeWaitingModal()
-                        if (response.data.status === "Validation failed" && response.data.data.score) {
-                            alert(response.data.data.score);
-                            setInputField({
-                                evaluatorRemarks: "",
-                                score: ""
-                            });
-                        } else {
-                            if (response.data.status === "Unauthorized access!!") {
-                                navigate("/admstafflogin")
-                                sessionStorage.clear()
-                            } else {
-                                alert(response.data.status);
-                                setInputField({
-                                    evaluatorRemarks: "",
-                                    score: ""
-                                });
-                            }
-                        }
-                    }
+                        setShowModal(true)
+                        setShowOverlay(true)
+                    }, 500)
+                } else if (response.data.status === "Validation failed" && response.data.data.score) {
+                    closeWaitingModal()
+                    setTimeout(()=>{
+                        alert(response.data.data.score);
+                        setShowModal(true)
+                        setShowOverlay(true)
+                    }, 500)
+                } else if (response.data.status === "Unauthorized access!!") {
+                    navigate("/admstafflogin")
+                    sessionStorage.clear()
+                } else {
+                    closeWaitingModal()
+                    setInputField({
+                        evaluatorRemarks: "",
+                        score: ""
+                    });
+                    setTimeout(()=>{
+                        alert(response.data.status);
+                        setShowModal(true)
+                        setShowOverlay(true)
+                    }, 500)
                 }
+
             }
         )
     }
 
     const readValue = (id) => {
         setSubmittedTaskId(id)
+        setShowModal(true)
+        setShowOverlay(true)
     }
 
     // Convert a date string from 'DD/MM/YYYY' to a JavaScript Date object
@@ -316,7 +333,7 @@ const AdminStaffViewSubmittedTask = () => {
                                             {value.totalScore}
                                         </td>
                                         <td className="px-6 py-4" style={{ whiteSpace: 'nowrap' }}>
-                                            <button onClick={() => readValue(value.submitTaskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Evaluate Task</button>
+                                            <button onClick={() => readValue(value.submitTaskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" disabled={value.evalDate !== null}>Evaluate Task</button>
                                         </td>
                                     </tr>
                                 }
@@ -400,13 +417,13 @@ const AdminStaffViewSubmittedTask = () => {
                     </div>
                 </div>
             </div>
-            <div className="flex justify-end">
-                <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+            {showModal && <div className="flex justify-end">
+                <div className="modal show d-block" tabIndex={-1}>
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h1 className="modal-title fs-5" id="exampleModalLabel">Evaluate Task</h1>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                                <button type="button" className="btn-close" onClick={closeModal} />
                             </div>
                             <div className="modal-body">
                                 <form>
@@ -423,15 +440,16 @@ const AdminStaffViewSubmittedTask = () => {
                                 </form>
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button data-bs-dismiss="modal" onClick={() => evaluateTask()} type="button" className="btn btn-primary">
+                                <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
+                                <button onClick={() => evaluateTask()} type="button" className="btn btn-primary">
                                     Submit
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-                {showWaitingModal && (
+            </div>}
+            {showWaitingModal && (
                 <div className="modal show d-block" tabIndex={-1}>
                     <div className="modal-dialog">
                         <div className="modal-content">
@@ -469,7 +487,6 @@ const AdminStaffViewSubmittedTask = () => {
                     }}
                 ></div>
             )}
-            </div>
         </>
     )
 }

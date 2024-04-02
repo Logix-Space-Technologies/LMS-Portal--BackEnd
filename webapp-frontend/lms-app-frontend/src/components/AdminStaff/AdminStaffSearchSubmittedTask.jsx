@@ -131,10 +131,6 @@ const AdminStaffSearchSubmittedTask = () => {
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
                     closeWaitingModal()
-                    setOutputField({
-                        evaluatorRemarks: "",
-                        score: ""
-                    });
                     setTimeout(() => {
                         alert(response.data.data.evaluatorRemarks);
                         setShowModal(true)
@@ -142,10 +138,6 @@ const AdminStaffSearchSubmittedTask = () => {
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.score) {
                     closeWaitingModal()
-                    setOutputField({
-                        evaluatorRemarks: "",
-                        score: ""
-                    });
                     setTimeout(() => {
                         alert(response.data.data.score);
                         setShowModal(true)
