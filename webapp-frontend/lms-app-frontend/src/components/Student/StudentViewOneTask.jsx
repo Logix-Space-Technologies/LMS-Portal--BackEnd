@@ -22,11 +22,17 @@ const StudentViewOneTask = () => {
 
     let [taskId, setTaskId] = useState({})
     const navigate = useNavigate()
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studViewTaskOfSessions";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const getData = () => {
         let data = { "id": sessionStorage.getItem("studentId"), "sessionId": sessionStorage.getItem("SessionId") };
@@ -97,33 +103,44 @@ const StudentViewOneTask = () => {
             "gitLink": inputField.gitLink,
             "remarks": inputField.remarks
         };
+        setShowModal(false)
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    alert("Task Submitted Successfully !!");
-                    getData()
+                    closeWaitingModal()
                     setInputField({
                         "gitLink": "",
                         "remarks": ""
                     });
-                    setShowModal(false)
-                    setShowOverlay(false); // Close the overlay
+                    setTimeout(() => {
+                        alert("Task Submitted Successfully !!");
+                        getData()
+                    }, 500)
                 } else {
+                    closeWaitingModal()
                     if (response.data.status === "Validation failed" && response.data.data.gitLink) {
-                        alert(response.data.data.gitLink);
-                        setShowModal(true)
-                        setShowOverlay(true);
-                    } else {
-                        if (response.data.status === "Validation failed" && response.data.data.remarks) {
-                            alert(response.data.data.remarks);
+                        setTimeout(() => {
+                            alert(response.data.data.gitLink);
                             setShowModal(true)
                             setShowOverlay(true);
+                        }, 500)
+                    } else {
+                        if (response.data.status === "Validation failed" && response.data.data.remarks) {
+                            setTimeout(() => {
+                                alert(response.data.data.remarks);
+                                setShowModal(true)
+                                setShowOverlay(true);
+                            }, 500)
                         } else {
                             if (response.data.status === "Unauthorized Access!!") {
                                 navigate("/studentLogin")
                                 sessionStorage.clear()
                             } else {
-                                alert(response.data.status);
+                                setTimeout(()=>{
+                                    alert(response.data.status);
+                                }, 500)
                             }
                         }
                     }
