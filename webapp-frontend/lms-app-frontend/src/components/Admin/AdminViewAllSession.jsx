@@ -268,7 +268,7 @@ const AdminViewAllSession = () => {
         );
     };
     const canSendReminder = (sessionDate, sessionTime) => {
-        const oneDay = 72 * 60 * 60 * 1000; // 72 hours in milliseconds
+        const oneDay = 72 * 60 * 60 * 1000; // 1 day in milliseconds
         const currentDate = new Date();
         const [day, month, year] = sessionDate.split('/'); // Assuming date format is DD/MM/YYYY
         const [hours, minutes] = sessionTime.split(':'); // Assuming time format is HH:mm
@@ -276,14 +276,14 @@ const AdminViewAllSession = () => {
         // Convert sessionDate and sessionTime into a Date object
         const sessionDateTime = new Date(year, month - 1, day, hours, minutes);
 
-        // Check if session date/time is within next 72 hours and not in the past
+        // Check if session date/time is within next 24 hours and not in the past
         const timeDifference = sessionDateTime.getTime() - currentDate.getTime();
         const isFutureSession = timeDifference > 0;
-        const isWithin72Hours = timeDifference <= oneDay * 3;
+        const isWithin72Hours = timeDifference <= oneDay;
+        // console.log(isWithin72Hours)
 
         return isFutureSession && isWithin72Hours;
     };
-
 
     const isSessionInPast = (dateString, timeString) => {
         const now = new Date();
