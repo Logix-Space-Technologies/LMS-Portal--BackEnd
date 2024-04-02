@@ -462,6 +462,7 @@ exports.cancelSession = (request, response) => {
                         return response.json({ "status": err });
                     }
                     let batchId = sessionres[0].batchId;
+                    let sessionName = sessionres[0].sessionName;
                     const sessionDate = sessionres[0].date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
                     const sessiontype = sessionres[0].type;
                     const sessiontime = formatTime(sessionres[0].time);
@@ -481,8 +482,8 @@ exports.cancelSession = (request, response) => {
                                     return response.json({ "status": err });
                                 }
                             });
-                            const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime);
-                            const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime);
+                            const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime, sessionName);
+                            const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime, sessionName);
                             mail.sendEmail(studentEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, cancelSessionHtmlContent, cancelSessionTextContent);
                             let formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
                             whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, formattedPhoneNumber, studentid)
@@ -497,8 +498,8 @@ exports.cancelSession = (request, response) => {
                             res.forEach(element => {
                                 let clgstaffEmail = element.email
                                 let clgstaffName = element.collegeStaffName
-                                const cancelSessionClgStaffHtmlContent = mailContents.cancelSessionClgStaffHTMLContent(clgstaffName, sessionDate, sessiontime);
-                                const cancelSessionClgStaffTextContent = mailContents.cancelSessionClgStaffTextContent(clgstaffName, sessionDate, sessiontime);
+                                const cancelSessionClgStaffHtmlContent = mailContents.cancelSessionClgStaffHTMLContent(clgstaffName, sessionDate, sessiontime, sessionName);
+                                const cancelSessionClgStaffTextContent = mailContents.cancelSessionClgStaffTextContent(clgstaffName, sessionDate, sessiontime, sessionName);
                                 mail.sendEmail(clgstaffEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, cancelSessionClgStaffHtmlContent, cancelSessionClgStaffTextContent);
                             })
                         }

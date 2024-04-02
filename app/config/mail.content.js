@@ -830,7 +830,7 @@ function collegeTextContent(collegeName) {
 }
 
 
-function cancelSessionContent(participantName, date, time) {
+function cancelSessionContent(participantName, date, time, sessionName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -891,7 +891,7 @@ function cancelSessionContent(participantName, date, time) {
         <h2>Session Cancellation Announcement</h2>
   
         <p>Dear ${participantName},</p>
-        <p>We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for
+        <p>We regret to inform you that the session <b>${sessionName}</b> scheduled on ${date} at ${time} has been cancelled. We apologize for
           any inconvenience this may cause.</p>
         <p>A new date for the session will be announced soon. We will keep you updated with the new schedule.</p>
         <p>Thank you for your understanding.</p>
@@ -910,10 +910,11 @@ function cancelSessionContent(participantName, date, time) {
 
 }
 
-function cancelSessionClgStaffHTMLContent(participantName, date, time) {
+function cancelSessionClgStaffHTMLContent(participantName, date, time, sessionName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
-  content = `<!DOCTYPE html>
+  content = `
+  <!DOCTYPE html>
   <html>
   
   <head>
@@ -971,7 +972,8 @@ function cancelSessionClgStaffHTMLContent(participantName, date, time) {
         <h2>Session Cancellation Announcement</h2>
   
         <p>Dear ${participantName},</p>
-        <p>We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for
+        <p>We regret to inform you that the session <b>${sessionName}</b> scheduled on ${date} at ${time} has been
+          cancelled. We apologize for
           any inconvenience this may cause.</p>
         <p>A new date for the session will be announced soon. We will keep you updated with the new schedule.</p>
         <p>Thank you for your understanding.</p>
@@ -990,12 +992,12 @@ function cancelSessionClgStaffHTMLContent(participantName, date, time) {
 
 }
 
-function cancelSessionTextContent(participantName, date, time) {
+function cancelSessionTextContent(participantName, date, time, sessionName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `Dear ${participantName},
 
-    We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for any inconvenience this may cause.
+    We regret to inform you that the session ${sessionName} scheduled on ${date} at ${time} has been cancelled. We apologize for any inconvenience this may cause.
     
     A new date for the session will be announced soon. We will keep you updated with the new schedule.
     
@@ -1009,12 +1011,12 @@ function cancelSessionTextContent(participantName, date, time) {
   return content;
 }
 
-function cancelSessionClgStaffTextContent(participantName, date, time) {
+function cancelSessionClgStaffTextContent(participantName, date, time, sessionName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `Dear ${participantName},
 
-    We regret to inform you that the session scheduled on ${date} at ${time} has been cancelled. We apologize for any inconvenience this may cause.
+    We regret to inform you that the session ${sessionName} scheduled on ${date} at ${time} has been cancelled. We apologize for any inconvenience this may cause.
     
     A new date for the session will be announced soon. We will keep you updated with the new schedule.
     
