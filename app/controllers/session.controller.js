@@ -245,6 +245,9 @@ exports.sessionUpdate = (request, response) => {
             let isVenueOrLinkChangedOnly = false;
             let originalVenueOrLink = "";
             let isTimeChangeOnly = false;
+            let isTrainerChanged = false;
+            let originalTrainer = ""
+            let updatedTrainer = ""
 
             Session.updateSession(upSession, (err, data) => {
                 if (err) {
@@ -256,12 +259,17 @@ exports.sessionUpdate = (request, response) => {
                     sessionTime = formatTime(upSession.time);
                     originalVenueOrLink = data.originalVenueOrLink;
                     updatedVenueOrLink = upSession.venueORlink;
+                    originalTrainer = data.trainerId;
+                    updatedTrainer = upSession.trainerId;
 
                     if (sessionDate === originaldate && originaltime === upSession.time && originalVenueOrLink !== updatedVenueOrLink) {
                         isVenueOrLinkChangedOnly = true;
                     }
                     if (sessionDate === originaldate && originalVenueOrLink === updatedVenueOrLink && originaltime !== upSession.time) {
                         isTimeChangeOnly = true;
+                    }
+                    if (sessionDate === originaldate && originalVenueOrLink === updatedVenueOrLink && originaltime === upSession.time && originalTrainer !== updatedTrainer) {
+                        isTrainerChanged = true;
                     }
 
                     db.query("SELECT * FROM sessiondetails WHERE id = ?", [upSession.id], (err, sessionres) => {
@@ -284,18 +292,20 @@ exports.sessionUpdate = (request, response) => {
                                         return response.json({ "status": err });
                                     }
                                 });
-                                if (upSession.type === "Offline") {
-                                    const updateSessionHtmlContent = mailContents.reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
-                                    const updateSessionTextContent = mailContents.reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
-                                    mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, updateSessionHtmlContent, updateSessionTextContent);
-                                } else if (upSession.type === "Online") {
-                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
-                                    const upcomingSessionTextContent = mailContents.reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
-                                    mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
-                                } else {
-                                    const upcomingSessionHtmlContent = mailContents.reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
-                                    const upcomingSessionTextContent = mailContents.reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
-                                    mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                if (isTrainerChanged === false) {
+                                    if (upSession.type === "Offline") {
+                                        const updateSessionHtmlContent = mailContents.reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                        const updateSessionTextContent = mailContents.reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                        mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, updateSessionHtmlContent, updateSessionTextContent);
+                                    } else if (upSession.type === "Online") {
+                                        const upcomingSessionHtmlContent = mailContents.reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                        const upcomingSessionTextContent = mailContents.reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                        mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    } else {
+                                        const upcomingSessionHtmlContent = mailContents.reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                        const upcomingSessionTextContent = mailContents.reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                        mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                    }
                                 }
 
 
@@ -309,9 +319,11 @@ exports.sessionUpdate = (request, response) => {
                                         let clgstaffEmail = element.email
                                         let batchName = element.batchName
                                         let collegeStaffName = element.collegeStaffName
-                                        const upcomingSessionHtmlContent = mailContents.reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
-                                        const upcomingSessionTextContent = mailContents.reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
-                                        mail.sendEmail(clgstaffEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                        if (isTrainerChanged === false) {
+                                            const upcomingSessionHtmlContent = mailContents.reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                            const upcomingSessionTextContent = mailContents.reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                            mail.sendEmail(clgstaffEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                        }
                                     })
 
                                 }
