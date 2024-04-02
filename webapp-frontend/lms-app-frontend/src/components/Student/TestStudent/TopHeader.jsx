@@ -294,7 +294,7 @@ const TopHeader = () => {
                                         <li>
                                             <a
                                                 className="w-full ti-dropdown-item !text-[0.8125rem] !p-[0.65rem] !gap-x-0 !inline-flex"
-                                                href="sign-in-cover.html"
+                                                href="/testlogin"
                                             >
                                                 <i className="ti ti-logout text-[1.125rem] me-2 opacity-[0.7]" />
                                                 Log Out
