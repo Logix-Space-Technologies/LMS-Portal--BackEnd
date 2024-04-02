@@ -155,19 +155,29 @@ const AdminStaffAddMaterials = () => {
                 } else {
                     closeWaitingModal()
                     if (response.data.status === "Validation failed" && response.data.data.batchId) {
-                        alert(response.data.data.batchId)
+                        setTimeout(() => {
+                            alert(response.data.data.batchId)
+                        }, 500)
                     } else {
                         if (response.data.status === "Validation failed" && response.data.data.fileName) {
-                            alert(response.data.data.fileName)
+                            setTimeout(() => {
+                                alert(response.data.data.fileName)
+                            }, 500)
                         } else {
                             if (response.data.status === "Validation failed" && response.data.data.materialDesc) {
-                                alert(response.data.data.materialDesc)
+                                setTimeout(() => {
+                                    alert(response.data.data.materialDesc)
+                                }, 500)
                             } else {
                                 if (response.data.status === "Validation failed" && response.data.data.remarks) {
-                                    alert(response.data.data.remarks)
+                                    setTimeout(() => {
+                                        alert(response.data.data.remarks)
+                                    }, 500)
                                 } else {
                                     if (response.data.status === "Validation failed" && response.data.data.materialType) {
-                                        alert(response.data.data.materialType)
+                                        setTimeout(() => {
+                                            alert(response.data.data.materialType)
+                                        }, 500)
                                     } else {
                                         if (response.data.status === "Unauthorized User!!") {
                                             navigate("/admstafflogin")
@@ -186,25 +196,38 @@ const AdminStaffAddMaterials = () => {
                 }
             }
             ).catch(error => {
+                closeWaitingModal()
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 500
                     } else {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     }
                 } else if (error.request) {
-                    alert(error.request);
+                    setTimeout(() => {
+                        alert(error.request);
+                    }, 500)
                 } else if (error.message) {
-                    alert('Error', error.message);
+                    setTimeout(() => {
+                        alert('Error', error.message);
+                    }, 500)
                 } else {
-                    console.log(error.config);
+                    setTimeout(() => {
+                        alert(error.config);
+                    }, 500)
                 }
             })
         } else {

@@ -156,71 +156,98 @@ const AdminStaffUpdateMaterial = () => {
                     console.log(Response)
                     if (Response.data.status === "Material Details Updated") {
                         closeWaitingModal()
-                      setTimeout(()=>{
-                        setUpdateField({
-                            "id": sessionStorage.getItem("materialId"),
-                            "batchId": "",
-                            "fileName": "",
-                            "materialDesc": "",
-                            "remarks": "",
-                            "materialType": "",
-                            "uploadFile": ""
-                        })
-                        alert("Material Updated Successfully")
-                        navigate(-1)
-                      }, 500)
-                        
+                        setTimeout(() => {
+                            setUpdateField({
+                                "id": sessionStorage.getItem("materialId"),
+                                "batchId": "",
+                                "fileName": "",
+                                "materialDesc": "",
+                                "remarks": "",
+                                "materialType": "",
+                                "uploadFile": ""
+                            })
+                            alert("Material Updated Successfully")
+                            navigate(-1)
+                        }, 500)
+
                     } else if (Response.data.status === "Validation failed" && Response.data.data.batchId) {
                         closeWaitingModal()
-                        alert(Response.data.data.batchId)
+                        setTimeout(()=>{
+                            alert(Response.data.data.batchId)
+                        }, 500)
                     } else if (Response.data.status === "Validation failed" && Response.data.data.fileName) {
                         closeWaitingModal()
-                        alert(Response.data.data.fileName)
+                        setTimeout(()=>{
+                            alert(Response.data.data.fileName)
+                        }, 500)
                     } else if (Response.data.status === "Validation failed" && Response.data.data.remarks) {
                         closeWaitingModal()
-                        alert(Response.data.data.remarks)
+                        setTimeout(()=>{
+                            alert(Response.data.data.remarks)
+                        }, 500)
                     } else if (Response.data.status === "Validation failed" && Response.data.data.materialDesc) {
                         closeWaitingModal()
-                        alert(Response.data.data.materialDesc)
+                        setTimeout(()=>{
+                            alert(Response.data.data.materialDesc)
+                        }, 500)
                     } else if (Response.data.status === "Validation failed" && Response.data.data.materialType) {
                         closeWaitingModal()
-                        alert(Response.data.data.materialType)
+                        setTimeout(()=>{
+                            alert(Response.data.data.materialType)
+                        }, 500)
                     } else if (Response.data.status === "Validation failed" && Response.data.data.file) {
                         closeWaitingModal()
-                        alert(Response.data.data.file)
+                        setTimeout(()=>{
+                            alert(Response.data.data.file)
+                        }, 500)
                     } else if (Response.data.status === "Validation failed" && Response.data.data.website) {
                         closeWaitingModal()
-                        alert(Response.data.data.website)
+                        setTimeout(()=>{
+                            alert(Response.data.data.website)
+                        }, 500)
                     } else if (Response.data.status === "Unauthorized Access!!!") {
                         navigate("/admstafflogin")
                         sessionStorage.clear()
                     } else {
                         closeWaitingModal()
-                          setTimeout(() => {
-                             alert(Response.data.status)
-                          }, 500)
+                        setTimeout(() => {
+                            alert(Response.data.status)
+                        }, 500)
                     }
 
                 }).catch(error => {
+                    closeWaitingModal()
                     if (error.response) {
                         // Extract the status code from the response
                         const statusCode = error.response.status;
 
                         if (statusCode === 400) {
-                            alert(error.response.data.status)
+                            setTimeout(() => {
+                                alert(error.response.data.status)
+                            }, 500)
                             // Additional logic for status 400
                         } else if (statusCode === 500) {
-                            alert(error.response.data.status)
+                            setTimeout(() => {
+                                alert(error.response.data.status)
+                            }, 500)
                             // Additional logic for status 500
                         } else {
-                            alert(error.response.data.status)
+                            setTimeout(() => {
+                                alert(error.response.data.status)
+                            }, 500)
                         }
                     } else if (error.request) {
-                        alert(error.request);
+                        setTimeout(() => {
+                            alert(error.request);
+                        }, 500)
                     } else if (error.message) {
-                        alert('Error', error.message);
+                        setTimeout(() => {
+                            alert('Error', error.message);
+                        }, 500)
                     } else {
-                        console.log(error.config);
+                        setTimeout(() => {
+                            alert(error.config);
+                        }, 500)
                     }
                 })
         } else {
