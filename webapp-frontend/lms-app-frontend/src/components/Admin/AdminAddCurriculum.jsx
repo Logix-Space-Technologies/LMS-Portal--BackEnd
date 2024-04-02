@@ -162,28 +162,36 @@ const AdminAddCurriculum = () => {
             axios.post(apiUrl, data, axiosConfig3).then((response) => {
                 if (response.data.status === 'success') {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert('Curriculum Added Successfully !!');
-                    setInputField({
-                        collegeId: '',
-                        batchId: '',
-                        curriculumTitle: '',
-                        curriculumDesc: '',
-                        curriculumFileLink: '',
-                    })
+                        setInputField({
+                            collegeId: '',
+                            batchId: '',
+                            curriculumTitle: '',
+                            curriculumDesc: '',
+                            curriculumFileLink: '',
+                        })
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.addedBy) {
                     closeWaitingModal()
-                    alert(response.data.data.addedBy)
+                    setTimeout(() => {
+                        alert(response.data.data.addedBy)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.batchId) {
                     closeWaitingModal()
-                    alert(response.data.data.batchId)
+                    setTimeout(() => {
+                        alert(response.data.data.batchId)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.curriculumTitle) {
                     closeWaitingModal()
-                    alert(response.data.data.curriculumTitle)
+                    setTimeout(() => {
+                        alert(response.data.data.curriculumTitle)
+                    }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.curriculumDesc) {
                     closeWaitingModal()
-                    alert(response.data.data.curriculumDesc)
+                    setTimeout(() => {
+                        alert(response.data.data.curriculumDesc)
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
@@ -194,30 +202,43 @@ const AdminAddCurriculum = () => {
                     }, 500)
                 }
             }).catch(error => {
+                closeWaitingModal()
                 if (error.response) {
                     // Extract the status code from the response
                     const statusCode = error.response.status;
 
                     if (statusCode === 400) {
                         console.log("Status 400:", error.response.data);
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 400
                     } else if (statusCode === 500) {
                         console.log("Status 500:", error.response.data);
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                         // Additional logic for status 500
                     } else {
-                        alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.response.data.status)
+                        }, 500)
                     }
                 } else if (error.request) {
                     console.log(error.request);
-                    alert(error.request);
+                    setTimeout(() => {
+                        alert(error.request);
+                    }, 500)
                 } else if (error.message) {
                     console.log('Error', error.message);
-                    alert('Error', error.message);
+                    setTimeout(() => {
+                        alert('Error', error.message);
+                    }, 500)
                 } else {
-                    alert(error.config);
                     console.log(error.config);
+                    setTimeout(() => {
+                        alert(error.config);
+                    }, 500)
                 }
             })
         } else {
