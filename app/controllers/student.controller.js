@@ -1120,13 +1120,15 @@ function generateSessionAttendancePDF(data, callback) {
     doc.text('\n');
 
     // Include sessionName after the batch name
-    const sessionName = data.length > 0 ? data[0].sessionName : ''; // Assuming sessionName is available in the data
-    doc.font('Helvetica-Bold').fontSize(10).text(`Session Name:   ${sessionName}`, {
-        align: 'center',
+    const sessionName = data.length > 0 ? data[0].sessionName : '';
+    const attendanceDate = data.length > 0 ? data[0].attendanceDate : '';
+    doc.font('Helvetica-Bold').fontSize(10).text('Session Name', {
+        continued: true,  // Ensures the next text continues on the same line
         underline: true,
-        margin: { bottom: 10 },
     });
-
+    doc.font('Helvetica').fontSize(10).text(`: ${sessionName} - ${attendanceDate}`, {
+        underline: false,
+    });
     doc.text('\n');
 
     // Group data by session
