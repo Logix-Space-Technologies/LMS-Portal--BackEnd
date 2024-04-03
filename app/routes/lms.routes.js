@@ -326,24 +326,28 @@ router.post('/studemailverifyotpsend', StudentController.StudEmailVerifyOTPSend)
 
 router.post('/studemailverificationotpverify', StudentController.emailverifyStudOTP)
 
-router.post('/sendFirebaseNotifications',AdminController.sendNotifications)
+router.post('/sendFirebaseNotifications', AdminController.sendNotifications)
 
-router.post('/addFirebaseToken',FirebaseController.createTokens)
+router.post('/addFirebaseToken', FirebaseController.createTokens)
 
 router.post('/emailverifypwdchangestud', StudentController.emailVerifyAndPasswordChange)
 
-router.post('/sendFirebaseNotificationByStudId',FirebaseController.sendNotificationByStudId)
+router.post('/sendFirebaseNotificationByStudId', FirebaseController.sendNotificationByStudId)
 
-router.post('/sendSessionRemainderEmail',SessionsController.sendRemainderMail)
+router.post('/sendSessionRemainderEmail', SessionsController.sendRemainderMail)
 
-router.post('/whatsapp-callback',WhatsappController.sendfn)
+router.post('/whatsapp-callback', WhatsappController.sendfn)
 
-router.get('/viewFirebaseTokens',FirebaseController.viewTokens)
+router.get('/viewFirebaseTokens', FirebaseController.viewTokens)
 
-router.post('/viewwhatsappmsgfeedback',WhatsappMsgFeedbackController.sendfn)
+router.post('/viewwhatsappmsgfeedback', WhatsappMsgFeedbackController.sendfn)
 
-router.get('/viewwhatsappmsgcommon',WhatsappMsgCommonController.sendfn)
+router.get('/viewwhatsappmsgcommon', WhatsappMsgCommonController.sendfn)
 
-router.post('/viewwhatsappmsgreceivedfromstud',WhatsappMsgReceivedFromStudController.sendfn)
+router.post('/viewwhatsappmsgreceivedfromstud', WhatsappMsgReceivedFromStudController.sendfn)
+
+router.post('/changeregstatustoopen', CollegeController.changeRegistrationStatusToAvailable)
+
+router.post('/changeregstatustoclose', CollegeController.changeRegistrationStatusToNotOpen)
 
 module.exports = router
