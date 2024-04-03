@@ -396,10 +396,12 @@ exports.viewAdminStaffProfile = (request, response) => {
 
 // View Submitted Tasks By AdminStaff
 exports.adsfViewSubmttedTask = (request, response) => {
-    viewSubmittedTaskToken = request.headers.token
-    jwt.verify(viewSubmittedTaskToken, "lmsappadmstaff", (error, decoded) => {
+    const sessionId = request.body.sessionId
+    const viewSubmittedTaskToken = request.headers.token
+    const key = request.body.key
+    jwt.verify(viewSubmittedTaskToken, key, (error, decoded) => {
         if (decoded) {
-            AdminStaff.viewSubmittedTask((error, data) => {
+            AdminStaff.viewSubmittedTask(sessionId, (error, data) => {
                 if (error) {
                     return response.json({ "status": error });
                 } else {
