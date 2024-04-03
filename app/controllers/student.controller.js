@@ -823,23 +823,22 @@ function generatePDF(data, callback) {
                 const students = groupedData[batchKey]; // Use batchKey to access the data
                 const columnWidths = [
                     90,   // Membership No.
-                    120,  // Roll No
+                    100,  // Roll No
                     140,  // Name
                     100,  // Department
                     70,   // Course
-                    250   // Email (Increased width)
+                    200   // Email
                 ];
 
                 // Create table headers
                 const tableHeaders = [
                     { label: 'Membership No', padding: 5 },
-                    { label: 'Roll No', padding: 5 },
                     { label: 'Name', padding: 5 },
+                    { label: 'Email', padding: 5 , noWrap: true},
                     { label: 'Department', padding: 5 },
-                    { label: 'Course', padding: 5 },
-                    { label: 'Email', padding: 5 },
+                    { label: 'Course', padding: 5 }
                 ];
-                const tableData = students.map(student => [student.membership_no, student.rollNo, student.studName, student.studDept, student.course, student.studEmail]);
+                const tableData = students.map(student => [student.membership_no, student.studName, student.studEmail, student.studDept, student.course ]);
 
 
                 // Draw the table
@@ -847,7 +846,7 @@ function generatePDF(data, callback) {
                     headers: tableHeaders,
                     rows: tableData,
                     widths: columnWidths,
-                    align: ['left', 'left', 'left', 'left', 'left', 'left'],
+                    align: ['left', 'left', 'left', 'left', 'left'],
                     // Custom styles for all columns
                     headerStyles: {
                         0: { fontSize: 8 }, // Membership No.
