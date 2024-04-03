@@ -783,64 +783,97 @@ function generatePDF(data, callback) {
     const imageScale = 0.3;
     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
 
-    doc.moveDown(2.0);
+    doc.moveDown(2);
     // Add main heading
     doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise List Of Students', {
         align: 'center',
         underline: true,
         margin: { top: 30, bottom: 30 },
     });
-    doc.moveDown(1)
+    doc.moveDown(1.5);
 
+    const pageSize = 680; // Adjust based on your requirement
 
-    // Group data by batch
-    const groupedData = groupDataByBatch(data);
+    let currentY = 0;
+    let currentPage = 0;
+    let remainingData = [...data];
 
-    const columnWidths = [
-        90,   // Membership No.
-        120,  // Roll No
-        140,  // Name
-        100,  // Department
-        70,   // Course
-        250   // Email (Increased width)
-    ];
-
-
-    // Add content to the PDF using grouped data
-    for (const batchName in groupedData) {
-        if (groupedData.hasOwnProperty(batchName)) {
-            // Batch heading
-            doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name: ${batchName}`, {
-                align: 'center',
-                underline: true
-            }).font('Helvetica').fontSize(6);
-            doc.moveDown(1.5)
-
-            const students = groupedData[batchName];
-
-            // Create table headers
-            const tableHeaders = [
-                { label: 'Membership No', padding: 5 },
-                { label: 'Roll No', padding: 5 },
-                { label: 'Name', padding: 5 },
-                { label: 'Department', padding: 5 },
-                { label: 'Course', padding: 5 },
-                { label: 'Email', padding: 5 },
-            ];
-            const tableData = students.map(student => [student.membership_no, student.rollNo, student.studName, student.studDept, student.course, student.studEmail]);
-
-
-            // Draw the table
-            doc.table({
-                headers: tableHeaders,
-                rows: tableData,
-                widths: columnWidths,
-                align: ['left', 'left', 'left', 'left', 'left', 'left'],
-            });
-
-            doc.moveDown(); // Add a newline between batches
+    while (remainingData.length > 0) {
+        currentPage++;
+        if (currentPage > 1) {
+            doc.addPage();
         }
+
+        const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
+        const pageData = remainingData.splice(0, getMaxRows(availableHeight));
+        const groupedData = groupDataByBatch(pageData);
+
+        // Add content to the PDF using grouped data
+        for (const batchKey in groupedData) {
+            if (groupedData.hasOwnProperty(batchKey)) {
+                const studInfo = groupedData[batchKey];
+                const batchName = studInfo[0].batchName; // You can use batchName here
+                // Batch heading
+                doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name: ${batchName}`, {
+                    align: 'center',
+                    underline: true
+                }).font('Helvetica').fontSize(6);
+                doc.moveDown(2);
+
+                const students = groupedData[batchKey]; // Use batchKey to access the data
+                const columnWidths = [
+                    90,   // Membership No.
+                    120,  // Roll No
+                    140,  // Name
+                    100,  // Department
+                    70,   // Course
+                    250   // Email (Increased width)
+                ];
+
+                // Create table headers
+                const tableHeaders = [
+                    { label: 'Membership No', padding: 5 },
+                    { label: 'Roll No', padding: 5 },
+                    { label: 'Name', padding: 5 },
+                    { label: 'Department', padding: 5 },
+                    { label: 'Course', padding: 5 },
+                    { label: 'Email', padding: 5 },
+                ];
+                const tableData = students.map(student => [student.membership_no, student.rollNo, student.studName, student.studDept, student.course, student.studEmail]);
+
+
+                // Draw the table
+                doc.table({
+                    headers: tableHeaders,
+                    rows: tableData,
+                    widths: columnWidths,
+                    align: ['left', 'left', 'left', 'left', 'left', 'left'],
+                    // Custom styles for all columns
+                    headerStyles: {
+                        0: { fontSize: 8 }, // Membership No.
+                        1: { fontSize: 8 }, // Admission No
+                        2: { fontSize: 8 }, // Student Name
+                        3: { fontSize: 8 }, // Department
+                        4: { fontSize: 8 }, // Course
+                        5: { fontSize: 8 }  // Attendance Status
+                    },
+                    bodyStyles: {
+                        0: { fontSize: 8 }, // Membership No.
+                        1: { fontSize: 8 }, // Admission No
+                        2: { fontSize: 8 }, // Student Name
+                        3: { fontSize: 8 }, // Department
+                        4: { fontSize: 8 }, // Course
+                        5: { fontSize: 8 }  // Attendance Status
+                    }
+                });
+
+                doc.moveDown(2); // Add a newline between batches
+            }
+        }
+
+
     }
+
     const generatedDate = new Date();
     doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
         align: 'center',
@@ -871,6 +904,10 @@ function groupDataByBatch(data) {
     return groupedData;
 }
 
+function getMaxRows(availableHeight) {
+    const rowHeight = 20; // Adjust based on your layout
+    return Math.floor(availableHeight / rowHeight);
+}
 
 
 
