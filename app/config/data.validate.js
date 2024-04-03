@@ -1,6 +1,10 @@
 const path = require('path');
 
 
+
+
+
+
 function isEmpty(value) {
     return {
         isValid: (value === null || value === ""),
@@ -277,6 +281,30 @@ function isLaterDate(selectedDate, previousDate) {
 }
 
 
+function isValidTitle(title) {
+    if (!title || title.trim() === "") {
+        return {
+            isValid: false,
+            message: "Title cannot be empty."
+        };
+    }
+
+    if (title.length > 500) {
+        return {
+            isValid: false,
+            message: "Title exceeds the maximum length of 500 characters."
+        };
+    }
+
+    return {
+        isValid: true,
+        message: "Title is valid."
+    };
+}
+
+
+
+
 
 module.exports = {
     isEmpty,
@@ -300,5 +328,6 @@ module.exports = {
     acceptOnlyCapitalLetters,
     isLaterDate,
     isDateGreaterThanOrEqualToToday,
-    isTimeGreaterThanOrEqualToCurrentIfToday
+    isTimeGreaterThanOrEqualToCurrentIfToday,
+    isValidTitle
 };

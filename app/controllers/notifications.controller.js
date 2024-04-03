@@ -25,7 +25,7 @@ exports.createNotifications = (request, response) => {
             if (Validator.isEmpty(request.body.title).isValid) {
                 validationErrors.title = "Please enter the title";
             }
-            if (!Validator.isValidName(request.body.title).isValid) {
+            if (!Validator.isValidTitle(request.body.title).isValid) {
                 validationErrors.title = "Please enter a valid title";
             }
             // If validation fails
