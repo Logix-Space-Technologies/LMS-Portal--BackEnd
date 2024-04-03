@@ -276,6 +276,11 @@ const AdminSearchSessionDetails = () => {
         navigate("/AdminViewAllTasks")
     }
 
+    const subtaskClick = (id) => {
+        sessionStorage.setItem("sessionId", id)
+        navigate("/adminstaffviewsubmittedtask")
+    }
+
     const remainderClick = (batchId, sessionId) => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
@@ -446,6 +451,13 @@ const AdminSearchSessionDetails = () => {
                                                             {value.cancelStatus === "ACTIVE" && (
                                                                 <button onClick={() => sessionClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                                                     View Tasks
+                                                                </button>
+                                                            )}
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            {value.cancelStatus === "ACTIVE" && (
+                                                                <button onClick={() => subtaskClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                                                    View Submitted Tasks
                                                                 </button>
                                                             )}
                                                         </td>
