@@ -2096,7 +2096,7 @@ function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessio
       </ul>`;
   } else if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === true) {
     content += `<p>We hope this message finds you well. Please note that there has been a change in the timing of the session scheduled on <b>${originaldate}</b>. However, the date and venue of the
-        session remain unchanged. We apologize for any inconvenience this
+        session remains unchanged. We apologize for any inconvenience this
         may cause and appreciate your understanding.</p>
       <p>Details of the session:</p>
       <ul>
@@ -2107,7 +2107,7 @@ function reschedulingSessionOfflineHTMLContent(originaldate, sessionDate, sessio
       </ul>`;
   } else if (isVenueOrLinkChangedOnly === true && isTimeChangeOnly === false) {
     content += `<p>We hope this message finds you well. Please note that there has been a change in the venue. However, the date and time of the
-        session remain unchanged. We apologize for any inconvenience this
+        session remains unchanged. We apologize for any inconvenience this
         may cause and appreciate your understanding.</p>
       <p>Details of the session:</p>
       <ul>
@@ -2212,7 +2212,7 @@ function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, session
           </ul>`;
   } else if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === true) {
     content += `<p>We hope this message finds you well. Please note that there has been a change in the timing of the session scheduled on <b>${originaldate}</b>. However, the date and meeting link of the
-            session remain unchanged. We apologize for any inconvenience this
+            session remains unchanged. We apologize for any inconvenience this
             may cause and appreciate your understanding.</p>
           <p>Details of the session:</p>
           <ul>
@@ -2223,7 +2223,7 @@ function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, session
           </ul>`;
   } else if (isVenueOrLinkChangedOnly === true && isTimeChangeOnly === false) {
     content += `<p>We hope this message finds you well. Please note that there has been a change in the meeting link. However, the date and time of the
-            session remain unchanged. We apologize for any inconvenience this
+            session remains unchanged. We apologize for any inconvenience this
             may cause and appreciate your understanding.</p>
           <p>Details of the session:</p>
           <ul>
@@ -2328,7 +2328,7 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
       </ul>`;
   } else if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === true) {
     content += `<p>We hope this message finds you well. Please note that there has been a change in the timing of the session scheduled on <b>${originaldate}</b>. However, the date and the recorded video
-        link of the session remain unchanged. We apologize for any inconvenience this
+        link of the session remains unchanged. We apologize for any inconvenience this
         may cause and appreciate your understanding.</p>
       <p>Details of the session:</p>
       <ul>
@@ -2340,7 +2340,7 @@ function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessi
   } else if (isVenueOrLinkChangedOnly === true && isTimeChangeOnly === false) {
     content += `<p>We hope this message finds you well. Please note that there has been a change in the recorded video
         link. However, the date and time of the
-        session remain unchanged. We apologize for any inconvenience this
+        session remains unchanged. We apologize for any inconvenience this
         may cause and appreciate your understanding.</p>
       <p>Details of the session:</p>
       <ul>
@@ -2442,7 +2442,7 @@ function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessi
         </ul>`;
   } else if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === true) {
     content += `<p>We hope this message finds you well. Please note that there has been a change in the timing of the session scheduled on <b>${originaldate}</b>. However, the date and venue/link of the
-        session remain unchanged. We apologize for any inconvenience this
+        session remains unchanged. We apologize for any inconvenience this
         may cause and appreciate your understanding.</p>
       <p>Details of the session:</p>
       <ul>
@@ -2454,7 +2454,7 @@ function reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessi
       </ul>`;
   } else if (isVenueOrLinkChangedOnly === true && isTimeChangeOnly === false) {
     content += `<p>We hope this message finds you well. Please note that there has been a change in the meeting link/venue. However, the date and time of the
-          session remain unchanged. We apologize for any inconvenience this
+          session remains unchanged. We apologize for any inconvenience this
           may cause and appreciate your understanding.</p>
         <p>Details of the session:</p>
         <ul>
@@ -2558,7 +2558,7 @@ function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessi
   } else if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === true) {
     content += `We hope this message finds you well. Please note that there has been a change in the timing of the session scheduled on ${originaldate}. However, the date and the recorded video link of the session remains unchanged. We apologize for any inconvenience this may cause and appreciate your understanding.\n\n`;
   } else if (isVenueOrLinkChangedOnly === true && isTimeChangeOnly === false) {
-    content += `We hope this message finds you well. Please note that there has been a change in the recorded video link. However, the date and time of the session remain unchanged. We apologize for any inconvenience this may cause and appreciate your understanding.\n\n`;
+    content += `We hope this message finds you well. Please note that there has been a change in the recorded video link. However, the date and time of the session remains unchanged. We apologize for any inconvenience this may cause and appreciate your understanding.\n\n`;
   }
 
   content += `Details of the session:\n\n`;
@@ -2592,9 +2592,9 @@ function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessi
   if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === false) {
     content += `We hope this message finds you well. Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding.\n\n`;
   } else if (isVenueOrLinkChangedOnly === false && isTimeChangeOnly === true) {
-    content += `We hope this message finds you well. Please note that there has been a change in the timing of the session scheduled on ${originaldate}. However, the date and the meeting link/venue of the session remain unchanged. We apologize for any inconvenience this may cause and appreciate your understanding.\n\n`;
+    content += `We hope this message finds you well. Please note that there has been a change in the timing of the session scheduled on ${originaldate}. However, the date and the meeting link/venue of the session remains unchanged. We apologize for any inconvenience this may cause and appreciate your understanding.\n\n`;
   } else if (isVenueOrLinkChangedOnly === true && isTimeChangeOnly === false) {
-    content += `We hope this message finds you well. Please note that there has been a change in the meeting link/venue. However, the date and time of the session remain unchanged. We apologize for any inconvenience this may cause and appreciate your understanding.\n\n`;
+    content += `We hope this message finds you well. Please note that there has been a change in the meeting link/venue. However, the date and time of the session remains unchanged. We apologize for any inconvenience this may cause and appreciate your understanding.\n\n`;
   }
 
   content += `Details of the session:\n\n`;
