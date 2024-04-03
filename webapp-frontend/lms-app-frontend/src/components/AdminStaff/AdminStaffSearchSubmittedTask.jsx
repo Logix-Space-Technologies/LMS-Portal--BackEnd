@@ -10,6 +10,8 @@ const AdminStaffSearchSubmittedTask = () => {
         "subTaskSearchQuery": ""
     });
 
+    const [key, setKey] = useState('')
+
     const [outputField, setOutputField] = useState({
         "adminstaffId": "",
         "evaluatorRemarks": "",
