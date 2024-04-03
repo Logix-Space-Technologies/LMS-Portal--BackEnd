@@ -1121,7 +1121,8 @@ function generateSessionAttendancePDF(data, callback) {
 
     // Include sessionName after the batch name
     const sessionName = data.length > 0 ? data[0].sessionName : '';
-    const attendanceDate = data.length > 0 ? data[0].attendanceDate : '';
+    const attendanceDate = data[0].attendanceDate;
+    console.log(attendanceDate)
     doc.font('Helvetica-Bold').fontSize(10).text('Session Name', {
         continued: true,  // Ensures the next text continues on the same line
         underline: true,
@@ -1135,7 +1136,6 @@ function generateSessionAttendancePDF(data, callback) {
     const groupedData = groupAttendanceBySessionStudent(data);
 
     const columnWidths = [
-        20, // Date 
         100, // Membership No. 
         70, // Admission No 
         120, // Student Name 
@@ -1152,7 +1152,6 @@ function generateSessionAttendancePDF(data, callback) {
 
             // Create table headers
             const tableHeaders = [
-                { label: 'Date', padding: 4 },
                 { label: 'Membership No.', padding: -10 },
                 { label: 'Admission No', padding: -5 },
                 { label: 'Student Name', padding: 0 },
@@ -1160,7 +1159,7 @@ function generateSessionAttendancePDF(data, callback) {
                 { label: 'Course', padding: 15 },
                 { label: 'Attendance Status', padding: -6 }
             ];
-            const tableData = students.map(student => [student.attendanceDate, student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
+            const tableData = students.map(student => [student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
 
             const tableWidth = 100;
             // Draw the table
@@ -1168,7 +1167,7 @@ function generateSessionAttendancePDF(data, callback) {
                 headers: tableHeaders,
                 rows: tableData,
                 widths: columnWidths,
-                align: ['left', 'left', 'left', 'left', 'left', 'left', 'left'],
+                align: ['left', 'left', 'left', 'left', 'left', 'left'],
             });
 
             doc.moveDown(); // Add a newline between sessions
