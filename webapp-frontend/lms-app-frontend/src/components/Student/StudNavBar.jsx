@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import StudHeader from './StudentDashboard/StudHeader';
 
 const StudNavBar = () => {
     const navigate = useNavigate()
@@ -15,47 +16,49 @@ const StudNavBar = () => {
         <div>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="#">Student</a>
+                    {/* <a className="navbar-brand" href="#">Student</a> */}
+                    <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" style={{ marginRight: '20px' }} />
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav">
                             <li className="nav-item">
-                                <Link className="nav-link active" aria-current="page" to='/studentViewTask'>View Task</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to='/studviewcollege'>View College Details</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to='/studviewNotifications'>View Notifications</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to='/studViewUpcomingSession'>View Upcoming Session Details</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to='/studSessionView'>View All Session Details</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to='/studentviewbatchincharge'>View Batch In-Charge</Link>
-                            </li>
-                            <li className="nav-item">
                                 <Link className="nav-link" to='/studdashboard'>Student Dashboard</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link active" aria-current="page" to='/studentViewTask'>View Tasks</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to='/studviewcollege'>College Details</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to='/studviewNotifications'>Notifications</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to='/studViewUpcomingSession'>Upcoming Session Details</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to='/studSessionView'>Session Details</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to='/studentviewbatchincharge'>Batch In-Charge</Link>
                             </li>
                             <li className="nav-item">
                                 <Link className="nav-link" to="/studMaterialView">View Materials</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/studviewCommunityManager">View Community Manager</Link>
+                                <Link className="nav-link" to="/studviewCommunityManager">Community Manager</Link>
                             </li>
-                            <li className="nav-item">
+                            <StudHeader />
+                            {/* <li className="nav-item">
                                 <button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">Log Out</button>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
                 </div>
             </nav>
-            <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+            {/* <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -75,7 +78,7 @@ const StudNavBar = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div>
     )
 }
