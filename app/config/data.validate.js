@@ -77,6 +77,7 @@ function isValidMobileNumber(mobileNumber) {
     };
 }
 
+
 function isValidAmount(amount) {
     console.log(amount)
     return {
@@ -298,7 +299,6 @@ function isValidTitle(title) {
 
     return {
         isValid: true,
-        message: "Title is valid."
     };
 }
 
