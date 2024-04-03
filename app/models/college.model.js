@@ -163,22 +163,22 @@ College.updateCollege = (clgUpdate, result) => {
                             if (clgUpdate.collegeImage) {
                                 updateQuery = "UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, collegePhNo = ?, collegeMobileNumber = ?, collegeImage = ?, updatedDate = CURRENT_DATE(), updatedStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
                                 updateValues = [
-                                    clgUpdate.collegeName, 
-                                    clgUpdate.collegeAddress, 
-                                    clgUpdate.website, 
-                                    clgUpdate.collegePhNo, 
-                                    clgUpdate.collegeMobileNumber, 
-                                    clgUpdate.collegeImage, 
+                                    clgUpdate.collegeName,
+                                    clgUpdate.collegeAddress,
+                                    clgUpdate.website,
+                                    clgUpdate.collegePhNo,
+                                    clgUpdate.collegeMobileNumber,
+                                    clgUpdate.collegeImage,
                                     clgUpdate.id
                                 ];
                             } else {
                                 updateQuery = "UPDATE college SET collegeName = ?, collegeAddress = ?, website = ?, collegePhNo = ?, collegeMobileNumber = ?, updatedDate = CURRENT_DATE(), updatedStatus = 1 WHERE id = ? AND deleteStatus = 0 AND isActive = 1";
                                 updateValues = [
-                                    clgUpdate.collegeName, 
-                                    clgUpdate.collegeAddress, 
-                                    clgUpdate.website, 
-                                    clgUpdate.collegePhNo, 
-                                    clgUpdate.collegeMobileNumber, 
+                                    clgUpdate.collegeName,
+                                    clgUpdate.collegeAddress,
+                                    clgUpdate.website,
+                                    clgUpdate.collegePhNo,
+                                    clgUpdate.collegeMobileNumber,
                                     clgUpdate.id
                                 ];
                             }
@@ -242,6 +242,50 @@ College.viewOneCollege = (id, result) => {
             console.log("College : ", res);
             result(null, res);
         })
+}
+
+College.changeRegistrationStatusToAvailable = (id, result) => {
+    db.query("SELECT * FROM `college` WHERE `id` = ?", [id], (err, res) => {
+        if (err) {
+            console.log("Error : ", err);
+            result(err, null);
+            return;
+        } else {
+            const collegeid = res[0].id;
+            db.query("UPDATE `college` SET `registrationStatus`= 1 WHERE `id` = ?", [collegeid], (err, res) => {
+                if (err) {
+                    console.log("Error : ", err);
+                    result(err, null);
+                    return;
+                } else {
+                    console.log("Changed Registration Status To Open For College With CollegeId: ", collegeid);
+                    return result(null, null);
+                }
+            })
+        }
+    })
+}
+
+College.changeRegistrationStatusToNotOpen = (id, result) => {
+    db.query("SELECT * FROM `college` WHERE `id` = ?", [id], (err, res) => {
+        if (err) {
+            console.log("Error : ", err);
+            result(err, null);
+            return;
+        } else {
+            const collegeid = res[0].id;
+            db.query("UPDATE `college` SET `registrationStatus`= 0 WHERE `id` = ?", [collegeid], (err, res) => {
+                if (err) {
+                    console.log("Error : ", err);
+                    result(err, null);
+                    return;
+                } else {
+                    console.log("Changed Registration Status To Not Available For College With CollegeId: ", collegeid);
+                    return result(null, null);
+                }
+            })
+        }
+    })
 }
 
 

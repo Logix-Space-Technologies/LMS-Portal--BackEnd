@@ -91,9 +91,9 @@ const StudHeader = () => {
         <div>
 
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-                <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" style={{ marginRight: '20px' }} />
+                {/* <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" style={{ marginRight: '20px' }} /> */}
 
-                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                {/* <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -104,7 +104,7 @@ const StudHeader = () => {
                             </ul>
                         </li>
                     </ul>
-                </div>
+                </div> */}
                 <div className="ms-auto d-flex justify-content-end w-100" style={{ marginRight: '20px' }}>
 
                     {sessionData && sessionData.length > 0 ? (

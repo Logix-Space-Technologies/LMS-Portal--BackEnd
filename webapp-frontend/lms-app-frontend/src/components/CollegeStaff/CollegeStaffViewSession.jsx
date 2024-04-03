@@ -86,7 +86,6 @@ const CollegeStaffViewSession = () => {
                 window.open(URL.createObjectURL(pdfBlob), '_blank');
             }
         };
-        reader.readAsText(response.data);
     };
 
     function formatTime(timeString) {

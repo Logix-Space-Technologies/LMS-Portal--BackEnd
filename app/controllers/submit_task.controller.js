@@ -3,15 +3,11 @@ const SubmitTask = require("../models/submit_task.model")
 
 exports.evaluateTask = (request, response) => {
     evaluateToken=request.headers.token
-    jwt.verify(evaluateToken, "lmsappadmstaff", (error, decoded) => {
+    key=request.headers.key
+    jwt.verify(evaluateToken, key, (error, decoded) => {
         if (decoded) {
             const { id, adminstaffId, evaluatorRemarks, score } = request.body;
             const validationErrors = {};
-
-
-            if (!adminstaffId) {
-                validationErrors.adminstaffId = "Admin Staff ID cannot be empty";
-            }
 
             if (!score) {
                 validationErrors.score = "Score cannot be empty";

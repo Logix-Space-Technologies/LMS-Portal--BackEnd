@@ -1,13 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AdmStaffNavBar from './AdmStaffNavBar'
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from '../Admin/Navbar';
 
 const AdminStaffSearchSubmittedTask = () => {
 
     const [inputField, setInputField] = useState({
         "subTaskSearchQuery": ""
     });
+
+    const [key, setKey] = useState('')
 
     const [outputField, setOutputField] = useState({
         "adminstaffId": "",
@@ -57,14 +60,21 @@ const AdminStaffSearchSubmittedTask = () => {
 
     const searchSubmittedTasks = () => {
         setIsLoading(true);
-        const axiosConfig = {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let axiosConfig = {
             headers: {
-                'Content-Type': 'application/json;charset=UTF-8',
+                'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": token,
+                "key": currentKey
             }
-        };
+        }
         axios.post(apiUrl, inputField, axiosConfig)
             .then(response => {
                 if (response.data.data) {
@@ -73,8 +83,8 @@ const AdminStaffSearchSubmittedTask = () => {
                     setIsLoading(false);
                     setSearchExecuted(true);
                 } else if (response.data.status === "Unauthorized access!!") {
-                    navigate("/admstafflogin")
-                    sessionStorage.clear()
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
                 } else if (!response.data.data) {
                     setInputField({ "subTaskSearchQuery": "" });
                     setSubTasks([]);
@@ -88,6 +98,7 @@ const AdminStaffSearchSubmittedTask = () => {
 
     const evaluateTask = () => {
         let newErrors = {};
+        let addedBy;
         if (!outputField.evaluatorRemarks.trim()) {
             newErrors.evaluatorRemarks = "Remarks required!";
         }
@@ -101,23 +112,35 @@ const AdminStaffSearchSubmittedTask = () => {
             setShowOverlay(true)
             return;
         }
-        setShowModal(false)
-        setShowWaitingModal(true)
-        setShowOverlay(true)
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": token,
+                "key": currentKey
             }
         }
         let data2 = {
             "id": submittedTaskId,
-            "adminstaffId": sessionStorage.getItem("admstaffId"),
+            "adminstaffId": addedBy,
             "evaluatorRemarks": outputField.evaluatorRemarks,
             "score": outputField.score
         }
+        setShowModal(false)
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Task evaluated successfully") {
@@ -129,6 +152,7 @@ const AdminStaffSearchSubmittedTask = () => {
                     setTimeout(() => {
                         alert("Task evaluated successfully")
                     }, 500)
+
                 } else if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
                     closeWaitingModal()
                     setTimeout(() => {
@@ -187,9 +211,14 @@ const AdminStaffSearchSubmittedTask = () => {
         setSubmittedTaskId(id)
     }
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
     return (
         <div>
-            <AdmStaffNavBar /> <br />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />} <br />
             <div className="container py-5">
                 <div className="row">
                     <div className="col col-12">
@@ -220,6 +249,7 @@ const AdminStaffSearchSubmittedTask = () => {
                                     <th>S.No.</th>
                                     <th>College Name</th>
                                     <th>Batch Name</th>
+                                    <th>Session Name</th>
                                     <th>Membership No.</th>
                                     <th>Student Name</th>
                                     <th>Task Title</th>
@@ -240,6 +270,7 @@ const AdminStaffSearchSubmittedTask = () => {
                                         <td>{calculateSerialNumber(index)}</td>
                                         <td>{task.collegeName}</td>
                                         <td>{task.batchName}</td>
+                                        <td>{task.sessionName}</td>
                                         <td>{task.membership_no}</td>
                                         <td>{task.studName}</td>
                                         <td>{task.taskTitle}</td>

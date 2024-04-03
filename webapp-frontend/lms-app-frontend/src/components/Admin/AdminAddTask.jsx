@@ -334,6 +334,8 @@ const AdminAddTask = () => {
         }
         if (!data.totalScore.trim()) {
             errors.totalScore = 'Total Score is required';
+        } else if (!/^[1-9]\d*$/.test(data.totalScore)) {
+            errors.totalScore = 'Total score should be a number greater than zero';
         }
         if (!data.dueDate.trim()) {
             errors.dueDate = 'Due Date is required';
