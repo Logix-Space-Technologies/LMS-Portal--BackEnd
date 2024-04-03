@@ -96,26 +96,24 @@ exports.createTask = (request, response) => {
                         validationErrors.sessionId = Validator.isEmpty(sessionId).message;
                     }
 
-                    if (Validator.isEmpty(taskTitle).isValid) {
-                        validationErrors.taskTitle = Validator.isValidName(taskTitle).message;
+                    if (Validator.isValidTitle(taskTitle).isValid) {
+                        validationErrors.taskTitle = Validator.isValidTitle(taskTitle).message;
                     }
 
                     if (Validator.isEmpty(taskDesc).isValid) {
-                        validationErrors.taskDesc = Validator.isValidName(taskDesc).message;
+                        validationErrors.taskDesc = Validator.isEmpty(taskDesc).message;
                     }
                     if (!Validator.isValidAddress(taskDesc).isValid) {
                         validationErrors.taskDesc = Validator.isValidAddress(taskDesc).message; //validation for task description.
                     }
 
                     if (Validator.isEmpty(taskType).isValid) {
-                        validationErrors.taskType = Validator.isValidName(taskType).message;
-                    }
-                    if (!Validator.isValidName(taskType).isValid) {
-                        validationErrors.taskType = Validator.isValidName(taskType).message; //validation for task type
+                        validationErrors.taskType = Validator.isEmpty(taskType).message;
                     }
 
+
                     if (Validator.isEmpty(totalScore).isValid) {
-                        validationErrors.totalScore = Validator.isValidName(totalScore).message;
+                        validationErrors.totalScore = Validator.isEmpty(totalScore).message;
                     }
                     if (!Validator.isValidAmount(totalScore).isValid) {
                         validationErrors.totalScore = Validator.isValidAmount(totalScore).message; //validation for total score
@@ -129,8 +127,6 @@ exports.createTask = (request, response) => {
                     if (!Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).isValid) {
                         validationErrors.dueDate = Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).message; //validation for date
                     }
-
-
 
 
                     // If validation fails
@@ -269,37 +265,50 @@ exports.taskUpdate = (request, response) => {
                 const validationErrors = {};
 
                 if (Validator.isEmpty(batchId).isValid) {
-                    validationErrors.value = Validator.isEmpty(batchId).message;
+                    validationErrors.batchId = Validator.isEmpty(batchId).message;
                 }
-                if (Validator.isEmpty(taskTitle).isValid) {
-                    validationErrors.name = Validator.isEmpty(taskTitle).message;
+                if (!Validator.isValidAmount(batchId).isValid) {
+                    validationErrors.batchId = Validator.isValidAmount(batchId).message; //validation for batch id
                 }
+
+                if (Validator.isEmpty(sessionId).isValid) {
+                    validationErrors.sessionId = Validator.isEmpty(sessionId).message;
+                }
+
+                if (Validator.isValidTitle(taskTitle).isValid) {
+                    validationErrors.taskTitle = Validator.isValidTitle(taskTitle).message;
+                }
+
                 if (Validator.isEmpty(taskDesc).isValid) {
-                    validationErrors.desc = Validator.isEmpty(taskDesc).message;
+                    validationErrors.taskDesc = Validator.isEmpty(taskDesc).message;
                 }
                 if (!Validator.isValidAddress(taskDesc).isValid) {
-                    validationErrors.desc = Validator.isValidAddress(taskDesc).message; //validation for task description.
+                    validationErrors.taskDesc = Validator.isValidAddress(taskDesc).message; //validation for task description.
                 }
 
                 if (Validator.isEmpty(taskType).isValid) {
-                    validationErrors.type = Validator.isEmpty(taskType).message; //validation for task type
+                    validationErrors.taskType = Validator.isEmpty(taskType).message;
+                }
+
+
+                if (Validator.isEmpty(totalScore).isValid) {
+                    validationErrors.totalScore = Validator.isEmpty(totalScore).message;
                 }
 
                 if (!Validator.isValidAmount(totalScore).isValid) {
-                    validationErrors.score = Validator.isValidAmount(totalScore).message; //validation for total score
-                }
-                if (Validator.isEmpty(totalScore).isValid) {
-                    validationErrors.score = Validator.isEmpty(totalScore).message; //validation for task type
+                    validationErrors.totalScore = Validator.isEmpty(totalScore).message;
                 }
 
+
                 if (!Validator.isValidDate(dueDate).isValid) {
-                    validationErrors.date = Validator.isValidDate(dueDate).message; //validation for date
+                    validationErrors.dueDate = Validator.isValidDate(dueDate).message; //validation for date
                 }
 
 
                 if (!Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).isValid) {
-                    validationErrors.date = Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).message; //validation for date
+                    validationErrors.dueDate = Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).message; //validation for date
                 }
+
 
                 // If validation fails
                 if (Object.keys(validationErrors).length > 0) {
