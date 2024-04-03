@@ -214,7 +214,7 @@ exports.studLog = (request, response) => {
         if (err) {
             return response.json({ "status": err })
         }
-        if(password==="0" && stud.password==="0"){
+        if (password === "0" && stud.password === "0") {
             return response.json({ "status": "Password Is Default Password. Please Change." })
         }
         const passwordMatch = bcrypt.compareSync(password, stud.password)
@@ -229,7 +229,7 @@ exports.studLog = (request, response) => {
                         if (stud.isVerified !== 1) {
                             return response.json({ "status": "Account Under Verification Process.Please Contact Your Batch-In-Charge." })
                         }
-                        if (stud.validity <= new Date() ) {
+                        if (stud.validity <= new Date()) {
                             return response.json({ "status": "Account expired. Please Renew Your Plan" })
                         }
                         if (type === 'web') {
@@ -453,7 +453,7 @@ exports.profileUpdateStudent = (request, response) => {
                             studProfilePic,
                             aadharNo
                         };
-                        
+
                         Student.updateStudentProfile(newStudent, (err, data) => {
                             if (err) {
                                 if (err.kind === "not_found") {
@@ -1112,17 +1112,17 @@ function generateSessionAttendancePDF(data, callback) {
 
     // Include batch name after the main heading
     const batchName = data.length > 0 ? data[0].batchName : ''; // Assuming batchName is available in the data
-    doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name:   ${batchName}`, {
+    doc.font('Helvetica-Bold').fontSize(11).text(`Batch Name:   ${batchName}`, {
         align: 'center',
         underline: true,
         margin: { bottom: 10 },
     });
-    doc.text('\n');
+    doc.moveDown(2);
 
     // Include sessionName after the batch name
     const sessionName = data.length > 0 ? data[0].sessionName : '';
-    const attendanceDate = data[0].attendanceDate;
-    console.log(attendanceDate)
+    const attendanceDate = data.length > 0 ? data[0].attendanceDate : '';
+
     doc.font('Helvetica-Bold').fontSize(10).text('Session Name', {
         continued: true,  // Ensures the next text continues on the same line
         underline: true,
@@ -1132,45 +1132,74 @@ function generateSessionAttendancePDF(data, callback) {
     });
     doc.text('\n');
 
-    // Group data by session
-    const groupedData = groupAttendanceBySessionStudent(data);
+    const pageSize = 680; // Adjust based on your requirement
 
-    const columnWidths = [
-        100, // Membership No. 
-        70, // Admission No 
-        120, // Student Name 
-        70, // Department 
-        60, // Course 
-        80 // Attendance Status 
-    ];
+    let currentY = 0;
+    let currentPage = 0;
+    let remainingData = [...data];
 
-    // Add content to the PDF using grouped data
-    for (const sessionName in groupedData) {
-        if (groupedData.hasOwnProperty(sessionName)) {
+    while (remainingData.length > 0) {
+        currentPage++;
+        if (currentPage > 1) {
+            doc.addPage();
+        }
 
-            const students = groupedData[sessionName];
+        const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
+        const pageData = remainingData.splice(0, getMaxRows(availableHeight));
+        const groupedData = groupAttendanceBySessionStudent(pageData);
 
-            // Create table headers
-            const tableHeaders = [
-                { label: 'Membership No.', padding: -10 },
-                { label: 'Admission No', padding: -5 },
-                { label: 'Student Name', padding: 0 },
-                { label: 'Department', padding: 10 },
-                { label: 'Course', padding: 15 },
-                { label: 'Attendance Status', padding: -6 }
-            ];
-            const tableData = students.map(student => [student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
+        // Add content to the PDF using grouped data
+        for (const sessionName in groupedData) {
+            if (groupedData.hasOwnProperty(sessionName)) {
 
-            const tableWidth = 100;
-            // Draw the table
-            doc.table({
-                headers: tableHeaders,
-                rows: tableData,
-                widths: columnWidths,
-                align: ['left', 'left', 'left', 'left', 'left', 'left'],
-            });
+                const students = groupedData[sessionName];
+                const columnWidths = [
+                    100, // Membership No. 
+                    70, // Admission No 
+                    120, // Student Name 
+                    70, // Department 
+                    60, // Course 
+                    80 // Attendance Status 
+                ];
 
-            doc.moveDown(); // Add a newline between sessions
+                // Create table headers
+                const tableHeaders = [
+                    { label: 'Membership No.', padding: 3 },
+                    { label: 'Admission No', padding: 5 },
+                    { label: 'Student Name', padding: 5 },
+                    { label: 'Department', padding: 5 },
+                    { label: 'Course', padding: 5 },
+                    { label: 'Attendance Status', padding: 5 }
+                ];
+                const tableData = students.map(student => [student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
+
+                // Draw the table
+                doc.table({
+                    headers: tableHeaders,
+                    rows: tableData,
+                    widths: columnWidths,
+                    align: ['left', 'left', 'left', 'left', 'left', 'left'],
+                    // Custom styles for all columns
+                    headerStyles: {
+                        0: { fontSize: 8 }, // Membership No.
+                        1: { fontSize: 8 }, // Admission No
+                        2: { fontSize: 8 }, // Student Name
+                        3: { fontSize: 8 }, // Department
+                        4: { fontSize: 8 }, // Course
+                        5: { fontSize: 8 }  // Attendance Status
+                    },
+                    bodyStyles: {
+                        0: { fontSize: 8 }, // Membership No.
+                        1: { fontSize: 8 }, // Admission No
+                        2: { fontSize: 8 }, // Student Name
+                        3: { fontSize: 8 }, // Department
+                        4: { fontSize: 8 }, // Course
+                        5: { fontSize: 8 }  // Attendance Status
+                    }
+                });
+
+                doc.moveDown(2); // Add a newline between sessions
+            }
         }
     }
     // Add the generated date and time
@@ -1197,8 +1226,10 @@ function groupAttendanceBySessionStudent(data) {
     return groupedData;
 }
 
-
-
+function getMaxRows(availableHeight) {
+    const rowHeight = 20; // Adjust based on your layout
+    return Math.floor(availableHeight / rowHeight);
+}
 
 
 
