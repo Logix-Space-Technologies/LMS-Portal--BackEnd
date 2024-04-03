@@ -98,6 +98,7 @@ const AdminStaffSearchSubmittedTask = () => {
 
     const evaluateTask = () => {
         let newErrors = {};
+        let addedBy;
         if (!outputField.evaluatorRemarks.trim()) {
             newErrors.evaluatorRemarks = "Remarks required!";
         }
@@ -111,23 +112,35 @@ const AdminStaffSearchSubmittedTask = () => {
             setShowOverlay(true)
             return;
         }
-        setShowModal(false)
-        setShowWaitingModal(true)
-        setShowOverlay(true)
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": token,
+                "key": currentKey
             }
         }
         let data2 = {
             "id": submittedTaskId,
-            "adminstaffId": sessionStorage.getItem("admstaffId"),
+            "adminstaffId": addedBy,
             "evaluatorRemarks": outputField.evaluatorRemarks,
             "score": outputField.score
         }
+        setShowModal(false)
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Task evaluated successfully") {
@@ -139,6 +152,7 @@ const AdminStaffSearchSubmittedTask = () => {
                     setTimeout(() => {
                         alert("Task evaluated successfully")
                     }, 500)
+
                 } else if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
                     closeWaitingModal()
                     setTimeout(() => {
