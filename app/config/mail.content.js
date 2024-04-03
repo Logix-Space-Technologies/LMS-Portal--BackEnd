@@ -2248,7 +2248,7 @@ function reschedulingSessionOnlineHTMLContent(originaldate, sessionDate, session
   return content;
 }
 
-function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName, isVenueOrLinkChangedOnly) {
+function reschedulingSessionRecordedHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   let content = `
