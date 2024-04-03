@@ -96,6 +96,7 @@ const AdminStaffViewSubmittedTask = () => {
 
     const evaluateTask = () => {
         let newErrors = {};
+        let addedBy;
         if (!inputField.evaluatorRemarks.trim()) {
             newErrors.evaluatorRemarks = "Remarks required!";
         }
@@ -109,17 +110,29 @@ const AdminStaffViewSubmittedTask = () => {
             setShowOverlay(true)
             return;
         }
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": token,
+                "key": currentKey
             }
         }
         let data2 = {
             "id": submittedTaskId,
-            "adminstaffId": sessionStorage.getItem("admstaffId"),
+            "adminstaffId": addedBy,
             "evaluatorRemarks": inputField.evaluatorRemarks,
             "score": inputField.score
         }
