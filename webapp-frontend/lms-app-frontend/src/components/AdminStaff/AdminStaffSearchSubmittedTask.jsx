@@ -235,6 +235,7 @@ const AdminStaffSearchSubmittedTask = () => {
                                     <th>S.No.</th>
                                     <th>College Name</th>
                                     <th>Batch Name</th>
+                                    <th>Session Name</th>
                                     <th>Membership No.</th>
                                     <th>Student Name</th>
                                     <th>Task Title</th>
@@ -255,6 +256,7 @@ const AdminStaffSearchSubmittedTask = () => {
                                         <td>{calculateSerialNumber(index)}</td>
                                         <td>{task.collegeName}</td>
                                         <td>{task.batchName}</td>
+                                        <td>{task.sessionName}</td>
                                         <td>{task.membership_no}</td>
                                         <td>{task.studName}</td>
                                         <td>{task.taskTitle}</td>
