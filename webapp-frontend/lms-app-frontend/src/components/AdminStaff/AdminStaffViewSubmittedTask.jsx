@@ -3,6 +3,7 @@ import AdmStaffNavBar from './AdmStaffNavBar'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
+import Navbar from '../Admin/Navbar'
 
 
 const AdminStaffViewSubmittedTask = () => {
@@ -10,6 +11,7 @@ const AdminStaffViewSubmittedTask = () => {
     const [errors, setErrors] = useState({});
 
     const navigate = useNavigate()
+    const [key, setKey] = useState('')
 
     let [submittedTaskId, setSubmittedTaskId] = useState("")
 
@@ -47,21 +49,28 @@ const AdminStaffViewSubmittedTask = () => {
     };
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": token,
+                "key": currentKey
             }
         }
-        axios.post(apiUrl, {}, axiosConfig).then(
+        axios.post(apiUrl, { sessionId: sessionStorage.getItem("sessionId") }, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
                     setTaskData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
-                        navigate("/admstafflogin")
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
@@ -139,7 +148,7 @@ const AdminStaffViewSubmittedTask = () => {
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.score) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.score);
                         setShowModal(true)
                         setShowOverlay(true)
@@ -153,7 +162,7 @@ const AdminStaffViewSubmittedTask = () => {
                         evaluatorRemarks: "",
                         score: ""
                     });
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.status);
                         setShowModal(true)
                         setShowOverlay(true)
@@ -196,13 +205,25 @@ const AdminStaffViewSubmittedTask = () => {
 
     useEffect(() => { getData() }, [])
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
 
     return (
         <>
             <div>
-                <AdmStaffNavBar />
+                {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
                 <br />
-                <strong>Admin Staff View Submitted Tasks</strong><br /><br />
+                <div className="flex justify-between items-center mx-4 my-4">
+                    <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+                    <strong>View All Submitted Tasks</strong>
+
+                    <div></div>
+                </div>
+                <br /><br />
                 <div className="relative overflow-x shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

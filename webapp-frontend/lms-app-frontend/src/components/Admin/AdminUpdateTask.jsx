@@ -204,17 +204,25 @@ const AdminUpdateTask = () => {
 
         if (!data.batchId) {
             errors.batchId = 'Batch Name is required';
-        } else if (!data.taskTitle) {
+        }
+        if (!data.taskTitle) {
             errors.taskTitle = 'Task Title is required';
-        } else if (!data.taskDesc) {
+        }
+        if (!data.taskDesc) {
             errors.taskDesc = 'Task Description is required';
-        } else if (!data.taskType) {
+        }
+        if (!data.taskType) {
             errors.taskType = 'Task Type is required';
-        } else if (!data.totalScore) {
+        }
+        if (!data.totalScore) {
             errors.totalScore = 'Total Score is required';
-        } else if (!data.dueDate) {
+        } else if (!/^[1-9]\d*$/.test(data.totalScore)) {
+            errors.totalScore = 'Total score should be a number greater than zero';
+        }
+        if (!data.dueDate) {
             errors.dueDate = 'Due Date is required';
-        } else if (file && fileType !== "docx" && fileType !== "pdf") {
+        }
+        if (file && fileType !== "docx" && fileType !== "pdf") {
             errors.file = "File must be in PDF or DOCX format";
         }
 
