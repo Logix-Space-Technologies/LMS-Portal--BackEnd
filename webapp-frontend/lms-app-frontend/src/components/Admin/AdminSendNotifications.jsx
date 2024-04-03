@@ -122,9 +122,9 @@ const AdminSendNotification = () => {
             setKey(currentKey); // Update the state if needed
         }
         if (currentKey === 'lmsapp') {
-            sendby = 0
+            sendby = 0;
         } else {
-            sendby = sessionStorage.getItem("admstaffId")
+            sendby = sessionStorage.getItem("admstaffId");
         }
         event.preventDefault();
         const axiosConfig = {
@@ -140,36 +140,43 @@ const AdminSendNotification = () => {
             "message": notificationData.message,
             "sendby": sendby,
             "title": notificationData.title
-        }
-        setShowWaitingModal(true)
-        setShowOverlay(true)
+        };
+        setShowWaitingModal(true);
+        setShowOverlay(true);
         try {
             const response = await axios.post(apiUrl, data, axiosConfig);
-            if (response.data.status === 'Success') {
-                closeWaitingModal()
+            if (response.data.status === 'Validation failed') {
+                closeWaitingModal();
                 setTimeout(() => {
-                    alert(response.data.message)
+                    const errorMessage = Object.values(response.data.data)[0]; // Extracting the first validation error message
+                    alert(errorMessage); // Alerting the validation error message
+                },500)
+            } else if (response.data.status === 'Success') {
+                closeWaitingModal();
+                setTimeout(() => {
+                    alert(response.data.message);
                     // Reset the text fields to their initial empty state
                     setNotificationData(initialNotificationData);
-                }, 500)
+                }, 500);
             } else {
                 if (response.data.message === "Invalid token") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
-                    sessionStorage.clear()
+                    sessionStorage.clear();
                 } else {
-                    closeWaitingModal()
+                    closeWaitingModal();
                     setTimeout(() => {
-                        alert(response.data.message)
-                    }, 500)
+                        alert(response.data.message);
+                    }, 500);
                 }
             }
         } catch (error) {
-            closeWaitingModal()
+            closeWaitingModal();
             setTimeout(() => {
-                alert(error.message)
-            }, 500)
+                alert(error.message);
+            }, 500);
         }
     };
+    
 
     // Inline styles
     const styles = {
