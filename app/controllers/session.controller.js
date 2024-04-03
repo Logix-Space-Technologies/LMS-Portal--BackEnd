@@ -71,9 +71,9 @@ exports.createSession = (request, response) => {
                 validationErrors.trainerId = Validator.isEmpty(request.body.trainerId).message;
             }
 
-            if (Validator.isEmpty(request.body.attendanceCode).isValid) {
-                validationErrors.attendanceCode = Validator.isEmpty(request.body.attendanceCode).message;
-            }
+            // if (Validator.isEmpty(request.body.attendanceCode).isValid) {
+            //     validationErrors.attendanceCode = Validator.isEmpty(request.body.attendanceCode).message;
+            // }
 
             if (Object.keys(validationErrors).length > 0) {
                 return response.json({ "status": "Validation failed", "data": validationErrors })
