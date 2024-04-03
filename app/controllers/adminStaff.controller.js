@@ -484,8 +484,9 @@ exports.viewOneMaterial = (request, response) => {
 exports.searchSubmittedTask = (request, response) => {
     const subTaskSearchQuery = request.body.subTaskSearchQuery;
     const searchSubmittedTaskToken = request.headers.token;
+    const key = request.headers.key;
 
-    jwt.verify(searchSubmittedTaskToken, "lmsappadmstaff", (error, decoded) => {
+    jwt.verify(searchSubmittedTaskToken, key, (error, decoded) => {
         if (decoded) {
             if (!subTaskSearchQuery) {
                 console.log("Search Item is required.");
