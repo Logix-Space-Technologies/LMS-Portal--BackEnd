@@ -271,10 +271,6 @@ exports.taskUpdate = (request, response) => {
                     validationErrors.batchId = Validator.isValidAmount(batchId).message; //validation for batch id
                 }
 
-                if (Validator.isEmpty(sessionId).isValid) {
-                    validationErrors.sessionId = Validator.isEmpty(sessionId).message;
-                }
-
                 if (Validator.isValidTitle(taskTitle).isValid) {
                     validationErrors.taskTitle = Validator.isValidTitle(taskTitle).message;
                 }
