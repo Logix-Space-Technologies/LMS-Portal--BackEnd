@@ -272,10 +272,6 @@ exports.sessionUpdate = (request, response) => {
                         isTrainerChanged = true;
                     }
 
-                    console.log(isTrainerChanged)
-                    console.log(originalTrainer)
-                    console.log(updatedTrainer)
-
                     db.query("SELECT * FROM sessiondetails WHERE id = ?", [upSession.id], (err, sessionres) => {
                         if (err) {
                             return response.json({ "status": err });
