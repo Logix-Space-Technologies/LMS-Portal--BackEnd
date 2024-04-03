@@ -833,12 +833,13 @@ function generatePDF(data, callback) {
                 // Create table headers
                 const tableHeaders = [
                     { label: 'Membership No', padding: 5 },
+                    { label: 'Roll No', padding: 5 },
                     { label: 'Name', padding: 5 },
-                    { label: 'Email', padding: 5 , noWrap: true},
                     { label: 'Department', padding: 5 },
-                    { label: 'Course', padding: 5 }
+                    { label: 'Course', padding: 5 },
+                    { label: 'Email', padding: 5 }
                 ];
-                const tableData = students.map(student => [student.membership_no, student.studName, student.studEmail, student.studDept, student.course ]);
+                const tableData = students.map(student => [student.membership_no, student.rollNo, student.studName, student.studDept, student.course, student.studEmail]);
 
 
                 // Draw the table
@@ -846,23 +847,23 @@ function generatePDF(data, callback) {
                     headers: tableHeaders,
                     rows: tableData,
                     widths: columnWidths,
-                    align: ['left', 'left', 'left', 'left', 'left'],
+                    align: ['left', 'left', 'left', 'left', 'left', 'left'],
                     // Custom styles for all columns
                     headerStyles: {
                         0: { fontSize: 8 }, // Membership No.
-                        1: { fontSize: 8 }, // Admission No
+                        1: { fontSize: 8 }, // Roll No.
                         2: { fontSize: 8 }, // Student Name
                         3: { fontSize: 8 }, // Department
                         4: { fontSize: 8 }, // Course
-                        5: { fontSize: 8 }  // Attendance Status
+                        5: { fontSize: 8 }  // Email
                     },
                     bodyStyles: {
                         0: { fontSize: 8 }, // Membership No.
-                        1: { fontSize: 8 }, // Admission No
+                        1: { fontSize: 8 }, // Roll No.
                         2: { fontSize: 8 }, // Student Name
                         3: { fontSize: 8 }, // Department
                         4: { fontSize: 8 }, // Course
-                        5: { fontSize: 8 }  // Attendance Status
+                        5: { fontSize: 4 }  // Email
                     }
                 });
 
