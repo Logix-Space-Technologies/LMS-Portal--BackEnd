@@ -20,6 +20,8 @@ const AdminViewAllCollege = () => {
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewallcolleges"
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteCollege"
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/changeregstatustoopen";
+    const apiUrl3 = global.config.urls.api.server + "/api/lms/changeregstatustoclose";
 
     const closeWaitingModal = () => {
         setShowOverlay(false)
@@ -106,6 +108,77 @@ const AdminViewAllCollege = () => {
 
     const readValue = (id) => {
         setDeleteCollege(id)
+    };
+
+    // Open Registration
+    const openRegistration = (id) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let collegeId = { "id": id };
+        let axiosConfig2 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+
+        axios.post(apiUrl2, collegeId, axiosConfig2).then(
+            (response) => {
+                if (response.data.status === "Registration Status Changed To Open.") {
+                    getData();
+                } else if (response.data.status === "Validation failed") {
+                    // Handle validation errors
+                    alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
+                } else if (response.data.status === "Unauthorized User !!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else {
+                    // Handle other errors
+                    alert(response.data.status);
+                }
+            }
+        )
+    };
+
+    // Close Registration
+    const closeRegistration = (id) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let collegeId = { "id": id };
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+        axios.post(apiUrl3, collegeId, axiosConfig).then(
+            (response) => {
+                if (response.data.status === "Registration Status Changed To Unavailable.") {
+                    getData();
+                } else {
+                    if (response.data.status === "Unauthorized User !!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status);
+                    }
+                }
+            }
+        )
     };
 
     // Logic for displaying current colleges
@@ -216,6 +289,14 @@ const AdminViewAllCollege = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.collegeMobileNumber}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.registrationStatus === 0 && (
+                                        <button onClick={() => openRegistration(value.id)} style={{ fontSize: '12px' }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Open Registration</button>
+                                    )}
+                                    {value.registrationStatus === 1 && (
+                                        <button onClick={() => { closeRegistration(value.id) }} style={{ fontSize: '12px' }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Close Registration</button>
+                                    )}
                                 </td>
                                 <td className="px-6 py-4">
                                     <Link to="/adminviewallbatches" onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Batches</Link>
