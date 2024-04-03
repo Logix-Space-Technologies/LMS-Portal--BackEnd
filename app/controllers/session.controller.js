@@ -259,7 +259,7 @@ exports.sessionUpdate = (request, response) => {
                     sessionTime = formatTime(upSession.time);
                     originalVenueOrLink = data.originalVenueOrLink;
                     updatedVenueOrLink = upSession.venueORlink;
-                    originalTrainer = data.trainerId;
+                    originalTrainer = data.originalTrainer;
                     updatedTrainer = upSession.trainerId;
 
                     if (sessionDate === originaldate && originaltime === upSession.time && originalVenueOrLink !== updatedVenueOrLink) {
@@ -271,6 +271,10 @@ exports.sessionUpdate = (request, response) => {
                     if (sessionDate === originaldate && originalVenueOrLink === updatedVenueOrLink && originaltime === upSession.time && originalTrainer !== updatedTrainer) {
                         isTrainerChanged = true;
                     }
+
+                    console.log(isTrainerChanged)
+                    console.log(originalTrainer)
+                    console.log(updatedTrainer)
 
                     db.query("SELECT * FROM sessiondetails WHERE id = ?", [upSession.id], (err, sessionres) => {
                         if (err) {
