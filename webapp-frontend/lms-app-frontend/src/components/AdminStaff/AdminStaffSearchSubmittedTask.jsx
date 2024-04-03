@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import AdmStaffNavBar from './AdmStaffNavBar'
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from '../Admin/Navbar';
 
 const AdminStaffSearchSubmittedTask = () => {
 
@@ -57,14 +58,21 @@ const AdminStaffSearchSubmittedTask = () => {
 
     const searchSubmittedTasks = () => {
         setIsLoading(true);
-        const axiosConfig = {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let axiosConfig = {
             headers: {
-                'Content-Type': 'application/json;charset=UTF-8',
+                'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": token,
+                "key": currentKey
             }
-        };
+        }
         axios.post(apiUrl, inputField, axiosConfig)
             .then(response => {
                 if (response.data.data) {
@@ -73,8 +81,8 @@ const AdminStaffSearchSubmittedTask = () => {
                     setIsLoading(false);
                     setSearchExecuted(true);
                 } else if (response.data.status === "Unauthorized access!!") {
-                    navigate("/admstafflogin")
-                    sessionStorage.clear()
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
                 } else if (!response.data.data) {
                     setInputField({ "subTaskSearchQuery": "" });
                     setSubTasks([]);
@@ -187,9 +195,14 @@ const AdminStaffSearchSubmittedTask = () => {
         setSubmittedTaskId(id)
     }
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
     return (
         <div>
-            <AdmStaffNavBar /> <br />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />} <br />
             <div className="container py-5">
                 <div className="row">
                     <div className="col col-12">
