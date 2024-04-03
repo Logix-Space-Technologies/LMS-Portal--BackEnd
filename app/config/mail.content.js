@@ -2514,7 +2514,7 @@ function reschedulingSessionOfflineTextContent(originaldate, sessionDate, sessio
 }
 
 
-function reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName, isVenueOrLinkChangedOnly) {
+function reschedulingSessionOnlineTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly) {
   const currentYear = new Date().getFullYear();
   let content = `Dear ${studName},\n\n`;
 
@@ -2549,7 +2549,7 @@ function reschedulingSessionOnlineTextContent(originaldate, sessionDate, session
   return content;
 }
 
-function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName, isVenueOrLinkChangedOnly) {
+function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly) {
   const currentYear = new Date().getFullYear();
   let content = `Dear ${studName},\n\n`;
 
@@ -2584,7 +2584,7 @@ function reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessi
   return content;
 }
 
-function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly) {
+function reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly, isTimeChangeOnly) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   let content = `Dear ${collegeStaffName},\n\n`;
