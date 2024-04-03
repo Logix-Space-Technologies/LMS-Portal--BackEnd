@@ -216,7 +216,14 @@ const AdminStaffViewSubmittedTask = () => {
             <div>
                 {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
                 <br />
-                <strong>Admin Staff View Submitted Tasks</strong><br /><br />
+                <div className="flex justify-between items-center mx-4 my-4">
+                    <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+                    <strong>View All Submitted Tasks</strong>
+
+                    <div></div>
+                </div>
+                <br /><br />
                 <div className="relative overflow-x shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
