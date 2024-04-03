@@ -399,7 +399,6 @@ exports.adsfViewSubmttedTask = (request, response) => {
     const sessionId = request.body.sessionId
     const viewSubmittedTaskToken = request.headers.token
     const key = request.headers.key
-    console.log(key)
     jwt.verify(viewSubmittedTaskToken, key, (error, decoded) => {
         if (decoded) {
             AdminStaff.viewSubmittedTask(sessionId, (error, data) => {
