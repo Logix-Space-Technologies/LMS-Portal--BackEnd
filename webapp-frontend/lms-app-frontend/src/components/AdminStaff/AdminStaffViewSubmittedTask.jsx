@@ -47,15 +47,22 @@ const AdminStaffViewSubmittedTask = () => {
     };
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": token,
+                "key": currentKey
             }
         }
-        axios.post(apiUrl, {}, axiosConfig).then(
+        axios.post(apiUrl, { sessionId: sessionStorage.getItem("sessionId")}, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
                     setTaskData(response.data.data)
@@ -139,7 +146,7 @@ const AdminStaffViewSubmittedTask = () => {
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.score) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.score);
                         setShowModal(true)
                         setShowOverlay(true)
@@ -153,7 +160,7 @@ const AdminStaffViewSubmittedTask = () => {
                         evaluatorRemarks: "",
                         score: ""
                     });
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.status);
                         setShowModal(true)
                         setShowOverlay(true)
@@ -195,6 +202,11 @@ const AdminStaffViewSubmittedTask = () => {
 
 
     useEffect(() => { getData() }, [])
+
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
 
 
     return (
