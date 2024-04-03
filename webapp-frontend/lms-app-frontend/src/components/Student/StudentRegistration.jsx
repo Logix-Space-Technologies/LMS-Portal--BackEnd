@@ -126,7 +126,9 @@ const StudentRegistration = () => {
     };
     axios.post(apiUrl2, axiosConfig).then(
       (response) => {
-        setOutputField(response.data.data)
+        // Filter out colleges with registrationStatus === 0
+        const activeColleges = response.data.data.filter(college => college.registrationStatus === 1);
+        setOutputField(activeColleges)
       }
     )
   }
