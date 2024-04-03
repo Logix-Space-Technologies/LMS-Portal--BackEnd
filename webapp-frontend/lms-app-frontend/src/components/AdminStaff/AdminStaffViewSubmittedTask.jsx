@@ -70,7 +70,7 @@ const AdminStaffViewSubmittedTask = () => {
                     setTaskData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
-                        navigate("/admstafflogin")
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
