@@ -3,6 +3,7 @@ import AdmStaffNavBar from './AdmStaffNavBar'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 import '../../config/config'
+import Navbar from '../Admin/Navbar'
 
 
 const AdminStaffViewSubmittedTask = () => {
@@ -10,6 +11,7 @@ const AdminStaffViewSubmittedTask = () => {
     const [errors, setErrors] = useState({});
 
     const navigate = useNavigate()
+    const [key, setKey] = useState('')
 
     let [submittedTaskId, setSubmittedTaskId] = useState("")
 
@@ -62,7 +64,7 @@ const AdminStaffViewSubmittedTask = () => {
                 "key": currentKey
             }
         }
-        axios.post(apiUrl, { sessionId: sessionStorage.getItem("sessionId")}, axiosConfig).then(
+        axios.post(apiUrl, { sessionId: sessionStorage.getItem("sessionId") }, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
                     setTaskData(response.data.data)
@@ -212,7 +214,7 @@ const AdminStaffViewSubmittedTask = () => {
     return (
         <>
             <div>
-                <AdmStaffNavBar />
+                {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
                 <br />
                 <strong>Admin Staff View Submitted Tasks</strong><br /><br />
                 <div className="relative overflow-x shadow-md sm:rounded-lg">
