@@ -863,7 +863,7 @@ function generatePDF(data, callback) {
                         2: { fontSize: 8 }, // Student Name
                         3: { fontSize: 8 }, // Department
                         4: { fontSize: 8 }, // Course
-                        5: { fontSize: 4 }  // Email
+                        5: { fontSize: 8 }  // Email
                     }
                 });
 
