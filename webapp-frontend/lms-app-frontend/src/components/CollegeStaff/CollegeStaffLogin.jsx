@@ -54,6 +54,7 @@ const CollegeStaffLogin = () => {
     const closeWaitingModel = () => {
         setShowWaitingModal(false)
         setShowOverlay(false)
+        setState(false)
         setErrors({})
         setUpdateField({
             email: "",
