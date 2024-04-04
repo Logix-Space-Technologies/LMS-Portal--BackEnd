@@ -1282,7 +1282,7 @@ Student.forgotPassGenerateAndHashOTP = (studEmail, result) => {
             console.error("Error while checking email existence: ", err);
             result(err, null);
             return;
-        } else if (checkRes[0].length === 0) {
+        } else if (checkRes.length === 0) {
             console.log("Student Does Not Exist")
             result("Student Does Not Exist", null)
         } else {
