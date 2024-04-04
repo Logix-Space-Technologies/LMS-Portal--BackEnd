@@ -45,7 +45,7 @@ CollegeStaff.clgStaffCreate = (newClgStaff, result) => {
                             return;
                         } else {
                             // College ID exists, proceed with checking email and inserting college staff
-                            db.query("SELECT * FROM college_staff WHERE email=? AND deleteStatus=0 AND isActive=1 ", [newClgStaff.email], (err, res) => {
+                            db.query("SELECT * FROM college_staff WHERE BINARY email=? AND deleteStatus=0 AND isActive=1 ", [newClgStaff.email], (err, res) => {
                                 console.log(newClgStaff);
                                 if (err) {
                                     console.log("error: ", err);
@@ -251,7 +251,7 @@ CollegeStaff.viewBatch = (collegeId, result) => {
 
 
 CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
-    const collegeStaffPassword = "SELECT id, password FROM college_staff WHERE email=? AND deleteStatus = 0 AND isActive = 1 ";
+    const collegeStaffPassword = "SELECT id, password FROM college_staff WHERE BINARY email=? AND deleteStatus = 0 AND isActive = 1 ";
     db.query(collegeStaffPassword, [college_staff.email], (err, res) => {
         if (err) {
             console.log("Error:", err);
@@ -262,7 +262,7 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
             const hashedOldPassword = res[0].password;
             let clgstaffid = res[0].id;
             if (bcrypt.compareSync(college_staff.oldPassword, hashedOldPassword)) {
-                const updateCollegeStaffPasswordQuery = "UPDATE college_Staff SET password = ?, pwdUpdateStatus = 1 WHERE email = ? AND deleteStatus = 0 AND isActive = 1 ";
+                const updateCollegeStaffPasswordQuery = "UPDATE college_Staff SET password = ?, pwdUpdateStatus = 1 WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1 ";
                 const hashedNewPassword = bcrypt.hashSync(college_staff.newPassword, 10);
                 db.query(updateCollegeStaffPasswordQuery, [hashedNewPassword, college_staff.email], (updateErr) => {
                     if (updateErr) {
@@ -297,7 +297,7 @@ CollegeStaff.collegeStaffForgotPassword = (college_staff, result) => {
 
         const clgstaffData = clgstaff[0];
 
-        const updateCollegeStaffPasswordQuery = `UPDATE college_Staff SET password = ?, pwdUpdateStatus = 1 WHERE email = ? AND deleteStatus = 0 AND isActive = 1 `;
+        const updateCollegeStaffPasswordQuery = `UPDATE college_Staff SET password = ?, pwdUpdateStatus = 1 WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1 `;
 
         bcrypt.hash(college_staff.password, 10, (err, hashedNewPassword) => {
             if (err) {
@@ -533,7 +533,7 @@ CollegeStaff.forgotPassGenerateAndHashOTP = (email, result) => {
             return result("College Staff Does Not Exist", null)
         } else {
             db.query(
-                "SELECT * FROM collegestaff_otp WHERE email = ?",
+                "SELECT * FROM collegestaff_otp WHERE BINARY email = ?",
                 [email],
                 (err, res) => {
                     if (err) {
@@ -543,7 +543,7 @@ CollegeStaff.forgotPassGenerateAndHashOTP = (email, result) => {
                     } else {
                         if (res.length > 0) {
                             // Email exists, so update the OTP
-                            const updateQuery = "UPDATE collegestaff_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                            const updateQuery = "UPDATE collegestaff_otp SET otp = ?, createdAt = NOW() WHERE BINARY email = ?";
                             db.query(
                                 updateQuery,
                                 [hashedOTP, email],
@@ -583,7 +583,7 @@ CollegeStaff.forgotPassGenerateAndHashOTP = (email, result) => {
 
 
 CollegeStaff.verifyOTP = (email, otp, result) => {
-    const query = "SELECT otp, createdAt FROM collegestaff_otp WHERE email = ?";
+    const query = "SELECT otp, createdAt FROM collegestaff_otp WHERE BINARY email = ?";
     db.query(query, [email], (err, res) => {
         if (err) {
             return result(err, null);
@@ -615,7 +615,7 @@ CollegeStaff.verifyOTP = (email, otp, result) => {
 
 CollegeStaff.searchcollegestaffbyemail = (searchKey, result) => {
     db.query(
-        "SELECT collegeStaffName FROM college_staff WHERE email= ?",
+        "SELECT collegeStaffName FROM college_staff WHERE BINARY email= ?",
         [searchKey],
         (err, res) => {
             if (err) {
@@ -640,7 +640,7 @@ CollegeStaff.searchcollegestaffbyemail = (searchKey, result) => {
 
 
 CollegeStaff.emailVerificationClgStaffOtpVerify = (email, otp, result) => {
-    const query = "SELECT otp, createdAt FROM collegestaff_otp WHERE email = ?";
+    const query = "SELECT otp, createdAt FROM collegestaff_otp WHERE BINARY email = ?";
     db.query(query, [email], (err, res) => {
         if (err) {
             return result(err, null);
@@ -659,7 +659,7 @@ CollegeStaff.emailVerificationClgStaffOtpVerify = (email, otp, result) => {
                 // If OTP not expired, proceed to compare
                 const isMatch = bcrypt.compareSync(otp, clgstaffotp);
                 if (isMatch) {
-                    db.query("UPDATE college_staff SET emailVerified = 1 WHERE email = ?", [email], (verifyErr, verifyRes) => {
+                    db.query("UPDATE college_staff SET emailVerified = 1 WHERE BINARY email = ?", [email], (verifyErr, verifyRes) => {
                         if (verifyErr) {
                             return result(err, null);
                         } else {
