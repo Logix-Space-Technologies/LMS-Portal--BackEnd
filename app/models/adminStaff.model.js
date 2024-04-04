@@ -388,51 +388,62 @@ AdminStaff.forgotPassGenerateAndHashOTP = (Email, result) => {
     const saltRounds = 10;
     const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
 
-    db.query(
-        "SELECT * FROM adminstaff_otp WHERE Email = ?",
-        [Email],
-        (err, res) => {
-            if (err) {
-                console.error("Error while checking OTP existence: ", err);
-                result(err, null);
-                return;
-            } else {
-                if (res.length > 0) {
-                    // Email exists, so update the OTP
-                    const updateQuery = "UPDATE adminstaff_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
-                    db.query(
-                        updateQuery,
-                        [hashedOTP, Email],
-                        (err, res) => {
-                            if (err) {
-                                console.error("Error while updating OTP: ", err);
-                                result(err, null);
-                            } else {
-                                console.log("OTP updated successfully");
-                                result(null, otp); // Return the plain OTP for email sending
-                            }
+    db.query("SELECT * FROM `admin_staff` WHERE BINARY `Email` = ? AND `deleteStatus` = 0 AND `isActive` = 1", [Email], (err, checkRes) => {
+        if (err) {
+            console.error("Error while checking email existence: ", err);
+            result(err, null);
+            return;
+        } else if (checkRes.length > 0) {
+            console.log("Admin Staff Does Not Exist")
+            return result("Admin Staff Does Not Exist", null);
+        } else {
+            db.query(
+                "SELECT * FROM adminstaff_otp WHERE Email = ?",
+                [Email],
+                (err, res) => {
+                    if (err) {
+                        console.error("Error while checking OTP existence: ", err);
+                        result(err, null);
+                        return;
+                    } else {
+                        if (res.length > 0) {
+                            // Email exists, so update the OTP
+                            const updateQuery = "UPDATE adminstaff_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                            db.query(
+                                updateQuery,
+                                [hashedOTP, Email],
+                                (err, res) => {
+                                    if (err) {
+                                        console.error("Error while updating OTP: ", err);
+                                        result(err, null);
+                                    } else {
+                                        console.log("OTP updated successfully");
+                                        result(null, otp); // Return the plain OTP for email sending
+                                    }
+                                }
+                            );
+                        } else {
+                            // Email does not exist, insert new OTP
+                            const insertQuery = "INSERT INTO adminstaff_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+                            db.query(
+                                insertQuery,
+                                [Email, hashedOTP],
+                                (err, res) => {
+                                    if (err) {
+                                        console.error("Error while inserting OTP: ", err);
+                                        result(err, null);
+                                    } else {
+                                        console.log("OTP inserted successfully");
+                                        result(null, otp); // Return the plain OTP for email sending
+                                    }
+                                }
+                            );
                         }
-                    );
-                } else {
-                    // Email does not exist, insert new OTP
-                    const insertQuery = "INSERT INTO adminstaff_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
-                    db.query(
-                        insertQuery,
-                        [Email, hashedOTP],
-                        (err, res) => {
-                            if (err) {
-                                console.error("Error while inserting OTP: ", err);
-                                result(err, null);
-                            } else {
-                                console.log("OTP inserted successfully");
-                                result(null, otp); // Return the plain OTP for email sending
-                            }
-                        }
-                    );
+                    }
                 }
-            }
+            );
         }
-    );
+    })
 }
 
 

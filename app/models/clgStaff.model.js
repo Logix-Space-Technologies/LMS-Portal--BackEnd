@@ -530,7 +530,7 @@ CollegeStaff.forgotPassGenerateAndHashOTP = (email, result) => {
             return;
         } else if (checkRes.length === 0) {
             console.log("College Staff Does Not Exist")
-            result("College Staff Does Not Exist", null)
+            return result("College Staff Does Not Exist", null)
         } else {
             db.query(
                 "SELECT * FROM collegestaff_otp WHERE email = ?",
