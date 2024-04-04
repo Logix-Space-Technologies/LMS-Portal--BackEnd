@@ -53,6 +53,7 @@ const StudentLogin = () => {
 
     //Function To Close Forgot Password Modal And Overlay
     const closeWaitingModel = () => {
+        setShowModal(false)
         setShowWaitingModal(false)
         setShowOverlay(false)
         setErrors({})
