@@ -19,7 +19,7 @@ const AdminStaff = function (adminStaff) {
 
 AdminStaff.create = (newAdminStaff, result) => {
 
-    db.query("SELECT * FROM admin_staff WHERE  Email=? AND deleteStatus = 0 AND isActive = 1", newAdminStaff.Email, (err, res) => {
+    db.query("SELECT * FROM admin_staff WHERE BINARY Email=? AND deleteStatus = 0 AND isActive = 1", newAdminStaff.Email, (err, res) => {
 
         if (err) {
             console.log("error: ", err);
@@ -220,7 +220,7 @@ AdminStaff.asChangePassword = (adsf, result) => {
                 const hashedNewPassword = bcrypt.hashSync(adsf.newAdSfPassword, 10);
 
                 // Query to update the password
-                const updateAstaffPasswordQuery = "UPDATE admin_staff SET Password = ?, updateStatus = 1, pwdUpdateStatus = 1, updatedDate = CURRENT_DATE() WHERE Email = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1";
+                const updateAstaffPasswordQuery = "UPDATE admin_staff SET Password = ?, updateStatus = 1, pwdUpdateStatus = 1, updatedDate = CURRENT_DATE() WHERE BINARY Email = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1";
 
                 db.query(updateAstaffPasswordQuery, [hashedNewPassword, adsf.Email], (updateErr) => {
                     if (updateErr) {
@@ -398,7 +398,7 @@ AdminStaff.forgotPassGenerateAndHashOTP = (Email, result) => {
             return result("Admin Staff Does Not Exist", null);
         } else {
             db.query(
-                "SELECT * FROM adminstaff_otp WHERE Email = ?",
+                "SELECT * FROM adminstaff_otp WHERE BINARY Email = ?",
                 [Email],
                 (err, res) => {
                     if (err) {
@@ -408,7 +408,7 @@ AdminStaff.forgotPassGenerateAndHashOTP = (Email, result) => {
                     } else {
                         if (res.length > 0) {
                             // Email exists, so update the OTP
-                            const updateQuery = "UPDATE adminstaff_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                            const updateQuery = "UPDATE adminstaff_otp SET otp = ?, createdAt = NOW() WHERE BINARY email = ?";
                             db.query(
                                 updateQuery,
                                 [hashedOTP, Email],
@@ -449,7 +449,7 @@ AdminStaff.forgotPassGenerateAndHashOTP = (Email, result) => {
 
 AdminStaff.searchadminstaffbyemail = (searchKey, result) => {
     db.query(
-        "SELECT `AdStaffName` FROM `admin_staff` WHERE `Email` = ?",
+        "SELECT `AdStaffName` FROM `admin_staff` WHERE BINARY `Email` = ?",
         [searchKey],
         (err, res) => {
             if (err) {
@@ -474,7 +474,7 @@ AdminStaff.searchadminstaffbyemail = (searchKey, result) => {
 
 
 AdminStaff.verifyOTP = (Email, otp, result) => {
-    const query = "SELECT otp, createdAt FROM adminstaff_otp WHERE email = ?";
+    const query = "SELECT otp, createdAt FROM adminstaff_otp WHERE BINARY email = ?";
     db.query(query, [Email], (err, res) => {
         if (err) {
             return result(err, null);
@@ -505,7 +505,7 @@ AdminStaff.verifyOTP = (Email, otp, result) => {
 }
 
 AdminStaff.emailVerificationOtpSendVerify = (Email, otp, result) => {
-    const query = "SELECT otp, createdAt FROM adminstaff_otp WHERE email = ?";
+    const query = "SELECT otp, createdAt FROM adminstaff_otp WHERE BINARY email = ?";
     db.query(query, [Email], (err, res) => {
         if (err) {
             return result(err, null);
@@ -524,7 +524,7 @@ AdminStaff.emailVerificationOtpSendVerify = (Email, otp, result) => {
                 // If OTP not expired, proceed to compare
                 const isMatch = bcrypt.compareSync(otp, admstaffotp);
                 if (isMatch) {
-                    db.query("UPDATE admin_staff SET emailVerified = 1 WHERE Email = ?", [Email], (verifyErr, verifyRes) => {
+                    db.query("UPDATE admin_staff SET emailVerified = 1 WHERE BINARY Email = ?", [Email], (verifyErr, verifyRes) => {
                         if (verifyErr) {
                             return result(err, null);
                         } else {
