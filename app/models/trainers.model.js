@@ -12,7 +12,7 @@ const Trainers = function (trainers) {
 };
 
 Trainers.create = (newTrainer, result) => {
-    db.query("SELECT * FROM trainersinfo WHERE email=? AND deleteStatus = 0 AND isActive = 1", newTrainer.email, (err, res) => {
+    db.query("SELECT * FROM trainersinfo WHERE BINARY email=? AND deleteStatus = 0 AND isActive = 1", newTrainer.email, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
