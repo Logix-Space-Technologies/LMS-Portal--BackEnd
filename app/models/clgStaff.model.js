@@ -523,51 +523,62 @@ CollegeStaff.forgotPassGenerateAndHashOTP = (email, result) => {
     const saltRounds = 10;
     const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
 
-    db.query(
-        "SELECT * FROM collegestaff_otp WHERE email = ?",
-        [email],
-        (err, res) => {
-            if (err) {
-                console.error("Error while checking OTP existence: ", err);
-                result(err, null);
-                return;
-            } else {
-                if (res.length > 0) {
-                    // Email exists, so update the OTP
-                    const updateQuery = "UPDATE collegestaff_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
-                    db.query(
-                        updateQuery,
-                        [hashedOTP, email],
-                        (err, res) => {
-                            if (err) {
-                                console.error("Error while updating OTP: ", err);
-                                result(err, null);
-                            } else {
-                                console.log("OTP updated successfully");
-                                result(null, otp); // Return the plain OTP for email sending
-                            }
+    db.query("SELECT * FROM `college_staff` WHERE BINARY `email` = ? AND `deleteStatus` = 0 AND `isActive` = 1", [email], (err, checkRes) => {
+        if (err) {
+            console.error("Error while checking email existence: ", err);
+            result(err, null);
+            return;
+        } else if (checkRes.length === 0) {
+            console.log("College Staff Does Not Exist")
+            result("College Staff Does Not Exist", null)
+        } else {
+            db.query(
+                "SELECT * FROM collegestaff_otp WHERE email = ?",
+                [email],
+                (err, res) => {
+                    if (err) {
+                        console.error("Error while checking OTP existence: ", err);
+                        result(err, null);
+                        return;
+                    } else {
+                        if (res.length > 0) {
+                            // Email exists, so update the OTP
+                            const updateQuery = "UPDATE collegestaff_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                            db.query(
+                                updateQuery,
+                                [hashedOTP, email],
+                                (err, res) => {
+                                    if (err) {
+                                        console.error("Error while updating OTP: ", err);
+                                        result(err, null);
+                                    } else {
+                                        console.log("OTP updated successfully");
+                                        result(null, otp); // Return the plain OTP for email sending
+                                    }
+                                }
+                            );
+                        } else {
+                            // Email does not exist, insert new OTP
+                            const insertQuery = "INSERT INTO collegestaff_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+                            db.query(
+                                insertQuery,
+                                [email, hashedOTP],
+                                (err, res) => {
+                                    if (err) {
+                                        console.error("Error while inserting OTP: ", err);
+                                        result(err, null);
+                                    } else {
+                                        console.log("OTP inserted successfully");
+                                        result(null, otp); // Return the plain OTP for email sending
+                                    }
+                                }
+                            );
                         }
-                    );
-                } else {
-                    // Email does not exist, insert new OTP
-                    const insertQuery = "INSERT INTO collegestaff_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
-                    db.query(
-                        insertQuery,
-                        [email, hashedOTP],
-                        (err, res) => {
-                            if (err) {
-                                console.error("Error while inserting OTP: ", err);
-                                result(err, null);
-                            } else {
-                                console.log("OTP inserted successfully");
-                                result(null, otp); // Return the plain OTP for email sending
-                            }
-                        }
-                    );
+                    }
                 }
-            }
+            );
         }
-    );
+    })
 }
 
 
