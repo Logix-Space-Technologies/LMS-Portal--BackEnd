@@ -393,7 +393,7 @@ AdminStaff.forgotPassGenerateAndHashOTP = (Email, result) => {
             console.error("Error while checking email existence: ", err);
             result(err, null);
             return;
-        } else if (checkRes.length > 0) {
+        } else if (checkRes.length === 0) {
             console.log("Admin Staff Does Not Exist")
             return result("Admin Staff Does Not Exist", null);
         } else {
