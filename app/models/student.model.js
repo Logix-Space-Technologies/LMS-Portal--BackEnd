@@ -337,7 +337,7 @@ Tasks.studentSessionRelatedTaskView = (studId, sessionId, result) => {
 };
 
 Student.StdChangePassword = (student, result) => {
-    const studentPassword = "SELECT password, id FROM student WHERE studEmail=? AND deleteStatus = 0 AND isActive = 1 AND ispaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
+    const studentPassword = "SELECT password, id FROM student WHERE BINARY studEmail=? AND deleteStatus = 0 AND isActive = 1 AND ispaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
     db.query(studentPassword, [student.studEmail], (err, res) => {
         if (err) {
             console.log("Error:", err);
@@ -348,7 +348,7 @@ Student.StdChangePassword = (student, result) => {
             const hashedOldPassword = res[0].password;
             const id = res[0].id;
             if (bcrypt.compareSync(student.oldPassword, hashedOldPassword)) {
-                const updateStudentPasswordQuery = "UPDATE student SET password = ?, pwdUpdateStatus = 1 WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1 AND isPaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
+                const updateStudentPasswordQuery = "UPDATE student SET password = ?, pwdUpdateStatus = 1 WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1 AND isPaid = 1 AND emailVerified = 1 AND validity > CURRENT_DATE AND isVerified = 1";
                 const hashedNewPassword = bcrypt.hashSync(student.newPassword, 10);
                 db.query(updateStudentPasswordQuery, [hashedNewPassword, student.studEmail], (updateErr) => {
                     if (updateErr) {
@@ -389,7 +389,7 @@ Student.forgotPassword = (student, result) => {
         const updateStudentPasswordQuery = `
             UPDATE student 
             SET password = ?, pwdUpdateStatus = 1 
-            WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1 AND isVerified = 1 AND isPaid = 1 AND validity > CURRENT_DATE`;
+            WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1 AND isVerified = 1 AND isPaid = 1 AND validity > CURRENT_DATE`;
 
         bcrypt.hash(student.password, 10, (err, hashedNewPassword) => {
             if (err) {
@@ -1083,7 +1083,7 @@ Student.generateAndHashOTP = (newStudentOtpSend, result) => {
                                                     return;
                                                 } else {
                                                     db.query(
-                                                        "SELECT * FROM student WHERE studEmail = ? AND deleteStatus = 0 AND isActive = 1",
+                                                        "SELECT * FROM student WHERE BINARY studEmail = ? AND deleteStatus = 0 AND isActive = 1",
                                                         [newStudentOtpSend.studEmail],
                                                         (err, res) => {
                                                             if (err) {
@@ -1097,7 +1097,7 @@ Student.generateAndHashOTP = (newStudentOtpSend, result) => {
                                                                     return;
                                                                 } else {
                                                                     db.query(
-                                                                        "SELECT * FROM student_otp WHERE email = ?",
+                                                                        "SELECT * FROM student_otp WHERE BINARY email = ?",
                                                                         [newStudentOtpSend.studEmail],
                                                                         (err, res) => {
                                                                             if (err) {
@@ -1107,7 +1107,7 @@ Student.generateAndHashOTP = (newStudentOtpSend, result) => {
                                                                             } else {
                                                                                 if (res.length > 0) {
                                                                                     // Email exists, so update the OTP
-                                                                                    const updateQuery = "UPDATE student_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                                                                                    const updateQuery = "UPDATE student_otp SET otp = ?, createdAt = NOW() WHERE BINARY email = ?";
                                                                                     db.query(
                                                                                         updateQuery,
                                                                                         [hashedOTP, newStudentOtpSend.studEmail],
@@ -1163,7 +1163,7 @@ Student.generateAndHashOTP = (newStudentOtpSend, result) => {
 
 // Function to verify OTP
 Student.verifyOTP = (studEmail, otp, result) => {
-    const query = "SELECT otp, createdAt FROM student_otp WHERE email = ?";
+    const query = "SELECT otp, createdAt FROM student_otp WHERE BINARY email = ?";
     db.query(query, [studEmail], (err, res) => {
         if (err) {
             return result(err, null);
@@ -1216,7 +1216,7 @@ Student.viewCommunityMangers = (batchId, result) => {
 //Student Validity Renewal
 
 Student.PaymentRenewal = (newStudent, result) => {
-    db.query("SELECT `validity` FROM `student` WHERE `studEmail` = ? AND `id` = ?", [newStudent.studEmail, newStudent.id], (err, res) => {
+    db.query("SELECT `validity` FROM `student` WHERE BINARY `studEmail` = ? AND `id` = ?", [newStudent.studEmail, newStudent.id], (err, res) => {
         if (err) {
             console.error("Error while selecting student: ", err);
             result(err, null);
@@ -1240,7 +1240,7 @@ Student.PaymentRenewal = (newStudent, result) => {
         // Update the student's validity
         newStudent.validity = addOneYear(formattedDate);
 
-        db.query("UPDATE student SET validity = ?, updatedDate = CURRENT_DATE, updateStatus = 1 WHERE studEmail = ? AND id = ?", [newStudent.validity, newStudent.studEmail, newStudent.id], (err, res) => {
+        db.query("UPDATE student SET validity = ?, updatedDate = CURRENT_DATE, updateStatus = 1 WHERE BINARY studEmail = ? AND id = ?", [newStudent.validity, newStudent.studEmail, newStudent.id], (err, res) => {
             if (err) {
                 console.error("Error while updating student: ", err);
                 result(err, null);
@@ -1287,7 +1287,7 @@ Student.forgotPassGenerateAndHashOTP = (studEmail, result) => {
             return result("Student Does Not Exist", null)
         } else {
             db.query(
-                "SELECT * FROM student_otp WHERE email = ?",
+                "SELECT * FROM student_otp WHERE BINARY email = ?",
                 [studEmail],
                 (err, res) => {
                     if (err) {
@@ -1297,7 +1297,7 @@ Student.forgotPassGenerateAndHashOTP = (studEmail, result) => {
                     } else {
                         if (res.length > 0) {
                             // Email exists, so update the OTP
-                            const updateQuery = "UPDATE student_otp SET otp = ?, createdAt = NOW() WHERE email = ?";
+                            const updateQuery = "UPDATE student_otp SET otp = ?, createdAt = NOW() WHERE BINARY email = ?";
                             db.query(
                                 updateQuery,
                                 [hashedOTP, studEmail],
@@ -1337,7 +1337,7 @@ Student.forgotPassGenerateAndHashOTP = (studEmail, result) => {
 
 Student.searchstudentbyemail = (searchKey, result) => {
     db.query(
-        "SELECT studName FROM student WHERE studEmail= ?",
+        "SELECT studName FROM student WHERE BINARY studEmail= ?",
         [searchKey],
         (err, res) => {
             if (err) {
@@ -1362,7 +1362,7 @@ Student.searchstudentbyemail = (searchKey, result) => {
 
 
 Student.verifyStudOTP = (studEmail, otp, result) => {
-    const query = "SELECT otp, createdAt FROM student_otp WHERE email = ?";
+    const query = "SELECT otp, createdAt FROM student_otp WHERE BINARY email = ?";
     db.query(query, [studEmail], (err, res) => {
         if (err) {
             return result(err, null);
@@ -1455,7 +1455,7 @@ Student.renewalReminder = async (id) => {
 };
 
 Student.emailverifyStudOTP = (studEmail, otp, result) => {
-    const query = "SELECT otp, createdAt FROM student_otp WHERE email = ?";
+    const query = "SELECT otp, createdAt FROM student_otp WHERE BINARY email = ?";
     db.query(query, [studEmail], (err, res) => {
         if (err) {
             return result(err, null);
@@ -1486,7 +1486,7 @@ Student.emailverifyStudOTP = (studEmail, otp, result) => {
 }
 
 Student.emailVerifyAndPasswordChange = (studEmail, password, result) => {
-    db.query("SELECT * FROM `student` WHERE `studEmail` = ?", [studEmail],
+    db.query("SELECT * FROM `student` WHERE BINARY `studEmail` = ?", [studEmail],
         (err, res) => {
             if (err) {
                 console.log("Error: ", err)
@@ -1497,7 +1497,7 @@ Student.emailVerifyAndPasswordChange = (studEmail, password, result) => {
                     return result("Old Password And New Password Cannot Be Same.", null)
                 } else {
                     const hashedNewPassword = bcrypt.hashSync(password, 10);
-                    db.query("UPDATE student SET password = ?, emailVerified = 1 WHERE studEmail = ?", [hashedNewPassword, studEmail], (verifyErr, verifyRes) => {
+                    db.query("UPDATE student SET password = ?, emailVerified = 1 WHERE BINARY studEmail = ?", [hashedNewPassword, studEmail], (verifyErr, verifyRes) => {
                         if (verifyErr) {
                             return result(err, null);
                         } else {
