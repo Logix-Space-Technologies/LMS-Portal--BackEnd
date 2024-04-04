@@ -1284,7 +1284,7 @@ Student.forgotPassGenerateAndHashOTP = (studEmail, result) => {
             return;
         } else if (checkRes.length === 0) {
             console.log("Student Does Not Exist")
-            result("Student Does Not Exist", null)
+            return result("Student Does Not Exist", null)
         } else {
             db.query(
                 "SELECT * FROM student_otp WHERE email = ?",
