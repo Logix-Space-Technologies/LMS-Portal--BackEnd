@@ -58,6 +58,7 @@ const AdminStaffLogin = () => {
     const closeWaitingModel = () => {
         setShowWaitingModal(false)
         setShowOverlay(false)
+        setState(false)
         setErrors({})
         setUpdateField({
             Email: "",
@@ -175,7 +176,7 @@ const AdminStaffLogin = () => {
                     setState(true)
                 } else {
                     alert(response.data.status)
-                    setShowModal(true)
+                    setShowWaitingModal(true)
                     setShowOverlay(true);
                 }
             }

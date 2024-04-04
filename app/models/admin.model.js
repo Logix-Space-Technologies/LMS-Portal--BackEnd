@@ -84,7 +84,7 @@ Admin.adminChangePassword = (ad, result) => {
 };
 
 Admin.forgotpassword = (admin, result) => {
-    const getAdminQuery = "SELECT * FROM admin WHERE userName = ?";
+    const getAdminQuery = "SELECT * FROM admin WHERE BINARY userName = ?";
     db.query(getAdminQuery, [admin.userName], (err, res) => {
         if (err) {
             console.log("Error: ", err);
@@ -93,7 +93,7 @@ Admin.forgotpassword = (admin, result) => {
         } else if (res.length === 0) {
             result("User not found!!!", null);
         } else {
-            const updatePasswordQuery = "UPDATE admin SET Password = ?, updateStatus = 1 WHERE userName = ?";
+            const updatePasswordQuery = "UPDATE admin SET Password = ?, updateStatus = 1 WHERE BINARY userName = ?";
             const hashedNewPassword = bcrypt.hashSync(admin.Password, 10);
 
             db.query(updatePasswordQuery, [hashedNewPassword, admin.userName], (updateErr, updateRes) => {
