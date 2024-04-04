@@ -175,7 +175,7 @@ const AdminStaffLogin = () => {
                     setState(true)
                 } else {
                     alert(response.data.status)
-                    setShowModal(true)
+                    setShowWaitingModal(true)
                     setShowOverlay(true);
                 }
             }
