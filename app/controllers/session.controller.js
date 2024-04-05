@@ -189,9 +189,6 @@ exports.sessionUpdate = (request, response) => {
             if (Validator.isEmpty(request.body.sessionName).isValid) {
                 validationErrors.sessionName = Validator.isEmpty(request.body.sessionName).message;
             }
-            if (!Validator.isValidName(request.body.sessionName).isValid) {
-                validationErrors.sessionName = Validator.isValidName(request.body.sessionName).message;
-            }
             if (Validator.isEmpty(request.body.date).isValid) {
                 validationErrors.date = Validator.isEmpty(request.body.date).message;
             }

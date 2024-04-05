@@ -84,9 +84,6 @@ exports.createMaterial = (request, response) => {
                         if (Validator.isEmpty(materialType).isValid) {
                             validationErrors.materialType = Validator.isEmpty(materialType).message;
                         }
-                        if (!Validator.isValidAddress(materialDesc).isValid) {
-                            validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
-                        }
 
                         if (!request.file) {
                             validationErrors.file = 'Please upload a file'
@@ -149,10 +146,6 @@ exports.createMaterial = (request, response) => {
                     if (Validator.isEmpty(materialType).isValid) {
                         validationErrors.materialType = Validator.isEmpty(materialType).message;
                     }
-                    if (!Validator.isValidAddress(materialDesc).isValid) {
-                        validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
-                    }
-
                     if (!Validator.isValidWebsite(uploadFile).isValid) {
                         validationErrors.website = Validator.isValidWebsite(uploadFile).message;
                     }
@@ -272,10 +265,7 @@ exports.updateMaterial = (request, response) => {
                         if (Validator.isEmpty(materialType).isValid) {
                             validationErrors.materialType = Validator.isEmpty(materialType).message;
                         }
-                        if (!Validator.isValidAddress(materialDesc).isValid) {
-                            validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
-                        }
-
+                    
                         if (!request.file) {
                             validationErrors.file = 'Please upload a file'
                         }
@@ -340,9 +330,6 @@ exports.updateMaterial = (request, response) => {
                     }
                     if (Validator.isEmpty(materialType).isValid) {
                         validationErrors.materialType = Validator.isEmpty(materialType).message;
-                    }
-                    if (!Validator.isValidAddress(materialDesc).isValid) {
-                        validationErrors.materialDesc = Validator.isValidAddress(materialDesc).message;
                     }
 
                     // If validation fails
