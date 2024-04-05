@@ -259,7 +259,7 @@ Admin.adminDashBoard = (result) => {
 
 
 Admin.getAll = async (result) => {
-    let query = "SELECT * FROM adminstafflog WHERE AdmStaffId=0 ORDER BY DateTime DESC"
+    let query = "SELECT * FROM adminstafflog WHERE AdmStaffId = 0 AND DateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY DateTime DESC;"
     db.query(query, (err, response) => {
         if (err) {
             console.log("Error : ", err)
