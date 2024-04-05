@@ -200,16 +200,30 @@ const AdminAddTask = () => {
                     "key": currentKey
                 }
             }
-            let data = {
-                "batchId": inputField.batchId,
-                "sessionId": inputField.sessionId,
-                "taskTitle": inputField.taskTitle,
-                "taskDesc": inputField.taskDesc,
-                "taskType": inputField.taskType,
-                "totalScore": inputField.totalScore,
-                "dueDate": inputField.dueDate,
-                "taskFileUpload": file,
-                "addedby": addedBy
+            let data = {}
+            if (file) {
+                data = {
+                    "batchId": inputField.batchId,
+                    "sessionId": inputField.sessionId,
+                    "taskTitle": inputField.taskTitle,
+                    "taskDesc": inputField.taskDesc,
+                    "taskType": inputField.taskType,
+                    "totalScore": inputField.totalScore,
+                    "dueDate": inputField.dueDate,
+                    "taskFileUpload": file,
+                    "addedby": addedBy
+                }
+            } else {
+                data = {
+                    "batchId": inputField.batchId,
+                    "sessionId": inputField.sessionId,
+                    "taskTitle": inputField.taskTitle,
+                    "taskDesc": inputField.taskDesc,
+                    "taskType": inputField.taskType,
+                    "totalScore": inputField.totalScore,
+                    "dueDate": inputField.dueDate,
+                    "addedby": addedBy
+                }
             }
             setShowWaitingModal(true)
             setShowOverlay(true)
@@ -340,7 +354,7 @@ const AdminAddTask = () => {
         if (!data.dueDate.trim()) {
             errors.dueDate = 'Due Date is required';
         }
-        if (fileType !== "pdf" && fileType !== "docx") {
+        if (file && fileType !== "pdf" && fileType !== "docx") {
             errors.file = "File must be in PDF or DOCX format";
         }
         return errors;
@@ -516,7 +530,7 @@ const AdminAddTask = () => {
                                     </div>
                                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                         <label htmlFor="taskFileUpload" className="form-label">
-                                            Task File <span className="text-danger">*</span>
+                                            Task File
                                         </label>
                                         <input type="file" className="form-control" name="taskFileUpload" id="taskFileUpload" onChange={fileUploadHandler} />
                                         {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}

@@ -41,8 +41,37 @@ Tasks.taskCreate = (newTask, result) => {
                     result("Task Title already exists.", null);
                     return;
                 } else {
+
+                    let createQuery;
+                    let createValues;
+
+                    if (newTask.taskFileUpload) {
+                        createQuery = "INSERT INTO `task`(`batchId`, `sessionId`, `taskTitle`, `taskDesc`, `taskType`, `taskFileUpload`, `totalScore`, `dueDate`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                        createValues = [
+                            newTask.batchId,
+                            newTask.sessionId,
+                            newTask.taskTitle,
+                            newTask.taskDesc,
+                            newTask.taskType,
+                            newTask.taskFileUpload,
+                            newTask.totalScore,                    
+                            newTask.dueDate
+                        ];
+                    } else {
+                        createQuery = "INSERT INTO `task`(`batchId`, `sessionId`, `taskTitle`, `taskDesc`, `taskType`, `totalScore`, `dueDate`) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                        createValues = [
+                            newTask.batchId,
+                            newTask.sessionId,
+                            newTask.taskTitle,
+                            newTask.taskDesc,
+                            newTask.taskType,
+                            newTask.totalScore,                    
+                            newTask.dueDate
+                        ];
+                    }
+                    
                     // Insert the new task
-                    db.query("INSERT INTO task SET ?", newTask, (err, res) => {
+                    db.query(createQuery, createValues, (err, res) => {
                         if (err) {
                             console.error("Error inserting task: ", err);
                             result(err, null);
