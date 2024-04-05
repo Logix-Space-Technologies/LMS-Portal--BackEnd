@@ -212,7 +212,7 @@ Refund.approveRefund = (approvedAmnt, admStaffId, transactionNo, adminRemarks, r
 
         // Continue to approve refund if refund ID exists
         db.query(
-            "UPDATE refund SET refundApprovalStatus = 1, approvedAmnt = ?, transactionNo = ?, adminRemarks = ?, refundStatus = 1, refundInitiatedDate=CURRENT_DATE(), admStaffId=? WHERE id = ?",
+            "UPDATE refund SET approvedAmnt = ?, transactionNo = ?, adminRemarks = ?, refundStatus = 1, refundInitiatedDate=CURRENT_DATE(), admStaffId=? WHERE id = ?",
             [approvedAmnt, transactionNo, adminRemarks, admStaffId, refundId],
             (err, res) => {
                 if (err) {

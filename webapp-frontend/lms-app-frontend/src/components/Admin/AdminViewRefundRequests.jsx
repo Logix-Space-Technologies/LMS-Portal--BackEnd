@@ -392,6 +392,9 @@ const AdminViewRefundRequests = () => {
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
 
                         </th>
+                        <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+
+                        </th>
 
 
                       </tr>
@@ -436,7 +439,12 @@ const AdminViewRefundRequests = () => {
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.refundApprovalStatus !== "Amount Refunded" && (
-                              <button onClick={() => approveValue(value.refundId)} type="button" className="btn btn-primary" disabled={value.refundApprovalStatus === "Amount Refunded" || isGreaterThanFiveDays === false}>Approve Refund</button>
+                              <button type="button" className="btn btn-primary" disabled={value.refundApprovalStatus === "Amount Refunded" || isGreaterThanFiveDays === false}>Approve Refund</button>
+                            )}
+                          </td>
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {value.refundApprovalStatus !== "Amount Refunded" && (
+                              <button onClick={() => approveValue(value.refundId)} type="button" className="btn btn-primary" disabled={value.refundApprovalStatus === "Amount Refunded" || isGreaterThanFiveDays === false}>Initiate Refund</button>
                             )}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
