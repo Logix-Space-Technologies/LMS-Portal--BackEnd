@@ -185,7 +185,7 @@ Refund.viewRefundStatus = (studId, result) => {
                     result("Your application is under process.", null);
                 } else {
                     // Format the date for each refund request
-                    const formattedRefund = res.map(refund => ({ ...refund, requestedDate: refund.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), refundInitiatedDate: refund.refundInitiatedDate ? refund.refundInitiatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
+                    const formattedRefund = res.map(refund => ({ ...refund, requestedDate: refund.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), refundInitiatedDate: refund.refundInitiatedDate ? refund.refundInitiatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null })); // Formats the date as 'YYYY-MM-DD'
                     // Return refund details with student name and college name
                     result(null, formattedRefund);
                 }

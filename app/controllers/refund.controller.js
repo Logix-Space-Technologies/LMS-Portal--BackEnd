@@ -62,14 +62,14 @@ exports.getRefundStatus = (request, response) => {
             Refund.viewRefundStatus(request.body.studId, (err, data) => {
                 if (err) {
                     console.log(err);
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     console.log("Refund status successfully retrieved");
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
