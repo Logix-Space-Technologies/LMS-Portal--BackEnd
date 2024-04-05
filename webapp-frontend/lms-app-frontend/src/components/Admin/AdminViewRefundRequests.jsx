@@ -12,6 +12,7 @@ const AdminViewRefundRequests = () => {
   const [errors, setErrors] = useState({});
   const [reject, setReject] = useState({})
   const [approve, setApprove] = useState({})
+  const [approveAmnt, setApproveAmnt] = useState({})
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showRejectModal, setRejectShowModal] = useState(false);
@@ -72,6 +73,7 @@ const AdminViewRefundRequests = () => {
         if (response.data.data) {
           setIsLoading(false)
           setRefundRequests(response.data.data);
+          setApproveField()
         } else {
           if (response.data.status === "Unauthorized User!!") {
             { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
@@ -205,7 +207,7 @@ const AdminViewRefundRequests = () => {
         "admStaffId": sessionStorage.getItem("admstaffId"),
         "adminRemarks": approveField.adminRemarks,
         "transactionNo": approveField.transactionNo,
-        "approvedAmnt": approveField.approvedAmnt
+        "approvedAmnt": approveAmnt
       }
       setShowModal(false)
       setShowWaitingModal(true)
@@ -299,10 +301,11 @@ const AdminViewRefundRequests = () => {
   const startPage = currentPage > 2 ? currentPage - 2 : 1;
   const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
 
-  const approveValue = (id) => {
+  const approveValue = (id, approvedAmnt) => {
     setShowModal(true)
     setShowOverlay(true)
     setApprove(id)
+    setApproveAmnt(approvedAmnt)
   }
 
   // Function to close both modal and overlay
@@ -444,7 +447,7 @@ const AdminViewRefundRequests = () => {
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.refundApprovalStatus !== "Amount Refunded" && (
-                              <button onClick={() => approveValue(value.refundId)} type="button" className="btn btn-primary" disabled={value.refundApprovalStatus === "Amount Refunded" || isGreaterThanFiveDays === false}>Initiate Refund</button>
+                              <button onClick={() => approveValue(value.refundId, value.approvedAmnt)} type="button" className="btn btn-primary" disabled={value.refundApprovalStatus === "Amount Refunded" || isGreaterThanFiveDays === false}>Initiate Refund</button>
                             )}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
@@ -544,7 +547,7 @@ const AdminViewRefundRequests = () => {
                 <form>
                   <div className="mb-3">
                     <label htmlFor="message-text" className="col-form-label">Refund Amount<span className="text-danger">*</span></label>
-                    <textarea name="approvedAmnt" className="form-control" value={approveField.approvedAmnt} onChange={approveHandler} />
+                    <textarea name="approvedAmnt" className="form-control" value={approveField.approvedAmnt} onChange={approveHandler} disabled />
                     {errors.approvedAmnt && <span style={{ color: 'red' }} className="error">{errors.approvedAmnt}</span>}
                   </div>
                   <div className="mb-3">
