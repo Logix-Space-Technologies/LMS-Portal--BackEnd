@@ -711,54 +711,16 @@ Student.refundAmountReceivedStatus = (studId, result) => {
 Student.searchStudentsByAdmAndAdmstf = (search, result) => {
     const searchString = '%' + search + '%';
     db.query(
-        `
-        SELECT 
-            s.studName, 
-            s.id, 
-            s.studProfilePic, 
-            c.collegeName, 
-            s.collegeId, 
-            s.batchId, 
-            s.admNo, 
-            s.rollNo, 
-            s.studDept, 
-            s.course, 
-            s.studEmail, 
-            s.studPhNo, 
-            s.aadharNo, 
-            s.membership_no 
-        FROM 
-            student s 
-            LEFT JOIN college c ON s.collegeId = c.id 
-        WHERE 
-            s.deleteStatus = 0 
-            AND s.isActive = 1 
-            AND s.emailVerified = 1 
-            AND s.isPaid = 1 
-            AND s.isVerified = 1 
-            AND (
-                s.id LIKE ? 
-                OR s.collegeId LIKE ? 
-                OR s.batchId LIKE ? 
-                OR s.studName LIKE ? 
-                OR s.admNo LIKE ? 
-                OR s.rollNo LIKE ? 
-                OR s.studDept LIKE ? 
-                OR s.course LIKE ? 
-                OR s.studEmail LIKE ? 
-                OR s.studPhNo LIKE ? 
-                OR s.aadharNo LIKE ? 
-                OR s.membership_no LIKE ?
-            )
-        `,
+        "SELECT cm.id AS commManagerId, s.studName, s.id, s.studProfilePic, b.batchName, c.collegeName, s.collegeId, s.batchId, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.aadharNo, s.membership_no, s.validity, CASE WHEN cm.studentId IS NOT NULL AND cm.deleteStatus = 0 AND cm.isActive = 1 THEN TRUE ELSE FALSE END AS communityManager FROM student s LEFT JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id LEFT JOIN communitymanagers cm ON s.id = cm.studentId WHERE s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND (s.id LIKE ? OR s.collegeId LIKE ? OR s.batchId LIKE ? OR s.studName LIKE ? OR s.admNo LIKE ? OR s.rollNo LIKE ? OR s.studDept LIKE ? OR s.course LIKE ? OR s.studEmail LIKE ? OR s.studPhNo LIKE ? OR s.aadharNo LIKE ? OR s.membership_no LIKE ?) ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity",
         [searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString],
         (err, res) => {
             if (err) {
                 console.log("Error: ", err);
                 result(err, null);
             } else {
-                console.log("Student Details: ", res);
-                result(null, res);
+                const formattedStudent = res.map(student => ({ ...student, validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) })); // Formats the date as 'YYYY-MM-DD'
+                console.log("Student Details: ", formattedStudent);
+                result(null, formattedStudent);
             }
         }
     );
