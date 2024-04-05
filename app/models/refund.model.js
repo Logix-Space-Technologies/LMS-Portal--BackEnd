@@ -46,7 +46,7 @@ Refund.createRefundRequest = (newRefund, result) => {
 
                     // Retrieve payment information for the specified student ID
                     db.query(
-                        "SELECT paymentdate, rpAmount FROM payment WHERE studId = ? ORDER BY paymentdate ASC",
+                        "SELECT paymentdate, rpAmount FROM payment WHERE studId = ? ORDER BY paymentdate DESC LIMIT 1;",
                         [newRefund.studId],
                         (paymentErr, paymentRes) => {
                             if (paymentErr) {
@@ -72,9 +72,10 @@ Refund.createRefundRequest = (newRefund, result) => {
                             // Calculate the remaining payment period in days
                             const currentDate = new Date();
                             const paymentStartDate = new Date(paymentRes[0].paymentdate);
-                            const daysSincePaymentStart = Math.floor(
+                            let daysSincePaymentStart = Math.floor(
                                 (currentDate - paymentStartDate) / (24 * 60 * 60 * 1000)
                             );
+                            daysSincePaymentStart=daysSincePaymentStart-1
                             if (daysSincePaymentStart < 0) {
                                 console.error("Error calculating days since payment start:", daysSincePaymentStart);
                                 result("Error calculating days since payment start.", null);
