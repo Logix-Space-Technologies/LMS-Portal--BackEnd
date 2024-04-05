@@ -12,7 +12,7 @@ const AdminViewRefundRequests = () => {
   const [errors, setErrors] = useState({});
   const [reject, setReject] = useState({})
   const [approve, setApprove] = useState({})
-  const [approveAmnt, setApproveAmnt] = useState({})
+  const [approveAmnt, setApproveAmnt] = useState(null)
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showRejectModal, setRejectShowModal] = useState(false);
@@ -73,7 +73,6 @@ const AdminViewRefundRequests = () => {
         if (response.data.data) {
           setIsLoading(false)
           setRefundRequests(response.data.data);
-          setApproveField()
         } else {
           if (response.data.status === "Unauthorized User!!") {
             { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
@@ -318,7 +317,7 @@ const AdminViewRefundRequests = () => {
       refundAmnt: "",
       transactionNo: ""
     });
-
+    setApproveAmnt(null)
 
   };
 
