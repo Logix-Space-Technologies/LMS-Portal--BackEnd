@@ -2,9 +2,16 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import '../../config/config';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const AdminViewAllAdminStaff = () => {
+  const [inputField, setInputField] = useState({
+    "adminStaffSearchQuery": ""
+  });
+
+  const inputHandler = (event) => {
+    setInputField({ ...inputField, [event.target.name]: event.target.value });
+  };
 
   const [admStaffData, setAdmStaffData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,11 +24,49 @@ const AdminViewAllAdminStaff = () => {
 
   const apiUrl = global.config.urls.api.server + "/api/lms/viewalladmstaff";
   const deleteUrl = global.config.urls.api.server + "/api/lms/deleteadmstaff";
+  const apiLink = global.config.urls.api.server + "/api/lms/searchAdminStaff";
 
   const closeWaitingModal = () => {
     setShowOverlay(false)
     setShowWaitingModal(false)
   }
+
+  const readSearchValue = () => {
+    setIsLoading(true); // Start loading before the request
+
+    let axiosConfig = {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*",
+        "token": sessionStorage.getItem("admtoken"),
+        "key": sessionStorage.getItem("admkey")
+      }
+    };
+
+    axios.post(apiLink, inputField, axiosConfig).then(
+      (response) => {
+        // Always stop loading when you get a response
+        setIsLoading(false);
+
+        if (response.data.data) {
+          setAdmStaffData(response.data.data);
+          setInputField({ "adminStaffSearchQuery": "" });
+        } else if (response.data.status === "Unauthorized User!!") {
+          navigate("/");
+          sessionStorage.clear();
+        } else if (!response.data.data) {
+          getData()
+          setInputField({ "adminStaffSearchQuery": "" });
+        } else {
+          alert(response.data.status);
+        }
+      }
+    ).catch(error => {
+      // Stop loading and handle error
+      setIsLoading(false);
+      console.error("There was an error!", error);
+    });
+  };
 
   const getData = () => {
     let axiosConfig = {
@@ -127,10 +172,20 @@ const AdminViewAllAdminStaff = () => {
 
   return (
     <div>
-      <Navbar />
+      <Navbar /><br />
       <section className="bg-gray-100 min-h-screen p-4">
         <div className="container mx-auto">
           <h1 className="text-3xl font-semibold text-gray-800 mb-6">Admin Staff List</h1>
+          <div className="row">
+            <div className="col col-12">
+              <br />
+              <br />
+              <input onChange={inputHandler} type="text" className="form-control" name="adminStaffSearchQuery" value={inputField.adminStaffSearchQuery} placeholder='Search By Admin Staff Name/Phone No/Address/Aadhar No/Email' />
+              <br></br>
+              <button onClick={readSearchValue} className="btn btn-warning">Search</button>
+              <br /><br />
+            </div>
+          </div>
           {isLoading ? <div className="flex justify-center items-center h-full">
             <div className="text-center py-20">
               <div>Loading...</div>
