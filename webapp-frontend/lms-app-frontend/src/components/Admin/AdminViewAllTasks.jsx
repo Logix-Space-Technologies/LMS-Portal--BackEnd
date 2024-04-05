@@ -217,7 +217,9 @@ const AdminViewAllTasks = () => {
                                             <td className="px-6 py-4">NIL</td>
                                         )}
                                         <td className="px-6 py-4">
-                                            <Link target="_blank" to={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View File</Link>
+                                            {value.taskFileUpload !== null && (
+                                                <Link target="_blank" to={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View File</Link>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4">
                                             <button onClick={() => handleUpdateClick(value.id)} className="btn btn-primary btn-sm me-2">Update</button>
