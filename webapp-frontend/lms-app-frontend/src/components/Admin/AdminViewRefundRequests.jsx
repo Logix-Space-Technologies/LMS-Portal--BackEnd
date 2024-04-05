@@ -106,9 +106,7 @@ const AdminViewRefundRequests = () => {
     if (!data.adminRemarks) {
       errors.adminRemarks = 'Remark is required';
     }
-    if (!data.approvedAmnt) {
-      errors.approvedAmnt = 'Amount is required';
-    }
+
     if (!data.transactionNo) {
       errors.transactionNo = 'Transaction No. is required';
     }
@@ -301,11 +299,12 @@ const AdminViewRefundRequests = () => {
   const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
 
   const approveValue = (id, approvedAmnt) => {
-    setShowModal(true)
-    setShowOverlay(true)
-    setApprove(id)
-    setApproveAmnt(approvedAmnt)
-  }
+    setApprove(id);
+    setApproveAmnt(approvedAmnt); // Set the approveAmnt value
+    setShowModal(true); // Open the modal
+    setShowOverlay(true); // Show overlay
+  };
+
 
   // Function to close both modal and overlay
   const closeModal = () => {
@@ -440,18 +439,18 @@ const AdminViewRefundRequests = () => {
                             {value.AmountReceivedStatus}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                            {value.refundApprovalStatus !== "Amount Refunded" && (
-                              <button type="button" className="btn btn-primary" disabled={value.refundApprovalStatus === "Amount Refunded" || isGreaterThanFiveDays === false}>Approve Refund</button>
+                            {value.refundApprovalStatus !== "Amount Approved" && (
+                              <button type="button" className="btn btn-primary" disabled={isGreaterThanFiveDays === false}>Approve Refund</button>
                             )}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                            {value.refundApprovalStatus !== "Amount Refunded" && (
-                              <button onClick={() => approveValue(value.refundId, value.approvedAmnt)} type="button" className="btn btn-primary" disabled={value.refundApprovalStatus === "Amount Refunded" || isGreaterThanFiveDays === false}>Initiate Refund</button>
+                            {value.refundApprovalStatus === "Amount Approved" && (
+                              <button onClick={() => approveValue(value.refundId, value.approvedAmnt)} type="button" className="btn btn-primary" disabled={isGreaterThanFiveDays === false}>Initiate Refund</button>
                             )}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                            {value.refundApprovalStatus !== "Amount Refunded" && (
-                              <button type="button" onClick={() => readValue(value.refundId)} className="btn btn-primary" disabled={value.refundApprovalStatus === "Amount Refunded" || isGreaterThanFiveDays === false}>Reject Refund</button>
+                            {value.refundApprovalStatus === "Amount Approved" && (
+                              <button type="button" onClick={() => readValue(value.refundId)} className="btn btn-primary" disabled={isGreaterThanFiveDays === false}>Reject Refund</button>
                             )}
                           </td>
                         </tr>
@@ -539,15 +538,20 @@ const AdminViewRefundRequests = () => {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h1 className="modal-title fs-5" id="exampleModalLabel">Approve Refund</h1>
+                <h1 className="modal-title fs-5" id="exampleModalLabel">Initiate Refund</h1>
                 <button type="button" className="btn-close" onClick={closeModal} />
               </div>
               <div className="modal-body">
                 <form>
                   <div className="mb-3">
                     <label htmlFor="message-text" className="col-form-label">Refund Amount<span className="text-danger">*</span></label>
-                    <textarea name="approvedAmnt" className="form-control" value={approveField.approvedAmnt} onChange={approveHandler} disabled />
-                    {errors.approvedAmnt && <span style={{ color: 'red' }} className="error">{errors.approvedAmnt}</span>}
+                    <textarea
+                      name="approvedAmnt"
+                      className="form-control"
+                      value={approveAmnt}
+                      disabled
+                    />
+                    {/* {errors.approvedAmnt && <span style={{ color: 'red' }} className="error">{errors.approvedAmnt}</span>} */}
                   </div>
                   <div className="mb-3">
                     <label htmlFor="message-text" className="col-form-label">Transaction No<span className="text-danger">*</span></label>
