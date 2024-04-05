@@ -7,6 +7,10 @@ import '../../config/config';
 
 const AdminViewAllBatch = () => {
 
+    const [inputField, setInputField] = useState({
+        "batchQuery": ""
+    });
+
     const [batchData, setBatchData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [batchesPerPage] = useState(10); // Number of batches per page
@@ -18,13 +22,59 @@ const AdminViewAllBatch = () => {
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
+    const inputHandler = (event) => {
+        const { name, value } = event.target;
+        setInputField({ ...inputField, [name]: value });
+    };
+
     const apiUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch";
+    const apiUrl3 = global.config.urls.api.server + '/api/lms/searchBatch';
+
 
     const closeWaitingModal = () => {
         setShowOverlay(false)
         setShowWaitingModal(false)
     }
+
+    const searchBatches = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        setIsLoading(true);
+        const axiosConfig3 = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+        axios.post(apiUrl3, inputField, axiosConfig3).then((response) => {
+            if (response.data.data) {
+                setBatchData(response.data.data);
+                setInputField({ batchQuery: "" })
+                setIsLoading(false);
+            } else if (response.data.status === "Unauthorized User!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                sessionStorage.clear()
+            } else if (!response.data.data) {
+                getData();
+                setInputField({ batchQuery: "" })
+                setIsLoading(false);
+            } else {
+                alert(response.data.status)
+                setInputField({ batchQuery: "" })
+                setIsLoading(false);
+            }
+        })
+    };
+
+
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -162,8 +212,26 @@ const AdminViewAllBatch = () => {
 
                 <div></div>
             </div>
-            <br />
             <br /><br />
+            <div className="row">
+                <div className="col">
+                    <div className="input-group">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search by batch name, college name, or description..."
+                            value={inputField.batchQuery}
+                            onChange={inputHandler}
+                            name="batchQuery"
+                        />
+                    </div>
+                    <br></br>
+                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <button onClick={searchBatches} className="btn btn-warning">Search</button>
+                    </div>
+                    <br />
+                </div>
+            </div>
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">
                     <div>Loading...</div>
