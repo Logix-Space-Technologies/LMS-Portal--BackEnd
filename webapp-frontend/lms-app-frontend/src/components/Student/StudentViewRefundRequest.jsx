@@ -161,7 +161,7 @@ const StudentViewRefundRequest = () => {
                                                                     <p className="card-text">Refund Approval : {value.refundStatus}</p>
                                                                     <p className="card-text">Approval Status : {value.approvalStatus}</p>
                                                                     <p className="card-text">Your Refund Request has being sent...Please wait for the Approval.</p>
-                                                                    <p className="card-text-centre">If you want to cancel your refund request... kindly click on <b>Cancel Request</b></p>
+                                                                    <p className="card-text-centre">If you want to cancel your refund request... kindly click on <b>Cancel Request</b> within <b>5 days</b> from your <b>requested date</b>.</p>
                                                                     <p className="card-text"><b>Thank You!!</b></p>
                                                                     <br></br>
                                                                     <div className="flex justify-between">
