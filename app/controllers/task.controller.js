@@ -96,15 +96,12 @@ exports.createTask = (request, response) => {
                         validationErrors.sessionId = Validator.isEmpty(sessionId).message;
                     }
 
-                    if (Validator.isValidTitle(taskTitle).isValid) {
-                        validationErrors.taskTitle = Validator.isValidTitle(taskTitle).message;
+                    if (Validator.isEmpty(taskTitle).isValid) {
+                        validationErrors.taskTitle = Validator.isEmpty(taskTitle).message;
                     }
 
                     if (Validator.isEmpty(taskDesc).isValid) {
                         validationErrors.taskDesc = Validator.isEmpty(taskDesc).message;
-                    }
-                    if (!Validator.isValidAddress(taskDesc).isValid) {
-                        validationErrors.taskDesc = Validator.isValidAddress(taskDesc).message; //validation for task description.
                     }
 
                     if (Validator.isEmpty(taskType).isValid) {
