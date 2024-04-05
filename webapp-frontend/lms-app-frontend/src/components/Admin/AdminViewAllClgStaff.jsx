@@ -7,6 +7,14 @@ import '../../config/config';
 
 const AdminViewAllClgStaff = () => {
 
+  const [inputField, setInputField] = useState({
+    "searchQuery": ""
+  });
+
+  const inputHandler = (event) => {
+    setInputField({ searchQuery: event.target.value });
+  };
+
   const [clgStaffData, setClgStaffData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [clgStaffPerPage] = useState(10); // Number of college staff per page
@@ -20,6 +28,60 @@ const AdminViewAllClgStaff = () => {
 
   const apiUrl = global.config.urls.api.server + "/api/lms/viewallcollegestaff";
   const deleteUrl = global.config.urls.api.server + "/api/lms/deletecolgstaff";
+  const searchApiLink = global.config.urls.api.server + "/api/lms/searchCollegeStaff";
+
+
+  const searchCollegeStaff = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
+    setIsLoading(true);
+
+    let axiosConfig = {
+      headers: {
+        "content-type": "application/json;charset=UTF-8",
+        "Access-Control-Allow-Origin": "*",
+        "token": token,
+        "key": currentKey
+      }
+    };
+
+    axios.post(searchApiLink, { searchQuery: inputField.searchQuery }, axiosConfig).then(response => {
+      if (response.data.data) {
+        setClgStaffData(response.data.data);
+        setIsLoading(false);
+        setInputField(
+          {
+            searchQuery: ""
+          }
+        )
+        setCurrentPage(1); // Reset to the first page after the search
+      } else if (response.data.status === "Unauthorized User!!") {
+        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+        sessionStorage.clear()
+      } else if (!response.data.data) {
+        getData()
+        setIsLoading(false);
+        setInputField(
+          {
+            searchQuery: ""
+          }
+        )
+      } else {
+        setIsLoading(false);
+        alert(response.data.status)
+        setInputField(
+          {
+            searchQuery: ""
+          }
+        )
+      }
+    })
+  };
 
   const closeWaitingModal = () => {
     setShowOverlay(false)
@@ -147,6 +209,15 @@ const AdminViewAllClgStaff = () => {
       <section className="bg-gray-100 min-h-screen p-4">
         <div className="container mx-auto">
           <h1 className="text-3xl font-semibold text-gray-800 mb-6">College Staff List</h1>
+          <div className="row justify-content-center">
+            <div className="col-12 col-md-8 text-center">
+              <div className="d-flex justify-content-center align-items-center">
+                <input onChange={inputHandler} type="text" className="form-control" name="searchQuery" value={inputField.searchQuery} placeholder='Name/College/Email/Phone No./Department' />
+                <button onClick={searchCollegeStaff} className="btn btn-warning ms-2">Search</button>
+              </div>
+            </div>
+          </div>
+          <br />
           {isLoading ? <div className="flex justify-center items-center h-full">
             <div className="text-center py-20">
               <div>Loading...</div>
