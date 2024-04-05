@@ -43,6 +43,12 @@ const AdminViewRefundRequests = () => {
     setShowWaitingModal(false)
   }
 
+  // Convert a date string from 'DD/MM/YYYY' to a JavaScript Date object
+  const parseDateString = (dateString) => {
+    const [day, month, year] = dateString.split('/');
+    return new Date(year, month - 1, day);
+  };
+
   const getData = () => {
     let currentKey = sessionStorage.getItem("admkey");
     let token = sessionStorage.getItem("admtoken");
@@ -347,6 +353,14 @@ const AdminViewRefundRequests = () => {
                     </thead>
                     <tbody>
                       {refundRequests.length > 0 ? currentStudents.map((value, index) => {
+                        const requestedDate = parseDateString(value.requestedDate)
+                        const currentDate = new Date()
+
+                        const oneDayInMilliseconds = 1000 * 60 * 60 * 24;
+
+                        const differenceInDays = Math.abs((currentDate - requestedDate) / oneDayInMilliseconds);
+
+                        const isGreaterThanFiveDays = differenceInDays > 5;
                         return <tr key={index}>
                           <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {calculateSerialNumber(index)}
@@ -377,12 +391,12 @@ const AdminViewRefundRequests = () => {
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.refundApprovalStatus !== "Amount Refunded" && (
-                              <button onClick={() => approveValue(value.refundId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal2" data-bs-whatever="@mdo" disabled={value.refundApprovalStatus === "Amount Refunded"}>Approve Refund</button>
+                              <button onClick={() => approveValue(value.refundId)} type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal2" data-bs-whatever="@mdo" disabled={value.refundApprovalStatus === "Amount Refunded" || isGreaterThanFiveDays === false}>Approve Refund</button>
                             )}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.refundApprovalStatus !== "Amount Refunded" && (
-                              <button type="button" onClick={() => readValue(value.refundId)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" disabled={value.refundApprovalStatus === "Amount Refunded"}>Reject Refund</button>
+                              <button type="button" onClick={() => readValue(value.refundId)} className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" disabled={value.refundApprovalStatus === "Amount Refunded" || isGreaterThanFiveDays === false}>Reject Refund</button>
                             )}
                           </td>
                         </tr>
