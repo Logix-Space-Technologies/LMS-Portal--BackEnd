@@ -140,7 +140,7 @@ const RefundRequestForm = () => {
                                 </div>
                                 <div className="row gy-3 gy-md-4 overflow-hidden">
                                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                        <label htmlFor="reason" className="form-label">Reason <span className="text-danger">*</span></label>
+                                        <label htmlFor="reason" className="form-label">Bank Account Details<span className="text-danger">*</span></label>
                                         <textarea name="reason" onChange={handleChange} value={inputField.reason} id="reason" cols="30" rows="10" className="form-control"></textarea>
                                         {errors.reason && <div className="text-danger">{errors.reason}</div>}
                                     </div>

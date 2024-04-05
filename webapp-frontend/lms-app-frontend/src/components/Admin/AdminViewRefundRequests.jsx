@@ -321,7 +321,7 @@ const AdminViewRefundRequests = () => {
                           Requested Date
                         </th>
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                          Reason
+                          Bank Account Details
                         </th>
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                           Refund Amount
@@ -335,16 +335,13 @@ const AdminViewRefundRequests = () => {
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                           Amount Received Status
                         </th>
-                        {key !== 'lmsapp' && (
-                          <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                        <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
 
-                          </th>
-                        )}
-                        {key !== 'lmsapp' && (
-                          <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                        </th>
+                        <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
 
-                          </th>
-                        )}
+                        </th>
+
 
                       </tr>
                     </thead>
@@ -378,18 +375,16 @@ const AdminViewRefundRequests = () => {
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.AmountReceivedStatus}
                           </td>
-                          {key !== 'lmsapp' && value.refundApprovalStatus !== "Amount Refunded" && (
-                            <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                              {/* <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Approve Refund</Link> */}
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {value.refundApprovalStatus !== "Amount Refunded" && (
                               <button onClick={() => approveValue(value.refundId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal2" data-bs-whatever="@mdo" disabled={value.refundApprovalStatus === "Amount Refunded"}>Approve Refund</button>
-                            </td>
-                          )}
-                          {key !== 'lmsapp' && value.refundApprovalStatus !== "Amount Refunded" && (
-                            <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                              {/* <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Reject Refund</Link> */}
+                            )}
+                          </td>
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {value.refundApprovalStatus !== "Amount Refunded" && (
                               <button type="button" onClick={() => readValue(value.refundId)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" disabled={value.refundApprovalStatus === "Amount Refunded"}>Reject Refund</button>
-                            </td>
-                          )}
+                            )}
+                          </td>
                         </tr>
                       }) : <td colSpan="10" className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                         No Refund Requests Found !!!
