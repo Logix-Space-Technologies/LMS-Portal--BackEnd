@@ -13,6 +13,7 @@ const firebasetokens = require("../models/firebaseTokens.model");
 require('dotenv').config({ path: '../../.env' });
 const whatsAppcancelsession = require("./Whatsapp/cancelSession")
 const WhatsAppupcomingSession = require("./Whatsapp/upcomingSession")
+const clgstaffFirebaseTokens=require('../models/clgStaffFirebaseToken.model')
 
 
 function formatTime(timeString) {
@@ -113,7 +114,7 @@ exports.createSession = (request, response) => {
                                 const studentPhno = element.studPhNo
                                 const sessionTime = formatTime(newSession.time)
                                 const sessionDate = newSession.date.split('-').reverse().join('/')
-                                firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "New Session", body: `A new session has been scheduled on ${sessionDate} at ${sessionTime}` } }, (err, data) => {
+                                firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "New Session Announcement", body: `A new session has been scheduled on ${sessionDate} at ${sessionTime}` } }, (err, data) => {
                                     if (err) {
                                         return response.json({ "status": err });
                                     }
@@ -158,11 +159,17 @@ exports.createSession = (request, response) => {
                                         let clgstaffEmail = element.email
                                         let batchName = element.batchName
                                         let collegeStaffName = element.collegeStaffName
+                                        let collegeStaffId=element.id
                                         const clgstaffsessionTime = formatTime(newSession.time)
                                         const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
                                         const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
                                         const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
                                         mail.sendEmail(clgstaffEmail, `Announcement Regarding Upcoming Session Scheduled On ${clgstaffsessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                        clgstaffFirebaseTokens.sendNotificationclgStaffId(collegeStaffId, { notification: { title: "New Session Announcement", body: `A new session has been scheduled on ${clgstaffsessionDate} at ${clgstaffsessionTime}` } }, (err, data) => {
+                                            if (err) {
+                                                return response.json({ "status": err });
+                                            }
+                                        });
                                     })
                                 }
                             })

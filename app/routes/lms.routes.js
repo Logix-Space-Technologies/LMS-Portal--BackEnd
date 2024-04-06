@@ -24,6 +24,7 @@ const WhatsappController = require("../controllers/Whatsapp/callbackAPI")
 const WhatsappMsgFeedbackController = require("../controllers/Whatsapp/whatsappmsgfeedbackview")
 const WhatsappMsgCommonController = require("../controllers/Whatsapp/whatsappmsgcommonview")
 const WhatsappMsgReceivedFromStudController = require("../controllers/Whatsapp/viewwhtsappmsgreceivedstud")
+const ClgStaffFirebaseController = require("../controllers/clgStaffFirebaseToken.controller")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -349,5 +350,11 @@ router.post('/viewwhatsappmsgreceivedfromstud', WhatsappMsgReceivedFromStudContr
 router.post('/changeregstatustoopen', CollegeController.changeRegistrationStatusToAvailable)
 
 router.post('/changeregstatustoclose', CollegeController.changeRegistrationStatusToNotOpen)
+
+router.post('/clgStaffAddFirebaseToken',ClgStaffFirebaseController.createTokens)
+
+router.post('/sendFirebaseNotificationByclgStaffId', ClgStaffFirebaseController.sendNotificationByclgStaffId)
+
+router.get('/viewClgStaffFirebaseTokens', ClgStaffFirebaseController.viewTokens)
 
 module.exports = router
