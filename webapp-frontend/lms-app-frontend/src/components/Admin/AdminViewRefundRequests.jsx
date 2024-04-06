@@ -39,9 +39,7 @@ const AdminViewRefundRequests = () => {
   });
 
   const [amountField, setAmountField] = useState({
-    "admStaffId": "",
-    "approvedAmnt": "",
-    "refundId": ""
+    "approvedAmnt": ""
   })
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -130,7 +128,7 @@ const AdminViewRefundRequests = () => {
     } else {
       approvedBy = sessionStorage.getItem("admstaffId")
     }
-    const validationErrors = validateForm(amountField)
+    const validationErrors = validateForm3(amountField)
     if (Object.keys(validationErrors).length === 0) {
       let axiosConfig4 = {
         headers: {
@@ -143,7 +141,7 @@ const AdminViewRefundRequests = () => {
       let approvedata = {
         "refundId": approvefinalId,
         "admStaffId": approvedBy,
-        "approvedAmnt": amountField.approveAmnt
+        "approvedAmnt": amountField.approvedAmnt
       }
       setShowApproveModal(false)
       setShowWaitingModal(true)
@@ -161,30 +159,26 @@ const AdminViewRefundRequests = () => {
                 "refundId": ""
               })
             }, 500)
+          } else if (response.data.status === "Validation failed" && response.data.data.approvedAmnt) {
+            closeWaitingModal()
+            setTimeout(() => {
+              alert(response.data.data.approvedAmnt)
+              setShowApproveModal(true)
+            }, 500)
+          } else if (response.data.status === "Unauthorized User!!") {
+            { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+            sessionStorage.clear()
           } else {
-
-            if (response.data.status === "Validation failed" && response.data.data.approvedAmnt) {
-              closeWaitingModal()
-              setTimeout(() => {
-                alert(response.data.data.approvedAmnt)
-                setShowModal(true)
-              }, 500)
-            } else if (response.data.status === "Unauthorized User!!") {
-              { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
-              sessionStorage.clear()
-            } else {
-              closeWaitingModal()
-              setTimeout(() => {
-                alert(response.data.status)
-                setApproveField({
-                  adminRemarks: "",
-                  refundAmnt: "",
-                  transactionNo: ""
-                });
-              }, 500)
-            }
+            closeWaitingModal()
+            setTimeout(() => {
+              alert(response.data.status)
+              setApproveField({
+                adminRemarks: "",
+                refundAmnt: "",
+                transactionNo: ""
+              });
+            }, 500)
           }
-
         }
       )
     } else {
@@ -222,7 +216,9 @@ const AdminViewRefundRequests = () => {
 
     if (!data.approvedAmnt) {
       errors.approvedAmnt = 'Approved Amount is required';
-    }
+    } else if (data.approvedAmnt <= 0) {
+      errors.approvedAmnt = 'Amount should be greater than 0';
+    }    
 
     return errors;
   }
@@ -420,6 +416,10 @@ const AdminViewRefundRequests = () => {
     setShowModal(true); // Open the modal
     setShowOverlay(true); // Show overlay
   };
+
+  const amountapproveValue = (refundId) => {
+    setApproveFinalId(refundId)
+  }
 
 
   // Function to close both modal and overlay
