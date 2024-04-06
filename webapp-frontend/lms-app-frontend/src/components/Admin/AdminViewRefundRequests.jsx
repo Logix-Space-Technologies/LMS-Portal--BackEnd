@@ -183,7 +183,7 @@ const AdminViewRefundRequests = () => {
     }
   }
 
-  const approveRefund = () => {
+  const initiateRefund = () => {
     let currentKey = sessionStorage.getItem("admkey");
     let token = sessionStorage.getItem("admtoken");
     if (currentKey !== 'lmsapp') {
@@ -611,7 +611,7 @@ const AdminViewRefundRequests = () => {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
-                <button onClick={() => approveRefund()} type="button" className="btn btn-primary">
+                <button onClick={() => initiateRefund()} type="button" className="btn btn-primary">
                   Submit
                 </button>
               </div>
