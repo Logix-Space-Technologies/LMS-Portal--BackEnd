@@ -78,7 +78,8 @@ exports.getRefundStatus = (request, response) => {
 exports.approveRefundRequest = (request, response) => {
     const { approvedAmnt, transactionNo, adminRemarks, admStaffId, refundId } = request.body;
     const refundtoken = request.headers.token;
-    jwt.verify(refundtoken, "lmsappadmstaff", (err, decoded) => {
+    const key = request.headers.key;
+    jwt.verify(refundtoken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
             if (Validator.isEmpty(adminRemarks).isValid) {
@@ -116,7 +117,8 @@ exports.approveRefundRequest = (request, response) => {
 exports.rejectRefundRequest = (request, response) => {
     const { admStaffId, adminRemarks, refundId } = request.body
     const rejectRefundToken = request.headers.token
-    jwt.verify(rejectRefundToken, "lmsappadmstaff", (err, decoded) => {
+    const key = request.headers.key;
+    jwt.verify(rejectRefundToken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
             if (Validator.isEmpty(adminRemarks).isValid) {

@@ -341,7 +341,7 @@ const AdminViewRefundRequests = () => {
   };
 
   const readBankDetails = (accountNo, IFSCCode, bankName, branchName, upiId) => {
-    setBankDetails(accountNo, IFSCCode, bankName, branchName, upiId)
+    setBankDetails({accountNo, IFSCCode, bankName, branchName, upiId})
     setShowBankDetailsModal(true)
     setShowOverlay(true)
   }
@@ -438,7 +438,7 @@ const AdminViewRefundRequests = () => {
                             {value.requestedDate}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                            <button type="button" onClick={() => readBankDetails(value.accountNo, value.IFSCCode, value.bankName, value.branchName, value.upiId)} className="btn btn-primary">Reject Refund</button>
+                            <button type="button" onClick={() => readBankDetails(value.accountNo, value.IFSCCode, value.bankName, value.branchName, value.upiId)} className="btn btn-primary">View Bank Details</button>
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.refundAmnt}
@@ -491,7 +491,7 @@ const AdminViewRefundRequests = () => {
                   <button type="button" className="btn-close" onClick={closeBankDetailsModal} />
                 </div>
                 <div className="modal-body">
-                  <p>Account No.: <b>{bankDetails.accountNo}</b></p>
+                  <p>Account No. : <b>{bankDetails.accountNo}</b></p>
                   <p>IFSC Code: <b>{bankDetails.IFSCCode}</b></p>
                   <p>Bank Name: <b>{bankDetails.bankName}</b></p>
                   <p>Branch Name: <b>{bankDetails.branchName}</b></p>
