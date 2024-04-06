@@ -197,7 +197,7 @@ CollegeStaff.searchCollegeStaff = (search, result) => {
     const searchTerm = `%${search}%`;
 
     db.query(
-        "SELECT c.collegeName, cs.* FROM college_staff cs JOIN college c ON cs.collegeId = c.id WHERE cs.deleteStatus = 0 AND cs.isActive = 1 AND (cs.collegeStaffName LIKE ? OR c.collegeName LIKE ? OR cs.email LIKE ? OR cs.phNo LIKE ? OR cs.department LIKE ?)",
+        "SELECT c.collegeName, cs.*, CASE WHEN cs.emailVerified = 1 THEN 'Verified' ELSE 'Not Verified' END AS emailVerificationStatus FROM college_staff cs JOIN college c ON cs.collegeId = c.id WHERE cs.deleteStatus = 0 AND cs.isActive = 1 AND (cs.collegeStaffName LIKE ? OR c.collegeName LIKE ? OR cs.email LIKE ? OR cs.phNo LIKE ? OR cs.department LIKE ?)",
         [searchTerm, searchTerm, searchTerm, searchTerm, searchTerm],
         (err, res) => {
             if (err) {
@@ -262,7 +262,7 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
             const hashedOldPassword = res[0].password;
             let clgstaffid = res[0].id;
             if (bcrypt.compareSync(college_staff.oldPassword, hashedOldPassword)) {
-                const updateCollegeStaffPasswordQuery = "UPDATE college_Staff SET password = ?, pwdUpdateStatus = 1 WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1 ";
+                const updateCollegeStaffPasswordQuery = "UPDATE college_staff SET password = ?, pwdUpdateStatus = 1 WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1 ";
                 const hashedNewPassword = bcrypt.hashSync(college_staff.newPassword, 10);
                 db.query(updateCollegeStaffPasswordQuery, [hashedNewPassword, college_staff.email], (updateErr) => {
                     if (updateErr) {
@@ -297,7 +297,7 @@ CollegeStaff.collegeStaffForgotPassword = (college_staff, result) => {
 
         const clgstaffData = clgstaff[0];
 
-        const updateCollegeStaffPasswordQuery = `UPDATE college_Staff SET password = ?, pwdUpdateStatus = 1 WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1 `;
+        const updateCollegeStaffPasswordQuery = `UPDATE college_staff SET password = ?, pwdUpdateStatus = 1 WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1 `;
 
         bcrypt.hash(college_staff.password, 10, (err, hashedNewPassword) => {
             if (err) {

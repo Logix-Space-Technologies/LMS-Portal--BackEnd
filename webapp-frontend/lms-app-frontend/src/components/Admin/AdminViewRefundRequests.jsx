@@ -12,7 +12,14 @@ const AdminViewRefundRequests = () => {
   const [errors, setErrors] = useState({});
   const [reject, setReject] = useState({})
   const [approve, setApprove] = useState({})
+  const [approvefinalId, setApproveFinalId] = useState({})
+  const [approveAmnt, setApproveAmnt] = useState(null)
   const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showBankDetailsModal, setShowBankDetailsModal] = useState(false)
+  const [bankDetails, setBankDetails] = useState({})
+  const [showRejectModal, setRejectShowModal] = useState(false);
   const [showWaitingModal, setShowWaitingModal] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
@@ -31,17 +38,30 @@ const AdminViewRefundRequests = () => {
     "refundId": ""
   });
 
+  const [amountField, setAmountField] = useState({
+    "admStaffId": "",
+    "approvedAmnt": "",
+    "refundId": ""
+  })
+
   const [currentPage, setCurrentPage] = useState(1);
   const [studentsPerPage] = useState(10); // Number of students per page
 
   const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/rejectRefund"
-  const apiUrl3 = global.config.urls.api.server + "/api/lms/admStaffRefundApproval"
+  const apiUrl3 = global.config.urls.api.server + "/api/lms/admStaffRefundInitiate"
+  const apiUrl4 = global.config.urls.api.server + "/api/lms/admStaffRefundApprove"
 
   const closeWaitingModal = () => {
     setShowOverlay(false)
     setShowWaitingModal(false)
   }
+
+  // Convert a date string from 'DD/MM/YYYY' to a JavaScript Date object
+  const parseDateString = (dateString) => {
+    const [day, month, year] = dateString.split('/');
+    return new Date(year, month - 1, day);
+  };
 
   const getData = () => {
     let currentKey = sessionStorage.getItem("admkey");
@@ -91,15 +111,96 @@ const AdminViewRefundRequests = () => {
     setApproveField({ ...approveField, [event.target.name]: event.target.value });
   };
 
+  const amountHandler = (event) => {
+    setErrors({}); // Clear previous errors
+    setAmountField({ ...amountField, [event.target.name]: event.target.value });
+  };
+
+  const approveRefund = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    let approvedBy;
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
+    if (currentKey === 'lmsapp') {
+      approvedBy = 0
+    } else {
+      approvedBy = sessionStorage.getItem("admstaffId")
+    }
+    const validationErrors = validateForm(amountField)
+    if (Object.keys(validationErrors).length === 0) {
+      let axiosConfig4 = {
+        headers: {
+          'content-type': 'application/json;charset=UTF-8',
+          "Access-Control-Allow-Origin": "*",
+          "token": token,
+          "key": currentKey
+        }
+      }
+      let approvedata = {
+        "refundId": approvefinalId,
+        "admStaffId": approvedBy,
+        "approvedAmnt": amountField.approveAmnt
+      }
+      setShowApproveModal(false)
+      setShowWaitingModal(true)
+      setShowOverlay(true)
+      axios.post(apiUrl4, approvedata, axiosConfig4).then(
+        (response) => {
+          if (response.data.status === "success") {
+            closeWaitingModal()
+            setTimeout(() => {
+              alert("Refund Approved Successfully!!!")
+              getData()
+              setAmountField({
+                "admStaffId": "",
+                "approvedAmnt": "",
+                "refundId": ""
+              })
+            }, 500)
+          } else {
+
+            if (response.data.status === "Validation failed" && response.data.data.approvedAmnt) {
+              closeWaitingModal()
+              setTimeout(() => {
+                alert(response.data.data.approvedAmnt)
+                setShowModal(true)
+              }, 500)
+            } else if (response.data.status === "Unauthorized User!!") {
+              { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+              sessionStorage.clear()
+            } else {
+              closeWaitingModal()
+              setTimeout(() => {
+                alert(response.data.status)
+                setApproveField({
+                  adminRemarks: "",
+                  refundAmnt: "",
+                  transactionNo: ""
+                });
+              }, 500)
+            }
+          }
+
+        }
+      )
+    } else {
+      setErrors(validationErrors);
+    }
+  }
+
+
+
   const validateForm = (data) => {
     let errors = {};
 
     if (!data.adminRemarks) {
       errors.adminRemarks = 'Remark is required';
     }
-    if (!data.approvedAmnt) {
-      errors.approvedAmnt = 'Amount is required';
-    }
+
     if (!data.transactionNo) {
       errors.transactionNo = 'Transaction No. is required';
     }
@@ -116,15 +217,31 @@ const AdminViewRefundRequests = () => {
     return errors;
   }
 
+  const validateForm3 = (data) => {
+    let errors = {};
+
+    if (!data.approvedAmnt) {
+      errors.approvedAmnt = 'Approved Amount is required';
+    }
+
+    return errors;
+  }
+
   const rejectRefund = () => {
     const validationErrors = validateForm2(inputField)
     if (Object.keys(validationErrors).length === 0) {
       let currentKey = sessionStorage.getItem("admkey");
       let token = sessionStorage.getItem("admtoken");
+      let rejectedBy;
       if (currentKey !== 'lmsapp') {
         currentKey = sessionStorage.getItem("admstaffkey");
         token = sessionStorage.getItem("admstaffLogintoken");
         setKey(currentKey); // Update the state if needed
+      }
+      if (currentKey === 'lmsapp') {
+        rejectedBy = 0
+      } else {
+        rejectedBy = sessionStorage.getItem("admstaffId")
       }
       let axiosConfig2 = {
         headers: {
@@ -136,9 +253,10 @@ const AdminViewRefundRequests = () => {
       }
       let data2 = {
         "refundId": reject,
-        "admStaffId": sessionStorage.getItem("admstaffId"),
+        "admStaffId": rejectedBy,
         "adminRemarks": inputField.adminRemarks
       }
+      setRejectShowModal(false)
       setShowWaitingModal(true)
       setShowOverlay(true)
       axios.post(apiUrl2, data2, axiosConfig2).then(
@@ -160,6 +278,9 @@ const AdminViewRefundRequests = () => {
               closeWaitingModal()
               setTimeout(() => {
                 alert(response.data.status)
+                setInputField({
+                  adminRemarks: ""
+                });
               }, 500)
             }
           }
@@ -170,13 +291,19 @@ const AdminViewRefundRequests = () => {
     }
   }
 
-  const approveRefund = () => {
+  const initiateRefund = () => {
     let currentKey = sessionStorage.getItem("admkey");
     let token = sessionStorage.getItem("admtoken");
+    let initiatedBy;
     if (currentKey !== 'lmsapp') {
       currentKey = sessionStorage.getItem("admstaffkey");
       token = sessionStorage.getItem("admstaffLogintoken");
       setKey(currentKey); // Update the state if needed
+    }
+    if (currentKey === 'lmsapp') {
+      initiatedBy = 0
+    } else {
+      initiatedBy = sessionStorage.getItem("admstaffId")
     }
     const validationErrors = validateForm(approveField)
     if (Object.keys(validationErrors).length === 0) {
@@ -190,11 +317,12 @@ const AdminViewRefundRequests = () => {
       }
       let data3 = {
         "refundId": approve,
-        "admStaffId": sessionStorage.getItem("admstaffId"),
+        "admStaffId": initiatedBy,
         "adminRemarks": approveField.adminRemarks,
         "transactionNo": approveField.transactionNo,
-        "approvedAmnt": approveField.approvedAmnt
+        "approvedAmnt": approveAmnt
       }
+      setShowModal(false)
       setShowWaitingModal(true)
       setShowOverlay(true)
       axios.post(apiUrl3, data3, axiosConfig3).then(
@@ -202,7 +330,7 @@ const AdminViewRefundRequests = () => {
           if (response.data.status === "success") {
             closeWaitingModal()
             setTimeout(() => {
-              alert("Refund Request Approved Successfully")
+              alert("Refund Initiated Successfully!!!")
               getData()
               setApproveField({
                 adminRemarks: "",
@@ -215,18 +343,21 @@ const AdminViewRefundRequests = () => {
               closeWaitingModal()
               setTimeout(() => {
                 alert(response.data.data.adminRemarks)
+                setShowModal(true)
               }, 500)
             } else {
               if (response.data.status === "Validation failed" && response.data.data.transactionNo) {
                 closeWaitingModal()
                 setTimeout(() => {
                   alert(response.data.data.transactionNo)
+                  setShowModal(true)
                 }, 500)
               } else {
                 if (response.data.status === "Validation failed" && response.data.data.approvedAmnt) {
                   closeWaitingModal()
                   setTimeout(() => {
                     alert(response.data.data.approvedAmnt)
+                    setShowModal(true)
                   }, 500)
                 } else {
                   if (response.data.status === "Unauthorized User!!") {
@@ -236,6 +367,11 @@ const AdminViewRefundRequests = () => {
                     closeWaitingModal()
                     setTimeout(() => {
                       alert(response.data.status)
+                      setApproveField({
+                        adminRemarks: "",
+                        refundAmnt: "",
+                        transactionNo: ""
+                      });
                     }, 500)
                   }
                 }
@@ -250,6 +386,8 @@ const AdminViewRefundRequests = () => {
   }
 
   const readValue = (id) => {
+    setRejectShowModal(true)
+    setShowOverlay(true)
     setReject(id)
   };
 
@@ -276,8 +414,50 @@ const AdminViewRefundRequests = () => {
   const startPage = currentPage > 2 ? currentPage - 2 : 1;
   const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
 
-  const approveValue = (id) => {
-    setApprove(id)
+  const approveValue = (refundId, approvedAmnt) => {
+    setApprove(refundId);
+    setApproveAmnt(approvedAmnt); // Set the approveAmnt value
+    setShowModal(true); // Open the modal
+    setShowOverlay(true); // Show overlay
+  };
+
+
+  // Function to close both modal and overlay
+  const closeModal = () => {
+    setShowModal(false);
+    setShowOverlay(false);
+    setErrors({})
+    setApproveField({
+      adminRemarks: "",
+      refundAmnt: "",
+      transactionNo: ""
+    });
+    setApproveAmnt(null)
+
+  };
+
+  // Function to close both modal and overlay
+  const closeRejectModal = () => {
+    setRejectShowModal(false);
+    setShowOverlay(false);
+    setErrors({})
+    setInputField({
+      adminRemarks: ""
+    });
+
+
+  };
+
+  // Function to close both modal and overlay
+  const closeBankDetailsModal = () => {
+    setShowBankDetailsModal(false);
+    setShowOverlay(false);
+  };
+
+  const readBankDetails = (accountNo, IFSCCode, bankName, branchName, upiId) => {
+    setBankDetails({ accountNo, IFSCCode, bankName, branchName, upiId })
+    setShowBankDetailsModal(true)
+    setShowOverlay(true)
   }
 
   // Update key state when component mounts
@@ -321,7 +501,7 @@ const AdminViewRefundRequests = () => {
                           Requested Date
                         </th>
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                          Reason
+                          Bank Account Details
                         </th>
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                           Refund Amount
@@ -330,26 +510,37 @@ const AdminViewRefundRequests = () => {
                           Approved Amount
                         </th>
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                          Approved Status
+                        </th>
+                        <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                           Refund Status
                         </th>
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                           Amount Received Status
                         </th>
-                        {key !== 'lmsapp' && (
-                          <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                        <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
 
-                          </th>
-                        )}
-                        {key !== 'lmsapp' && (
-                          <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                        </th>
+                        <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
 
-                          </th>
-                        )}
+                        </th>
+                        <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+
+                        </th>
+
 
                       </tr>
                     </thead>
                     <tbody>
                       {refundRequests.length > 0 ? currentStudents.map((value, index) => {
+                        const requestedDate = parseDateString(value.requestedDate)
+                        const currentDate = new Date()
+
+                        const oneDayInMilliseconds = 1000 * 60 * 60 * 24;
+
+                        const differenceInDays = Math.abs((currentDate - requestedDate) / oneDayInMilliseconds);
+
+                        const isGreaterThanFiveDays = differenceInDays > 5;
                         return <tr key={index}>
                           <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {calculateSerialNumber(index)}
@@ -364,7 +555,7 @@ const AdminViewRefundRequests = () => {
                             {value.requestedDate}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                            {value.reason}
+                            <button type="button" onClick={() => readBankDetails(value.accountNo, value.IFSCCode, value.bankName, value.branchName, value.upiId)} className="btn btn-primary">View Details</button>
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.refundAmnt}
@@ -376,20 +567,26 @@ const AdminViewRefundRequests = () => {
                             {value.refundApprovalStatus}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {value.refundStatus}
+                          </td>
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.AmountReceivedStatus}
                           </td>
-                          {key !== 'lmsapp' && value.refundApprovalStatus !== "Amount Refunded" && (
-                            <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                              {/* <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Approve Refund</Link> */}
-                              <button onClick={() => approveValue(value.refundId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal2" data-bs-whatever="@mdo" disabled={value.refundApprovalStatus === "Amount Refunded"}>Approve Refund</button>
-                            </td>
-                          )}
-                          {key !== 'lmsapp' && value.refundApprovalStatus !== "Amount Refunded" && (
-                            <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                              {/* <Link to="#" onClick={() => handleClick(value.refundId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Reject Refund</Link> */}
-                              <button type="button" onClick={() => readValue(value.refundId)} className="btn bg-blue-500 text-white px-4 py-2 rounded-md" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" disabled={value.refundApprovalStatus === "Amount Refunded"}>Reject Refund</button>
-                            </td>
-                          )}
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {value.refundApprovalStatus !== "Amount Approved" && (
+                              <button type="button" className="btn btn-primary" disabled={isGreaterThanFiveDays === false}>Approve Refund</button>
+                            )}
+                          </td>
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {value.refundApprovalStatus === "Amount Approved" && value.refundStatus !== "Amount Refunded" && (
+                              <button onClick={() => approveValue(value.refundId, value.approvedAmnt)} type="button" className="btn btn-primary" disabled={isGreaterThanFiveDays === false}>Initiate Refund</button>
+                            )}
+                          </td>
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {value.refundApprovalStatus !== "Amount Approved" && (
+                              <button type="button" onClick={() => readValue(value.refundId)} className="btn btn-primary" disabled={isGreaterThanFiveDays === false}>Reject Refund</button>
+                            )}
+                          </td>
                         </tr>
                       }) : <td colSpan="10" className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                         No Refund Requests Found !!!
@@ -404,14 +601,38 @@ const AdminViewRefundRequests = () => {
         </section>
       </div>
 
-      {key !== 'lmsapp' && (
+      {showBankDetailsModal && (
         <div className="flex justify-end">
-          <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div className="modal show d-block" tabIndex={-1}>
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h1 className="modal-title fs-5" id="exampleModalLabel">Bank Details</h1>
+                  <button type="button" className="btn-close" onClick={closeBankDetailsModal} />
+                </div>
+                <div className="modal-body">
+                  <p>Account No. : <b>{bankDetails.accountNo}</b></p>
+                  <p>IFSC Code: <b>{bankDetails.IFSCCode}</b></p>
+                  <p>Bank Name: <b>{bankDetails.bankName}</b></p>
+                  <p>Branch Name: <b>{bankDetails.branchName}</b></p>
+                  <p>UPI ID: <b>{bankDetails.upiId}</b></p>
+                </div>
+                <div className="modal-footer">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showRejectModal && (
+        <div className="flex justify-end">
+          <div className="modal show d-block" tabIndex={-1}>
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">
                   <h1 className="modal-title fs-5" id="exampleModalLabel">Reject Refund</h1>
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                  <button type="button" className="btn-close" onClick={closeRejectModal} />
                 </div>
                 <div className="modal-body">
                   <form>
@@ -423,7 +644,7 @@ const AdminViewRefundRequests = () => {
                   </form>
                 </div>
                 <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" className="btn btn-secondary" onClick={closeRejectModal}>Close</button>
                   <button onClick={() => rejectRefund()} type="button" className="btn btn-primary">
                     Submit
                   </button>
@@ -433,6 +654,7 @@ const AdminViewRefundRequests = () => {
           </div>
         </div>
       )}
+
 
       {!isLoading && currentStudents.length > 0 && (
         <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
@@ -469,45 +691,49 @@ const AdminViewRefundRequests = () => {
       )}
 
 
-      {key !== 'lmsapp' && (
-        <div className="flex justify-end">
-          <div className="modal fade" id="exampleModal2" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h1 className="modal-title fs-5" id="exampleModalLabel">Approve Refund</h1>
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                </div>
-                <div className="modal-body">
-                  <form>
-                    <div className="mb-3">
-                      <label htmlFor="message-text" className="col-form-label">Refund Amount<span className="text-danger">*</span></label>
-                      <textarea name="approvedAmnt" className="form-control" value={approveField.approvedAmnt} onChange={approveHandler} />
-                      {errors.approvedAmnt && <span style={{ color: 'red' }} className="error">{errors.approvedAmnt}</span>}
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="message-text" className="col-form-label">Transaction No<span className="text-danger">*</span></label>
-                      <textarea name="transactionNo" className="form-control" value={approveField.transactionNo} onChange={approveHandler} />
-                      {errors.transactionNo && <span style={{ color: 'red' }} className="error">{errors.transactionNo}</span>}
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="message-text" className="col-form-label">Remarks<span className="text-danger">*</span></label>
-                      <textarea name="adminRemarks" className="form-control" value={approveField.adminRemarks} onChange={approveHandler} />
-                      {errors.adminRemarks && <span style={{ color: 'red' }} className="error">{errors.adminRemarks}</span>}
-                    </div>
-                  </form>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button onClick={() => approveRefund()} type="button" className="btn btn-primary">
-                    Submit
-                  </button>
-                </div>
+      {showModal && <div className="flex justify-end">
+        <div className="modal show d-block" tabIndex={-1}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="exampleModalLabel">Initiate Refund</h1>
+                <button type="button" className="btn-close" onClick={closeModal} />
+              </div>
+              <div className="modal-body">
+                <form>
+                  <div className="mb-3">
+                    <label htmlFor="message-text" className="col-form-label">Refund Amount<span className="text-danger">*</span></label>
+                    <textarea
+                      name="approvedAmnt"
+                      className="form-control"
+                      value={approveAmnt}
+                      disabled
+                    />
+                    {/* {errors.approvedAmnt && <span style={{ color: 'red' }} className="error">{errors.approvedAmnt}</span>} */}
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="message-text" className="col-form-label">Transaction No<span className="text-danger">*</span></label>
+                    <textarea name="transactionNo" className="form-control" value={approveField.transactionNo} onChange={approveHandler} />
+                    {errors.transactionNo && <span style={{ color: 'red' }} className="error">{errors.transactionNo}</span>}
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="message-text" className="col-form-label">Remarks<span className="text-danger">*</span></label>
+                    <textarea name="adminRemarks" className="form-control" value={approveField.adminRemarks} onChange={approveHandler} />
+                    {errors.adminRemarks && <span style={{ color: 'red' }} className="error">{errors.adminRemarks}</span>}
+                  </div>
+                </form>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
+                <button onClick={() => initiateRefund()} type="button" className="btn btn-primary">
+                  Submit
+                </button>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>}
+
       {showWaitingModal && (
         <div className="modal show d-block" tabIndex={-1}>
           <div className="modal-dialog">

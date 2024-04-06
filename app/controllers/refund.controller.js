@@ -62,23 +62,62 @@ exports.getRefundStatus = (request, response) => {
             Refund.viewRefundStatus(request.body.studId, (err, data) => {
                 if (err) {
                     console.log(err);
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     console.log("Refund status successfully retrieved");
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
 
+exports.approveRefund = (request, response) => {
+    const { approvedAmnt, admStaffId, refundId } = request.body;
+    const approverefundToken = request.headers.token;
+    const key = request.headers.key;
 
-exports.approveRefundRequest = (request, response) => {
+    jwt.verify(approverefundToken, key, (err, decoded) => {
+        if (decoded) {
+
+            const validationErrors = {};
+
+            if (Validator.isEmpty(approvedAmnt).isValid) {
+                validationErrors.approvedAmnt = Validator.isEmpty(approvedAmnt).message;
+            }
+            if (!Validator.isValidAmount(approvedAmnt).isValid) {
+                validationErrors.approvedAmnt = Validator.isValidAmount(approvedAmnt).message;
+            }
+            // If validation fails
+            if (Object.keys(validationErrors).length > 0) {
+                return response.json({ "status": "Validation failed", "data": validationErrors });
+            }
+
+            Refund.approveRefund(approvedAmnt, admStaffId, refundId, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    return response.json({ "status": err });
+                } else {
+                    console.log("Refund request successfully approved");
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+
+
+exports.initiateRefundRequest = (request, response) => {
     const { approvedAmnt, transactionNo, adminRemarks, admStaffId, refundId } = request.body;
     const refundtoken = request.headers.token;
-    jwt.verify(refundtoken, "lmsappadmstaff", (err, decoded) => {
+    const key = request.headers.key;
+
+    jwt.verify(refundtoken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
             if (Validator.isEmpty(adminRemarks).isValid) {
@@ -97,12 +136,12 @@ exports.approveRefundRequest = (request, response) => {
             if (Object.keys(validationErrors).length > 0) {
                 return response.json({ "status": "Validation failed", "data": validationErrors });
             }
-            Refund.approveRefund(approvedAmnt, admStaffId, transactionNo, adminRemarks, refundId, (err, data) => {
+            Refund.initiateRefund(approvedAmnt, admStaffId, transactionNo, adminRemarks, refundId, (err, data) => {
                 if (err) {
                     console.log(err);
                     return response.json({ "status": err });
                 } else {
-                    console.log("Refund request successfully approved");
+                    console.log("Refund request successfully initiated");
                     return response.json({ "status": "success", "data": data });
                 }
             });
@@ -116,7 +155,8 @@ exports.approveRefundRequest = (request, response) => {
 exports.rejectRefundRequest = (request, response) => {
     const { admStaffId, adminRemarks, refundId } = request.body
     const rejectRefundToken = request.headers.token
-    jwt.verify(rejectRefundToken, "lmsappadmstaff", (err, decoded) => {
+    const key = request.headers.key;
+    jwt.verify(rejectRefundToken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
             if (Validator.isEmpty(adminRemarks).isValid) {

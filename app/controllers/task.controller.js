@@ -53,140 +53,132 @@ exports.createTask = (request, response) => {
             return response.status(500).json({ "status": error.message });
         }
 
-        if (!request.file) {
-            return response.status(400).json({ "status": "No file uploaded" });
-        }
-
         // File handling
         const file = request.file;
-        const fileStream = fs.createReadStream(file.path);
+        let taskFileUpload = null;
 
-        const uploadParams = {
-            Bucket: process.env.S3_BUCKET,
-            Key: `uploads/${file.filename}`,
-            Body: fileStream
-        };
+        if (file) {
+            const fileStream = fs.createReadStream(file.path);
 
-        try {
-            const data = await s3Client.send(new PutObjectCommand(uploadParams));
-            const fileUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+            const uploadParams = {
+                Bucket: process.env.S3_BUCKET,
+                Key: `uploads/${file.filename}`,
+                Body: fileStream
+            };
 
-            // Remove the file from local storage
-            fs.unlinkSync(file.path);
+            try {
+                await s3Client.send(new PutObjectCommand(uploadParams));
+                taskFileUpload = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
 
-            const { batchId, taskTitle, taskDesc, taskType, totalScore, sessionId, addedby } = request.body
-            const dueDate = request.body.dueDate
-
-            const taskToken = request.headers.token
-            key = request.headers.key
-
-            jwt.verify(taskToken, key, (err, decoded) => {
-                if (decoded) {
-
-                    const validationErrors = {};
-
-                    if (Validator.isEmpty(batchId).isValid) {
-                        validationErrors.batchId = Validator.isEmpty(batchId).message;
-                    }
-                    if (!Validator.isValidAmount(batchId).isValid) {
-                        validationErrors.batchId = Validator.isValidAmount(batchId).message; //validation for batch id
-                    }
-
-                    if (Validator.isEmpty(sessionId).isValid) {
-                        validationErrors.sessionId = Validator.isEmpty(sessionId).message;
-                    }
-
-                    if (Validator.isValidTitle(taskTitle).isValid) {
-                        validationErrors.taskTitle = Validator.isValidTitle(taskTitle).message;
-                    }
-
-                    if (Validator.isEmpty(taskDesc).isValid) {
-                        validationErrors.taskDesc = Validator.isEmpty(taskDesc).message;
-                    }
-                    if (!Validator.isValidAddress(taskDesc).isValid) {
-                        validationErrors.taskDesc = Validator.isValidAddress(taskDesc).message; //validation for task description.
-                    }
-
-                    if (Validator.isEmpty(taskType).isValid) {
-                        validationErrors.taskType = Validator.isEmpty(taskType).message;
-                    }
-
-
-                    if (Validator.isEmpty(totalScore).isValid) {
-                        validationErrors.totalScore = Validator.isEmpty(totalScore).message;
-                    }
-                    if (!Validator.isValidAmount(totalScore).isValid) {
-                        validationErrors.totalScore = Validator.isValidAmount(totalScore).message; //validation for total score
-                    }
-
-                    if (!Validator.isValidDate(dueDate).isValid) {
-                        validationErrors.dueDate = Validator.isValidDate(dueDate).message; //validation for date
-                    }
-
-
-                    if (!Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).isValid) {
-                        validationErrors.dueDate = Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).message; //validation for date
-                    }
-
-
-                    // If validation fails
-                    if (Object.keys(validationErrors).length > 0) {
-                        return response.json({ "status": "Validation failed", "data": validationErrors });
-                    }
-
-
-                    const taskFileUpload = request.file ? request.file.filename : null
-
-                    const addtask = new Tasks({
-                        batchId: batchId,
-                        taskTitle: taskTitle,
-                        taskDesc: taskDesc,
-                        taskType: taskType,
-                        taskFileUpload: fileUrl,
-                        totalScore: totalScore,
-                        sessionId: sessionId,
-                        dueDate: dueDate.split('/').reverse().join('-')
-                    });
-
-                    Tasks.taskCreate(addtask, (err, data) => {
-                        if (err) {
-                            return response.json({ "status": err });
-                        } else {
-                            if (key === "lmsapp") {
-                                logAdminStaff(0, "Admin Created Task")
-                            }
-                            if (key !== "lmsapp") {
-                                logAdminStaff(addedby, "Admin Staff Created Task")
-                            }
-                            Student.searchStudentByBatch(addtask.batchId, (err, res) => {
-                                if (err) {
-                                    return response.json({ "status": err });
-                                } else {
-                                    console.log(res)
-                                    res.forEach(element => {
-                                        const studName = element.studName
-                                        const studEmail = element.studEmail
-                                        const dueDate = request.body.dueDate.split('-').reverse().join('/')
-                                        const newTaskHtmlContent = mailContents.newTaskHtmlContent(studName, dueDate);
-                                        const newTaskTextContent = mailContents.newTaskTextContent(studName, dueDate);
-                                        mail.sendEmail(studEmail, "New Task Assigned", newTaskHtmlContent, newTaskTextContent);
-                                    })
-                                }
-                            })
-
-                            return response.json({ "status": "success", "data": data });
-                        }
-                    })
-                } else {
-                    return response.json({ "status": "Unauthorized User!!" });
-                }
-            });
-
-
-        } catch (err) {
-            fs.unlinkSync(file.path);
-            response.status(500).json({ "status": err.message });
+                // Remove the file from local storage
+                fs.unlinkSync(file.path);
+            } catch (err) {
+                fs.unlinkSync(file.path);
+                return response.status(500).json({ "status": err.message });
+            }
         }
+
+        const { batchId, taskTitle, taskDesc, taskType, totalScore, sessionId, addedby } = request.body
+        const dueDate = request.body.dueDate
+
+        const taskToken = request.headers.token
+        key = request.headers.key
+
+        jwt.verify(taskToken, key, (err, decoded) => {
+            if (decoded) {
+
+                const validationErrors = {};
+
+                if (Validator.isEmpty(batchId).isValid) {
+                    validationErrors.batchId = Validator.isEmpty(batchId).message;
+                }
+                if (!Validator.isValidAmount(batchId).isValid) {
+                    validationErrors.batchId = Validator.isValidAmount(batchId).message; //validation for batch id
+                }
+
+                if (Validator.isEmpty(sessionId).isValid) {
+                    validationErrors.sessionId = Validator.isEmpty(sessionId).message;
+                }
+
+                if (Validator.isEmpty(taskTitle).isValid) {
+                    validationErrors.taskTitle = Validator.isEmpty(taskTitle).message;
+                }
+
+                if (Validator.isEmpty(taskDesc).isValid) {
+                    validationErrors.taskDesc = Validator.isEmpty(taskDesc).message;
+                }
+
+                if (Validator.isEmpty(taskType).isValid) {
+                    validationErrors.taskType = Validator.isEmpty(taskType).message;
+                }
+
+
+                if (Validator.isEmpty(totalScore).isValid) {
+                    validationErrors.totalScore = Validator.isEmpty(totalScore).message;
+                }
+                if (!Validator.isValidAmount(totalScore).isValid) {
+                    validationErrors.totalScore = Validator.isValidAmount(totalScore).message; //validation for total score
+                }
+
+                if (!Validator.isValidDate(dueDate).isValid) {
+                    validationErrors.dueDate = Validator.isValidDate(dueDate).message; //validation for date
+                }
+
+
+                if (!Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).isValid) {
+                    validationErrors.dueDate = Validator.isDateGreaterThanToday(dueDate.split('/').reverse().join('-')).message; //validation for date
+                }
+
+
+                // If validation fails
+                if (Object.keys(validationErrors).length > 0) {
+                    return response.json({ "status": "Validation failed", "data": validationErrors });
+                }
+
+                const addtask = new Tasks({
+                    batchId: batchId,
+                    taskTitle: taskTitle,
+                    taskDesc: taskDesc,
+                    taskType: taskType,
+                    taskFileUpload: taskFileUpload,
+                    totalScore: totalScore,
+                    sessionId: sessionId,
+                    dueDate: dueDate.split('/').reverse().join('-')
+                });
+
+                Tasks.taskCreate(addtask, (err, data) => {
+                    if (err) {
+                        return response.json({ "status": err });
+                    } else {
+                        if (key === "lmsapp") {
+                            logAdminStaff(0, "Admin Created Task")
+                        }
+                        if (key !== "lmsapp") {
+                            logAdminStaff(addedby, "Admin Staff Created Task")
+                        }
+                        Student.searchStudentByBatch(addtask.batchId, (err, res) => {
+                            if (err) {
+                                return response.json({ "status": err });
+                            } else {
+                                console.log(res)
+                                res.forEach(element => {
+                                    const studName = element.studName
+                                    const studEmail = element.studEmail
+                                    const dueDate = request.body.dueDate.split('-').reverse().join('/')
+                                    const newTaskHtmlContent = mailContents.newTaskHtmlContent(studName, dueDate);
+                                    const newTaskTextContent = mailContents.newTaskTextContent(studName, dueDate);
+                                    mail.sendEmail(studEmail, "New Task Assigned", newTaskHtmlContent, newTaskTextContent);
+                                })
+                            }
+                        })
+
+                        return response.json({ "status": "success", "data": data });
+                    }
+                })
+            } else {
+                return response.json({ "status": "Unauthorized User!!" });
+            }
+        });
     })
 };
 
@@ -271,21 +263,17 @@ exports.taskUpdate = (request, response) => {
                     validationErrors.batchId = Validator.isValidAmount(batchId).message; //validation for batch id
                 }
 
-                if (Validator.isValidTitle(taskTitle).isValid) {
-                    validationErrors.taskTitle = Validator.isValidTitle(taskTitle).message;
+                if (Validator.isEmpty(taskTitle).isValid) {
+                    validationErrors.taskTitle = Validator.isEmpty(taskTitle).message;
                 }
 
                 if (Validator.isEmpty(taskDesc).isValid) {
                     validationErrors.taskDesc = Validator.isEmpty(taskDesc).message;
                 }
-                if (!Validator.isValidAddress(taskDesc).isValid) {
-                    validationErrors.taskDesc = Validator.isValidAddress(taskDesc).message; //validation for task description.
-                }
 
                 if (Validator.isEmpty(taskType).isValid) {
                     validationErrors.taskType = Validator.isEmpty(taskType).message;
                 }
-
 
                 if (Validator.isEmpty(totalScore).isValid) {
                     validationErrors.totalScore = Validator.isEmpty(totalScore).message;

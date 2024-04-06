@@ -11,6 +11,7 @@ const AdminViewAllStud = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [studentsPerPage] = useState(10); // Number of students per page
     const [isLoading, setIsLoading] = useState(true);
+    const [inputField, setInputField] = useState({ studentSearchQuery: '' });
 
     const navigate = useNavigate()
 
@@ -18,6 +19,50 @@ const AdminViewAllStud = () => {
     const apiUrl2 = global.config.urls.api.server + "/api/lms/createCommunityManager";
     const apiUrl3 = global.config.urls.api.server + "/api/lms/deleteCommunityManager";
     const apiUrl4 = global.config.urls.api.server + "/api/lms/sendRenewalReminderEmail";
+    const apiLink = global.config.urls.api.server + "/api/lms/searchStudentsByAdmAndAdmstf";
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value });
+    };
+
+    const readValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        setIsLoading(true);
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+        axios.post(apiLink, inputField, axiosConfig).then((response) => {
+            if (response.data.data) {
+                setStudData(response.data.data);
+                setIsLoading(false);
+                setInputField({ "studentSearchQuery": "" });
+            } else {
+                if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else {
+                    if (!response.data.data) {
+                        setIsLoading(false);
+                        getData()
+                        setInputField({ "studentSearchQuery": "" });
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
+            }
+        });
+    };
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -218,6 +263,23 @@ const AdminViewAllStud = () => {
                 <strong>View All Students</strong>
 
                 <div></div>
+            </div>
+            <div className="row">
+                <div className="col-12">
+                    <br />
+                    <input
+                        onChange={inputHandler}
+                        type="text"
+                        className="form-control"
+                        name="studentSearchQuery"
+                        value={inputField.studentSearchQuery}
+                        placeholder="Student Name/Phone No/Address/Aadhar No/Email"
+                    />
+                    <br />
+                    <button onClick={readValue} className="btn btn-warning">
+                        Search
+                    </button>
+                </div>
             </div>
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">

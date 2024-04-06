@@ -4,9 +4,16 @@ const { StudentLog, logStudent } = require("../models/studentLog.model")
 const Refund = function (refund) {
     this.studId = refund.studId;
     this.reason = refund.reason;
+    this.accountNo = refund.accountNo;
+    this.IFSCCode = refund.IFSCCode;
+    this.bankName = refund.bankName;
+    this.branchName = refund.branchName;
+    this.upiId = refund.upiId;
     this.refundAmnt = refund.refundAmnt;
     this.approvedAmnt = refund.approvedAmnt;
-    this.admStaffId = refund.admStaffId; //added
+    this.admStaffId = refund.admStaffId;
+    this.transactionNo = refund.transactionNo;
+    this.adminRemarks = refund.adminRemarks;
 };
 
 Refund.createRefundRequest = (newRefund, result) => {
@@ -46,7 +53,7 @@ Refund.createRefundRequest = (newRefund, result) => {
 
                     // Retrieve payment information for the specified student ID
                     db.query(
-                        "SELECT paymentdate, rpAmount FROM payment WHERE studId = ? ORDER BY paymentdate ASC",
+                        "SELECT paymentdate, rpAmount FROM payment WHERE studId = ? ORDER BY paymentdate DESC LIMIT 1;",
                         [newRefund.studId],
                         (paymentErr, paymentRes) => {
                             if (paymentErr) {
@@ -72,9 +79,10 @@ Refund.createRefundRequest = (newRefund, result) => {
                             // Calculate the remaining payment period in days
                             const currentDate = new Date();
                             const paymentStartDate = new Date(paymentRes[0].paymentdate);
-                            const daysSincePaymentStart = Math.floor(
+                            let daysSincePaymentStart = Math.floor(
                                 (currentDate - paymentStartDate) / (24 * 60 * 60 * 1000)
                             );
+                            daysSincePaymentStart = daysSincePaymentStart - 1
                             if (daysSincePaymentStart < 0) {
                                 console.error("Error calculating days since payment start:", daysSincePaymentStart);
                                 result("Error calculating days since payment start.", null);
@@ -125,7 +133,7 @@ Refund.createRefundRequest = (newRefund, result) => {
 
 Refund.getRefundRequests = (result) => {
     db.query(
-        "SELECT r.id AS refundId, s.studName, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, CASE WHEN r.refundApprovalStatus = 1 THEN 'Amount Refunded' ELSE 'Under Progress' END AS refundApprovalStatus, CASE WHEN r.AmountReceivedStatus = 1 THEN 'Amount Received' ELSE 'Not Yet Received' END AS AmountReceivedStatus, r.approvedAmnt FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.cancelStatus = 0 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 ORDER BY r.requestedDate ASC;",
+        "SELECT r.id AS refundId, s.studName, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, CASE WHEN r.refundApprovalStatus = 1 THEN 'Amount Approved' ELSE 'Under Progress' END AS refundApprovalStatus, CASE WHEN r.AmountReceivedStatus = 1 THEN 'Amount Received' ELSE 'Not Yet Received' END AS AmountReceivedStatus, r.approvedAmnt, r.accountNo, r.IFSCCode, r.bankName, r.branchName, r.upiId, CASE WHEN r.refundStatus = 1 THEN 'Amount Refunded' ELSE 'Not Refunded' END AS refundStatus FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.cancelStatus = 0 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 ORDER BY r.requestedDate ASC;",
         (err, res) => {
             if (err) {
                 console.error("Error retrieving refund requests:", err);
@@ -184,7 +192,7 @@ Refund.viewRefundStatus = (studId, result) => {
                     result("Your application is under process.", null);
                 } else {
                     // Format the date for each refund request
-                    const formattedRefund = res.map(refund => ({ ...refund, requestedDate: refund.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }), refundInitiatedDate: refund.refundInitiatedDate ? refund.refundInitiatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : null })); // Formats the date as 'YYYY-MM-DD'
+                    const formattedRefund = res.map(refund => ({ ...refund, requestedDate: refund.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), refundInitiatedDate: refund.refundInitiatedDate ? refund.refundInitiatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null })); // Formats the date as 'YYYY-MM-DD'
                     // Return refund details with student name and college name
                     result(null, formattedRefund);
                 }
@@ -194,9 +202,49 @@ Refund.viewRefundStatus = (studId, result) => {
 };
 
 //admin staff refund approval
-Refund.approveRefund = (approvedAmnt, admStaffId, transactionNo, adminRemarks, refundId, result) => {
+Refund.initiateRefund = (approvedAmnt, admStaffId, transactionNo, adminRemarks, refundId, result) => {
     // Check if the refund ID exists in the refund table
-    db.query("SELECT * FROM refund WHERE id = ? AND cancelStatus = 0 AND refundApprovalStatus = 0 ", [refundId], (refundErr, refundRes) => {
+    db.query("SELECT * FROM refund WHERE id = ? AND cancelStatus = 0 AND refundApprovalStatus = 1", [refundId], (refundErr, refundRes) => {
+        if (refundErr) {
+            console.error("Error checking refund existence:", refundErr);
+            result(refundErr, null);
+            return;
+        }
+
+        if (refundRes.length === 0) {
+            console.log("Refund with ID not found.");
+            result("Refund with the specified ID not found.", null);
+            return;
+        }
+
+        // Continue to initiate refund if refund ID exists
+        db.query(
+            "UPDATE refund SET approvedAmnt = ?, transactionNo = ?, adminRemarks = ?, refundStatus = 1, refundInitiatedDate=CURRENT_DATE(), admStaffId=? WHERE id = ?",
+            [approvedAmnt, transactionNo, adminRemarks, admStaffId, refundId],
+            (err, res) => {
+                if (err) {
+                    console.error("Error initiating refund:", err);
+                    result(err, null);
+                    return;
+                }
+
+                if (res.affectedRows === 0) {
+                    // Refund with the specified ID not found
+                    result("Refund with the specified ID not found.", null);
+                    return;
+                }
+
+                result(null, null);
+            }
+        );
+    });
+};
+
+
+
+Refund.approveRefund = (approvedAmnt, admStaffId, refundId, result) => {
+    // Check if the refund ID exists in the refund table
+    db.query("SELECT * FROM refund WHERE id = ? AND cancelStatus = 0 AND refundApprovalStatus = 0", [refundId], (refundErr, refundRes) => {
         if (refundErr) {
             console.error("Error checking refund existence:", refundErr);
             result(refundErr, null);
@@ -211,8 +259,8 @@ Refund.approveRefund = (approvedAmnt, admStaffId, transactionNo, adminRemarks, r
 
         // Continue to approve refund if refund ID exists
         db.query(
-            "UPDATE refund SET refundApprovalStatus = 1, approvedAmnt = ?, transactionNo = ?, adminRemarks = ?, refundStatus = 1, refundInitiatedDate=CURRENT_DATE(), admStaffId=? WHERE id = ?",
-            [approvedAmnt, transactionNo, adminRemarks, admStaffId, refundId],
+            "UPDATE refund SET refundApprovalStatus = 1, approvedAmnt = ?, admStaffId=? WHERE id = ?",
+            [approvedAmnt, admStaffId, refundId],
             (err, res) => {
                 if (err) {
                     console.error("Error approving refund:", err);
@@ -230,7 +278,7 @@ Refund.approveRefund = (approvedAmnt, admStaffId, transactionNo, adminRemarks, r
             }
         );
     });
-};
+}
 
 
 

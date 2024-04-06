@@ -122,6 +122,12 @@ const StudentViewRefundRequest = () => {
         sessionStorage.clear()
     }
 
+    // Convert a date string from 'DD/MM/YYYY' to a JavaScript Date object
+    const parseDateString = (dateString) => {
+        const [day, month, year] = dateString.split('/');
+        return new Date(year, month - 1, day);
+    };
+
     useEffect(() => { getData() }, [])
 
     return (
@@ -150,6 +156,15 @@ const StudentViewRefundRequest = () => {
                                             <div className="col-12 text-center">No Refund Requests Found!!</div>
                                         ) : (
                                             studentViewRefundReqData.map((value, index) => {
+                                                const requestedDate = parseDateString(value.requestedDate)
+                                                const currentDate = new Date()
+
+                                                const oneDayInMilliseconds = 1000 * 60 * 60 * 24;
+
+                                                const differenceInDays = Math.abs((currentDate - requestedDate) / oneDayInMilliseconds);
+
+                                                const isGreaterThanFiveDays = differenceInDays > 5;
+                                                
                                                 return <div key={index} className="col-12">
                                                     <div className="card">
                                                         <div className="card-body">
@@ -161,11 +176,11 @@ const StudentViewRefundRequest = () => {
                                                                     <p className="card-text">Refund Approval : {value.refundStatus}</p>
                                                                     <p className="card-text">Approval Status : {value.approvalStatus}</p>
                                                                     <p className="card-text">Your Refund Request has being sent...Please wait for the Approval.</p>
-                                                                    <p className="card-text-centre">If you want to cancel your refund request... kindly click on <b>Cancel Request</b></p>
+                                                                    <p className="card-text-centre">If you want to cancel your refund request... kindly click on <b>Cancel Request</b> within <b>5 days</b> from your <b>requested date</b>.</p>
                                                                     <p className="card-text"><b>Thank You!!</b></p>
                                                                     <br></br>
                                                                     <div className="flex justify-between">
-                                                                        <button onClick={() => cancelClick(value.refundId)} className="btn bg-red-500 text-white px-6 py-3 rounded-md">Cancel Request</button>
+                                                                        {isGreaterThanFiveDays === false && <button onClick={() => cancelClick(value.refundId)} className="btn bg-red-500 text-white px-6 py-3 rounded-md">Cancel Request</button>}
                                                                     </div>
                                                                 </>
                                                             )}
