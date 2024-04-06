@@ -42,7 +42,7 @@ exports.createRefundRequest = (request, response) => {
                             let requestedDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
                             refundRequestConfirmationHtmlContent = mailContents.refundRequestConfirmationHtmlContent(studName, requestedDate, addedDate, data.remainingPaymentPeriod);
                             // refundRequestConfirmationTextContent = mailContents.refundRequestConfirmationTextContent;
-                            //mail.sendEmail(studentEmail, `Refund Request Confirmation ${requestedDate}`, refundRequestConfirmationHtmlContent);
+                            mail.sendEmail(studentEmail, `Refund Request Confirmation ${requestedDate}`, refundRequestConfirmationHtmlContent);
                         }
                     });
                     console.log("Refund request successfully created");

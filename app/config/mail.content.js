@@ -3427,6 +3427,7 @@ function refundRequestConfirmationHtmlContent(studName, requestedDate, addedDate
 
     </html>
 `
+return content
 }
 
 module.exports = {
