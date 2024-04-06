@@ -7,11 +7,11 @@ const RefundRequestForm = () => {
     const [inputField, setInputField] = useState({
         studId: "",
         reason: "",
-        accountNo: "",
-        IFSCCode: "",
-        bankName: "",
-        branchName: "",
-        upiId: ""
+        accountNo: null,
+        IFSCCode: null,
+        bankName: null,
+        branchName: null,
+        upiId: null
     });
 
     const [errors, setErrors] = useState({});
