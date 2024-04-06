@@ -154,7 +154,7 @@ const RefundRequestForm = () => {
                                         <textarea name="reason" onChange={handleChange} value={inputField.reason} id="reason" cols="30" rows="10" className="form-control"></textarea>
                                         {errors.reason && <div className="text-danger">{errors.reason}</div>}
                                     </div>
-                                    <h1><b>Bank Details (Provide Bank Details OR UPI ID)</b></h1>
+                                    <h1>Bank Details (Provide Bank Details OR UPI ID)</h1>
                                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                         <label htmlFor="accountNo" className="form-label">Account No.</label>
                                         <input onChange={handleChange} type="text" class="form-control" name="accountNo" value={inputField.accountNo} id="accountNo" />
