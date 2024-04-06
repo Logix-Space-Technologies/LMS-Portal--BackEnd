@@ -12,9 +12,11 @@ const AdminViewRefundRequests = () => {
   const [errors, setErrors] = useState({});
   const [reject, setReject] = useState({})
   const [approve, setApprove] = useState({})
+  const [approvefinalId, setApproveFinalId] = useState({})
   const [approveAmnt, setApproveAmnt] = useState(null)
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showApproveModal, setShowApproveModal] = useState(false);
   const [showBankDetailsModal, setShowBankDetailsModal] = useState(false)
   const [bankDetails, setBankDetails] = useState({})
   const [showRejectModal, setRejectShowModal] = useState(false);
@@ -36,12 +38,19 @@ const AdminViewRefundRequests = () => {
     "refundId": ""
   });
 
+  const [amountField, setAmountField] = useState({
+    "admStaffId": "",
+    "approvedAmnt": "",
+    "refundId": ""
+  })
+
   const [currentPage, setCurrentPage] = useState(1);
   const [studentsPerPage] = useState(10); // Number of students per page
 
   const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/rejectRefund"
   const apiUrl3 = global.config.urls.api.server + "/api/lms/admStaffRefundInitiate"
+  const apiUrl4 = global.config.urls.api.server + "/api/lms/admStaffRefundApprove"
 
   const closeWaitingModal = () => {
     setShowOverlay(false)
@@ -102,6 +111,89 @@ const AdminViewRefundRequests = () => {
     setApproveField({ ...approveField, [event.target.name]: event.target.value });
   };
 
+  const amountHandler = (event) => {
+    setErrors({}); // Clear previous errors
+    setAmountField({ ...amountField, [event.target.name]: event.target.value });
+  };
+
+  const approveRefund = () => {
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    let approvedBy;
+    if (currentKey !== 'lmsapp') {
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
+    }
+    if (currentKey === 'lmsapp') {
+      approvedBy = 0
+    } else {
+      approvedBy = sessionStorage.getItem("admstaffId")
+    }
+    const validationErrors = validateForm(amountField)
+    if (Object.keys(validationErrors).length === 0) {
+      let axiosConfig4 = {
+        headers: {
+          'content-type': 'application/json;charset=UTF-8',
+          "Access-Control-Allow-Origin": "*",
+          "token": token,
+          "key": currentKey
+        }
+      }
+      let approvedata = {
+        "refundId": approvefinalId,
+        "admStaffId": approvedBy,
+        "approvedAmnt": amountField.approveAmnt
+      }
+      setShowApproveModal(false)
+      setShowWaitingModal(true)
+      setShowOverlay(true)
+      axios.post(apiUrl4, approvedata, axiosConfig4).then(
+        (response) => {
+          if (response.data.status === "success") {
+            closeWaitingModal()
+            setTimeout(() => {
+              alert("Refund Approved Successfully!!!")
+              getData()
+              setAmountField({
+                "admStaffId": "",
+                "approvedAmnt": "",
+                "refundId": ""
+              })
+            }, 500)
+          } else {
+
+            if (response.data.status === "Validation failed" && response.data.data.approvedAmnt) {
+              closeWaitingModal()
+              setTimeout(() => {
+                alert(response.data.data.approvedAmnt)
+                setShowModal(true)
+              }, 500)
+            } else if (response.data.status === "Unauthorized User!!") {
+              { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+              sessionStorage.clear()
+            } else {
+              closeWaitingModal()
+              setTimeout(() => {
+                alert(response.data.status)
+                setApproveField({
+                  adminRemarks: "",
+                  refundAmnt: "",
+                  transactionNo: ""
+                });
+              }, 500)
+            }
+          }
+
+        }
+      )
+    } else {
+      setErrors(validationErrors);
+    }
+  }
+
+
+
   const validateForm = (data) => {
     let errors = {};
 
@@ -125,15 +217,31 @@ const AdminViewRefundRequests = () => {
     return errors;
   }
 
+  const validateForm3 = (data) => {
+    let errors = {};
+
+    if (!data.approvedAmnt) {
+      errors.approvedAmnt = 'Approved Amount is required';
+    }
+
+    return errors;
+  }
+
   const rejectRefund = () => {
     const validationErrors = validateForm2(inputField)
     if (Object.keys(validationErrors).length === 0) {
       let currentKey = sessionStorage.getItem("admkey");
       let token = sessionStorage.getItem("admtoken");
+      let rejectedBy;
       if (currentKey !== 'lmsapp') {
         currentKey = sessionStorage.getItem("admstaffkey");
         token = sessionStorage.getItem("admstaffLogintoken");
         setKey(currentKey); // Update the state if needed
+      }
+      if (currentKey === 'lmsapp') {
+        rejectedBy = 0
+      } else {
+        rejectedBy = sessionStorage.getItem("admstaffId")
       }
       let axiosConfig2 = {
         headers: {
@@ -145,7 +253,7 @@ const AdminViewRefundRequests = () => {
       }
       let data2 = {
         "refundId": reject,
-        "admStaffId": sessionStorage.getItem("admstaffId"),
+        "admStaffId": rejectedBy,
         "adminRemarks": inputField.adminRemarks
       }
       setRejectShowModal(false)
@@ -186,10 +294,16 @@ const AdminViewRefundRequests = () => {
   const initiateRefund = () => {
     let currentKey = sessionStorage.getItem("admkey");
     let token = sessionStorage.getItem("admtoken");
+    let initiatedBy;
     if (currentKey !== 'lmsapp') {
       currentKey = sessionStorage.getItem("admstaffkey");
       token = sessionStorage.getItem("admstaffLogintoken");
       setKey(currentKey); // Update the state if needed
+    }
+    if (currentKey === 'lmsapp') {
+      initiatedBy = 0
+    } else {
+      initiatedBy = sessionStorage.getItem("admstaffId")
     }
     const validationErrors = validateForm(approveField)
     if (Object.keys(validationErrors).length === 0) {
@@ -203,7 +317,7 @@ const AdminViewRefundRequests = () => {
       }
       let data3 = {
         "refundId": approve,
-        "admStaffId": sessionStorage.getItem("admstaffId"),
+        "admStaffId": initiatedBy,
         "adminRemarks": approveField.adminRemarks,
         "transactionNo": approveField.transactionNo,
         "approvedAmnt": approveAmnt
@@ -341,7 +455,7 @@ const AdminViewRefundRequests = () => {
   };
 
   const readBankDetails = (accountNo, IFSCCode, bankName, branchName, upiId) => {
-    setBankDetails({accountNo, IFSCCode, bankName, branchName, upiId})
+    setBankDetails({ accountNo, IFSCCode, bankName, branchName, upiId })
     setShowBankDetailsModal(true)
     setShowOverlay(true)
   }
