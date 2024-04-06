@@ -74,12 +74,49 @@ exports.getRefundStatus = (request, response) => {
     });
 };
 
+exports.approveRefund = (request, response) => {
+    const { approvedAmnt, admStaffId, refundId } = request.body;
+    const approverefundToken = request.headers.token;
+    const key = request.headers.key;
+
+    jwt.verify(approverefundToken, key, (err, decoded) => {
+        if (decoded) {
+
+            const validationErrors = {};
+
+            if (Validator.isEmpty(approvedAmnt).isValid) {
+                validationErrors.approvedAmnt = Validator.isEmpty(approvedAmnt).message;
+            }
+            if (!Validator.isValidAmount(approvedAmnt).isValid) {
+                validationErrors.approvedAmnt = Validator.isValidAmount(approvedAmnt).message;
+            }
+            // If validation fails
+            if (Object.keys(validationErrors).length > 0) {
+                return response.json({ "status": "Validation failed", "data": validationErrors });
+            }
+
+            Refund.approveRefund(approvedAmnt, admStaffId, refundId, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    return response.json({ "status": err });
+                } else {
+                    console.log("Refund request successfully approved");
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+
 
 exports.initiateRefundRequest = (request, response) => {
     const { approvedAmnt, transactionNo, adminRemarks, admStaffId, refundId } = request.body;
     const refundtoken = request.headers.token;
     const key = request.headers.key;
-    console.log(refundId)
+
     jwt.verify(refundtoken, key, (err, decoded) => {
         if (decoded) {
             const validationErrors = {};
@@ -104,7 +141,7 @@ exports.initiateRefundRequest = (request, response) => {
                     console.log(err);
                     return response.json({ "status": err });
                 } else {
-                    console.log("Refund request successfully approved");
+                    console.log("Refund request successfully initiated");
                     return response.json({ "status": "success", "data": data });
                 }
             });
