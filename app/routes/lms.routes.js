@@ -161,7 +161,7 @@ router.post("/profileViewByAdmStaff", AdminStaffController.viewAdminStaffProfile
 
 router.post("/adSfViewSubmittedTask", AdminStaffController.adsfViewSubmttedTask)
 
-router.post("/admStaffRefundApproval", RefundController.approveRefundRequest)
+router.post("/admStaffRefundInitiate", RefundController.initiateRefundRequest)
 
 router.post("/refundamntrcvdstatus", StudentController.refundAmountReceivedStatus)
 

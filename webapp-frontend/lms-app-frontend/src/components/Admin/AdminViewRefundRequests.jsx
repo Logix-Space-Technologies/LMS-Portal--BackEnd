@@ -41,7 +41,7 @@ const AdminViewRefundRequests = () => {
 
   const apiUrl = global.config.urls.api.server + "/api/lms/getAllRefundRequests"
   const apiUrl2 = global.config.urls.api.server + "/api/lms/rejectRefund"
-  const apiUrl3 = global.config.urls.api.server + "/api/lms/admStaffRefundApproval"
+  const apiUrl3 = global.config.urls.api.server + "/api/lms/admStaffRefundInitiate"
 
   const closeWaitingModal = () => {
     setShowOverlay(false)

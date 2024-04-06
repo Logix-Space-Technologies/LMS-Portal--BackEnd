@@ -98,7 +98,7 @@ exports.initiateRefundRequest = (request, response) => {
             if (Object.keys(validationErrors).length > 0) {
                 return response.json({ "status": "Validation failed", "data": validationErrors });
             }
-            Refund.approveRefund(approvedAmnt, admStaffId, transactionNo, adminRemarks, refundId, (err, data) => {
+            Refund.initiateRefund(approvedAmnt, admStaffId, transactionNo, adminRemarks, refundId, (err, data) => {
                 if (err) {
                     console.log(err);
                     return response.json({ "status": err });
