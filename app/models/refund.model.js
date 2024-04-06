@@ -12,6 +12,8 @@ const Refund = function (refund) {
     this.refundAmnt = refund.refundAmnt;
     this.approvedAmnt = refund.approvedAmnt;
     this.admStaffId = refund.admStaffId;
+    this.transactionNo = refund.transactionNo;
+    this.adminRemarks = refund.adminRemarks;
 };
 
 Refund.createRefundRequest = (newRefund, result) => {
