@@ -10,7 +10,7 @@ exports.createTokens = (request, response) => {
         return response.status(400).json({ "status": "Firebase token is required." });
     }
 
-    jwt.verify(firebaseCreateToken, "lmsappstud", (err, decoded) => {
+    jwt.verify(firebaseCreateToken, "lmsappclgstaff", (err, decoded) => {
         if (err) {
             return response.status(401).json({ "status": "Unauthorized access!!" });
         }
