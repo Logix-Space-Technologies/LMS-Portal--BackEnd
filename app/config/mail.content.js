@@ -3427,7 +3427,32 @@ function refundRequestConfirmationHtmlContent(studName, requestedDate, addedDate
 
     </html>
 `
-return content
+  return content
+}
+
+function refundRequestConfirmationTextContent(studName, requestedDate, addedDate, remainingPaymentPeriod) {
+  const currentYear = new Date().getFullYear();
+
+  content = `LinkUrCodes Refund Request Confirmation
+
+  Dear ${studName},
+  
+  We acknowledge your request dated ${requestedDate}, regarding your decision to withdraw from the "Link Ur Codes" skill development program. As per the details you provided, you joined the program on ${addedDate}, and based on your withdrawal date, there are ${remainingPaymentPeriod} days remaining in your subscription period. In line with our commitment at the time of registration, we will calculate the refund on a pro-rata basis. Please be assured that the amount will be refunded to the bank account details you have provided. The process will be initiated, and you can expect the amount to be credited within 20 to 25 working days.
+  
+  We would also like to remind you that as per our policy, withdrawing from the program means that rejoining at a later date is not an option. Therefore, we are extending a consideration period of 5 days from the date of this correspondence. Should you decide to continue with the program within this timeframe, please inform us immediately, and we will halt the refund process.
+  
+  If we do not hear from you within the next 5 days, we will proceed with the refund as outlined above.
+  
+  We appreciate the time you spent with us, and we wish you the very best in your academic endeavors. Should you have any further questions or require additional assistance, please do not hesitate to reach out.
+  
+  Best Regards,
+
+  LinkUrCodes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.
+  `
+
+  return content
 }
 
 module.exports = {
@@ -3487,7 +3512,7 @@ module.exports = {
   cancelSessionClgStaffTextContent,
   SessionRemainderClgStaffHTMLContent,
   SessionRemainderClgStaffTextContent,
-  refundRequestConfirmationHtmlContent
-
+  refundRequestConfirmationHtmlContent,
+  refundRequestConfirmationTextContent
 };
 

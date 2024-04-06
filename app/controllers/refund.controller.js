@@ -38,10 +38,10 @@ exports.createRefundRequest = (request, response) => {
                         } else {
                             let studentEmail = result[0].studEmail;
                             let studName = result[0].studName;
-                            let addedDate = result[0].addedDate;
+                            let addedDate = result[0].addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
                             let requestedDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
                             refundRequestConfirmationHtmlContent = mailContents.refundRequestConfirmationHtmlContent(studName, requestedDate, addedDate, data.remainingPaymentPeriod);
-                            // refundRequestConfirmationTextContent = mailContents.refundRequestConfirmationTextContent;
+                            refundRequestConfirmationTextContent = mailContents.refundRequestConfirmationTextContent(studName, requestedDate, addedDate, data.remainingPaymentPeriod)
                             mail.sendEmail(studentEmail, `Refund Request Confirmation ${requestedDate}`, refundRequestConfirmationHtmlContent);
                         }
                     });
