@@ -10,6 +10,11 @@ exports.createRefundRequest = (request, response) => {
             const newRefund = new Refund({
                 studId: request.body.studId, // Use studId instead of studid
                 reason: request.body.reason,
+                accountNo: request.body.accountNo,
+                IFSCCode: request.body.IFSCCode,
+                bankName: request.body.bankName,
+                branchName: request.body.branchName,
+                upiId: request.body.upiId
             });
 
             Refund.createRefundRequest(newRefund, (err, data) => {
