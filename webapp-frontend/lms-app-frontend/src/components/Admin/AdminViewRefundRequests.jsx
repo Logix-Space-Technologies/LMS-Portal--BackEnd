@@ -216,7 +216,7 @@ const AdminViewRefundRequests = () => {
           if (response.data.status === "success") {
             closeWaitingModal()
             setTimeout(() => {
-              alert("Refund Request Approved Successfully")
+              alert("Refund Initiated Successfully!!!")
               getData()
               setApproveField({
                 adminRemarks: "",
