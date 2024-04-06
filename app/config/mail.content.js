@@ -3404,7 +3404,7 @@ function refundRequestConfirmationHtmlContent(studName, requestedDate, addedDate
 
         <h2>LinkUrCodes Refund Request Confirmation</h2>
         <p>Dear ${studName},</p>
-        <p>We acknowledge your request dated ${requestedDate}, regarding your decision to withdraw from the "Link Ur Codes"
+        <p>We acknowledge the receipt of your email dated ${requestedDate}, regarding your decision to withdraw from the "Link Ur Codes"
           skill development program. As per the details you provided, you joined the program on ${addedDate}, and based on
           your withdrawal date, there are ${remainingPaymentPeriod} days remaining in your subscription period. In line with
           our commitment at the time of registration, we will calculate the refund on a pro-rata basis. Please be assured
@@ -3437,7 +3437,7 @@ function refundRequestConfirmationTextContent(studName, requestedDate, addedDate
 
   Dear ${studName},
   
-  We acknowledge your request dated ${requestedDate}, regarding your decision to withdraw from the "Link Ur Codes" skill development program. As per the details you provided, you joined the program on ${addedDate}, and based on your withdrawal date, there are ${remainingPaymentPeriod} days remaining in your subscription period. In line with our commitment at the time of registration, we will calculate the refund on a pro-rata basis. Please be assured that the amount will be refunded to the bank account details you have provided. The process will be initiated, and you can expect the amount to be credited within 20 to 25 working days.
+  We acknowledge the receipt of your email dated ${requestedDate}, regarding your decision to withdraw from the "Link Ur Codes" skill development program. As per the details you provided, you joined the program on ${addedDate}, and based on your withdrawal date, there are ${remainingPaymentPeriod} days remaining in your subscription period. In line with our commitment at the time of registration, we will calculate the refund on a pro-rata basis. Please be assured that the amount will be refunded to the bank account details you have provided. The process will be initiated, and you can expect the amount to be credited within 20 to 25 working days.
   
   We would also like to remind you that as per our policy, withdrawing from the program means that rejoining at a later date is not an option. Therefore, we are extending a consideration period of 5 days from the date of this correspondence. Should you decide to continue with the program within this timeframe, please inform us immediately, and we will halt the refund process.
   
