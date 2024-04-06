@@ -202,7 +202,7 @@ Refund.viewRefundStatus = (studId, result) => {
 };
 
 //admin staff refund approval
-Refund.approveRefund = (approvedAmnt, admStaffId, transactionNo, adminRemarks, refundId, result) => {
+Refund.initiateRefund = (approvedAmnt, admStaffId, transactionNo, adminRemarks, refundId, result) => {
     // Check if the refund ID exists in the refund table
     db.query("SELECT * FROM refund WHERE id = ? AND cancelStatus = 0 AND refundApprovalStatus = 0 ", [refundId], (refundErr, refundRes) => {
         if (refundErr) {

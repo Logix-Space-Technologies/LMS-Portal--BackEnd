@@ -75,7 +75,7 @@ exports.getRefundStatus = (request, response) => {
 };
 
 
-exports.approveRefundRequest = (request, response) => {
+exports.initiateRefundRequest = (request, response) => {
     const { approvedAmnt, transactionNo, adminRemarks, admStaffId, refundId } = request.body;
     const refundtoken = request.headers.token;
     const key = request.headers.key;

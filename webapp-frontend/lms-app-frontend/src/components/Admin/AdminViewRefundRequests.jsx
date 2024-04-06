@@ -300,8 +300,8 @@ const AdminViewRefundRequests = () => {
   const startPage = currentPage > 2 ? currentPage - 2 : 1;
   const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
 
-  const approveValue = (id, approvedAmnt) => {
-    setApprove(id);
+  const approveValue = (refundId, approvedAmnt) => {
+    setApprove(refundId);
     setApproveAmnt(approvedAmnt); // Set the approveAmnt value
     setShowModal(true); // Open the modal
     setShowOverlay(true); // Show overlay
