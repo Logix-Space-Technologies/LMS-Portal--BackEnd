@@ -156,6 +156,7 @@ const AdminViewRefundRequests = () => {
               setAmountField({
                 "approvedAmnt": ""
               })
+              setApproveFinalId({})
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.approvedAmnt) {
             closeWaitingModal()
@@ -173,6 +174,7 @@ const AdminViewRefundRequests = () => {
               setAmountField({
                 "approvedAmnt": ""
               })
+              setApproveFinalId({})
             }, 500)
           }
         }
@@ -446,6 +448,7 @@ const AdminViewRefundRequests = () => {
     setInputField({
       adminRemarks: ""
     });
+    setReject({})
   };
 
   const closeApproveModal = () => {
@@ -455,6 +458,7 @@ const AdminViewRefundRequests = () => {
     setAmountField({
       "approvedAmnt": ""
     })
+    setApproveFinalId({})
   };
 
   // Function to close both modal and overlay
