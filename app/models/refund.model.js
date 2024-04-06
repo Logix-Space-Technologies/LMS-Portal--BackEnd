@@ -4,9 +4,14 @@ const { StudentLog, logStudent } = require("../models/studentLog.model")
 const Refund = function (refund) {
     this.studId = refund.studId;
     this.reason = refund.reason;
+    this.accountNo = refund.accountNo;
+    this.IFSCCode = refund.IFSCCode;
+    this.bankName = refund.bankName;
+    this.branchName = refund.branchName;
+    this.upiId = refund.upiId;
     this.refundAmnt = refund.refundAmnt;
     this.approvedAmnt = refund.approvedAmnt;
-    this.admStaffId = refund.admStaffId; //added
+    this.admStaffId = refund.admStaffId;
 };
 
 Refund.createRefundRequest = (newRefund, result) => {
