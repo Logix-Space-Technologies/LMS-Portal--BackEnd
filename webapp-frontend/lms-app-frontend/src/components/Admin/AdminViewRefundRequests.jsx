@@ -15,6 +15,8 @@ const AdminViewRefundRequests = () => {
   const [approveAmnt, setApproveAmnt] = useState(null)
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showBankDetailsModal, setShowBankDetailsModal] = useState(false)
+  const [bankDetails, setBankDetails] = useState({})
   const [showRejectModal, setRejectShowModal] = useState(false);
   const [showWaitingModal, setShowWaitingModal] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
@@ -332,6 +334,18 @@ const AdminViewRefundRequests = () => {
 
   };
 
+  // Function to close both modal and overlay
+  const closeBankDetailsModal = () => {
+    setShowBankDetailsModal(false);
+    setShowOverlay(false);
+  };
+
+  const readBankDetails = (accountNo, IFSCCode, bankName, branchName, upiId) => {
+    setBankDetails(accountNo, IFSCCode, bankName, branchName, upiId)
+    setShowBankDetailsModal(true)
+    setShowOverlay(true)
+  }
+
   // Update key state when component mounts
   useEffect(() => {
     setKey(sessionStorage.getItem("admkey") || '');
@@ -373,7 +387,7 @@ const AdminViewRefundRequests = () => {
                           Requested Date
                         </th>
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                          Bank Account Details/ UPI ID
+                          Bank Account Details
                         </th>
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                           Refund Amount
@@ -424,7 +438,7 @@ const AdminViewRefundRequests = () => {
                             {value.requestedDate}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                            {value.reason}
+                            <button type="button" onClick={() => readBankDetails(value.accountNo, value.IFSCCode, value.bankName, value.branchName, value.upiId)} className="btn btn-primary">Reject Refund</button>
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.refundAmnt}
@@ -466,6 +480,30 @@ const AdminViewRefundRequests = () => {
           </div>
         </section>
       </div>
+
+      {showBankDetailsModal && (
+        <div className="flex justify-end">
+          <div className="modal show d-block" tabIndex={-1}>
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h1 className="modal-title fs-5" id="exampleModalLabel">Bank Details</h1>
+                  <button type="button" className="btn-close" onClick={closeBankDetailsModal} />
+                </div>
+                <div className="modal-body">
+                  <p>Account No.: <b>{bankDetails.accountNo}</b></p>
+                  <p>IFSC Code: <b>{bankDetails.IFSCCode}</b></p>
+                  <p>Bank Name: <b>{bankDetails.bankName}</b></p>
+                  <p>Branch Name: <b>{bankDetails.branchName}</b></p>
+                  <p>UPI ID: <b>{bankDetails.upiId}</b></p>
+                </div>
+                <div className="modal-footer">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showRejectModal && (
         <div className="flex justify-end">
