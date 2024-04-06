@@ -2,13 +2,15 @@ const jwt = require("jsonwebtoken");
 const Refund = require("../models/refund.model");
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 const Validator = require("../config/data.validate");
-
+const mailContents = require('../config/mail.content');
+const mail = require('../../sendEmail');
+const db = require('../models/db');
 exports.createRefundRequest = (request, response) => {
     refundtoken = request.headers.token;
     jwt.verify(refundtoken, "lmsappstud", (err, decoded) => {
         if (decoded) {
             const newRefund = new Refund({
-                studId: request.body.studId, // Use studId instead of studid
+                studId: request.body.studId, //student id
                 reason: request.body.reason,
                 accountNo: request.body.accountNo,
                 IFSCCode: request.body.IFSCCode,
@@ -30,6 +32,19 @@ exports.createRefundRequest = (request, response) => {
                         return response.json({ "status": "Failed to create refund request." });
                     }
                 } else {
+                    db.query('select studName,studEmail,addedDate from student where id=?', [request.body.studId], (err, result) => {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            let studentEmail = result[0].studEmail;
+                            let studName = result[0].studName;
+                            let addedDate = result[0].addedDate;
+                            let requestedDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
+                            refundRequestConfirmationHtmlContent = mailContents.refundRequestConfirmationHtmlContent(studName, requestedDate, addedDate, data.remainingPaymentPeriod);
+                            // refundRequestConfirmationTextContent = mailContents.refundRequestConfirmationTextContent;
+                            //mail.sendEmail(studentEmail, `Refund Request Confirmation ${requestedDate}`, refundRequestConfirmationHtmlContent);
+                        }
+                    });
                     console.log("Refund request successfully created");
                     return response.json({ "status": "success", "data": data });
                 }

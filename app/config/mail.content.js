@@ -3339,7 +3339,95 @@ function SessionRemainderRecordedTextContent(studName, sessionName, date, time, 
   return content
 }
 
+function refundRequestConfirmationHtmlContent(studName, requestedDate, addedDate, remainingPaymentPeriod) {
+  const currentYear = new Date().getFullYear();
+  content = `
+      <!DOCTYPE html>
+    <html lang="en">
 
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>LinkUrCodes Student Refund Request Confirmation</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+
+        .container {
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 20px;
+          border: 1px solid #ccc;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+
+        h2 {
+          text-align: center;
+          color: #007bff;
+        }
+
+        p {
+          text-align: justify;
+          line-height: 1.6;
+        }
+
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          text-align: center;
+          text-decoration: none;
+          background-color: #007bff;
+          color: #fff;
+          border-radius: 5px;
+        }
+
+        .footer {
+          text-align: center;
+          margin-top: 30px;
+          font-size: smaller;
+          color: grey;
+        }
+      </style>
+    </head>
+
+    <body>
+      <div class="container">
+        <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+
+        <h2>LinkUrCodes Refund Request Confirmation</h2>
+        <p>Dear ${studName},</p>
+        <p>We acknowledge your request dated ${requestedDate}, regarding your decision to withdraw from the "Link Ur Codes"
+          skill development program. As per the details you provided, you joined the program on ${addedDate}, and based on
+          your withdrawal date, there are ${remainingPaymentPeriod} days remaining in your subscription period. In line with
+          our commitment at the time of registration, we will calculate the refund on a pro-rata basis. Please be assured
+          that the amount will be refunded to the bank account details you have provided. The process will be initiated, and
+          you can expect the amount to be credited within 20 to 25 working days.</p>
+        <p>We would also like to remind you that as per our policy, withdrawing from the program means that rejoining at a
+          later date is not an option. Therefore, we are extending a consideration period of 5 days from the date of this
+          correspondence. Should you decide to continue with the program within this timeframe, please inform us
+          immediately, and we will halt the refund process.</p>
+        <p>If we do not hear from you within the next 5 days, we will proceed with the refund as outlined above.</p>
+        <p>We appreciate the time you spent with us, and we wish you the very best in your academic endeavors.
+          Should you have any further questions or require additional assistance, please do not hesitate to reach out.</p>
+        <p>Best Regards,</p>
+        <p>LinkUrCodes Team</p>
+        <div class="footer">
+          © ${currentYear} Link Ur Codes. All rights reserved.
+        </div>
+      </div>
+    </body>
+
+    </html>
+`
+}
 
 module.exports = {
   admStaffAddHTMLContent,
@@ -3397,7 +3485,8 @@ module.exports = {
   cancelSessionClgStaffHTMLContent,
   cancelSessionClgStaffTextContent,
   SessionRemainderClgStaffHTMLContent,
-  SessionRemainderClgStaffTextContent
+  SessionRemainderClgStaffTextContent,
+  refundRequestConfirmationHtmlContent
 
 };
 
