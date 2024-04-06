@@ -55,6 +55,11 @@ const RefundRequestForm = () => {
             let data = {
                 studId: inputField.studId,
                 reason: inputField.reason,
+                accountNo: inputField.accountNo,
+                IFSCCode: inputField.IFSCCode,
+                bankName: inputField.bankName,
+                branchName: inputField.branchName,
+                upiId: inputField.upiId
             };
             setShowWaitingModal(true)
             setShowOverlay(true)
@@ -149,7 +154,12 @@ const RefundRequestForm = () => {
                                         <textarea name="reason" onChange={handleChange} value={inputField.reason} id="reason" cols="30" rows="10" className="form-control"></textarea>
                                         {errors.reason && <div className="text-danger">{errors.reason}</div>}
                                     </div>
-
+                                    <h1>Bank Details (Provide Bank Details OR UPI ID)</h1>
+                                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                        <label htmlFor="accountNo" className="form-label">Account No.</label>
+                                        <input type="text" onChange={handleChange} name='accountNo' value={inputField.accountNo} className="form-control" />
+                                        {errors.reason && <div className="text-danger">{errors.reason}</div>}
+                                    </div>
                                     <div className="col-12">
                                         <div className="d-grid">
                                             <button onClick={handleSubmit} className="btn btn-primary btn-lg" type="submit">Submit</button>
