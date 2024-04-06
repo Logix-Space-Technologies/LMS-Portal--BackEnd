@@ -396,6 +396,9 @@ const AdminViewRefundRequests = () => {
                           Approved Amount
                         </th>
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                          Approved Status
+                        </th>
+                        <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                           Refund Status
                         </th>
                         <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
@@ -438,7 +441,7 @@ const AdminViewRefundRequests = () => {
                             {value.requestedDate}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                            <button type="button" onClick={() => readBankDetails(value.accountNo, value.IFSCCode, value.bankName, value.branchName, value.upiId)} className="btn btn-primary">View Bank Details</button>
+                            <button type="button" onClick={() => readBankDetails(value.accountNo, value.IFSCCode, value.bankName, value.branchName, value.upiId)} className="btn btn-primary">View Details</button>
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.refundAmnt}
@@ -450,6 +453,9 @@ const AdminViewRefundRequests = () => {
                             {value.refundApprovalStatus}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                            {value.refundStatus}
+                          </td>
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.AmountReceivedStatus}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
@@ -458,7 +464,7 @@ const AdminViewRefundRequests = () => {
                             )}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                            {value.refundApprovalStatus === "Amount Approved" && (
+                            {value.refundApprovalStatus === "Amount Approved" && value.refundStatus !== "Amount Refunded" && (
                               <button onClick={() => approveValue(value.refundId, value.approvedAmnt)} type="button" className="btn btn-primary" disabled={isGreaterThanFiveDays === false}>Initiate Refund</button>
                             )}
                           </td>
