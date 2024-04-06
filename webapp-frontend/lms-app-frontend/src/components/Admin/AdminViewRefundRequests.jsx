@@ -601,7 +601,7 @@ const AdminViewRefundRequests = () => {
                             )}
                           </td>
                         </tr>
-                      }) : <td colSpan="10" className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                      }) : <td colSpan="14" className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                         No Refund Requests Found !!!
                       </td>}
                     </tbody>
