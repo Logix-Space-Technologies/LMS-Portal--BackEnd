@@ -117,7 +117,7 @@ const StudentViewOneTask = () => {
                     setTimeout(() => {
                         alert("Task Submitted Successfully !!");
                         getData()
-                    }, 500)
+                    }, 1000)
                 } else {
                     closeWaitingModal()
                     if (response.data.status === "Validation failed" && response.data.data.gitLink) {
