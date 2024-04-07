@@ -33,17 +33,31 @@ exports.createRefundRequest = (request, response) => {
                         return response.json({ "status": "Failed to create refund request." });
                     }
                 } else {
-                    db.query('select studName,studEmail,addedDate from student where id=?', [request.body.studId], (err, result) => {
+                    db.query('SELECT s.*, b.batchName, c.collegeName FROM student s JOIN batches b ON s.batchId = b.id JOIN college c ON b.collegeId = c.id WHERE s.id = ?', [request.body.studId], (err, result) => {
                         if (err) {
                             console.log(err);
                         } else {
                             let studentEmail = result[0].studEmail;
                             let studName = result[0].studName;
+                            let membershipNo = result[0].membership_no;
+                            let rollNo = result[0].rollNo;
+                            let admNo = result[0].admNo;
+                            let collegeName = result[0].collegeName;
+                            let batchName = result[0].batchName;
                             let addedDate = result[0].addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
                             let requestedDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
                             refundRequestConfirmationHtmlContent = mailContents.refundRequestConfirmationHtmlContent(studName, requestedDate, addedDate, data.remainingPaymentPeriod);
                             refundRequestConfirmationTextContent = mailContents.refundRequestConfirmationTextContent(studName, requestedDate, addedDate, data.remainingPaymentPeriod)
                             mail.sendEmail(studentEmail, `Refund Request Confirmation ${requestedDate}`, refundRequestConfirmationHtmlContent, refundRequestConfirmationTextContent);
+                            db.query('SELECT `userName` FROM `admin` WHERE `id` = 1', (err, res) => {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    let adminEmail = res[0].userName;
+                                    refundRequestAdmAdmStaffNotificationHtmlContent = mailContents.refundRequestConfirmationAdminAdmStaffHTMLContent(studName, membershipNo, admNo, rollNo, studentEmail, collegeName, batchName, requestedDate, data.reason);
+                                    mail.sendEmail(adminEmail, `System Alert: Student Withdrawal Request - "Link Your Codes" Program ${requestedDate}`, refundRequestAdmAdmStaffNotificationHtmlContent);
+                                }
+                            })
                         }
                     });
                     console.log("Refund request successfully created");
