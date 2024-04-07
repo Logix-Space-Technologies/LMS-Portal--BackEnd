@@ -181,6 +181,7 @@ const CollegeStaffSearchTask = () => {
                                                     {value.taskType}
                                                 </td>
                                                 <td className="p-4 whitespace-nowrap">
+                                                    {value.taskFileUpload === null && <p>NIL</p>}
                                                     {value.taskFileUpload !== null && <Link target="_blank" to={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 shadow rounded-md hover:bg-blue-500">View Material</Link>}
                                                 </td>
                                                 <td className="p-4 whitespace-nowrap">
