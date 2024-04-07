@@ -55,7 +55,8 @@ exports.createRefundRequest = (request, response) => {
                                 } else {
                                     let adminEmail = res[0].userName;
                                     refundRequestAdmAdmStaffNotificationHtmlContent = mailContents.refundRequestConfirmationAdminAdmStaffHTMLContent(studName, membershipNo, admNo, rollNo, studentEmail, collegeName, batchName, requestedDate, data.reason);
-                                    mail.sendEmail(adminEmail, `System Alert: Student Withdrawal Request - "Link Your Codes" Program ${requestedDate}`, refundRequestAdmAdmStaffNotificationHtmlContent);
+                                    refundRequestAdmAdmStaffNotificationTextContent = mailContents.refundRequestConfirmationAdminAdmStaffTextContent(studName, membershipNo, admNo, rollNo, studentEmail, collegeName, batchName, requestedDate, data.reason);
+                                    mail.sendEmail(adminEmail, `System Alert: Student Withdrawal Request - "Link Your Codes" Program ${requestedDate}`, refundRequestAdmAdmStaffNotificationHtmlContent, refundRequestAdmAdmStaffNotificationTextContent);
                                 }
                             })
                         }

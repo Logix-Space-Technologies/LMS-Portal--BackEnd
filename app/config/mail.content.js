@@ -3555,6 +3555,37 @@ function refundRequestConfirmationAdminAdmStaffHTMLContent(studName, membershipN
   return content
 }
 
+function refundRequestConfirmationAdminAdmStaffTextContent(studName, membershipNo, AdmNo, rollNo, studEmail, collegeName, batchName, requestedDate, reason) {
+  const currentYear = new Date().getFullYear();
+  content = `Dear Administration Team,
+
+  This is an automated notification to inform you of a student withdrawal request received through the "Link Your Codes" program platform.
+  
+  Please find the details of the student below:
+  
+  - Name: ${studName}
+  - Membership No.: ${membershipNo}
+  - Admission No.: ${AdmNo}
+  - Roll No.: ${rollNo}
+  - Email: ${studEmail}
+  - College Name: ${collegeName}
+  - Batch Name: ${batchName}
+  
+  Withdrawal Details:
+  
+  - Request received on: ${requestedDate}
+  - Reason For Withdrawal: ${reason}
+  
+  Thank you for your attention to this matter.
+  
+  Best Regards,
+  
+  LinkUrCodes Notification System
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+  return content
+}
+
 module.exports = {
   admStaffAddHTMLContent,
   admStaffAddTextContent,
@@ -3614,6 +3645,7 @@ module.exports = {
   SessionRemainderClgStaffTextContent,
   refundRequestConfirmationHtmlContent,
   refundRequestConfirmationTextContent,
-  refundRequestConfirmationAdminAdmStaffHTMLContent
+  refundRequestConfirmationAdminAdmStaffHTMLContent,
+  refundRequestConfirmationAdminAdmStaffTextContent
 };
 
