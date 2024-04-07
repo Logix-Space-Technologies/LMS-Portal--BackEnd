@@ -116,9 +116,9 @@ const StudentViewTasks = () => {
             (response) => {
                 if (response.data.status === "success") {
                     closeWaitingModal()
+                    getData()
                     setTimeout(() => {
                         alert("Task Submitted Successfully !!");
-                        getData()
                         setInputField({
                             "gitLink": "",
                             "remarks": ""
