@@ -122,7 +122,7 @@ const StudentViewTasks = () => {
                         setInputField({
                             "gitLink": "",
                             "remarks": ""
-                        }, 1000);
+                        }, 500);
                     })
                     
                 } else {
