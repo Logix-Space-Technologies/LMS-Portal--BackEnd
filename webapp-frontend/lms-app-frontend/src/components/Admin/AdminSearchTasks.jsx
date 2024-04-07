@@ -235,6 +235,7 @@ const AdminSearchTasks = () => {
                                         </td>
                                         <td>{task.totalScore}</td>
                                         <td>
+                                            {task.taskFileUpload === null && <p>NIL</p>}
                                             {task.taskFileUpload !== null && <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white btn-sm me-2">View File</Link>}
                                         </td>
                                         <td>
