@@ -235,7 +235,7 @@ const AdminSearchTasks = () => {
                                         </td>
                                         <td>{task.totalScore}</td>
                                         <td>
-                                            <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white btn-sm me-2">View File</Link>
+                                            {task.taskFileUpload !== null && <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white btn-sm me-2">View File</Link>}
                                         </td>
                                         <td>
                                             <button onClick={() => handleUpdateClick(task.id)} className="btn btn-primary btn-sm me-2">Update</button>
