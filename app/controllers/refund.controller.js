@@ -230,14 +230,14 @@ exports.cancelRefundRequest = (request, response) => {
             Refund.cancelRefundRequest(refundId, (err, data) => {
                 if (err) {
                     console.log(err);
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 } else {
                     console.log("Refund request successfully cancelled");
-                    response.json({ "status": "success" });
+                    return response.json({ "status": "success" });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 }
