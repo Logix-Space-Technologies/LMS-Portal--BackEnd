@@ -140,9 +140,9 @@ const CollegeStaffViewTask = () => {
                                                                 {value.dueDate}
                                                             </td>
                                                             <td class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                                <a target='_blank' href={value.taskFileUpload} class="inline-block px-6 py-2.5 border rounded-md border-primary text-primary hover:bg-primary hover:text-white font-medium">
+                                                                <Link target='_blank' to={value.taskFileUpload} class="inline-block px-6 py-2.5 border rounded-md border-primary text-primary hover:bg-primary hover:text-white font-medium">
                                                                     View Material
-                                                                </a>
+                                                                </Link>
                                                             </td>
                                                         </>
                                                     )}
@@ -152,9 +152,9 @@ const CollegeStaffViewTask = () => {
                                                                 {value.dueDate}
                                                             </td>
                                                             <td class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                                <a target='_blank' href={value.taskFileUpload} class="inline-block px-6 py-2.5 border rounded-md border-primary text-primary hover:bg-primary hover:text-white font-medium">
+                                                                <Link target='_blank' to={value.taskFileUpload} class="inline-block px-6 py-2.5 border rounded-md border-primary text-primary hover:bg-primary hover:text-white font-medium">
                                                                     View Material
-                                                                </a>
+                                                                </Link>
                                                             </td>
                                                         </>
                                                     )}
