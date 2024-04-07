@@ -117,7 +117,7 @@ const StudentViewOneTask = () => {
                     setTimeout(() => {
                         alert("Task Submitted Successfully !!");
                         getData()
-                    }, 1000)
+                    }, 500)
                 } else {
                     closeWaitingModal()
                     if (response.data.status === "Validation failed" && response.data.data.gitLink) {
@@ -377,6 +377,27 @@ const StudentViewOneTask = () => {
                     )}
                 </div>
             </section>}
+
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             {!loading && <div>
                 <div className="flex items-center justify-between bg-white px-4 py-3 sm:px-6">
                     <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
