@@ -624,11 +624,11 @@ const AdminViewRefundRequests = () => {
                   <button type="button" className="btn-close" onClick={closeBankDetailsModal} />
                 </div>
                 <div className="modal-body">
-                  <p>Account No. : <b>{bankDetails.accountNo ? bankDetails.accountNo : <p>NIL</p>}</b></p>
-                  <p>IFSC Code: <b>{bankDetails.IFSCCode ? bankDetails.IFSCCode : <p>NIL</p>}</b></p>
-                  <p>Bank Name: <b>{bankDetails.bankName ? bankDetails.bankName : <p>NIL</p>}</b></p>
-                  <p>Branch Name: <b>{bankDetails.branchName ? bankDetails.branchName : <p>NIL</p>}</b></p>
-                  <p>UPI ID: <b>{bankDetails.upiId ? bankDetails.upiId : <p>NIL</p>}</b></p>
+                  <p>Account No. : <b>{bankDetails.accountNo ? <p>{bankDetails.accountNo}</p> : <p>NIL</p>}</b></p>
+                  <p>IFSC Code: <b>{bankDetails.IFSCCode ? <p>{bankDetails.IFSCCode}</p> : <p>NIL</p>}</b></p>
+                  <p>Bank Name: <b>{bankDetails.bankName ? <p>{bankDetails.bankName}</p> : <p>NIL</p>}</b></p>
+                  <p>Branch Name: <b>{bankDetails.branchName ? <p>{bankDetails.branchName}</p> : <p>NIL</p>}</b></p>
+                  <p>UPI ID: <b>{bankDetails.upiId ? <p>{bankDetails.upiId}</p> : <p>NIL</p>}</b></p>
                 </div>
                 <div className="modal-footer">
                 </div>
