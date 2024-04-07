@@ -31,8 +31,8 @@ const StudentViewTasks = () => {
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
 
     const closeWaitingModal = () => {
-        setShowOverlay(false)
         setShowWaitingModal(false)
+        setShowOverlay(false)
     }
 
     const getData = () => {
@@ -116,13 +116,13 @@ const StudentViewTasks = () => {
             (response) => {
                 if (response.data.status === "success") {
                     closeWaitingModal()
-                    getData()
                     setTimeout(() => {
                         alert("Task Submitted Successfully !!");
+                        getData()
                         setInputField({
                             "gitLink": "",
                             "remarks": ""
-                        }, 500);
+                        }, 1000);
                     })
                     
                 } else {
