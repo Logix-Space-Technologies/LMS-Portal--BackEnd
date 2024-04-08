@@ -147,8 +147,11 @@ const StudViewProfile = () => {
                                                                 {performanceData.cgpa === 0 && performanceData.SubmitTaskCount > 0 && (
                                                                     <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Task Submitted but yet to be Evaluated...</p>
                                                                 )}
-                                                                {performanceData.cgpa === 0 && performanceData.SubmitTaskCount === 0 && (
+                                                                {performanceData.cgpa === 0 && performanceData.SubmitTaskCount === 0 && performanceData.TaskCount > 0 && (
                                                                     <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">❌ No Tasks Completed!!! ❌</p>
+                                                                )}
+                                                                {performanceData.cgpa === 0 && performanceData.SubmitTaskCount === 0 && performanceData.TaskCount === 0 && (
+                                                                    <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">No Tasks Assigned!!!</p>
                                                                 )}
                                                             </div>
                                                         </div>
