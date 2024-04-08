@@ -1299,7 +1299,7 @@ Student.forgotPassGenerateAndHashOTP = (studEmail, result) => {
 
 Student.searchstudentbyemail = (searchKey, result) => {
     db.query(
-        "SELECT studName FROM student WHERE BINARY studEmail= ?",
+        "SELECT id, studName, studPhNo FROM student WHERE BINARY studEmail= ?",
         [searchKey],
         (err, res) => {
             if (err) {
@@ -1309,8 +1309,7 @@ Student.searchstudentbyemail = (searchKey, result) => {
             } else {
                 if (res.length > 0) {
                     // Directly access the collegeStaffName of the first result
-                    let name = res[0].studName;
-                    result(null, name);
+                    result(null, res);
                 } else {
                     // Handle case where no results are found
                     console.log("No student found with the given email.");

@@ -118,7 +118,7 @@ const StudentLogin = () => {
                     axios.post(apiUrl2, data).then(
                         (Response) => {
                             if (Response.data.status === "OTP sent to email.") {
-                                alert("Please Change Your Password.\nOTP Send To Email For Verification!!")
+                                alert("Please Change Your Password.\nOTP Send To Email And Whatsapp For Verification!!")
                                 setShowModal(true)
                                 setShowOverlay(true);
                             } else if (Response.data.status.sqlMessage) {
@@ -353,7 +353,7 @@ const StudentLogin = () => {
                             <div className="modal-body">
                                 {state === true && (
                                     <div>
-                                        <p style={{ fontSize: "15px" }}>Enter OTP Send To Email For Verification.</p><br />
+                                        <p style={{ fontSize: "15px" }}>Enter OTP Send To Email Or Whatsapp For Verification.</p><br />
                                     </div>
                                 )}
                                 <form>
