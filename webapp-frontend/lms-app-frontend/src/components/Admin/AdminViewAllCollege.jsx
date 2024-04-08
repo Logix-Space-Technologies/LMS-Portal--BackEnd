@@ -6,7 +6,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminViewAllCollege = () => {
-
+    const [inputField, setInputField] = useState(
+        {
+            "collegeSearchQuery": ""
+        }
+    )
     const [collegeData, setCollegeData] = useState([])
     const [key, setKey] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -22,11 +26,71 @@ const AdminViewAllCollege = () => {
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteCollege"
     const apiUrl2 = global.config.urls.api.server + "/api/lms/changeregstatustoopen";
     const apiUrl3 = global.config.urls.api.server + "/api/lms/changeregstatustoclose";
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/searchCollege";
 
     const closeWaitingModal = () => {
         setShowOverlay(false)
         setShowWaitingModal(false)
     }
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
+    }
+
+    const readSearchValue = () => {
+        setIsLoading(true)
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let axiosConfig3 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        }
+        axios.post(apiUrl4, inputField, axiosConfig3).then(
+            (response) => {
+                if (response.data.data) {
+                    setCollegeData(response.data.data)
+                    setInputField(
+                        {
+                            "collegeSearchQuery": ""
+                        }
+                    )
+                    setIsLoading(false)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "collegeSearchQuery": ""
+                        }
+                    )
+                    setTimeout(()=>{
+                        getData()
+                        alert("No Colleges Found !!")
+                    }, 500)
+                } else {
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "collegeSearchQuery": ""
+                        }
+                    )
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
+
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
