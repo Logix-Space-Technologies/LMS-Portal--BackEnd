@@ -333,3 +333,23 @@ exports.changeRegistrationStatusToAvailable = (request, response) => {
         }
     })
 }
+
+exports.changeRegistrationStatusToNotAvailable = (request, response) => {
+    const batchId = request.body.id;
+    const token = request.headers.token;
+    const key = request.headers.key;
+
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Batches.changeRegistrationStatusToNotOpen(batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    return response.json({ "status": "Registration Status Changed To Unavailable." });
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User !!!" });
+        }
+    })
+}

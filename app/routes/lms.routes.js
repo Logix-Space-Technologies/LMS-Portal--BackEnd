@@ -363,4 +363,6 @@ router.post('/viewPerformancebyEachStud',StudentController.studentPerformance)
 
 router.post('/changeregstatustoopenforbatch', BatchesController.changeRegistrationStatusToAvailable)
 
+router.post('/changeregstatustocloseforbatch', BatchesController.changeRegistrationStatusToNotAvailable)
+
 module.exports = router

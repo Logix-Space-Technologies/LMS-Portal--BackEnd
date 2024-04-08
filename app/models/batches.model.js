@@ -241,5 +241,27 @@ Batches.changeRegistrationStatusToAvailable = (id, result) => {
     })
 }
 
+Batches.changeRegistrationStatusToNotOpen = (id, result) => {
+    db.query("SELECT * FROM `batches` WHERE `id` = ?", [id], (err, res) => {
+        if (err) {
+            console.log("Error : ", err);
+            result(err, null);
+            return;
+        } else {
+            const batchid = res[0].id;
+            db.query("UPDATE `batches` SET `registrationStatus`= 0 WHERE `id` = ?", [batchid], (err, res) => {
+                if (err) {
+                    console.log("Error : ", err);
+                    result(err, null);
+                    return;
+                } else {
+                    console.log("Changed Registration Status To Closed For Batch With Id: ", batchid);
+                    return result(null, null);
+                }
+            })
+        }
+    })
+}
+
 module.exports = Batches;
 
