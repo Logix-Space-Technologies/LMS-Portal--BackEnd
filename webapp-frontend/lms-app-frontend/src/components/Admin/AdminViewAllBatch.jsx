@@ -30,7 +30,7 @@ const AdminViewAllBatch = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch";
     const apiUrl3 = global.config.urls.api.server + '/api/lms/searchBatch';
-    
+
 
 
     const closeWaitingModal = () => {
@@ -64,6 +64,7 @@ const AdminViewAllBatch = () => {
                 { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                 sessionStorage.clear()
             } else if (!response.data.data) {
+                alert("No Batches Found !!")
                 getData();
                 setInputField({ batchQuery: "" })
                 setIsLoading(false);
