@@ -6,7 +6,7 @@ async function sendMessage(name, phoneNumber, otp, studId) {
     const apiUrl = 'https://api.gupshup.io/wa/api/v1/template/msg';
     const headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'apikey': process.env.WhatsAppKey // Replace with your actual API key
+        'apikey': process.env.WhatsAppKey 
     };
 
     const requestBody = {
