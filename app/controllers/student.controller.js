@@ -1589,7 +1589,11 @@ exports.forgotStudpassword = (request, response) => {
         } else {
             let studentotp = otp
             Student.searchstudentbyemail(email, (err, data) => {
-                let studName = data[0].studName;
+                const studId = data[0].id;
+                const studName = data[0].studName;
+                const studPhNo = data[0].studPhNo;
+                const formattedPhoneNumber = studPhNo.startsWith('91') ? studPhNo : `91${studPhNo}`;
+                whatsappotp.sendfn(studName, formattedPhoneNumber, otp, studId)
                 // Send OTP to email
                 const mailSent = sendOTPEmail(email, studName, otp);
                 if (mailSent) {
