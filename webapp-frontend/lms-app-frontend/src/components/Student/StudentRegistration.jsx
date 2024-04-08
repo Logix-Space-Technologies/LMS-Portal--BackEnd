@@ -143,7 +143,9 @@ const StudentRegistration = () => {
       }
     };
     axios.post(batchUrl, { collegeId }, axiosConfig).then((response) => {
-      setBatches(response.data);
+      // Filter out colleges with registrationStatus === 0
+      const activeBatches = response.data.filter(batch => batch.registrationStatus === 1);
+      setBatches(activeBatches);
     });
   };
 
