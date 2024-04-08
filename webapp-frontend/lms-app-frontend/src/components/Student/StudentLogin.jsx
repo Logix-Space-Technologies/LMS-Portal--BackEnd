@@ -353,7 +353,7 @@ const StudentLogin = () => {
                             <div className="modal-body">
                                 {state === true && (
                                     <div>
-                                        <p style={{ fontSize: "15px" }}>Enter OTP Send To Email and Whatsapp For Verification.</p><br />
+                                        <p style={{ fontSize: "15px" }}>Enter OTP Send To Email Or Whatsapp For Verification.</p><br />
                                     </div>
                                 )}
                                 <form>
