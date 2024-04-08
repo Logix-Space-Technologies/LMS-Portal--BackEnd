@@ -137,6 +137,7 @@ exports.batchView = (request, response) => {
 
 
 exports.searchBatch = (request, response) => {
+    const collegeId = request.body.collegeId;
     const batchQuery = request.body.batchQuery;//changed
     const batchToken = request.headers.token;
     //key for respective token
@@ -147,7 +148,7 @@ exports.searchBatch = (request, response) => {
             return response.json({ "status": "Search query cannot be empty" })
         }
         if (decoded) {
-            Batches.searchBatch(batchQuery, (err, data) => {
+            Batches.searchBatch(collegeId, batchQuery, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {

@@ -30,6 +30,7 @@ const AdminViewAllBatch = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch";
     const apiUrl3 = global.config.urls.api.server + '/api/lms/searchBatch';
+    
 
 
     const closeWaitingModal = () => {
