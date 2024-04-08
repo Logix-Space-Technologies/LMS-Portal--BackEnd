@@ -30,12 +30,104 @@ const AdminViewAllBatch = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/deletebatch";
     const apiUrl3 = global.config.urls.api.server + '/api/lms/searchBatch';
+    const apiUrl4 = global.config.urls.api.server + '/api/lms/changeregstatustoopenforbatch';
+    const apiUrl5 = global.config.urls.api.server + '/api/lms/changeregstatustocloseforbatch';
+
 
 
     const closeWaitingModal = () => {
         setShowOverlay(false)
         setShowWaitingModal(false)
     }
+
+    // Open Registration
+    const openRegistration = (id) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let batchId = { "id": id };
+        let axiosConfig4 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
+        axios.post(apiUrl4, batchId, axiosConfig4).then(
+            (response) => {
+                if (response.data.status === "Registration Status Changed To Open.") {
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Registration Status Set To Open")
+                        getData();
+                    }, 500)
+                } else if (response.data.status === "Unauthorized User !!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else {
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        // Handle other errors
+                        alert(response.data.status);
+                    }, 500)
+                }
+            }
+        )
+    };
+
+
+
+    // Close Registration
+    const closeRegistration = (id) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let batchcloseId = { "id": id };
+        let axiosConfig5 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
+        axios.post(apiUrl5, batchcloseId, axiosConfig5).then(
+            (response) => {
+                if (response.data.status === "Registration Status Changed To Unavailable.") {
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Registration Status Set To Closed")
+                        getData();
+                    }, 500)
+                } else {
+                    if (response.data.status === "Unauthorized User !!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status);
+                        }, 500)
+                    }
+                }
+            }
+        )
+    };
+
+
 
     const searchBatches = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -63,9 +155,12 @@ const AdminViewAllBatch = () => {
                 { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                 sessionStorage.clear()
             } else if (!response.data.data) {
-                getData();
-                setInputField({ batchQuery: "" })
                 setIsLoading(false);
+                setInputField({ batchQuery: "" })
+                setTimeout(() => {
+                    getData();
+                    alert("No Batches Found !!")
+                }, 500)
             } else {
                 alert(response.data.status)
                 setInputField({ batchQuery: "" })
@@ -252,6 +347,7 @@ const AdminViewAllBatch = () => {
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
                             {key === "lmsapp" && (
                                 <th scope="col" className="px-6 py-3"></th>
                             )}
@@ -271,6 +367,14 @@ const AdminViewAllBatch = () => {
                                     <img src="https://www.svgrepo.com/show/389251/indian-rupee.svg" alt="rupee" style={{ marginLeft: '24px', height: '14px', verticalAlign: 'middle' }} />
                                     <td className="px-6 py-4">{value.batchAmount}</td>
                                 </div>
+                                <td className="px-6 py-4">
+                                    {value.registrationStatus === 0 && (
+                                        <button onClick={() => openRegistration(value.id)} style={{ fontSize: '12px' }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Open Registration</button>
+                                    )}
+                                    {value.registrationStatus === 1 && (
+                                        <button onClick={() => { closeRegistration(value.id) }} style={{ fontSize: '12px' }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Close Registration</button>
+                                    )}
+                                </td>
                                 <td className="px-6 py-4">
                                     <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Sessions</Link>
                                 </td>

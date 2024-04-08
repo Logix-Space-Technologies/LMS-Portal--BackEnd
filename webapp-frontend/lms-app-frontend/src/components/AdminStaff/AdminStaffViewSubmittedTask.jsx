@@ -75,6 +75,7 @@ const AdminStaffViewSubmittedTask = () => {
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
+                            setLoading(false)
                             setTaskData([])
                         } else {
                             alert(response.data.status)
