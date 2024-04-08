@@ -1473,7 +1473,7 @@ Student.emailVerifyAndPasswordChange = (studEmail, password, result) => {
 
 //Student Performance
 Student.viewPerformance = (collegeId, batchId, id, result) => {
-    db.query("SELECT studName,sum(score) as score ,sum(totalScore) as totalScore, COUNT(submitTaskId) AS SubmitTaskCount FROM studentTaskScore where CollegeId=? and batchId=? and studentId = ? GROUP BY studentId,studName order by studentId", [collegeId, batchId, id],
+    db.query("SELECT studName,sum(score) as score ,sum(totalScore) as totalScore, COUNT(submitTaskId) AS SubmitTaskCount, COUNT(taskId) AS TaskCount FROM studentTaskScore where CollegeId=? and batchId=? and studentId = ? GROUP BY studentId,studName order by studentId", [collegeId, batchId, id],
         (err, res) => {
             if (err) {
                 console.log("Error: ", err)
