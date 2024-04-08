@@ -1479,11 +1479,11 @@ Student.viewPerformance = (collegeId, batchId, id, result) => {
                 console.log("Error: ", err)
                 return result(err, null)
             } else {
-                let score = res[0].score
-                let totalScore = res[0].totalScore
-                let cgpa = (score / totalScore) * 10
-                let SubmitTaskCount = res[0].SubmitTaskCount
-                return result(null, {cgpa, SubmitTaskCount})
+                let score = res[0].score ? res[0].score : 0;
+                let totalScore = res[0].totalScore ? res[0].totalScore : 0;
+                let cgpa = score && totalScore ? (score / totalScore) * 10 : 0;
+                let SubmitTaskCount = res[0].SubmitTaskCount ? res[0].SubmitTaskCount : 0;
+                return result(null, { cgpa, SubmitTaskCount })
             }
         })
 }
