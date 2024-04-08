@@ -76,6 +76,7 @@ const AdminStaffViewSubmittedTask = () => {
                     } else {
                         if (!response.data.data) {
                             setTaskData([])
+                            setLoading(false)
                         } else {
                             alert(response.data.status)
                         }
