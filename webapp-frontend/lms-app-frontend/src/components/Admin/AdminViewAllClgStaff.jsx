@@ -64,13 +64,16 @@ const AdminViewAllClgStaff = () => {
         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
         sessionStorage.clear()
       } else if (!response.data.data) {
-        getData()
         setIsLoading(false);
         setInputField(
           {
             searchQuery: ""
           }
         )
+        setTimeout(()=>{
+          getData()
+          alert("No College Staffs Found !!!")
+        })
       } else {
         setIsLoading(false);
         alert(response.data.status)
