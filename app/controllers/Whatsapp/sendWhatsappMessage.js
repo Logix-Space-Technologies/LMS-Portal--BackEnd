@@ -13,7 +13,7 @@ const sendMessageSignUpSuccess = async (destinationPhoneNumber, Name, studId) =>
             }
         });
         console.log('Message sent successfully:', response.data);
-        db.query("INSERT INTO `whatsappmsgfeedback`(`studId`, `msgId`, message) VALUES (?,?,'Student Registered')", [studId, response.data.messageId, response.data.status],
+        db.query("INSERT INTO `whatsappmsgfeedback`(`studId`, `msgId`, message) VALUES (?,?,'Student Registered')", [studId, response.data.messageId],
             (err, res) => {
                 if (err) {
                     console.log(err)

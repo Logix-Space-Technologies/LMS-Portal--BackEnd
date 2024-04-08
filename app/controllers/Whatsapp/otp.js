@@ -23,7 +23,7 @@ async function sendMessage(name, phoneNumber, otp, studId) {
     try {
         const response = await axios.post(apiUrl, requestBody, { headers });
         console.log('Message sent successfully:', response.data);
-        db.query("INSERT INTO `whatsappmsgfeedback`(`studId`, `msgId`, message) VALUES (?,?,'Student Password Change OTP Sent')", [studId, response.data.messageId, response.data.status],
+        db.query("INSERT INTO `whatsappmsgfeedback`(`studId`, `msgId`, message) VALUES (?,?,'Student Password Change OTP Sent')", [studId, response.data.messageId],
             (err, res) => {
                 if (err) {
                     console.log(err)
