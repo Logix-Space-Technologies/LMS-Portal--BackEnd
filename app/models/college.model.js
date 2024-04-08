@@ -204,7 +204,7 @@ College.updateCollege = (clgUpdate, result) => {
 
 College.searchCollege = (search, result) => {
     const searchTerm = '%' + search + '%'
-    db.query("SELECT id, collegeName, collegeAddress, website, email, collegePhNo, collegeMobileNumber, collegeImage, addedDate, updatedDate, emailVerified, updatedStatus, registrationStatus FROM college WHERE deleteStatus = 0 AND isActive = 1 AND (collegeName LIKE ? OR collegeAddress LIKE ? OR website LIKE ? OR email LIKE ? OR collegePhNo LIKE ? OR collegeMobileNumber LIKE ?)",
+    db.query("SELECT id, collegeName, collegeAddress, website, email, collegePhNo, collegeMobileNumber, collegeImage, addedDate, updatedDate, emailVerified, updatedStatus, registrationStatus, collegeCode FROM college WHERE deleteStatus = 0 AND isActive = 1 AND (collegeName LIKE ? OR collegeAddress LIKE ? OR website LIKE ? OR email LIKE ? OR collegePhNo LIKE ? OR collegeMobileNumber LIKE ?)",
         [searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm],
         (err, res) => {
             if (err) {
