@@ -1483,10 +1483,11 @@ Student.viewPerformance = (collegeId, batchId, id, result) => {
                 let totalScore = res[0].totalScore;
                 let cgpa = (score / totalScore) * 10;
                 let SubmitTaskCount = res[0].SubmitTaskCount;
-                return result(null, { cgpa, SubmitTaskCount })
-            } else {
-                return result(null, null)
+                let TaskCount = res[0].TaskCount;
+                return result(null, { cgpa, SubmitTaskCount, TaskCount })
             }
+            return result(null, { cgpa: 0, SubmitTaskCount: 0, TaskCount: 0 })
+
         })
 }
 
