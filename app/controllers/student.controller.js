@@ -1828,6 +1828,27 @@ exports.emailVerifyAndPasswordChange = (req, res) => {
 }
 
 
+exports.studentPerformance = (req, res) => {
+    const collegeId = req.body.collegeId
+    const batchId = req.body.batchId
+    const studId = req.body.id
+    const token = req.headers.token
+
+    jwt.verify(token, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            Student.viewPerformance(collegeId, batchId, studId, (perfErr, perfRes) => {
+                if (perfErr) {
+                    return res.json({ "status": perfErr })
+                } else {
+                    console.log("Result Performance : ", perfRes)
+                    return res.json({ "status": "success", "data": perfRes })
+                }
+            })
+        } else {
+            return res.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
 
 
 

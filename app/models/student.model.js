@@ -289,7 +289,7 @@ Student.findByEmail = (Email, result) => {
 
 
 Tasks.studentTaskView = (studId, result) => {
-    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, sd.sessionName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, asf.AdStaffName AS 'evaluatorName', st.score, st.lateSubDate, st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id LEFT JOIN sessiondetails sd ON t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND sd.date <= CURDATE() ORDER BY t.dueDate DESC", [studId],
+    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, sd.sessionName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, CASE WHEN st.admStaffId = 0 THEN 'Admin' ELSE (SELECT asf.AdStaffName FROM admin_staff asf WHERE asf.id = st.admStaffId) END AS evaluatorName, st.score, st.lateSubDate, st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id LEFT JOIN sessiondetails sd ON t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND sd.date <= CURDATE() ORDER BY t.dueDate DESC;", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -313,7 +313,7 @@ Tasks.studentTaskView = (studId, result) => {
 
 Tasks.studentSessionRelatedTaskView = (studId, sessionId, result) => {
     db.query(
-        "SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, asf.AdStaffName AS 'evaluatorName', st.score, st.lateSubDate, st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id JOIN sessiondetails sd ON t.batchId = sd.batchId AND t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND sd.id = ? ORDER BY t.addedDate DESC",
+        "SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, CASE WHEN st.admStaffId = 0 THEN 'Admin' ELSE (SELECT asf.AdStaffName FROM admin_staff asf WHERE asf.id = st.admStaffId) END AS evaluatorName, st.score, st.lateSubDate, st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id JOIN sessiondetails sd ON t.batchId = sd.batchId AND t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND sd.id = ? ORDER BY t.addedDate DESC",
         [studId, sessionId],
         (err, res) => {
             if (err) {
@@ -1470,6 +1470,23 @@ Student.emailVerifyAndPasswordChange = (studEmail, password, result) => {
         })
 }
 
+
+//Student Performance
+Student.viewPerformance = (collegeId, batchId, id, result) => {
+    db.query("SELECT studName,sum(score) as score ,sum(totalScore) as totalScore, COUNT(submitTaskId) AS SubmitTaskCount FROM studentTaskScore where CollegeId=1 and batchId=1 and studentId = 12 GROUP BY studentId,studName order by studentId", [collegeId, batchId, id],
+        (err, res) => {
+            if (err) {
+                console.log("Error: ", err)
+                return result(err, null)
+            } else {
+                let score = res[0].score
+                let totalScore = res[0].totalScore
+                let cgpa = (score / totalScore) * 10
+                let SubmitTaskCount = res[0].SubmitTaskCount
+                return result(null, {cgpa, SubmitTaskCount})
+            }
+        })
+}
 
 
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
