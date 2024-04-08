@@ -132,6 +132,7 @@ exports.approveRefund = (request, response) => {
     jwt.verify(approverefundToken, key, (err, decoded) => {
         if (decoded) {
             let admadmstaffId = admStaffId
+            let refundstudId = refundId
             const validationErrors = {};
 
             if (Validator.isEmpty(approvedAmnt).isValid) {
@@ -150,6 +151,7 @@ exports.approveRefund = (request, response) => {
                     console.log(err);
                     return response.json({ "status": err });
                 } else {
+                    logAdminStaff(admadmstaffId, `Approved Refund For Student With Refund ID ${refundstudId}`)
                     console.log("Refund request successfully approved");
                     return response.json({ "status": "success", "data": data });
                 }
