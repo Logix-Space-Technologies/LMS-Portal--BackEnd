@@ -74,6 +74,7 @@ exports.createRefundRequest = (request, response) => {
                             })
                         }
                     });
+                    logStudent(request.body.studId, "Student Sent Refund Request");
                     console.log("Refund request successfully created");
                     return response.json({ "status": "success", "data": data });
                 }
