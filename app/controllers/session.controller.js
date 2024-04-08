@@ -160,7 +160,7 @@ exports.createSession = (request, response) => {
                                         let clgstaffEmail = element.email
                                         let batchName = element.batchName
                                         let collegeStaffName = element.collegeStaffName
-                                        let collegeStaffId=element.id
+                                        let collegeStaffId= element.id
                                         let collegestaffphoneNo = element.phNo
                                         const clgstaffsessionTime = formatTime(newSession.time)
                                         const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
