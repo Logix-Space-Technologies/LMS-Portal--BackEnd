@@ -134,7 +134,7 @@ const StudentRegistration = () => {
   }
 
 
-  // Add a new function to fetch batches based on the selected college
+  // Function to fetch batches based on the selected college
   const getBatches = (collegeId) => {
     let axiosConfig = {
       headers: {
