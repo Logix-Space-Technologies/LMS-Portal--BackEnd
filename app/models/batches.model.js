@@ -105,7 +105,7 @@ Batches.searchBatch = (search, result) => {
                 return;
             } else {
                 // Format the date for each session
-                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })}));
+                const formattedBatches = res.map(batches => ({ ...batches, regStartDate: batches.regStartDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), regEndDate: batches.regEndDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
                 console.log("Batches: ", formattedBatches);
                 result(null, formattedBatches);
             }
@@ -219,6 +219,27 @@ Batches.ClgStaffNotificationView = (id, result) => {
     });
 };
 
+Batches.changeRegistrationStatusToAvailable = (id, result) => {
+    db.query("SELECT * FROM `batches` WHERE `id` = ?", [id], (err, res) => {
+        if (err) {
+            console.log("Error : ", err);
+            result(err, null);
+            return;
+        } else {
+            const batchid = res[0].id;
+            db.query("UPDATE `batches` SET `registrationStatus`= 1 WHERE `id` = ?", [batchid], (err, res) => {
+                if (err) {
+                    console.log("Error : ", err);
+                    result(err, null);
+                    return;
+                } else {
+                    console.log("Changed Registration Status To Open For Batch With Id: ", batchid);
+                    return result(null, null);
+                }
+            })
+        }
+    })
+}
 
 module.exports = Batches;
 

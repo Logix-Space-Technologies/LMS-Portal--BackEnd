@@ -361,4 +361,6 @@ router.get('/viewClgStaffFirebaseTokens', ClgStaffFirebaseController.viewTokens)
 
 router.post('/viewPerformancebyEachStud',StudentController.studentPerformance)
 
+router.post('/changeregstatustoopenforbatch', BatchesController.changeRegistrationStatusToAvailable)
+
 module.exports = router
