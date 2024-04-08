@@ -311,7 +311,7 @@ exports.trainerDetailsUpdate = (request, response) => {
                     phoneNumber: formattedPhoneNumber,
                     profilePicture,
                 };
-                console.log(trainerUpdate)
+                
                 Trainers.updateTrainer(trainerUpdate, (err, data) => {
                     if (err) {
                         if (err.kind === "not_found") {
