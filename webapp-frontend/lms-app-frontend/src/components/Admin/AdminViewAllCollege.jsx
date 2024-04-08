@@ -74,7 +74,7 @@ const AdminViewAllCollege = () => {
                             "collegeSearchQuery": ""
                         }
                     )
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         getData()
                         alert("No Colleges Found !!")
                     }, 500)
@@ -298,6 +298,18 @@ const AdminViewAllCollege = () => {
                 <div></div>
             </div>
             <br /><br />
+            <div className="row">
+                <div className="col">
+                    <div className="input-group">
+                        <input onChange={inputHandler} type="text" className="form-control" name="collegeSearchQuery" value={inputField.collegeSearchQuery} placeholder='College Name/College Address/Website/Email/College Contact Number' />
+                    </div>
+                    <br></br>
+                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <button onClick={readSearchValue} className="btn btn-warning">Search</button>
+                    </div>
+                    <br />
+                </div>
+            </div>
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">
                     <div>Loading...</div>
