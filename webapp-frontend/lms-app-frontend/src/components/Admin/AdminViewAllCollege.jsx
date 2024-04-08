@@ -128,20 +128,25 @@ const AdminViewAllCollege = () => {
                 "key": currentKey
             }
         };
-
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, collegeId, axiosConfig2).then(
             (response) => {
                 if (response.data.status === "Registration Status Changed To Open.") {
-                    getData();
-                } else if (response.data.status === "Validation failed") {
-                    // Handle validation errors
-                    alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Registration Status Set To Open")
+                        getData();
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User !!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
-                    // Handle other errors
-                    alert(response.data.status);
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        // Handle other errors
+                        alert(response.data.status);
+                    }, 500)
                 }
             }
         )
@@ -165,16 +170,25 @@ const AdminViewAllCollege = () => {
                 "key": currentKey
             }
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl3, collegeId, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Registration Status Changed To Unavailable.") {
-                    getData();
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Registration Status Set To Closed")
+                        getData();
+                    }, 500)
                 } else {
                     if (response.data.status === "Unauthorized User !!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status);
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status);
+                        }, 500)
                     }
                 }
             }
