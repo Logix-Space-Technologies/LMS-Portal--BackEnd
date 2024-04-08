@@ -64,10 +64,12 @@ const AdminViewAllBatch = () => {
                 { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                 sessionStorage.clear()
             } else if (!response.data.data) {
-                alert("No Batches Found !!")
-                getData();
-                setInputField({ batchQuery: "" })
                 setIsLoading(false);
+                setInputField({ batchQuery: "" })
+                setTimeout(() => {
+                    getData();
+                    alert("No Batches Found !!")
+                }, 500)
             } else {
                 alert(response.data.status)
                 setInputField({ batchQuery: "" })
