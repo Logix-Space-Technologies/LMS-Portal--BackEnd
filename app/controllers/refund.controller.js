@@ -59,6 +59,18 @@ exports.createRefundRequest = (request, response) => {
                                     mail.sendEmail(adminEmail, `System Alert: Student Withdrawal Request - "Link Your Codes" Program ${requestedDate}`, refundRequestAdmAdmStaffNotificationHtmlContent, refundRequestAdmAdmStaffNotificationTextContent);
                                 }
                             })
+                            db.query('SELECT AdStaffName, Email FROM admin_staff', (err, res) => {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    res.forEach(element =>{
+                                        let admstaffEmail = element.Email;
+                                        const AdmStaffNotificationHtmlContent = mailContents.refundRequestConfirmationAdminAdmStaffHTMLContent(studName, membershipNo, admNo, rollNo, studentEmail, collegeName, batchName, requestedDate, data.reason);
+                                        const AdmStaffNotificationTextContent = mailContents.refundRequestConfirmationAdminAdmStaffTextContent(studName, membershipNo, admNo, rollNo, studentEmail, collegeName, batchName, requestedDate, data.reason);
+                                        mail.sendEmail(admstaffEmail, `System Alert: Student Withdrawal Request - "Link Your Codes" Program ${requestedDate}`, AdmStaffNotificationHtmlContent, AdmStaffNotificationTextContent)
+                                    })
+                                }
+                            })
                         }
                     });
                     console.log("Refund request successfully created");
