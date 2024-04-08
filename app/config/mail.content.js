@@ -3586,6 +3586,139 @@ function refundRequestConfirmationAdminAdmStaffTextContent(studName, membershipN
   return content
 }
 
+function refundRequestConfirmationClgStaffHTMLContent(studName, membershipNo, AdmNo, rollNo, studEmail, collegeName, batchName, requestedDate, reason, clgstaffName) {
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkUrCodes Refund Request Notification</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+  
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+  
+      h2 {
+        font-size: 21px;
+        text-align: center;
+        color: #007bff;
+      }
+  
+      p {
+        font-size: 16px;
+        text-align: justify;
+        line-height: 1.6;
+      }
+  
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: smaller;
+        color: grey;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="container">
+      <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+      <h2>LinkUrCodes Refund Request Notification</h2>
+      <p>Dear ${clgstaffName},</p>
+      <p>This is an automated notification to inform you of a student withdrawal request received through the "Link Your
+        Codes" program platform.</p>
+  
+      <p>Please find the details of student below:</p>
+  
+      <ul>
+        <li><strong>Name :</strong> ${studName} </li>
+        <li><strong>Membership No. :</strong> ${membershipNo}</li>
+        <li><strong>Admission No. :</strong> ${AdmNo}</li>
+        <li><strong>Roll No. :</strong> ${rollNo}</li>
+        <li><strong>Email :</strong> ${studEmail}</li>
+        <li><strong>College Name :</strong> ${collegeName}</li>
+        <li><strong>Batch Name :</strong> ${batchName}</li>
+      </ul>
+  
+      <p>Withdrawal Details:</p>
+  
+      <ul>
+        <li><strong>Request received on :</strong> ${requestedDate} </li>
+        <li><strong>Reason For Withdrawal :</strong> ${reason}</li>
+      </ul>
+  
+      <p>Thank you for your attention to this matter.</p>
+      <p>Best Regards,</p>
+      <p>LinkUrCodes Notification System</p>
+      <div class="footer">
+        © ${currentYear} Link Ur Codes. All rights reserved.
+      </div>
+    </div>
+  </body>
+  
+  </html>`
+  return content
+}
+
+function refundRequestConfirmationClgStaffTextContent(studName, membershipNo, AdmNo, rollNo, studEmail, collegeName, batchName, requestedDate, reason, clgstaffName) {
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${clgstaffName},
+
+  This is an automated notification to inform you of a student withdrawal request received through the "Link Your Codes" program platform.
+  
+  Please find the details of the student below:
+  
+  - Name: ${studName}
+  - Membership No.: ${membershipNo}
+  - Admission No.: ${AdmNo}
+  - Roll No.: ${rollNo}
+  - Email: ${studEmail}
+  - College Name: ${collegeName}
+  - Batch Name: ${batchName}
+  
+  Withdrawal Details:
+  
+  - Request received on: ${requestedDate}
+  - Reason For Withdrawal: ${reason}
+  
+  Thank you for your attention to this matter.
+  
+  Best Regards,
+  
+  LinkUrCodes Notification System
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+  return content
+}
+
+
+
 module.exports = {
   admStaffAddHTMLContent,
   admStaffAddTextContent,
@@ -3646,6 +3779,8 @@ module.exports = {
   refundRequestConfirmationHtmlContent,
   refundRequestConfirmationTextContent,
   refundRequestConfirmationAdminAdmStaffHTMLContent,
-  refundRequestConfirmationAdminAdmStaffTextContent
+  refundRequestConfirmationAdminAdmStaffTextContent,
+  refundRequestConfirmationClgStaffHTMLContent,
+  refundRequestConfirmationClgStaffTextContent
 };
 
