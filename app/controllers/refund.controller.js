@@ -131,7 +131,7 @@ exports.approveRefund = (request, response) => {
 
     jwt.verify(approverefundToken, key, (err, decoded) => {
         if (decoded) {
-
+            let admadmstaffId = admStaffId
             const validationErrors = {};
 
             if (Validator.isEmpty(approvedAmnt).isValid) {
