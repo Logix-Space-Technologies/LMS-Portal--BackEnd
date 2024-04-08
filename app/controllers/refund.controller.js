@@ -43,6 +43,7 @@ exports.createRefundRequest = (request, response) => {
                             let membershipNo = result[0].membership_no;
                             let rollNo = result[0].rollNo;
                             let admNo = result[0].admNo;
+                            let collegeId = result[0].collegeId;
                             let collegeName = result[0].collegeName;
                             let batchName = result[0].batchName;
                             let addedDate = result[0].addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -60,11 +61,11 @@ exports.createRefundRequest = (request, response) => {
                                     mail.sendEmail(adminEmail, `System Alert: Student Withdrawal Request - "Link Your Codes" Program ${requestedDate}`, refundRequestAdmAdmStaffNotificationHtmlContent, refundRequestAdmAdmStaffNotificationTextContent);
                                 }
                             })
-                            db.query('SELECT AdStaffName, Email FROM admin_staff WHERE deleteStatus = 0 AND isActive = 1', (err, res) => {
+                            db.query('SELECT AdStaffName, Email FROM admin_staff WHERE deleteStatus = 0 AND isActive = 1', (err, admstaffres) => {
                                 if (err) {
                                     console.log(err);
                                 } else {
-                                    res.forEach(element =>{
+                                    admstaffres.forEach(element => {
                                         let admstaffEmail = element.Email;
                                         const AdmStaffNotificationHtmlContent = mailContents.refundRequestConfirmationAdminAdmStaffHTMLContent(studName, membershipNo, admNo, rollNo, studentEmail, collegeName, batchName, requestedDate, data.reason);
                                         const AdmStaffNotificationTextContent = mailContents.refundRequestConfirmationAdminAdmStaffTextContent(studName, membershipNo, admNo, rollNo, studentEmail, collegeName, batchName, requestedDate, data.reason);
@@ -72,7 +73,19 @@ exports.createRefundRequest = (request, response) => {
                                     })
                                 }
                             })
-                            db.query('')
+                            db.query('SELECT `collegeStaffName`, `email` FROM `college_staff` WHERE `collegeId` = ?', [collegeId], (err, clgstaffres) => {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    clgstaffres.forEach(element => {
+                                        let clgstaffEmail = element.email;
+                                        let clgstaffName = element.collegeStaffName;
+                                        const clgstaffNotificationHTMLContent = mailContents.refundRequestConfirmationClgStaffHTMLContent(studName, membershipNo, admNo, rollNo, studentEmail, collegeName, batchName, requestedDate, data.reason, clgstaffName)
+                                        const clgstaffNotificationTextContent = mailContents.refundRequestConfirmationClgStaffTextContent(studName, membershipNo, admNo, rollNo, studentEmail, collegeName, batchName, requestedDate, data.reason, clgstaffName)
+                                        mail.sendEmail(clgstaffEmail, `System Alert: Student Withdrawal Request - "Link Your Codes" Program ${requestedDate}`, clgstaffNotificationHTMLContent, clgstaffNotificationTextContent)
+                                    })
+                                }
+                            })
                         }
                     });
                     logStudent(request.body.studId, "Student Sent Refund Request");
