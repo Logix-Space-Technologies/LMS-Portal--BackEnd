@@ -119,7 +119,7 @@ Refund.createRefundRequest = (newRefund, result) => {
                                     logStudent(newRefund.studId, "Refund request sent")
 
                                     console.log("Created refund:", { id: refundRes.insertId, ...newRefund });
-                                    result(null, { id: refundRes.insertId, ...newRefund });
+                                    result(null, { id: refundRes.insertId, ...newRefund,remainingPaymentPeriod });
                                 });
                             }
                         }

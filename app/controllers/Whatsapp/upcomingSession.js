@@ -24,7 +24,7 @@ function sendUpcomingSessionWhatsAppMessage(date, time, link, sessionType, desti
     axios.post(url, data, { headers: headers })
         .then(function (response) {
             console.log('Response:', response.data);
-            db.query("INSERT INTO `whatsappmsgfeedback`(`studId`, `msgId`, message) VALUES (?,?,'Session created')", [studId, response.data.messageId, response.data.status],
+            db.query("INSERT INTO `whatsappmsgfeedback`(`studId`, `msgId`, message) VALUES (?,?,'Session created')", [studId, response.data.messageId],
                 (err, res) => {
                     if (err) {
                         console.log(err)

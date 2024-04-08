@@ -359,4 +359,6 @@ router.post('/sendFirebaseNotificationByclgStaffId', ClgStaffFirebaseController.
 
 router.get('/viewClgStaffFirebaseTokens', ClgStaffFirebaseController.viewTokens)
 
+router.post('/viewPerformancebyEachStud',StudentController.studentPerformance)
+
 module.exports = router

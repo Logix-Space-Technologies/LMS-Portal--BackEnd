@@ -31,8 +31,8 @@ const StudentViewTasks = () => {
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
 
     const closeWaitingModal = () => {
-        setShowOverlay(false)
         setShowWaitingModal(false)
+        setShowOverlay(false)
     }
 
     const getData = () => {
@@ -115,6 +115,7 @@ const StudentViewTasks = () => {
         axios.post(apiUrl2, data2, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
+                    setShowWaitingModal(false)
                     closeWaitingModal()
                     setTimeout(() => {
                         alert("Task Submitted Successfully !!");
@@ -124,7 +125,7 @@ const StudentViewTasks = () => {
                             "remarks": ""
                         }, 500);
                     })
-                    
+
                 } else {
                     setShowWaitingModal(false)
                     closeWaitingModal()
@@ -253,7 +254,7 @@ const StudentViewTasks = () => {
                                             </p>
                                             <td>
                                                 <div className="flex justify-start pl-36" >
-                                                    <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
+                                                    {task.taskFileUpload !== null && <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>}
                                                 </div>
 
                                             </td>
@@ -293,13 +294,18 @@ const StudentViewTasks = () => {
                                             )}
                                             <td>
                                                 <div className="flex justify-start pl-32 pt-20" >
-                                                    <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
+                                                    {task.taskFileUpload !== null && <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>}
                                                 </div>
 
                                             </td>
-                                            <td>
+                                            {task.taskFileUpload === null && <td>
+                                                <div className="flex justify-start pl-8 pt-24">
+                                                    <button onClick={() => { updateSubTask(task.submitTaskId) }} className="btn btn-primary" style={{ marginLeft: "30px" }}>Update</button>
+                                                </div>
+                                            </td>}
+                                            {task.taskFileUpload !== null && <td>
                                                 <button onClick={() => { updateSubTask(task.submitTaskId) }} className="btn btn-primary" style={{ marginLeft: "30px" }}>Update</button>
-                                            </td>
+                                            </td>}
                                         </>
                                     )}
                                     {task.taskStatus === "Task Not Submitted" && (
@@ -323,15 +329,17 @@ const StudentViewTasks = () => {
 
                                             </p><br /><br />
                                             <td>
-                                                <div className="flex justify-start pl-16 pt-28" >
+                                                {task.taskFileUpload !== null && <div className="flex justify-start pl-16 pt-28" >
                                                     <Link target="_blank" to={task.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
-                                                </div>
-
+                                                </div>}
                                             </td>
                                             <td>
-                                                <div className="flex justify-end">
+                                                {task.taskFileUpload !== null && <div className="flex justify-end">
                                                     <button onClick={() => readValue(task.taskId)} style={{ marginLeft: "20px" }} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Submit Task</button>
-                                                </div>
+                                                </div>}
+                                                {task.taskFileUpload === null && <div className="flex justify-start pl-16 pt-28">
+                                                    <button onClick={() => readValue(task.taskId)} style={{ marginLeft: "20px" }} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Submit Task</button>
+                                                </div>}
                                             </td>
                                         </>
                                     )}
