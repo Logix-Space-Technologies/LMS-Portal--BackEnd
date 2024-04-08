@@ -87,12 +87,14 @@ const StudentLogin = () => {
                     let studId = Response.data.data.id;
                     let studemail = Response.data.data.studEmail;
                     let batchId = Response.data.data.batchId;
+                    let collegeId = Response.data.data.collegeId;
                     let key = "lmsappstud"
                     sessionStorage.setItem("studentkey", key);
                     sessionStorage.setItem("studentId", studId);
                     sessionStorage.setItem("studemail", studemail);
                     sessionStorage.setItem("studBatchId", batchId);
                     sessionStorage.setItem("studLoginToken", studtoken);
+                    sessionStorage.setItem("studCollegeId", collegeId);
 
 
                     navigate("/studdashboard")

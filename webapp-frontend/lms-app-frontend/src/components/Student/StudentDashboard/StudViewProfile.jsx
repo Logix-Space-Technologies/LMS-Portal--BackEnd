@@ -5,7 +5,9 @@ import '../../../config/config'
 
 const StudViewProfile = () => {
     const [studData, setStudData] = useState([])
+    const [performanceData, setPerformanceData] = useState([])
     const apiURL = global.config.urls.api.server + "/api/lms/studentViewProfile"
+    const performApiURL = global.config.urls.api.server + "/api/lms/viewPerformancebyEachStud"
 
     const navigate = useNavigate()
 
@@ -43,6 +45,38 @@ const StudViewProfile = () => {
         )
     }
 
+    const getPerformanceData = () => {
+        let performData = {
+            "id": sessionStorage.getItem("studentId"),
+            "collegeId": sessionStorage.getItem("studCollegeId"),
+            "batchId": sessionStorage.getItem("studBatchId")
+        }
+        let axiosConfig = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("studLoginToken"),
+                "key": sessionStorage.getItem("studentkey")
+            }
+        }
+        axios.post(performApiURL, performData, axiosConfig).then(
+            (response) => {
+                if (response.data.data) {
+                    setPerformanceData(response.data.data)
+                } else if (!response.data.data) {
+                    setPerformanceData(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        logOut()
+                        navigate("/studentLogin")
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
+            }
+        )
+    }
+
     const UpdateClick = () => {
         navigate("/studValidityRenewal");
     };
@@ -59,6 +93,9 @@ const StudViewProfile = () => {
     };
 
     useEffect(() => { getData() }, [])
+
+    useEffect(() => { getPerformanceData() }, [])
+
     return (
         <div className="container">
             <div className="row">
@@ -73,7 +110,51 @@ const StudViewProfile = () => {
                                 (value, index) => {
                                     return <div className="row align-items-center">
                                         <div className="col-lg-6 mb-4 mb-lg-0">
-                                            <img height="300px" src={value.studProfilePic} alt="" />
+                                            <div className="row">
+                                                <img height="300px" src={value.studProfilePic} alt="" />
+                                            </div>
+                                            <div className="row justify-content-center">
+                                                <div className="col-lg-8">
+                                                    <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                                                        <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">Your Performance</h5>
+                                                        <div className="row">
+                                                            <div className="col-6">
+                                                                <img style={{ height: '100px', width: "150px" }} src="https://www.svgrepo.com/show/423006/trophy-prize-medal.svg" alt />
+                                                            </div>
+                                                            <div className="col-4">
+                                                                <div>
+                                                                    <p style={{ textAlign: 'center', fontSize: '14px' }} className="mt-10 font-bold text-gray-700 dark:text-gray-400">
+                                                                        GPA : {performanceData.cgpa && performanceData.cgpa > 0 ? performanceData.cgpa.toFixed(2) : performanceData.cgpa}/10
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br />
+                                                        <div className="row">
+                                                            <div className="col-12">
+                                                                {performanceData.cgpa >= 9 && (
+                                                                    <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Excellent...😍🤩🎉👏</p>
+                                                                )}
+                                                                {performanceData.cgpa >= 7 && performanceData.cgpa < 9 && (
+                                                                    <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Good Job...👍👍</p>
+                                                                )}
+                                                                {performanceData.cgpa >= 5 && performanceData.cgpa < 7 && (
+                                                                    <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Good 👍...You can improve more!!</p>
+                                                                )}
+                                                                {performanceData.cgpa < 5 && performanceData.cgpa > 0 && (
+                                                                    <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Very Poor😢...Need to improve. You can do this!!😀💪</p>
+                                                                )}
+                                                                {performanceData.cgpa === 0 && performanceData.SubmitTaskCount > 0 && (
+                                                                    <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Task Submitted but yet to be Evaluated...</p>
+                                                                )}
+                                                                {performanceData.cgpa === 0 && performanceData.SubmitTaskCount === 0 && (
+                                                                    <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">❌ No Tasks Completed!!! ❌</p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="col-lg-6 px-xl-10">
                                             <div className="d-lg-flex justify-between align-items-center py-1-9 px-1-9 px-sm-6 mb-1-9 rounded">
