@@ -1299,7 +1299,7 @@ Student.forgotPassGenerateAndHashOTP = (studEmail, result) => {
 
 Student.searchstudentbyemail = (searchKey, result) => {
     db.query(
-        "SELECT studName, studPhNo FROM student WHERE BINARY studEmail= ?",
+        "SELECT id, studName, studPhNo FROM student WHERE BINARY studEmail= ?",
         [searchKey],
         (err, res) => {
             if (err) {

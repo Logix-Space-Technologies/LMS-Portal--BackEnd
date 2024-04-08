@@ -13,6 +13,7 @@ const { Upload } = require('@aws-sdk/lib-storage');
 require('dotenv').config({ path: '../../.env' });
 const path = require("path");
 const whatsApp = require("./Whatsapp/sendWhatsappMessage")
+const whatsappotp = require("./Whatsapp/otp")
 const { StudentLog, logStudent } = require("../models/studentLog.model");
 
 // const { Session } = require("inspector");
@@ -1741,7 +1742,11 @@ exports.StudEmailVerifyOTPSend = (request, response) => {
             return response.json({ "status": err });
         } else {
             Student.searchstudentbyemail(email, (err, data) => {
-                let studName = data[0].studName;
+                const studId = data[0].id;
+                const studName = data[0].studName;
+                const studPhNo = data[0].studPhNo;
+                const formattedPhoneNumber = studPhNo.startsWith('91') ? studPhNo : `91${studPhNo}`;
+                whatsappotp.sendfn(studName, formattedPhoneNumber, otp, studId)
                 // Send OTP to email
                 const mailSent = sendOTPVerifyEmail(email, studName, otp);
                 if (mailSent) {
