@@ -44,7 +44,7 @@ exports.createRefundRequest = (request, response) => {
                             let admNo = result[0].admNo;
                             let collegeName = result[0].collegeName;
                             let batchName = result[0].batchName;
-                            let addedDate = result[0].addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'  });
+                            let addedDate = result[0].addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
                             let requestedDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
                             refundRequestConfirmationHtmlContent = mailContents.refundRequestConfirmationHtmlContent(studName, requestedDate, addedDate, data.remainingPaymentPeriod);
                             refundRequestConfirmationTextContent = mailContents.refundRequestConfirmationTextContent(studName, requestedDate, addedDate, data.remainingPaymentPeriod)
