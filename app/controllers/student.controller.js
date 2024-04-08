@@ -1588,7 +1588,7 @@ exports.forgotStudpassword = (request, response) => {
         } else {
             let studentotp = otp
             Student.searchstudentbyemail(email, (err, data) => {
-                let studName = data
+                let studName = data[0].studName;
                 // Send OTP to email
                 const mailSent = sendOTPEmail(email, studName, otp);
                 if (mailSent) {
@@ -1741,7 +1741,7 @@ exports.StudEmailVerifyOTPSend = (request, response) => {
             return response.json({ "status": err });
         } else {
             Student.searchstudentbyemail(email, (err, data) => {
-                let studName = data
+                let studName = data[0].studName;
                 // Send OTP to email
                 const mailSent = sendOTPVerifyEmail(email, studName, otp);
                 if (mailSent) {
