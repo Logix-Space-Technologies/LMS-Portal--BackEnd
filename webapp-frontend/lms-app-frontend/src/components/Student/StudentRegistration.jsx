@@ -143,8 +143,8 @@ const StudentRegistration = () => {
       }
     };
     axios.post(batchUrl, { collegeId }, axiosConfig).then((response) => {
-      // Filter out colleges with registrationStatus === 0
-      const activeBatches = response.data.filter(batch => batch.registrationStatus === 1);
+      // Filter out batches with registrationStatus === 0
+      const activeBatches = response.data.data.filter(batch => batch.registrationStatus === 1);
       setBatches(activeBatches);
     });
   };
@@ -450,7 +450,7 @@ const StudentRegistration = () => {
                     value={inputField.batchId}
                     onChange={handleBatchChange}>
                     <option value="">Select</option>
-                    {batches.data && batches.data.map((value) => {
+                    {batches && batches.map((value) => {
                       return <option key={value.id} value={value.id}> {value.batchName} </option>;
                     })}
                   </select>
