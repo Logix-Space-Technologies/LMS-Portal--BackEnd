@@ -2,11 +2,12 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminViewSuccessfulRefunds = () => {
 
     const [refundSuccessData, setrefundSuccessData] = useState([]);
-
+    const [key, setKey] = useState('');
     const [isLoading, setIsLoading] = useState(true)
 
     const navigate = useNavigate()
@@ -85,7 +86,7 @@ const AdminViewSuccessfulRefunds = () => {
 
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div>
                 {/* ====== Table Section Start */}
                 <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
