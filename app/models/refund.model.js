@@ -299,7 +299,7 @@ Refund.cancelRefundRequest = (refundId, result) => {
 
         // Continue to cancel refund if refund ID exists
         db.query(
-            "UPDATE refund SET cancelStatus = 1 AND `cancelDate` = CURRENT_DATE WHERE id = ?",
+            "UPDATE refund SET cancelStatus = 1 AND cancelDate = CURRENT_DATE WHERE id = ?",
             [refundId],
             (err, res) => {
                 if (err) {
