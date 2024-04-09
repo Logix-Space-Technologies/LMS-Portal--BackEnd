@@ -3831,8 +3831,7 @@ function refundRequestApprovalNotificationTextContent(studName, approvedamnt) {
 
 
 
-function upcomingSessionTrainerTextContent(sessionName, date, time, venueORlink, type, batchName, trainerName,
-  collegeName) {
+function upcomingSessionTrainerTextContent(sessionName, date, time, venueORlink, type, batchName, trainerName, collegeName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   textContent = `Dear ${trainerName},
