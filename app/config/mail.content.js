@@ -4026,13 +4026,12 @@ function refundRequestInitiatedHTMLContent(studName, refundAmount, transactionNo
     <p>Transaction details is as follows:</p>
 
     <ul>
-      <li><strong>Transaction No. :</strong> ${transactionNo} </li>
+      <p><strong>Transaction No. :</strong> ${transactionNo} </p>
     </ul>
 
-    <p>This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. Please expect
-      the credited amount to
-      reflect in your bank account within the next 3 to 4 working days. </p>
-    <p>If, for any reason, the amount has not been credited to your account within this timeframe, we kindly ask you to
+    <p>This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. 
+      Please verify whether the amount has been credited into your bank account. If credited, kindly inform us by clicking on the <strong>Payment Received</strong> button in your LinkUrCodes account.</p>
+    <p>If, for any reason, the amount has not been credited to your account within the next 3 to 4 working days, we kindly ask you to
       contact us immediately for further assistance.</p>
     <p>We would like to take this opportunity to remind you that, as per our policy and your decision to withdraw, you
       will no longer be a part of the "Link Ur Codes" program and will not be eligible to REJOIN in the future.</p>
@@ -4060,7 +4059,9 @@ Transaction details is as follows:
 
 - Transaction No. : ${transactionNo}
 
-This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. Please expect the credited amount to reflect in your bank account within the next 3 to 4 working days. If, for any reason, the amount has not been credited to your account within this timeframe, we kindly ask you to contact us immediately for further assistance.
+This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. Please verify whether the amount has been credited into your bank account. If credited, kindly inform us by clicking on the Payment Received button in your LinkUrCodes account. 
+
+If, for any reason, the amount has not been credited to your account within the next 3 to 4 working days, we kindly ask you to contact us immediately for further assistance.
 
 We would like to take this opportunity to remind you that, as per our policy and your decision to withdraw, you will no longer be a part of the "Link Ur Codes" program and will not be eligible to REJOIN in the future.
 
