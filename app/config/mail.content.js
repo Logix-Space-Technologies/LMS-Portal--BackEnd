@@ -3830,6 +3830,131 @@ function refundRequestApprovalNotificationTextContent(studName, approvedamnt) {
 
 
 
+
+function upcomingSessionTrainerTextContent(sessionName, date, time, venueORlink, type, batchName, trainerName,
+  collegeName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  textContent = `Dear ${trainerName},
+  
+  We hope this email finds you well. We are writing to inform you about the upcoming session details for our coding
+  platform, Link Ur Codes.
+  
+  The next session is scheduled for:
+  
+  - College Name: ${collegeName}
+  - Batch Name: ${batchName}
+  - Session Name: ${sessionName}
+  - Type: ${type}
+  - Date: ${date}
+  - Time: ${time}
+  - Link or Venue: ${venueORlink}
+  
+  If you have any questions or concerns, please feel free to contact us.
+  
+  Best regards,
+  Link Ur Codes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+
+  return textContent
+
+}
+
+function upcomingSessionTrainerHTMLContent(sessionName, date, time, venueORlink, type, batchName, trainerName, collegeName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Next Session Details</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+      }
+  
+      .container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+  
+      h2 {
+        color: #333;
+        text-align: center;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      p {
+        color: #555;
+      }
+  
+      .button {
+        display: inline-block;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+      }
+  
+      .footer {
+        text-align: center;
+        font-size: 0.8em;
+        /* Reduced font size for the footer */
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <h2>Upcoming Session Details</h2>
+      <p>Dear ${trainerName},</p>
+      <p>We hope this email finds you well. We are writing to inform you about the upcoming session details for our coding
+        platform, Link Ur Codes.</p>
+      <p>The next session is scheduled for:</p>
+      <ul>
+        <li><strong>College Name :</strong> ${collegeName}</li>
+        <li><strong>Batch Name :</strong> ${batchName}</li>
+        <li><strong>Session Name:</strong> ${sessionName}</li>
+        <li><strong>Type:</strong> ${type}</li>
+        <li><strong>Date:</strong> ${date}</li>
+        <li><strong>Time:</strong> ${time}</li>
+        <li><strong>Link or Venue : </strong>${venueORlink}</li>
+      </ul>
+  
+      <p>If you have any questions or concerns, please feel free to contact us.</p>
+      <p>Best regards,</p>
+      <p>Link Ur Codes Team</p>
+      <br>
+      <div class="footer">
+        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+  
+  </html>`
+  return content;
+}
+
+
 module.exports = {
   admStaffAddHTMLContent,
   admStaffAddTextContent,
@@ -3894,6 +4019,9 @@ module.exports = {
   refundRequestConfirmationClgStaffHTMLContent,
   refundRequestConfirmationClgStaffTextContent,
   refundRequestApprovalNotificationHTMLContent,
-  refundRequestApprovalNotificationTextContent
+  refundRequestApprovalNotificationTextContent,
+  upcomingSessionTrainerTextContent,
+  upcomingSessionTrainerHTMLContent
+
 };
 

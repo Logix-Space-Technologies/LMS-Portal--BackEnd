@@ -177,6 +177,42 @@ exports.createSession = (request, response) => {
                                     })
                                 }
                             })
+                            
+                            db.query('SELECT b.batchName, b.collegeId, c.collegeName FROM batches b INNER JOIN college c ON b.collegeId = c.id WHERE b.id = ?', [newSession.batchId], (err, batch) => {
+                                if (err) {
+                                    console.error("Error fetching batch and college details:", err);
+                                } else {
+                                    if (batch.length > 0) {
+                                        const batchName = batch[0].batchName;
+                                        const collegeName = batch[0].collegeName;
+                            
+                                        db.query('SELECT * FROM trainersinfo', (err, trainers) => {
+                                            if (err) {
+                                                console.error("Error fetching trainers:", err);
+                                            } else {
+                                                trainers.forEach(trainer => {
+                                                    const trainerName = trainer.trainerName;
+                                                    const trainerEmail = trainer.email;
+                            
+                                                    const sessionDate = newSession.date.split('-').reverse().join('/');
+                                                    const sessionTime = formatTime(newSession.time);
+                                                    const venueORlink = newSession.venueORlink;
+                                                    const type = newSession.type;
+                            
+                                                    const htmlContent = mailContents.upcomingSessionTrainerHTMLContent(newSession.sessionName, sessionDate, sessionTime, venueORlink, type, batchName, trainerName, collegeName);
+                                                    const textContent = mailContents.upcomingSessionTrainerTextContent(newSession.sessionName, sessionDate, sessionTime, venueORlink, type, batchName, trainerName, collegeName);
+                            
+                                                    mail.sendEmail(trainerEmail, `Announcement Regarding Upcoming Session Scheduled On ${sessionDate}`, htmlContent, textContent);
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        console.error("No batch found for batchId:", newSession.batchId);
+                                    }
+                                }
+                            });
+                            
+                            
                             return response.json({ "status": "success", "data": data });
 
                         }
