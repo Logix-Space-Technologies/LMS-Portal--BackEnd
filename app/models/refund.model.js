@@ -282,7 +282,7 @@ Refund.approveRefund = (approvedAmnt, admStaffId, refundId, result) => {
 
 
 
-Refund.cancelRefundRequest = (refundId, adminRemarks, admStaffId, result) => {
+Refund.cancelRefundRequest = (refundId, result) => {
     // Check if the refund ID exists in the refund table
     db.query("SELECT * FROM refund WHERE id = ? AND cancelStatus = 0", [refundId], (refundErr, refundRes) => {
         if (refundErr) {
@@ -299,8 +299,8 @@ Refund.cancelRefundRequest = (refundId, adminRemarks, admStaffId, result) => {
 
         // Continue to cancel refund if refund ID exists
         db.query(
-            "UPDATE refund SET cancelStatus = 1 AND `cancelDate` = CURRENT_DATE AND `AdmStaffId` = ?, `adminRemarks`= ? WHERE id = ?",
-            [admStaffId, adminRemarks, refundId],
+            "UPDATE refund SET cancelStatus = 1 AND `cancelDate` = CURRENT_DATE WHERE id = ?",
+            [refundId],
             (err, res) => {
                 if (err) {
                     console.error("Error cancelling refund:", err);
@@ -322,8 +322,7 @@ Refund.cancelRefundRequest = (refundId, adminRemarks, admStaffId, result) => {
 
 //Admin Staff Reject Refund
 Refund.rejectRefund = (admStaffId, adminRemarks, refundId, result) => {
-    console.log(admStaffId)
-    db.query("UPDATE refund SET cancelStatus = 1, adminRemarks = ?, AdmStaffId = ? WHERE id = ? AND cancelStatus = 0",
+    db.query("UPDATE refund SET cancelStatus = 1, `cancelDate` = CURRENT_DATE, adminRemarks = ?, AdmStaffId = ? WHERE id = ? AND cancelStatus = 0",
         [adminRemarks, admStaffId, refundId],
         (err, res) => {
             if (err) {

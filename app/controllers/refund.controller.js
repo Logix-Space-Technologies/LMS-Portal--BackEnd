@@ -274,7 +274,7 @@ exports.rejectRefundRequest = (request, response) => {
             if (Object.keys(validationErrors).length > 0) {
                 return response.json({ "status": "Validation failed", "data": validationErrors });
             }
-            Refund.rejectRefund(refundId, adminRemarks, admStaffId, (err, data) => {
+            Refund.rejectRefund(admStaffId, adminRemarks, refundId, (err, data) => {
                 if (err) {
                     console.log(err);
                     return response.json({ "status": err })
