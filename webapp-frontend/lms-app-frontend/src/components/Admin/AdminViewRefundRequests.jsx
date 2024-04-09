@@ -81,7 +81,8 @@ const AdminViewRefundRequests = () => {
       .then((response) => {
         if (response.data.data) {
           setIsLoading(false)
-          setRefundRequests(response.data.data);
+          const activeRefundReq = response.data.data.filter(refund => refund.AmountReceivedStatus === 'Not Yet Received');
+          setRefundRequests(activeRefundReq);
         } else {
           if (response.data.status === "Unauthorized User!!") {
             { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
