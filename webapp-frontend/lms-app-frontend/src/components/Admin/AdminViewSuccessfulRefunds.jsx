@@ -22,15 +22,21 @@ const AdminViewSuccessfulRefunds = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSuccessfulRefunds"
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
-
         axios.post(apiUrl, {}, axiosConfig).then((response) => {
             if (response.data.data) {
                 setrefundSuccessData(response.data.data);
@@ -69,6 +75,10 @@ const AdminViewSuccessfulRefunds = () => {
         return ((currentPage - 1) * refundsPerPage) + index + 1;
     }
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
 
     useEffect(() => { getData() }, []);
 
