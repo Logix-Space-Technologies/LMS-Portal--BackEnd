@@ -3954,6 +3954,126 @@ function upcomingSessionTrainerHTMLContent(sessionName, date, time, venueORlink,
 }
 
 
+//Sending mail after Initiating a Refund Transaction By Admin/AdminStaff - HTML Content
+function refundRequestInitiatedHTMLContent(studName, refundAmount, transactionNo) {
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkUrCodes Refund Initiation Notification</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+
+    h2 {
+      font-size: 21px;
+      text-align: center;
+      color: #007bff;
+    }
+
+    p {
+      font-size: 16px;
+      text-align: justify;
+      line-height: 1.6;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      text-align: center;
+      text-decoration: none;
+      background-color: #007bff;
+      color: #fff;
+      border-radius: 5px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: smaller;
+      color: grey;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    <h2>LinkUrCodes Refund Initiation Notification</h2>
+    <p>Dear ${studName},</p>
+    <p>We hope this message finds you well. We are writing to inform you that the refund amount of INR ${refundAmount},
+      as previously discussed, has been successfully processed from our end today.</p>
+
+    <p>Transaction details is as follows:</p>
+
+    <ul>
+      <li><strong>Transaction No. :</strong> ${transactionNo} </li>
+    </ul>
+
+    <p>This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. Please expect
+      the credited amount to
+      reflect in your bank account within the next 3 to 4 working days. </p>
+    <p>If, for any reason, the amount has not been credited to your account within this timeframe, we kindly ask you to
+      contact us immediately for further assistance.</p>
+    <p>We would like to take this opportunity to remind you that, as per our policy and your decision to withdraw, you
+      will no longer be a part of the "Link Ur Codes" program and will not be eligible to REJOIN in the future.</p>
+    <p>We wish you all the best in your academic pursuits and future endeavors.</p>
+    <p>Best Regards,</p>
+    <p>LinkUrCodes Team</p>
+    <div class="footer">
+      © ${currentYear} Link Ur Codes. All rights reserved.
+    </div>
+  </div>
+</body>
+
+</html>`
+  return content
+}
+
+//Sending mail after Initiating a Refund Transaction By Admin/AdminStaff - Text Content
+function refundRequestInitiatedTextContent(studName, refundAmount, transactionNo) {
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${studName},
+
+We hope this message finds you well. We are writing to inform you that the refund amount of INR ${refundAmount}, as previously discussed, has been successfully processed from our end today.
+
+Transaction details is as follows:
+
+- Transaction No. : ${transactionNo}
+
+This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. Please expect the credited amount to reflect in your bank account within the next 3 to 4 working days. If, for any reason, the amount has not been credited to your account within this timeframe, we kindly ask you to contact us immediately for further assistance.
+
+We would like to take this opportunity to remind you that, as per our policy and your decision to withdraw, you will no longer be a part of the "Link Ur Codes" program and will not be eligible to REJOIN in the future.
+
+We wish you all the best in your academic pursuits and future endeavors.
+
+Best Regards,
+LinkUrCodes Team
+
+© ${currentYear} Link Ur Codes. All rights reserved.`
+  return content
+}
+
+
 module.exports = {
   admStaffAddHTMLContent,
   admStaffAddTextContent,
@@ -4020,7 +4140,8 @@ module.exports = {
   refundRequestApprovalNotificationHTMLContent,
   refundRequestApprovalNotificationTextContent,
   upcomingSessionTrainerTextContent,
-  upcomingSessionTrainerHTMLContent
-
+  upcomingSessionTrainerHTMLContent,
+  refundRequestInitiatedHTMLContent,
+  refundRequestInitiatedTextContent
 };
 
