@@ -87,7 +87,7 @@ exports.createRefundRequest = (request, response) => {
                             })
                         }
                     });
-                    
+
                     console.log("Refund request successfully created");
                     return response.json({ "status": "success", "data": data });
                 }
@@ -204,6 +204,9 @@ exports.initiateRefundRequest = (request, response) => {
 
     jwt.verify(refundtoken, key, (err, decoded) => {
         if (decoded) {
+            let initiatedRefundId = refundId
+            let initiatedTransactionNo = transactionNo
+            let initiatedRefundAmnt = approvedAmnt
             const validationErrors = {};
             if (Validator.isEmpty(adminRemarks).isValid) {
                 validationErrors.adminRemarks = Validator.isEmpty(adminRemarks).message;
@@ -226,6 +229,25 @@ exports.initiateRefundRequest = (request, response) => {
                     console.log(err);
                     return response.json({ "status": err });
                 } else {
+                    db.query("SELECT * FROM `refund` WHERE `id` = ?", [initiatedRefundId], (err, res) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            let initiatedStudId = res[0].studId;
+                            let initiatedDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
+                            db.query("SELECT r.id AS refundId, s.* FROM student s JOIN refund r ON r.studId = s.id WHERE s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND r.cancelStatus = 0", [initiatedStudId], (initiateErr, initiateRes) => {
+                                if (initiateErr) {
+                                    console.log(initiateErr)
+                                } else {
+                                    const studName = initiateRes[0].studName;
+                                    const studEmail = initiateRes[0].studEmail;
+                                    const refundInitiatedNotificationHTMLContent = mailContents.refundRequestInitiatedHTMLContent(studName, initiatedRefundAmnt, initiatedTransactionNo)
+                                    const refundInitiatedNotificationTextContent = mailContents.refundRequestInitiatedTextContent(studName, initiatedRefundAmnt, initiatedTransactionNo)
+                                    mail.sendEmail(studEmail, `Refund Initiation Notification - "Link Your Codes" Program ${initiatedDate}`, refundInitiatedNotificationHTMLContent, refundInitiatedNotificationTextContent)
+                                }
+                            })
+                        }
+                    })
                     console.log("Refund request successfully initiated");
                     return response.json({ "status": "success", "data": data });
                 }
