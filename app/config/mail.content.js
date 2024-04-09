@@ -4075,6 +4075,117 @@ LinkUrCodes Team
 }
 
 
+function refundRejectionNotificationHTMLContent(studName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `
+  <!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>LinkUrCodes Refund Rejection Notification</title>
+      <style>
+          body {
+              font-family: 'Arial', sans-serif;
+              background-color: #f5f5f5;
+              color: #333;
+              margin: 0;
+              padding: 0;
+          }
+  
+          .container {
+              max-width: 600px;
+              margin: 20px auto;
+              padding: 20px;
+              border: 1px solid #ccc;
+              background-color: #fff;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+              border-radius: 5px;
+          }
+  
+          h2 {
+              font-size: 21px;
+              text-align: center;
+              color: #007bff;
+          }
+  
+          p {
+              font-size: 16px;
+              text-align: justify;
+              line-height: 1.5;
+          }
+  
+          .button {
+              display: inline-block;
+              padding: 10px 20px;
+              font-size: 16px;
+              text-align: center;
+              text-decoration: none;
+              background-color: #007bff;
+              color: #fff;
+              border-radius: 5px;
+          }
+  
+          .footer {
+              text-align: center;
+              margin-top: 30px;
+              font-size: smaller;
+              color: grey;
+          }
+      </style>
+  </head>
+  
+  <body>
+      <div class="container">
+          <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+          <h2>LinkUrCodes Refund Rejection Notification</h2>
+          <p>Dear ${studName},</p>
+          <p>We regret to inform you that we are unable to process your request to cancel your membership subscription and
+              issue a refund at this time. After careful review of your request and our policies, we have determined that
+              the cancellation request provided does not meet our criteria for cancellation eligibility.</p>
+  
+          <p>Please note that our cancellation policy outlines specific terms and conditions regarding subscription
+              cancellation and refund requests. Unfortunately, your request does not align with these guidelines.</p>
+  
+          <p>We understand your frustration and apologize for any inconvenience this may cause. If you have any further
+              questions or concerns, please do not hesitate to contact our customer support team at admin@linkurcodes.com.
+          </p>
+          <p>Thank you for your understanding.</p>
+          <p>Sincerely,</p>
+          <p>LinkUrCodes Team</p>
+          <div class="footer">
+              © ${currentYear} Link Ur Codes. All rights reserved.
+          </div>
+      </div>
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function refundRejectionNotificationTextContent(studName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${studName},
+
+  We regret to inform you that we are unable to process your request to cancel your membership subscription and issue a refund at this time. After careful review of your request and our policies, we have determined that the cancellation request provided does not meet our criteria for cancellation eligibility.
+  
+  Please note that our cancellation policy outlines specific terms and conditions regarding subscription cancellation and refund requests. Unfortunately, your request does not align with these guidelines.
+  
+  We understand your frustration and apologize for any inconvenience this may cause. If you have any further questions or concerns, please do not hesitate to contact our customer support team at admin@linkurcodes.com.
+  
+  Thank you for your understanding.
+  
+  Sincerely,
+  LinkUrCodes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+  return content;
+}
+
+
 module.exports = {
   admStaffAddHTMLContent,
   admStaffAddTextContent,
@@ -4143,6 +4254,8 @@ module.exports = {
   upcomingSessionTrainerTextContent,
   upcomingSessionTrainerHTMLContent,
   refundRequestInitiatedHTMLContent,
-  refundRequestInitiatedTextContent
+  refundRequestInitiatedTextContent,
+  refundRejectionNotificationHTMLContent,
+  refundRejectionNotificationTextContent
 };
 
