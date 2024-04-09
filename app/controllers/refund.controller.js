@@ -283,7 +283,6 @@ exports.rejectRefundRequest = (request, response) => {
                         if (err) {
                             console.log(err)
                         } else {
-                            console.log(res[0].studId)
                             let rejectedStudId = res[0].studId;
                             let rejectedDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
                             db.query("SELECT r.id AS refundId, s.* FROM student s JOIN refund r ON r.studId = s.id WHERE s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND r.cancelStatus = 1", [rejectedStudId], (rejectErr, rejectRes) => {
