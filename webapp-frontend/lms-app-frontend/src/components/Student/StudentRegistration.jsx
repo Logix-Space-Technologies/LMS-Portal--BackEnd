@@ -134,7 +134,7 @@ const StudentRegistration = () => {
   }
 
 
-  // Add a new function to fetch batches based on the selected college
+  // Function to fetch batches based on the selected college
   const getBatches = (collegeId) => {
     let axiosConfig = {
       headers: {
@@ -143,7 +143,9 @@ const StudentRegistration = () => {
       }
     };
     axios.post(batchUrl, { collegeId }, axiosConfig).then((response) => {
-      setBatches(response.data);
+      // Filter out batches with registrationStatus === 0
+      const activeBatches = response.data.data.filter(batch => batch.registrationStatus === 1);
+      setBatches(activeBatches);
     });
   };
 
@@ -448,7 +450,7 @@ const StudentRegistration = () => {
                     value={inputField.batchId}
                     onChange={handleBatchChange}>
                     <option value="">Select</option>
-                    {batches.data && batches.data.map((value) => {
+                    {batches && batches.map((value) => {
                       return <option key={value.id} value={value.id}> {value.batchName} </option>;
                     })}
                   </select>

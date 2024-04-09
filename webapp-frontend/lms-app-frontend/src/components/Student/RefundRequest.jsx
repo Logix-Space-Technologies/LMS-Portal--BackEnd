@@ -5,8 +5,13 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const RefundRequestForm = () => {
     const [inputField, setInputField] = useState({
-        studId: '',
-        reason: '',
+        studId: "",
+        reason: "",
+        accountNo: null,
+        IFSCCode: null,
+        bankName: null,
+        branchName: null,
+        upiId: null
     });
 
     const [errors, setErrors] = useState({});
@@ -50,6 +55,11 @@ const RefundRequestForm = () => {
             let data = {
                 studId: inputField.studId,
                 reason: inputField.reason,
+                accountNo: inputField.accountNo,
+                IFSCCode: inputField.IFSCCode,
+                bankName: inputField.bankName,
+                branchName: inputField.branchName,
+                upiId: inputField.upiId
             };
             setShowWaitingModal(true)
             setShowOverlay(true)
@@ -140,11 +150,31 @@ const RefundRequestForm = () => {
                                 </div>
                                 <div className="row gy-3 gy-md-4 overflow-hidden">
                                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                        <label htmlFor="reason" className="form-label">Bank Account Details/UPI ID<span className="text-danger">*</span></label>
+                                        <label htmlFor="reason" className="form-label">Reason<span className="text-danger">*</span></label>
                                         <textarea name="reason" onChange={handleChange} value={inputField.reason} id="reason" cols="30" rows="10" className="form-control"></textarea>
                                         {errors.reason && <div className="text-danger">{errors.reason}</div>}
                                     </div>
-
+                                    <h1>Bank Details (Provide Bank Details OR UPI ID)</h1>
+                                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                        <label htmlFor="accountNo" className="form-label">Account No.</label>
+                                        <input onChange={handleChange} type="text" class="form-control" name="accountNo" value={inputField.accountNo} id="accountNo" />
+                                    </div>
+                                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                        <label htmlFor="IFSCCode" className="form-label">IFSC Code</label>
+                                        <input onChange={handleChange} type="text" class="form-control" name="IFSCCode" value={inputField.IFSCCode} id="IFSCCode" />
+                                    </div>
+                                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                        <label htmlFor="bankName" className="form-label">Bank Name</label>
+                                        <input onChange={handleChange} type="text" class="form-control" name="bankName" value={inputField.bankName} id="bankName" />
+                                    </div>
+                                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                        <label htmlFor="branchName" className="form-label">Branch</label>
+                                        <input onChange={handleChange} type="text" class="form-control" name="branchName" value={inputField.branchName} id="branchName" />
+                                    </div>
+                                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                        <label htmlFor="upiId" className="form-label">UPI ID</label>
+                                        <input onChange={handleChange} type="text" class="form-control" name="upiId" value={inputField.upiId} id="upiId" />
+                                    </div>
                                     <div className="col-12">
                                         <div className="d-grid">
                                             <button onClick={handleSubmit} className="btn btn-primary btn-lg" type="submit">Submit</button>

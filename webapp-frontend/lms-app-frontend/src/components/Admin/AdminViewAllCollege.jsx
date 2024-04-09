@@ -6,7 +6,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminViewAllCollege = () => {
-
+    const [inputField, setInputField] = useState(
+        {
+            "collegeSearchQuery": ""
+        }
+    )
     const [collegeData, setCollegeData] = useState([])
     const [key, setKey] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -22,11 +26,71 @@ const AdminViewAllCollege = () => {
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteCollege"
     const apiUrl2 = global.config.urls.api.server + "/api/lms/changeregstatustoopen";
     const apiUrl3 = global.config.urls.api.server + "/api/lms/changeregstatustoclose";
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/searchCollege";
 
     const closeWaitingModal = () => {
         setShowOverlay(false)
         setShowWaitingModal(false)
     }
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
+    }
+
+    const readSearchValue = () => {
+        setIsLoading(true)
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let axiosConfig3 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        }
+        axios.post(apiUrl4, inputField, axiosConfig3).then(
+            (response) => {
+                if (response.data.data) {
+                    setCollegeData(response.data.data)
+                    setInputField(
+                        {
+                            "collegeSearchQuery": ""
+                        }
+                    )
+                    setIsLoading(false)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "collegeSearchQuery": ""
+                        }
+                    )
+                    setTimeout(() => {
+                        getData()
+                        alert("No Colleges Found !!")
+                    }, 500)
+                } else {
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "collegeSearchQuery": ""
+                        }
+                    )
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
+
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
@@ -128,20 +192,25 @@ const AdminViewAllCollege = () => {
                 "key": currentKey
             }
         };
-
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, collegeId, axiosConfig2).then(
             (response) => {
                 if (response.data.status === "Registration Status Changed To Open.") {
-                    getData();
-                } else if (response.data.status === "Validation failed") {
-                    // Handle validation errors
-                    alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Registration Status Set To Open")
+                        getData();
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User !!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
-                    // Handle other errors
-                    alert(response.data.status);
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        // Handle other errors
+                        alert(response.data.status);
+                    }, 500)
                 }
             }
         )
@@ -165,16 +234,25 @@ const AdminViewAllCollege = () => {
                 "key": currentKey
             }
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl3, collegeId, axiosConfig).then(
             (response) => {
                 if (response.data.status === "Registration Status Changed To Unavailable.") {
-                    getData();
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert("Registration Status Set To Closed")
+                        getData();
+                    }, 500)
                 } else {
                     if (response.data.status === "Unauthorized User !!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
-                        alert(response.data.status);
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status);
+                        }, 500)
                     }
                 }
             }
@@ -220,6 +298,18 @@ const AdminViewAllCollege = () => {
                 <div></div>
             </div>
             <br /><br />
+            <div className="row">
+                <div className="col">
+                    <div className="input-group">
+                        <input onChange={inputHandler} type="text" className="form-control" name="collegeSearchQuery" value={inputField.collegeSearchQuery} placeholder='College Name/College Address/Website/Email/College Contact Number' />
+                    </div>
+                    <br></br>
+                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <button onClick={readSearchValue} className="btn btn-warning">Search</button>
+                    </div>
+                    <br />
+                </div>
+            </div>
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">
                     <div>Loading...</div>

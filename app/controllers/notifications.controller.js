@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const path = require("path")
 const Validator = require("../config/data.validate");
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
+const firebasetokens = require("../models/firebaseTokens.model");
+const { Student } = require("../models/student.model");
 
 
 exports.createNotifications = (request, response) => {
@@ -50,6 +52,24 @@ exports.createNotifications = (request, response) => {
                 if (key !== "lmsapp") {
                     logAdminStaff(request.body.sendby, "Admin Staff Sent Notification")
                 }
+                Student.searchStudentByBatch(request.body.batchId, (err, data) => {
+                    if (err) {
+                        return response.json({ "status": "Error", "message": err.message });
+                    }
+                    const payload = {
+                        notification: {
+                            title: request.body.title,
+                            body: request.body.message
+                        }
+                    };
+                    data.forEach((student) => {
+                        firebasetokens.sendNotificationByStudId(student.id, payload, (err, data) => {
+                            if (err) {
+                                return response.json({ "status": "Error", "message": err.message });
+                            }
+                        });
+                    });
+                });
                 return response.json({ "status": "Success", "message": "Notification created successfully" });
             });
         } else {

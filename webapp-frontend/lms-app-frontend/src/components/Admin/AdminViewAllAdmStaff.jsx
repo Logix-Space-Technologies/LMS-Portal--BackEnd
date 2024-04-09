@@ -55,6 +55,7 @@ const AdminViewAllAdminStaff = () => {
           navigate("/");
           sessionStorage.clear();
         } else if (!response.data.data) {
+          alert("No AdminStaffs Found !!")
           getData()
           setInputField({ "adminStaffSearchQuery": "" });
         } else {

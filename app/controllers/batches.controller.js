@@ -137,6 +137,7 @@ exports.batchView = (request, response) => {
 
 
 exports.searchBatch = (request, response) => {
+    const collegeId = request.body.collegeId;
     const batchQuery = request.body.batchQuery;//changed
     const batchToken = request.headers.token;
     //key for respective token
@@ -147,7 +148,7 @@ exports.searchBatch = (request, response) => {
             return response.json({ "status": "Search query cannot be empty" })
         }
         if (decoded) {
-            Batches.searchBatch(batchQuery, (err, data) => {
+            Batches.searchBatch(collegeId, batchQuery, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
@@ -312,3 +313,44 @@ exports.clgstaffNotificationView = (request, response) => {
         }
     });
 };
+
+
+exports.changeRegistrationStatusToAvailable = (request, response) => {
+    const batchId = request.body.id;
+    const token = request.headers.token;
+    const key = request.headers.key;
+
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Batches.changeRegistrationStatusToAvailable(batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    return response.json({ "status": "Registration Status Changed To Open." });
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User !!!" });
+        }
+    })
+}
+
+exports.changeRegistrationStatusToNotAvailable = (request, response) => {
+    const batchId = request.body.id;
+    const token = request.headers.token;
+    const key = request.headers.key;
+
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Batches.changeRegistrationStatusToNotOpen(batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    return response.json({ "status": "Registration Status Changed To Unavailable." });
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User !!!" });
+        }
+    })
+}

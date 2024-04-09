@@ -262,7 +262,7 @@ CollegeStaff.collegeStaffChangePassword = (college_staff, result) => {
             const hashedOldPassword = res[0].password;
             let clgstaffid = res[0].id;
             if (bcrypt.compareSync(college_staff.oldPassword, hashedOldPassword)) {
-                const updateCollegeStaffPasswordQuery = "UPDATE college_Staff SET password = ?, pwdUpdateStatus = 1 WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1 ";
+                const updateCollegeStaffPasswordQuery = "UPDATE college_staff SET password = ?, pwdUpdateStatus = 1 WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1 ";
                 const hashedNewPassword = bcrypt.hashSync(college_staff.newPassword, 10);
                 db.query(updateCollegeStaffPasswordQuery, [hashedNewPassword, college_staff.email], (updateErr) => {
                     if (updateErr) {
@@ -297,7 +297,7 @@ CollegeStaff.collegeStaffForgotPassword = (college_staff, result) => {
 
         const clgstaffData = clgstaff[0];
 
-        const updateCollegeStaffPasswordQuery = `UPDATE college_Staff SET password = ?, pwdUpdateStatus = 1 WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1 `;
+        const updateCollegeStaffPasswordQuery = `UPDATE college_staff SET password = ?, pwdUpdateStatus = 1 WHERE BINARY email = ? AND deleteStatus = 0 AND isActive = 1 `;
 
         bcrypt.hash(college_staff.password, 10, (err, hashedNewPassword) => {
             if (err) {
@@ -678,7 +678,7 @@ CollegeStaff.emailVerificationClgStaffOtpVerify = (email, otp, result) => {
 
 CollegeStaff.searchClgStaffByCollege = (searchKey, result) => {
     db.query(
-        "SELECT c.collegeStaffName, c.email, b.batchName FROM college_staff c JOIN batches b ON b.collegeId = c.collegeId WHERE b.id = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1",
+        "SELECT c.id, c.collegeStaffName, c.email, c.phNo, b.batchName FROM college_staff c JOIN batches b ON b.collegeId = c.collegeId WHERE b.id = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1",
         [searchKey],
         (err, res) => {
             if (err) {

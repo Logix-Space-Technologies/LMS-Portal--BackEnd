@@ -9,7 +9,7 @@ import Navbar from '../Admin/Navbar'
 const AdminStaffViewSubmittedTask = () => {
 
     const [errors, setErrors] = useState({});
-
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate()
     const [key, setKey] = useState('')
 
@@ -67,6 +67,7 @@ const AdminStaffViewSubmittedTask = () => {
         axios.post(apiUrl, { sessionId: sessionStorage.getItem("sessionId") }, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
+                    setLoading(false)
                     setTaskData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
@@ -74,6 +75,7 @@ const AdminStaffViewSubmittedTask = () => {
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
+                            setLoading(false)
                             setTaskData([])
                         } else {
                             alert(response.data.status)
@@ -237,190 +239,190 @@ const AdminStaffViewSubmittedTask = () => {
                     <div></div>
                 </div>
                 <br /><br />
-                <div className="relative overflow-x shadow-md sm:rounded-lg">
-                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                    S/L
-                                </th>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                    College Name
-                                </th>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                    Batch Name
-                                </th>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                    Membership No.
-                                </th>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                    Student Name
-                                </th>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                    Task Title
-                                </th>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                    Due Date
-                                </th>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                    Git Link
-                                </th>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                    Remarks
-                                </th>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                    Submitted Date
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Evaluated Date
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Evaluator Remarks
-                                </th>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                    Score
-                                </th>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                    Total Score
-                                </th>
-                                <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
 
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentTasks && currentTasks.length > 0 ? (currentTasks.map(
-                                (value, index) => {
-                                    // Convert dueDate and subDate to Date objects for comparison
-                                    const dueDateObj = parseDateString(value.dueDate);
-                                    const submissionDateObj = parseDateString(value.subDate);
+                {loading && <div className="col-12 text-center">Loading...</div>}
+                {!loading && <div className="relative overflow-x shadow-md sm:rounded-lg"> <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                S/L
+                            </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                College Name
+                            </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                Batch Name
+                            </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                Membership No.
+                            </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                Student Name
+                            </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                Task Title
+                            </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                Due Date
+                            </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                Git Link
+                            </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                Remarks
+                            </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                Submitted Date
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Evaluated Date
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Evaluator Remarks
+                            </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                Score
+                            </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+                                Total Score
+                            </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
 
-                                    // Determine if the task was submitted late
-                                    const isLateSubmission = submissionDateObj > dueDateObj;
-                                    return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td className="px-6 py-4">
-                                            {calculateSerialNumber(index)}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.collegeName}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.batchName}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.membership_no}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.studName}
-                                        </td>
-                                        <td className="px-6 py-4" style={{ whiteSpace: 'nowrap' }}>
-                                            {value.taskTitle}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.dueDate}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <Link to={value.gitLink} className='btn btn-primary' target="_blank" rel="noopener noreferrer">
-                                                Link
-                                            </Link>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {value.remarks}
-                                        </td>
-                                        <td className="px-6 py-12" style={{ display: 'flex', alignItems: 'center' }}>
-                                            {value.subDate}
-                                            {isLateSubmission && (
-                                                <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '10px' }} />
-                                            )}
-                                        </td>
-                                        {!value.evalDate === null && (
-                                            <td className="px-6 py-4">
-                                                {value.evalDate}
-                                            </td>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentTasks && currentTasks.length > 0 ? (currentTasks.map(
+                            (value, index) => {
+                                // Convert dueDate and subDate to Date objects for comparison
+                                const dueDateObj = parseDateString(value.dueDate);
+                                const submissionDateObj = parseDateString(value.subDate);
+
+                                // Determine if the task was submitted late
+                                const isLateSubmission = submissionDateObj > dueDateObj;
+                                return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <td className="px-6 py-4">
+                                        {calculateSerialNumber(index)}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {value.collegeName}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {value.batchName}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {value.membership_no}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {value.studName}
+                                    </td>
+                                    <td className="px-6 py-4" style={{ whiteSpace: 'nowrap' }}>
+                                        {value.taskTitle}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {value.dueDate}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <Link to={value.gitLink} className='btn btn-primary' target="_blank" rel="noopener noreferrer">
+                                            Link
+                                        </Link>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {value.remarks}
+                                    </td>
+                                    <td className="px-6 py-12" style={{ display: 'flex', alignItems: 'center' }}>
+                                        {value.subDate}
+                                        {isLateSubmission && (
+                                            <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '10px' }} />
                                         )}
-                                        {value.evalDate === null && (
-                                            <td className="px-6 py-4">
-                                                NIL
-                                            </td>
-                                        )}
-                                        {!value.evaluatorRemarks === null && (
-                                            <td className="px-6 py-4">
-                                                {value.evaluatorRemarks}
-                                            </td>
-                                        )}
-                                        {value.evaluatorRemarks === null && (
-                                            <td className="px-6 py-4">
-                                                NIL
-                                            </td>
-                                        )}
-                                        {!value.score === null && (
-                                            <td className="px-6 py-4">
-                                                {value.score}
-                                            </td>
-                                        )}
-                                        {value.score === null && (
-                                            <td className="px-6 py-4">
-                                                NIL
-                                            </td>
-                                        )}
+                                    </td>
+                                    {!value.evalDate === null && (
                                         <td className="px-6 py-4">
-                                            {value.totalScore}
+                                            {value.evalDate}
                                         </td>
-                                        <td className="px-6 py-4" style={{ whiteSpace: 'nowrap' }}>
-                                            <button onClick={() => readValue(value.submitTaskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" disabled={value.evalDate !== null}>Evaluate Task</button>
+                                    )}
+                                    {value.evalDate === null && (
+                                        <td className="px-6 py-4">
+                                            NIL
                                         </td>
-                                    </tr>
-                                }
-                            )) : <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td className="px-6 py-4">
-
-                                </td>
-                                <td className="px-6 py-4">
-
-                                </td>
-                                <td className="px-6 py-4">
-
-                                </td>
-                                <td className="px-6 py-4">
-
-                                </td>
-                                <td className="px-6 py-4">
-
-                                </td>
-                                <td className="px-6 py-4">
-                                    No Tasks Are Submitted !!
-                                </td>
-                                <td className="px-6 py-4">
-
-                                </td>
-                                <td className="px-6 py-4">
-
-                                </td>
-                                <td className="px-6 py-4">
-
-                                </td>
-                                <td className="px-6 py-4">
-
-                                </td>
-                                <td className="px-6 py-4">
-
-                                </td>
-                                <td className="px-6 py-4">
-
-                                </td>
-                                <td className="px-6 py-4">
-
-                                </td>
-                                <td className="px-6 py-4">
-
-                                </td>
-                            </tr>
+                                    )}
+                                    {!value.evaluatorRemarks === null && (
+                                        <td className="px-6 py-4">
+                                            {value.evaluatorRemarks}
+                                        </td>
+                                    )}
+                                    {value.evaluatorRemarks === null && (
+                                        <td className="px-6 py-4">
+                                            NIL
+                                        </td>
+                                    )}
+                                    {!value.score === null && (
+                                        <td className="px-6 py-4">
+                                            {value.score}
+                                        </td>
+                                    )}
+                                    {value.score === null && (
+                                        <td className="px-6 py-4">
+                                            NIL
+                                        </td>
+                                    )}
+                                    <td className="px-6 py-4">
+                                        {value.totalScore}
+                                    </td>
+                                    <td className="px-6 py-4" style={{ whiteSpace: 'nowrap' }}>
+                                        <button onClick={() => readValue(value.submitTaskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" disabled={value.evalDate !== null}>Evaluate Task</button>
+                                    </td>
+                                </tr>
                             }
-                        </tbody>
-                    </table>
-                </div>
+                        )) : !loading && <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <td className="px-6 py-4">
+
+                            </td>
+                            <td className="px-6 py-4">
+
+                            </td>
+                            <td className="px-6 py-4">
+
+                            </td>
+                            <td className="px-6 py-4">
+
+                            </td>
+                            <td className="px-6 py-4">
+
+                            </td>
+                            <td className="px-6 py-4">
+                                No Tasks Are Submitted !!
+                            </td>
+                            <td className="px-6 py-4">
+
+                            </td>
+                            <td className="px-6 py-4">
+
+                            </td>
+                            <td className="px-6 py-4">
+
+                            </td>
+                            <td className="px-6 py-4">
+
+                            </td>
+                            <td className="px-6 py-4">
+
+                            </td>
+                            <td className="px-6 py-4">
+
+                            </td>
+                            <td className="px-6 py-4">
+
+                            </td>
+                            <td className="px-6 py-4">
+
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table></div>}
             </div>
-            <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
+            {!loading && <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
                 <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                     <div>
                         <p className="text-sm text-gray-700">
@@ -450,7 +452,7 @@ const AdminStaffViewSubmittedTask = () => {
                         </nav>
                     </div>
                 </div>
-            </div>
+            </div>}
             {showModal && <div className="flex justify-end">
                 <div className="modal show d-block" tabIndex={-1}>
                     <div className="modal-dialog">

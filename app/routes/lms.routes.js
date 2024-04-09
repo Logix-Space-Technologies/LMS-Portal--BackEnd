@@ -24,6 +24,7 @@ const WhatsappController = require("../controllers/Whatsapp/callbackAPI")
 const WhatsappMsgFeedbackController = require("../controllers/Whatsapp/whatsappmsgfeedbackview")
 const WhatsappMsgCommonController = require("../controllers/Whatsapp/whatsappmsgcommonview")
 const WhatsappMsgReceivedFromStudController = require("../controllers/Whatsapp/viewwhtsappmsgreceivedstud")
+const ClgStaffFirebaseController = require("../controllers/clgStaffFirebaseToken.controller")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -160,7 +161,9 @@ router.post("/profileViewByAdmStaff", AdminStaffController.viewAdminStaffProfile
 
 router.post("/adSfViewSubmittedTask", AdminStaffController.adsfViewSubmttedTask)
 
-router.post("/admStaffRefundApproval", RefundController.approveRefundRequest)
+router.post("/admStaffRefundInitiate", RefundController.initiateRefundRequest)
+
+router.post("/admStaffRefundApprove", RefundController.approveRefund)
 
 router.post("/refundamntrcvdstatus", StudentController.refundAmountReceivedStatus)
 
@@ -349,5 +352,17 @@ router.post('/viewwhatsappmsgreceivedfromstud', WhatsappMsgReceivedFromStudContr
 router.post('/changeregstatustoopen', CollegeController.changeRegistrationStatusToAvailable)
 
 router.post('/changeregstatustoclose', CollegeController.changeRegistrationStatusToNotOpen)
+
+router.post('/clgStaffAddFirebaseToken',ClgStaffFirebaseController.createTokens)
+
+router.post('/sendFirebaseNotificationByclgStaffId', ClgStaffFirebaseController.sendNotificationByclgStaffId)
+
+router.get('/viewClgStaffFirebaseTokens', ClgStaffFirebaseController.viewTokens)
+
+router.post('/viewPerformancebyEachStud',StudentController.studentPerformance)
+
+router.post('/changeregstatustoopenforbatch', BatchesController.changeRegistrationStatusToAvailable)
+
+router.post('/changeregstatustocloseforbatch', BatchesController.changeRegistrationStatusToNotAvailable)
 
 module.exports = router

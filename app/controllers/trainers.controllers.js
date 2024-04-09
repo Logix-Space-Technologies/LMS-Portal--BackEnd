@@ -308,10 +308,10 @@ exports.trainerDetailsUpdate = (request, response) => {
                     'id': request.body.id,
                     trainerName,
                     about,
-                    formattedPhoneNumber,
+                    phoneNumber: formattedPhoneNumber,
                     profilePicture,
                 };
-
+                
                 Trainers.updateTrainer(trainerUpdate, (err, data) => {
                     if (err) {
                         if (err.kind === "not_found") {

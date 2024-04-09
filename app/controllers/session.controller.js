@@ -13,6 +13,8 @@ const firebasetokens = require("../models/firebaseTokens.model");
 require('dotenv').config({ path: '../../.env' });
 const whatsAppcancelsession = require("./Whatsapp/cancelSession")
 const WhatsAppupcomingSession = require("./Whatsapp/upcomingSession")
+const whatsappclgstaffupcomingsession = require("./Whatsapp/collegeStaffUpcomingSession")
+const clgstaffFirebaseTokens=require('../models/clgStaffFirebaseToken.model')
 
 
 function formatTime(timeString) {
@@ -113,12 +115,12 @@ exports.createSession = (request, response) => {
                                 const studentPhno = element.studPhNo
                                 const sessionTime = formatTime(newSession.time)
                                 const sessionDate = newSession.date.split('-').reverse().join('/')
-                                firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "New Session", body: `A new session has been scheduled on ${sessionDate} at ${sessionTime}` } }, (err, data) => {
+                                firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "New Session Announcement", body: `A new session has been scheduled on ${sessionDate} at ${sessionTime}` } }, (err, data) => {
                                     if (err) {
                                         return response.json({ "status": err });
                                     }
                                 });
-                                let formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
+                                const formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
                                 WhatsAppupcomingSession.sendfn(sessionDate, sessionTime, newSession.venueORlink, newSession.type, formattedPhoneNumber, studentid)
                                 if (newSession.type === "Offline") {
                                     const upcomingSessionHtmlContent = mailContents.upcomingSessionOfflineHTMLContent(studentName, newSession.sessionName, sessionDate, sessionTime, newSession.venueORlink);
@@ -158,11 +160,20 @@ exports.createSession = (request, response) => {
                                         let clgstaffEmail = element.email
                                         let batchName = element.batchName
                                         let collegeStaffName = element.collegeStaffName
+                                        let collegeStaffId= element.id
+                                        let collegestaffphoneNo = element.phNo
                                         const clgstaffsessionTime = formatTime(newSession.time)
                                         const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
                                         const upcomingSessionHtmlContent = mailContents.upcomingSessionClgStaffHTMLContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
                                         const upcomingSessionTextContent = mailContents.upcomingSessionClgStaffTextContent(newSession.sessionName, clgstaffsessionDate, clgstaffsessionTime, newSession.venueORlink, type, batchName, collegeStaffName);
                                         mail.sendEmail(clgstaffEmail, `Announcement Regarding Upcoming Session Scheduled On ${clgstaffsessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                        clgstaffFirebaseTokens.sendNotificationclgStaffId(collegeStaffId, { notification: { title: "New Session Announcement", body: `A new session has been scheduled on ${clgstaffsessionDate} at ${clgstaffsessionTime}` } }, (err, data) => {
+                                            if (err) {
+                                                return response.json({ "status": err });
+                                            }
+                                        });
+                                        const formattedPhoneNumber = collegestaffphoneNo.startsWith('91') ? collegestaffphoneNo : `91${collegestaffphoneNo}`;
+                                        whatsappclgstaffupcomingsession.sendfn(collegeStaffName, batchName, clgstaffsessionDate, clgstaffsessionTime, newSession.type, newSession.venueORlink, formattedPhoneNumber)
                                     })
                                 }
                             })
@@ -502,7 +513,7 @@ exports.cancelSession = (request, response) => {
                             const cancelSessionHtmlContent = mailContents.cancelSessionContent(studentName, sessionDate, sessiontime, sessionName);
                             const cancelSessionTextContent = mailContents.cancelSessionTextContent(studentName, sessionDate, sessiontime, sessionName);
                             mail.sendEmail(studentEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, cancelSessionHtmlContent, cancelSessionTextContent);
-                            let formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
+                            const formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
                             whatsAppcancelsession.sendfn(sessionDate, sessiontime, sessiontype, formattedPhoneNumber, studentid)
                         });
 
