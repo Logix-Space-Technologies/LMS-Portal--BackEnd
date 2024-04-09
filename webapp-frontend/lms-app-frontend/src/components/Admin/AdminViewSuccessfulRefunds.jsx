@@ -93,7 +93,7 @@ const AdminViewSuccessfulRefunds = () => {
                     <div className="container mx-auto">
                         <div className="flex flex-wrap -mx-4">
                             <div className="w-full px-4">
-                                <h1>Admin View Successful Refunds</h1>
+                                <h1>View Successful Refunds</h1>
                                 <br />
                                 {isLoading ? (
                                     <div className="col-12 text-center">

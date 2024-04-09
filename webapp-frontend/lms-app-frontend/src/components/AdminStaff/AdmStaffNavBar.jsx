@@ -51,7 +51,6 @@ const AdmStaffNavBar = () => {
                                 </Link>
                                 <ul className="dropdown-menu">
                                     <li><Link className="dropdown-item" to="/AdminSearchSessionDetails">Search Session</Link></li>
-                                    <li><Link className="dropdown-item" to="/adminSearchBatch">Search Batch</Link></li>
                                     <li><Link className="dropdown-item" to="/adminsearchtask">Search Tasks</Link></li>
                                     <li><Link className="dropdown-item" to="/adminsearchcurriculum">Search Curriculum</Link></li>
                                     <li><Link className="dropdown-item" to="/adminSearchClg">Search Colleges</Link></li>
