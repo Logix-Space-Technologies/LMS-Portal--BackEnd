@@ -354,7 +354,7 @@ Refund.getSuccessfulRefunds = (result) => {
                 result("No successful refunds found.", null);
                 return;
             }
-            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), refundInitiatedDate: refunds.refundInitiatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
+            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), refundInitiatedDate: refunds.refundInitiatedDate ?  refunds.refundInitiatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
             // Return all successful refunds
             console.log(formattedRefunds)
             result(null, formattedRefunds);
