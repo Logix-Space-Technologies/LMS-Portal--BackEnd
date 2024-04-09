@@ -354,7 +354,7 @@ function upcomingSessionClgStaffHTMLContent(sessionName, date, time, venueORlink
           <li><strong>Type:</strong> ${type}</li>
           <li><strong>Date:</strong> ${date}</li>
           <li><strong>Time:</strong> ${time}</li>
-          <li><strong>Link or Venue : ${venueORlink}</li>
+          <li><strong>Link or Venue : </strong> ${venueORlink}</li>
       </ul>
       <p>We kindly request your assistance in disseminating this information to the students, ensuring maximum participation and engagement.</p>
       <p>If you have any questions or concerns, please feel free to contact us.</p>
