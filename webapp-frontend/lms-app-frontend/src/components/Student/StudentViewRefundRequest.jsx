@@ -164,7 +164,7 @@ const StudentViewRefundRequest = () => {
                                                 const differenceInDays = Math.abs((currentDate - requestedDate) / oneDayInMilliseconds);
 
                                                 const isGreaterThanFiveDays = differenceInDays > 5;
-                                                
+
                                                 return <div key={index} className="col-12">
                                                     <div className="card">
                                                         <div className="card-body">
@@ -175,8 +175,12 @@ const StudentViewRefundRequest = () => {
                                                                 <>
                                                                     <p className="card-text">Refund Approval : {value.refundStatus}</p>
                                                                     <p className="card-text">Approval Status : {value.approvalStatus}</p>
+                                                                    <br />
                                                                     <p className="card-text">Your Refund Request has being sent...Please wait for the Approval.</p>
-                                                                    <p className="card-text-centre">If you want to cancel your refund request... kindly click on <b>Cancel Request</b> within <b>5 days</b> from your <b>requested date</b>.</p>
+                                                                    {isGreaterThanFiveDays === false && (
+                                                                        <p className="card-text-centre">If you want to cancel your refund request... kindly click on <b>Cancel Request</b> within <b>5 days</b> from your <b>requested date</b>.</p>
+                                                                    )}
+                                                                    <br />
                                                                     <p className="card-text"><b>Thank You!!</b></p>
                                                                     <br></br>
                                                                     <div className="flex justify-between">
@@ -193,6 +197,7 @@ const StudentViewRefundRequest = () => {
                                                                     <p className="card-text">Approval Status : {value.approvalStatus}</p>
                                                                     <p className="card-text">Admin Remarks : {value.adminRemarks}</p>
                                                                     <p className="card-text">Did you receive the amount? : {value.AmountReceivedStatus}</p>
+                                                                    <br />
                                                                     <p className="card-text">Your Request has being successfully Processed!</p>
                                                                     <p className="card-text"><b>Thank You!!</b></p>
                                                                     <br></br>
@@ -212,6 +217,7 @@ const StudentViewRefundRequest = () => {
                                                                     <p className="card-text">Approval Status : {value.approvalStatus}</p>
                                                                     <p className="card-text">Admin Remarks : {value.adminRemarks}</p>
                                                                     <p className="card-text">Did you receive the amount? : {value.AmountReceivedStatus}</p>
+                                                                    <br />
                                                                     <p className="card-text">Refund Amount Successfully Received By {value.studName}!</p>
                                                                     <p className="card-text"><b>Thank You!!</b></p>
                                                                 </>
