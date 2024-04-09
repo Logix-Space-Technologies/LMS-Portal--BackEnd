@@ -54,7 +54,7 @@ Tasks.taskCreate = (newTask, result) => {
                             newTask.taskDesc,
                             newTask.taskType,
                             newTask.taskFileUpload,
-                            newTask.totalScore,                    
+                            newTask.totalScore,
                             newTask.dueDate
                         ];
                     } else {
@@ -65,11 +65,11 @@ Tasks.taskCreate = (newTask, result) => {
                             newTask.taskTitle,
                             newTask.taskDesc,
                             newTask.taskType,
-                            newTask.totalScore,                    
+                            newTask.totalScore,
                             newTask.dueDate
                         ];
                     }
-                    
+
                     // Insert the new task
                     db.query(createQuery, createValues, (err, res) => {
                         if (err) {
@@ -220,7 +220,7 @@ Tasks.taskView = (sessionId, result) => {
                 result(err, null)
                 return
             } else {
-                const formattedTasks = res.map(Tasks => ({ ...Tasks, addedDate: Tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), dueDate: Tasks.dueDate ? Tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null, updatedDate: Tasks.updatedDate ? Tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null  })); // Formats the date as 'YYYY-MM-DD'
+                const formattedTasks = res.map(Tasks => ({ ...Tasks, addedDate: Tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), dueDate: Tasks.dueDate ? Tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null, updatedDate: Tasks.updatedDate ? Tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null })); // Formats the date as 'YYYY-MM-DD'
                 console.log("Tasks: ", formattedTasks);
                 result(null, formattedTasks)
             }
@@ -230,7 +230,7 @@ Tasks.taskView = (sessionId, result) => {
 
 
 Tasks.searchTasks = (searchString, result) => {
-    db.query("SELECT b.batchName, s.sessionName, t.id, t.taskTitle, t.batchId, t.sessionId, t.taskDesc, t.taskType, t.dueDate, t.totalScore, t.taskFileUpload FROM task t JOIN batches b ON t.batchId=b.id LEFT JOIN sessiondetails s ON t.sessionId = s.id WHERE t.deleteStatus=0 AND t.isActive=1 AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ? OR t.taskType LIKE ? OR b.batchName LIKE ? OR s.sessionName LIKE ?) ORDER BY t.dueDate DESC",
+    db.query("SELECT b.batchName, s.sessionName, t.id, t.taskTitle, t.batchId, t.sessionId, t.taskDesc, t.taskType, t.dueDate, t.totalScore, t.taskFileUpload, t.addedDate, t.updatedDate FROM task t JOIN batches b ON t.batchId=b.id LEFT JOIN sessiondetails s ON t.sessionId = s.id WHERE t.deleteStatus=0 AND t.isActive=1 AND (t.taskTitle LIKE ? OR t.taskDesc LIKE ? OR t.taskType LIKE ? OR b.batchName LIKE ? OR s.sessionName LIKE ?) ORDER BY t.dueDate DESC",
         [`%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`, `%${searchString}%`],
         (err, res) => {
             if (err) {
@@ -238,7 +238,7 @@ Tasks.searchTasks = (searchString, result) => {
                 result(err, null)
                 return
             } else {
-                const formattedSearchTasks = res.map(tasks => ({ ...tasks, dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
+                const formattedSearchTasks = res.map(tasks => ({ ...tasks, dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), addedDate: tasks.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), updatedDate: Tasks.updatedDate ? Tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
                 console.log("Tasks: ", formattedSearchTasks);
                 result(null, formattedSearchTasks)
             }

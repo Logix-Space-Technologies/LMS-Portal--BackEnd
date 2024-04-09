@@ -139,8 +139,8 @@ const AdminUpdateTask = () => {
                                         if (Response.data.status === "Validation failed" && Response.data.data.score) {
                                             setTimeout(() => { alert(Response.data.data.score) }, 500)
                                         } else {
-                                            if (Response.data.status === "Validation failed" && Response.data.data.date) {
-                                                setTimeout(() => { alert(Response.data.data.date) }, 500)
+                                            if (Response.data.status === "Validation failed" && Response.data.data.dueDate) {
+                                                setTimeout(() => { alert(Response.data.data.dueDate) }, 500)
                                             } else {
                                                 if (Response.data.status === "Unauthorized access!!") {
                                                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }

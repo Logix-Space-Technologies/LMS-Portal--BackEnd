@@ -7,6 +7,7 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminViewAllTasks = () => {
     const [taskData, setTaskData] = useState([]);
+    const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of tasks per page
     const [key, setKey] = useState('');
@@ -16,9 +17,65 @@ const AdminViewAllTasks = () => {
     const navigate = useNavigate()
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+    const [inputField, setInputField] = useState({
+        "taskQuery": ""
+    });
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewtasks"
     const deleteUrl = global.config.urls.api.server + '/api/lms/deleteTask'
+    const apiUrl2 = global.config.urls.api.server + '/api/lms/searchTasks'
+
+    const inputHandler = (event) => {
+        const { name, value } = event.target;
+        setInputField({ ...inputField, [name]: value });
+    };
+
+    const searchTasks = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        setIsLoading(true);
+        const axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+        axios.post(apiUrl2, inputField, axiosConfig)
+            .then(response => {
+                if (response.data.data) {
+                    setTaskData(response.data.data);
+                    setInputField({ taskQuery: "" })
+                    setIsLoading(false);
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
+                    } else {
+                        if (!response.data.data) {
+                            setInputField({ taskQuery: "" })
+                            setIsLoading(false);
+                            setTimeout(() => {
+                                alert("No Tasks Found")
+                                getData();
+                            }, 500)
+                        } else {
+                            alert(response.data.status)
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("Search failed:", error);
+                setIsLoading(false);
+            });
+    };
 
     const closeWaitingModal = () => {
         setShowOverlay(false)
@@ -154,6 +211,25 @@ const AdminViewAllTasks = () => {
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
+            <div className="row mb-3">
+                <div className="col">
+                    <div className="input-group">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search by title, description, or type..."
+                            value={inputField.taskQuery}
+                            onChange={inputHandler}
+                            name="taskQuery"
+                        />
+                    </div>
+                    <br></br>
+                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <button onClick={searchTasks} className="btn btn-warning">Search</button>
+                    </div>
+                    <br />
+                </div>
+            </div>
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
