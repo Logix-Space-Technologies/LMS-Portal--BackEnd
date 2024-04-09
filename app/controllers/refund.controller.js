@@ -147,6 +147,7 @@ exports.approveRefund = (request, response) => {
         if (decoded) {
             let admadmstaffId = admStaffId
             let refundstudId = refundId
+            let approvalamnt = approvedAmnt
             const validationErrors = {};
 
             if (Validator.isEmpty(approvedAmnt).isValid) {
@@ -165,7 +166,26 @@ exports.approveRefund = (request, response) => {
                     console.log(err);
                     return response.json({ "status": err });
                 } else {
-                    logAdminStaff(admadmstaffId, `Approved Refund For Student With Refund ID: ${refundstudId}`)
+                    db.query("SELECT * FROM `refund` WHERE `id` = ?", [refundstudId], (err, res) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            let studRefundId = res[0].studId;
+                            let approveddate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
+                            db.query("SELECT r.id AS refundId, s.* FROM student s JOIN refund r ON r.studId = s.id WHERE s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND r.cancelStatus = 0", [studRefundId], (approveErr, approveRes) => {
+                                if (approveErr) {
+                                    console.log(approveErr)
+                                } else {
+                                    const studName = approveRes[0].studName;
+                                    const studEmail = approveRes[0].studEmail;
+                                    logAdminStaff(admadmstaffId, `Approved Refund For Student : ${studName}`)
+                                    const refundRequestApprovalNotificationHTMLContent = mailContents.refundRequestApprovalNotificationHTMLContent(studName, approvalamnt)
+                                    const refundRequestApprovalNotificationTextContent = mailContents.refundRequestApprovalNotificationTextContent(studName, approvalamnt)
+                                    mail.sendEmail(studEmail, `Refund Request Approval Notification - "Link Your Codes" Program ${approveddate}`, refundRequestApprovalNotificationHTMLContent, refundRequestApprovalNotificationTextContent)
+                                }
+                            })
+                        }
+                    })
                     console.log("Refund request successfully approved");
                     return response.json({ "status": "success", "data": data });
                 }
