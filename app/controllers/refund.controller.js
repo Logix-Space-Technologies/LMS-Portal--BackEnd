@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Refund = require("../models/refund.model");
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
-const { StudentLog, logStudent } = require("../models/studentLog.model");
 const Validator = require("../config/data.validate");
 const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
@@ -88,7 +87,7 @@ exports.createRefundRequest = (request, response) => {
                             })
                         }
                     });
-                    logStudent(request.body.studId, "Student Sent Refund Request");
+                    
                     console.log("Refund request successfully created");
                     return response.json({ "status": "success", "data": data });
                 }
