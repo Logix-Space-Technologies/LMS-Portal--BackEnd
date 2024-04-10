@@ -4267,6 +4267,26 @@ function cancelSessionTrainerHTMLContent(sessionName, sessionDate, sessiontime, 
 
 }
 
+function cancelSessionTrainerTextContent(sessionName, sessionDate, sessiontime, sessiontype, batchName, trainerName, CollegeName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${trainerName},
+
+  We regret to inform you that the ${sessiontype} session ${sessionName} scheduled on ${sessionDate}, ${sessiontime} at ${CollegeName} for batch ${batchName} has been cancelled. We apologize for any inconvenience this may cause.
+
+  A new date for the session will be announced soon. We will keep you updated with the new schedule.
+
+  Thank you for your understanding.
+
+  Best Regards,
+
+  The LinkUrCodes Team
+
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+  return content;
+
+}
+
 
 module.exports = {
   admStaffAddHTMLContent,
@@ -4339,6 +4359,7 @@ module.exports = {
   refundRequestInitiatedTextContent,
   refundRejectionNotificationHTMLContent,
   refundRejectionNotificationTextContent,
-  cancelSessionTrainerHTMLContent
+  cancelSessionTrainerHTMLContent,
+  cancelSessionTrainerTextContent
 };
 
