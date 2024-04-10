@@ -121,9 +121,9 @@ const StudViewProfile = () => {
                                                             <div className="col-6">
                                                                 <img style={{ height: '100px', width: "150px" }} src="https://www.svgrepo.com/show/423006/trophy-prize-medal.svg" alt />
                                                             </div>
-                                                            <div className="col-4">
+                                                            <div className="col-6">
                                                                 <div>
-                                                                    <p style={{ textAlign: 'center', fontSize: '14px' }} className="mt-10 font-bold text-gray-700 dark:text-gray-400">
+                                                                    <p style={{ textAlign: 'center', fontSize: '16px' }} className="mt-10 font-bold text-gray-700 dark:text-gray-400">
                                                                         Dev Rating : {performanceData.cgpa && performanceData.cgpa > 0 ? performanceData.cgpa.toFixed(2) : performanceData.cgpa}/10
                                                                     </p>
                                                                 </div>
