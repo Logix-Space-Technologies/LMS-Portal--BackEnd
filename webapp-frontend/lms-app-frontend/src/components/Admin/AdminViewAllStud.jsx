@@ -46,7 +46,7 @@ const AdminViewAllStud = () => {
             studentSearchQuery: inputField.studentSearchQuery,
             batchId: sessionStorage.getItem("viewbatchId")
         }
-        axios.post(apiLink, inputField, axiosConfig).then((response) => {
+        axios.post(apiLink, searchData, axiosConfig).then((response) => {
             if (response.data.data) {
                 setStudData(response.data.data);
                 setIsLoading(false);
