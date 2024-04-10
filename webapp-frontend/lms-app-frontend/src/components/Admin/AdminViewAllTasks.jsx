@@ -7,7 +7,6 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminViewAllTasks = () => {
     const [taskData, setTaskData] = useState([]);
-    const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of tasks per page
     const [key, setKey] = useState('');
