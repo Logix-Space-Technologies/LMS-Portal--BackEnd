@@ -4185,6 +4185,88 @@ function refundRejectionNotificationTextContent(studName) {
   return content;
 }
 
+function cancelSessionTrainerHTMLContent(sessionName, sessionDate, sessiontime, sessiontype, batchName, trainerName, CollegeName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `
+  <!DOCTYPE html>
+  <html>
+  
+  <head>
+    <title>Session Cancellation</title>
+    <style>
+      body {
+        background-color: #faf4f4;
+        color: #140101;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+  
+      .container {
+        border-radius: 8px;
+        background-color: #ece9e9;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 600px;
+      }
+  
+      h2 {
+        text-align: center;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      .content {
+        margin-top: 20px;
+        border: 2px solid #a3a0a0;
+        /* Added a border to content */
+        padding: 20px;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: smaller;
+        color: grey;
+      }
+    </style>
+  </head>
+  
+  <body>
+  
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <div class="content">
+        <h2>Session Cancellation Announcement</h2>
+  
+        <p>Dear ${trainerName},</p>
+        <p>We regret to inform you that the ${sessiontype} session <b>${sessionName}</b> scheduled on ${sessionDate}, ${sessiontime} at ${CollegeName} for batch ${batchName} has been
+          cancelled. We apologize for
+          any inconvenience this may cause.</p>
+        <p>A new date for the session will be announced soon. We will keep you updated with the new schedule.</p>
+        <p>Thank you for your understanding.</p>
+        <p>Best Regards,</p>
+        <p>The LinkUrCodes Team</p>
+      </div>
+      <div class="footer">
+        <p>© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  
+  </body>
+  
+  </html>`
+  return content;
+
+}
+
 
 module.exports = {
   admStaffAddHTMLContent,
@@ -4256,6 +4338,7 @@ module.exports = {
   refundRequestInitiatedHTMLContent,
   refundRequestInitiatedTextContent,
   refundRejectionNotificationHTMLContent,
-  refundRejectionNotificationTextContent
+  refundRejectionNotificationTextContent,
+  cancelSessionTrainerHTMLContent
 };
 

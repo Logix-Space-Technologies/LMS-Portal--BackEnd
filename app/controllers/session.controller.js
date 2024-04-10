@@ -520,13 +520,15 @@ exports.cancelSession = (request, response) => {
                 if (key !== "lmsapp") {
                     logAdminStaff(cancelledby, "Admin Staff Cancelled Session")
                 }
-                db.query("SELECT b.batchName, s.* FROM sessiondetails s JOIN batches b ON b.id = s.batchId WHERE s.id = ?", [data], (err, sessionres) => {
+                db.query("SELECT b.batchName, c.collegeName, s.* FROM sessiondetails s JOIN batches b ON b.id = s.batchId JOIN college c ON b.collegeId = c.id WHERE s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1", [data], (err, sessionres) => {
                     if (err) {
                         return response.json({ "status": err });
                     }
                     let batchName = sessionres[0].batchName;
                     let batchId = sessionres[0].batchId;
                     let sessionName = sessionres[0].sessionName;
+                    let cancelCollegeName = sessionres[0].collegeName;
+                    let canceltrainerId = sessionres[0].trainerId;
                     const sessionDate = sessionres[0].date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
                     const sessiontype = sessionres[0].type;
                     const sessiontime = formatTime(sessionres[0].time);
@@ -568,6 +570,23 @@ exports.cancelSession = (request, response) => {
                             })
                         }
                     })
+
+                    db.query('SELECT * FROM `trainersinfo` WHERE `id` = ?', [canceltrainerId], (err, trainers) => {
+                        if (err) {
+                            console.error("Error fetching trainers:", err);
+                        } else {
+
+                            const trainerName = trainers[0].trainerName;
+                            const trainerEmail = trainers[0].email;
+
+                            const htmlContent = mailContents.upcomingSessionTrainerHTMLContent(sessionName, sessionDate, sessiontime, sessiontype, batchName, trainerName, cancelCollegeName);
+                            const textContent = mailContents.upcomingSessionTrainerTextContent(sessionName, sessionDate, sessiontime, sessiontype, batchName, trainerName, cancelCollegeName);
+
+                            mail.sendEmail(trainerEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, htmlContent, textContent);
+
+                        }
+                    });
+
 
                     return response.json({ "status": "success" });
 
