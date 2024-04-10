@@ -579,8 +579,8 @@ exports.cancelSession = (request, response) => {
                             const trainerName = trainers[0].trainerName;
                             const trainerEmail = trainers[0].email;
 
-                            const htmlContent = mailContents.cancelSessionTrainerHTMLContent(sessionName, sessionDate, sessiontime, sessiontype, batchName, trainerName, cancelCollegeName);
-                            const textContent = mailContents.cancelSessionTrainerTextContent(sessionName, sessionDate, sessiontime, sessiontype, batchName, trainerName, cancelCollegeName);
+                            const htmlContent = mailContents.cancelSessionTrainerHTMLContent(sessionName, sessionDate, sessiontime, batchName, trainerName, cancelCollegeName);
+                            const textContent = mailContents.cancelSessionTrainerTextContent(sessionName, sessionDate, sessiontime, batchName, trainerName, cancelCollegeName);
 
                             mail.sendEmail(trainerEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, htmlContent, textContent);
 

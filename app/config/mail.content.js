@@ -4185,7 +4185,7 @@ function refundRejectionNotificationTextContent(studName) {
   return content;
 }
 
-function cancelSessionTrainerHTMLContent(sessionName, sessionDate, sessiontime, sessiontype, batchName, trainerName, CollegeName) {
+function cancelSessionTrainerHTMLContent(sessionName, sessionDate, sessiontime, batchName, trainerName, CollegeName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `
@@ -4247,7 +4247,7 @@ function cancelSessionTrainerHTMLContent(sessionName, sessionDate, sessiontime, 
         <h2>Session Cancellation Announcement</h2>
   
         <p>Dear ${trainerName},</p>
-        <p>We regret to inform you that the ${sessiontype} session <b>${sessionName}</b> scheduled on <b>${sessionDate}, ${sessiontime}</b> at <b>${CollegeName}</b> for batch <b>${batchName}</b> has been
+        <p>We regret to inform you that the session <b>${sessionName}</b> scheduled on <b>${sessionDate}, ${sessiontime}</b> at <b>${CollegeName}</b> for batch <b>${batchName}</b> has been
           cancelled. We apologize for
           any inconvenience this may cause.</p>
         <p>A new date for the session will be announced soon. We will keep you updated with the new schedule.</p>
@@ -4267,12 +4267,12 @@ function cancelSessionTrainerHTMLContent(sessionName, sessionDate, sessiontime, 
 
 }
 
-function cancelSessionTrainerTextContent(sessionName, sessionDate, sessiontime, sessiontype, batchName, trainerName, CollegeName) {
+function cancelSessionTrainerTextContent(sessionName, sessionDate, sessiontime, batchName, trainerName, CollegeName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `Dear ${trainerName},
 
-  We regret to inform you that the ${sessiontype} session ${sessionName} scheduled on ${sessionDate}, ${sessiontime} at ${CollegeName} for batch ${batchName} has been cancelled. We apologize for any inconvenience this may cause.
+  We regret to inform you that the session ${sessionName} scheduled on ${sessionDate}, ${sessiontime} at ${CollegeName} for batch ${batchName} has been cancelled. We apologize for any inconvenience this may cause.
 
   A new date for the session will be announced soon. We will keep you updated with the new schedule.
 
