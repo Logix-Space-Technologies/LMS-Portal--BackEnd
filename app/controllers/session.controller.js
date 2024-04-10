@@ -14,7 +14,7 @@ require('dotenv').config({ path: '../../.env' });
 const whatsAppcancelsession = require("./Whatsapp/cancelSession")
 const WhatsAppupcomingSession = require("./Whatsapp/upcomingSession")
 const whatsappclgstaffupcomingsession = require("./Whatsapp/collegeStaffUpcomingSession")
-const clgstaffFirebaseTokens=require('../models/clgStaffFirebaseToken.model')
+const clgstaffFirebaseTokens = require('../models/clgStaffFirebaseToken.model')
 
 
 function formatTime(timeString) {
@@ -160,7 +160,7 @@ exports.createSession = (request, response) => {
                                         let clgstaffEmail = element.email
                                         let batchName = element.batchName
                                         let collegeStaffName = element.collegeStaffName
-                                        let collegeStaffId= element.id
+                                        let collegeStaffId = element.id
                                         let collegestaffphoneNo = element.phNo
                                         const clgstaffsessionTime = formatTime(newSession.time)
                                         const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
@@ -177,7 +177,7 @@ exports.createSession = (request, response) => {
                                     })
                                 }
                             })
-                            
+
                             db.query('SELECT b.batchName, b.collegeId, c.collegeName FROM batches b INNER JOIN college c ON b.collegeId = c.id WHERE b.id = ?', [newSession.batchId], (err, batch) => {
                                 if (err) {
                                     console.error("Error fetching batch and college details:", err);
@@ -185,25 +185,25 @@ exports.createSession = (request, response) => {
                                     if (batch.length > 0) {
                                         const batchName = batch[0].batchName;
                                         const collegeName = batch[0].collegeName;
-                            
-                                        db.query('SELECT * FROM trainersinfo', (err, trainers) => {
+
+                                        db.query('SELECT * FROM `trainersinfo` WHERE `id` = ?', [newSession.trainerId], (err, trainers) => {
                                             if (err) {
                                                 console.error("Error fetching trainers:", err);
                                             } else {
-                                                trainers.forEach(trainer => {
-                                                    const trainerName = trainer.trainerName;
-                                                    const trainerEmail = trainer.email;
-                            
-                                                    const sessionDate = newSession.date.split('-').reverse().join('/');
-                                                    const sessionTime = formatTime(newSession.time);
-                                                    const venueORlink = newSession.venueORlink;
-                                                    const type = newSession.type;
-                            
-                                                    const htmlContent = mailContents.upcomingSessionTrainerHTMLContent(newSession.sessionName, sessionDate, sessionTime, venueORlink, type, batchName, trainerName, collegeName);
-                                                    const textContent = mailContents.upcomingSessionTrainerTextContent(newSession.sessionName, sessionDate, sessionTime, venueORlink, type, batchName, trainerName, collegeName);
-                            
-                                                    mail.sendEmail(trainerEmail, `Announcement Regarding Upcoming Session Scheduled On ${sessionDate}`, htmlContent, textContent);
-                                                });
+
+                                                const trainerName = trainers[0].trainerName;
+                                                const trainerEmail = trainers[0].email;
+
+                                                const sessionDate = newSession.date.split('-').reverse().join('/');
+                                                const sessionTime = formatTime(newSession.time);
+                                                const venueORlink = newSession.venueORlink;
+                                                const type = newSession.type;
+
+                                                const htmlContent = mailContents.upcomingSessionTrainerHTMLContent(newSession.sessionName, sessionDate, sessionTime, venueORlink, type, batchName, trainerName, collegeName);
+                                                const textContent = mailContents.upcomingSessionTrainerTextContent(newSession.sessionName, sessionDate, sessionTime, venueORlink, type, batchName, trainerName, collegeName);
+
+                                                mail.sendEmail(trainerEmail, `Announcement Regarding Upcoming Session Scheduled On ${sessionDate}`, htmlContent, textContent);
+
                                             }
                                         });
                                     } else {
@@ -211,8 +211,8 @@ exports.createSession = (request, response) => {
                                     }
                                 }
                             });
-                            
-                            
+
+
                             return response.json({ "status": "success", "data": data });
 
                         }
