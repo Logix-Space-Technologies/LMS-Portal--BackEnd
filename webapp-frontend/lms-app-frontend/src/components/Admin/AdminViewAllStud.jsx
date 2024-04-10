@@ -58,9 +58,9 @@ const AdminViewAllStud = () => {
                 } else {
                     if (!response.data.data) {
                         setIsLoading(false);
+                        getData()
                         setInputField({ "studentSearchQuery": "" });
                         setTimeout(()=>{
-                            getData()
                             alert("No Students Found")
                         })
                     } else {
