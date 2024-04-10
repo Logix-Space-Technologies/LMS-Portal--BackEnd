@@ -124,7 +124,7 @@ const StudViewProfile = () => {
                                                             <div className="col-4">
                                                                 <div>
                                                                     <p style={{ textAlign: 'center', fontSize: '14px' }} className="mt-10 font-bold text-gray-700 dark:text-gray-400">
-                                                                        GPA : {performanceData.cgpa && performanceData.cgpa > 0 ? performanceData.cgpa.toFixed(2) : performanceData.cgpa}/10
+                                                                        Dev Rating : {performanceData.cgpa && performanceData.cgpa > 0 ? performanceData.cgpa.toFixed(2) : performanceData.cgpa}/10
                                                                     </p>
                                                                 </div>
                                                             </div>
