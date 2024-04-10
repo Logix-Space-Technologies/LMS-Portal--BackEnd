@@ -4247,7 +4247,7 @@ function cancelSessionTrainerHTMLContent(sessionName, sessionDate, sessiontime, 
         <h2>Session Cancellation Announcement</h2>
   
         <p>Dear ${trainerName},</p>
-        <p>We regret to inform you that the ${sessiontype} session <b>${sessionName}</b> scheduled on ${sessionDate}, ${sessiontime} at ${CollegeName} for batch ${batchName} has been
+        <p>We regret to inform you that the ${sessiontype} session <b>${sessionName}</b> scheduled on <b>${sessionDate}, ${sessiontime}</b> at <b>${CollegeName}</b> for batch <b>${batchName}</b> has been
           cancelled. We apologize for
           any inconvenience this may cause.</p>
         <p>A new date for the session will be announced soon. We will keep you updated with the new schedule.</p>
