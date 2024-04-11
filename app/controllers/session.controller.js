@@ -518,7 +518,7 @@ exports.cancelSession = (request, response) => {
                 if (key !== "lmsapp") {
                     logAdminStaff(cancelledby, "Admin Staff Cancelled Session")
                 }
-                db.query("SELECT b.batchName, s.* FROM sessiondetails s JOIN batches b ON b.id = s.batchId WHERE s.id = ?", [data], (err, sessionres) => {
+                db.query("SELECT b.batchName, c.collegeName, s.* FROM sessiondetails s JOIN batches b ON b.id = s.batchId JOIN college c ON b.collegeId = c.id WHERE s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1", [data], (err, sessionres) => {
                     if (err) {
                         return response.json({ "status": err });
                     }
