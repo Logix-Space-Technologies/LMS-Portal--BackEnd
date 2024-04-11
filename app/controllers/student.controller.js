@@ -689,6 +689,7 @@ exports.refundAmountReceivedStatus = (request, response) => {
 
 exports.searchStudentsByAdmAndAdmstf = (request, response) => {
     const { studentSearchQuery } = request.body;
+    const batchId = request.body.batchId;
     const token = request.headers.token;
     const key = request.headers.key;
 
@@ -698,7 +699,7 @@ exports.searchStudentsByAdmAndAdmstf = (request, response) => {
                 console.log("Search Item is required.");
                 return response.json({ "status": "Search Item is required." });
             }
-            Student.searchStudentsByAdmAndAdmstf(studentSearchQuery, (err, data) => {
+            Student.searchStudentsByAdmAndAdmstf(batchId, studentSearchQuery, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {

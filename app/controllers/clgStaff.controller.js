@@ -1009,3 +1009,26 @@ exports.emailVerificationClgStaffOtpVerify = (req, res) => {
     }
   });
 };
+
+exports.viewTaskwiseScore = (request, response) => {
+  const clgStaffToken = request.headers.token;
+  const collegeId=request.body.collegeId;
+  const taskId=request.body.taskId;
+
+  jwt.verify(clgStaffToken, "lmsappstud", (err, decoded) => {
+    if (decoded) {
+      CollegeStaff.viewTaskwiseScore(collegeId,taskId, (err, data) => {
+        if (err) {
+          return response.json({ "status": err });
+        }
+        if (data.length === 0) {
+          return response.json({ "status": "No task found" });
+        } else {
+          return response.json({ "status": "success", "data": data });
+        }
+      });
+    } else {
+      return response.json({ "status": "Unauthorized User!!" });
+    }
+  });
+}

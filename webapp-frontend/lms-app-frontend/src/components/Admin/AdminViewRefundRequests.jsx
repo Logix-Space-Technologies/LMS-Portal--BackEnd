@@ -81,7 +81,8 @@ const AdminViewRefundRequests = () => {
       .then((response) => {
         if (response.data.data) {
           setIsLoading(false)
-          setRefundRequests(response.data.data);
+          const activeRefundReq = response.data.data.filter(refund => refund.AmountReceivedStatus === 'Not Yet Received');
+          setRefundRequests(activeRefundReq);
         } else {
           if (response.data.status === "Unauthorized User!!") {
             { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
@@ -570,11 +571,20 @@ const AdminViewRefundRequests = () => {
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             <button type="button" onClick={() => readBankDetails(value.accountNo, value.IFSCCode, value.bankName, value.branchName, value.upiId)} className="btn btn-primary">View Details</button>
                           </td>
-                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                            {value.refundAmnt}
+
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-4 text-center text-base font-medium">
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                              <img src="https://www.svgrepo.com/show/389251/indian-rupee.svg" alt="rupee" style={{ marginLeft: '24px', height: '14px', verticalAlign: 'middle' }} />
+                              {value.refundAmnt}
+                            </div>
                           </td>
-                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                            {value.approvedAmnt ? value.approvedAmnt : <p>Not Available</p>}
+                          <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-8 text-center text-base font-medium">
+                            {value.approvedAmnt ? (
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <img src="https://www.svgrepo.com/show/389251/indian-rupee.svg" alt="rupee" style={{ marginLeft: '24px', height: '14px', verticalAlign: 'middle' }} />
+                                {value.approvedAmnt}
+                              </div>
+                            ) : <p>Not Available</p>}
                           </td>
                           <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                             {value.refundApprovalStatus}

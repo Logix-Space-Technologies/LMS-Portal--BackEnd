@@ -354,7 +354,7 @@ function upcomingSessionClgStaffHTMLContent(sessionName, date, time, venueORlink
           <li><strong>Type:</strong> ${type}</li>
           <li><strong>Date:</strong> ${date}</li>
           <li><strong>Time:</strong> ${time}</li>
-          <li><strong>Link or Venue : ${venueORlink}</li>
+          <li><strong>Link or Venue : </strong> ${venueORlink}</li>
       </ul>
       <p>We kindly request your assistance in disseminating this information to the students, ensuring maximum participation and engagement.</p>
       <p>If you have any questions or concerns, please feel free to contact us.</p>
@@ -830,7 +830,7 @@ function collegeTextContent(collegeName) {
 }
 
 
-function cancelSessionContent(participantName, date, time, sessionName, batchName) {
+function cancelSessionContent(participantName, date, time, sessionName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `<!DOCTYPE html>
@@ -891,7 +891,7 @@ function cancelSessionContent(participantName, date, time, sessionName, batchNam
         <h2>Session Cancellation Announcement</h2>
   
         <p>Dear ${participantName},</p>
-        <p>We regret to inform you that the session <b>${sessionName}</b> scheduled for ${batchName} on ${date} at ${time} has been cancelled. We apologize for
+        <p>We regret to inform you that the session <b>${sessionName}</b> scheduled on ${date} at ${time} has been cancelled. We apologize for
           any inconvenience this may cause.</p>
         <p>A new date for the session will be announced soon. We will keep you updated with the new schedule.</p>
         <p>Thank you for your understanding.</p>
@@ -992,12 +992,12 @@ function cancelSessionClgStaffHTMLContent(participantName, date, time, sessionNa
 
 }
 
-function cancelSessionTextContent(participantName, date, time, sessionName, batchName) {
+function cancelSessionTextContent(participantName, date, time, sessionName) {
   // Get the current year
   const currentYear = new Date().getFullYear();
   content = `Dear ${participantName},
 
-    We regret to inform you that the session ${sessionName} scheduled for ${batchName} on ${date} at ${time} has been cancelled. We apologize for any inconvenience this may cause.
+    We regret to inform you that the session ${sessionName} scheduled on ${date} at ${time} has been cancelled. We apologize for any inconvenience this may cause.
     
     A new date for the session will be announced soon. We will keep you updated with the new schedule.
     
@@ -3718,6 +3718,575 @@ function refundRequestConfirmationClgStaffTextContent(studName, membershipNo, Ad
 }
 
 
+function refundRequestApprovalNotificationHTMLContent(studName, approvedamnt) {
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkUrCodes Student Refund Request Approval Notification</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+  
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+  
+      h2 {
+        font-size: 21px;
+        text-align: center;
+        color: #007bff;
+      }
+  
+      p {
+        font-size: 16px;
+        text-align: justify;
+        line-height: 1.6;
+      }
+  
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: smaller;
+        color: grey;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="container">
+      <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+      <h2>LinkUrCodes Refund Request Approval Notification</h2>
+      <p>Dear ${studName},</p>
+      <p>We hope this message finds you well. We are writing to inform you that the refund amount of INR ${approvedamnt},
+        as previously discussed, has been successfully approved from our end today. This is in relation to your
+        withdrawal request from the "Link Ur Codes" skill development program. Please expect the amount to
+        be credited in your
+        bank account within the next 3 to 4 working days.</p>
+  
+      <p>If, for any reason, the amount has not been credited to your account within this timeframe, we kindly ask you to
+        contact us
+        immediately for further assistance.</p>
+  
+      <p>We would like to take this opportunity to remind you that, as per our policy and your decision to withdraw, you
+        will no longer be a part of the "Link Ur Codes" program and will not be eligible to REJOIN in the future.</p>
+  
+      <p>We wish you all the best in your academic pursuits and future endeavors.</p>
+      <p>Best Regards,</p>
+      <p>LinkUrCodes Team</p>
+      <div class="footer">
+        © ${currentYear} Link Ur Codes. All rights reserved.
+      </div>
+    </div>
+  </body>
+  
+  </html>`
+  return content
+}
+
+function refundRequestApprovalNotificationTextContent(studName, approvedamnt) {
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${studName},
+
+  We hope this message finds you well. We are writing to inform you that the refund amount of INR ${approvedamnt}, as previously discussed, has been successfully approved from our end today. This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. Please expect the amount to be credited in your bank account within the next 3 to 4 working days.
+  
+  If, for any reason, the amount has not been credited to your account within this timeframe, we kindly ask you to contact us immediately for further assistance.
+  
+  We would like to take this opportunity to remind you that, as per our policy and your decision to withdraw, you will no longer be a part of the "Link Ur Codes" program and will not be eligible to REJOIN in the future.
+  
+  We wish you all the best in your academic pursuits and future endeavors.
+  
+  Best Regards,
+  LinkUrCodes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+  return content
+}
+
+
+
+
+function upcomingSessionTrainerTextContent(sessionName, date, time, venueORlink, type, batchName, trainerName, collegeName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  textContent = `Dear ${trainerName},
+  
+  We hope this email finds you well. We are writing to inform you about the upcoming session details for our coding
+  platform, Link Ur Codes.
+  
+  The next session is scheduled for:
+  
+  - College Name: ${collegeName}
+  - Batch Name: ${batchName}
+  - Session Name: ${sessionName}
+  - Type: ${type}
+  - Date: ${date}
+  - Time: ${time}
+  - Link or Venue: ${venueORlink}
+  
+  If you have any questions or concerns, please feel free to contact us.
+  
+  Best regards,
+  Link Ur Codes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+
+  return textContent
+
+}
+
+function upcomingSessionTrainerHTMLContent(sessionName, date, time, venueORlink, type, batchName, trainerName, collegeName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Next Session Details</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+      }
+  
+      .container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+  
+      h2 {
+        color: #333;
+        text-align: center;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      p {
+        color: #555;
+      }
+  
+      .button {
+        display: inline-block;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+      }
+  
+      .footer {
+        text-align: center;
+        font-size: 0.8em;
+        /* Reduced font size for the footer */
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <h2>Upcoming Session Details</h2>
+      <p>Dear ${trainerName},</p>
+      <p>We hope this email finds you well. We are writing to inform you about the upcoming session details for our coding
+        platform, Link Ur Codes.</p>
+      <p>The next session is scheduled for:</p>
+      <ul>
+        <li><strong>College Name :</strong> ${collegeName}</li>
+        <li><strong>Batch Name :</strong> ${batchName}</li>
+        <li><strong>Session Name:</strong> ${sessionName}</li>
+        <li><strong>Type:</strong> ${type}</li>
+        <li><strong>Date:</strong> ${date}</li>
+        <li><strong>Time:</strong> ${time}</li>
+        <li><strong>Link or Venue : </strong>${venueORlink}</li>
+      </ul>
+  
+      <p>If you have any questions or concerns, please feel free to contact us.</p>
+      <p>Best regards,</p>
+      <p>Link Ur Codes Team</p>
+      <br>
+      <div class="footer">
+        <p id="copyright">© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+  
+  </html>`
+  return content;
+}
+
+
+//Sending mail after Initiating a Refund Transaction By Admin/AdminStaff - HTML Content
+function refundRequestInitiatedHTMLContent(studName, refundAmount, transactionNo) {
+  const currentYear = new Date().getFullYear();
+  content = `<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkUrCodes Refund Initiation Notification</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+
+    h2 {
+      font-size: 21px;
+      text-align: center;
+      color: #007bff;
+    }
+
+    p {
+      font-size: 16px;
+      text-align: justify;
+      line-height: 1.6;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      text-align: center;
+      text-decoration: none;
+      background-color: #007bff;
+      color: #fff;
+      border-radius: 5px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: smaller;
+      color: grey;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+    <h2>LinkUrCodes Refund Initiation Notification</h2>
+    <p>Dear ${studName},</p>
+    <p>We hope this message finds you well. We are writing to inform you that the refund amount of INR ${refundAmount},
+      as previously discussed, has been successfully processed from our end today.</p>
+
+    <p>Transaction details is as follows:</p>
+
+    <ul>
+      <p><strong>Transaction No. :</strong> ${transactionNo} </p>
+    </ul>
+
+    <p>This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. 
+      Please verify whether the amount has been credited into your bank account. If credited, kindly inform us by clicking on the <strong>Payment Received</strong> button in your LinkUrCodes account.</p>
+    <p>If, for any reason, the amount has not been credited to your account within the next 3 to 4 working days, we kindly ask you to
+      contact us immediately for further assistance.</p>
+    <p>We would like to take this opportunity to remind you that, as per our policy and your decision to withdraw, you
+      will no longer be a part of the "Link Ur Codes" program and will not be eligible to REJOIN in the future.</p>
+    <p>We wish you all the best in your academic pursuits and future endeavors.</p>
+    <p>Best Regards,</p>
+    <p>LinkUrCodes Team</p>
+    <div class="footer">
+      © ${currentYear} Link Ur Codes. All rights reserved.
+    </div>
+  </div>
+</body>
+
+</html>`
+  return content
+}
+
+//Sending mail after Initiating a Refund Transaction By Admin/AdminStaff - Text Content
+function refundRequestInitiatedTextContent(studName, refundAmount, transactionNo) {
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${studName},
+
+We hope this message finds you well. We are writing to inform you that the refund amount of INR ${refundAmount}, as previously discussed, has been successfully processed from our end today.
+
+Transaction details is as follows:
+
+- Transaction No. : ${transactionNo}
+
+This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. Please verify whether the amount has been credited into your bank account. If credited, kindly inform us by clicking on the Payment Received button in your LinkUrCodes account. 
+
+If, for any reason, the amount has not been credited to your account within the next 3 to 4 working days, we kindly ask you to contact us immediately for further assistance.
+
+We would like to take this opportunity to remind you that, as per our policy and your decision to withdraw, you will no longer be a part of the "Link Ur Codes" program and will not be eligible to REJOIN in the future.
+
+We wish you all the best in your academic pursuits and future endeavors.
+
+Best Regards,
+LinkUrCodes Team
+
+© ${currentYear} Link Ur Codes. All rights reserved.`
+  return content
+}
+
+
+function refundRejectionNotificationHTMLContent(studName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `
+  <!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>LinkUrCodes Refund Rejection Notification</title>
+      <style>
+          body {
+              font-family: 'Arial', sans-serif;
+              background-color: #f5f5f5;
+              color: #333;
+              margin: 0;
+              padding: 0;
+          }
+  
+          .container {
+              max-width: 600px;
+              margin: 20px auto;
+              padding: 20px;
+              border: 1px solid #ccc;
+              background-color: #fff;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+              border-radius: 5px;
+          }
+  
+          h2 {
+              font-size: 21px;
+              text-align: center;
+              color: #007bff;
+          }
+  
+          p {
+              font-size: 16px;
+              text-align: justify;
+              line-height: 1.5;
+          }
+  
+          .button {
+              display: inline-block;
+              padding: 10px 20px;
+              font-size: 16px;
+              text-align: center;
+              text-decoration: none;
+              background-color: #007bff;
+              color: #fff;
+              border-radius: 5px;
+          }
+  
+          .footer {
+              text-align: center;
+              margin-top: 30px;
+              font-size: smaller;
+              color: grey;
+          }
+      </style>
+  </head>
+  
+  <body>
+      <div class="container">
+          <p><img height="50px" width="150px" src="https://www.linkurcodes.com/images/logo.png" alt=""> </p>
+          <h2>LinkUrCodes Refund Rejection Notification</h2>
+          <p>Dear ${studName},</p>
+          <p>We regret to inform you that we are unable to process your request to cancel your membership subscription and
+              issue a refund at this time. After careful review of your request and our policies, we have determined that
+              the cancellation request provided does not meet our criteria for cancellation eligibility.</p>
+  
+          <p>Please note that our cancellation policy outlines specific terms and conditions regarding subscription
+              cancellation and refund requests. Unfortunately, your request does not align with these guidelines.</p>
+  
+          <p>We understand your frustration and apologize for any inconvenience this may cause. If you have any further
+              questions or concerns, please do not hesitate to contact our customer support team at admin@linkurcodes.com.
+          </p>
+          <p>Thank you for your understanding.</p>
+          <p>Sincerely,</p>
+          <p>LinkUrCodes Team</p>
+          <div class="footer">
+              © ${currentYear} Link Ur Codes. All rights reserved.
+          </div>
+      </div>
+  </body>
+  
+  </html>`
+  return content;
+}
+
+function refundRejectionNotificationTextContent(studName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${studName},
+
+  We regret to inform you that we are unable to process your request to cancel your membership subscription and issue a refund at this time. After careful review of your request and our policies, we have determined that the cancellation request provided does not meet our criteria for cancellation eligibility.
+  
+  Please note that our cancellation policy outlines specific terms and conditions regarding subscription cancellation and refund requests. Unfortunately, your request does not align with these guidelines.
+  
+  We understand your frustration and apologize for any inconvenience this may cause. If you have any further questions or concerns, please do not hesitate to contact our customer support team at admin@linkurcodes.com.
+  
+  Thank you for your understanding.
+  
+  Sincerely,
+  LinkUrCodes Team
+  
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+  return content;
+}
+
+function cancelSessionTrainerHTMLContent(sessionName, sessionDate, sessiontime, batchName, trainerName, CollegeName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `
+  <!DOCTYPE html>
+  <html>
+  
+  <head>
+    <title>Session Cancellation</title>
+    <style>
+      body {
+        background-color: #faf4f4;
+        color: #140101;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+  
+      .container {
+        border-radius: 8px;
+        background-color: #ece9e9;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 600px;
+      }
+  
+      h2 {
+        text-align: center;
+      }
+  
+      .logo-header img {
+        max-width: 30%;
+        height: auto;
+      }
+  
+      .content {
+        margin-top: 20px;
+        border: 2px solid #a3a0a0;
+        /* Added a border to content */
+        padding: 20px;
+      }
+  
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: smaller;
+        color: grey;
+      }
+    </style>
+  </head>
+  
+  <body>
+  
+    <div class="container">
+      <div class="logo-header">
+        <img src="https://www.linkurcodes.com/images/logo.png" alt="Link Ur Codes Logo">
+      </div>
+      <div class="content">
+        <h2>Session Cancellation Announcement</h2>
+  
+        <p>Dear ${trainerName},</p>
+        <p>We regret to inform you that the session <b>${sessionName}</b> scheduled on <b>${sessionDate}, ${sessiontime}</b> at <b>${CollegeName}</b> for batch <b>${batchName}</b> has been
+          cancelled. We apologize for
+          any inconvenience this may cause.</p>
+        <p>A new date for the session will be announced soon. We will keep you updated with the new schedule.</p>
+        <p>Thank you for your understanding.</p>
+        <p>Best Regards,</p>
+        <p>The LinkUrCodes Team</p>
+      </div>
+      <div class="footer">
+        <p>© ${currentYear} Link Ur Codes. All rights reserved.</p>
+      </div>
+    </div>
+  
+  </body>
+  
+  </html>`
+  return content;
+
+}
+
+function cancelSessionTrainerTextContent(sessionName, sessionDate, sessiontime, batchName, trainerName, CollegeName) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  content = `Dear ${trainerName},
+
+  We regret to inform you that the session ${sessionName} scheduled on ${sessionDate}, ${sessiontime} at ${CollegeName} for batch ${batchName} has been cancelled. We apologize for any inconvenience this may cause.
+
+  A new date for the session will be announced soon. We will keep you updated with the new schedule.
+
+  Thank you for your understanding.
+
+  Best Regards,
+
+  The LinkUrCodes Team
+
+  © ${currentYear} Link Ur Codes. All rights reserved.`
+  return content;
+
+}
+
 
 module.exports = {
   admStaffAddHTMLContent,
@@ -3781,6 +4350,16 @@ module.exports = {
   refundRequestConfirmationAdminAdmStaffHTMLContent,
   refundRequestConfirmationAdminAdmStaffTextContent,
   refundRequestConfirmationClgStaffHTMLContent,
-  refundRequestConfirmationClgStaffTextContent
+  refundRequestConfirmationClgStaffTextContent,
+  refundRequestApprovalNotificationHTMLContent,
+  refundRequestApprovalNotificationTextContent,
+  upcomingSessionTrainerTextContent,
+  upcomingSessionTrainerHTMLContent,
+  refundRequestInitiatedHTMLContent,
+  refundRequestInitiatedTextContent,
+  refundRejectionNotificationHTMLContent,
+  refundRejectionNotificationTextContent,
+  cancelSessionTrainerHTMLContent,
+  cancelSessionTrainerTextContent
 };
 

@@ -7,7 +7,6 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar'
 
 const AdminViewAllTasks = () => {
     const [taskData, setTaskData] = useState([]);
-    const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of tasks per page
     const [key, setKey] = useState('');
@@ -211,6 +210,13 @@ const AdminViewAllTasks = () => {
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
+            <div className="flex justify-between items-center mx-4 my-4">
+                <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+                <strong>View All Tasks</strong>
+
+                <div></div>
+            </div>
             <div className="row mb-3">
                 <div className="col">
                     <div className="input-group">
@@ -229,13 +235,6 @@ const AdminViewAllTasks = () => {
                     </div>
                     <br />
                 </div>
-            </div>
-            <div className="flex justify-between items-center mx-4 my-4">
-                <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
-
-                <strong>View All Tasks</strong>
-
-                <div></div>
             </div>
             <br /><br />
             {isLoading ? <div className="flex justify-center items-center h-full">

@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Refund = require("../models/refund.model");
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
-const { StudentLog, logStudent } = require("../models/studentLog.model");
 const Validator = require("../config/data.validate");
 const mailContents = require('../config/mail.content');
 const mail = require('../../sendEmail');
@@ -88,7 +87,7 @@ exports.createRefundRequest = (request, response) => {
                             })
                         }
                     });
-                    logStudent(request.body.studId, "Student Sent Refund Request");
+
                     console.log("Refund request successfully created");
                     return response.json({ "status": "success", "data": data });
                 }
@@ -147,6 +146,7 @@ exports.approveRefund = (request, response) => {
         if (decoded) {
             let admadmstaffId = admStaffId
             let refundstudId = refundId
+            let approvalamnt = approvedAmnt
             const validationErrors = {};
 
             if (Validator.isEmpty(approvedAmnt).isValid) {
@@ -165,7 +165,26 @@ exports.approveRefund = (request, response) => {
                     console.log(err);
                     return response.json({ "status": err });
                 } else {
-                    logAdminStaff(admadmstaffId, `Approved Refund For Student With Refund ID: ${refundstudId}`)
+                    db.query("SELECT * FROM `refund` WHERE `id` = ?", [refundstudId], (err, res) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            let studRefundId = res[0].studId;
+                            let approveddate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
+                            db.query("SELECT r.id AS refundId, s.* FROM student s JOIN refund r ON r.studId = s.id WHERE s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND r.cancelStatus = 0", [studRefundId], (approveErr, approveRes) => {
+                                if (approveErr) {
+                                    console.log(approveErr)
+                                } else {
+                                    const studName = approveRes[0].studName;
+                                    const studEmail = approveRes[0].studEmail;
+                                    logAdminStaff(admadmstaffId, `Approved Refund For Student : ${studName}`)
+                                    const refundRequestApprovalNotificationHTMLContent = mailContents.refundRequestApprovalNotificationHTMLContent(studName, approvalamnt)
+                                    const refundRequestApprovalNotificationTextContent = mailContents.refundRequestApprovalNotificationTextContent(studName, approvalamnt)
+                                    mail.sendEmail(studEmail, `Refund Request Approval Notification - "Link Your Codes" Program ${approveddate}`, refundRequestApprovalNotificationHTMLContent, refundRequestApprovalNotificationTextContent)
+                                }
+                            })
+                        }
+                    })
                     console.log("Refund request successfully approved");
                     return response.json({ "status": "success", "data": data });
                 }
@@ -185,6 +204,9 @@ exports.initiateRefundRequest = (request, response) => {
 
     jwt.verify(refundtoken, key, (err, decoded) => {
         if (decoded) {
+            let initiatedRefundId = refundId
+            let initiatedTransactionNo = transactionNo
+            let initiatedRefundAmnt = approvedAmnt
             const validationErrors = {};
             if (Validator.isEmpty(adminRemarks).isValid) {
                 validationErrors.adminRemarks = Validator.isEmpty(adminRemarks).message;
@@ -207,6 +229,25 @@ exports.initiateRefundRequest = (request, response) => {
                     console.log(err);
                     return response.json({ "status": err });
                 } else {
+                    db.query("SELECT * FROM `refund` WHERE `id` = ?", [initiatedRefundId], (err, res) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            let initiatedStudId = res[0].studId;
+                            let initiatedDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
+                            db.query("SELECT r.id AS refundId, s.* FROM student s JOIN refund r ON r.studId = s.id WHERE s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND r.cancelStatus = 0", [initiatedStudId], (initiateErr, initiateRes) => {
+                                if (initiateErr) {
+                                    console.log(initiateErr)
+                                } else {
+                                    const studName = initiateRes[0].studName;
+                                    const studEmail = initiateRes[0].studEmail;
+                                    const refundInitiatedNotificationHTMLContent = mailContents.refundRequestInitiatedHTMLContent(studName, initiatedRefundAmnt, initiatedTransactionNo)
+                                    const refundInitiatedNotificationTextContent = mailContents.refundRequestInitiatedTextContent(studName, initiatedRefundAmnt, initiatedTransactionNo)
+                                    mail.sendEmail(studEmail, `Refund Initiation Notification - "Link Your Codes" Program ${initiatedDate}`, refundInitiatedNotificationHTMLContent, refundInitiatedNotificationTextContent)
+                                }
+                            })
+                        }
+                    })
                     console.log("Refund request successfully initiated");
                     return response.json({ "status": "success", "data": data });
                 }
@@ -224,6 +265,7 @@ exports.rejectRefundRequest = (request, response) => {
     const key = request.headers.key;
     jwt.verify(rejectRefundToken, key, (err, decoded) => {
         if (decoded) {
+            let refundrejectionId = refundId
             const validationErrors = {};
             if (Validator.isEmpty(adminRemarks).isValid) {
                 validationErrors.adminRemarks = Validator.isEmpty(adminRemarks).message;
@@ -237,6 +279,25 @@ exports.rejectRefundRequest = (request, response) => {
                     console.log(err);
                     return response.json({ "status": err })
                 } else {
+                    db.query("SELECT * FROM `refund` WHERE `id` = ? AND cancelStatus = 1", [refundrejectionId], (err, res) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            let rejectedStudId = res[0].studId;
+                            let rejectedDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
+                            db.query("SELECT r.id AS refundId, s.* FROM student s JOIN refund r ON r.studId = s.id WHERE s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND r.cancelStatus = 1", [rejectedStudId], (rejectErr, rejectRes) => {
+                                if (rejectErr) {
+                                    console.log(rejectErr)
+                                } else {
+                                    const studName = rejectRes[0].studName;
+                                    const studEmail = rejectRes[0].studEmail;
+                                    const refundRejectedNotificationHTMLContent = mailContents.refundRejectionNotificationHTMLContent(studName)
+                                    const refundRejectedNotificationTextContent = mailContents.refundRejectionNotificationTextContent(studName)
+                                    mail.sendEmail(studEmail, `Refund Rejection Notification - "Link Your Codes" Program ${rejectedDate}`, refundRejectedNotificationHTMLContent, refundRejectedNotificationTextContent)
+                                }
+                            })
+                        }
+                    })
                     console.log("Refund Request Cancelled.");
                     return response.json({ "status": "Refund Request Cancelled." });
                 }
