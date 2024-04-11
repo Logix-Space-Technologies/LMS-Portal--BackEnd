@@ -718,4 +718,17 @@ CollegeStaff.searchClgStaffByCollege = (searchKey, result) => {
     );
 }
 
+CollegeStaff.viewTaskwiseScore=(CollegeId,taskId,result)=>{
+    db.query(`SELECT studName,score,totalScore FROM studentTaskScore where CollegeId=? and taskId=?;`, [CollegeId, taskId], (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        } else {
+            console.log("Taskwise Score: ", res);
+            result(null, res);
+        }
+    })
+}
+
 module.exports = CollegeStaff
