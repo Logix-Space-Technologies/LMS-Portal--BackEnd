@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken")
 const SubmitTask = require("../models/submit_task.model")
+const firebasetokens = require("../models/firebaseTokens.model");
 
 exports.evaluateTask = (request, response) => {
     evaluateToken=request.headers.token
@@ -31,6 +32,14 @@ exports.evaluateTask = (request, response) => {
                 if (error) {
                     return response.json({ "status": error });
                 } else {
+                    const studentId=data.student_id;
+                    const sessionName=data.sessionName;
+                    const taskTitle=data.taskTitle;
+                    firebasetokens.sendNotificationByStudId(studentId, { notification: { title: `${taskTitle} has been evaluated`, body: `Your submitted task for session ${sessionName} has been evaluated.` } }, (err, data) => {
+                        if (err) {
+                            return response.json({ "status": err });
+                        }
+                    });
                     return response.json({ "status": "Task evaluated successfully" });
                 }
             });

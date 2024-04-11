@@ -9,7 +9,7 @@ const Submit_task = function (submit_task) {
 
 Submit_task.evaluateTask = (submit_task, result) => {
 
-    db.query("SELECT * FROM submit_task WHERE id = ? and isEvaluated = 0", [submit_task.id], (submitTaskErr, submitTaskRes) => {
+    db.query("SELECT st.*,t.taskTitle,sd.sessionName FROM submit_task st JOIN task t ON t.id=st.taskId JOIN sessiondetails sd ON sd.id=t.sessionId  WHERE st.id = ? and isEvaluated = 0", [submit_task.id], (submitTaskErr, submitTaskRes) => {
         if (submitTaskErr) {
             console.log("error checking submit_task: ", submitTaskErr);
             result(submitTaskErr, null);
@@ -24,6 +24,9 @@ Submit_task.evaluateTask = (submit_task, result) => {
 
         // Fetch task_id using foreign key relationship
         const task_id = submitTaskRes[0].taskId;
+        const student_id = submitTaskRes[0].studId;
+        const sessionName= submitTaskRes[0].sessionName;
+        const taskTitle= submitTaskRes[0].taskTitle;
 
         // Retrieve total marks for the task from the task table
         db.query("SELECT totalScore FROM task WHERE id = ?", [task_id], (taskErr, taskRes) => {
@@ -56,7 +59,7 @@ Submit_task.evaluateTask = (submit_task, result) => {
                 }
 
                 console.log("Updated successfully.");
-                result(null, updateRes);
+                result(null, { student_id,sessionName,taskTitle });
             });
         });
     });
