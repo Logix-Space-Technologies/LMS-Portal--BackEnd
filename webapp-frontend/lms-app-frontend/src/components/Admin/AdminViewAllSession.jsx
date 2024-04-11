@@ -37,7 +37,9 @@ const AdminViewAllSession = () => {
     const navigate = useNavigate();
     const [key, setKey] = useState('')
     const [isLoading, setIsLoading] = useState(true);
+    const [inputField, setInputField] = useState({ "SessionSearchQuery": "" });
 
+    const searchApiLink = global.config.urls.api.server + "/api/lms/searchSession";
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deleteSessions";
@@ -47,6 +49,49 @@ const AdminViewAllSession = () => {
         setShowOverlay(false)
         setShowWaitingModal(false)
     }
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value });
+    };
+
+    const readValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        setIsLoading(true);
+        let axiosConfig = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+
+        axios.post(searchApiLink, inputField, axiosConfig).then((response) => {
+            if (response.data.data) {
+                setSessionData(response.data.data);
+                setIsLoading(false);
+                setInputField({ "SessionSearchQuery": "" });
+            } else if (response.data.status === "Unauthorized User!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                sessionStorage.clear()
+            } else if (!response.data.data) {
+                setIsLoading(false);
+                setInputField({ "SessionSearchQuery": "" });
+                setTimeout(() => {
+                    alert("No Sessions Found")
+                    getData();
+                }, 500)
+            } else {
+                alert(response.data.status)
+            }
+        });
+    };
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -347,11 +392,25 @@ const AdminViewAllSession = () => {
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            <div className="row">
+                <div className="col col-12">
+                    <div className="row g-3">
+                        <div className="col col-12 text-center">
+                            <h1>Search Session</h1>
+                        </div>
+                        <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+                            <div className="input-group mb-3"> {/* Use an input group */}
+                                <input onChange={inputHandler} type="text" className="form-control" name="SessionSearchQuery" value={inputField.SessionSearchQuery} placeholder='Batch Name/College Name/Trainer Name' />
+                                <button onClick={readValue} className="btn btn-warning ms-2">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
                 <strong>View All Sessions</strong>
-
                 <div></div>
             </div>
             <br /><br />
