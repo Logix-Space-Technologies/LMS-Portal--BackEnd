@@ -365,4 +365,6 @@ router.post('/changeregstatustoopenforbatch', BatchesController.changeRegistrati
 
 router.post('/changeregstatustocloseforbatch', BatchesController.changeRegistrationStatusToNotAvailable)
 
+router.post('/getOverallPerformanceOfBatch',BatchesController.getOverallBatchEvaluation)
+
 module.exports = router
