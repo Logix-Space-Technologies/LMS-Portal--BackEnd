@@ -392,26 +392,22 @@ const AdminViewAllSession = () => {
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            <div className="flex justify-between items-center mx-4 my-4">
+                <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+                <strong>View All Sessions</strong>
+                <div></div>
+            </div>
             <div className="row">
                 <div className="col col-12">
                     <div className="row g-3">
-                        <div className="col col-12 text-center">
-                            <h1>Search Session</h1>
-                        </div>
                         <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
                             <div className="input-group mb-3"> {/* Use an input group */}
-                                <input onChange={inputHandler} type="text" className="form-control" name="SessionSearchQuery" value={inputField.SessionSearchQuery} placeholder='Batch Name/College Name/Trainer Name' />
+                                <input onChange={inputHandler} type="text" className="form-control" name="SessionSearchQuery" value={inputField.SessionSearchQuery} placeholder='Session Name/Batch Name/College Name/Trainer Name' />
                                 <button onClick={readValue} className="btn btn-warning ms-2">Search</button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="flex justify-between items-center mx-4 my-4">
-                <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
-
-                <strong>View All Sessions</strong>
-                <div></div>
             </div>
             <br /><br />
             {isLoading ? <div className="flex justify-center items-center h-full">
