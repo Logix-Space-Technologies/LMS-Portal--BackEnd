@@ -367,4 +367,6 @@ router.post('/changeregstatustocloseforbatch', BatchesController.changeRegistrat
 
 router.post('/getOverallPerformanceOfBatch',BatchesController.getOverallBatchEvaluation)
 
+router.post('/getTaskwiseScores',ClgStaffController.viewTaskwiseScore)
+
 module.exports = router
