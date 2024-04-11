@@ -14,7 +14,7 @@ require('dotenv').config({ path: '../../.env' });
 const whatsAppcancelsession = require("./Whatsapp/cancelSession")
 const WhatsAppupcomingSession = require("./Whatsapp/upcomingSession")
 const whatsappclgstaffupcomingsession = require("./Whatsapp/collegeStaffUpcomingSession")
-const clgstaffFirebaseTokens=require('../models/clgStaffFirebaseToken.model')
+const clgstaffFirebaseTokens = require('../models/clgStaffFirebaseToken.model')
 
 
 function formatTime(timeString) {
@@ -160,7 +160,7 @@ exports.createSession = (request, response) => {
                                         let clgstaffEmail = element.email
                                         let batchName = element.batchName
                                         let collegeStaffName = element.collegeStaffName
-                                        let collegeStaffId= element.id
+                                        let collegeStaffId = element.id
                                         let collegestaffphoneNo = element.phNo
                                         const clgstaffsessionTime = formatTime(newSession.time)
                                         const clgstaffsessionDate = newSession.date.split('-').reverse().join('/')
@@ -177,6 +177,42 @@ exports.createSession = (request, response) => {
                                     })
                                 }
                             })
+
+                            db.query('SELECT b.batchName, b.collegeId, c.collegeName FROM batches b INNER JOIN college c ON b.collegeId = c.id WHERE b.id = ?', [newSession.batchId], (err, batch) => {
+                                if (err) {
+                                    console.error("Error fetching batch and college details:", err);
+                                } else {
+                                    if (batch.length > 0) {
+                                        const batchName = batch[0].batchName;
+                                        const collegeName = batch[0].collegeName;
+
+                                        db.query('SELECT * FROM `trainersinfo` WHERE `id` = ?', [newSession.trainerId], (err, trainers) => {
+                                            if (err) {
+                                                console.error("Error fetching trainers:", err);
+                                            } else {
+
+                                                const trainerName = trainers[0].trainerName;
+                                                const trainerEmail = trainers[0].email;
+
+                                                const sessionDate = newSession.date.split('-').reverse().join('/');
+                                                const sessionTime = formatTime(newSession.time);
+                                                const venueORlink = newSession.venueORlink;
+                                                const type = newSession.type;
+
+                                                const htmlContent = mailContents.upcomingSessionTrainerHTMLContent(newSession.sessionName, sessionDate, sessionTime, venueORlink, type, batchName, trainerName, collegeName);
+                                                const textContent = mailContents.upcomingSessionTrainerTextContent(newSession.sessionName, sessionDate, sessionTime, venueORlink, type, batchName, trainerName, collegeName);
+
+                                                mail.sendEmail(trainerEmail, `Announcement Regarding Upcoming Session Scheduled On ${sessionDate}`, htmlContent, textContent);
+
+                                            }
+                                        });
+                                    } else {
+                                        console.error("No batch found for batchId:", newSession.batchId);
+                                    }
+                                }
+                            });
+
+
                             return response.json({ "status": "success", "data": data });
 
                         }
@@ -484,13 +520,15 @@ exports.cancelSession = (request, response) => {
                 if (key !== "lmsapp") {
                     logAdminStaff(cancelledby, "Admin Staff Cancelled Session")
                 }
-                db.query("SELECT b.batchName, s.* FROM sessiondetails s JOIN batches b ON b.id = s.batchId WHERE s.id = ?", [data], (err, sessionres) => {
+                db.query("SELECT b.batchName, c.collegeName, s.* FROM sessiondetails s JOIN batches b ON b.id = s.batchId JOIN college c ON b.collegeId = c.id WHERE s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1", [data], (err, sessionres) => {
                     if (err) {
                         return response.json({ "status": err });
                     }
                     let batchName = sessionres[0].batchName;
                     let batchId = sessionres[0].batchId;
                     let sessionName = sessionres[0].sessionName;
+                    let cancelCollegeName = sessionres[0].collegeName;
+                    let canceltrainerId = sessionres[0].trainerId;
                     const sessionDate = sessionres[0].date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })
                     const sessiontype = sessionres[0].type;
                     const sessiontime = formatTime(sessionres[0].time);
@@ -532,6 +570,23 @@ exports.cancelSession = (request, response) => {
                             })
                         }
                     })
+
+                    db.query('SELECT * FROM `trainersinfo` WHERE `id` = ?', [canceltrainerId], (err, trainers) => {
+                        if (err) {
+                            console.error("Error fetching trainers:", err);
+                        } else {
+
+                            const trainerName = trainers[0].trainerName;
+                            const trainerEmail = trainers[0].email;
+
+                            const htmlContent = mailContents.cancelSessionTrainerHTMLContent(sessionName, sessionDate, sessiontime, batchName, trainerName, cancelCollegeName);
+                            const textContent = mailContents.cancelSessionTrainerTextContent(sessionName, sessionDate, sessiontime, batchName, trainerName, cancelCollegeName);
+
+                            mail.sendEmail(trainerEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, htmlContent, textContent);
+
+                        }
+                    });
+
 
                     return response.json({ "status": "success" });
 

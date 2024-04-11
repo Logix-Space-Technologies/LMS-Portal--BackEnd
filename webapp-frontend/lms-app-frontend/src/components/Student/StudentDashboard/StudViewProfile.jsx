@@ -112,7 +112,7 @@ const StudViewProfile = () => {
                                         <div className="col-lg-6 mb-4 mb-lg-0">
                                             <div className="row">
                                                 <img height="300px" src={value.studProfilePic} alt="" />
-                                            </div>
+                                            </div><br />
                                             <div className="row justify-content-center">
                                                 <div className="col-lg-8">
                                                     <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -121,10 +121,10 @@ const StudViewProfile = () => {
                                                             <div className="col-6">
                                                                 <img style={{ height: '100px', width: "150px" }} src="https://www.svgrepo.com/show/423006/trophy-prize-medal.svg" alt />
                                                             </div>
-                                                            <div className="col-4">
+                                                            <div className="col-6">
                                                                 <div>
-                                                                    <p style={{ textAlign: 'center', fontSize: '14px' }} className="mt-10 font-bold text-gray-700 dark:text-gray-400">
-                                                                        GPA : {performanceData.cgpa && performanceData.cgpa > 0 ? performanceData.cgpa.toFixed(2) : performanceData.cgpa}/10
+                                                                    <p style={{ textAlign: 'center', fontSize: '16px' }} className="mt-10 font-bold text-gray-700 dark:text-gray-400">
+                                                                        Dev Rating : {performanceData.cgpa && performanceData.cgpa > 0 ? performanceData.cgpa.toFixed(2) : performanceData.cgpa}/10
                                                                     </p>
                                                                 </div>
                                                             </div>

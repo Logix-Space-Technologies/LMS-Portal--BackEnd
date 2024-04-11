@@ -378,7 +378,7 @@ const AdminViewAllCollege = () => {
                                     {value.website}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {value.collegePhNo}
+                                    {value.collegePhNo ? value.collegePhNo : <p>NIL</p>}
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.collegeMobileNumber}

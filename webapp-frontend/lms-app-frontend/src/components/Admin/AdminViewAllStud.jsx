@@ -42,7 +42,11 @@ const AdminViewAllStud = () => {
                 "key": currentKey
             }
         };
-        axios.post(apiLink, inputField, axiosConfig).then((response) => {
+        let searchData = {
+            studentSearchQuery: inputField.studentSearchQuery,
+            batchId: sessionStorage.getItem("viewbatchId")
+        }
+        axios.post(apiLink, searchData, axiosConfig).then((response) => {
             if (response.data.data) {
                 setStudData(response.data.data);
                 setIsLoading(false);
@@ -56,6 +60,9 @@ const AdminViewAllStud = () => {
                         setIsLoading(false);
                         getData()
                         setInputField({ "studentSearchQuery": "" });
+                        setTimeout(()=>{
+                            alert("No Students Found")
+                        })
                     } else {
                         alert(response.data.status)
                     }

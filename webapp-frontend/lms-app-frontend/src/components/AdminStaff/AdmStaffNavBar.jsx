@@ -51,7 +51,6 @@ const AdmStaffNavBar = () => {
                                 </Link>
                                 <ul className="dropdown-menu">
                                     <li><Link className="dropdown-item" to="/AdminSearchSessionDetails">Search Session</Link></li>
-                                    <li><Link className="dropdown-item" to="/adminSearchBatch">Search Batch</Link></li>
                                     <li><Link className="dropdown-item" to="/adminsearchtask">Search Tasks</Link></li>
                                     <li><Link className="dropdown-item" to="/adminsearchcurriculum">Search Curriculum</Link></li>
                                     <li><Link className="dropdown-item" to="/adminSearchClg">Search Colleges</Link></li>
@@ -59,7 +58,6 @@ const AdmStaffNavBar = () => {
                                     <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search College Staff</Link></li>
                                     <li><Link className="dropdown-item" to="/adminStaffSearchSubmittedTask">Search Submitted Task</Link></li>
                                     <li><Link className="dropdown-item" to="/adminstaffsearchmaterial">Search Material</Link></li>
-                                    <li><Link className="dropdown-item" to="/adminsearchstudent">Search Student</Link></li>
                                 </ul>
                             </li>
                             <li className="nav-item dropdown">
@@ -68,12 +66,11 @@ const AdmStaffNavBar = () => {
                                 </Link>
                                 <ul className="dropdown-menu">
                                     <li><Link className="dropdown-item" to="/adminviewallcollege">View All College</Link></li>
-                                    <li><Link className="dropdown-item" to="/AdminViewRefundRequests">View Refunds</Link></li>
+                                    <li><Link className="dropdown-item" to="/AdminViewRefundRequests">View Refund Requests</Link></li>
                                     <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
                                     <li><Link className="dropdown-item" to="/AdminStaffViewAllMaterial">View All Materials</Link></li>
                                     <li><Link className="dropdown-item" to="/adminviewallclgstaff">View All College Staff</Link></li>
-
-
+                                    <li><Link className="dropdown-item" to="/adminViewSuccessfulrefunds">View Successful Refunds</Link></li>
                                 </ul>
                             </li>
                             <li className="nav-item">

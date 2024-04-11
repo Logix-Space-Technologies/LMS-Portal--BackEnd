@@ -16,13 +16,72 @@ const AdminViewAllTrainers = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+    const [inputField, setInputField] = useState(
+        {
+            "TrainerSearchQuery": ""
+        }
+    )
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewAllTrainer";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteTrainer";
-
+    const apiUrl3 = global.config.urls.api.server + "/api/lms/searchTrainer"
+    
     const closeWaitingModal = () => {
         setShowOverlay(false)
         setShowWaitingModal(false)
+    }
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
+    }
+
+    const searchValue = () => {
+
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        setIsLoading(true)
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        }
+        axios.post(apiUrl3, inputField, axiosConfig).then(
+            (response) => {
+                if (response.data.data) {     
+                    setTrainerData(response.data.data) 
+                    setIsLoading(false)           
+                    setInputField(
+                        {
+                            "TrainerSearchQuery": ""
+                        }
+                    )
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "TrainerSearchQuery": ""
+                        }
+                    )
+                    setTimeout(() => {
+                        alert("No Trainers Found")
+                        getData();
+                    }, 500)
+                } else {
+                    alert(response.data.status)
+                }
+            }
+        )
     }
 
     const getData = () => {
@@ -147,6 +206,21 @@ const AdminViewAllTrainers = () => {
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
             <strong>View All Trainers</strong>
             <br /><br />
+            <div className="row">
+                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                    <div className="row g-3">
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            <h1>Search Trainers</h1>
+                        </div>
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            <input onChange={inputHandler} type="text" className="form-control" name="TrainerSearchQuery" value={inputField.TrainerSearchQuery} placeholder='Trainer Name/Email/Contact No.' />
+                        </div>
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            <button onClick={searchValue} className="btn btn-warning">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">
                     <div>Loading...</div>

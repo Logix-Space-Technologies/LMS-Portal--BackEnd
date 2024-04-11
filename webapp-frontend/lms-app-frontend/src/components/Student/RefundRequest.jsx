@@ -14,6 +14,9 @@ const RefundRequestForm = () => {
         upiId: null
     });
 
+    const [showBankDetailsModal, setShowBankDetailsModal] = useState(false)
+    const [bankDetails, setBankDetails] = useState({})
+
     const [errors, setErrors] = useState({});
 
     const navigate = useNavigate()
@@ -32,6 +35,18 @@ const RefundRequestForm = () => {
     const closeWaitingModal = () => {
         setShowOverlay(false)
         setShowWaitingModal(false)
+    }
+
+    // Function to close both modal and overlay
+    const closeBankDetailsModal = () => {
+        setShowBankDetailsModal(false);
+        setShowOverlay(false);
+    };
+
+    const readBankDetails = () => {
+        setBankDetails(inputField)
+        setShowBankDetailsModal(true)
+        setShowOverlay(true)
     }
 
     const handleChange = (event) => {
@@ -61,6 +76,7 @@ const RefundRequestForm = () => {
                 branchName: inputField.branchName,
                 upiId: inputField.upiId
             };
+            setShowBankDetailsModal(false)
             setShowWaitingModal(true)
             setShowOverlay(true)
             axios.post(apiUrl, data, axiosConfig).then(
@@ -177,7 +193,7 @@ const RefundRequestForm = () => {
                                     </div>
                                     <div className="col-12">
                                         <div className="d-grid">
-                                            <button onClick={handleSubmit} className="btn btn-primary btn-lg" type="submit">Submit</button>
+                                            <button onClick={readBankDetails} className="btn btn-primary btn-lg" type="submit">Submit</button>
                                         </div>
                                     </div>
                                 </div>
@@ -214,6 +230,34 @@ const RefundRequestForm = () => {
                     </div>
                 </div>
             )}
+
+            {showBankDetailsModal && (
+                <div className="flex justify-end">
+                    <div className="modal show d-block" tabIndex={-1}>
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h1 className="modal-title fs-5" id="exampleModalLabel">Confirm Bank Details</h1>
+                                    <button type="button" className="btn-close" onClick={closeBankDetailsModal} />
+                                </div>
+                                <div className="modal-body">
+                                    <p>Please confirm your bank details before submitting your request!!</p>
+                                    <br />
+                                    <p>Account No. : <b>{bankDetails.accountNo ? <p>{bankDetails.accountNo}</p> : <p>NIL</p>}</b></p>
+                                    <p>IFSC Code: <b>{bankDetails.IFSCCode ? <p>{bankDetails.IFSCCode}</p> : <p>NIL</p>}</b></p>
+                                    <p>Bank Name: <b>{bankDetails.bankName ? <p>{bankDetails.bankName}</p> : <p>NIL</p>}</b></p>
+                                    <p>Branch Name: <b>{bankDetails.branchName ? <p>{bankDetails.branchName}</p> : <p>NIL</p>}</b></p>
+                                    <p>UPI ID: <b>{bankDetails.upiId ? <p>{bankDetails.upiId}</p> : <p>NIL</p>}</b></p>
+                                </div>
+                                <div className="modal-footer">
+                                    <button onClick={handleSubmit} className="btn btn-success btn-lg" type="submit">I Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {showOverlay && (
                 <div
                     className="modal-backdrop fade show"

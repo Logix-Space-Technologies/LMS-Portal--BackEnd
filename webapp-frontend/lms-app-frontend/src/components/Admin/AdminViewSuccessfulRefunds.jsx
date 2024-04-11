@@ -2,11 +2,12 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminViewSuccessfulRefunds = () => {
 
     const [refundSuccessData, setrefundSuccessData] = useState([]);
-
+    const [key, setKey] = useState('');
     const [isLoading, setIsLoading] = useState(true)
 
     const navigate = useNavigate()
@@ -22,15 +23,21 @@ const AdminViewSuccessfulRefunds = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSuccessfulRefunds"
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admtoken"),
-                "key": sessionStorage.getItem("admkey")
+                "token": token,
+                "key": currentKey
             }
         }
-
         axios.post(apiUrl, {}, axiosConfig).then((response) => {
             if (response.data.data) {
                 setrefundSuccessData(response.data.data);
@@ -69,20 +76,24 @@ const AdminViewSuccessfulRefunds = () => {
         return ((currentPage - 1) * refundsPerPage) + index + 1;
     }
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
 
     useEffect(() => { getData() }, []);
 
 
     return (
         <div>
-            <Navbar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div>
                 {/* ====== Table Section Start */}
                 <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
                     <div className="container mx-auto">
                         <div className="flex flex-wrap -mx-4">
                             <div className="w-full px-4">
-                                <h1>Admin View Successful Refunds</h1>
+                                <h1>View Successful Refunds</h1>
                                 <br />
                                 {isLoading ? (
                                     <div className="col-12 text-center">
