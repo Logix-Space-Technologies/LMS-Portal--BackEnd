@@ -8,6 +8,7 @@ const CollegeStaffViewAttendance = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [attendancePerPage] = useState(10); // Number of students per page
     const [loading, setLoading] = useState(true);
+    const [key, setKey] = useState('')
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(clgStaffViewAttendance.length / attendancePerPage); // Calculate the total number of pages
@@ -20,12 +21,23 @@ const CollegeStaffViewAttendance = () => {
 
     const getData = () => {
         const data = { "sessionId": sessionStorage.getItem("viewattendanceid") };
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp' && currentKey !== 'lmsappclgstaff') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        } else if (currentKey !== 'lmsapp' && currentKey !== 'lmsappadmstaff') {
+            currentKey = sessionStorage.getItem("clgstaffkey");
+            token = sessionStorage.getItem("clgstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         const axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem("clgstaffLogintoken"),
-                "key": sessionStorage.getItem("clgstaffkey")
+                "token": token,
+                "key": currentKey
             },
         };
         axios.post(apiUrl, data, axiosConfig).then((response) => {
@@ -73,69 +85,69 @@ const CollegeStaffViewAttendance = () => {
                 <h2 className="text-lg font-bold">College Staff View Attendance</h2>
                 <Link to="/clgstaffviewsession" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
             </div>
-            
-                {loading ? <div className="col-12 text-center">Loading...</div> : <div className="relative overflow-x-auto shadow-md sm:rounded-lg"><table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead>
-                        <tr>
-                            <th scope="col" className="px-6 py-3">
-                                S/L
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Session Name
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Date
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Membership_no
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Student Name
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Status
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentAttendances ? (currentAttendances.map((value, index) => {
-                            const isPresent = value.attendence_status.toLowerCase() === 'present';
-                            const buttonClassName = isPresent ? 'bg-green-500/20 text-green-700' : 'bg-red-500/20 text-red-700';
-                            return (
-                                <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td className="p-4 whitespace-nowrap">
-                                        {calculateSerialNumber(index)}
-                                    </td >
-                                    <td className="p-4 whitespace-nowrap">
-                                        {value.sessionName}
-                                    </td >
-                                    <td className="p-4 whitespace-nowrap">
-                                        {value.date}
-                                    </td>
-                                    <td className="p-4 whitespace-nowrap">
-                                        {value.membership_no}
-                                    </td>
-                                    <td className="p-4 whitespace-nowrap">
-                                        {value.studName}
-                                    </td>
 
-                                    <td className={`p-4 whitespace-nowrap`}>
-                                        <div className="w-max">
-                                            <button className={`relative grid items-center font-sans font-bold uppercase whitespace-nowrap select-none py-0.5 px-1 text-xs rounded-md ${buttonClassName}`} style={{ opacity: 1 }}>
-                                                {isPresent ? 'Present' : 'Absent'}
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            );
-                        })) : (
-                            <td colSpan="8" className="px-6 py-4">
-                                No Attendance Record Found !!!
-                            </td>
-                        )}
-                    </tbody>
-                </table> </div>}
-           
+            {loading ? <div className="col-12 text-center">Loading...</div> : <div className="relative overflow-x-auto shadow-md sm:rounded-lg"><table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead>
+                    <tr>
+                        <th scope="col" className="px-6 py-3">
+                            S/L
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Session Name
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Date
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Membership_no
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Student Name
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Status
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {currentAttendances ? (currentAttendances.map((value, index) => {
+                        const isPresent = value.attendence_status.toLowerCase() === 'present';
+                        const buttonClassName = isPresent ? 'bg-green-500/20 text-green-700' : 'bg-red-500/20 text-red-700';
+                        return (
+                            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td className="p-4 whitespace-nowrap">
+                                    {calculateSerialNumber(index)}
+                                </td >
+                                <td className="p-4 whitespace-nowrap">
+                                    {value.sessionName}
+                                </td >
+                                <td className="p-4 whitespace-nowrap">
+                                    {value.date}
+                                </td>
+                                <td className="p-4 whitespace-nowrap">
+                                    {value.membership_no}
+                                </td>
+                                <td className="p-4 whitespace-nowrap">
+                                    {value.studName}
+                                </td>
+
+                                <td className={`p-4 whitespace-nowrap`}>
+                                    <div className="w-max">
+                                        <button className={`relative grid items-center font-sans font-bold uppercase whitespace-nowrap select-none py-0.5 px-1 text-xs rounded-md ${buttonClassName}`} style={{ opacity: 1 }}>
+                                            {isPresent ? 'Present' : 'Absent'}
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        );
+                    })) : (
+                        <td colSpan="8" className="px-6 py-4">
+                            No Attendance Record Found !!!
+                        </td>
+                    )}
+                </tbody>
+            </table> </div>}
+
             {!loading && currentAttendances.length > 0 && (
                 <div className="flex items-center justify-between bg-white px-6 py-4 sm:px-6">
                     <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
