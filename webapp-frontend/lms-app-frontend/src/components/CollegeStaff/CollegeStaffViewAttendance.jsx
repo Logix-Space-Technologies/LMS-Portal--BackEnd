@@ -28,13 +28,12 @@ const CollegeStaffViewAttendance = () => {
         if (currentKey !== 'lmsapp' && currentKey !== 'lmsappclgstaff') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey);
         } else if (currentKey !== 'lmsapp' && currentKey !== 'lmsappadmstaff') {
             currentKey = sessionStorage.getItem("clgstaffkey");
             token = sessionStorage.getItem("clgstaffLogintoken");
-            setKey(currentKey);
         }
-        
+        setKey(currentKey); // Set key state
+
         // Construct axiosConfig with correct headers
         const axiosConfig = {
             headers: {
@@ -47,23 +46,21 @@ const CollegeStaffViewAttendance = () => {
 
         // Make the API call
         axios.post(apiUrl, data, axiosConfig).then((response) => {
-            if (response.data.data) {
+            if (response.data) {
                 setLoading(false)
-                setClgStaffViewAttendance(response.data.data);
+                setClgStaffViewAttendance(response.data.data || []); // Handle case where response.data.data might be an empty array
             } else {
                 if (response.data.status === "Unauthorized User!!") {
                     sessionStorage.clear()
                     navigate("/clgStafflogin")
                 } else {
-                    if (!response.data.data) {
-                        setLoading(false)
-                        setClgStaffViewAttendance([])
-                    } else {
-                        setLoading(false)
-                        alert(response.data.status)
-                    }
+                    setLoading(false)
+                    alert(response.data.status)
                 }
             }
+        }).catch(error => {
+            setLoading(false);
+            console.error("Error fetching data:", error);
         });
     };
 
@@ -84,12 +81,7 @@ const CollegeStaffViewAttendance = () => {
         return ((currentPage - 1) * attendancePerPage) + index + 1;
     }
 
-    // Update key state when component mounts
-    useEffect(() => {
-        setKey(sessionStorage.getItem("admkey") || '');
-    }, []);
-
-    useEffect(() => { getData() }, []);
+    useEffect(() => { getData() }, [key]);
 
     return (
         <div>
