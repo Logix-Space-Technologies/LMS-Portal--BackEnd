@@ -26,12 +26,11 @@ const CollegeStaffViewAttendance = () => {
         if (currentKey !== 'lmsapp' && currentKey !== 'lmsappclgstaff') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
         } else if (currentKey !== 'lmsapp' && currentKey !== 'lmsappadmstaff') {
             currentKey = sessionStorage.getItem("clgstaffkey");
             token = sessionStorage.getItem("clgstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
         }
+        setKey(currentKey); // Update the state        
         const axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
