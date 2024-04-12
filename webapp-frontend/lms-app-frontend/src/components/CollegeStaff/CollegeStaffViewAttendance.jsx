@@ -77,12 +77,12 @@ const CollegeStaffViewAttendance = () => {
         return ((currentPage - 1) * attendancePerPage) + index + 1;
     }
 
-    useEffect(() => { getData() }, []);
-
     // Update key state when component mounts
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
+
+    useEffect(() => { getData() }, []);
 
     return (
         <div>
