@@ -79,6 +79,11 @@ const CollegeStaffViewAttendance = () => {
 
     useEffect(() => { getData() }, []);
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
     return (
         <div>
             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
