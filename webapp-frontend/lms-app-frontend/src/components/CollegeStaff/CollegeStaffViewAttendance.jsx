@@ -23,14 +23,19 @@ const CollegeStaffViewAttendance = () => {
         const data = { "sessionId": sessionStorage.getItem("viewattendanceid") };
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
+
+        // Check and assign correct key and token based on conditions
         if (currentKey !== 'lmsapp' && currentKey !== 'lmsappclgstaff') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey);
         } else if (currentKey !== 'lmsapp' && currentKey !== 'lmsappadmstaff') {
             currentKey = sessionStorage.getItem("clgstaffkey");
             token = sessionStorage.getItem("clgstaffLogintoken");
+            setKey(currentKey);
         }
-        setKey(currentKey); // Update the state        
+        
+        // Construct axiosConfig with correct headers
         const axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -39,6 +44,8 @@ const CollegeStaffViewAttendance = () => {
                 "key": currentKey
             },
         };
+
+        // Make the API call
         axios.post(apiUrl, data, axiosConfig).then((response) => {
             if (response.data.data) {
                 setLoading(false)
@@ -59,6 +66,7 @@ const CollegeStaffViewAttendance = () => {
             }
         });
     };
+
 
     // Logic for displaying current students
     const indexOfLastStudent = currentPage * attendancePerPage;
