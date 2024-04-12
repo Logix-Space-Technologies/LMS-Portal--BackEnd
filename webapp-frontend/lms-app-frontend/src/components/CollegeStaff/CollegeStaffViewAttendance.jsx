@@ -45,7 +45,7 @@ const CollegeStaffViewAttendance = () => {
                 "key": currentKey
             },
         };
-
+        console.log(axiosConfig)
         // Make the API call
         axios.post(apiUrl, data, axiosConfig).then((response) => {
             if (response.data.data) {
