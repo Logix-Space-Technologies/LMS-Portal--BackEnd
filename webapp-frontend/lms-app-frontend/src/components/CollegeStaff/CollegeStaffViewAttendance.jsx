@@ -32,7 +32,7 @@ const CollegeStaffViewAttendance = () => {
             currentKey = sessionStorage.getItem("clgstaffkey");
             token = sessionStorage.getItem("clgstaffLogintoken");
         }
-        
+
         // Update the state with the current key
         setKey(currentKey);
 
@@ -51,19 +51,15 @@ const CollegeStaffViewAttendance = () => {
             if (response.data.data) {
                 setLoading(false)
                 setClgStaffViewAttendance(response.data.data);
+            } else if (response.data.status === "Unauthorized User!!") {
+                sessionStorage.clear()
+                navigate("/clgStafflogin")
+            } else if (!response.data.data) {
+                setLoading(false)
+                setClgStaffViewAttendance([])
             } else {
-                if (response.data.status === "Unauthorized User!!") {
-                    sessionStorage.clear()
-                    navigate("/clgStafflogin")
-                } else {
-                    if (!response.data.data) {
-                        setLoading(false)
-                        setClgStaffViewAttendance([])
-                    } else {
-                        setLoading(false)
-                        alert(response.data.status)
-                    }
-                }
+                setLoading(false)
+                alert(response.data.status)
             }
         });
     };
