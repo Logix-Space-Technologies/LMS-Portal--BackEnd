@@ -32,7 +32,9 @@ const CollegeStaffViewAttendance = () => {
             currentKey = sessionStorage.getItem("clgstaffkey");
             token = sessionStorage.getItem("clgstaffLogintoken");
         }
-        setKey(currentKey); // Set key state
+        
+        // Update the state with the current key
+        setKey(currentKey);
 
         // Construct axiosConfig with correct headers
         const axiosConfig = {
@@ -46,21 +48,23 @@ const CollegeStaffViewAttendance = () => {
 
         // Make the API call
         axios.post(apiUrl, data, axiosConfig).then((response) => {
-            if (response.data) {
+            if (response.data.data) {
                 setLoading(false)
-                setClgStaffViewAttendance(response.data.data || []); // Handle case where response.data.data might be an empty array
+                setClgStaffViewAttendance(response.data.data);
             } else {
                 if (response.data.status === "Unauthorized User!!") {
                     sessionStorage.clear()
                     navigate("/clgStafflogin")
                 } else {
-                    setLoading(false)
-                    alert(response.data.status)
+                    if (!response.data.data) {
+                        setLoading(false)
+                        setClgStaffViewAttendance([])
+                    } else {
+                        setLoading(false)
+                        alert(response.data.status)
+                    }
                 }
             }
-        }).catch(error => {
-            setLoading(false);
-            console.error("Error fetching data:", error);
         });
     };
 
@@ -81,7 +85,12 @@ const CollegeStaffViewAttendance = () => {
         return ((currentPage - 1) * attendancePerPage) + index + 1;
     }
 
-    useEffect(() => { getData() }, [key]);
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
+    useEffect(() => { getData() }, []);
 
     return (
         <div>
