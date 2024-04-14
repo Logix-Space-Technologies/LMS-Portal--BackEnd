@@ -133,6 +133,11 @@ const AdminViewAllSession = () => {
         );
     };
 
+    const viewsessionId = (attendanceid) => {
+        sessionStorage.setItem("viewattendanceid", attendanceid)
+        navigate("/clgstaffviewattendance")
+    }
+
     const [cancelId, setCancelId] = useState(null);
 
     const cancelClick = (id) => {
@@ -389,6 +394,28 @@ const AdminViewAllSession = () => {
         return domains.some(domain => venueLink.includes(domain));
     }
 
+    const isSessionPast = (sessionDate, sessionTime) => {
+        // Split sessionDate and sessionTime strings
+        const dateParts = sessionDate.split('/');
+        const timeParts = sessionTime.split(':');
+
+        // Parse date and time components
+        const day = parseInt(dateParts[0], 10);
+        const month = parseInt(dateParts[1], 10) - 1; // Adjust month to be zero-indexed
+        const year = parseInt(dateParts[2], 10);
+        const hours = parseInt(timeParts[0], 10);
+        const minutes = parseInt(timeParts[1], 10);
+
+        // Create a Date object for the session's date and time
+        const sessionDateTime = new Date(year, month, day, hours, minutes);
+
+        // Get the current date and time
+        const currentTime = new Date();
+
+        // Return true if the session date-time is in the past
+        return sessionDateTime < currentTime;
+    };
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
@@ -438,6 +465,8 @@ const AdminViewAllSession = () => {
                     </thead>
                     <tbody>
                         {currentSessions.length > 0 ? currentSessions.map((value, index) => {
+                            // Check if the session is in the past
+                            const sessionIsPast = isSessionPast(value.date, value.time);
                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
@@ -471,6 +500,13 @@ const AdminViewAllSession = () => {
                                     )}
                                     {!isSessionToday(value.date) && value.cancelStatus !== "ACTIVE" && (
                                         <p>Not Available</p>
+                                    )}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.cancelStatus === "ACTIVE" && (
+                                        <button onClick={() => viewsessionId(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none" disabled={!sessionIsPast}>
+                                            View Attendance List
+                                        </button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">

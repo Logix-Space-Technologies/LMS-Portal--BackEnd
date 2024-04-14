@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import Navbar from '../Admin/Navbar';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const CollegeStaffViewAttendance = () => {
     const [clgStaffViewAttendance, setClgStaffViewAttendance] = useState([]);
@@ -23,12 +25,11 @@ const CollegeStaffViewAttendance = () => {
         const data = { "sessionId": sessionStorage.getItem("viewattendanceid") };
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
-
         // Check and assign correct key and token based on conditions
-        if (currentKey !== 'lmsapp' && currentKey !== 'lmsappclgstaff') {
+        if (currentKey !== 'lmsapp' && currentKey === 'lmsappadmstaff' && currentKey !== 'lmsappclgstaff') {
             currentKey = sessionStorage.getItem("admstaffkey");
             token = sessionStorage.getItem("admstaffLogintoken");
-        } else if (currentKey !== 'lmsapp' && currentKey !== 'lmsappadmstaff') {
+        } else if (currentKey !== 'lmsapp' && currentKey !== 'lmsappadmstaff' && currentKey !== 'lmsappclgstaff') {
             currentKey = sessionStorage.getItem("clgstaffkey");
             token = sessionStorage.getItem("clgstaffLogintoken");
         }
@@ -52,8 +53,8 @@ const CollegeStaffViewAttendance = () => {
                 setLoading(false)
                 setClgStaffViewAttendance(response.data.data);
             } else if (response.data.status === "Unauthorized User!!") {
-                sessionStorage.clear()
-                navigate("/clgStafflogin")
+                { key === 'lmsapp' ? navigate("/") : (key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : navigate("/admstafflogin")) }
+                sessionStorage.clear();
             } else if (!response.data.data) {
                 setLoading(false)
                 setClgStaffViewAttendance([])
@@ -81,6 +82,10 @@ const CollegeStaffViewAttendance = () => {
         return ((currentPage - 1) * attendancePerPage) + index + 1;
     }
 
+    const backNav = () => {
+        {key === 'lmsapp' || key === 'lmsappadmstaff' ? navigate('/AdminViewAllSession') : navigate('/clgstaffviewsession')}
+    }
+
     // Update key state when component mounts
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
@@ -90,11 +95,11 @@ const CollegeStaffViewAttendance = () => {
 
     return (
         <div>
+            {key !== 'lmsappclgstaff' && key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
                 {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Attendance</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Attendance</h2> : <h2 className="text-lg font-bold">Admin Staff View Attendance</h2>)}
-                <Link to="/clgstaffviewsession" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
+                <button type='button' onClick={backNav()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</button>
             </div>
-
             {loading ? <div className="col-12 text-center">Loading...</div> : <div className="relative overflow-x-auto shadow-md sm:rounded-lg"><table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead>
                     <tr>
