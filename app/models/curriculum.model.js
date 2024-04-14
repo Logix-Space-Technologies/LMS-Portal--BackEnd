@@ -66,8 +66,9 @@ Curriculum.searchCurriculum = (batchId, search , result)=>{
             result(err, null)
             result
         } else {
-            console.log("Curriculum   Details : ", res)
-            result(null, res)
+            const formattedCurriculums = res.map(curriculum => ({ ...curriculum, addedDate: curriculum.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), updatedDate: curriculum.updatedDate ? curriculum.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null}));
+            console.log("Curriculum   Details : ", formattedCurriculums)
+            result(null, formattedCurriculums)
         }
     })
 }
