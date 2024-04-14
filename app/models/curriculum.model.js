@@ -56,10 +56,10 @@ Curriculum.curriculumCreate = (newCurriculum, result) => {
 
 
 
-Curriculum.searchCurriculum = (search , result)=>{
+Curriculum.searchCurriculum = (batchId, search , result)=>{
     const searchTerm = '%'+ search + '%'
-    db.query("SELECT b.batchName, c.id, c.curriculumTitle, c.curriculumDesc, CASE WHEN c.addedBy = 0 THEN 'admin' ELSE asa.AdStaffName END AS addedBy, c.curriculumFileLink FROM curriculum c JOIN batches b ON c.batchId = b.id JOIN college co ON b.collegeId = co.id LEFT JOIN  admin_staff asa ON c.addedBy = asa.id WHERE c.isActive = 1 AND c.deleteStatus = 0 AND b.isActive = 1 AND b.deleteStatus = 0 AND co.isActive = 1 AND co.deleteStatus = 0 AND ( c.curriculumTitle LIKE ? OR c.curriculumDesc LIKE ? OR b.batchName LIKE ? OR co.collegeName LIKE ?)",
-    [searchTerm, searchTerm, searchTerm,searchTerm],
+    db.query("SELECT b.batchName, c.id, c.curriculumTitle, c.curriculumDesc, CASE WHEN c.addedBy = 0 THEN 'admin' ELSE asa.AdStaffName END AS addedBy, c.curriculumFileLink FROM curriculum c JOIN batches b ON c.batchId = b.id JOIN college co ON b.collegeId = co.id LEFT JOIN  admin_staff asa ON c.addedBy = asa.id WHERE b.id = ? AND c.isActive = 1 AND c.deleteStatus = 0 AND b.isActive = 1 AND b.deleteStatus = 0 AND co.isActive = 1 AND co.deleteStatus = 0 AND ( c.curriculumTitle LIKE ? OR c.curriculumDesc LIKE ? OR b.batchName LIKE ? OR co.collegeName LIKE ?)",
+    [batchId, searchTerm, searchTerm, searchTerm,searchTerm],
     (err, res) => {
         if (err) {
             console.log("Error : ", err)
