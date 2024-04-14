@@ -127,16 +127,16 @@ exports.collegeStaffViewCollegeWiseAttendance = (request, response) => {
         if (decoded) {
             Attendence.collegestaffViewCollegeWiseAttendance(collegeId, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 }
                 if (data == null) {
-                    response.json({ "status": "No attendance records found!" });
+                    return response.json({ "status": "No attendance records found!" });
                 } else {
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
