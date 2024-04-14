@@ -37,7 +37,9 @@ const AdminViewAllSession = () => {
     const navigate = useNavigate();
     const [key, setKey] = useState('')
     const [isLoading, setIsLoading] = useState(true);
+    const [inputField, setInputField] = useState({ "SessionSearchQuery": "" });
 
+    const searchApiLink = global.config.urls.api.server + "/api/lms/searchSession";
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/cancelSession";
     const deleteApiLink = global.config.urls.api.server + "/api/lms/deleteSessions";
@@ -47,6 +49,49 @@ const AdminViewAllSession = () => {
         setShowOverlay(false)
         setShowWaitingModal(false)
     }
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value });
+    };
+
+    const readValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        setIsLoading(true);
+        let axiosConfig = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+
+        axios.post(searchApiLink, inputField, axiosConfig).then((response) => {
+            if (response.data.data) {
+                setSessionData(response.data.data);
+                setIsLoading(false);
+                setInputField({ "SessionSearchQuery": "" });
+            } else if (response.data.status === "Unauthorized User!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                sessionStorage.clear()
+            } else if (!response.data.data) {
+                setIsLoading(false);
+                setInputField({ "SessionSearchQuery": "" });
+                setTimeout(() => {
+                    alert("No Sessions Found")
+                    getData();
+                }, 500)
+            } else {
+                alert(response.data.status)
+            }
+        });
+    };
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -87,6 +132,11 @@ const AdminViewAllSession = () => {
             }
         );
     };
+
+    const viewsessionId = (attendanceid) => {
+        sessionStorage.setItem("viewattendanceid", attendanceid)
+        navigate("/clgstaffviewattendance")
+    }
 
     const [cancelId, setCancelId] = useState(null);
 
@@ -344,15 +394,47 @@ const AdminViewAllSession = () => {
         return domains.some(domain => venueLink.includes(domain));
     }
 
+    const isSessionPast = (sessionDate, sessionTime) => {
+        // Split sessionDate and sessionTime strings
+        const dateParts = sessionDate.split('/');
+        const timeParts = sessionTime.split(':');
+
+        // Parse date and time components
+        const day = parseInt(dateParts[0], 10);
+        const month = parseInt(dateParts[1], 10) - 1; // Adjust month to be zero-indexed
+        const year = parseInt(dateParts[2], 10);
+        const hours = parseInt(timeParts[0], 10);
+        const minutes = parseInt(timeParts[1], 10);
+
+        // Create a Date object for the session's date and time
+        const sessionDateTime = new Date(year, month, day, hours, minutes);
+
+        // Get the current date and time
+        const currentTime = new Date();
+
+        // Return true if the session date-time is in the past
+        return sessionDateTime < currentTime;
+    };
+
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
-
                 <strong>View All Sessions</strong>
-
                 <div></div>
+            </div>
+            <div className="row">
+                <div className="col col-12">
+                    <div className="row g-3">
+                        <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+                            <div className="input-group mb-3"> {/* Use an input group */}
+                                <input onChange={inputHandler} type="text" className="form-control" name="SessionSearchQuery" value={inputField.SessionSearchQuery} placeholder='Session Name/Batch Name/College Name/Trainer Name' />
+                                <button onClick={readValue} className="btn btn-warning ms-2">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <br /><br />
             {isLoading ? <div className="flex justify-center items-center h-full">
@@ -379,10 +461,14 @@ const AdminViewAllSession = () => {
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
                         </tr>
                     </thead>
                     <tbody>
                         {currentSessions.length > 0 ? currentSessions.map((value, index) => {
+                            // Check if the session is in the past
+                            const sessionIsPast = isSessionPast(value.date, value.time);
+                            console.log(sessionIsPast)
                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
@@ -416,6 +502,13 @@ const AdminViewAllSession = () => {
                                     )}
                                     {!isSessionToday(value.date) && value.cancelStatus !== "ACTIVE" && (
                                         <p>Not Available</p>
+                                    )}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {value.cancelStatus === "ACTIVE" && sessionIsPast === true && (
+                                        <button onClick={() => viewsessionId(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                            View Attendance List
+                                        </button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">

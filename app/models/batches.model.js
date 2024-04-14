@@ -1,5 +1,6 @@
 const db = require('../models/db')
-const { response } = require('express')
+const { response } = require('express');
+const College = require('./college.model');
 
 
 const Batches = function (batches) {
@@ -259,6 +260,21 @@ Batches.changeRegistrationStatusToNotOpen = (id, result) => {
                     return result(null, null);
                 }
             })
+        }
+    })
+}
+
+Batches.getOverallPerformanceOfBatch = (CollegeId, batchId, result) => {
+    db.query(`SELECT studName,sum(score) as score ,sum(totalScore) as totalScore FROM 
+    studentTaskScore where CollegeId=? and batchId=? GROUP BY 
+    studentId,studName order by studentId;`, [CollegeId, batchId], (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        } else {
+            console.log("Overall Performance of Batch: ", res);
+            result(null, res);
         }
     })
 }

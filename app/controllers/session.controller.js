@@ -211,8 +211,6 @@ exports.createSession = (request, response) => {
                                     }
                                 }
                             });
-
-
                             return response.json({ "status": "success", "data": data });
 
                         }
@@ -586,7 +584,6 @@ exports.cancelSession = (request, response) => {
 
                         }
                     });
-
 
                     return response.json({ "status": "success" });
 

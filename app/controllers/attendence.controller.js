@@ -63,16 +63,16 @@ exports.collegeStaffViewAttendance = (request, response) => {
         if (decoded) {
             Attendence.collegeStaffViewAttendance(sessionId, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 }
                 if (data.length == 0) {
-                    response.json({ "status": "No attendance records found!" });
+                    return response.json({ "status": "No attendance records found!" });
                 } else {
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
@@ -84,16 +84,16 @@ exports.studentViewAttendance = (request, response) => {
         if (decoded) {
             Attendence.studentViewAttendance(studId, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 }
                 if (data.length == 0) {
-                    response.json({ "status": "No attendance records found!" });
+                    return response.json({ "status": "No attendance records found!" });
                 } else {
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
@@ -106,16 +106,16 @@ exports.studentViewSessionWiseAttendance = (request, response) => {
         if (decoded) {
             Attendence.studentViewSessionWiseAttendance(studId,sessionId, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 }
                 if (data.length == 0) {
-                    response.json({ "status": "No attendance records found!" });
+                    return response.json({ "status": "No attendance records found!" });
                 } else {
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };
@@ -127,16 +127,16 @@ exports.collegeStaffViewCollegeWiseAttendance = (request, response) => {
         if (decoded) {
             Attendence.collegestaffViewCollegeWiseAttendance(collegeId, (err, data) => {
                 if (err) {
-                    response.json({ "status": err });
+                    return response.json({ "status": err });
                 }
                 if (data == null) {
-                    response.json({ "status": "No attendance records found!" });
+                    return response.json({ "status": "No attendance records found!" });
                 } else {
-                    response.json({ "status": "success", "data": data });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         } else {
-            response.json({ "status": "Unauthorized User!!" });
+            return response.json({ "status": "Unauthorized User!!" });
         }
     });
 };

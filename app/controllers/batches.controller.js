@@ -354,3 +354,26 @@ exports.changeRegistrationStatusToNotAvailable = (request, response) => {
         }
     })
 }
+
+exports.getOverallBatchEvaluation = (request, response) => {
+    const batchId = request.body.batchId;
+    const collegeId = request.body.collegeId;
+    const token = request.headers.token;
+    const key = request.headers.key;
+
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Batches.getOverallPerformanceOfBatch(collegeId, batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else if (data.length === 0) {
+                    return response.json({ "status": "No data found for this batch" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User !!!" });
+        }
+    })
+}
