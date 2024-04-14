@@ -146,7 +146,11 @@ const AdminViewAllBatch = () => {
                 "key": currentKey
             }
         };
-        axios.post(apiUrl3, inputField, axiosConfig3).then((response) => {
+        const data = {
+            "batchQuery": inputField.batchQuery,
+            "collegeId": sessionStorage.getItem("clgId")
+        }
+        axios.post(apiUrl3, data, axiosConfig3).then((response) => {
             if (response.data.data) {
                 setBatchData(response.data.data);
                 setInputField({ batchQuery: "" })
