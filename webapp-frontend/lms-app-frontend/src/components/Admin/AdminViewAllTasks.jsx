@@ -46,7 +46,11 @@ const AdminViewAllTasks = () => {
                 "key": currentKey
             }
         };
-        axios.post(apiUrl2, inputField, axiosConfig)
+        const data = {
+            "taskQuery" : inputField.taskQuery,
+            "sessionId" : sessionStorage.getItem("viewtaskId")
+        }
+        axios.post(apiUrl2, data, axiosConfig)
             .then(response => {
                 if (response.data.data) {
                     setTaskData(response.data.data);
