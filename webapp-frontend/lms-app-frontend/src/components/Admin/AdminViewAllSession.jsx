@@ -461,12 +461,14 @@ const AdminViewAllSession = () => {
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
                         </tr>
                     </thead>
                     <tbody>
                         {currentSessions.length > 0 ? currentSessions.map((value, index) => {
                             // Check if the session is in the past
                             const sessionIsPast = isSessionPast(value.date, value.time);
+                            console.log(sessionIsPast)
                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
@@ -503,8 +505,8 @@ const AdminViewAllSession = () => {
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {value.cancelStatus === "ACTIVE" && (
-                                        <button onClick={() => viewsessionId(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none" disabled={!sessionIsPast}>
+                                    {value.cancelStatus === "ACTIVE" && sessionIsPast === true && (
+                                        <button onClick={() => viewsessionId(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                             View Attendance List
                                         </button>
                                     )}
