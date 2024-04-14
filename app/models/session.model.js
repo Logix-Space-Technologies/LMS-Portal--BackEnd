@@ -249,10 +249,10 @@ Session.deleteSession = (sessionId, result) => {
 
 
 // Code for Searching the Session
-Session.searchSession = (search, result) => {
+Session.searchSession = (collegeId, search, result) => {
     const searchTerm = '%' + search + '%'
-    db.query("SELECT c.collegeName, s.id, b.batchName, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, t.trainerName, s.attendenceCode, CASE WHEN cancelStatus = 0 THEN 'ACTIVE' WHEN cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN batches b ON s.batchId = b.id JOIN trainersinfo t ON s.trainerId = t.id JOIN college c ON b.collegeId = c.id WHERE s.isActive = 1 AND s.deleteStatus = 0  AND c.isActive = 1 AND c.deleteStatus = 0 AND  (b.batchName LIKE ? OR c.collegeName LIKE  ? OR t.trainerName LIKE ? OR s.sessionName LIKE ? ) ORDER BY s.addedDate DESC",
-        [searchTerm, searchTerm, searchTerm, searchTerm],
+    db.query("SELECT c.collegeName, s.id, b.batchName, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, t.trainerName, s.attendenceCode, CASE WHEN cancelStatus = 0 THEN 'ACTIVE' WHEN cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN batches b ON s.batchId = b.id JOIN trainersinfo t ON s.trainerId = t.id JOIN college c ON b.collegeId = c.id WHERE c.id = ? AND s.isActive = 1 AND s.deleteStatus = 0  AND c.isActive = 1 AND c.deleteStatus = 0 AND  (b.batchName LIKE ? OR c.collegeName LIKE  ? OR t.trainerName LIKE ? OR s.sessionName LIKE ? ) ORDER BY s.addedDate DESC",
+        [collegeId, searchTerm, searchTerm, searchTerm, searchTerm],
         (err, res) => {
             if (err) {
                 console.log("Error : ", err)

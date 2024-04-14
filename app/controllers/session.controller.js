@@ -469,6 +469,7 @@ exports.deleteSession = (request, response) => {
 // Code for Searching the Session
 exports.searchSession = (request, response) => {
     const SessionSearchQuery = request.body.SessionSearchQuery
+    const collegeId = request.body.collegeId
     const SessionSearchToken = request.headers.token
     const key = request.headers.key;
 
@@ -477,7 +478,7 @@ exports.searchSession = (request, response) => {
             if (!SessionSearchQuery) {
                 return response.json({ "status": "Search Item is required." })
             }
-            Session.searchSession(SessionSearchQuery, (err, data) => {
+            Session.searchSession(collegeId, SessionSearchQuery, (err, data) => {
                 if (err) {
                     return response.json({ "status": err })
                 } else {
