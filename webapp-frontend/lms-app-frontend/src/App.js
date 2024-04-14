@@ -37,7 +37,6 @@ import StudentBatchInCharge from './components/Student/StudentBatchInCharge';
 import CollegeStaffChangePassword from './components/CollegeStaff/CollegeStaffChangePassword';
 import CollegeStaffViewAttendance from './components/CollegeStaff/CollegeStaffViewAttendance';
 import CollegeStaffSearchStudent from './components/CollegeStaff/CollegeStaffSearchStudent';
-import AdminSearchCurriculum from './components/Admin/AdminSearchCurriculum';
 import CollegeStaffSearchBatch from './components/CollegeStaff/CollegeStaffSearchBatch';
 import StudentViewTransaction from './components/Student/StudentViewTransaction';
 import AdminSearchAdminStaff from './components/Admin/AdminSearchAdminStaff';
@@ -133,7 +132,6 @@ function App() {
           <Route path='/addcollegestaff' element={<AddCollegeStaff />} />
           <Route path='/addcollege' element={<AddCollege />} />
           <Route path='/addAdminStaff' element={<AddAdminStaff />} />
-          <Route path='/adminsearchcurriculum' element={<AdminSearchCurriculum />} />
           <Route path='/adminsearchadminstaff' element={<AdminSearchAdminStaff />} />
           <Route path='/adminviewadstafflog' element={<AdminViewAdStaffLog/>}/>
           <Route path='/adminchangepassword' element={<AdminChangePassword/>}/>
