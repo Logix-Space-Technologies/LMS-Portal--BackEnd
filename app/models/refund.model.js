@@ -377,5 +377,21 @@ Refund.searchRefundRequests = (searchterm, result) => {
     })
 }
 
+Refund.searchSuccessfulRefunds = (refundsearchterm, result) => {
+    const searchTerm = '%' + refundsearchterm + '%'
+    db.query("SELECT s.studName, s.membership_no, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, r.refundInitiatedDate, r.approvedAmnt, r.transactionNo FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.refundApprovalStatus = 1 AND r.refundStatus = 1 AND r.AmountReceivedStatus = 1 AND r.cancelStatus = 0 AND (s.studName LIKE ? OR c.collegeName LIKE ? OR s.membership_no = ?) ORDER BY r.refundInitiatedDate DESC;", [searchTerm, searchTerm, 'refundsearchterm'], (err, res) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            return
+        } else {
+            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), refundInitiatedDate: refunds.refundInitiatedDate ? refunds.refundInitiatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
+            // Return all successful refunds
+            console.log(formattedRefunds)
+            result(null, formattedRefunds);
+        }
+    })
+}
+
 
 module.exports = Refund;
