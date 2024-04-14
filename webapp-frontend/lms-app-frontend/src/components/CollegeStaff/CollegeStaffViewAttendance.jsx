@@ -82,10 +82,6 @@ const CollegeStaffViewAttendance = () => {
         return ((currentPage - 1) * attendancePerPage) + index + 1;
     }
 
-    const backNav = () => {
-        {key === 'lmsapp' || key === 'lmsappadmstaff' ? navigate('/AdminViewAllSession') : navigate('/clgstaffviewsession')}
-    }
-
     // Update key state when component mounts
     useEffect(() => {
         setKey(sessionStorage.getItem("admkey") || '');
@@ -98,7 +94,7 @@ const CollegeStaffViewAttendance = () => {
             {key !== 'lmsappclgstaff' && key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
                 {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Attendance</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Attendance</h2> : <h2 className="text-lg font-bold">Admin Staff View Attendance</h2>)}
-                <button type='button' onClick={backNav()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</button>
+                <button type='button' onClick={()=> navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</button>
             </div>
             {loading ? <div className="col-12 text-center">Loading...</div> : <div className="relative overflow-x-auto shadow-md sm:rounded-lg"><table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead>
