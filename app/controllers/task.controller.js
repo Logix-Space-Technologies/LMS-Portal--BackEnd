@@ -361,6 +361,7 @@ exports.taskView = (request, response) => {
 
 exports.searchTask = (request, response) => {
     const taskQuery = request.body.taskQuery;
+    const sessionId = request.body.sessionId;
     const taskSearchToken = request.headers.token;
     key = request.headers.key
     jwt.verify(taskSearchToken, key, (err, decoded) => {
@@ -368,7 +369,7 @@ exports.searchTask = (request, response) => {
             return response.json({ "status": "Provide a search query" })
         }
         if (decoded) {
-            Tasks.searchTasks(taskQuery, (err, data) => {
+            Tasks.searchTasks(sessionId, taskQuery, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
