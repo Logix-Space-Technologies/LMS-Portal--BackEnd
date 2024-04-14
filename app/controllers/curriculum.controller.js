@@ -142,6 +142,7 @@ exports.createCurriculum = (request, response) => {
 
 exports.searchCurriculum = (request, response) => {
     const CurriculumSearchQuery = request.body.CurriculumSearchQuery
+    const batchId = request.body.batchId
     const CurriculumSearchToken = request.headers.token
     const key = request.headers.key;
 
@@ -150,7 +151,7 @@ exports.searchCurriculum = (request, response) => {
             if (!CurriculumSearchQuery) {
                 return response.json({ "status": "Search Item is required." })
             }
-            Curriculum.searchCurriculum(CurriculumSearchQuery, (err, data) => {
+            Curriculum.searchCurriculum(batchId, CurriculumSearchQuery, (err, data) => {
                 if (err) {
                     return response.json({ "status": err })
                 } else {

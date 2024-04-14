@@ -119,7 +119,7 @@ Refund.createRefundRequest = (newRefund, result) => {
                                     logStudent(newRefund.studId, "Refund request sent")
 
                                     console.log("Created refund:", { id: refundRes.insertId, ...newRefund });
-                                    result(null, { id: refundRes.insertId, ...newRefund,remainingPaymentPeriod });
+                                    result(null, { id: refundRes.insertId, ...newRefund, remainingPaymentPeriod });
                                 });
                             }
                         }
@@ -353,13 +353,45 @@ Refund.getSuccessfulRefunds = (result) => {
                 result("No successful refunds found.", null);
                 return;
             }
-            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), refundInitiatedDate: refunds.refundInitiatedDate ?  refunds.refundInitiatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
+            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), refundInitiatedDate: refunds.refundInitiatedDate ? refunds.refundInitiatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
             // Return all successful refunds
             console.log(formattedRefunds)
             result(null, formattedRefunds);
         }
     );
 };
+
+Refund.searchRefundRequests = (searchterm, result) => {
+    const searchTerm = '%' + searchterm + '%'
+    db.query("SELECT r.id AS refundId, s.studName, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, CASE WHEN r.refundApprovalStatus = 1 THEN 'Amount Approved' ELSE 'Under Progress' END AS refundApprovalStatus, CASE WHEN r.AmountReceivedStatus = 1 THEN 'Amount Received' ELSE 'Not Yet Received' END AS AmountReceivedStatus, CASE WHEN r.AdmStaffId = 0 THEN 'Admin' ELSE a.AdStaffName END AS AdmStaffName, r.approvedAmnt, r.accountNo, r.IFSCCode, r.bankName, r.branchName, r.upiId, CASE WHEN r.refundStatus = 1 THEN 'Amount Refunded' ELSE 'Not Refunded' END AS refundStatus FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id LEFT JOIN admin_staff a ON r.AdmStaffId = a.id WHERE r.cancelStatus = 0 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 AND (s.studName LIKE ? OR c.collegeName LIKE ?) ORDER BY r.requestedDate ASC", [searchTerm, searchTerm], (err, res) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            return
+        } else {
+            // Format the date for each session
+            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate ? refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
+            console.log(formattedRefunds)
+            result(null, formattedRefunds);
+        }
+    })
+}
+
+Refund.searchSuccessfulRefunds = (refundsearchterm, result) => {
+    const searchTerm = '%' + refundsearchterm + '%'
+    db.query("SELECT s.studName, s.membership_no, c.collegeName, r.studId, r.requestedDate, r.reason, r.refundAmnt, r.refundInitiatedDate, r.approvedAmnt, r.transactionNo FROM refund r JOIN student s ON r.studId = s.id JOIN college c ON s.collegeId = c.id WHERE r.refundApprovalStatus = 1 AND r.refundStatus = 1 AND r.AmountReceivedStatus = 1 AND r.cancelStatus = 0 AND (s.studName LIKE ? OR c.collegeName LIKE ? OR s.membership_no = ?) ORDER BY r.refundInitiatedDate DESC;", [searchTerm, searchTerm, 'refundsearchterm'], (err, res) => {
+        if (err) {
+            console.log("Error : ", err)
+            result(err, null)
+            return
+        } else {
+            const formattedRefunds = res.map(refunds => ({ ...refunds, requestedDate: refunds.requestedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), refundInitiatedDate: refunds.refundInitiatedDate ? refunds.refundInitiatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null }));
+            // Return all successful refunds
+            console.log(formattedRefunds)
+            result(null, formattedRefunds);
+        }
+    })
+}
 
 
 module.exports = Refund;

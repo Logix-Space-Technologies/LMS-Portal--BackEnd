@@ -14,6 +14,15 @@ const AdminViewAllCurriculum = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+    const [inputField, setInputField] = useState(
+        {
+            "CurriculumSearchQuery": ""
+        }
+    )
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value });
+    };
 
 
     const navigate = useNavigate();
@@ -21,11 +30,63 @@ const AdminViewAllCurriculum = () => {
 
     const apiUrl = global.config.urls.api.server + "/api/lms/curriculumview";
     const apiLink2 = global.config.urls.api.server + "/api/lms/deletecurriculum";
+    const apiLink = global.config.urls.api.server + "/api/lms/searchCurriculum"
 
     const closeWaitingModal = () => {
         setShowOverlay(false)
         setShowWaitingModal(false)
     }
+
+    const readValue = () => {
+        setIsLoading(true);
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let axiosConfig3 = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+
+        const data = {
+            "CurriculumSearchQuery": inputField.CurriculumSearchQuery,
+            "batchId": sessionStorage.getItem("currbatchId")
+        }
+
+        axios.post(apiLink, data, axiosConfig3).then(
+            (response) => {
+                if (response.data.data) {
+                    setCurriculumData(response.data.data)
+                    setIsLoading(false);
+                    setInputField({
+                        "CurriculumSearchQuery": ""
+                    });
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setIsLoading(false);
+                    setInputField({
+                        "CurriculumSearchQuery": ""
+                    });
+                    setTimeout(() => {
+                        alert("No curriculum found !!!")
+                        getData()
+                    }, 500)
+                } else {
+                    setIsLoading(false);
+                    alert(response.data.status)
+                }
+            }
+        );
+    };
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -147,7 +208,15 @@ const AdminViewAllCurriculum = () => {
                 <strong>View All Curriculum</strong>
                 <div></div>
             </div>
-            <br /><br />
+            <br />
+            <div className="row g-3">
+                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                    <input onChange={inputHandler} type="text" className="form-control" name="CurriculumSearchQuery" value={inputField.CurriculumSearchQuery} placeholder='Search By Title/Description/Batch Name/College Name' />
+                </div>
+                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                    <button onClick={readValue} className="btn btn-warning">Search</button>
+                </div>
+            </div><br />
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">
                     <div>Loading...</div>

@@ -369,4 +369,8 @@ router.post('/getOverallPerformanceOfBatch',BatchesController.getOverallBatchEva
 
 router.post('/getTaskwiseScores',ClgStaffController.viewTaskwiseScore)
 
+router.post('/searchRefundRequests', RefundController.searchRefundRequests)
+
+router.post('/searchSuccessfulRefundRequests', RefundController.searchSuccessfulRefunds)
+
 module.exports = router

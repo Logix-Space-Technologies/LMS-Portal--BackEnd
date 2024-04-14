@@ -71,8 +71,13 @@ const AdminViewAllSession = () => {
                 "key": currentKey
             }
         };
+        const data = {
+            "SessionSearchQuery" : inputField.SessionSearchQuery,
+            "collegeId" : sessionStorage.getItem("clgId"),
+            "batchId": sessionStorage.getItem("viewbatchId")
+        }
 
-        axios.post(searchApiLink, inputField, axiosConfig).then((response) => {
+        axios.post(searchApiLink, data, axiosConfig).then((response) => {
             if (response.data.data) {
                 setSessionData(response.data.data);
                 setIsLoading(false);
