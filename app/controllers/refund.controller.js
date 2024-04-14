@@ -348,3 +348,26 @@ exports.cancelRefundRequest = (request, response) => {
         }
     });
 }
+
+exports.searchRefundRequests = (request, response) => {
+    const refundToken = request.headers.token
+    const key = request.headers.key
+    const searchTerm = request.body.searchTerm
+
+    jwt.verify(refundToken, key, (err, decoded) => {
+        if (err) {
+            console.log(err)
+            return response.json({ "status": "Unauthorized User !!!" })
+        } else {
+            Refund.searchRefundRequests(searchTerm, (refErr, data) => {
+                if (refErr) {
+                    console.log(refErr)
+                    return response.json({ "status": refErr })
+                } else {
+                    return response.json({"status": "success", "data": data})
+                }
+            })
+        }
+    })
+
+}
