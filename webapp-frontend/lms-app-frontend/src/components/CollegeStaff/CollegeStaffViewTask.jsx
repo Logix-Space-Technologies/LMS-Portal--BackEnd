@@ -51,6 +51,10 @@ const CollegeStaffViewTask = () => {
         )
     }
 
+    const taskScore = () => {
+        let collegeId = 
+    }
+
     // Logic for displaying current students
     const indexOfLastTask = currentPage * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
@@ -110,6 +114,9 @@ const CollegeStaffViewTask = () => {
                                             <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
 
                                             </th>
+                                            <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -143,6 +150,9 @@ const CollegeStaffViewTask = () => {
                                                                 {value.taskFileUpload !== null && <Link target='_blank' to={value.taskFileUpload} class="inline-block px-6 py-2.5 border rounded-md border-primary text-primary hover:bg-primary hover:text-white font-medium">
                                                                     View Material
                                                                 </Link>}
+                                                            </td>
+                                                            <td class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                                <button className="btn btn-primary">View Score</button>
                                                             </td>
                                                         </>
                                                     )}
