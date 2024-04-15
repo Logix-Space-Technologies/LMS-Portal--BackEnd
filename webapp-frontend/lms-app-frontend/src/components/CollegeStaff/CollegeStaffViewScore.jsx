@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from '../Admin/Navbar';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const CollegeStaffViewScore = () => {
 
@@ -96,9 +98,10 @@ const CollegeStaffViewScore = () => {
                 <div className="container mx-auto">
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
+                            {key !== 'lmsappclgstaff' && key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                                <h2 className="text-lg font-bold">College Staff View Score</h2>
-                                <Link to="/clgstaffviewtask" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
+                                {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Scores</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Scores</h2> : <h2 className="text-lg font-bold">Admin Staff View Scores</h2>)}
+                                <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</button>
                             </div>
                             <br />
                             <div className="max-w-full overflow-x-auto">
