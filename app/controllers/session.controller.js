@@ -371,6 +371,42 @@ exports.sessionUpdate = (request, response) => {
                                 }
                             })
 
+                            db.query('SELECT b.batchName, b.collegeId, c.collegeName FROM batches b INNER JOIN college c ON b.collegeId = c.id WHERE b.id = ?', [batchId], (err, batchRes) => {
+                                if (err) {
+                                    console.error("Error fetching batch and college details:", err);
+                                } else {
+                                    if (batchRes.length > 0) {
+                                        const batchName = batchRes[0].batchName;
+                                        const collegeName = batchRes[0].collegeName;
+
+                                        db.query('SELECT * FROM `trainersinfo` WHERE `id` = ?', [upSession.trainerId], (err, trainers) => {
+                                            if (err) {
+                                                console.error("Error fetching trainers:", err);
+                                            } else {
+
+                                                const trainerName = trainers[0].trainerName;
+                                                const trainerEmail = trainers[0].email;
+
+                                                const sessionDate = upSession.date.split('-').reverse().join('/');
+                                                const sessionTime = formatTime(upSession.time);
+                                                const venueORlink = upSession.venueORlink;
+                                                const type = upSession.type;
+
+                                                if (isTrainerChanged === false) {
+                                                    const TrainerhtmlContent = mailContents.reschedulingSessionTrainerHTMLContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeName, trainerName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+                                                    const TrainertextContent = mailContents.reschedulingSessionTrainerTextContent(originaldate, sessionDate, sessionTime, type, venueORlink, batchName, collegeName, trainerName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
+
+                                                    mail.sendEmail(trainerEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, TrainerhtmlContent, TrainertextContent);
+                                                }
+
+                                            }
+                                        });
+                                    } else {
+                                        console.error("No batch found for batchId:", newSession.batchId);
+                                    }
+                                }
+                            });
+
                             if (key === "lmsapp") {
                                 logAdminStaff(0, "Admin Updated Session Details");
                             }
