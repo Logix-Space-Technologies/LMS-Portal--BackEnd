@@ -93,7 +93,7 @@ const CollegeStaffViewScore = () => {
 
     return (
         <div>
-            {key === 'lmsappclgstaff' ? '' : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar /> )}
+            {key === 'lmsappclgstaff' ? '' : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
             {/* ====== Table Section Start */}
             <section className="bg-gray-100 dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
@@ -135,9 +135,17 @@ const CollegeStaffViewScore = () => {
                                                     <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.totalScore}
                                                     </td>
-                                                    <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.score}
+                                                    <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                        {value.score >= (value.totalScore * 0.85) ? (
+                                                            <span className="flex items-center justify-center text-black-500">
+                                                                {value.score}
+                                                                <img src="https://www.svgrepo.com/show/475275/star.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '10px' }} />
+                                                            </span>
+                                                        ) : (
+                                                            value.score
+                                                        )}
                                                     </td>
+
                                                 </tr>
                                             }
                                         ) : (
