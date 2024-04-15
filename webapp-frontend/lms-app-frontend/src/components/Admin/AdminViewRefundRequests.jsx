@@ -25,6 +25,12 @@ const AdminViewRefundRequests = () => {
 
   const navigate = useNavigate()
 
+  const [searchField, setSearchField] = useState(
+    {
+        "searchTerm": ""
+    }
+)
+
   const [inputField, setInputField] = useState({
     "admStaffId": "",
     "adminRemarks": "",
@@ -49,6 +55,7 @@ const AdminViewRefundRequests = () => {
   const apiUrl2 = global.config.urls.api.server + "/api/lms/rejectRefund"
   const apiUrl3 = global.config.urls.api.server + "/api/lms/admStaffRefundInitiate"
   const apiUrl4 = global.config.urls.api.server + "/api/lms/admStaffRefundApprove"
+  const apiUrl5 = global.config.urls.api.server + "/api/lms/searchRefundRequests"
 
   const closeWaitingModal = () => {
     setShowOverlay(false)
@@ -60,6 +67,60 @@ const AdminViewRefundRequests = () => {
     const [day, month, year] = dateString.split('/');
     return new Date(year, month - 1, day);
   };
+
+  const readSearchValue = () => {
+    setIsLoading(true)
+    let currentKey = sessionStorage.getItem("admkey");
+    let token = sessionStorage.getItem("admtoken");
+    if (currentKey !== 'lmsapp') {
+        currentKey = sessionStorage.getItem("admstaffkey");
+        token = sessionStorage.getItem("admstaffLogintoken");
+        setKey(currentKey); // Update the state if needed
+    }
+    let axiosConfig3 = {
+        headers: {
+            'content-type': 'application/json;charset=UTF-8',
+            "Access-Control-Allow-Origin": "*",
+            "token": token,
+            "key": currentKey
+        }
+    }
+    axios.post(apiUrl5, searchField, axiosConfig3).then(
+        (response) => {
+            if (response.data.data) {
+              setRefundRequests(response.data.data)
+                setSearchField(
+                    {
+                        "searchTerm": ""
+                    }
+                )
+                setIsLoading(false)
+            } else if (response.data.status === "Unauthorized User!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                sessionStorage.clear()
+            } else if (!response.data.data) {
+                setIsLoading(false)
+                setSearchField(
+                    {
+                        "searchTerm": ""
+                    }
+                )
+                setTimeout(() => {
+                    getData()
+                    alert("No Requesta Found !!")
+                }, 500)
+            } else {
+                setIsLoading(false)
+                setSearchField(
+                    {
+                        "searchTerm": ""
+                    }
+                )
+                alert(response.data.status)
+            }
+        }
+    )
+}
 
   const getData = () => {
     let currentKey = sessionStorage.getItem("admkey");
@@ -104,6 +165,10 @@ const AdminViewRefundRequests = () => {
     setErrors({}); // Clear previous errors
     setInputField({ ...inputField, [event.target.name]: event.target.value });
   };
+
+  const searchHandler = (event) => {
+    setSearchField({ ...searchField, [event.target.name]: event.target.value })
+}
 
   const approveHandler = (event) => {
     setErrors({}); // Clear previous errors
@@ -427,6 +492,7 @@ const AdminViewRefundRequests = () => {
   }
 
 
+
   // Function to close both modal and overlay
   const closeModal = () => {
     setShowModal(false);
@@ -494,6 +560,18 @@ const AdminViewRefundRequests = () => {
               <div className="w-full px-4">
                 <h1>Refund Requests</h1>
                 <br />
+                <div className="row">
+                <div className="col">
+                    <div className="input-group">
+                        <input onChange={searchHandler} type="text" className="form-control" name="searchTerm" value={searchField.searchTerm} placeholder='College Name/Student Name' />
+                    </div>
+                    <br></br>
+                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <button onClick={readSearchValue} className="btn btn-warning">Search</button>
+                    </div>
+                    <br />
+                </div>
+            </div>
                 {isLoading ? <div className="flex justify-center items-center h-full">
                   <div className="text-center py-20">
                     <div>Loading...</div>
