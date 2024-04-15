@@ -47,8 +47,8 @@ const AdminViewAllTasks = () => {
             }
         };
         const data = {
-            "taskQuery" : inputField.taskQuery,
-            "sessionId" : sessionStorage.getItem("viewtaskId")
+            "taskQuery": inputField.taskQuery,
+            "sessionId": sessionStorage.getItem("viewtaskId")
         }
         axios.post(apiUrl2, data, axiosConfig)
             .then(response => {
@@ -308,7 +308,7 @@ const AdminViewAllTasks = () => {
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                        <button onClick={() => taskScore(value.batchId, value.id)} className="btn btn-primary btn-sm me-2">View Score</button>
+                                            {isLateSubmission && <button onClick={() => taskScore(value.batchId, value.id)} className="btn btn-primary btn-sm me-2">View Score</button>}
                                         </td>
                                         <td className="px-6 py-4">
                                             <button onClick={() => handleUpdateClick(value.id)} className="btn btn-primary btn-sm me-2">Update</button>

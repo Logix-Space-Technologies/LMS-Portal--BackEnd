@@ -294,8 +294,9 @@ const AdminUpdateTask = () => {
     }, []);
 
     return (
+        <div>{key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
         <div className="container">
-            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            
             <div className="row">
                 <div className="col-lg-12 mb-4 mb-sm-5">
                     <br></br>
@@ -465,7 +466,7 @@ const AdminUpdateTask = () => {
                     }}
                 ></div>
             )}
-        </div>
+        </div></div>
     )
 }
 
