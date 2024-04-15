@@ -92,7 +92,7 @@ const CollegeStaffViewAttendance = () => {
 
     return (
         <div>
-            {key !== 'lmsappclgstaff' && key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            {key === 'lmsapp' ? <Navbar /> : (key === 'lmsappclgstaff' ? '' : <AdmStaffNavBar /> )}
             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
                 {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Attendance</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Attendance</h2> : <h2 className="text-lg font-bold">Admin Staff View Attendance</h2>)}
                 <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</button>
