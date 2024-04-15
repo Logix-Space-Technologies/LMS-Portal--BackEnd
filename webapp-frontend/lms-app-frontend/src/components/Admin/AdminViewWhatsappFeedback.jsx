@@ -78,7 +78,7 @@ const AdminViewWhatsappFeedback = () => {
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" className="px-6 py-3">S/N</th>
-                                <th scope="col" className="px-6 py-3">Student Id</th>
+                                <th scope="col" className="px-6 py-3">Membership No.</th>
                                 <th scope="col" className="px-6 py-3">Student Name</th>
                                 <th scope="col" className="px-6 py-3">Message Id</th>
                                 <th scope="col" className="px-6 py-3">Message</th>
