@@ -9,6 +9,7 @@ const CollegeStaffViewScore = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [scoresPerPage] = useState(10); // Number of students per page
     const [loading, setLoading] = useState(true);
+    const [key, setKey] = useState('')
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(scoreData.length / scoresPerPage); // Calculate the total number of pages
@@ -23,14 +24,26 @@ const CollegeStaffViewScore = () => {
     const getData = () => {
         let data = {
             "batchId": sessionStorage.getItem("viewScoreBatchId"),
-            "id": sessionStorage.getItem("viewScoreTaskId")
+            "taskId": sessionStorage.getItem("viewScoreTaskId")
         }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("clgstaffLogintoken"),
-                "key": sessionStorage.getItem("clgstaffkey")
+                "token": token,
+                "key": currentKey
             }
         }
         axios.post(apiurl, data, axiosConfig).then(
@@ -114,13 +127,13 @@ const CollegeStaffViewScore = () => {
                                                         {calculateSerialNumber(index)}
                                                     </td>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.sessionName}
+                                                        {value.studName}
                                                     </td>
                                                     <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.taskTitle}
+                                                        {value.totalScore}
                                                     </td>
                                                     <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.taskDesc}
+                                                        {value.score}
                                                     </td>
                                                 </tr>
                                             }

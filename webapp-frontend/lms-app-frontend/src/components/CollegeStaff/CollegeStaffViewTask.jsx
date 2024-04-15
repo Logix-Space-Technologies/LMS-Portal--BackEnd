@@ -148,13 +148,10 @@ const CollegeStaffViewTask = () => {
                                                             <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                                 {value.dueDate}
                                                             </td>
-                                                            <td class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                            <td className="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                                 {value.taskFileUpload !== null && <Link target='_blank' to={value.taskFileUpload} class="inline-block px-6 py-2.5 border rounded-md border-primary text-primary hover:bg-primary hover:text-white font-medium">
                                                                     View Material
                                                                 </Link>}
-                                                            </td>
-                                                            <td class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                                <button onClick={() => taskScore(value.batchId, value.id)} className="btn btn-primary">View Score</button>
                                                             </td>
                                                         </>
                                                     )}
@@ -163,13 +160,18 @@ const CollegeStaffViewTask = () => {
                                                             <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                                 {value.dueDate}
                                                             </td>
-                                                            <td class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                            <td className="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                                 {value.taskFileUpload !== null && <Link target='_blank' to={value.taskFileUpload} class="inline-block px-6 py-2.5 border rounded-md border-primary text-primary hover:bg-primary hover:text-white font-medium">
                                                                     View Material
                                                                 </Link>}
                                                             </td>
                                                         </>
                                                     )}
+                                                    <td className="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                        {value.dueDate === "Past Due Date" && (
+                                                            <button onClick={() => taskScore(value.batchId, value.id)} className="btn btn-primary">View Score</button>
+                                                        )}
+                                                    </td>
                                                 </tr>
                                             }
                                         ) : (
