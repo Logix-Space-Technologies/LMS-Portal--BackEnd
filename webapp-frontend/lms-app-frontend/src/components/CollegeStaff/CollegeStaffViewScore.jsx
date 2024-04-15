@@ -93,12 +93,12 @@ const CollegeStaffViewScore = () => {
 
     return (
         <div>
+            {key !== 'lmsappclgstaff' && key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             {/* ====== Table Section Start */}
             <section className="bg-gray-100 dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
-                            {key !== 'lmsappclgstaff' && key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
                                 {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Scores</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Scores</h2> : <h2 className="text-lg font-bold">Admin Staff View Scores</h2>)}
                                 <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</button>
