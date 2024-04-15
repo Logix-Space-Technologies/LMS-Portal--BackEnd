@@ -139,7 +139,7 @@ const CollegeStaffViewScore = () => {
                                                         {value.score >= (value.totalScore * 0.85) ? (
                                                             <span className="flex items-center justify-center text-black-500">
                                                                 {value.score}
-                                                                <img src="https://www.svgrepo.com/show/475275/star.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '10px' }} />
+                                                                <img src="https://www.svgrepo.com/show/475275/star.svg" alt="Excellent" style={{ width: '20px', marginLeft: '10px' }} />
                                                             </span>
                                                         ) : (
                                                             value.score
