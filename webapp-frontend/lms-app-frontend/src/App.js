@@ -111,6 +111,7 @@ import StudentForgotPassword from './components/Student/StudentForgotPassword';
 import CollegeStaffForgotPassword from './components/CollegeStaff/CollegeStaffForgotPassword';
 import AdminViewWhatsappFeedback from './components/Admin/AdminViewWhatsappFeedback';
 import AdminViewMsgReceived from './components/Admin/AdminViewMsgReceived';
+import CollegeStaffViewScore from './components/CollegeStaff/CollegeStaffViewScore';
 
 
 
@@ -222,6 +223,7 @@ function App() {
           <Route path='/clgstaffviewNotifications' element={<CollegeStaffViewNotifications/>}/>
           <Route path='/CollegeStaffViewCollege' element={<CollegeStaffViewCollege/>}/>
           <Route path='/collegestaffforgotpass' element={<CollegeStaffForgotPassword/>}/>
+          <Route path='/collegestaffviewscore' element={<CollegeStaffViewScore/>}/>
 
 
 

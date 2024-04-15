@@ -21,7 +21,7 @@ const logCollegeStaff = (clgStaffId, action) => {
 
 
 CollegeStaffLog.getAll = async (result) => {
-    let query = "SELECT cs.collegeStaffName, csl.* FROM clgstafflog csl JOIN college_staff cs ON csl.ClgStaffId = cs.id WHERE cs.deleteStatus = 0 AND cs.isActive = 1 AND csl.DateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY csl.DateTime DESC;"
+    let query = "SELECT c.collegeName, cs.collegeStaffName, csl.* FROM clgstafflog csl JOIN college_staff cs ON csl.ClgStaffId = cs.id JOIN college c ON cs.collegeId = c.id WHERE cs.deleteStatus = 0 AND cs.isActive = 1 AND csl.DateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY csl.DateTime DESC;"
     db.query(query, (err, response) => {
         if (err) {
             console.log("Error : ", err)

@@ -47,8 +47,8 @@ const AdminViewAllTasks = () => {
             }
         };
         const data = {
-            "taskQuery" : inputField.taskQuery,
-            "sessionId" : sessionStorage.getItem("viewtaskId")
+            "taskQuery": inputField.taskQuery,
+            "sessionId": sessionStorage.getItem("viewtaskId")
         }
         axios.post(apiUrl2, data, axiosConfig)
             .then(response => {
@@ -79,6 +79,12 @@ const AdminViewAllTasks = () => {
                 setIsLoading(false);
             });
     };
+
+    const taskScore = (batchId, id) => {
+        sessionStorage.setItem("viewScoreBatchId", batchId);
+        sessionStorage.setItem("viewScoreTaskId", id);
+        navigate("/collegestaffviewscore")
+    }
 
     const closeWaitingModal = () => {
         setShowOverlay(false)
@@ -260,6 +266,7 @@ const AdminViewAllTasks = () => {
                             <th scope="col" className="px-6 py-3">Updated Date</th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
                             {key === "lmsapp" && (
                                 <th scope="col" className="px-6 py-3"></th>
                             )}
@@ -299,6 +306,9 @@ const AdminViewAllTasks = () => {
                                             {value.taskFileUpload !== null && (
                                                 <Link target="_blank" to={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View File</Link>
                                             )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {isLateSubmission && <button onClick={() => taskScore(value.batchId, value.id)} className="btn btn-primary btn-sm me-2">View Score</button>}
                                         </td>
                                         <td className="px-6 py-4">
                                             <button onClick={() => handleUpdateClick(value.id)} className="btn btn-primary btn-sm me-2">Update</button>

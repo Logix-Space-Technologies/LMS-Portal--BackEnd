@@ -1011,18 +1011,18 @@ exports.emailVerificationClgStaffOtpVerify = (req, res) => {
 };
 
 exports.viewTaskwiseScore = (request, response) => {
-  const clgStaffToken = request.headers.token;
-  const collegeId=request.body.collegeId;
-  const taskId=request.body.taskId;
+  const token = request.headers.token;
+  const batchId = request.body.batchId;
+  const taskId = request.body.taskId;
+  const key = request.headers.key
+  console.log("Batch ID :", batchId)
+  console.log("Task ID :", taskId)
 
-  jwt.verify(clgStaffToken, "lmsappstud", (err, decoded) => {
+  jwt.verify(token, key, (err, decoded) => {
     if (decoded) {
-      CollegeStaff.viewTaskwiseScore(collegeId,taskId, (err, data) => {
+      CollegeStaff.viewTaskwiseScore(batchId, taskId, (err, data) => {
         if (err) {
           return response.json({ "status": err });
-        }
-        if (data.length === 0) {
-          return response.json({ "status": "No task found" });
         } else {
           return response.json({ "status": "success", "data": data });
         }
