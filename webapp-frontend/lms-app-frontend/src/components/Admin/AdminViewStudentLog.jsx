@@ -84,6 +84,7 @@ const AdminViewStudentLog = () => {
                         <tr>
                             <th scope="col" className="px-6 py-3">S/N</th>
                             <th scope="col" className="px-6 py-3">Student Name</th>
+                            <th scope="col" className="px-6 py-3">Membership No.</th>
                             <th scope="col" className="px-6 py-3">Action</th>
                             <th scope="col" className="px-6 py-3">Date Time</th>
                         </tr>
@@ -95,6 +96,7 @@ const AdminViewStudentLog = () => {
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                         <td className="px-6 py-4">{value.studName}</td>
+                                        <td className="px-6 py-4">{value.membership_no}</td>
                                         <td className="px-6 py-4">{value.Action}</td>
                                         <td className="px-6 py-4">{value.DateTime}</td>
                                     </tr>
