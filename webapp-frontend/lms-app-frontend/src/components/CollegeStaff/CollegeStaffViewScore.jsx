@@ -1,38 +1,56 @@
 import React, { useEffect, useState } from 'react'
 import '../../config/config';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const CollegeStaffViewTask = () => {
-    const [taskData, setTaskData] = useState([])
+const CollegeStaffViewScore = () => {
+
+    const [scoreData, setScoreData] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
-    const [tasksPerPage] = useState(10); // Number of students per page
+    const [scoresPerPage] = useState(10); // Number of students per page
     const [loading, setLoading] = useState(true);
+    const [key, setKey] = useState('')
 
     const rangeSize = 5; // Number of pages to display in the pagination
-    const lastPage = Math.ceil(taskData.length / tasksPerPage); // Calculate the total number of pages
+    const lastPage = Math.ceil(scoreData.length / scoresPerPage); // Calculate the total number of pages
     let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
-    const apiurl = global.config.urls.api.server + "/api/lms/clgstaffviewtask"
+
+    const apiurl = global.config.urls.api.server + "/api/lms/getTaskwiseScores"
 
     const navigate = useNavigate()
 
     const getData = () => {
-        let data = { "sessionId": sessionStorage.getItem("viewattendanceid") }
+        let data = {
+            "batchId": sessionStorage.getItem("viewScoreBatchId"),
+            "taskId": sessionStorage.getItem("viewScoreTaskId")
+        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("clgstaffLogintoken"),
-                "key": sessionStorage.getItem("clgstaffkey")
+                "token": token,
+                "key": currentKey
             }
         }
         axios.post(apiurl, data, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
                     setLoading(false)
-                    setTaskData(response.data.data)
+                    setScoreData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
                         sessionStorage.clear()
@@ -40,7 +58,7 @@ const CollegeStaffViewTask = () => {
                     } else {
                         if (!response.data.data) {
                             setLoading(false)
-                            setTaskData([])
+                            setScoreData([])
                         } else {
                             setLoading(false)
                             alert(response.data.status)
@@ -51,30 +69,25 @@ const CollegeStaffViewTask = () => {
         )
     }
 
-    const taskScore = (batchId, id) => {
-        sessionStorage.setItem("viewScoreBatchId", batchId);
-        sessionStorage.setItem("viewScoreTaskId", id);
-        navigate("/collegestaffviewscore")
-    }
-
     // Logic for displaying current students
-    const indexOfLastTask = currentPage * tasksPerPage;
-    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
-    const currentTasks = taskData ? taskData.slice(indexOfFirstTask, indexOfLastTask) : [];
+    const indexOfLastScore = currentPage * scoresPerPage;
+    const indexOfFirstScore = indexOfLastScore - scoresPerPage;
+    const currentScores = scoreData ? scoreData.slice(indexOfFirstScore, indexOfLastScore) : [];
 
 
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
     // Calculate total pages
-    const totalPages = Math.ceil(taskData.length / tasksPerPage);
+    const totalPages = Math.ceil(scoreData.length / scoresPerPage);
 
     const calculateSerialNumber = (index) => {
-        return ((currentPage - 1) * tasksPerPage) + index + 1;
+        return ((currentPage - 1) * scoresPerPage) + index + 1;
     }
 
 
     useEffect(() => { getData() }, [])
+
 
     return (
         <div>
@@ -84,8 +97,8 @@ const CollegeStaffViewTask = () => {
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                                <h2 className="text-lg font-bold">College Staff View Tasks</h2>
-                                <Link to="/clgstaffviewsession" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
+                                <h2 className="text-lg font-bold">College Staff View Score</h2>
+                                <Link to="/clgstaffviewtask" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
                             </div>
                             <br />
                             <div className="max-w-full overflow-x-auto">
@@ -96,100 +109,50 @@ const CollegeStaffViewTask = () => {
                                                 S/L
                                             </th>
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                Session Name
-                                            </th>
-                                            <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                Title
-                                            </th>
-                                            <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                Description
-                                            </th>
-                                            <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                Task Type
+                                                Student Name
                                             </th>
                                             <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 Total Score
                                             </th>
                                             <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                Due Date
-                                            </th>
-                                            <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-
-                                            </th>
-                                            <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-
+                                                Score Obtained
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {currentTasks.length > 0 ? currentTasks.map(
+                                        {currentScores.length > 0 ? currentScores.map(
                                             (value, index) => {
                                                 return <tr key={index}>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {calculateSerialNumber(index)}
                                                     </td>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.sessionName}
+                                                        {value.studName}
                                                     </td>
                                                     <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.taskTitle}
-                                                    </td>
-                                                    <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.taskDesc}
-                                                    </td>
-                                                    <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.taskType}
-                                                    </td>
-                                                    <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.totalScore}
                                                     </td>
-                                                    {value.dueDate === "Past Due Date" && (
-                                                        <>
-                                                            <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                                {value.dueDate}
-                                                            </td>
-                                                            <td className="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                                {value.taskFileUpload !== null && <Link target='_blank' to={value.taskFileUpload} class="inline-block px-6 py-2.5 border rounded-md border-primary text-primary hover:bg-primary hover:text-white font-medium">
-                                                                    View Material
-                                                                </Link>}
-                                                            </td>
-                                                        </>
-                                                    )}
-                                                    {value.dueDate !== "Past Due Date" && (
-                                                        <>
-                                                            <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                                {value.dueDate}
-                                                            </td>
-                                                            <td className="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                                {value.taskFileUpload !== null && <Link target='_blank' to={value.taskFileUpload} class="inline-block px-6 py-2.5 border rounded-md border-primary text-primary hover:bg-primary hover:text-white font-medium">
-                                                                    View Material
-                                                                </Link>}
-                                                            </td>
-                                                        </>
-                                                    )}
-                                                    <td className="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.dueDate === "Past Due Date" && (
-                                                            <button onClick={() => taskScore(value.batchId, value.id)} className="btn btn-primary">View Score</button>
-                                                        )}
+                                                    <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                        {value.score}
                                                     </td>
                                                 </tr>
                                             }
                                         ) : (
                                             <tr>
                                                 <td colSpan="7" className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                    No Tasks Found !!!
+                                                    No Scores Entered !!!
                                                 </td>
                                             </tr>
                                         )}
                                     </tbody>
                                 </table>}
 
-                                {!loading && currentTasks.length > 0 && (
+                                {!loading && currentScores.length > 0 && (
                                     <div className="flex items-center justify-between bg-[#C4E1E2] px-6 py-4 sm:px-6">
                                         <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                                             <div>
                                                 <p className="text-sm text-gray-700">
-                                                    Showing <span className="font-medium">{indexOfFirstTask + 1}</span> to <span className="font-medium">{indexOfLastTask > taskData.length ? taskData.length : indexOfLastTask}</span> of <span className="font-medium">{taskData.length}</span> results
+                                                    Showing <span className="font-medium">{indexOfFirstScore + 1}</span> to <span className="font-medium">{indexOfLastScore > scoreData.length ? scoreData.length : indexOfLastScore}</span> of <span className="font-medium">{scoreData.length}</span> results
                                                 </p>
                                             </div>
                                             <div>
@@ -227,4 +190,4 @@ const CollegeStaffViewTask = () => {
     )
 }
 
-export default CollegeStaffViewTask
+export default CollegeStaffViewScore

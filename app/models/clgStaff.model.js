@@ -343,6 +343,7 @@ CollegeStaff.viewTask = (sessionId, result) => {
     db.query(`SELECT DISTINCT 
     s.sessionName, 
     t.batchId, 
+    t.id,
     t.taskTitle, 
     t.taskDesc, 
     t.taskType, 
@@ -718,8 +719,8 @@ CollegeStaff.searchClgStaffByCollege = (searchKey, result) => {
     );
 }
 
-CollegeStaff.viewTaskwiseScore=(CollegeId,taskId,result)=>{
-    db.query(`SELECT studName,score,totalScore FROM studentTaskScore where CollegeId=? and taskId=?;`, [CollegeId, taskId], (err, res) => {
+CollegeStaff.viewTaskwiseScore=(batchId,taskId,result)=>{
+    db.query(`SELECT studName,score,totalScore FROM studentTaskScore where batchId=? and taskId=?;`, [batchId, taskId], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
