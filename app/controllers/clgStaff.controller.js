@@ -1014,8 +1014,9 @@ exports.viewTaskwiseScore = (request, response) => {
   const clgStaffToken = request.headers.token;
   const batchId=request.body.batchId;
   const taskId=request.body.taskId;
+  const key = request.headers.key
 
-  jwt.verify(clgStaffToken, "lmsappstud", (err, decoded) => {
+  jwt.verify(clgStaffToken, key, (err, decoded) => {
     if (decoded) {
       CollegeStaff.viewTaskwiseScore(batchId,taskId, (err, data) => {
         if (err) {

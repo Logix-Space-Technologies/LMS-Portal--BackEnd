@@ -51,8 +51,10 @@ const CollegeStaffViewTask = () => {
         )
     }
 
-    const taskScore = () => {
-        let collegeId = 
+    const taskScore = (batchId, id) => {
+        sessionStorage.setItem("viewScoreBatchId", batchId);
+        sessionStorage.setItem("viewScoreTaskId", id);
+        navigate("/collegestaffviewscore")
     }
 
     // Logic for displaying current students
@@ -152,7 +154,7 @@ const CollegeStaffViewTask = () => {
                                                                 </Link>}
                                                             </td>
                                                             <td class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                                <button className="btn btn-primary">View Score</button>
+                                                                <button onClick={() => taskScore(value.batchId, value.id)} className="btn btn-primary">View Score</button>
                                                             </td>
                                                         </>
                                                     )}

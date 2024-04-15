@@ -343,6 +343,7 @@ CollegeStaff.viewTask = (sessionId, result) => {
     db.query(`SELECT DISTINCT 
     s.sessionName, 
     t.batchId, 
+    t.id,
     t.taskTitle, 
     t.taskDesc, 
     t.taskType, 
