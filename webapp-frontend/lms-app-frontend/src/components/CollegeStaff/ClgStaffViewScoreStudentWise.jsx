@@ -1,34 +1,29 @@
-import React, { useEffect, useState } from 'react'
-import '../../config/config';
-import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../Admin/Navbar';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import '../../config/config';
 
-const CollegeStaffViewScore = () => {
-
+const ClgStaffViewScoreStudentWise = () => {
     const [scoreData, setScoreData] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
     const [scoresPerPage] = useState(10); // Number of students per page
     const [loading, setLoading] = useState(true);
     const [key, setKey] = useState('')
-    const taskId = sessionStorage.getItem("viewScoreTaskId");
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(scoreData.length / scoresPerPage); // Calculate the total number of pages
     let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
-
-    const apiurl = global.config.urls.api.server + "/api/lms/getTaskwiseScores"
-    const apiurl2 = global.config.urls.api.server + "/api/lms/viewScoreOfStudPDF"
-
     const navigate = useNavigate()
+
+    const apiurl = global.config.urls.api.server + "/api/lms/studentViewPerformance"
 
     const getData = () => {
         let data = {
-            "batchId": sessionStorage.getItem("viewScoreBatchId"),
-            "taskId": sessionStorage.getItem("viewScoreTaskId")
+            "studId": sessionStorage.getItem("viewscorestudId")
         }
         // Retrieve key and token from sessionStorage without providing the key
         let currentKey, token;
@@ -57,7 +52,7 @@ const CollegeStaffViewScore = () => {
                     setScoreData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        { key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : (key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")) }
+                        {key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : (key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin"))}
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
@@ -72,57 +67,6 @@ const CollegeStaffViewScore = () => {
             }
         )
     }
-
-    const pdfGenerate = async () => {
-
-        // Retrieve key and token from sessionStorage without providing the key
-        let currentKey, token;
-        Object.entries(sessionStorage).forEach(([key, value]) => {
-            if (key.includes('key')) {
-                currentKey = value;
-            } else if (key.includes('token')) {
-                token = value;
-            }
-        });
-
-        // Update the state with the current key
-        setKey(currentKey);
-
-
-        const axiosConfig2 = {
-            headers: {
-                "Content-Type": "application/json",
-                "token": token,
-                "key": currentKey
-            },
-            responseType: 'blob', // Important for PDF downloads
-        };
-
-        let data = {
-            "taskId": taskId
-        }
-
-        const response = await axios.post(apiurl2, data, axiosConfig2);
-
-        // Attempt to read the response as a blob, but check for an error message
-        const reader = new FileReader();
-        reader.readAsText(response.data);
-        reader.onloadend = () => {
-            try {
-                const obj = JSON.parse(reader.result);
-                if (obj.status === "Unauthorized User!!") {
-                    { key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : (key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")) }
-                    sessionStorage.clear()
-                } else {
-                    alert(obj.status)
-                }
-            } catch (error) {
-                // If parsing throws, it's likely a PDF blob
-                const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-                window.open(URL.createObjectURL(pdfBlob), '_blank');
-            }
-        };
-    };
 
     // Logic for displaying current students
     const indexOfLastScore = currentPage * scoresPerPage;
@@ -144,9 +88,9 @@ const CollegeStaffViewScore = () => {
     useEffect(() => { getData() }, [])
 
 
-    return (
-        <div>
-            {key === 'lmsappclgstaff' ? '' : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
+  return (
+    <div>
+        {key === 'lmsappclgstaff' ? '' : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
             {/* ====== Table Section Start */}
             <section className="bg-gray-100 dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
@@ -154,10 +98,7 @@ const CollegeStaffViewScore = () => {
                         <div className="w-full px-4">
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
                                 {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Scores</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Scores</h2> : <h2 className="text-lg font-bold">Admin Staff View Scores</h2>)}
-                                <div className="flex space-x-4">
-                                    <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
-                                    <button type='button' onClick={() => pdfGenerate()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download PDF</button>
-                                </div>
+                                <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</button>
                             </div>
                             <br />
                             <div className="max-w-full overflow-x-auto">
@@ -168,7 +109,7 @@ const CollegeStaffViewScore = () => {
                                                 S/L
                                             </th>
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                Student Name
+                                                Task Name
                                             </th>
                                             <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 Total Score
@@ -186,7 +127,7 @@ const CollegeStaffViewScore = () => {
                                                         {calculateSerialNumber(index)}
                                                     </td>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.studName}
+                                                        {value.taskName}
                                                     </td>
                                                     <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.totalScore}
@@ -207,7 +148,7 @@ const CollegeStaffViewScore = () => {
                                         ) : (
                                             <tr>
                                                 <td colSpan="7" className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                    No Scores Entered !!!
+                                                    No Tasks Assigned !!!
                                                 </td>
                                             </tr>
                                         )}
@@ -253,8 +194,8 @@ const CollegeStaffViewScore = () => {
                 </div>
             </section>
             {/* ====== Table Section End */}
-        </div>
-    )
+    </div>
+  )
 }
 
-export default CollegeStaffViewScore
+export default ClgStaffViewScoreStudentWise
