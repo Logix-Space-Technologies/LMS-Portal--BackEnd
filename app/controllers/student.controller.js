@@ -1851,5 +1851,23 @@ exports.studentPerformance = (req, res) => {
     })
 }
 
+exports.studentViewPerformanceScore = (req, res) => {
+    const studId = req.body.studId
+    const token = req.headers.token
+    const key = req.headers.key
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Student.viewPerformanceScore(studId, (err, data) => {
+                if (err) {
+                    return res.json({ "status": err });
+                } else {
+                    return res.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return res.json({ "status": "Unauthorized User!!" });
+        }
+    });
+}
 
 

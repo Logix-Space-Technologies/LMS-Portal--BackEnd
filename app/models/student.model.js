@@ -1491,6 +1491,17 @@ Student.viewPerformance = (collegeId, batchId, id, result) => {
         })
 }
 
+Student.viewPerformanceScore=(studId, result)=>{
+    db.query("SELECT taskName,score,totalScore FROM studentTaskScore where studentId=?;", [studId], (err, res) => {
+        if (err) {
+            console.log("Error: ", err)
+            return result(err, null)
+        } else {
+            return result(null, res)
+        }
+    })
+
+}
 
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 
