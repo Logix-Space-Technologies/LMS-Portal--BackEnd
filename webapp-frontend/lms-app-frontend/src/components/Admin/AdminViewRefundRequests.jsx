@@ -27,9 +27,9 @@ const AdminViewRefundRequests = () => {
 
   const [searchField, setSearchField] = useState(
     {
-        "searchTerm": ""
+      "searchTerm": ""
     }
-)
+  )
 
   const [inputField, setInputField] = useState({
     "admStaffId": "",
@@ -73,54 +73,54 @@ const AdminViewRefundRequests = () => {
     let currentKey = sessionStorage.getItem("admkey");
     let token = sessionStorage.getItem("admtoken");
     if (currentKey !== 'lmsapp') {
-        currentKey = sessionStorage.getItem("admstaffkey");
-        token = sessionStorage.getItem("admstaffLogintoken");
-        setKey(currentKey); // Update the state if needed
+      currentKey = sessionStorage.getItem("admstaffkey");
+      token = sessionStorage.getItem("admstaffLogintoken");
+      setKey(currentKey); // Update the state if needed
     }
     let axiosConfig3 = {
-        headers: {
-            'content-type': 'application/json;charset=UTF-8',
-            "Access-Control-Allow-Origin": "*",
-            "token": token,
-            "key": currentKey
-        }
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*",
+        "token": token,
+        "key": currentKey
+      }
     }
     axios.post(apiUrl5, searchField, axiosConfig3).then(
-        (response) => {
-            if (response.data.data) {
-              setRefundRequests(response.data.data)
-                setSearchField(
-                    {
-                        "searchTerm": ""
-                    }
-                )
-                setIsLoading(false)
-            } else if (response.data.status === "Unauthorized User!!") {
-                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
-                sessionStorage.clear()
-            } else if (!response.data.data) {
-                setIsLoading(false)
-                setSearchField(
-                    {
-                        "searchTerm": ""
-                    }
-                )
-                setTimeout(() => {
-                    getData()
-                    alert("No Requesta Found !!")
-                }, 500)
-            } else {
-                setIsLoading(false)
-                setSearchField(
-                    {
-                        "searchTerm": ""
-                    }
-                )
-                alert(response.data.status)
+      (response) => {
+        if (response.data.data) {
+          setRefundRequests(response.data.data)
+          setSearchField(
+            {
+              "searchTerm": ""
             }
+          )
+          setIsLoading(false)
+        } else if (response.data.status === "Unauthorized User!!") {
+          { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+          sessionStorage.clear()
+        } else if (!response.data.data) {
+          setIsLoading(false)
+          setSearchField(
+            {
+              "searchTerm": ""
+            }
+          )
+          setTimeout(() => {
+            getData()
+            alert("No Requesta Found !!")
+          }, 500)
+        } else {
+          setIsLoading(false)
+          setSearchField(
+            {
+              "searchTerm": ""
+            }
+          )
+          alert(response.data.status)
         }
+      }
     )
-}
+  }
 
   const getData = () => {
     let currentKey = sessionStorage.getItem("admkey");
@@ -168,7 +168,7 @@ const AdminViewRefundRequests = () => {
 
   const searchHandler = (event) => {
     setSearchField({ ...searchField, [event.target.name]: event.target.value })
-}
+  }
 
   const approveHandler = (event) => {
     setErrors({}); // Clear previous errors
@@ -561,17 +561,17 @@ const AdminViewRefundRequests = () => {
                 <h1>Refund Requests</h1>
                 <br />
                 <div className="row">
-                <div className="col">
+                  <div className="col">
                     <div className="input-group">
-                        <input onChange={searchHandler} type="text" className="form-control" name="searchTerm" value={searchField.searchTerm} placeholder='College Name/Student Name' />
+                      <input onChange={searchHandler} type="text" className="form-control" name="searchTerm" value={searchField.searchTerm} placeholder='College Name/Student Name' />
                     </div>
                     <br></br>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                        <button onClick={readSearchValue} className="btn btn-warning">Search</button>
+                      <button onClick={readSearchValue} className="btn btn-warning">Search</button>
                     </div>
                     <br />
+                  </div>
                 </div>
-            </div>
                 {isLoading ? <div className="flex justify-center items-center h-full">
                   <div className="text-center py-20">
                     <div>Loading...</div>
