@@ -1503,5 +1503,20 @@ Student.viewPerformanceScore=(studId, result)=>{
 
 }
 
+
+Student.generateTaskWiseScoreList = (taskId, result) => {
+    let query = "SELECT taskName, membership_no, studName,score,totalScore FROM studentTaskScore where taskId = ? GROUP BY studName, membership_no ORDER BY score DESC;"
+
+    db.query(query, [taskId], (err, response) => {
+        if (err) {
+            console.log("Error executing the query:", err);
+            result(err, null);
+        } else {
+            console.log("Query results:", response);
+            result(null, response);
+        }
+    })
+}
+
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 
