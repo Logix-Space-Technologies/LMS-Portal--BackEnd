@@ -807,7 +807,7 @@ function generatePDF(data, callback) {
         }
 
         const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
-        const pageData = remainingData.splice(0, getBatchMaxRows(availableHeight));
+        const pageData = remainingData.splice(0, getMaxRows(availableHeight));
         const groupedData = groupDataByBatch(pageData);
 
         // Add content to the PDF using grouped data
@@ -906,7 +906,7 @@ function groupDataByBatch(data) {
     return groupedData;
 }
 
-function getBatchMaxRows(availableHeight) {
+function getMaxRows(availableHeight) {
     const rowHeight = 20; // Adjust based on your layout
     return Math.floor(availableHeight / rowHeight);
 }
@@ -1178,7 +1178,7 @@ function generateSessionAttendancePDF(data, callback) {
         }
 
         const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
-        const pageData = remainingData.splice(0, getSessionMaxRows(availableHeight));
+        const pageData = remainingData.splice(0, getMaxRows(availableHeight));
         const groupedData = groupAttendanceBySessionStudent(pageData);
 
         // Add content to the PDF using grouped data
@@ -1259,7 +1259,7 @@ function groupAttendanceBySessionStudent(data) {
     return groupedData;
 }
 
-function getSessionMaxRows(availableHeight) {
+function getMaxRows(availableHeight) {
     const rowHeight = 20; // Adjust based on your layout
     return Math.floor(availableHeight / rowHeight);
 }
@@ -1940,7 +1940,7 @@ function generateScoreListPDF(data, callback) {
         // });
 
         const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
-        const pageData = remainingData.splice(0, getScoreMaxRows(availableHeight));
+        const pageData = remainingData.splice(0, getMaxRows(availableHeight));
         const groupedData = groupScoreByTask(pageData);
 
         for (const taskName in groupedData) {
@@ -2018,7 +2018,7 @@ function groupScoreByTask(data) {
     return groupedData;
 }
 
-function getScoreMaxRows(availableHeight) {
+function getMaxRows(availableHeight) {
     const rowHeight = 20; // Adjust based on your layout
     return Math.floor(availableHeight / rowHeight);
 }
