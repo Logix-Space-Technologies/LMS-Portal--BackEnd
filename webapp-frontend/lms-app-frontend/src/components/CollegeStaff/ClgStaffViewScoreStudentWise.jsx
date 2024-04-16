@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import '../../config/config';
-import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../Admin/Navbar';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import '../../config/config';
 
-const CollegeStaffViewScore = () => {
-
+const ClgStaffViewScoreStudentWise = () => {
     const [scoreData, setScoreData] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
     const [scoresPerPage] = useState(10); // Number of students per page
@@ -18,15 +17,13 @@ const CollegeStaffViewScore = () => {
     let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
-
-    const apiurl = global.config.urls.api.server + "/api/lms/getTaskwiseScores"
-
     const navigate = useNavigate()
+
+    const apiurl = global.config.urls.api.server + "/api/lms/studentViewPerformance"
 
     const getData = () => {
         let data = {
-            "batchId": sessionStorage.getItem("viewScoreBatchId"),
-            "taskId": sessionStorage.getItem("viewScoreTaskId")
+            "studId": sessionStorage.getItem("viewscorestudId")
         }
         // Retrieve key and token from sessionStorage without providing the key
         let currentKey, token;
@@ -91,9 +88,9 @@ const CollegeStaffViewScore = () => {
     useEffect(() => { getData() }, [])
 
 
-    return (
-        <div>
-            {key === 'lmsappclgstaff' ? '' : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
+  return (
+    <div>
+        {key === 'lmsappclgstaff' ? '' : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
             {/* ====== Table Section Start */}
             <section className="bg-gray-100 dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
@@ -112,7 +109,7 @@ const CollegeStaffViewScore = () => {
                                                 S/L
                                             </th>
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                Student Name
+                                                Task Name
                                             </th>
                                             <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 Total Score
@@ -130,7 +127,7 @@ const CollegeStaffViewScore = () => {
                                                         {calculateSerialNumber(index)}
                                                     </td>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.studName}
+                                                        {value.taskName}
                                                     </td>
                                                     <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.totalScore}
@@ -197,8 +194,8 @@ const CollegeStaffViewScore = () => {
                 </div>
             </section>
             {/* ====== Table Section End */}
-        </div>
-    )
+    </div>
+  )
 }
 
-export default CollegeStaffViewScore
+export default ClgStaffViewScoreStudentWise
