@@ -12,6 +12,7 @@ const CollegeStaffViewScore = () => {
     const [scoresPerPage] = useState(10); // Number of students per page
     const [loading, setLoading] = useState(true);
     const [key, setKey] = useState('')
+    const taskId = sessionStorage.getItem("viewScoreTaskId");
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(scoreData.length / scoresPerPage); // Calculate the total number of pages
@@ -20,6 +21,7 @@ const CollegeStaffViewScore = () => {
 
 
     const apiurl = global.config.urls.api.server + "/api/lms/getTaskwiseScores"
+    const apiurl2 = global.config.urls.api.server + "/api/lms/viewScoreOfStudPDF"
 
     const navigate = useNavigate()
 
@@ -55,7 +57,7 @@ const CollegeStaffViewScore = () => {
                     setScoreData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        {key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : (key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin"))}
+                        { key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : (key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")) }
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
@@ -70,6 +72,57 @@ const CollegeStaffViewScore = () => {
             }
         )
     }
+
+    const pdfGenerate = async () => {
+
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
+
+
+        const axiosConfig2 = {
+            headers: {
+                "Content-Type": "application/json",
+                "token": token,
+                "key": currentKey
+            },
+            responseType: 'blob', // Important for PDF downloads
+        };
+
+        let data = {
+            "taskId": taskId
+        }
+
+        const response = await axios.post(apiurl2, data, axiosConfig2);
+
+        // Attempt to read the response as a blob, but check for an error message
+        const reader = new FileReader();
+        reader.readAsText(response.data);
+        reader.onloadend = () => {
+            try {
+                const obj = JSON.parse(reader.result);
+                if (obj.status === "Unauthorized User!!") {
+                    { key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : (key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")) }
+                    sessionStorage.clear()
+                } else {
+                    alert(obj.status)
+                }
+            } catch (error) {
+                // If parsing throws, it's likely a PDF blob
+                const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+                window.open(URL.createObjectURL(pdfBlob), '_blank');
+            }
+        };
+    };
 
     // Logic for displaying current students
     const indexOfLastScore = currentPage * scoresPerPage;
@@ -101,7 +154,10 @@ const CollegeStaffViewScore = () => {
                         <div className="w-full px-4">
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
                                 {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Scores</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Scores</h2> : <h2 className="text-lg font-bold">Admin Staff View Scores</h2>)}
-                                <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</button>
+                                <div className="flex space-x-4">
+                                    <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
+                                    <button type='button' onClick={() => pdfGenerate()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download PDF</button>
+                                </div>
                             </div>
                             <br />
                             <div className="max-w-full overflow-x-auto">
