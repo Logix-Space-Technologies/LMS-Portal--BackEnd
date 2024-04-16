@@ -983,11 +983,11 @@ function generateAttendancePDF(data, callback) {
             doc.addPage();
         }
 
-        // doc.font('Helvetica-Bold').fontSize(8).text(`Page ${currentPage}`, {
-        //     align: 'right',
-        //     underline: false,
-        //     margin: { bottom: 10 },
-        // });
+        doc.font('Helvetica-Bold').fontSize(8).text(`Page ${currentPage}`, {
+            align: 'right',
+            underline: false,
+            margin: { bottom: 10 },
+        });
 
         const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
         const pageData = remainingData.splice(0, getMaxRows(availableHeight));
@@ -999,7 +999,7 @@ function generateAttendancePDF(data, callback) {
                 const attendanceDate = sessionInfo[0].attendanceDate;
 
                 doc.font('Helvetica-Bold').fontSize(10).text('Session Name', {
-                    continued: true,  // Ensures the next text continues on the same line
+                    continued: true,
                     underline: true,
                 });
                 doc.font('Helvetica').fontSize(10).text(`: ${sessionName} - ${attendanceDate}`, {
@@ -1031,22 +1031,21 @@ function generateAttendancePDF(data, callback) {
                     rows: tableData,
                     widths: columnWidths,
                     align: ['left', 'left', 'left', 'left', 'left', 'left'],
-                    // Custom styles for all columns
                     headerStyles: {
-                        0: { fontSize: 8 }, // Membership No.
-                        1: { fontSize: 8 }, // Admission No
-                        2: { fontSize: 8 }, // Student Name
-                        3: { fontSize: 8 }, // Department
-                        4: { fontSize: 8 }, // Course
-                        5: { fontSize: 8 }  // Attendance Status
+                        0: { fontSize: 8 },
+                        1: { fontSize: 8 },
+                        2: { fontSize: 8 },
+                        3: { fontSize: 8 },
+                        4: { fontSize: 8 },
+                        5: { fontSize: 8 }
                     },
                     bodyStyles: {
-                        0: { fontSize: 8 }, // Membership No.
-                        1: { fontSize: 8 }, // Admission No
-                        2: { fontSize: 8 }, // Student Name
-                        3: { fontSize: 8 }, // Department
-                        4: { fontSize: 8 }, // Course
-                        5: { fontSize: 8 }  // Attendance Status
+                        0: { fontSize: 8 },
+                        1: { fontSize: 8 },
+                        2: { fontSize: 8 },
+                        3: { fontSize: 8 },
+                        4: { fontSize: 8 },
+                        5: { fontSize: 8 }
                     }
                 });
 
@@ -1069,11 +1068,6 @@ function generateAttendancePDF(data, callback) {
     });
 }
 
-
-
-
-
-
 function groupAttendanceBySession(data) {
     const groupedData = {};
     data.forEach(student => {
@@ -1087,7 +1081,7 @@ function groupAttendanceBySession(data) {
 }
 
 function getMaxRows(availableHeight) {
-    const rowHeight = 20; // Adjust based on your layout
+    const rowHeight = 20;
     return Math.floor(availableHeight / rowHeight);
 }
 
