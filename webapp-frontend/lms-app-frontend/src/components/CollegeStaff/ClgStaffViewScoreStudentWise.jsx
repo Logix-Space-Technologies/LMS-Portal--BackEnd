@@ -23,7 +23,7 @@ const ClgStaffViewScoreStudentWise = () => {
 
     const getData = () => {
         let data = {
-            "studId": sessionStorage.getItem("viewScoreBatchId")
+            "studId": sessionStorage.getItem("viewscorestudId")
         }
         // Retrieve key and token from sessionStorage without providing the key
         let currentKey, token;
