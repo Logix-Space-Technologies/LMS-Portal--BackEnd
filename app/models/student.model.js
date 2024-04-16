@@ -1505,7 +1505,7 @@ Student.viewPerformanceScore=(studId, result)=>{
 
 
 Student.generateTaskWiseScoreList = (taskId, result) => {
-    let query = "SELECT taskName, membership_no, studName,score,totalScore FROM studentTaskScore where taskId = ? GROUP BY studName, membership_no ORDER BY score DESC;"
+    let query = "SELECT taskName, membership_no, studName, MAX(score) AS score, totalScore FROM studentTaskScore WHERE taskId = ? GROUP BY studName, membership_no, taskName, totalScore ORDER BY score DESC"
 
     db.query(query, [taskId], (err, response) => {
         if (err) {
