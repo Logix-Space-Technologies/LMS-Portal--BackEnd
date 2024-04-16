@@ -112,6 +112,7 @@ import CollegeStaffForgotPassword from './components/CollegeStaff/CollegeStaffFo
 import AdminViewWhatsappFeedback from './components/Admin/AdminViewWhatsappFeedback';
 import AdminViewMsgReceived from './components/Admin/AdminViewMsgReceived';
 import CollegeStaffViewScore from './components/CollegeStaff/CollegeStaffViewScore';
+import AdminViewOverallBatchPerformance from './components/Admin/AdminViewOverallBatchPerformance';
 import ClgStaffViewScoreStudentWise from './components/CollegeStaff/ClgStaffViewScoreStudentWise';
 
 
@@ -171,6 +172,7 @@ function App() {
           <Route path='/AdminUpdateSession' element={<AdminUpdateSession/>}/>
           <Route path='/adminviewwhtsappfeedback' element={<AdminViewWhatsappFeedback/>}/>
           <Route path='/adminviewwhtsappmsgreceived' element={<AdminViewMsgReceived/>}/>
+          <Route path='/adminviewoverallBatchPerformance' element={<AdminViewOverallBatchPerformance/>}/>
 
 
 

@@ -257,6 +257,12 @@ const AdminViewAllBatch = () => {
         setShowConfirmation(false);
     };
 
+    const taskScore = (batchId, CollegeId) => {
+        sessionStorage.setItem("viewBatchScoreBatchId", batchId);
+        sessionStorage.setItem("viewBatchScoreCollegeId", CollegeId);
+        navigate("/adminviewoverallBatchPerformance")
+    }
+
     const viewAllCurr = (id) => {
         sessionStorage.setItem("currbatchId", id)
     }
@@ -352,6 +358,7 @@ const AdminViewAllBatch = () => {
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
                             {key === "lmsapp" && (
                                 <th scope="col" className="px-6 py-3"></th>
                             )}
@@ -387,6 +394,9 @@ const AdminViewAllBatch = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id)} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>
+                                </td>
+                                <td className="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                    <button onClick={() => taskScore(value.id, value.collegeId)} className="btn btn-primary">View Batch Peformance</button>
                                 </td>
                                 <td className="px-6 py-4">
                                     <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success">Update</button>
