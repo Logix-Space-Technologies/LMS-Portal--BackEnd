@@ -1,5 +1,9 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../Admin/Navbar';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import '../../config/config';
 
 const ClgStaffViewScoreStudentWise = () => {
     const [scoreData, setScoreData] = useState([])
@@ -19,8 +23,7 @@ const ClgStaffViewScoreStudentWise = () => {
 
     const getData = () => {
         let data = {
-            "batchId": sessionStorage.getItem("viewScoreBatchId"),
-            "taskId": sessionStorage.getItem("viewScoreTaskId")
+            "studId": sessionStorage.getItem("viewScoreBatchId")
         }
         // Retrieve key and token from sessionStorage without providing the key
         let currentKey, token;
