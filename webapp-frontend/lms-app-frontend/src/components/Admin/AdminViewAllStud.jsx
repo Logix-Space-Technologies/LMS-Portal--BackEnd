@@ -25,6 +25,11 @@ const AdminViewAllStud = () => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
 
+    const viewtaskScore = (id) => {
+        sessionStorage.setItem("viewscorestudId", id)
+        navigate("/clgstaffstudentviewscore")
+    }
+
     const readValue = () => {
         let currentKey = sessionStorage.getItem("admkey");
         let token = sessionStorage.getItem("admtoken");
@@ -271,23 +276,25 @@ const AdminViewAllStud = () => {
 
                 <div></div>
             </div>
-            <div className="row">
-                <div className="col-12">
+            <div className="row justify-content-center">
+                <div className="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                     <br />
-                    <input
-                        onChange={inputHandler}
-                        type="text"
-                        className="form-control"
-                        name="studentSearchQuery"
-                        value={inputField.studentSearchQuery}
-                        placeholder="Student Name/Phone No/Address/Aadhar No/Email"
-                    />
-                    <br />
-                    <button onClick={readValue} className="btn btn-warning">
-                        Search
-                    </button>
+                    <div className="d-flex align-items-center">
+                        <input
+                            onChange={inputHandler}
+                            type="text"
+                            className="form-control"
+                            name="studentSearchQuery"
+                            value={inputField.studentSearchQuery}
+                            placeholder="Student Name/Phone No/Address/Aadhar No/Email"
+                        />
+                        <button onClick={readValue} className="btn btn-warning">
+                            Search
+                        </button>
+                    </div>
                 </div>
             </div>
+            <br />
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">
                     <div>Loading...</div>
@@ -332,6 +339,9 @@ const AdminViewAllStud = () => {
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Valid Upto
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+
                             </th>
                             <th scope="col" className="px-6 py-3">
 
@@ -391,6 +401,9 @@ const AdminViewAllStud = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.validity}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <button onClick={() => viewtaskScore(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">View Scores</button>
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.communityManager === 0 && (
