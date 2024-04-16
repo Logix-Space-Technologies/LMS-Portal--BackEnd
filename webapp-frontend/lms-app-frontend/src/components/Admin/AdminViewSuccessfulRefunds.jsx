@@ -6,6 +6,12 @@ import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
 
 const AdminViewSuccessfulRefunds = () => {
 
+    const [inputField, setInputField] = useState(
+        {
+            "refundSearchTerm": ""
+        }
+    )
+
     const [refundSuccessData, setrefundSuccessData] = useState([]);
     const [key, setKey] = useState('');
     const [isLoading, setIsLoading] = useState(true)
@@ -21,6 +27,65 @@ const AdminViewSuccessfulRefunds = () => {
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSuccessfulRefunds"
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/searchSuccessfulRefundRequests";
+
+    const searchHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
+      }
+
+    const readSearchValue = () => {
+        setIsLoading(true)
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let axiosConfig3 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        }
+        axios.post(apiUrl2, inputField, axiosConfig3).then(
+            (response) => {
+                if (response.data.data) {
+                    setrefundSuccessData(response.data.data)
+                    setInputField(
+                        {
+                            "refundSearchTerm": ""
+                        }
+                    )
+                    setIsLoading(false)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "refundSearchTerm": ""
+                        }
+                    )
+                    setTimeout(() => {
+                        getData()
+                        alert("No Successful Found !!")
+                    }, 500)
+                } else {
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "refundSearchTerm": ""
+                        }
+                    )
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
 
     const getData = () => {
         let currentKey = sessionStorage.getItem("admkey");
@@ -95,6 +160,18 @@ const AdminViewSuccessfulRefunds = () => {
                             <div className="w-full px-4">
                                 <h1>View Successful Refunds</h1>
                                 <br />
+                                <div className="row">
+                                    <div className="col">
+                                        <div className="input-group">
+                                            <input onChange={searchHandler} type="text" className="form-control" name="refundSearchTerm" value={inputField.refundSearchTerm} placeholder='College Name/Student Name' />
+                                        </div>
+                                        <br></br>
+                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                            <button onClick={readSearchValue} className="btn btn-warning">Search</button>
+                                        </div>
+                                        <br />
+                                    </div>
+                                </div>
                                 {isLoading ? (
                                     <div className="col-12 text-center">
                                         <p>Loading...</p> {/* Added a loading text */}
