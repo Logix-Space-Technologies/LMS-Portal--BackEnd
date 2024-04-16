@@ -1015,8 +1015,6 @@ exports.viewTaskwiseScore = (request, response) => {
   const batchId = request.body.batchId;
   const taskId = request.body.taskId;
   const key = request.headers.key
-  console.log("Batch ID :", batchId)
-  console.log("Task ID :", taskId)
 
   jwt.verify(token, key, (err, decoded) => {
     if (decoded) {
