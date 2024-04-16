@@ -308,7 +308,7 @@ const AdminViewAllTasks = () => {
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {isLateSubmission && <button onClick={() => taskScore(value.batchId, value.id)} className="btn btn-primary btn-sm me-2">View Score</button>}
+                                            <button onClick={() => taskScore(value.batchId, value.id)} className="btn btn-primary btn-sm me-2">View Score</button>
                                         </td>
                                         <td className="px-6 py-4">
                                             <button onClick={() => handleUpdateClick(value.id)} className="btn btn-primary btn-sm me-2">Update</button>
