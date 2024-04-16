@@ -25,6 +25,12 @@ const CollegeStaffViewBatch = () => {
   const navigate = useNavigate()
 
 
+  const taskScore = (batchId) => {
+    sessionStorage.setItem("viewBatchScoreBatchId", batchId);
+    sessionStorage.setItem("viewBatchScoreCollegeId", collegeId);
+    navigate("/adminviewoverallBatchPerformance")
+  }
+
   const fetchBatches = () => {
     let axiosConfig = {
       headers: {
@@ -204,7 +210,12 @@ const CollegeStaffViewBatch = () => {
                           <div key={index} className="col-12">
                             <div className="card">
                               <div className="card-body">
-                                <h5 className="card-title">{batch.batchName}</h5>
+                                <div className="flex justify-between items-center mx-4 my-4">
+                                  <h5 className="card-title">{batch.batchName}</h5>
+                                  <button onClick={() => taskScore(batch.id)} className="btn btn-primary" style={{ marginRight: '20px' }}>
+                                    View Batch Performance
+                                  </button>
+                                </div>
                                 <p className="card-text">Registration Start Date: {batch.regStartDate}</p>
                                 <p className="card-text">Registration End Date: {batch.regEndDate}</p>
                                 <p className="card-text">Description: {batch.batchDesc}</p>

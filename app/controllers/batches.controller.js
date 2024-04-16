@@ -357,13 +357,13 @@ exports.changeRegistrationStatusToNotAvailable = (request, response) => {
 
 exports.getOverallBatchEvaluation = (request, response) => {
     const batchId = request.body.batchId;
-    const collegeId = request.body.collegeId;
+    const CollegeId = request.body.CollegeId;
     const token = request.headers.token;
     const key = request.headers.key;
 
     jwt.verify(token, key, (err, decoded) => {
         if (decoded) {
-            Batches.getOverallPerformanceOfBatch(collegeId, batchId, (err, data) => {
+            Batches.getOverallPerformanceOfBatch(CollegeId, batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else if (data.length === 0) {
