@@ -25,8 +25,8 @@ const AdminViewOverallBatchPerformance = () => {
 
     const getData = () => {
         let data = {
-            "batchId": sessionStorage.getItem("viewBatchScoreBatchId"),
-            "collegeId": sessionStorage.getItem("viewBatchScoreCollegeId")
+            "CollegeId": sessionStorage.getItem("viewBatchScoreCollegeId"),
+            "batchId": sessionStorage.getItem("viewBatchScoreBatchId")
         }
         // Retrieve key and token from sessionStorage without providing the key
         let currentKey, token;
@@ -55,8 +55,8 @@ const AdminViewOverallBatchPerformance = () => {
                     setScoreData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
+                        { key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : (key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")) }
                         sessionStorage.clear()
-                        navigate("/clgStafflogin")
                     } else {
                         if (!response.data.data) {
                             setLoading(false)
