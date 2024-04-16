@@ -288,5 +288,16 @@ College.changeRegistrationStatusToNotOpen = (id, result) => {
     })
 }
 
+College.viewPerformanceOfStudents = (collegeId, result) => {
+    db.query("SELECT batchName, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where CollegeId=? GROUP BY studentId,studName order by studentId;",[collegeId],(err,res)=>{
+        if(err){
+            console.log("Error : ", err);
+            result(err, null);
+            return;
+        }
+        console.log("College Performance : ", res);
+        result(null, res);
+    })
+}
 
 module.exports = College;

@@ -533,3 +533,23 @@ exports.changeRegistrationStatusToNotOpen = (request, response) => {
         }
     })
 }
+
+exports.viewPerformanceOfStudents = (request, response) => {
+    const collegeId = request.body.collegeId;
+    const token = request.headers.token;
+    const key = request.headers.key;
+
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            College.viewPerformanceOfStudents(collegeId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User !!!" });
+        }
+    })
+}
