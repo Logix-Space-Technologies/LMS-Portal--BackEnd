@@ -375,4 +375,6 @@ router.post('/searchSuccessfulRefundRequests', RefundController.searchSuccessful
 
 router.post('/studentViewPerformance', StudentController.studentViewPerformanceScore)
 
+router.post('/viewPerformanceOfStudents',CollegeController.viewPerformanceOfStudents)
+
 module.exports = router
