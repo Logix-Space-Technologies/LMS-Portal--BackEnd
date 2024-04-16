@@ -35,7 +35,7 @@ exports.evaluateTask = (request, response) => {
                     const studentId=data.student_id;
                     const sessionName=data.sessionName;
                     const taskTitle=data.taskTitle;
-                    firebasetokens.sendNotificationByStudId(studentId, { notification: { title: `${taskTitle} has been evaluated`, body: `Your submitted task for session ${sessionName} has been evaluated.` } }, (err, data) => {
+                    firebasetokens.sendNotificationByStudId(studentId, { notification: { title: `${taskTitle} has been evaluated`, body: `Your task submitted for session ${sessionName} has been evaluated.` } }, (err, data) => {
                         if (err) {
                             return response.json({ "status": err });
                         }
