@@ -757,14 +757,7 @@ exports.generateListOfBatchWiseStudents = (request, response) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
-                    generatePDF(data, (pdfPath, pdfError) => {
-                        if (pdfError) {
-                            return response.json({ "status": pdfError });
-                        }
-                        response.setHeader('Content-Type', 'application/pdf');
-                        response.setHeader('Content-Disposition', 'attachment; filename=batch_wise_students_list.pdf');
-                        fs.createReadStream(pdfPath).pipe(response);
-                    });
+                    return response.json({ "status": "success", "data": data });
                 }
             });
         } else {
@@ -774,142 +767,142 @@ exports.generateListOfBatchWiseStudents = (request, response) => {
 }
 
 // Generate Batch-Wise Student List BY College Staff
-function generatePDF(data, callback) {
-    const pdfPath = 'pdfFolder/batch_wise_students_list.pdf';
-    let doc = new PDFDocument({ margin: 50, size: 'A4' });
-    const stream = fs.createWriteStream(pdfPath);
+// function generatePDF(data, callback) {
+//     const pdfPath = 'pdfFolder/batch_wise_students_list.pdf';
+//     let doc = new PDFDocument({ margin: 50, size: 'A4' });
+//     const stream = fs.createWriteStream(pdfPath);
 
-    doc.pipe(stream);
-    const imageLogo = 'app/assets/logo.png';
-    const logoImage = doc.openImage(imageLogo);
-    const imageScale = 0.3;
-    doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
+//     doc.pipe(stream);
+//     const imageLogo = 'app/assets/logo.png';
+//     const logoImage = doc.openImage(imageLogo);
+//     const imageScale = 0.3;
+//     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
 
-    doc.moveDown(2);
-    // Add main heading
-    doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise List Of Students', {
-        align: 'center',
-        underline: true,
-        margin: { top: 30, bottom: 30 },
-    });
-    doc.moveDown(1.5);
+//     doc.moveDown(2);
+//     // Add main heading
+//     doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise List Of Students', {
+//         align: 'center',
+//         underline: true,
+//         margin: { top: 30, bottom: 30 },
+//     });
+//     doc.moveDown(1.5);
 
-    const pageSize = 680; // Adjust based on your requirement
+//     const pageSize = 680; // Adjust based on your requirement
 
-    let currentY = 0;
-    let currentPage = 0;
-    let remainingData = [...data];
+//     let currentY = 0;
+//     let currentPage = 0;
+//     let remainingData = [...data];
 
-    while (remainingData.length > 0) {
-        currentPage++;
-        if (currentPage > 1) {
-            doc.addPage();
-        }
+//     while (remainingData.length > 0) {
+//         currentPage++;
+//         if (currentPage > 1) {
+//             doc.addPage();
+//         }
 
-        const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
-        const pageData = remainingData.splice(0, getMaxRows(availableHeight));
-        const groupedData = groupDataByBatch(pageData);
+//         const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
+//         const pageData = remainingData.splice(0, getMaxRows(availableHeight));
+//         const groupedData = groupDataByBatch(pageData);
 
-        // Add content to the PDF using grouped data
-        for (const batchKey in groupedData) {
-            if (groupedData.hasOwnProperty(batchKey)) {
-                const studInfo = groupedData[batchKey];
-                const batchName = studInfo[0].batchName; // You can use batchName here
-                // Batch heading
-                doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name: ${batchName}`, {
-                    align: 'center',
-                    underline: true
-                }).font('Helvetica').fontSize(6);
-                doc.moveDown(2);
+//         // Add content to the PDF using grouped data
+//         for (const batchKey in groupedData) {
+//             if (groupedData.hasOwnProperty(batchKey)) {
+//                 const studInfo = groupedData[batchKey];
+//                 const batchName = studInfo[0].batchName; // You can use batchName here
+//                 // Batch heading
+//                 doc.font('Helvetica-Bold').fontSize(12).text(`Batch Name: ${batchName}`, {
+//                     align: 'center',
+//                     underline: true
+//                 }).font('Helvetica').fontSize(6);
+//                 doc.moveDown(2);
 
-                const students = groupedData[batchKey]; // Use batchKey to access the data
-                const columnWidths = [
-                    90,   // Membership No.
-                    100,  // Roll No
-                    140,  // Name
-                    100,  // Department
-                    70,   // Course
-                    200   // Email
-                ];
+//                 const students = groupedData[batchKey]; // Use batchKey to access the data
+//                 const columnWidths = [
+//                     90,   // Membership No.
+//                     100,  // Roll No
+//                     140,  // Name
+//                     100,  // Department
+//                     70,   // Course
+//                     200   // Email
+//                 ];
 
-                // Create table headers
-                const tableHeaders = [
-                    { label: 'Membership No', padding: 5 },
-                    { label: 'Roll No', padding: 5 },
-                    { label: 'Name', padding: 5 },
-                    { label: 'Department', padding: 5 },
-                    { label: 'Course', padding: 5 },
-                    { label: 'Email', padding: 5 }
-                ];
-                const tableData = students.map(student => [student.membership_no, student.rollNo, student.studName, student.studDept, student.course, student.studEmail]);
-
-
-                // Draw the table
-                doc.table({
-                    headers: tableHeaders,
-                    rows: tableData,
-                    widths: columnWidths,
-                    align: ['left', 'left', 'left', 'left', 'left', 'left'],
-                    // Custom styles for all columns
-                    headerStyles: {
-                        0: { fontSize: 8 }, // Membership No.
-                        1: { fontSize: 8 }, // Roll No.
-                        2: { fontSize: 8 }, // Student Name
-                        3: { fontSize: 8 }, // Department
-                        4: { fontSize: 8 }, // Course
-                        5: { fontSize: 8 }  // Email
-                    },
-                    bodyStyles: {
-                        0: { fontSize: 8 }, // Membership No.
-                        1: { fontSize: 8 }, // Roll No.
-                        2: { fontSize: 8 }, // Student Name
-                        3: { fontSize: 8 }, // Department
-                        4: { fontSize: 8 }, // Course
-                        5: { fontSize: 8 }  // Email
-                    }
-                });
-
-                doc.moveDown(2); // Add a newline between batches
-            }
-        }
+//                 // Create table headers
+//                 const tableHeaders = [
+//                     { label: 'Membership No', padding: 5 },
+//                     { label: 'Roll No', padding: 5 },
+//                     { label: 'Name', padding: 5 },
+//                     { label: 'Department', padding: 5 },
+//                     { label: 'Course', padding: 5 },
+//                     { label: 'Email', padding: 5 }
+//                 ];
+//                 const tableData = students.map(student => [student.membership_no, student.rollNo, student.studName, student.studDept, student.course, student.studEmail]);
 
 
-    }
+//                 // Draw the table
+//                 doc.table({
+//                     headers: tableHeaders,
+//                     rows: tableData,
+//                     widths: columnWidths,
+//                     align: ['left', 'left', 'left', 'left', 'left', 'left'],
+//                     // Custom styles for all columns
+//                     headerStyles: {
+//                         0: { fontSize: 8 }, // Membership No.
+//                         1: { fontSize: 8 }, // Roll No.
+//                         2: { fontSize: 8 }, // Student Name
+//                         3: { fontSize: 8 }, // Department
+//                         4: { fontSize: 8 }, // Course
+//                         5: { fontSize: 8 }  // Email
+//                     },
+//                     bodyStyles: {
+//                         0: { fontSize: 8 }, // Membership No.
+//                         1: { fontSize: 8 }, // Roll No.
+//                         2: { fontSize: 8 }, // Student Name
+//                         3: { fontSize: 8 }, // Department
+//                         4: { fontSize: 8 }, // Course
+//                         5: { fontSize: 8 }  // Email
+//                     }
+//                 });
 
-    const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
-        align: 'center',
-    });
+//                 doc.moveDown(2); // Add a newline between batches
+//             }
+//         }
 
 
-    doc.end();
+//     }
+
+//     const generatedDate = new Date();
+//     doc.font('Helvetica').fontSize(9).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
+//         align: 'center',
+//     });
 
 
-    stream.on('finish', () => {
-        callback(pdfPath);
-    });
-}
+//     doc.end();
 
 
-function groupDataByBatch(data) {
-    // Group data by batch name using a JavaScript object
-    const groupedData = {};
+//     stream.on('finish', () => {
+//         callback(pdfPath);
+//     });
+// }
 
-    data.forEach(student => {
-        const batchName = student.batchName;
-        if (!groupedData[batchName]) {
-            groupedData[batchName] = [];
-        }
-        groupedData[batchName].push(student);
-    });
 
-    return groupedData;
-}
+// function groupDataByBatch(data) {
+//     // Group data by batch name using a JavaScript object
+//     const groupedData = {};
 
-function getMaxRows(availableHeight) {
-    const rowHeight = 20; // Adjust based on your layout
-    return Math.floor(availableHeight / rowHeight);
-}
+//     data.forEach(student => {
+//         const batchName = student.batchName;
+//         if (!groupedData[batchName]) {
+//             groupedData[batchName] = [];
+//         }
+//         groupedData[batchName].push(student);
+//     });
+
+//     return groupedData;
+// }
+
+// function getMaxRows(availableHeight) {
+//     const rowHeight = 20; // Adjust based on your layout
+//     return Math.floor(availableHeight / rowHeight);
+// }
 
 
 

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import '../../config/config';
 import ClgStaffNavbar from './ClgStaffNavbar';
 import { useNavigate } from 'react-router-dom';
+
 
 const CollegeStaffViewBatch = () => {
   const [batches, setBatches] = useState([]);
@@ -18,12 +19,10 @@ const CollegeStaffViewBatch = () => {
   let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
   const apiUrl = global.config.urls.api.server + "/api/lms/collegeStaffViewBatch";
-  const apiUrl2 = global.config.urls.api.server + "/api/lms/generatePdf";
   const apiUrl3 = global.config.urls.api.server + "/api/lms/generateAttendancePdf"
   const token = sessionStorage.getItem("clgstaffLogintoken");
   const collegeId = sessionStorage.getItem("clgStaffCollegeId");
   const navigate = useNavigate()
-
 
   const taskScore = (batchId) => {
     sessionStorage.setItem("viewBatchScoreBatchId", batchId);
@@ -76,41 +75,7 @@ const CollegeStaffViewBatch = () => {
       });
   };
 
-  const pdfGenerate = async () => {
-    const axiosConfig2 = {
-      headers: {
-        "Content-Type": "application/json",
-        "token": token,
-        "key": sessionStorage.getItem("clgstaffkey")
-      },
-      responseType: 'blob', // Important for PDF downloads
-    };
 
-    let data = {
-      "collegeId": collegeId
-    }
-
-    const response = await axios.post(apiUrl2, data, axiosConfig2);
-
-    // Attempt to read the response as a blob, but check for an error message
-    const reader = new FileReader();
-    reader.readAsText(response.data);
-    reader.onloadend = () => {
-      try {
-        const obj = JSON.parse(reader.result);
-        if (obj.status === "Unauthorized User!!") {
-          sessionStorage.clear();
-          navigate("/clgStafflogin");
-        } else {
-          alert(obj.status)
-        }
-      } catch (error) {
-        // If parsing throws, it's likely a PDF blob
-        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-        window.open(URL.createObjectURL(pdfBlob), '_blank');
-      }
-    };
-  };
 
 
   const attendancePdfGenerate = async (id) => {
@@ -194,7 +159,7 @@ const CollegeStaffViewBatch = () => {
                       <h1 style={{ fontWeight: 'bold', fontSize: '40px' }}>Batch Details</h1>
                     </div>
                     <div className="col-6 text-end">
-                      {!loading && currentBatch.length > 0 && <button className='btn btn-primary' onClick={pdfGenerate} disabled={studentCount === 0}>
+                      {!loading && currentBatch.length > 0 && <button className='btn btn-primary' onClick={()=> navigate("/clgstaffdownloadbatchwisestudlist")} disabled={studentCount === 0}>
                         Download Batch-Wise Student List PDF
                       </button>}
                     </div>
