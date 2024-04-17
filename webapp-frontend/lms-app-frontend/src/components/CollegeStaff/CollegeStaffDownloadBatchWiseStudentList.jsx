@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import html2pdf from 'html2pdf.js';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ClgStaffNavbar from './ClgStaffNavbar';
 
 const CollegeStaffDownloadBatchWiseStudentList = () => {
@@ -132,7 +132,7 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
                                         </div>
                                         <strong style={{ textAlign: "center", fontSize: "24px" }}>Download Preview Of Batch-Wise Student List</strong>
                                         <div>
-                                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{marginRight: "30px"}} onClick={generatePDF}>Download PDF</button>
+                                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: "30px" }} onClick={generatePDF}>Download PDF</button>
                                         </div>
                                     </div>
                                     <div></div><div></div>

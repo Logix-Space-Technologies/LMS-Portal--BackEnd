@@ -767,6 +767,7 @@ exports.generateListOfBatchWiseStudents = (request, response) => {
 }
 
 // Generate Batch-Wise Student List BY College Staff
+
 // function generatePDF(data, callback) {
 //     const pdfPath = 'pdfFolder/batch_wise_students_list.pdf';
 //     let doc = new PDFDocument({ margin: 50, size: 'A4' });
@@ -920,14 +921,15 @@ exports.generateBatchWiseAttendanceList = (request, response) => {
                 } else if (data.length === 0) { // Check if data is empty
                     return response.json({ "status": "No data found" }); // Return status if no data is available
                 } else {
-                    generateAttendancePDF(data, (pdfPath, pdfError) => {
-                        if (pdfError) {
-                            return response.json({ "status": pdfError });
-                        }
-                        response.setHeader('Content-Type', 'application/pdf');
-                        response.setHeader('Content-Disposition', 'attachment; filename=batch_wise_attendance_list.pdf');
-                        fs.createReadStream(pdfPath).pipe(response);
-                    });
+                    return response.json({ "status": "success", "data": data });
+                    // generateAttendancePDF(data, (pdfPath, pdfError) => {
+                    //     if (pdfError) {
+                    //         return response.json({ "status": pdfError });
+                    //     }
+                    //     response.setHeader('Content-Type', 'application/pdf');
+                    //     response.setHeader('Content-Disposition', 'attachment; filename=batch_wise_attendance_list.pdf');
+                    //     fs.createReadStream(pdfPath).pipe(response);
+                    // });
                 }
             })
         } else {
@@ -937,146 +939,146 @@ exports.generateBatchWiseAttendanceList = (request, response) => {
 
 }
 
-function generateAttendancePDF(data, callback) {
-    const pdfPath = 'pdfFolder/batch_wise_attendance_list.pdf';
-    let doc = new PDFDocument({ margin: 50, size: 'A4' });
-    const stream = fs.createWriteStream(pdfPath);
+// function generateAttendancePDF(data, callback) {
+//     const pdfPath = 'pdfFolder/batch_wise_attendance_list.pdf';
+//     let doc = new PDFDocument({ margin: 50, size: 'A4' });
+//     const stream = fs.createWriteStream(pdfPath);
 
-    doc.pipe(stream);
-    const imageLogo = 'app/assets/logo.png';
-    const logoImage = doc.openImage(imageLogo);
-    const imageScale = 0.3;
-    doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
+//     doc.pipe(stream);
+//     const imageLogo = 'app/assets/logo.png';
+//     const logoImage = doc.openImage(imageLogo);
+//     const imageScale = 0.3;
+//     doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
 
-    doc.moveDown(2);
-    doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise Attendance List Of Students', {
-        align: 'center',
-        underline: true,
-        margin: { top: 30, bottom: 30 },
-    });
-    doc.text('\n');
+//     doc.moveDown(2);
+//     doc.font('Helvetica-Bold').fontSize(14).text('Batch-Wise Attendance List Of Students', {
+//         align: 'center',
+//         underline: true,
+//         margin: { top: 30, bottom: 30 },
+//     });
+//     doc.text('\n');
 
-    const batchName = data.length > 0 ? data[0].batchName : '';
-    doc.font('Helvetica-Bold').fontSize(11).text(`Batch Name: ${batchName}`, {
-        align: 'center',
-        underline: true,
-        margin: { bottom: 10 },
-    });
-    doc.moveDown(2);
+//     const batchName = data.length > 0 ? data[0].batchName : '';
+//     doc.font('Helvetica-Bold').fontSize(11).text(`Batch Name: ${batchName}`, {
+//         align: 'center',
+//         underline: true,
+//         margin: { bottom: 10 },
+//     });
+//     doc.moveDown(2);
 
-    const pageSize = 680; // Adjust based on your requirement
+//     const pageSize = 680; // Adjust based on your requirement
 
-    let currentY = 0;
-    let currentPage = 0;
-    let remainingData = [...data];
+//     let currentY = 0;
+//     let currentPage = 0;
+//     let remainingData = [...data];
 
-    while (remainingData.length > 0) {
-        currentPage++;
-        if (currentPage > 1) {
-            doc.addPage();
-        }
+//     while (remainingData.length > 0) {
+//         currentPage++;
+//         if (currentPage > 1) {
+//             doc.addPage();
+//         }
 
-        doc.font('Helvetica-Bold').fontSize(8).text(`Page ${currentPage}`, {
-            align: 'right',
-            underline: false,
-            margin: { bottom: 10 },
-        });
+//         doc.font('Helvetica-Bold').fontSize(8).text(`Page ${currentPage}`, {
+//             align: 'right',
+//             underline: false,
+//             margin: { bottom: 10 },
+//         });
 
-        const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
-        const pageData = remainingData.splice(0, getMaxRows(availableHeight));
-        const groupedData = groupAttendanceBySession(pageData);
+//         const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
+//         const pageData = remainingData.splice(0, getMaxRows(availableHeight));
+//         const groupedData = groupAttendanceBySession(pageData);
 
-        for (const sessionName in groupedData) {
-            if (groupedData.hasOwnProperty(sessionName)) {
-                const sessionInfo = groupedData[sessionName];
-                const attendanceDate = sessionInfo[0].attendanceDate;
+//         for (const sessionName in groupedData) {
+//             if (groupedData.hasOwnProperty(sessionName)) {
+//                 const sessionInfo = groupedData[sessionName];
+//                 const attendanceDate = sessionInfo[0].attendanceDate;
 
-                doc.font('Helvetica-Bold').fontSize(10).text('Session Name', {
-                    continued: true,
-                    underline: true,
-                });
-                doc.font('Helvetica').fontSize(10).text(`: ${sessionName} - ${attendanceDate}`, {
-                    underline: false,
-                });
-                doc.text('\n');
+//                 doc.font('Helvetica-Bold').fontSize(10).text('Session Name', {
+//                     continued: true,
+//                     underline: true,
+//                 });
+//                 doc.font('Helvetica').fontSize(10).text(`: ${sessionName} - ${attendanceDate}`, {
+//                     underline: false,
+//                 });
+//                 doc.text('\n');
 
-                const students = sessionInfo;
-                const columnWidths = [
-                    90,  // Membership No.
-                    50,  // Admission No
-                    110, // Student Name
-                    70,  // Department
-                    60,  // Course
-                    80   // Attendance Status
-                ];
-                const tableHeaders = [
-                    { label: 'Membership No.', padding: 3 },
-                    { label: 'Admission No', padding: 5 },
-                    { label: 'Student Name', padding: 5 },
-                    { label: 'Department', padding: 5 },
-                    { label: 'Course', padding: 5 },
-                    { label: 'Attendance Status', padding: 5 }
-                ];
-                const tableData = students.map(student => [student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
+//                 const students = sessionInfo;
+//                 const columnWidths = [
+//                     90,  // Membership No.
+//                     50,  // Admission No
+//                     110, // Student Name
+//                     70,  // Department
+//                     60,  // Course
+//                     80   // Attendance Status
+//                 ];
+//                 const tableHeaders = [
+//                     { label: 'Membership No.', padding: 3 },
+//                     { label: 'Admission No', padding: 5 },
+//                     { label: 'Student Name', padding: 5 },
+//                     { label: 'Department', padding: 5 },
+//                     { label: 'Course', padding: 5 },
+//                     { label: 'Attendance Status', padding: 5 }
+//                 ];
+//                 const tableData = students.map(student => [student.membership_no, student.admNo, student.studName, student.studDept, student.course, student.attendanceStatus]);
 
-                doc.table({
-                    headers: tableHeaders,
-                    rows: tableData,
-                    widths: columnWidths,
-                    align: ['left', 'left', 'left', 'left', 'left', 'left'],
-                    headerStyles: {
-                        0: { fontSize: 8 },
-                        1: { fontSize: 8 },
-                        2: { fontSize: 8 },
-                        3: { fontSize: 8 },
-                        4: { fontSize: 8 },
-                        5: { fontSize: 8 }
-                    },
-                    bodyStyles: {
-                        0: { fontSize: 8 },
-                        1: { fontSize: 8 },
-                        2: { fontSize: 8 },
-                        3: { fontSize: 8 },
-                        4: { fontSize: 8 },
-                        5: { fontSize: 8 }
-                    }
-                });
+//                 doc.table({
+//                     headers: tableHeaders,
+//                     rows: tableData,
+//                     widths: columnWidths,
+//                     align: ['left', 'left', 'left', 'left', 'left', 'left'],
+//                     headerStyles: {
+//                         0: { fontSize: 8 },
+//                         1: { fontSize: 8 },
+//                         2: { fontSize: 8 },
+//                         3: { fontSize: 8 },
+//                         4: { fontSize: 8 },
+//                         5: { fontSize: 8 }
+//                     },
+//                     bodyStyles: {
+//                         0: { fontSize: 8 },
+//                         1: { fontSize: 8 },
+//                         2: { fontSize: 8 },
+//                         3: { fontSize: 8 },
+//                         4: { fontSize: 8 },
+//                         5: { fontSize: 8 }
+//                     }
+//                 });
 
-                doc.moveDown(2);
-            }
-        }
+//                 doc.moveDown(2);
+//             }
+//         }
 
-        currentY = doc.y;
-    }
+//         currentY = doc.y;
+//     }
 
-    const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(8).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
-        align: 'center',
-    });
+//     const generatedDate = new Date();
+//     doc.font('Helvetica').fontSize(8).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
+//         align: 'center',
+//     });
 
-    doc.end();
+//     doc.end();
 
-    stream.on('finish', () => {
-        callback(pdfPath);
-    });
-}
+//     stream.on('finish', () => {
+//         callback(pdfPath);
+//     });
+// }
 
-function groupAttendanceBySession(data) {
-    const groupedData = {};
-    data.forEach(student => {
-        const sessionName = student.sessionName;
-        if (!groupedData[sessionName]) {
-            groupedData[sessionName] = [];
-        }
-        groupedData[sessionName].push(student);
-    });
-    return groupedData;
-}
+// function groupAttendanceBySession(data) {
+//     const groupedData = {};
+//     data.forEach(student => {
+//         const sessionName = student.sessionName;
+//         if (!groupedData[sessionName]) {
+//             groupedData[sessionName] = [];
+//         }
+//         groupedData[sessionName].push(student);
+//     });
+//     return groupedData;
+// }
 
-function getMaxRows(availableHeight) {
-    const rowHeight = 20;
-    return Math.floor(availableHeight / rowHeight);
-}
+// function getMaxRows(availableHeight) {
+//     const rowHeight = 20;
+//     return Math.floor(availableHeight / rowHeight);
+// }
 
 
 

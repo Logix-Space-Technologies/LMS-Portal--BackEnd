@@ -114,6 +114,11 @@ const CollegeStaffViewBatch = () => {
   };
 
 
+  const attendancePDFClick = (id) => {
+    navigate("/")
+    sessionStorage.setItem("clgstaffpdfid", id)
+  }
+
 
   const batchClick = (id) => {
     navigate("/clgstaffviewsession")
@@ -159,7 +164,7 @@ const CollegeStaffViewBatch = () => {
                       <h1 style={{ fontWeight: 'bold', fontSize: '40px' }}>Batch Details</h1>
                     </div>
                     <div className="col-6 text-end">
-                      {!loading && currentBatch.length > 0 && <button className='btn btn-primary' onClick={()=> navigate("/clgstaffdownloadbatchwisestudlist")} disabled={studentCount === 0}>
+                      {!loading && currentBatch.length > 0 && <button className='btn btn-primary' onClick={() => navigate("/clgstaffdownloadbatchwisestudlist")} disabled={studentCount === 0}>
                         Download Batch-Wise Student List PDF
                       </button>}
                     </div>
@@ -192,7 +197,7 @@ const CollegeStaffViewBatch = () => {
                                 <p className="card-text">Added Date: {batch.addedDate}</p><br />
                                 <button
                                   className='btn btn-primary'
-                                  onClick={() => { attendancePdfGenerate(batch.id) }}
+                                  onClick={() => { attendancePDFClick(batch.id) }}
                                   style={{ marginLeft: '5px' }}
                                   disabled={batch.sessionCount === 0} // Disable button if sessionCount is 0
                                 >
