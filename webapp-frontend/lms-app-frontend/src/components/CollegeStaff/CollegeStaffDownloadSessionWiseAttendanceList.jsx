@@ -135,48 +135,45 @@ const CollegeStaffDownloadSessionWiseAttendanceList = () => {
                                     <div ref={pdfContentRef}>
                                         <img width="200px" src='/logo.png' alt="" />
                                         <p style={{ textAlign: "center", fontSize: "24px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Batch-Wise List Of Students</p>
-                                        <p style={{ textAlign: "center", fontSize: "20px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>{batchName}</p>
+                                        <p style={{ textAlign: "center", fontSize: "20px", fontWeight: 'bold', textDecoration: "underline" }}>{batchName}</p>
                                         <br />
-                                        {Object.keys(groupedData).map(sessionName => (
-                                            <div key={sessionName}>
-                                                {groupedData[sessionName].map((data, index) => {
-                                                    // Extract attendanceDate from the first element in the grouped data array
-                                                    const attendanceDate = data.attendanceDate;
-                                                    return (
-                                                        <div key={index}>
-                                                            <p style={{ textAlign: "center", fontSize: "20px", fontWeight: "bold", marginBottom: '10px', textDecoration: "underline" }}>
-                                                                {sessionName} - {attendanceDate}
-                                                            </p>
-                                                            <br />
-                                                            <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th style={{ border: '1px solid black', padding: '8px' }}>Membership No</th>
-                                                                        <th style={{ border: '1px solid black', padding: '8px' }}>Name</th>
-                                                                        <th style={{ border: '1px solid black', padding: '8px' }}>Roll No</th>
-                                                                        <th style={{ border: '1px solid black', padding: '8px' }}>Department</th>
-                                                                        <th style={{ border: '1px solid black', padding: '8px' }}>Course</th>
-                                                                        <th style={{ border: '1px solid black', padding: '8px' }}>Attendance Status</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {groupedData[sessionName].map((student, index) => (
-                                                                        <tr key={index}>
-                                                                            <td style={{ border: '1px solid black', padding: '8px' }}>{student.membership_no}</td>
-                                                                            <td style={{ border: '1px solid black', padding: '8px' }}>{student.studName}</td>
-                                                                            <td style={{ border: '1px solid black', padding: '8px' }}>{student.rollNo}</td>
-                                                                            <td style={{ border: '1px solid black', padding: '8px' }}>{student.studDept}</td>
-                                                                            <td style={{ border: '1px solid black', padding: '8px' }}>{student.course}</td>
-                                                                            <td style={{ border: '1px solid black', padding: '8px' }}>{student.attendanceStatus}</td>
-                                                                        </tr>
-                                                                    ))}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        ))}
+                                        {Object.keys(groupedData).map(sessionName => {
+                                            // Extract attendanceDate for the session
+                                            const sessionData = groupedData[sessionName];
+                                            const attendanceDate = sessionData[0].attendanceDate; // Assuming attendanceDate is the same for all students in the session
+                                            return (
+                                                <div key={sessionName}>
+                                                    <p style={{ textAlign: "center", fontSize: "20px", fontWeight: "bold", marginBottom: '10px', textDecoration: "underline" }}>
+                                                        {sessionName} - {attendanceDate}
+                                                    </p>
+                                                    <br />
+                                                    <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                                                        <thead>
+                                                            <tr>
+                                                                <th style={{ border: '1px solid black', padding: '8px' }}>Membership No</th>
+                                                                <th style={{ border: '1px solid black', padding: '8px' }}>Name</th>
+                                                                <th style={{ border: '1px solid black', padding: '8px' }}>Roll No</th>
+                                                                <th style={{ border: '1px solid black', padding: '8px' }}>Department</th>
+                                                                <th style={{ border: '1px solid black', padding: '8px' }}>Course</th>
+                                                                <th style={{ border: '1px solid black', padding: '8px' }}>Attendance Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {sessionData.map((student, index) => (
+                                                                <tr key={index}>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.membership_no}</td>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.studName}</td>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.rollNo}</td>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.studDept}</td>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.course}</td>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.attendanceStatus}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table><br />
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>
