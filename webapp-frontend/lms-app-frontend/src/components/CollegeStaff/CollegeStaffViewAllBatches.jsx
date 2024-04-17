@@ -19,7 +19,6 @@ const CollegeStaffViewBatch = () => {
   let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
   const apiUrl = global.config.urls.api.server + "/api/lms/collegeStaffViewBatch";
-  const apiUrl3 = global.config.urls.api.server + "/api/lms/generateAttendancePdf"
   const token = sessionStorage.getItem("clgstaffLogintoken");
   const collegeId = sessionStorage.getItem("clgStaffCollegeId");
   const navigate = useNavigate()
@@ -76,47 +75,10 @@ const CollegeStaffViewBatch = () => {
   };
 
 
-
-
-  const attendancePdfGenerate = async (id) => {
-    const data = { "batchId": id };
-    const axiosConfig3 = {
-      headers: {
-        "Content-Type": "application/json",
-        "token": token,
-        "key": sessionStorage.getItem("clgstaffkey")
-      },
-      responseType: 'blob', // Set responseType to 'blob' for PDF
-    };
-
-    const response = await axios.post(apiUrl3, data, axiosConfig3);
-
-    // Attempt to read the response as a blob, but check for an error message
-    const reader = new FileReader();
-    reader.readAsText(response.data);
-    reader.onloadend = () => {
-      try {
-        const obj = JSON.parse(reader.result);
-        // Check for unauthorized access or other errors based on your backend response structure
-        if (obj.status === "Unauthorized User!!") {
-          sessionStorage.clear();
-          navigate("/clgStafflogin");
-        } else {
-          alert(obj.status)
-        }
-      } catch (error) {
-        // If parsing throws, it's likely a PDF blob
-        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-        window.open(URL.createObjectURL(pdfBlob), '_blank');
-      }
-    };
-
-  };
-
-
-  const attendancePDFClick = (id) => {
+  const attendancePDFClick = (id, batchName) => {
     navigate("/")
-    sessionStorage.setItem("clgstaffpdfid", id)
+    sessionStorage.setItem("clgstaffattendancepdfbatchid", id)
+    sessionStorage.setItem("clgstaffattendancepdfbatchName", batchName)
   }
 
 
@@ -197,7 +159,7 @@ const CollegeStaffViewBatch = () => {
                                 <p className="card-text">Added Date: {batch.addedDate}</p><br />
                                 <button
                                   className='btn btn-primary'
-                                  onClick={() => { attendancePDFClick(batch.id) }}
+                                  onClick={() => { attendancePDFClick(batch.id, batch.batchName) }}
                                   style={{ marginLeft: '5px' }}
                                   disabled={batch.sessionCount === 0} // Disable button if sessionCount is 0
                                 >
