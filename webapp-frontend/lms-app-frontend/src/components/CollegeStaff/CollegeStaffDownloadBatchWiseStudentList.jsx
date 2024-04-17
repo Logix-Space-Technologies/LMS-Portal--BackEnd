@@ -167,7 +167,7 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
                                                             </tr>
                                                         ))}
                                                     </tbody>
-                                                </table>
+                                                </table><br />
                                             </div>
                                         ))}
                                     </div>

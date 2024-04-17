@@ -134,7 +134,7 @@ const CollegeStaffDownloadSessionWiseAttendanceList = () => {
                                     <div></div><div></div>
                                     <div ref={pdfContentRef}>
                                         <img width="200px" src='/logo.png' alt="" />
-                                        <p style={{ textAlign: "center", fontSize: "24px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Batch-Wise List Of Students</p>
+                                        <p style={{ textAlign: "center", fontSize: "22px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Batch-Wise Attendance List Of Students</p>
                                         <p style={{ textAlign: "center", fontSize: "20px", fontWeight: 'bold', textDecoration: "underline" }}>{batchName}</p>
                                         <br />
                                         {Object.keys(groupedData).map(sessionName => {
@@ -143,7 +143,7 @@ const CollegeStaffDownloadSessionWiseAttendanceList = () => {
                                             const attendanceDate = sessionData[0].attendanceDate; // Assuming attendanceDate is the same for all students in the session
                                             return (
                                                 <div key={sessionName}>
-                                                    <p style={{ textAlign: "center", fontSize: "20px", fontWeight: "bold", marginBottom: '10px', textDecoration: "underline" }}>
+                                                    <p style={{ textAlign: "center", fontSize: "18px", fontWeight: "bold", marginBottom: '10px', textDecoration: "underline" }}>
                                                         {sessionName} - {attendanceDate}
                                                     </p>
                                                     <br />
