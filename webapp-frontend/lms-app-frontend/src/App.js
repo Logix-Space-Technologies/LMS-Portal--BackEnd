@@ -114,6 +114,8 @@ import AdminViewMsgReceived from './components/Admin/AdminViewMsgReceived';
 import CollegeStaffViewScore from './components/CollegeStaff/CollegeStaffViewScore';
 import AdminViewOverallBatchPerformance from './components/Admin/AdminViewOverallBatchPerformance';
 import ClgStaffViewScoreStudentWise from './components/CollegeStaff/ClgStaffViewScoreStudentWise';
+import CollegeStaffDownloadBatchWiseStudentList from './components/CollegeStaff/CollegeStaffDownloadBatchWiseStudentList';
+import CollegeStaffDownloadSessionWiseAttendanceList from './components/CollegeStaff/CollegeStaffDownloadSessionWiseAttendanceList';
 
 
 
@@ -228,6 +230,8 @@ function App() {
           <Route path='/collegestaffforgotpass' element={<CollegeStaffForgotPassword/>}/>
           <Route path='/collegestaffviewscore' element={<CollegeStaffViewScore/>}/>
           <Route path='/clgstaffstudentviewscore' element={<ClgStaffViewScoreStudentWise/>}/>
+          <Route path='/clgstaffdownloadbatchwisestudlist' element={<CollegeStaffDownloadBatchWiseStudentList/>}/>
+          <Route path='/clgstaffdownloadbatchwiseattendancelist' element={<CollegeStaffDownloadSessionWiseAttendanceList/>}/>
 
 
 
