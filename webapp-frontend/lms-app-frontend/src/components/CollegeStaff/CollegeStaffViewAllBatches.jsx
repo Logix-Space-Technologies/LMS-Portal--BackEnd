@@ -76,7 +76,7 @@ const CollegeStaffViewBatch = () => {
 
 
   const attendancePDFClick = (id, batchName) => {
-    navigate("/")
+    navigate("/clgstaffdownloadbatchwiseattendancelist")
     sessionStorage.setItem("clgstaffattendancepdfbatchid", id)
     sessionStorage.setItem("clgstaffattendancepdfbatchName", batchName)
   }
