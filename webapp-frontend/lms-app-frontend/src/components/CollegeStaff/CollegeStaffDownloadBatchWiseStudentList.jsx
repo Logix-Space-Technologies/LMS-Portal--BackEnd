@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
-import html2pdf from 'html2pdf.js'
+import React, { useEffect, useRef, useState } from 'react';
+import html2pdf from 'html2pdf.js';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
 const CollegeStaffDownloadBatchWiseStudentList = () => {
     const pdfContentRef = useRef(null);
-    const [batchPDFData, setBatchPDFData] = useState([])
-    const navigate = useNavigate()
+    const [batchPDFData, setBatchPDFData] = useState([]);
+    const navigate = useNavigate();
 
     const apiUrl = global.config.urls.api.server + "/api/lms/generatePdf";
 
@@ -16,7 +16,7 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
     const getBatchPDFData = () => {
         const data = {
             "collegeId": collegeId
-        }
+        };
         let axiosConfig2 = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
@@ -28,26 +28,25 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
 
         axios.post(apiUrl, data, axiosConfig2).then((response) => {
             if (response.data.data) {
-                console.log(response.data.data)
-                setBatchPDFData(response.data.data)
+                console.log(response.data.data);
+                setBatchPDFData(response.data.data);
             } else if (response.data.status === "Unauthorized User!!") {
-                sessionStorage.clear()
-                navigate("/clgStafflogin")
+                sessionStorage.clear();
+                navigate("/clgStafflogin");
             } else if (!response.data.data) {
-                setBatchPDFData([])
-                alert("No Data Available !!!")
+                setBatchPDFData([]);
+                alert("No Data Available !!!");
             } else {
-                alert(response.data.status)
+                alert(response.data.status);
             }
-        })
-
-    }
+        });
+    };
 
     const generatePDF = async () => {
         const element = pdfContentRef.current;
 
         // Fetch image data asynchronously
-        const imageUrl = "https://linkurcodes.com/images/logo.png";
+        const imageUrl = '/logo.png';
         const imageData = await fetch(imageUrl)
             .then(response => response.blob())
             .then(blob => new Promise((resolve, reject) => {
@@ -65,21 +64,57 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
 
         // Options for PDF generation
         const opt = {
-            margin: 1,
+            margin: 0.4,
             filename: 'batch_wise_students_list.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true }, // Add useCORS: true option here
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            jsPDF: { unit: 'in', format: 'A4', orientation: 'portrait' }
         };
 
         // Generate PDF with content
         html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
             pdf.addImage(imageData, 'JPEG', 10, 10, 50, 50); // Add the image at specified coordinates
-            pdf.save();
+
+            // Add Generated on information
+            const generatedDate = new Date();
+            const generatedOnText = 'Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' });
+            const fontSize = 10; // Font size
+            const textWidth = pdf.getStringUnitWidth(generatedOnText) * fontSize / pdf.internal.scaleFactor;
+            const textHeight = pdf.internal.getLineHeight() / pdf.internal.scaleFactor;
+            const pageSize = pdf.internal.pageSize;
+            const textX = (pageSize.width - textWidth) / 2;
+            const textY = pageSize.height - textHeight - 10;
+
+            // Calculate content height
+            const contentHeight = element.clientHeight / pdf.internal.scaleFactor;
+
+            // Set the position of the "Generated on" information
+            const positionY = Math.max(contentHeight, textY);
+
+            // Set font size
+            pdf.setFontSize(fontSize);
+
+            pdf.text(generatedOnText, textX, positionY);
+
+            // Save PDF with specified filename
+            pdf.save('batch_wise_students_list.pdf');
         });
     };
 
-    useEffect(() => { getBatchPDFData() }, [])
+
+
+
+
+
+    const groupedData = {};
+    batchPDFData.forEach(student => {
+        if (!groupedData[student.batchName]) {
+            groupedData[student.batchName] = [];
+        }
+        groupedData[student.batchName].push(student);
+    });
+
+    useEffect(() => { getBatchPDFData() }, []);
 
     return (
         <div>
@@ -97,31 +132,39 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
                                         </div>
                                     </div>
                                     <div ref={pdfContentRef}>
-                                        <img src="https://linkurcodes.com/images/logo.png" alt="" />
-                                        <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-                                            <thead>
-                                                <tr>
-                                                    <th style={{ border: '1px solid black', padding: '8px' }}>Membership No</th>
-                                                    <th style={{ border: '1px solid black', padding: '8px' }}>Name</th>
-                                                    <th style={{ border: '1px solid black', padding: '8px' }}>Roll No</th>
-                                                    <th style={{ border: '1px solid black', padding: '8px' }}>Department</th>
-                                                    <th style={{ border: '1px solid black', padding: '8px' }}>Course</th>
-                                                    <th style={{ border: '1px solid black', padding: '8px' }}>Email</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {batchPDFData.map((student, index) => (
-                                                    <tr key={index}>
-                                                        <td style={{ border: '1px solid black', padding: '8px' }}>{student.membership_no}</td>
-                                                        <td style={{ border: '1px solid black', padding: '8px' }}>{student.studName}</td>
-                                                        <td style={{ border: '1px solid black', padding: '8px' }}>{student.rollNo}</td>
-                                                        <td style={{ border: '1px solid black', padding: '8px' }}>{student.studDept}</td>
-                                                        <td style={{ border: '1px solid black', padding: '8px' }}>{student.course}</td>
-                                                        <td style={{ border: '1px solid black', padding: '8px' }}>{student.studEmail}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                        <img width="200px" src='/logo.png' alt="" />
+                                        <p style={{ textAlign: "center", fontSize: "24px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Batch-Wise List Of Students</p>
+                                        <br />
+                                        {Object.keys(groupedData).map(batchName => (
+                                            <div key={batchName}>
+                                                <p style={{ textAlign: "center", fontSize: "20px", fontWeight: "bold", marginBottom: '10px', textDecoration: "underline" }}>{batchName}</p>
+                                                <br />
+                                                <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                                                    <thead>
+                                                        <tr>
+                                                            <th style={{ border: '1px solid black', padding: '8px' }}>Membership No</th>
+                                                            <th style={{ border: '1px solid black', padding: '8px' }}>Name</th>
+                                                            <th style={{ border: '1px solid black', padding: '8px' }}>Roll No</th>
+                                                            <th style={{ border: '1px solid black', padding: '8px' }}>Department</th>
+                                                            <th style={{ border: '1px solid black', padding: '8px' }}>Course</th>
+                                                            <th style={{ border: '1px solid black', padding: '8px' }}>Email</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {groupedData[batchName].map((student, index) => (
+                                                            <tr key={index}>
+                                                                <td style={{ border: '1px solid black', padding: '8px' }}>{student.membership_no}</td>
+                                                                <td style={{ border: '1px solid black', padding: '8px' }}>{student.studName}</td>
+                                                                <td style={{ border: '1px solid black', padding: '8px' }}>{student.rollNo}</td>
+                                                                <td style={{ border: '1px solid black', padding: '8px' }}>{student.studDept}</td>
+                                                                <td style={{ border: '1px solid black', padding: '8px' }}>{student.course}</td>
+                                                                <td style={{ border: '1px solid black', padding: '8px' }}>{student.studEmail}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -130,7 +173,7 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default CollegeStaffDownloadBatchWiseStudentList
+export default CollegeStaffDownloadBatchWiseStudentList;
