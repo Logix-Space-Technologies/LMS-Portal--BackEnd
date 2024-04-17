@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import ClgStaffNavbar from './ClgStaffNavbar';
 
 const CollegeStaffViewTask = () => {
     const [taskData, setTaskData] = useState([])
@@ -78,6 +79,7 @@ const CollegeStaffViewTask = () => {
 
     return (
         <div>
+            <ClgStaffNavbar /><br />
             {/* ====== Table Section Start */}
             <section className="bg-gray-100 dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">

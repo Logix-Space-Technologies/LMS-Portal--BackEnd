@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import html2pdf from 'html2pdf.js';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import ClgStaffNavbar from './ClgStaffNavbar';
 
 const CollegeStaffDownloadBatchWiseStudentList = () => {
     const pdfContentRef = useRef(null);
@@ -118,6 +119,7 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
 
     return (
         <div>
+            <ClgStaffNavbar />
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">
@@ -128,11 +130,12 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
                                         <div className="flex space-x-4">
                                             <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
                                         </div>
-                                        <strong style={{ textAlign: "center", fontSize: "24px" }}></strong>
+                                        <strong style={{ textAlign: "center", fontSize: "24px" }}>Download Preview Of Batch-Wise Student List</strong>
                                         <div>
                                             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{marginRight: "30px"}} onClick={generatePDF}>Download PDF</button>
                                         </div>
                                     </div>
+                                    <div></div><div></div>
                                     <div ref={pdfContentRef}>
                                         <img width="200px" src='/logo.png' alt="" />
                                         <p style={{ textAlign: "center", fontSize: "24px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Batch-Wise List Of Students</p>

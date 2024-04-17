@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../config/config';
 import { Link, useNavigate } from 'react-router-dom';
+import ClgStaffNavbar from './ClgStaffNavbar';
 
 const CollegeStaffViewAllStudents = () => {
   const [students, setStudents] = useState([]);
@@ -77,6 +78,7 @@ const CollegeStaffViewAllStudents = () => {
 
   return (
     <div>
+      <ClgStaffNavbar />
       <br /><br />
       <div className="flex justify-between items-center mt-8 ml-4 mb-4">
         <h2 className="text-lg font-bold">College Staff View All Students</h2>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import ClgStaffNavbar from './ClgStaffNavbar';
 
 const CollegeStaffViewSession = () => {
     const [sessionData, setSessionData] = useState([])
@@ -151,6 +152,7 @@ const CollegeStaffViewSession = () => {
     return (
         <div>
             <div>
+                <ClgStaffNavbar />
                 <br />
                 <br />
                 <div className="flex justify-between items-center mt-8 ml-4 mb-4">
