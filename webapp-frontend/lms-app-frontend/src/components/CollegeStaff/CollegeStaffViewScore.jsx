@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../Admin/Navbar';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import ClgStaffNavbar from './ClgStaffNavbar';
 
 const CollegeStaffViewScore = () => {
 
@@ -146,7 +147,7 @@ const CollegeStaffViewScore = () => {
 
     return (
         <div>
-            {key === 'lmsappclgstaff' ? '' : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
+            {key === 'lmsappclgstaff' ? <ClgStaffNavbar /> : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
             {/* ====== Table Section Start */}
             <section className="bg-gray-100 dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
