@@ -124,11 +124,13 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
                         <div className="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-9 col-xxl-8">
                             <div className="bg-white p-4 p-md-5 rounded shadow-sm">
                                 <div className="row gy-3 gy-md-4 overflow-hidden">
-                                    <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                                        <h2 className="text-lg font-bold">College Staff View Students Batch Wise List</h2>
+                                    <div className="flex justify-between items-center mx-4 my-4">
                                         <div className="flex space-x-4">
-                                            <Link to="/collegeStaffViewBatch" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
-                                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={generatePDF}>Download PDF</button>
+                                            <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+                                        </div>
+                                        <strong style={{ textAlign: "center", fontSize: "24px" }}></strong>
+                                        <div>
+                                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{marginRight: "30px"}} onClick={generatePDF}>Download PDF</button>
                                         </div>
                                     </div>
                                     <div ref={pdfContentRef}>
