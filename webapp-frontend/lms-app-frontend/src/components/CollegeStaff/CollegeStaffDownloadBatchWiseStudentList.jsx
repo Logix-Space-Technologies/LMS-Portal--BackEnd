@@ -3,6 +3,7 @@ import html2pdf from 'html2pdf.js';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ClgStaffNavbar from './ClgStaffNavbar';
+import '../../config/config'
 
 const CollegeStaffDownloadBatchWiseStudentList = () => {
     const pdfContentRef = useRef(null);
