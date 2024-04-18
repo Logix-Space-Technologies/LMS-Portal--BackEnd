@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import ClgStaffNavbar from './ClgStaffNavbar';
 import Navbar from '../Admin/Navbar';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import axios from 'axios';
+import '../../config/config'
+import html2pdf from 'html2pdf.js';
 
 const ClgStaffDownloadScorePDF = () => {
     const pdfContentRef = useRef(null);
@@ -148,13 +151,12 @@ const ClgStaffDownloadScorePDF = () => {
                                     <div ref={pdfContentRef}>
                                         <img width="200px" src='/logo.png' alt="" />
                                         <p style={{ textAlign: "center", fontSize: "22px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Task-Wise Score List Of Students</p>
-                                        <p style={{ textAlign: "center", fontSize: "20px", fontWeight: 'bold', textDecoration: "underline" }}>{batchName}</p>
                                         <br />
                                         {Object.keys(groupedData).map(taskName => {
                                             return (
-                                                <div key={sessionName}>
+                                                <div key={taskName}>
                                                     <p style={{ textAlign: "center", fontSize: "18px", fontWeight: "bold", marginBottom: '10px', textDecoration: "underline" }}>
-                                                        {taskName}
+                                                        Task Name: {taskName}
                                                     </p>
                                                     <br />
                                                     <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -167,7 +169,7 @@ const ClgStaffDownloadScorePDF = () => {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {sessionData.map((student, index) => (
+                                                            {scorePDFData.map((student, index) => (
                                                                 <tr key={index}>
                                                                     <td style={{ border: '1px solid black', padding: '8px' }}>{student.membership_no}</td>
                                                                     <td style={{ border: '1px solid black', padding: '8px' }}>{student.studName}</td>
