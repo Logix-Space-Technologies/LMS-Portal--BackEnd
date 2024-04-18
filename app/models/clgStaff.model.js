@@ -571,8 +571,8 @@ CollegeStaff.forgotPassGenerateAndHashOTP = (email, result) => {
                             const timeDiffInSeconds = (currentTime - lastOTPTime) / 1000; // Calculate time difference in seconds
 
                             if (timeDiffInSeconds < 120) {
-                                console.log("Please wait for 120 seconds before sending OTP again");
-                                return result("Please wait for 120 seconds before sending OTP again", null);
+                                console.log("Please wait for 2 minutes before sending OTP again");
+                                return result("Please wait for 2 minutes before sending OTP again", null);
                             }
 
                             // Email exists, so update the OTP
