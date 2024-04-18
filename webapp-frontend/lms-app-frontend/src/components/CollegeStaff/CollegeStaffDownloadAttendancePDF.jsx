@@ -1,23 +1,24 @@
-import React, { useEffect, useRef, useState } from 'react';
-import html2pdf from 'html2pdf.js';
-import axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import ClgStaffNavbar from './ClgStaffNavbar';
 import '../../config/config'
+import html2pdf from 'html2pdf.js';
+import axios from 'axios';
 
-const CollegeStaffDownloadBatchWiseStudentList = () => {
+const CollegeStaffDownloadAttendancePDF = () => {
     const pdfContentRef = useRef(null);
-    const [batchPDFData, setBatchPDFData] = useState([]);
+    const [sessionPDFData, setSessionPDFData] = useState([]);
     const navigate = useNavigate();
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/generatePdf";
+    const apiUrl = global.config.urls.api.server + "/api/lms/GenerateSessionWiseAttendancePdf";
 
-    const collegeId = sessionStorage.getItem("clgStaffCollegeId");
+    const batchName = sessionStorage.getItem("clgstaffattendancepdfbatchName");
+    const sessionId = sessionStorage.getItem("downloadattendanceid");
     const token = sessionStorage.getItem("clgstaffLogintoken");
 
-    const getBatchPDFData = () => {
+    const getSessionPDFData = () => {
         const data = {
-            "collegeId": collegeId
+            "sessionId": sessionId
         };
         let axiosConfig2 = {
             headers: {
@@ -31,12 +32,12 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
         axios.post(apiUrl, data, axiosConfig2).then((response) => {
             if (response.data.data) {
                 console.log(response.data.data);
-                setBatchPDFData(response.data.data);
+                setSessionPDFData(response.data.data);
             } else if (response.data.status === "Unauthorized User!!") {
                 sessionStorage.clear();
                 navigate("/clgStafflogin");
             } else if (!response.data.data) {
-                setBatchPDFData([]);
+                setSessionPDFData([]);
                 alert("No Data Available !!!");
             } else {
                 alert(response.data.status);
@@ -67,7 +68,7 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
         // Options for PDF generation
         const opt = {
             margin: 0.4,
-            filename: 'batch_wise_students_list.pdf',
+            filename: 'session_wise_attendance_list.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true }, // Add useCORS: true option here
             jsPDF: { unit: 'in', format: 'A4', orientation: 'portrait' }
@@ -99,25 +100,20 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
             pdf.text(generatedOnText, textX, positionY);
 
             // Save PDF with specified filename
-            pdf.save('batch_wise_students_list.pdf');
+            pdf.save('session_wise_attendance_list.pdf');
         });
     };
 
 
-
-
-
-
     const groupedData = {};
-    batchPDFData.forEach(student => {
-        if (!groupedData[student.batchName]) {
-            groupedData[student.batchName] = [];
+    sessionPDFData.forEach(student => {
+        if (!groupedData[student.sessionName]) {
+            groupedData[student.sessionName] = [];
         }
-        groupedData[student.batchName].push(student);
+        groupedData[student.sessionName].push(student);
     });
 
-    useEffect(() => { getBatchPDFData() }, []);
-
+    useEffect(() => { getSessionPDFData() }, []);
     return (
         <div>
             <ClgStaffNavbar />
@@ -131,7 +127,7 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
                                         <div className="flex space-x-4">
                                             <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
                                         </div>
-                                        <strong style={{ textAlign: "center", fontSize: "24px" }}>Download Preview Of Batch-Wise Student List</strong>
+                                        <strong style={{ textAlign: "center", fontSize: "24px" }}>Download Preview Of Session-Wise Attendance List</strong>
                                         <div>
                                             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: "30px" }} onClick={generatePDF}>Download PDF</button>
                                         </div>
@@ -139,38 +135,46 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
                                     <div></div><div></div>
                                     <div ref={pdfContentRef}>
                                         <img width="200px" src='/logo.png' alt="" />
-                                        <p style={{ textAlign: "center", fontSize: "24px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Batch-Wise List Of Students</p>
+                                        <p style={{ textAlign: "center", fontSize: "22px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Session-Wise Attendance List Of Students</p>
+                                        <p style={{ textAlign: "center", fontSize: "20px", fontWeight: 'bold', textDecoration: "underline" }}>Batch Name: {batchName}</p>
                                         <br />
-                                        {Object.keys(groupedData).map(batchName => (
-                                            <div key={batchName}>
-                                                <p style={{ textAlign: "center", fontSize: "20px", fontWeight: "bold", marginBottom: '10px', textDecoration: "underline" }}>{batchName}</p>
-                                                <br />
-                                                <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-                                                    <thead>
-                                                        <tr>
-                                                            <th style={{ border: '1px solid black', padding: '8px' }}>Membership No</th>
-                                                            <th style={{ border: '1px solid black', padding: '8px' }}>Name</th>
-                                                            <th style={{ border: '1px solid black', padding: '8px' }}>Roll No</th>
-                                                            <th style={{ border: '1px solid black', padding: '8px' }}>Department</th>
-                                                            <th style={{ border: '1px solid black', padding: '8px' }}>Course</th>
-                                                            <th style={{ border: '1px solid black', padding: '8px' }}>Email</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {groupedData[batchName].map((student, index) => (
-                                                            <tr key={index}>
-                                                                <td style={{ border: '1px solid black', padding: '8px' }}>{student.membership_no}</td>
-                                                                <td style={{ border: '1px solid black', padding: '8px' }}>{student.studName}</td>
-                                                                <td style={{ border: '1px solid black', padding: '8px' }}>{student.rollNo}</td>
-                                                                <td style={{ border: '1px solid black', padding: '8px' }}>{student.studDept}</td>
-                                                                <td style={{ border: '1px solid black', padding: '8px' }}>{student.course}</td>
-                                                                <td style={{ border: '1px solid black', padding: '8px' }}>{student.studEmail}</td>
+                                        {Object.keys(groupedData).map(sessionName => {
+                                            // Extract attendanceDate for the session
+                                            const sessionData = groupedData[sessionName];
+                                            const attendanceDate = sessionData[0].attendanceDate; // Assuming attendanceDate is the same for all students in the session
+                                            return (
+                                                <div key={sessionName}>
+                                                    <p style={{ textAlign: "center", fontSize: "18px", fontWeight: "bold", marginBottom: '10px', textDecoration: "underline" }}>
+                                                        {sessionName} - {attendanceDate}
+                                                    </p>
+                                                    <br />
+                                                    <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                                                        <thead>
+                                                            <tr>
+                                                                <th style={{ border: '1px solid black', padding: '8px' }}>Membership No</th>
+                                                                <th style={{ border: '1px solid black', padding: '8px' }}>Name</th>
+                                                                <th style={{ border: '1px solid black', padding: '8px' }}>Roll No</th>
+                                                                <th style={{ border: '1px solid black', padding: '8px' }}>Department</th>
+                                                                <th style={{ border: '1px solid black', padding: '8px' }}>Course</th>
+                                                                <th style={{ border: '1px solid black', padding: '8px' }}>Attendance Status</th>
                                                             </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table><br />
-                                            </div>
-                                        ))}
+                                                        </thead>
+                                                        <tbody>
+                                                            {sessionData.map((student, index) => (
+                                                                <tr key={index}>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.membership_no}</td>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.studName}</td>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.rollNo}</td>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.studDept}</td>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.course}</td>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.attendanceStatus}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table><br />
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>
@@ -179,7 +183,7 @@ const CollegeStaffDownloadBatchWiseStudentList = () => {
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default CollegeStaffDownloadBatchWiseStudentList;
+export default CollegeStaffDownloadAttendancePDF

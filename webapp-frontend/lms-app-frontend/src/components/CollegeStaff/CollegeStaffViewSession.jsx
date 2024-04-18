@@ -19,7 +19,6 @@ const CollegeStaffViewSession = () => {
     const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/ClgStaffViewSession";
-    const apiUrl2 = global.config.urls.api.server + "/api/lms/GenerateSessionWiseAttendancePdf";
 
     const getData = () => {
         const data = { "batchId": sessionStorage.getItem("clgstaffbatchId") };
@@ -53,42 +52,6 @@ const CollegeStaffViewSession = () => {
         });
     };
 
-    const attendancePdfGenerate = async (id) => {
-
-        const data = { "sessionId": id };
-        const axiosConfig2 = {
-            headers: {
-                "Content-Type": "application/json",
-                "token": sessionStorage.getItem("clgstaffLogintoken"),
-                "key": sessionStorage.getItem("clgstaffkey")
-            },
-            responseType: 'blob', // Set responseType to 'blob' for PDF
-        };
-
-        const response = await axios.post(apiUrl2, data, axiosConfig2);
-
-        // Attempt to read the response as a blob, but check for an error message
-        const reader = new FileReader();
-        reader.readAsText(response.data);
-        reader.onloadend = () => {
-            try {
-                const obj = JSON.parse(reader.result);
-                // Check for unauthorized access or other errors based on your backend response structure
-                if (obj.status === "Unauthorized User!!") {
-                    sessionStorage.clear();
-                    navigate("/clgStafflogin");
-                } else {
-                    // If the backend sends a different type of JSON response, handle it here
-                    alert("Error: " + obj.status);
-                }
-            } catch (error) {
-                // If parsing throws, it's likely a PDF blob
-                const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-                window.open(URL.createObjectURL(pdfBlob), '_blank');
-            }
-        };
-    };
-
     function formatTime(timeString) {
         const options = { hour: '2-digit', minute: '2-digit', hour12: true };
         return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
@@ -97,6 +60,11 @@ const CollegeStaffViewSession = () => {
     const viewsessionId = (attendanceid) => {
         sessionStorage.setItem("viewattendanceid", attendanceid)
         navigate("/clgstaffviewattendance")
+    }
+
+    const downloadAttendancePDF = (attendanceid) => {
+        sessionStorage.setItem("downloadattendanceid", attendanceid)
+        navigate("/clgstaffdownloadsessionattendancelist")
     }
 
     const viewtasksessionId = (attendanceid) => {
@@ -240,7 +208,7 @@ const CollegeStaffViewSession = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.cancelStatus === "ACTIVE" && (
-                                                <button className="btn btn-primary" onClick={() => attendancePdfGenerate(value.id)} disabled={!sessionIsPast}>
+                                                <button className="btn btn-primary" onClick={() => downloadAttendancePDF(value.id)} disabled={!sessionIsPast}>
                                                     Download Attendance List PDF
                                                 </button>
                                             )}

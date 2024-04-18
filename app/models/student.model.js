@@ -799,7 +799,7 @@ Student.generateBatchWiseAttendanceList = (batchId, result) => {
 }
 
 Session.generateSessionAttendanceList = (sessionId, result) => {
-    let query = "SELECT b.batchName, st.sessionName, s.studName, c.collegeName, s.admNo, s.studDept, s.course, s.membership_no, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendanceStatus, st.date AS attendanceDate, s.addedDate FROM sessiondetails st JOIN attendence a ON st.id = a.sessionId JOIN student s ON s.id = a.studId JOIN batches b ON b.id = s.batchId JOIN college c ON s.collegeId = c.id WHERE s.isActive = 1 AND b.isActive = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 AND s.deleteStatus = 0 AND b.deleteStatus = 0 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= s.addedDate AND st.id = ? ORDER BY c.collegeName, b.id, s.id, a.sessionId;"
+    let query = "SELECT b.batchName, st.sessionName, s.studName, s.rollNo, c.collegeName, s.admNo, s.studDept, s.course, s.membership_no, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendanceStatus, st.date AS attendanceDate, s.addedDate FROM sessiondetails st JOIN attendence a ON st.id = a.sessionId JOIN student s ON s.id = a.studId JOIN batches b ON b.id = s.batchId JOIN college c ON s.collegeId = c.id WHERE s.isActive = 1 AND b.isActive = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.isPaid = 1 AND s.deleteStatus = 0 AND b.deleteStatus = 0 AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= s.addedDate AND st.id = ? ORDER BY c.collegeName, b.id, s.id, a.sessionId;"
 
     db.query(query, [sessionId], (err, response) => {
         if (err) {
