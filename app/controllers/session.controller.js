@@ -745,6 +745,25 @@ exports.sendRemainderMail = (request, response) => {
 
 }
 
+exports.viewSessionwisePerformance = (request, response) => {
+    const token = request.headers.token;
+    const key = request.headers.key;
+    const sessionId = request.body.sessionId;
 
-
-
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Session.viewSessionwisePerformance(sessionId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (!data || data.length === 0) {
+                    return response.json({ "status": "No data found" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+}
