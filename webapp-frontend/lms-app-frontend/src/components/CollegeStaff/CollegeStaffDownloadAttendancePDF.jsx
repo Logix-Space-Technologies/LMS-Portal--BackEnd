@@ -6,10 +6,10 @@ const CollegeStaffDownloadAttendancePDF = () => {
     const [sessionPDFData, setSessionPDFData] = useState([]);
     const navigate = useNavigate();
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/generateAttendancePdf"
+    const apiUrl = global.config.urls.api.server + "/api/lms/GenerateSessionWiseAttendancePdf"
 
     const batchName = sessionStorage.getItem("clgstaffattendancepdfbatchName");
-    const batchId = sessionStorage.getItem("clgstaffattendancepdfbatchid");
+    const sessionId = sessionStorage.getItem("clgstaffattendancepdfbatchid");
     const token = sessionStorage.getItem("clgstaffLogintoken");
 
     const getSessionPDFData = () => {
