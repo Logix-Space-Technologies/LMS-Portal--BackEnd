@@ -1454,14 +1454,7 @@ exports.generateTaskWiseScoreList = (request, response) => {
                 } else if (data.length === 0) { // Check if data is empty
                     return response.json({ "status": "No data found" }); // Return status if no data is available
                 } else {
-                    generateScoreListPDF(data, (pdfPath, pdfError) => {
-                        if (pdfError) {
-                            return response.json({ "status": pdfError });
-                        }
-                        response.setHeader('Content-Type', 'application/pdf');
-                        response.setHeader('Content-Disposition', 'attachment; filename=task_wise_score_list.pdf');
-                        fs.createReadStream(pdfPath).pipe(response);
-                    });
+                    return response.json({ "status": "success", "data": data });
                 }
             })
         } else {
@@ -1471,133 +1464,6 @@ exports.generateTaskWiseScoreList = (request, response) => {
 
 }
 
-function generateScoreListPDF(data, callback) {
-    const pdfPath = 'pdfFolder/task_wise_score_list.pdf';
-    let doc = new PDFDocument({ margin: 50, size: 'A4' });
-    const stream = fs.createWriteStream(pdfPath);
 
-    doc.pipe(stream);
-    const imageLogo = 'app/assets/logo.png';
-    const logoImage = doc.openImage(imageLogo);
-    const imageScale = 0.3;
-    doc.image(logoImage, (doc.page.width - logoImage.width * imageScale) / 2, 20, { width: logoImage.width * imageScale });
-
-    doc.moveDown(2);
-    doc.font('Helvetica-Bold').fontSize(14).text('Task-Wise Score List Of Students', {
-        align: 'center',
-        underline: true,
-        margin: { top: 30, bottom: 30 }
-    });
-    doc.text('\n');
-
-    const taskName = data.length > 0 ? data[0].taskName : '';
-    doc.font('Helvetica-Bold').fontSize(11).text(`Task Name: ${taskName}`, {
-        align: 'center',
-        underline: true,
-        margin: { bottom: 10 },
-    });
-    doc.moveDown(2);
-
-    const pageSize = 680; // Adjust based on your requirement
-
-    let currentY = 0;
-    let currentPage = 0;
-    let remainingData = [...data];
-
-    while (remainingData.length > 0) {
-        currentPage++;
-        if (currentPage > 1) {
-            doc.addPage();
-        }
-
-        // doc.font('Helvetica-Bold').fontSize(8).text(`Page ${currentPage}`, {
-        //     align: 'right',
-        //     underline: false,
-        //     margin: { bottom: 10 },
-        // });
-
-        const availableHeight = pageSize - currentY - 60; // Adjusted based on your layout
-        const pageData = remainingData.splice(0, getMaxRows(availableHeight));
-        const groupedData = groupScoreByTask(pageData);
-
-        for (const taskName in groupedData) {
-            if (groupedData.hasOwnProperty(taskName)) {
-                const TaskInfo = groupedData[taskName];
-
-                const students = TaskInfo;
-                const columnWidths = [
-                    90,  // Membership No.
-                    110, // Student Name
-                    70,  // Score
-                    60  // Total Score
-                ];
-                const tableHeaders = [
-                    { label: 'Membership No.', padding: 3 },
-                    { label: 'Student Name', padding: 5 },
-                    { label: 'Score', padding: 5 },
-                    { label: 'Total Score', padding: 5 }
-                ];
-                const tableData = students.map(student => [student.membership_no, student.studName, student.score, student.totalScore]);
-
-                doc.table({
-                    headers: tableHeaders,
-                    rows: tableData,
-                    widths: columnWidths,
-                    align: ['left', 'left', 'left', 'left'],
-                    // Custom styles for all columns
-                    headerStyles: {
-                        0: { fontSize: 8 }, // Membership No.
-                        1: { fontSize: 8 }, // Student Name
-						2: { fontSize: 8 }, // Score
-                        3: { fontSize: 8 } // Total Score
-                    },
-                    bodyStyles: {
-                        0: { fontSize: 8 }, // Membership No.
-                        1: { fontSize: 8 }, // Student Name
-						2: { fontSize: 8 }, // Score
-                        3: { fontSize: 8 } // Total Score
-                    }
-                });
-
-                doc.moveDown(2);
-            }
-        }
-
-        currentY = doc.y;
-    }
-
-    const generatedDate = new Date();
-    doc.font('Helvetica').fontSize(8).text('Generated on: ' + generatedDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' ' + generatedDate.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }), {
-        align: 'center',
-    });
-
-    doc.end();
-
-    stream.on('finish', () => {
-        callback(pdfPath);
-    });
-}
-
-
-
-
-
-
-function groupScoreByTask(data) {
-    const groupedData = {};
-    data.forEach(student => {
-        const taskName = student.taskName;
-        if (!groupedData[taskName]) {
-            groupedData[taskName] = [];
-        }
-        groupedData[taskName].push(student);
-    });
-    return groupedData;
-}
-
-function getMaxRows(availableHeight) {
-    const rowHeight = 20; // Adjust based on your layout
-    return Math.floor(availableHeight / rowHeight);
-}
 
 
