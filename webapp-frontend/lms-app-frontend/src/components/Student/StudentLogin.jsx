@@ -209,6 +209,7 @@ const StudentLogin = () => {
                     setState(true)
                 } else {
                     alert(response.data.status)
+                    setUpdateField({ "studEmail": "" })
                     setShowWaitingModal(true)
                     setShowOverlay(true);
                 }
