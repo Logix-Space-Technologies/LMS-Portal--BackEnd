@@ -127,7 +127,7 @@ const CollegeStaffDownloadAttendancePDF = () => {
                                         <div className="flex space-x-4">
                                             <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
                                         </div>
-                                        <strong style={{ textAlign: "center", fontSize: "24px" }}>Download Preview Of Session Attendance List</strong>
+                                        <strong style={{ textAlign: "center", fontSize: "24px" }}>Download Preview Of Session-Wise Attendance List</strong>
                                         <div>
                                             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: "30px" }} onClick={generatePDF}>Download PDF</button>
                                         </div>
@@ -135,7 +135,7 @@ const CollegeStaffDownloadAttendancePDF = () => {
                                     <div></div><div></div>
                                     <div ref={pdfContentRef}>
                                         <img width="200px" src='/logo.png' alt="" />
-                                        <p style={{ textAlign: "center", fontSize: "22px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Session Attendance List Of Students</p>
+                                        <p style={{ textAlign: "center", fontSize: "22px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Session-Wise Attendance List Of Students</p>
                                         <p style={{ textAlign: "center", fontSize: "20px", fontWeight: 'bold', textDecoration: "underline" }}>Batch Name: {batchName}</p>
                                         <br />
                                         {Object.keys(groupedData).map(sessionName => {

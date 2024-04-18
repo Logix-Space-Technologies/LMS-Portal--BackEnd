@@ -64,7 +64,7 @@ const CollegeStaffViewSession = () => {
 
     const downloadAttendancePDF = (attendanceid) => {
         sessionStorage.setItem("downloadattendanceid", attendanceid)
-        navigate("/clgstaffviewattendance")
+        navigate("/clgstaffdownloadsessionattendancelist")
     }
 
     const viewtasksessionId = (attendanceid) => {
