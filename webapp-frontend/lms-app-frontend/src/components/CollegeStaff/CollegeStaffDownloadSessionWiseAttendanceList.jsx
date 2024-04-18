@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import ClgStaffNavbar from './ClgStaffNavbar';
 import html2pdf from 'html2pdf.js';
+import '../../config/config'
 
 const CollegeStaffDownloadSessionWiseAttendanceList = () => {
     const pdfContentRef = useRef(null);
