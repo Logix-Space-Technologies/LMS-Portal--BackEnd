@@ -407,6 +407,18 @@ AdminStaff.forgotPassGenerateAndHashOTP = (Email, result) => {
                         return;
                     } else {
                         if (res.length > 0) {
+                            const lastOTPTime = new Date(res[0].createdAt).getTime(); // Get the time when OTP was last set
+                            const currentTime = new Date().getTime(); // Get current time
+                            const timeDiffInSeconds = (currentTime - lastOTPTime) / 1000; // Calculate time difference in seconds
+                            console.log(lastOTPTime)
+                            console.log(currentTime)
+                            console.log(timeDiffInSeconds)
+                            
+                            if (timeDiffInSeconds < 120) {
+                                console.log("Please wait for 120 seconds before setting OTP again");
+                                return result("Please wait for 120 seconds before setting OTP again", null);
+                            }
+                            
                             // Email exists, so update the OTP
                             const updateQuery = "UPDATE adminstaff_otp SET otp = ?, createdAt = NOW() WHERE BINARY email = ?";
                             db.query(

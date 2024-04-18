@@ -176,6 +176,7 @@ const AdminStaffLogin = () => {
                     setState(true)
                 } else {
                     alert(response.data.status)
+                    setUpdateField({"Email":""})
                     setShowWaitingModal(true)
                     setShowOverlay(true);
                 }
