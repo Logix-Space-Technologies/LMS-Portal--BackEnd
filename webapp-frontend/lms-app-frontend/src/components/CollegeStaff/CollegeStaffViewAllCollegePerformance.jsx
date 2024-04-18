@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import '../../config/config';
-import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import ClgStaffNavbar from './ClgStaffNavbar';
 import Navbar from '../Admin/Navbar';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
-import ClgStaffNavbar from './ClgStaffNavbar';
+import '../../config/config'
 
-const CollegeStaffViewScore = () => {
+const CollegeStaffViewAllCollegePerformance = () => {
 
     const [scoreData, setScoreData] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
@@ -19,15 +19,13 @@ const CollegeStaffViewScore = () => {
     let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
-
-    const apiurl = global.config.urls.api.server + "/api/lms/getTaskwiseScores"
+    const apiurl = global.config.urls.api.server + "/api/lms/viewPerformanceOfStudents"
 
     const navigate = useNavigate()
 
     const getData = () => {
         let data = {
-            "batchId": sessionStorage.getItem("viewScoreBatchId"),
-            "taskId": sessionStorage.getItem("viewScoreTaskId")
+            "collegeId": sessionStorage.getItem("ViewAllperformancecollegeId")
         }
         // Retrieve key and token from sessionStorage without providing the key
         let currentKey, token;
@@ -72,11 +70,6 @@ const CollegeStaffViewScore = () => {
         )
     }
 
-    const generatePDF = () => {
-        navigate("/clgstaffdownloadscorelist")
-    }
-
-
     // Logic for displaying current students
     const indexOfLastScore = currentPage * scoresPerPage;
     const indexOfFirstScore = indexOfLastScore - scoresPerPage;
@@ -96,7 +89,6 @@ const CollegeStaffViewScore = () => {
 
     useEffect(() => { getData() }, [])
 
-
     return (
         <div>
             {key === 'lmsappclgstaff' ? <ClgStaffNavbar /> : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
@@ -106,10 +98,9 @@ const CollegeStaffViewScore = () => {
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                                {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Scores</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Scores</h2> : <h2 className="text-lg font-bold">Admin Staff View Scores</h2>)}
+                                {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Performance</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Performance</h2> : <h2 className="text-lg font-bold">Admin Staff View Performance</h2>)}
                                 <div className="flex space-x-4">
                                     <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
-                                    <button type='button' onClick={() => generatePDF()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download Score List PDF</button>
                                 </div>
                             </div>
                             <br />
@@ -119,6 +110,12 @@ const CollegeStaffViewScore = () => {
                                         <tr className="text-center bg-primary">
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 S/L
+                                            </th>
+                                            <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                                                Batch Name
+                                            </th>
+                                            <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                                                Membership No
                                             </th>
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 Student Name
@@ -137,6 +134,12 @@ const CollegeStaffViewScore = () => {
                                                 return <tr key={index}>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {calculateSerialNumber(index)}
+                                                    </td>
+                                                    <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                        {value.batchName}
+                                                    </td>
+                                                    <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                        {value.membership_no}
                                                     </td>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.studName}
@@ -210,4 +213,4 @@ const CollegeStaffViewScore = () => {
     )
 }
 
-export default CollegeStaffViewScore
+export default CollegeStaffViewAllCollegePerformance
