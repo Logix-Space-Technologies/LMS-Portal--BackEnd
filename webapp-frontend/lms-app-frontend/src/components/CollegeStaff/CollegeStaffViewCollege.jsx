@@ -38,14 +38,20 @@ const CollegeStaffViewCollege = () => {
         )
     }
 
+    const taskScore = (id) => {
+        sessionStorage.setItem("ViewAllperformancecollegeId", id)
+        navigate("/clgStaffviewAllClgPerformance")
+    }
+
     useEffect(() => { getData() }, [])
+
     return (
         <div>
             <ClgStaffNavbar />
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
-                        
+
                         <br></br>
                         <strong>View College Details</strong>
                         <br></br>
@@ -76,12 +82,9 @@ const CollegeStaffViewCollege = () => {
                                                     <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Phone Number : {value.collegePhNo}</span></li>
                                                     <li className="mb-2 mb-xl-3 display-28"><span className="display-26 text-secondary me-2 font-weight-600">Email : {value.email}</span></li>
                                                 </ul>
-                                                <ul className="social-icon-style1 list-unstyled mb-0 ps-0">
-                                                    <li><a href="#!"><i className="ti-twitter-alt" /></a></li>
-                                                    <li><a href="#!"><i className="ti-facebook" /></a></li>
-                                                    <li><a href="#!"><i className="ti-pinterest" /></a></li>
-                                                    <li><a href="#!"><i className="ti-instagram" /></a></li>
-                                                </ul>
+                                                <button onClick={() => taskScore(value.id)} className="btn btn-primary" style={{ marginRight: '20px' }}>
+                                                    View Performance
+                                                </button>
                                             </div>
                                         </div>
                                     })}
