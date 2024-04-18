@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import ClgStaffNavbar from './ClgStaffNavbar';
 import Navbar from '../Admin/Navbar';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import '../../config/config'
 
 const CollegeStaffViewAllCollegePerformance = () => {
 
