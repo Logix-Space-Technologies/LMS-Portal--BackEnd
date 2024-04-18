@@ -168,6 +168,7 @@ const CollegeStaffLogin = () => {
                     setState(true)
                 } else {
                     alert(response.data.status)
+                    setUpdateField({ "email": "" })
                     setShowWaitingModal(true)
                     setShowOverlay(true);
                 }
