@@ -116,6 +116,7 @@ import AdminViewOverallBatchPerformance from './components/Admin/AdminViewOveral
 import ClgStaffViewScoreStudentWise from './components/CollegeStaff/ClgStaffViewScoreStudentWise';
 import CollegeStaffDownloadBatchWiseStudentList from './components/CollegeStaff/CollegeStaffDownloadBatchWiseStudentList';
 import CollegeStaffDownloadSessionWiseAttendanceList from './components/CollegeStaff/CollegeStaffDownloadSessionWiseAttendanceList';
+import CollegeStaffViewAllCollegePerformance from './components/CollegeStaff/CollegeStaffViewAllCollegePerformance';
 
 
 
@@ -232,6 +233,7 @@ function App() {
           <Route path='/clgstaffstudentviewscore' element={<ClgStaffViewScoreStudentWise/>}/>
           <Route path='/clgstaffdownloadbatchwisestudlist' element={<CollegeStaffDownloadBatchWiseStudentList/>}/>
           <Route path='/clgstaffdownloadbatchwiseattendancelist' element={<CollegeStaffDownloadSessionWiseAttendanceList/>}/>
+          <Route path='/clgStaffviewAllClgPerformance' element={<CollegeStaffViewAllCollegePerformance/>}/>
 
 
 
