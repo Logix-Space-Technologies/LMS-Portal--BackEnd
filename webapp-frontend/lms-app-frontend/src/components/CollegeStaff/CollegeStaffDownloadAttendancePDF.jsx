@@ -11,6 +11,8 @@ const CollegeStaffDownloadAttendancePDF = () => {
     const navigate = useNavigate();
 
     const apiUrl = global.config.urls.api.server + "/api/lms/GenerateSessionWiseAttendancePdf";
+
+    const batchName = sessionStorage.getItem("clgstaffattendancepdfbatchName");
     const sessionId = sessionStorage.getItem("downloadattendanceid");
     const token = sessionStorage.getItem("clgstaffLogintoken");
 
@@ -133,7 +135,8 @@ const CollegeStaffDownloadAttendancePDF = () => {
                                     <div></div><div></div>
                                     <div ref={pdfContentRef}>
                                         <img width="200px" src='/logo.png' alt="" />
-                                        <p style={{ textAlign: "center", fontSize: "20px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Session-Wise Attendance List Of Students</p>
+                                        <p style={{ textAlign: "center", fontSize: "22px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Session-Wise Attendance List Of Students</p>
+                                        <p style={{ textAlign: "center", fontSize: "20px", fontWeight: 'bold', textDecoration: "underline" }}>Batch Name: {batchName}</p>
                                         <br />
                                         {Object.keys(groupedData).map(sessionName => {
                                             // Extract attendanceDate for the session
