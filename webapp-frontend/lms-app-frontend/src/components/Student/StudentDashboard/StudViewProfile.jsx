@@ -95,22 +95,27 @@ const StudViewProfile = () => {
     // Function to generate star icons based on dev rating value
     const renderStarRating = (rating) => {
         const fullStars = Math.floor(rating);
-        const halfStar = rating - fullStars >= 0.5 ? 1 : 0;
-        const emptyStars = 5 - fullStars - halfStar;
-
+        const remainder = rating - fullStars;
         const stars = [];
+
+        // Render full stars
         for (let i = 0; i < fullStars; i++) {
             stars.push(<i className="bi bi-star-fill" key={i}></i>);
         }
-        if (halfStar) {
+
+        // Render partially filled star if remainder is greater than 0
+        if (remainder > 0) {
             stars.push(<i className="bi bi-star-half" key={fullStars}></i>);
         }
-        for (let i = 0; i < emptyStars; i++) {
-            stars.push(<i className="bi bi-star" key={fullStars + halfStar + i}></i>);
+
+        // Render empty stars to fill up to 5 stars
+        for (let i = fullStars + 1; i < 5; i++) {
+            stars.push(<i className="bi bi-star" key={i}></i>);
         }
 
         return stars;
     };
+
 
     useEffect(() => { getData() }, [])
 
