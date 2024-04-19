@@ -103,23 +103,26 @@ const StudViewProfile = () => {
             stars.push(<i className="bi bi-star-fill" key={i}></i>);
         }
 
-        // Render partially filled star if remainder is greater than 0
-        if (remainder > 0) {
-            // Calculate width of partially filled star
-            const partialStarWidth = `${Math.round(remainder * 100)}%`;
-            stars.push(
-                <i className="bi bi-star-half" key={fullStars} style={{ width: partialStarWidth }}></i>
-            );
+        // Determine the state of the last star
+        if (remainder <= 0.25) {
+            // No additional star needed
+        } else if (remainder <= 0.75) {
+            // Render a half-filled star
+            stars.push(<i className="bi bi-star-half" key={fullStars}></i>);
+        } else {
+            // Render a full star
+            stars.push(<i className="bi bi-star-fill" key={fullStars}></i>);
         }
 
         // Render empty stars to fill up to 5 stars
-        const remainingEmptyStars = 5 - fullStars - (remainder > 0 ? 1 : 0);
+        const remainingEmptyStars = 5 - Math.ceil(rating);
         for (let i = 0; i < remainingEmptyStars; i++) {
-            stars.push(<i className="bi bi-star" key={fullStars + (remainder > 0 ? 1 : 0) + i}></i>);
+            stars.push(<i className="bi bi-star" key={fullStars + i}></i>);
         }
 
         return stars;
     };
+
 
 
 
