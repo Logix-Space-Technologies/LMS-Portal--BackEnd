@@ -119,6 +119,7 @@ import CollegeStaffDownloadSessionWiseAttendanceList from './components/CollegeS
 import CollegeStaffViewAllCollegePerformance from './components/CollegeStaff/CollegeStaffViewAllCollegePerformance';
 import CollegeStaffDownloadAttendancePDF from './components/CollegeStaff/CollegeStaffDownloadAttendancePDF';
 import ClgStaffDownloadScorePDF from './components/CollegeStaff/ClgStaffDownloadScorePDF';
+import CollegeStaffViewSessionWisePerformance from './components/CollegeStaff/CollegeStaffViewSessionWisePerformance';
 
 
 
@@ -238,6 +239,7 @@ function App() {
           <Route path='/clgStaffviewAllClgPerformance' element={<CollegeStaffViewAllCollegePerformance/>}/>
           <Route path='/clgstaffdownloadsessionattendancelist' element={<CollegeStaffDownloadAttendancePDF/>}/>
           <Route path='/clgstaffdownloadscorelist' element={<ClgStaffDownloadScorePDF/>}/>
+          <Route path='/clgStaffviewSessionWisePerformance' element={<CollegeStaffViewSessionWisePerformance/>}/>
 
 
 

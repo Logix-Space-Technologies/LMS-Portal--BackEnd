@@ -72,8 +72,8 @@ const AdminViewAllSession = () => {
             }
         };
         const data = {
-            "SessionSearchQuery" : inputField.SessionSearchQuery,
-            "collegeId" : sessionStorage.getItem("clgId"),
+            "SessionSearchQuery": inputField.SessionSearchQuery,
+            "collegeId": sessionStorage.getItem("clgId"),
             "batchId": sessionStorage.getItem("viewbatchId")
         }
 
@@ -120,6 +120,7 @@ const AdminViewAllSession = () => {
                 if (response.data.Sessions) {
                     setIsLoading(false)
                     setSessionData(response.data.Sessions);
+                    console.log("Test View :", response.data.Sessions)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
@@ -141,6 +142,11 @@ const AdminViewAllSession = () => {
     const viewsessionId = (attendanceid) => {
         sessionStorage.setItem("viewattendanceid", attendanceid)
         navigate("/clgstaffviewattendance")
+    }
+
+    const taskScore = (id) => {
+        sessionStorage.setItem("ViewsessionperformanceSessionId", id)
+        navigate("/clgStaffviewSessionWisePerformance")
     }
 
     const [cancelId, setCancelId] = useState(null);
@@ -467,6 +473,7 @@ const AdminViewAllSession = () => {
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -527,6 +534,13 @@ const AdminViewAllSession = () => {
                                     {value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => subtaskClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                             View Submitted Tasks
+                                        </button>
+                                    )}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
+                                        <button onClick={() => taskScore(value.id)} className="btn btn-primary" style={{ marginRight: '20px' }}>
+                                            View Performance
                                         </button>
                                     )}
                                 </td>
