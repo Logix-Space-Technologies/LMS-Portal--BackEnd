@@ -245,8 +245,8 @@ const StudentLogin = () => {
                     });
                 } else {
                     alert(response.data.status)
-                    setShowWaitingModal(false)
-                    setShowOverlay(false);
+                    setShowWaitingModal(true)
+                    setShowOverlay(true);
                 }
             }
         )

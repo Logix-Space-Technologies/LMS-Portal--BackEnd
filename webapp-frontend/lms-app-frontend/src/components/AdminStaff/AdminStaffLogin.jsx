@@ -211,7 +211,7 @@ const AdminStaffLogin = () => {
                     });
                 } else {
                     alert(response.data.status)
-                    setShowWaitingModal(false)
+                    setShowWaitingModal(true)
                     setShowOverlay(true);
                 }
             }

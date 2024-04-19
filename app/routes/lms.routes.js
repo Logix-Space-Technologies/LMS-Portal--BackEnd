@@ -381,4 +381,8 @@ router.post('/viewScoreOfStudPDF',StudentController.generateTaskWiseScoreList)
 
 router.post('/viewSessionwisePerformance',SessionsController.viewSessionwisePerformance)
 
+router.post('/adminForgotPasswordOTPSend',AdminController.forgotPassword)
+
+router.post('/adminForgotPasswordVerifyOTP',AdminController.verifyOtp)
+
 module.exports = router
