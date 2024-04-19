@@ -49,5 +49,21 @@ AdminStaffLog.getAll = async (result) => {
 
 }
 
+AdminStaffLog.searchAdminStaffLog = (search, result) => {
+    const searchTerm = '%' + search + '%'
+    db.query("SELECT asg.AdStaffName, asl.* FROM adminstafflog asl JOIN admin_staff asg ON asl.AdmStaffId = asg.id WHERE asg.deleteStatus = 0 AND asg.isActive = 1 AND asg.AdStaffName LIKE ? AND asl.DateTime >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH) AND asl.DateTime <= CURRENT_TIMESTAMP() ORDER BY asl.DateTime DESC;",
+        [searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                result
+            } else {
+                console.log("AdminStaff Log Details : ", res)
+                result(null, res)
+            }
+        })
+}
+
 
 module.exports = { AdminStaffLog, logAdminStaff }

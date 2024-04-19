@@ -224,3 +224,30 @@ exports.adminforgotpassword = (request, response) => {
     });
 
 }
+
+exports.searchAdminLog = (request, response) => {
+    const adminLogSearchQuery = request.body.SearchQuery
+    const adminLogSearchToken = request.headers.token
+    const adminLogSearchKey = request.headers.key
+
+    jwt.verify(adminLogSearchToken, adminLogSearchKey, (err, decoded) => {
+        if (decoded) {
+            if (!adminLogSearchQuery) {
+                return response.json({ "status": "Search Item is required." })
+            }
+            Admin.searchAdminLog(adminLogSearchQuery, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err })
+                } else {
+                    if (data.length === 0) {
+                        return response.json({ "status": "No Search Items Found." })
+                    } else {
+                        return response.json({ "status": "Result Found", "data": data })
+                    }
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User!!" })
+        }
+    })
+}

@@ -381,4 +381,10 @@ router.post('/viewScoreOfStudPDF',StudentController.generateTaskWiseScoreList)
 
 router.post('/viewSessionwisePerformance',SessionsController.viewSessionwisePerformance)
 
+router.post('/searchCollegeStaffLog',ClgStaffLogController.searchCollegeStaffLog)
+
+router.post("/searchAdminStaffLog", AdminStaffLogController.searchAdminStaffLog)
+
+router.post("/adminSearchLog", AdminController.searchAdminLog);
+
 module.exports = router

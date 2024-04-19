@@ -286,4 +286,20 @@ Admin.getAll = async (result) => {
 
 }
 
+Admin.searchAdminLog = (search, result) => {
+    const searchTerm = '%' + search + '%'
+    db.query("SELECT * FROM adminstafflog WHERE Action LIKE ? AND DateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY DateTime DESC;",
+        [searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                result
+            } else {
+                console.log("Admin Log Details : ", res)
+                result(null, res)
+            }
+        })
+}
+
 module.exports = Admin
