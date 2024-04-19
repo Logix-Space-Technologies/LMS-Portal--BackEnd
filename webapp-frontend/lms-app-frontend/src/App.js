@@ -120,6 +120,7 @@ import CollegeStaffViewAllCollegePerformance from './components/CollegeStaff/Col
 import CollegeStaffDownloadAttendancePDF from './components/CollegeStaff/CollegeStaffDownloadAttendancePDF';
 import ClgStaffDownloadScorePDF from './components/CollegeStaff/ClgStaffDownloadScorePDF';
 import CollegeStaffViewSessionWisePerformance from './components/CollegeStaff/CollegeStaffViewSessionWisePerformance';
+import AdminForgotPassword from './components/Admin/AdminForgotPassword';
 
 
 
@@ -179,6 +180,7 @@ function App() {
           <Route path='/adminviewwhtsappfeedback' element={<AdminViewWhatsappFeedback/>}/>
           <Route path='/adminviewwhtsappmsgreceived' element={<AdminViewMsgReceived/>}/>
           <Route path='/adminviewoverallBatchPerformance' element={<AdminViewOverallBatchPerformance/>}/>
+          <Route path='/adminForgotPassword' element={<AdminForgotPassword/>}/>
 
 
 

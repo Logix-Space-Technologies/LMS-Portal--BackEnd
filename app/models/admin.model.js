@@ -1,6 +1,7 @@
 const db = require('../models/db')
 const bcrypt = require('bcrypt')
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
+const crypto = require("crypto")
 
 const Admin = function (admin) {
     this.userName = admin.userName

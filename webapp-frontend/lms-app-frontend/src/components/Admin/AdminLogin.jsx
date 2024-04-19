@@ -14,10 +14,12 @@ const AdminLogin = () => {
 
     const [updateField, setUpdateField] = useState(
         {
-            "username": "",
-            "password": ""
+            "userName": "",
+            "otp": ""
         }
     )
+
+    const [state, setState] = useState(false)
 
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
@@ -25,7 +27,8 @@ const AdminLogin = () => {
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const apiUrl = global.config.urls.api.server + "/api/lms/"
-    const apiUrl2 = global.config.urls.api.server + "/api/lms/adminforgotpassword"
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/adminForgotPasswordOTPSend"
+    const apiUrl5 = global.config.urls.api.server + "/api/lms/adminForgotPasswordVerifyOTP"
     const navigate = useNavigate()
 
     const inputHandler = (event) => {
@@ -38,64 +41,23 @@ const AdminLogin = () => {
         setUpdateField({ ...updateField, [event.target.name]: event.target.value })
     }
 
+    //Function To Close Forgot Password Modal And Overlay
+    const closeWaitingModel = () => {
+        setShowModal(false)
+        setShowOverlay(false)
+        setState(false)
+        setErrors({})
+        setUpdateField({
+            "userName": "",
+            "otp": ""
+        });
+    }
+
     const forgotPassword = () => {
         setShowModal(true)
         setShowOverlay(true)
     }
 
-    const closeModal = () => {
-        setErrors({})
-        setShowModal(false);
-        setShowOverlay(false)
-        setUpdateField({
-            "username": "",
-            "password": ""
-        });
-    };
-
-    const handleSubmit = () => {
-        let newErrors = {};
-        if (!updateField.username) {
-            newErrors.username = "Username is required!";
-        }
-        if (!updateField.password) {
-            newErrors.password = "Password is required!";
-        } else if (updateField.password.length < 8) {
-            newErrors.password = "Password must be at least 8 characters";
-        } else if (updateField.password.length > 12) {
-            newErrors.password = "Password should not exceed 12 characters";
-        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,12}$/.test(updateField.password)) {
-            newErrors.password = "Password should include one uppercase letter, one lowercase letter, numbers and special characters";
-        }
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
-
-        let data = {
-            "userName": updateField.username,
-            "Password": updateField.password
-        }
-
-        axios.post(apiUrl2, data).then(
-            (response) => {
-                if (response.data.status === "success") {
-                    closeModal()
-                    alert("Password Reset Successful !!!\nPlease Login.")
-                } else if (response.data.status === "Validation failed" && response.data.data.userName) {
-                    alert(response.data.data.userName);
-                    setShowModal(true)
-                    setShowOverlay(true)
-                } else if (response.data.status === "Validation failed" && response.data.data.newPassword) {
-                    alert(response.data.data.newPassword);
-                    setShowModal(true)
-                    setShowOverlay(true)
-                } else {
-                    alert(response.data.status)
-                }
-            }
-        )
-    }
 
     const readValue = () => {
         let newErrors = {};
@@ -132,6 +94,66 @@ const AdminLogin = () => {
                             alert(Response.data.status)
                         }
                     }
+                }
+            }
+        )
+    }
+
+    const otpForgotPasswordSend = () => {
+        let newErrors = {};
+        if (!updateField.userName) {
+            newErrors.forgotPassEmail = "Email is required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        let data = { "userName": updateField.userName }
+        axios.post(apiUrl4, data).then(
+            (response) => {
+                if (response.data.status === "OTP sent to email.") {
+                    setShowModal(true)
+                    setShowOverlay(true);
+                    setState(true)
+                } else {
+                    alert(response.data.status)
+                    setUpdateField({ "userName": "" })
+                    setShowModal(true)
+                    setShowOverlay(true);
+                }
+            }
+        )
+    }
+
+    const otpForgotPasswordVerify = () => {
+        let newErrors = {};
+        if (!updateField.userName) {
+            newErrors.forgotpassotp = "Email is required!";
+        }
+        if (!updateField.otp) {
+            newErrors.forgotpassotp = "OTP is required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        let data = { "userName": updateField.userName, "otp": updateField.otp }
+        axios.post(apiUrl5, data).then(
+            (response) => {
+                if (response.data.status === "OTP verified successfully") {
+                    setShowModal(false)
+                    setShowOverlay(false); // Close the overlay
+                    setState(false)
+                    navigate("/adminForgotPassword")
+                    sessionStorage.setItem("adminEmail", updateField.userName)
+                    setUpdateField({
+                        "userName": "",
+                        "otp": ""
+                    });
+                } else {
+                    alert(response.data.status)
+                    setShowModal(true)
+                    setShowOverlay(true);
                 }
             }
         )
@@ -197,25 +219,39 @@ const AdminLogin = () => {
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h1 className="modal-title fs-5" id="exampleModalLabel">Reset Password</h1>
-                                <button type="button" className="btn-close" onClick={closeModal} />
+                                <button type="button" className="btn-close" onClick={closeWaitingModel} />
                             </div>
                             <div className="modal-body">
-                                <>
-                                    <div className="mb-3">
-                                        <label htmlFor="message-text" className="col-form-label">Username:</label>
-                                        <input type="text" onChange={updateHandler} value={updateField.username} name="username" className="form-control" id="message-text" defaultValue={""} />
-                                        {errors.username && <span style={{ color: 'red' }} className="error">{errors.username}</span>}
+                                {state === true && (
+                                    <div>
+                                        <p style={{ fontSize: "15px" }}>Enter OTP Send To Email For Verification.</p><br />
                                     </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="message-text" className="col-form-label">Password:</label>
-                                        <input type="password" onChange={updateHandler} value={updateField.password} name="password" className="form-control" id="message-text" defaultValue={""} />
-                                        {errors.password && <span style={{ color: 'red' }} className="error">{errors.password}</span>}
-                                    </div>
-                                </>
+                                )}
+                                <form>
+                                    {state === false && (
+                                        <div className="mb-3">
+                                            <label htmlFor="recipient-name" className="col-form-label">Username:</label>
+                                            <input type="text" name="userName" className="form-control" value={updateField.userName} onChange={updateHandler} />
+                                            {errors.forgotPassEmail && <span style={{ color: 'red' }} className="error">{errors.forgotPassEmail}</span>}
+                                        </div>
+                                    )}
+                                    {state === true && (
+                                        <div className="mb-3">
+                                            <label htmlFor="recipient-name" className="col-form-label">OTP:</label>
+                                            <input type="text" name="otp" className="form-control" value={updateField.otp} onChange={updateHandler} />
+                                            {errors.otp && <span style={{ color: 'red' }} className="error">{errors.otp}</span>}
+                                        </div>
+                                    )}
+                                </form>
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
-                                <button type="button" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
+                                <button type="button" className="btn btn-secondary" onClick={closeWaitingModel}>Close</button>
+                                {state === false && (
+                                    <button type="button" onClick={() => otpForgotPasswordSend()} className="btn btn-primary">Submit</button>
+                                )}
+                                {state === true && (
+                                    <button type="button" onClick={() => otpForgotPasswordVerify()} className="btn btn-primary">Submit</button>
+                                )}
                             </div>
                         </div>
                     </div>
