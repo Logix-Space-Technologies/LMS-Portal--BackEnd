@@ -450,7 +450,7 @@ exports.profileUpdateStudent = (request, response) => {
                             rollNo,
                             studDept,
                             course,
-                            formattedPhoneNumber,
+                            studPhNo: formattedPhoneNumber,
                             studProfilePic,
                             aadharNo
                         };
