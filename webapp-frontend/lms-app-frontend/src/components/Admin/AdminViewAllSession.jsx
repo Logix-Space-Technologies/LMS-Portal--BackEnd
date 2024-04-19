@@ -120,7 +120,6 @@ const AdminViewAllSession = () => {
                 if (response.data.Sessions) {
                     setIsLoading(false)
                     setSessionData(response.data.Sessions);
-                    console.log("Test View :", response.data.Sessions)
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
