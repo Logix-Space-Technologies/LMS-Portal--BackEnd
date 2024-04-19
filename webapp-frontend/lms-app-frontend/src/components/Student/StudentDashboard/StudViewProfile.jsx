@@ -92,6 +92,26 @@ const StudViewProfile = () => {
         return differenceInDays <= 45;
     };
 
+    // Function to generate star icons based on dev rating value
+    const renderStarRating = (rating) => {
+        const fullStars = Math.floor(rating);
+        const halfStar = rating - fullStars >= 0.5 ? 1 : 0;
+        const emptyStars = 5 - fullStars - halfStar;
+
+        const stars = [];
+        for (let i = 0; i < fullStars; i++) {
+            stars.push(<i className="bi bi-star-fill" key={i}></i>);
+        }
+        if (halfStar) {
+            stars.push(<i className="bi bi-star-half" key={fullStars}></i>);
+        }
+        for (let i = 0; i < emptyStars; i++) {
+            stars.push(<i className="bi bi-star" key={fullStars + halfStar + i}></i>);
+        }
+
+        return stars;
+    };
+
     useEffect(() => { getData() }, [])
 
     useEffect(() => { getPerformanceData() }, [])
@@ -124,24 +144,28 @@ const StudViewProfile = () => {
                                                             <div className="col-6">
                                                                 <div>
                                                                     <p style={{ textAlign: 'center', fontSize: '16px' }} className="mt-10 font-bold text-gray-700 dark:text-gray-400">
-                                                                        Dev Rating : {performanceData.cgpa && performanceData.cgpa > 0 ? performanceData.cgpa.toFixed(2) : performanceData.cgpa}/10
+                                                                        Dev Rating : {performanceData.cgpa && performanceData.cgpa > 0 ? performanceData.cgpa.toFixed(1) : performanceData.cgpa}/{performanceData.cgpaMax}
                                                                     </p>
+                                                                    {/* Render star rating */}
+                                                                    <div style={{ textAlign: 'center' }}>
+                                                                        {renderStarRating(performanceData.cgpa)}
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <br />
                                                         <div className="row">
                                                             <div className="col-12">
-                                                                {performanceData.cgpa >= 9 && (
+                                                                {performanceData.cgpa >= 4 && (
                                                                     <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Excellent...😍🤩🎉👏</p>
                                                                 )}
-                                                                {performanceData.cgpa >= 7 && performanceData.cgpa < 9 && (
+                                                                {performanceData.cgpa >= 3 && performanceData.cgpa < 4 && (
                                                                     <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Good Job...👍👍</p>
                                                                 )}
-                                                                {performanceData.cgpa >= 5 && performanceData.cgpa < 7 && (
+                                                                {performanceData.cgpa >= 2 && performanceData.cgpa < 3 && (
                                                                     <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Good 👍...You can improve more!!</p>
                                                                 )}
-                                                                {performanceData.cgpa < 5 && performanceData.cgpa > 0 && (
+                                                                {performanceData.cgpa < 1 && performanceData.cgpa > 0 && (
                                                                     <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Very Poor😢...Need to improve. You can do this!!😀💪</p>
                                                                 )}
                                                                 {performanceData.cgpa === 0 && performanceData.SubmitTaskCount > 0 && (

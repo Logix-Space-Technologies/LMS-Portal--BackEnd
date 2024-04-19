@@ -1491,12 +1491,13 @@ Student.viewPerformance = (collegeId, batchId, id, result) => {
             } else if (res.length > 0) {
                 let score = res[0].score;
                 let totalScore = res[0].totalScore;
-                let cgpa = (score / totalScore) * 10;
+                // Calculate CGPA out of 5 instead of 10
+                let cgpa = (score / totalScore) * 5;
                 let SubmitTaskCount = res[0].SubmitTaskCount;
                 let TaskCount = res[0].TaskCount;
-                return result(null, { cgpa, SubmitTaskCount, TaskCount })
+                return result(null, { cgpa, SubmitTaskCount, TaskCount,cgpaMax:5 })
             }
-            return result(null, { cgpa: 0, SubmitTaskCount: 0, TaskCount: 0 })
+            return result(null, { cgpa: 0, SubmitTaskCount: 0, TaskCount: 0,cgpaMax:5 })
 
         })
 }
