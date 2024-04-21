@@ -263,9 +263,9 @@ const AddCollegeStaff = () => {
     if (!data.confirmpassword) {
       errors.confirmpassword = 'Confirm password is required';
     }
-    // if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
-    //   errors.file = "File must be in jpg/jpeg/png/webp/heif format";
-    // }
+    if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+      errors.file = "File must be in jpg/jpeg/png/webp/heif format";
+    }
     if (!data.phNo.trim()) {
       errors.phNo = 'Phone No is required';
     }
