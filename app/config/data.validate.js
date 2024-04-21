@@ -41,8 +41,8 @@ function isValidImageWith1mbConstratint(file) {
     // Check file extension
     const extensionIsValid = allowedExtensions.test(path.extname(file.filename.replace(/[^\w\-.]/g, '')).toLowerCase());
 
-    // Check file size (max 1 MB)
-    const maxFileSize = 2 * 1024 * 1024; // 1 MB in bytes
+    // Check file size (max 2 MB)
+    const maxFileSize = 2 * 1024 * 1024; // 2 MB in bytes
     const sizeIsValid = file.size <= maxFileSize;
 
     if (!extensionIsValid && !sizeIsValid) {
