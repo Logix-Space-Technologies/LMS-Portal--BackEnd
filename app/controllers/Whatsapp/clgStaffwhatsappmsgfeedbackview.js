@@ -41,6 +41,7 @@ const clgStaffwhatsappmsgfeedbackview = (request, response) => {
                             second: '2-digit'
                         }) : null
                     }));
+                    console.log(formattedFeedbackLog)
                     return response.json({ "status": "success", "data": formattedFeedbackLog });
                 }
             });
