@@ -32,7 +32,7 @@ async function clgStaffUpcomingSession(name, batch, date, time, sessionType, ven
             }
         );
         console.log('WhatsApp message sent successfully:', response.data);
-        db.query("INSERT INTO `wtsappmsgreceivedfromclgstaff`(`clgstaffId`, `msgId`, `message`) VALUES (?,?,'Session Created')", [clgstaffId, response.data.messageId],
+        db.query("INSERT INTO `whatsappmsgfeedbackclgstaff`(`clgstaffId`, `msgId`, `message`) VALUES (?,?,'Session Created')", [clgstaffId, response.data.messageId],
             (err, res) => {
                 if (err) {
                     console.log(err)
