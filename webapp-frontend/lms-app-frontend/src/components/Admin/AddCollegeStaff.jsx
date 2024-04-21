@@ -130,7 +130,7 @@ const AddCollegeStaff = () => {
         "confirmpassword": inputField.confirmpassword,
         "profilePic": collegestaffImage
       }
-      console.log(data)
+      
       setShowWaitingModal(true)
       setShowOverlay(true)
       axios.post(apiUrl, data, axiosConfig).then(

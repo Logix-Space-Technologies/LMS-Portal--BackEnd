@@ -72,6 +72,8 @@ const AdminAddTrainer = () => {
             addedBy = sessionStorage.getItem("admstaffId")
         }
         e.preventDefault();
+        // Check if file is uploaded, if not, use a default image
+        let trainerImage = file ? file : getDefaultImage();
         const validationErrors = validateForm(inputField);
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig3 = {
@@ -88,7 +90,7 @@ const AdminAddTrainer = () => {
                 "email": inputField.email,
                 "password": inputField.password,
                 "phoneNumber": inputField.phoneNumber,
-                "profilePicture": file,
+                "profilePicture": trainerImage,
                 "confirmpassword": inputField.confirmpassword,
                 "addedby": addedBy
             }
@@ -188,6 +190,12 @@ const AdminAddTrainer = () => {
         }
     }
 
+    // Function to get default image
+    const getDefaultImage = () => {
+        // You can replace this with your default image URL or base64 encoded image
+        return '/person.svg';
+    }
+
     const validateForm = (data) => {
         let errors = {};
 
@@ -212,7 +220,7 @@ const AdminAddTrainer = () => {
         if (!data.phoneNumber.trim()) {
             errors.phoneNumber = 'Contact Details required';
         }
-        if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+        if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
             errors.file = "File must be in jpg/jpeg/png/webp/heif format";
         }
         if (!data.confirmpassword) {
