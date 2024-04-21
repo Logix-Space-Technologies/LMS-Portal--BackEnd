@@ -54,7 +54,101 @@ exports.collegeCreate = (request, response) => {
         }
 
         if (!request.file) {
-            return response.status(400).json({ "status": "No file uploaded" });
+            imageUrl = request.body.collegeImage
+
+            const collegeToken = request.headers.token;
+
+            const { collegeName, collegeCode, collegeAddress, website, email, collegePhNo, collegeMobileNumber, addedby } = request.body;
+
+            key = request.headers.key
+            jwt.verify(collegeToken, key, (err, decoded) => {
+                if (decoded) {
+                    
+                    const validationErrors = {};
+
+                    if (Validator.isEmpty(collegeName).isValid) {
+                        validationErrors.name = Validator.isEmpty(collegeName).message;
+                    }
+                    if (!Validator.isValidName(collegeName).isValid) {
+                        validationErrors.name = Validator.isValidName(collegeName).message;
+                    }
+                    if (Validator.isEmpty(collegeCode).isValid) {
+                        validationErrors.code = Validator.isEmpty(collegeCode).message;
+                    }
+                    if (!Validator.acceptOnlyCapitalLetters(collegeCode).isValid) {
+                        validationErrors.code = Validator.acceptOnlyCapitalLetters(collegeCode).message;
+                    }
+
+                    if (!Validator.isValidAddress(collegeAddress).isValid) {
+                        validationErrors.address = Validator.isValidAddress(collegeAddress).message;
+                    }
+                    if (Validator.isEmpty(collegeAddress).isValid) {
+                        validationErrors.address = Validator.isEmpty(collegeAddress).message;
+                    }
+                    if (!Validator.isValidWebsite(website).isValid) {
+                        validationErrors.website = Validator.isValidWebsite(website).message;
+                    }
+
+                    if (!Validator.isValidEmail(email).isValid) {
+                        validationErrors.email = Validator.isValidEmail(email).message;
+                    }
+                    if (Validator.isEmpty(email).isValid) {
+                        validationErrors.email = Validator.isEmpty(email).message;
+                    }
+
+                    if (!Validator.isValidPhoneNumber(collegePhNo).isValid) {
+                        validationErrors.phone = Validator.isValidPhoneNumber(collegePhNo).message;
+                    }
+
+                    if (!Validator.isValidMobileNumber(collegeMobileNumber).isValid) {
+                        validationErrors.mobile = Validator.isValidMobileNumber(collegeMobileNumber).message;
+                    }
+                    if (Validator.isEmpty(collegeMobileNumber).isValid) {
+                        validationErrors.mobile = Validator.isEmpty(collegeMobileNumber).message;
+                    }
+
+                    // If validation fails
+                    if (Object.keys(validationErrors).length > 0) {
+                        return response.json({ "status": "Validation failed", "data": validationErrors });
+                    }
+
+                    let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(collegeMobileNumber) ? collegeMobileNumber.replace(/^(\+91\s?|91\s?)/, '') : collegeMobileNumber;
+
+                    const college = new College({
+                        collegeName: collegeName,
+                        collegeCode: collegeCode,
+                        collegeAddress: collegeAddress,
+                        website: website,
+                        email: email,
+                        collegePhNo: collegePhNo,
+                        collegeMobileNumber: formattedPhoneNumber,
+                        collegeImage: imageUrl
+                    });
+
+                    College.collegeCreate(college, (err, data) => {
+                        if (err) {
+                            return response.json({ "status": err });
+                        } else {
+                            //send mail to the college email
+                            const collegeName = college.collegeName
+                            const collegeEmail = college.email
+                            const collegeEmailContent = mailContents.collegeHtmlContent(collegeName)
+                            const collegeTextContent = mailContents.collegeTextContent(collegeName)
+                            mail.sendEmail(collegeEmail, 'Registration Successful!', collegeEmailContent, collegeTextContent);
+                            if (key == "lmsapp") {
+                                logAdminStaff(0, "Admin Created College")
+                            }
+                            if (key !== "lmsapp") {
+                                logAdminStaff(addedby, "Admin Staff Created College")
+                            }
+                            return response.json({ "status": "success", "data": data });
+                        }
+                    });
+                } else {
+                    return response.json({ "status": "Unauthorized User!!" });
+                }
+
+            });
         } else {
             // File handling
             const file = request.file;
