@@ -50,16 +50,17 @@ const Navbar = () => {
                             </Link>
                             <ul className="dropdown-menu">
                                 <li><Link className="dropdown-item" to="/adminviewallcollege">View All College</Link></li>
-                                <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
-                                <li><Link className="dropdown-item" to="/adminviewCollegeStaffLog">View College Staff Log</Link></li>
-                                <li><Link className="dropdown-item" to="/AdminViewRefundRequests">View Refund Requests</Link></li>
-                                <li><Link className="dropdown-item" to="/AdminViewStudentLog">View Student Log</Link></li>
-                                <li><Link className="dropdown-item" to="/AdminViewAllAdminStaff">View Admin Staffs</Link></li>
-                                <li><Link className="dropdown-item" to="/adminViewlog">View Admin Logs</Link></li>
-                                <li><Link className="dropdown-item" to="/adminViewSuccessfulrefunds">View Successful Refunds</Link></li>
-                                <li><Link className="dropdown-item" to="/adminviewadstafflog">View Admin Staff Log</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewallclgstaff">View College Staff</Link></li>
-                                <li><Link className="dropdown-item" to="/adminviewwhtsappfeedback">View Whatsapp Feedback Log</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminViewAllAdminStaff">View Admin Staffs</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminViewRefundRequests">View Refund Requests</Link></li>
+                                <li><Link className="dropdown-item" to="/adminViewSuccessfulrefunds">View Successful Refunds</Link></li>
+                                <li><Link className="dropdown-item" to="/adminViewlog">View Admin Logs</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewadstafflog">View Admin Staff Log</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewCollegeStaffLog">View College Staff Log</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminViewStudentLog">View Student Log</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewwhtsappfeedback">View Student Whatsapp Feedback Log</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewclgstaffwtsappfeedback">View College Staff Whatsapp Feedback Log</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewwhtsappmsgreceived">View Whatsapp Message Received Log</Link></li>
                             </ul>
                         </li>

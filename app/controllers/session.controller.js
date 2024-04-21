@@ -173,7 +173,7 @@ exports.createSession = (request, response) => {
                                             }
                                         });
                                         const formattedPhoneNumber = collegestaffphoneNo.startsWith('91') ? collegestaffphoneNo : `91${collegestaffphoneNo}`;
-                                        whatsappclgstaffupcomingsession.sendfn(collegeStaffName, batchName, clgstaffsessionDate, clgstaffsessionTime, newSession.type, newSession.venueORlink, formattedPhoneNumber)
+                                        whatsappclgstaffupcomingsession.sendfn(collegeStaffName, batchName, clgstaffsessionDate, clgstaffsessionTime, newSession.type, newSession.venueORlink, formattedPhoneNumber, collegeStaffId)
                                     })
                                 }
                             })

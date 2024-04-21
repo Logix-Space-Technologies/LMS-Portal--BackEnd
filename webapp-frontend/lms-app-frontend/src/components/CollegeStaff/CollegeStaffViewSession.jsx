@@ -52,6 +52,11 @@ const CollegeStaffViewSession = () => {
         });
     };
 
+    const taskScore = (id) => {
+        sessionStorage.setItem("ViewsessionperformanceSessionId", id)
+        navigate("/clgStaffviewSessionWisePerformance")
+    }
+
     function formatTime(timeString) {
         const options = { hour: '2-digit', minute: '2-digit', hour12: true };
         return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
@@ -167,6 +172,9 @@ const CollegeStaffViewSession = () => {
                                 <th scope="col" className="px-6 py-3">
 
                                 </th>
+                                <th scope="col" className="px-6 py-3">
+
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -226,6 +234,11 @@ const CollegeStaffViewSession = () => {
                                                     View Tasks
                                                 </button>
                                             )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <button onClick={() => taskScore(value.id)} className="btn btn-primary" style={{ marginRight: '20px' }} disabled={!sessionIsPast}>
+                                                View Performance
+                                            </button>
                                         </td>
                                     </tr>
                                 );

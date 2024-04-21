@@ -68,7 +68,7 @@ const AdminViewWhatsappFeedback = () => {
             <div>
                 <Navbar />
                 <br />
-                <strong>Admin View Whatsapp Feedback Log</strong><br /><br />
+                <strong>View Student Whatsapp Feedback Log</strong><br /><br />
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     {isLoading ? <div className="flex justify-center items-center h-full">
                         <div className="text-center py-20">

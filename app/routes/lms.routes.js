@@ -25,6 +25,8 @@ const WhatsappMsgFeedbackController = require("../controllers/Whatsapp/whatsappm
 const WhatsappMsgCommonController = require("../controllers/Whatsapp/whatsappmsgcommonview")
 const WhatsappMsgReceivedFromStudController = require("../controllers/Whatsapp/viewwhtsappmsgreceivedstud")
 const ClgStaffFirebaseController = require("../controllers/clgStaffFirebaseToken.controller")
+const ClgStaffCallBackController = require("../controllers/Whatsapp/callbackAPIClgStaff")
+const ClgStaffViewCallBackController = require("../controllers/Whatsapp/clgStaffwhatsappmsgfeedbackview")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -380,5 +382,13 @@ router.post('/viewPerformanceOfStudents',CollegeController.viewPerformanceOfStud
 router.post('/viewScoreOfStudPDF',StudentController.generateTaskWiseScoreList)
 
 router.post('/viewSessionwisePerformance',SessionsController.viewSessionwisePerformance)
+
+router.post('/adminForgotPasswordOTPSend',AdminController.forgotPassword)
+
+router.post('/adminForgotPasswordVerifyOTP',AdminController.verifyOtp)
+
+router.post('/callbackAPIClgStaff', ClgStaffCallBackController.sendfn)
+
+router.post('/viewcallbackAPIClgStaff', ClgStaffViewCallBackController.sendfn)
 
 module.exports = router
