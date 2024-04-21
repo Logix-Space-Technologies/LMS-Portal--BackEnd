@@ -1,7 +1,8 @@
 const axios = require('axios');
+const db = require('../../models/db')
 require('dotenv').config({ path: '../../.env' });
 
-async function clgStaffUpcomingSession(name, batch, date, time, sessionType, venue, destinationPhoneNumber) {
+async function clgStaffUpcomingSession(name, batch, date, time, sessionType, venue, destinationPhoneNumber, clgstaffId) {
     const apiKey = process.env.WhatsAppKey;
     const templateId = '09d7700f-cd5c-4681-b6f6-7e09e17bd7f9';
     const srcName = 'LinkUrCodes';
@@ -31,6 +32,15 @@ async function clgStaffUpcomingSession(name, batch, date, time, sessionType, ven
             }
         );
         console.log('WhatsApp message sent successfully:', response.data);
+        db.query("INSERT INTO `whatsappmsgfeedbackclgstaff`(`clgstaffId`, `msgId`, `message`) VALUES (?,?,'Session Created')", [clgstaffId, response.data.messageId],
+            (err, res) => {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log(res)
+                }
+
+            })
     } catch (error) {
         console.error('Error sending WhatsApp message:', error);
     }
