@@ -152,11 +152,6 @@ exports.createTrainer = (request, response) => {
 
                 jwt.verify(trainerToken, key, (err, decoded) => {
                     if (decoded) {
-                        const profilePicture = request.file ? request.file.filename : null;
-
-                        if (!request.file) {
-                            return response.json({ "status": "Please upload a profile picture" });
-                        }
 
                         const validationErrors = {};
 
@@ -186,6 +181,10 @@ exports.createTrainer = (request, response) => {
                         }
                         if (!Validator.isValidPassword(request.body.password).isValid) {
                             validationErrors.password = Validator.isValidPassword(request.body.password).message;
+                        }
+
+                        if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+                            validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
                         }
 
                         if (Object.keys(validationErrors).length > 0) {
