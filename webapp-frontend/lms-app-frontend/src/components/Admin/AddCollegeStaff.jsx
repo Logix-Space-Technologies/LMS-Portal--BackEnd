@@ -106,6 +106,8 @@ const AddCollegeStaff = () => {
       setKey(currentKey); // Update the state if needed
     }
     e.preventDefault();
+    // Check if file is uploaded, if not, use a default image
+    let collegestaffImage = file ? file : getDefaultImage();
     const validationErrors = validateForm(inputField);
     if (Object.keys(validationErrors).length === 0) {
       let axiosConfig = {
@@ -126,8 +128,9 @@ const AddCollegeStaff = () => {
         "aadharNo": inputField.aadharNo,
         "password": inputField.password,
         "confirmpassword": inputField.confirmpassword,
-        "profilePic": file
+        "profilePic": collegestaffImage
       }
+      console.log(data)
       setShowWaitingModal(true)
       setShowOverlay(true)
       axios.post(apiUrl, data, axiosConfig).then(
@@ -151,37 +154,37 @@ const AddCollegeStaff = () => {
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.dept) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.dept)
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.name) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.name)
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.address) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.address)
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.email) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.email)
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.mobile) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.mobile)
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.aadharnumber) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.aadharnumber)
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.password) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.password)
             }, 500)
           } else if (response.data.status === "Unauthorized access!!") {
@@ -200,30 +203,30 @@ const AddCollegeStaff = () => {
             const statusCode = error.response.status;
 
             if (statusCode === 400) {
-              setTimeout(()=>{
+              setTimeout(() => {
                 alert(error.response.data.status)
               }, 500)
               // Additional logic for status 400
             } else if (statusCode === 500) {
-              setTimeout(()=>{
+              setTimeout(() => {
                 alert(error.response.data.status)
               }, 500)
               // Additional logic for status 500
             } else {
-              setTimeout(()=>{
+              setTimeout(() => {
                 alert(error.response.data.status)
               }, 500)
             }
           } else if (error.request) {
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(error.request);
             }, 500)
           } else if (error.message) {
-            setTimeout(()=>{
+            setTimeout(() => {
               alert('Error', error.message);
             }, 500)
           } else {
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(error.config);
             }, 500)
           }
@@ -231,6 +234,12 @@ const AddCollegeStaff = () => {
     } else {
       setErrors(validationErrors);
     }
+  }
+
+  // Function to get default image
+  const getDefaultImage = () => {
+    // You can replace this with your default image URL or base64 encoded image
+    return '/person.svg';
   }
 
 
@@ -254,9 +263,9 @@ const AddCollegeStaff = () => {
     if (!data.confirmpassword) {
       errors.confirmpassword = 'Confirm password is required';
     }
-    if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
-      errors.file = "File must be in jpg/jpeg/png/webp/heif format";
-    }
+    // if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+    //   errors.file = "File must be in jpg/jpeg/png/webp/heif format";
+    // }
     if (!data.phNo.trim()) {
       errors.phNo = 'Phone No is required';
     }

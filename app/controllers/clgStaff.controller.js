@@ -57,52 +57,19 @@ exports.clgStaffCreate = (request, response) => {
   const uploadSingle = upload.single('profilePic');
 
   uploadSingle(request, response, async (error) => {
+    let imageUrl;
     if (error) {
       return response.status(500).json({ "status": error.message });
     }
 
     if (!request.file) {
-      return response.status(400).json({ "status": "No file uploaded" });
-    }
+      // If no file is uploaded, set the profilePic field to the default image URL
+      imageUrl = request.body.profilePic; // Change the URL to your default image URL
 
-    // // Read additional form fields
-    // const name = request.body.name;
-    // const rollNo = request.body.rollNo;
-
-    // File handling
-    const file = request.file;
-    const fileStream = fs.createReadStream(file.path);
-
-    const uploadParams = {
-      Bucket: process.env.S3_BUCKET,
-      Key: `uploads/${file.filename}`,
-      Body: fileStream
-    };
-
-    try {
-      const data = await s3Client.send(new PutObjectCommand(uploadParams));
-      const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
-
-      // Remove the file from local storage
-      fs.unlinkSync(file.path);
-
-      // Respond with the image URL and additional data
-      // response.status(200).json({
-      //   message: 'File uploaded successfully',
-      //   imageUrl: imageUrl,
-      //   studentInfo: {
-      //     name: name,
-      //     rollNumber: rollNo
-      //   }
-      // });
       const clgStaffToken = request.headers.token
       key = request.headers.key;
       jwt.verify(clgStaffToken, key, (err, decoded) => {
         if (decoded) {
-          const profilePic = request.file ? request.file.filename : null
-          if (!request.file) {
-            return response.json({ "status": "Image cannot be empty!" })
-          }
           //Checking validations
           const validationErrors = {}
 
@@ -134,9 +101,6 @@ exports.clgStaffCreate = (request, response) => {
 
           if (!Validator.isValidMobileNumber(request.body.phNo).isValid) {
             validationErrors.mobile = Validator.isValidMobileNumber(request.body.phNo).message;
-          }
-          if (!Validator.isValidImageWith1mbConstratint(request.file).isValid) {
-            validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
           }
           if (Validator.isEmpty(request.body.department).isValid) {
             validationErrors.dept = Validator.isEmpty(request.body.department).message;
@@ -216,11 +180,165 @@ exports.clgStaffCreate = (request, response) => {
           return response.json({ "status": "Unauthorized access!!" });
         }
       });
+    } else {
+      // // Read additional form fields
+      // const name = request.body.name;
+      // const rollNo = request.body.rollNo;
 
-    } catch (err) {
-      fs.unlinkSync(file.path);
-      return response.status(500).json({ "status": err.message });
+      // File handling
+      const file = request.file;
+      const fileStream = fs.createReadStream(file.path);
+
+      const uploadParams = {
+        Bucket: process.env.S3_BUCKET,
+        Key: `uploads/${file.filename}`,
+        Body: fileStream
+      };
+
+      try {
+        const data = await s3Client.send(new PutObjectCommand(uploadParams));
+        imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+
+        // Remove the file from local storage
+        fs.unlinkSync(file.path);
+
+        // Respond with the image URL and additional data
+        // response.status(200).json({
+        //   message: 'File uploaded successfully',
+        //   imageUrl: imageUrl,
+        //   studentInfo: {
+        //     name: name,
+        //     rollNumber: rollNo
+        //   }
+        // });
+        const clgStaffToken = request.headers.token
+        key = request.headers.key;
+        jwt.verify(clgStaffToken, key, (err, decoded) => {
+          if (decoded) {
+            const profilePic = request.file ? request.file.filename : null
+            if (!request.file) {
+              return response.json({ "status": "Image cannot be empty!" })
+            }
+            //Checking validations
+            const validationErrors = {}
+
+            if (Validator.isEmpty(request.body.collegeId).isValid) {
+              validationErrors.id = Validator.isEmpty(request.body.collegeId).message
+            }
+
+            if (Validator.isEmpty(request.body.collegeStaffName).isValid) {
+              validationErrors.name = Validator.isEmpty(request.body.collegeStaffName).message
+            }
+            if (!Validator.isValidName(request.body.collegeStaffName).isValid) {
+              validationErrors.name = Validator.isValidName(request.body.collegeStaffName).message
+            }
+            if (Validator.isEmpty(request.body.clgStaffAddress).isValid) {
+              validationErrors.address = Validator.isEmpty(request.body.clgStaffAddress).message;
+            }
+            if (!Validator.isValidAddress(request.body.clgStaffAddress).isValid) {
+              validationErrors.address = Validator.isValidAddress(request.body.clgStaffAddress).message;
+            }
+            if (Validator.isEmpty(request.body.email).isValid) {
+              validationErrors.email = Validator.isEmpty(request.body.email).message;
+            }
+            if (!Validator.isValidEmail(request.body.email).isValid) {
+              validationErrors.email = Validator.isValidEmail(request.body.email).message;
+            }
+            if (Validator.isEmpty(request.body.phNo).isValid) {
+              validationErrors.mobile = Validator.isEmpty(request.body.phNo).message;
+            }
+
+            if (!Validator.isValidMobileNumber(request.body.phNo).isValid) {
+              validationErrors.mobile = Validator.isValidMobileNumber(request.body.phNo).message;
+            }
+            if (!Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+              validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+            }
+            if (Validator.isEmpty(request.body.department).isValid) {
+              validationErrors.dept = Validator.isEmpty(request.body.department).message;
+            }
+            if (!Validator.isValidName(request.body.department).isValid) {
+              validationErrors.dept = Validator.isValidName(request.body.department).message
+            }
+            if (Validator.isEmpty(request.body.password).isValid) {
+              validationErrors.password = Validator.isEmpty(request.body.password).message;
+            }
+
+            if (!Validator.isValidPassword(request.body.password).isValid) {
+              validationErrors.password = Validator.isValidPassword(request.body.password).message
+            }
+            if (Validator.isEmpty(request.body.aadharNo).isValid) {
+              validationErrors.aadharnumber = Validator.isEmpty(request.body.aadharNo).message;
+            }
+            if (!Validator.isValidAadharNumber(request.body.aadharNo).isValid) {
+              validationErrors.aadharnumber = Validator.isValidAadharNumber(request.body.aadharNo).message
+            }
+            //If Validation fails
+            if (Object.keys(validationErrors).length > 0) {
+              console.log(validationErrors)
+              return response.json({ "status": "Validation failed", "data": validationErrors });
+            }
+
+            let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(request.body.phNo) ? request.body.phNo.replace(/^(\+91\s?|91\s?)/, '') : request.body.phNo;
+
+            const clgstaff = new CollegeStaff({
+
+              collegeId: request.body.collegeId,
+              collegeStaffName: request.body.collegeStaffName,
+              email: request.body.email,
+              phNo: formattedPhoneNumber,
+              aadharNo: request.body.aadharNo,
+              clgStaffAddress: request.body.clgStaffAddress,
+              profilePic: imageUrl,
+              department: request.body.department,
+              password: request.body.password,
+            });
+
+            let password = request.body.password
+
+            bcrypt.hash(clgstaff.password, saltRounds, (err, hashedPassword) => {
+              if (err) {
+                return response.json({ "status": err });
+              }
+
+
+              clgstaff.password = hashedPassword;
+
+
+              CollegeStaff.clgStaffCreate(clgstaff, (err, data) => {
+                if (err) {
+                  return response.json({ "status": err });
+                } else {
+                  var collegeName = ""
+                  //send email
+                  db.query('SELECT collegeName FROM college WHERE id=?', [clgstaff.collegeId], (err, result) => {
+                    if (err) {
+                      return response.json({ "status": err })
+                    } else {
+                      collegeName = result[0].collegeName
+                      const collegeStaffName = clgstaff.collegeStaffName
+                      const collegeStaffEmail = clgstaff.email
+                      const collegeStaffEmailContent = mailContents.collegeStaffHtmlContent(collegeStaffName, collegeName, collegeStaffEmail, password)
+                      const collegeStaffTextContent = mailContents.collegeStaffTextContent(collegeStaffName, collegeName, collegeStaffEmail, password)
+                      mail.sendEmail(collegeStaffEmail, 'Registration Successful!', collegeStaffEmailContent, collegeStaffTextContent);
+                    }
+                  })
+                  return response.json({ "status": "success", "data": data });
+                }
+              });
+
+            });
+          } else {
+            return response.json({ "status": "Unauthorized access!!" });
+          }
+        });
+
+      } catch (err) {
+        fs.unlinkSync(file.path);
+        return response.status(500).json({ "status": err.message });
+      }
     }
+
   });
 };
 
