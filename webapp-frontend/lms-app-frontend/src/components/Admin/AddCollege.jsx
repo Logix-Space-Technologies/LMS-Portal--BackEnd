@@ -53,7 +53,7 @@ const AddCollege = () => {
   const closeWaitingModal = () => {
     setShowOverlay(false)
     setShowWaitingModal(false)
-}
+  }
 
   const handleSubmit = (e) => {
     let currentKey = sessionStorage.getItem("admkey");
@@ -70,6 +70,8 @@ const AddCollege = () => {
       addedBy = sessionStorage.getItem("admstaffId")
     }
     e.preventDefault()
+    // Check if file is uploaded, if not, use a default image
+    let collegeImage = file ? file : getDefaultImage();
     const validationErrors = validateForm(inputField)
     if (Object.keys(validationErrors).length === 0) {
       let axiosConfig = {
@@ -88,7 +90,7 @@ const AddCollege = () => {
         "email": inputField.email,
         "collegePhNo": inputField.collegePhNo,
         "collegeMobileNumber": inputField.collegeMobileNumber,
-        "collegeImage": file,
+        "collegeImage": collegeImage,
         "addedby": addedBy
       }
       setShowWaitingModal(true)
@@ -97,52 +99,52 @@ const AddCollege = () => {
         (response) => {
           if (response.data.status === "success") {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert("College Details Added Successfully.")
-            setInputField({
-              collegeName: '',
-              collegeCode: '',
-              collegeAddress: '',
-              website: '',
-              email: '',
-              collegePhNo: '',
-              collegeMobileNumber: '',
-              collegeImage: ''
-            })
+              setInputField({
+                collegeName: '',
+                collegeCode: '',
+                collegeAddress: '',
+                website: '',
+                email: '',
+                collegePhNo: '',
+                collegeMobileNumber: '',
+                collegeImage: ''
+              })
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.name) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.name)
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.address) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.address)
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.website) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.website)
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.email) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.email)
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.phone) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.phone)
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.mobile) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.mobile)
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.code) {
             closeWaitingModal()
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(response.data.data.code)
             }, 500)
           } else if (response.data.status === "Unauthorized User!!") {
@@ -151,7 +153,7 @@ const AddCollege = () => {
           } else {
             closeWaitingModal()
             setTimeout(() => {
-                alert(response.data.status)
+              alert(response.data.status)
             }, 500)
           }
         }
@@ -162,30 +164,30 @@ const AddCollege = () => {
           const statusCode = error.response.status;
 
           if (statusCode === 400) {
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(error.response.data.status)
             }, 500)
             // Additional logic for status 400
           } else if (statusCode === 500) {
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(error.response.data.status)
             }, 500)
             // Additional logic for status 500
           } else {
-            setTimeout(()=>{
+            setTimeout(() => {
               alert(error.response.data.status)
             }, 500)
           }
         } else if (error.request) {
-          setTimeout(()=>{
+          setTimeout(() => {
             alert(error.request);
           }, 500)
         } else if (error.message) {
-          setTimeout(()=>{
+          setTimeout(() => {
             alert('Error', error.message);
           }, 500)
         } else {
-          setTimeout(()=>{
+          setTimeout(() => {
             alert(error.config);
           }, 500)
         }
@@ -193,6 +195,12 @@ const AddCollege = () => {
     } else {
       setErrors(validationErrors);
     }
+  }
+
+  // Function to get default image
+  const getDefaultImage = () => {
+    // You can replace this with your default image URL or base64 encoded image
+    return '/university.svg';
   }
 
   const validateForm = (data) => {
@@ -216,7 +224,7 @@ const AddCollege = () => {
     if (!data.collegeMobileNumber.trim()) {
       errors.collegeMobileNumber = 'Mobile Number is required';
     }
-    if (fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
+    if (file && fileType !== "jpg" && fileType !== "jpeg" && fileType !== "png" && fileType !== "webp" && fileType !== "heif") {
       errors.file = "File must be in jpg/jpeg/png/webp/heif format";
     }
     return errors;
@@ -308,43 +316,43 @@ const AddCollege = () => {
         </div>
       </div>
       {showWaitingModal && (
-                <div className="modal show d-block" tabIndex={-1}>
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
-                            </div>
-                            <div className="modal-body">
-                                <>
-                                    <div className="mb-3">
-                                        <p>Processing Request. Do Not Refresh.</p>
-                                    </div>
-                                </>
-                            </div>
-                            <div className="modal-footer">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-            {showOverlay && (
-                <div
-                    className="modal-backdrop fade show"
-                    onClick={() => {
-                        setShowWaitingModal(false);
-                        setShowOverlay(false);
-                    }}
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        zIndex: 1040, // Ensure this is below your modal's z-index
-                    }}
-                ></div>
-            )}
+        <div className="modal show d-block" tabIndex={-1}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+              </div>
+              <div className="modal-body">
+                <>
+                  <div className="mb-3">
+                    <p>Processing Request. Do Not Refresh.</p>
+                  </div>
+                </>
+              </div>
+              <div className="modal-footer">
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showOverlay && (
+        <div
+          className="modal-backdrop fade show"
+          onClick={() => {
+            setShowWaitingModal(false);
+            setShowOverlay(false);
+          }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 1040, // Ensure this is below your modal's z-index
+          }}
+        ></div>
+      )}
     </div>
   )
 }
