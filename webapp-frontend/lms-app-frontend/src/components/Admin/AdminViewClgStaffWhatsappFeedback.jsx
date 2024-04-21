@@ -67,7 +67,7 @@ const AdminViewClgStaffWhatsappFeedback = () => {
         <div>
             <Navbar />
             <br />
-            <strong>View Batch In-Charge Whatsapp Feedback Log</strong><br /><br />
+            <strong>View College Staff Whatsapp Feedback Log</strong><br /><br />
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 {isLoading ? <div className="flex justify-center items-center h-full">
                     <div className="text-center py-20">
@@ -78,7 +78,7 @@ const AdminViewClgStaffWhatsappFeedback = () => {
                         <tr>
                             <th scope="col" className="px-6 py-3">S/N</th>
                             <th scope="col" className="px-6 py-3">College Name</th>
-                            <th scope="col" className="px-6 py-3">Batch In-Charge Name</th>
+                            <th scope="col" className="px-6 py-3">College Staff Name</th>
                             <th scope="col" className="px-6 py-3">Message Id</th>
                             <th scope="col" className="px-6 py-3">Message</th>
                             <th scope="col" className="px-6 py-3">Queued Status</th>
