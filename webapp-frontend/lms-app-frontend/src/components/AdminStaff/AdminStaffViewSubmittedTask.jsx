@@ -112,7 +112,8 @@ const AdminStaffViewSubmittedTask = () => {
                 "key": currentKey
             }
         }
-        axios.post(apiUrl3, updateField, axiosConfig)
+        let data = { "sessionId": sessionStorage.getItem("sessionId"), "subTaskSearchQuery": updateField.subTaskSearchQuery }
+        axios.post(apiUrl3, data, axiosConfig)
             .then(response => {
                 if (response.data.data) {
                     setUpdateField({ "subTaskSearchQuery": "" });
@@ -123,7 +124,7 @@ const AdminStaffViewSubmittedTask = () => {
                     sessionStorage.clear()
                 } else if (!response.data.data) {
                     setUpdateField({ "subTaskSearchQuery": "" });
-                    setTaskData([]);
+                    getData()
                     setLoading(false);
                 } else {
                     alert(response.data.status)
