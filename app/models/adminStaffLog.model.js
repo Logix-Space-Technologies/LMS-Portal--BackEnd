@@ -59,8 +59,20 @@ AdminStaffLog.searchAdminStaffLog = (search, result) => {
                 result(err, null)
                 result
             } else {
-                console.log("AdminStaff Log Details : ", res)
-                result(null, res)
+                const formattedAdmStaffLog = res.map(admstafflog => ({
+                    ...admstafflog,
+                    DateTime: admstafflog.DateTime.toLocaleString('en-IN', {
+                        timeZone: 'Asia/Kolkata',
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    })
+                }));
+                console.log("AdminStaff Log Details : ", formattedAdmStaffLog)
+                result(null, formattedAdmStaffLog)
             }
         })
 }

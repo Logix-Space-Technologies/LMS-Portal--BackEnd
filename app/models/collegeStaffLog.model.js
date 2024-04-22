@@ -56,8 +56,20 @@ CollegeStaffLog.searchCollegeStaffLog = (search, result) => {
                 result(err, null)
                 result
             } else {
-                console.log("CollegeStaff Log Details : ", res)
-                result(null, res)
+                const formattedClgStaffLog = res.map(clgstafflog => ({
+                    ...clgstafflog,
+                    DateTime: clgstafflog.DateTime.toLocaleString('en-IN', {
+                        timeZone: 'Asia/Kolkata',
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    })
+                }));
+                console.log("CollegeStaff Log Details : ", formattedClgStaffLog)
+                result(null, formattedClgStaffLog)
             }
         })
 }
