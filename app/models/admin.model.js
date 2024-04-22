@@ -1,6 +1,7 @@
 const db = require('../models/db')
 const bcrypt = require('bcrypt')
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
+const crypto = require("crypto")
 
 const Admin = function (admin) {
     this.userName = admin.userName
@@ -269,22 +270,23 @@ Admin.getAll = async (result) => {
             const formattedLog = response.map(log => ({
                 ...log,
                 DateTime: log.DateTime.toLocaleString('en-IN', {
-                  timeZone: 'Asia/Kolkata',
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit'
+                    timeZone: 'Asia/Kolkata',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
                 })
-              }));
-              
+            }));
+
             console.log("Admin Staff Log : ", formattedLog)
             result(null, formattedLog)
         }
     })
 
 }
+
 
 Admin.searchAdminLog = (search, result) => {
     const searchTerm = '%' + search + '%'
@@ -300,6 +302,111 @@ Admin.searchAdminLog = (search, result) => {
                 result(null, res)
             }
         })
+
+Admin.forgotPassGenerateAndHashOTP = (userName, result) => {
+    // Generate a 6-digit numeric OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const saltRounds = 10;
+    const hashedOTP = bcrypt.hashSync(otp, saltRounds); // Hash the OTP
+
+    db.query("SELECT * FROM admin WHERE BINARY userName = ?", [userName], (err, checkRes) => {
+        if (err) {
+            console.error("Error while checking username existence: ", err);
+            result(err, null);
+            return;
+        } else if (checkRes.length === 0) {
+            console.log("Admin Does Not Exist")
+            return result("Admin Does Not Exist", null);
+        } else {
+            db.query(
+                "SELECT * FROM adminstaff_otp WHERE BINARY Email = ?",
+                [userName],
+                (err, res) => {
+                    if (err) {
+                        console.error("Error while checking OTP existence: ", err);
+                        result(err, null);
+                        return;
+                    } else {
+                        if (res.length > 0) {
+
+                            const lastOTPTime = new Date(res[0].createdAt).getTime(); // Get the time when OTP was last set
+                            const currentTime = new Date().getTime(); // Get current time
+                            const timeDiffInSeconds = (currentTime - lastOTPTime) / 1000; // Calculate time difference in seconds
+
+                            if (timeDiffInSeconds < 120) {
+                                console.log("Please wait for 2 minutes before sending OTP again");
+                                return result("Please wait for 2 minutes before sending OTP again", null);
+                            }
+
+                            // Email exists, so update the OTP
+                            const updateQuery = "UPDATE adminstaff_otp SET otp = ?, createdAt = NOW() WHERE BINARY email = ?";
+                            db.query(
+                                updateQuery,
+                                [hashedOTP, userName],
+                                (err, res) => {
+                                    if (err) {
+                                        console.error("Error while updating OTP: ", err);
+                                        result(err, null);
+                                    } else {
+                                        console.log("OTP updated successfully");
+                                        result(null, otp); // Return the plain OTP for email sending
+                                    }
+                                }
+                            );
+                        } else {
+                            // Email does not exist, insert new OTP
+                            const insertQuery = "INSERT INTO adminstaff_otp (email, otp, createdAt) VALUES (?, ?, NOW())";
+                            db.query(
+                                insertQuery,
+                                [userName, hashedOTP],
+                                (err, res) => {
+                                    if (err) {
+                                        console.error("Error while inserting OTP: ", err);
+                                        result(err, null);
+                                    } else {
+                                        console.log("OTP inserted successfully");
+                                        result(null, otp); // Return the plain OTP for email sending
+                                    }
+                                }
+                            );
+                        }
+                    }
+                }
+            );
+        }
+    })
+}
+
+Admin.verifyOTP = (userName, otp, result) => {
+    const query = "SELECT otp, createdAt FROM adminstaff_otp WHERE BINARY email = ?";
+    db.query(query, [userName], (err, res) => {
+        if (err) {
+            return result(err, null);
+        } else {
+            if (res.length > 0) {
+                const admotp = res[0].otp;
+                const createdAt = res[0].createdAt;
+                // Check if OTP is expired
+                const expiryDuration = 10 * 60 * 1000; // 10 minute in milliseconds
+                const otpCreatedAt = new Date(createdAt).getTime();
+                const currentTime = new Date().getTime();
+                if (currentTime - otpCreatedAt > expiryDuration) {
+                    return result("OTP expired", null);
+                }
+
+                // If OTP not expired, proceed to compare
+                const isMatch = bcrypt.compareSync(otp, admotp);
+                if (isMatch) {
+                    return result(null, true);
+                } else {
+                    return result(null, false);
+                }
+            } else {
+                return result("OTP not found or expired", null);
+            }
+        }
+    });
+
 }
 
 module.exports = Admin

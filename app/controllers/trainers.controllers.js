@@ -47,39 +47,21 @@ const upload = multer({
 exports.createTrainer = (request, response) => {
     const uploadSingle = upload.single('profilePicture');
     uploadSingle(request, response, async (error) => {
+
+        let imageUrl;
+
         if (error) {
             return response.status(500).json({ "status": error.message });
         }
 
         if (!request.file) {
-            return response.status(400).json({ "status": "No file uploaded" });
-        }
-
-        const file = request.file;
-        const fileStream = fs.createReadStream(file.path);
-
-        const uploadParams = {
-            Bucket: process.env.S3_BUCKET,
-            Key: `uploads/${file.filename}`,
-            Body: fileStream
-        };
-
-        try {
-            const data = await s3Client.send(new PutObjectCommand(uploadParams));
-            const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
-            // Remove the file from local storage
-            fs.unlinkSync(file.path);
+            imageUrl = request.body.profilePicture
 
             const trainerToken = request.headers.token;
             const key = request.headers.key; //give key of respective logins of admin and adminstaff.
 
             jwt.verify(trainerToken, key, (err, decoded) => {
                 if (decoded) {
-                    const profilePicture = request.file ? request.file.filename : null;
-
-                    if (!request.file) {
-                        return response.json({ "status": "Please upload a profile picture" });
-                    }
 
                     const validationErrors = {};
 
@@ -123,7 +105,7 @@ exports.createTrainer = (request, response) => {
                         email: request.body.email,
                         password: request.body.password,
                         phoneNumber: formattedPhoneNumber,
-                        profilePicture: imageUrl,
+                        profilePicture: imageUrl
                     });
 
                     bcrypt.hash(trainer.password, saltRounds, (err, hashedPassword) => {
@@ -149,11 +131,108 @@ exports.createTrainer = (request, response) => {
                     return response.json({ "status": "Unauthorized access!!" });
                 }
             });
+        } else {
+            const file = request.file;
+            const fileStream = fs.createReadStream(file.path);
 
-        } catch (err) {
-            fs.unlinkSync(file.path);
-            return response.status(500).json({ "status": err.message });
+            const uploadParams = {
+                Bucket: process.env.S3_BUCKET,
+                Key: `uploads/${file.filename}`,
+                Body: fileStream
+            };
+
+            try {
+                const data = await s3Client.send(new PutObjectCommand(uploadParams));
+                const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+                // Remove the file from local storage
+                fs.unlinkSync(file.path);
+
+                const trainerToken = request.headers.token;
+                const key = request.headers.key; //give key of respective logins of admin and adminstaff.
+
+                jwt.verify(trainerToken, key, (err, decoded) => {
+                    if (decoded) {
+
+                        const validationErrors = {};
+
+                        if (Validator.isEmpty(request.body.trainerName).isValid) {
+                            validationErrors.trainerName = "Please enter your name";
+                        }
+                        if (Validator.isEmpty(request.body.about).isValid) {
+                            validationErrors.about = "Please enter something about you";
+                        }
+                        if (Validator.isEmpty(request.body.email).isValid) {
+                            validationErrors.email = "Please enter your email";
+                        }
+                        if (Validator.isEmpty(request.body.password).isValid) {
+                            validationErrors.password = "Please enter your password";
+                        }
+                        if (Validator.isEmpty(request.body.phoneNumber).isValid) {
+                            validationErrors.phoneNumber = "Please enter your mobile number";
+                        }
+                        if (!Validator.isValidName(request.body.trainerName).isValid) {
+                            validationErrors.trainerName = Validator.isValidName(request.body.trainerName).message;
+                        }
+                        if (!Validator.isValidEmail(request.body.email).isValid) {
+                            validationErrors.email = "Please enter a valid email";
+                        }
+                        if (!Validator.isValidMobileNumber(request.body.phoneNumber).isValid) {
+                            validationErrors.phoneNumber = "Please enter a valid mobile number";
+                        }
+                        if (!Validator.isValidPassword(request.body.password).isValid) {
+                            validationErrors.password = Validator.isValidPassword(request.body.password).message;
+                        }
+
+                        if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+                            validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+                        }
+
+                        if (Object.keys(validationErrors).length > 0) {
+                            return response.json({ "status": "Validation failed", "data": validationErrors });
+                        }
+
+                        let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(request.body.phoneNumber) ? request.body.phoneNumber.replace(/^(\+91\s?|91\s?)/, '') : request.body.phoneNumber;
+
+                        const trainer = new Trainers({
+                            trainerName: request.body.trainerName,
+                            about: request.body.about,
+                            email: request.body.email,
+                            password: request.body.password,
+                            phoneNumber: formattedPhoneNumber,
+                            profilePicture: imageUrl
+                        });
+
+                        bcrypt.hash(trainer.password, saltRounds, (err, hashedPassword) => {
+                            if (err) {
+                                return response.json({ "status": "Error hashing password" });
+                            }
+                            trainer.password = hashedPassword;
+
+                            Trainers.create(trainer, (err, data) => {
+                                if (err) {
+                                    return response.json({ "status": err });
+                                }
+                                if (key === "lmsapp") {
+                                    logAdminStaff(0, "Admin Created Trainer")
+                                }
+                                if (key !== "lmsapp") {
+                                    logAdminStaff(request.body.addedby, "Admin Staff Created Trainer")
+                                }
+                                return response.json({ "status": "success", "data": data });
+                            });
+                        });
+                    } else {
+                        return response.json({ "status": "Unauthorized access!!" });
+                    }
+                });
+
+            } catch (err) {
+                fs.unlinkSync(file.path);
+                return response.status(500).json({ "status": err.message });
+            }
         }
+
+
     })
 };
 
@@ -311,7 +390,7 @@ exports.trainerDetailsUpdate = (request, response) => {
                     phoneNumber: formattedPhoneNumber,
                     profilePicture,
                 };
-                
+
                 Trainers.updateTrainer(trainerUpdate, (err, data) => {
                     if (err) {
                         if (err.kind === "not_found") {
@@ -342,7 +421,7 @@ exports.trainerDetailsUpdate = (request, response) => {
 exports.viewOneTrainer = (request, response) => {
     const trainerToken = request.headers.token;
     const key = request.headers.key; //give respective keys of admin and adminstaff
-    const trainerId = request.body.id; 
+    const trainerId = request.body.id;
 
     jwt.verify(trainerToken, key, (err, decoded) => {
         if (decoded) {

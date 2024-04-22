@@ -204,8 +204,8 @@ const CollegeStaffLogin = () => {
                     });
                 } else {
                     alert(response.data.status)
-                    setShowWaitingModal(false)
-                    setShowOverlay(false);
+                    setShowWaitingModal(true)
+                    setShowOverlay(true);
                 }
             }
         )

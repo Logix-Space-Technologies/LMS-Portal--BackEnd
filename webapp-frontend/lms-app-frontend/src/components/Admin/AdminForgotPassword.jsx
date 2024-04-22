@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
-import '../../config/config'
-import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import '../../config/config'
 
-const AdminStaffForgotPassword = () => {
+const AdminForgotPassword = () => {
+
     const [updateField, setUpdateField] = useState({
-        "Email": sessionStorage.getItem("admstaffemail"),
+        "userName": sessionStorage.getItem("adminEmail"),
         "Password": "",
         "ConfirmPassword": ""
     })
@@ -15,7 +16,7 @@ const AdminStaffForgotPassword = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const apiurl = global.config.urls.api.server + "/api/lms/admstaffforgotpassword";
+    const apiurl = global.config.urls.api.server + "/api/lms/adminforgotpassword";
 
     const navigate = useNavigate();
     const [showWaitingModal, setShowWaitingModal] = useState(false);
@@ -32,10 +33,10 @@ const AdminStaffForgotPassword = () => {
     }
 
     const backFunc = () => {
-        navigate("/admstafflogin");
+        navigate("/");
         sessionStorage.clear()
         setUpdateField({
-            "Email": "",
+            "userName": "",
             "Password": "",
             "ConfirmPassword": ""
         })
@@ -50,7 +51,7 @@ const AdminStaffForgotPassword = () => {
             }
         };
         let data = {
-            "Email": updateField.Email,
+            "userName": updateField.userName,
             "Password": updateField.Password
         }
 
@@ -62,24 +63,24 @@ const AdminStaffForgotPassword = () => {
                     if (response.data.status === "success") {
                         closeWaitingModal()
                         setUpdateField({
-                            "Email": "",
+                            "userName": "",
                             "Password": "",
                             "ConfirmPassword": ""
                         })
                         setTimeout(() => {
                             alert("Password Changed Successfully\nKindly Login.");
-                            navigate("/admstafflogin");
+                            navigate("/");
                             sessionStorage.clear()
                         }, 500)
-                    } else if (response.data.status === "Validation failed" && response.data.data.Email) {
+                    } else if (response.data.status === "Validation failed" && response.data.data.userName) {
                         closeWaitingModal()
                         setTimeout(() => {
-                            alert(response.data.data.Email);
+                            alert(response.data.data.userName);
                         }, 500)
-                    } else if (response.data.status === "Validation failed" && response.data.data.Password) {
+                    } else if (response.data.status === "Validation failed" && response.data.data.newPassword) {
                         closeWaitingModal()
                         setTimeout(() => {
-                            alert(response.data.data.Password);
+                            alert(response.data.data.newPassword);
                         }, 500)
                     } else {
                         closeWaitingModal()
@@ -114,7 +115,7 @@ const AdminStaffForgotPassword = () => {
         }
         return errors;
     };
-    
+
     return (
         <div>
             <div className="container">
@@ -211,4 +212,4 @@ const AdminStaffForgotPassword = () => {
     )
 }
 
-export default AdminStaffForgotPassword
+export default AdminForgotPassword

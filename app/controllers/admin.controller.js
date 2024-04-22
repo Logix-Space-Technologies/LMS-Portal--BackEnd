@@ -4,6 +4,8 @@ const Admin = require("../models/admin.model");
 const Validator = require('../config/data.validate')
 const { AdminStaffLog, logAdminStaff } = require("../models/adminStaffLog.model")
 const firebaseAdmin = require('firebase-admin')
+const mailContents = require('../config/mail.content');
+const mail = require('../../sendEmail');
 
 
 exports.sendNotifications = (request, response) => {
@@ -225,6 +227,7 @@ exports.adminforgotpassword = (request, response) => {
 
 }
 
+
 exports.searchAdminLog = (request, response) => {
     const adminLogSearchQuery = request.body.SearchQuery
     const adminLogSearchToken = request.headers.token
@@ -251,3 +254,63 @@ exports.searchAdminLog = (request, response) => {
         }
     })
 }
+
+
+// Function to handle forgot password request
+exports.forgotPassword = (request, response) => {
+    const email = request.body.userName
+    // Generate and hash OTP
+    Admin.forgotPassGenerateAndHashOTP(email, (err, otp) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            let admotp = otp
+            let admName = "Admin"
+            // Send OTP to email
+            const mailSent = sendOTPEmail(email, admName, admotp);
+            if (mailSent) {
+                return response.json({ "status": "OTP sent to email." });
+            } else {
+                return response.json({ "status": "Failed to send OTP." });
+            }
+
+        }
+    });
+};
+
+// Function to send OTP
+function sendOTPEmail(email, admName, admotp) {
+    const otpVerificationHTMLContent = mailContents.AdminOTPVerificationHTMLContent(admName, admotp);
+    const otpVerificationTextContent = mailContents.AdminOTPVerificationTextContent(admName, admotp);
+    mail.sendEmail(email, 'Password Reset Request', otpVerificationHTMLContent, otpVerificationTextContent)
+    return true; // Placeholder
+}
+
+// Function to verify OTP
+exports.verifyOtp = (req, res) => {
+    // Extract email and OTP from request body
+    const email = req.body.userName;
+    const otp = req.body.otp;
+
+    // Input validation (basic example)
+    if (!email || !otp) {
+        return res.json({ "status": "Username and OTP are required" });
+    }
+
+    // Call the model function to verify the OTP
+    Admin.verifyOTP(email, otp, (err, result) => {
+        if (err) {
+            // If there was an error or the OTP is not valid/expired
+            return res.json({ "status": err });
+        } else {
+            if (result) {
+                // If the OTP is verified successfully
+                return res.json({ "status": "OTP verified successfully" });
+            } else {
+                // If the OTP does not match
+                return res.json({ "status": "Invalid OTP" });
+            }
+        }
+    });
+};
+
