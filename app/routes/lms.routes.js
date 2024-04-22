@@ -400,5 +400,7 @@ router.post('/viewcallbackAPIClgStaff', ClgStaffViewCallBackController.sendfn)
 
 router.post('/viewmsgreceivedAPIClgStaff', ClgStaffViewMsgReceivedController.sendfn)
 
+router.post('/clgStaffSearchSession',ClgStaffController.collegeStaffSearchSession)
+
 
 module.exports = router
