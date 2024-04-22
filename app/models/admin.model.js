@@ -287,6 +287,35 @@ Admin.getAll = async (result) => {
 
 }
 
+
+Admin.searchAdminLog = (search, result) => {
+    const searchTerm = '%' + search + '%'
+    db.query("SELECT * FROM adminstafflog WHERE Action LIKE ? AND DateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY DateTime DESC;",
+        [searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                result
+            } else {
+                const formattedLog = res.map(log => ({
+                    ...log,
+                    DateTime: log.DateTime.toLocaleString('en-IN', {
+                        timeZone: 'Asia/Kolkata',
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    })
+                }));
+                console.log("Admin Log Details : ", formattedLog)
+                result(null, formattedLog)
+            }
+        })
+}
+
 Admin.forgotPassGenerateAndHashOTP = (userName, result) => {
     // Generate a 6-digit numeric OTP
     const otp = crypto.randomInt(100000, 999999).toString();
@@ -390,6 +419,7 @@ Admin.verifyOTP = (userName, otp, result) => {
             }
         }
     });
+
 }
 
 module.exports = Admin
