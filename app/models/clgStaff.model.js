@@ -333,8 +333,8 @@ CollegeStaff.viewStudent = (batchId, result) => {
                 return;
             } else {
                 const formattedViewStudent = res.map(student => ({ ...student, validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
-                console.log("Student Details: ", res);
-                result(null, res);
+                console.log("Student Details: ", formattedViewStudent);
+                result(null, formattedViewStudent);
             }
         }
     );
