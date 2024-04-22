@@ -1,13 +1,13 @@
 const db = require('../../models/db');
 const jwt = require("jsonwebtoken");
 
-const whatsappmsgreceivedfromstudview = (request, response) => {
+const whatsappmsgreceivedfromclgstaffview = (request, response) => {
     const token = request.headers.token;
     const key = request.headers.key;
 
     jwt.verify(token, key, (error, decoded) => {
         if (decoded) {
-            db.query("SELECT s.membership_no, s.studName, w.id, w.messageId, w.message, w.dateTime, w.studId, c.phone, c.country_code, c.dial_code FROM wtsappmsgreceivedfromstudent w JOIN student s ON s.id = w.studId JOIN wtsappmsgcommon c ON c.messageId = w.messageId WHERE w.dateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY w.dateTime ASC", (err, res) => {
+            db.query("SELECT ce.collegeName, cs.collegeStaffName, w.id, w.messageId, w.message, w.dateTime, w.clgstaffId, c.phone, c.country_code, c.dial_code FROM wtsappmsgreceivedfromclgstaff w JOIN college_staff cs ON cs.id = w.clgstaffId JOIN wtsappmsgcommon c ON c.messageId = w.messageId JOIN college ce ON ce.id = cs.collegeId WHERE w.dateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY w.dateTime ASC", (err, res) => {
                 if (err) {
                     console.log(err)
                 } else {
@@ -33,4 +33,4 @@ const whatsappmsgreceivedfromstudview = (request, response) => {
 
 };
 
-module.exports.sendfn = whatsappmsgreceivedfromstudview
+module.exports.sendfn = whatsappmsgreceivedfromclgstaffview

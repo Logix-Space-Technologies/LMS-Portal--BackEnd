@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import Navbar from './Navbar';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import Navbar from './Navbar';
 
-const AdminViewMsgReceived = () => {
+const AdminViewClgStaffMsgReceivedLog = () => {
     const [msgReceivedLogData, setMsgReceivedLogData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [logsPerPage] = useState(10); // Number of logs per page
@@ -16,7 +16,7 @@ const AdminViewMsgReceived = () => {
     let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
-    const apiUrl = global.config.urls.api.server + "/api/lms/viewwhatsappmsgreceivedfromstud";
+    const apiUrl = global.config.urls.api.server + "/api/lms/viewmsgreceivedAPIClgStaff";
 
     const getData = () => {
         let axiosConfig = {
@@ -64,13 +64,12 @@ const AdminViewMsgReceived = () => {
     const calculateSerialNumber = (index) => {
         return ((currentPage - 1) * logsPerPage) + index + 1;
     }
-
     return (
         <div>
             <div>
                 <Navbar />
                 <br />
-                <strong>Admin View Student Whatsapp Message Received Log</strong><br /><br />
+                <strong>Admin View College Staff Whatsapp Message Received Log</strong><br /><br />
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     {isLoading ? <div className="flex justify-center items-center h-full">
                         <div className="text-center py-20">
@@ -80,8 +79,8 @@ const AdminViewMsgReceived = () => {
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" className="px-6 py-3">S/N</th>
-                                <th scope="col" className="px-6 py-3">Membership No.</th>
-                                <th scope="col" className="px-6 py-3">Student Name</th>
+                                <th scope="col" className="px-6 py-3">College Name</th>
+                                <th scope="col" className="px-6 py-3">College Staff Name</th>
                                 <th scope="col" className="px-6 py-3">Message Id</th>
                                 <th scope="col" className="px-6 py-3">Message</th>
                                 <th scope="col" className="px-6 py-3">Sent Date Time</th>
@@ -96,8 +95,8 @@ const AdminViewMsgReceived = () => {
                                     return (
                                         <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                             <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
-                                            <td className="px-6 py-4">{value.membership_no}</td>
-                                            <td className="px-6 py-4">{value.studName}</td>
+                                            <td className="px-6 py-4">{value.collegeName}</td>
+                                            <td className="px-6 py-4">{value.collegeStaffName}</td>
                                             <td className="px-6 py-4">{value.messageId}</td>
                                             <td className="px-6 py-4">{value.message}</td>
                                             <td className="px-6 py-4">{value.dateTime}</td>
@@ -155,4 +154,4 @@ const AdminViewMsgReceived = () => {
     )
 }
 
-export default AdminViewMsgReceived
+export default AdminViewClgStaffMsgReceivedLog
