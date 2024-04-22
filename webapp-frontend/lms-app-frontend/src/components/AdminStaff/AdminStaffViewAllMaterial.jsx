@@ -5,6 +5,9 @@ import axios from 'axios';
 import AdmStaffNavBar from './AdmStaffNavBar';
 
 const AdminStaffViewAllMaterial = () => {
+    const [inputField, setInputField] = useState({
+        materialQuery: "",
+    });
     const [materialData, setMaterialData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [materialPerPage] = useState(10);
@@ -20,8 +23,13 @@ const AdminStaffViewAllMaterial = () => {
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
     const apiUrl = global.config.urls.api.server + "/api/lms/AdmViewAllMaterial";
+    const apiLink = global.config.urls.api.server + "/api/lms/searchMaterial";
     const apiLink2 = global.config.urls.api.server + "/api/lms/adminStaffDeleteMaterial";
     const navigate = useNavigate();
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value });
+    };
 
     const closeWaitingModal = () => {
         setShowOverlay(false)
@@ -52,6 +60,39 @@ const AdminStaffViewAllMaterial = () => {
                 alert(response.data.status);
             }
 
+        });
+    };
+
+    const readValue = () => {
+        setIsLoading(true);
+        let axiosConfig = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admstaffLogintoken"),
+                "key": sessionStorage.getItem("admstaffkey"),
+            },
+        };
+
+        axios.post(apiLink, inputField, axiosConfig).then((response) => {
+            if (response.data.data) {
+                setMaterialData(response.data.data);
+                setIsLoading(false);
+                setInputField({
+                    materialQuery: "",
+                });
+            } else if (response.data.status === "Unauthorized User!!") {
+                sessionStorage.clear();
+                navigate("/admstafflogin");
+            } else if (!response.data.data) {
+                setMaterialData([]);
+                setIsLoading(false);
+                setInputField({
+                    materialQuery: "",
+                });
+            } else {
+                alert(response.data.status);
+            }
         });
     };
 
@@ -121,6 +162,19 @@ const AdminStaffViewAllMaterial = () => {
             <br />
             <strong>AdminStaff View All Materials</strong>
             <br /><br />
+            <div className="flex justify-between items-center mx-4 my-4">
+                <div className="container">
+                    <div className="row g-3">
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            <label htmlFor="" className="form-label"></label>
+                            <input onChange={inputHandler} type="text" className="form-control" name="materialQuery" value={inputField.materialQuery} placeholder='Search By fileName/Description/Batch Name' />
+                        </div>
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            <button onClick={readValue} className="btn btn-warning">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">
                     <div>Loading...</div>
