@@ -302,6 +302,7 @@ Admin.searchAdminLog = (search, result) => {
                 result(null, res)
             }
         })
+}
 
 Admin.forgotPassGenerateAndHashOTP = (userName, result) => {
     // Generate a 6-digit numeric OTP
