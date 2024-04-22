@@ -26,9 +26,6 @@ const ClgStaffNavbar = () => {
                                 <Link className="nav-link active" aria-current="page" to="/studentverification">Student Verification</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/clgStaffSearchTask">Search Task</Link>
-                            </li>
-                            <li className="nav-item">
                                 <Link className="nav-link" to="/CollegeStaffViewCollege">View College Details</Link>
                             </li>
                             <li className="nav-item">
