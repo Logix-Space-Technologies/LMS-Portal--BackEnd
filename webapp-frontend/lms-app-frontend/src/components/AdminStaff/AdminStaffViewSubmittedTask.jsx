@@ -8,6 +8,10 @@ import Navbar from '../Admin/Navbar'
 
 const AdminStaffViewSubmittedTask = () => {
 
+    const [updateField, setUpdateField] = useState({
+        "subTaskSearchQuery": ""
+    });
+
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate()
@@ -36,6 +40,7 @@ const AdminStaffViewSubmittedTask = () => {
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
     const apiUrl = global.config.urls.api.server + "/api/lms/adSfViewSubmittedTask"
+    const apiUrl3 = global.config.urls.api.server + '/api/lms/admstaffsearchsubtask'
     const apiUrl2 = global.config.urls.api.server + "/api/lms/evaluateTask"
 
     const closeModal = () => {
@@ -46,6 +51,10 @@ const AdminStaffViewSubmittedTask = () => {
             "evaluatorRemarks": "",
             "score": ""
         });
+    };
+
+    const updateHandler = (event) => {
+        setUpdateField({ ...updateField, [event.target.name]: event.target.value });
     };
 
     const getData = () => {
@@ -85,6 +94,46 @@ const AdminStaffViewSubmittedTask = () => {
             }
         )
     }
+
+    const searchSubmittedTasks = () => {
+        setLoading(true);
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let axiosConfig = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        }
+        let data = { "sessionId": sessionStorage.getItem("sessionId"), "subTaskSearchQuery": updateField.subTaskSearchQuery }
+        axios.post(apiUrl3, data, axiosConfig)
+            .then(response => {
+                if (response.data.data) {
+                    setTaskData(response.data.data);
+                    setLoading(false);
+                    setUpdateField({ "subTaskSearchQuery": "" });
+                } else if (response.data.status === "Unauthorized access!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setLoading(false);
+                    setUpdateField({ "subTaskSearchQuery": "" });
+                    setTimeout(()=>{
+                        alert("No Submitted Tasks Found")
+                        getData()
+                    }, 500)
+                } else {
+                    alert(response.data.status)
+                }
+            })
+    };
 
     const closeWaitingModal = () => {
         setShowOverlay(false)
@@ -237,6 +286,12 @@ const AdminStaffViewSubmittedTask = () => {
                     <strong>View All Submitted Tasks</strong>
 
                     <div></div>
+                </div>
+                <div className="col col-md-6 mx-auto">
+                    <div className="input-group mb-3">
+                        <input onChange={updateHandler} type="text" className="form-control" name="subTaskSearchQuery" value={updateField.subTaskSearchQuery} placeholder='Batch Name/College Name/Task Title' />
+                        <button onClick={searchSubmittedTasks} className="btn btn-warning ms-2">Search</button>
+                    </div>
                 </div>
                 <br /><br />
 

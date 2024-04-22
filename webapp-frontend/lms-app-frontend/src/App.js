@@ -96,8 +96,6 @@ import CollegeStaffViewSession from './components/CollegeStaff/CollegeStaffViewS
 import StudentViewCommunityManager from './components/Student/StudentViewCommunityManager';
 import CollegeStaffViewNotifications from './components/CollegeStaff/CollegeStaffViewNotifications';
 import CollegeStaffViewCollege from './components/CollegeStaff/CollegeStaffViewCollege';
-import AdminStaffSearchSubmittedTask from './components/AdminStaff/AdminStaffSearchSubmittedTask';
-import AdminStaffSearchMaterial from './components/AdminStaff/AdminStaffSearchMaterial';
 import StudentValidityRenewal from './components/Student/StudentValidityRenewal';
 import TestLogin from './components/Student/TestLogin';
 import Content1 from './components/Student/TestStudent/Content1';
@@ -204,8 +202,6 @@ function App() {
           <Route path='/AdminStaffUpdateMaterial' element={<AdminStaffUpdateMaterial/>}/>
           <Route path='/adminstaffviewsubmittedtask' element={<AdminStaffViewSubmittedTask/>}/>
           <Route path='/adminStaffAddmaterials' element={<AdminStaffAddMaterials/>}/>
-          <Route path='/adminStaffSearchSubmittedTask' element={<AdminStaffSearchSubmittedTask/>}/>
-          <Route path='/adminstaffsearchmaterial' element={<AdminStaffSearchMaterial/>}/>
           <Route path='/adminstaffforgotpassword' element={<AdminStaffForgotPassword/>}/>
 
           
