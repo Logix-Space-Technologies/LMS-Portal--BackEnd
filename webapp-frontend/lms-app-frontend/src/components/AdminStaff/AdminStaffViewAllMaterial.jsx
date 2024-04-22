@@ -85,11 +85,14 @@ const AdminStaffViewAllMaterial = () => {
                 sessionStorage.clear();
                 navigate("/admstafflogin");
             } else if (!response.data.data) {
-                setMaterialData([]);
                 setIsLoading(false);
                 setInputField({
                     materialQuery: "",
                 });
+                setTimeout(()=>{
+                    alert("No Materials Found")
+                    getData()
+                }, 500)
             } else {
                 alert(response.data.status);
             }

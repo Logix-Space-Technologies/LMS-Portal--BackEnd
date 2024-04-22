@@ -116,16 +116,19 @@ const AdminStaffViewSubmittedTask = () => {
         axios.post(apiUrl3, data, axiosConfig)
             .then(response => {
                 if (response.data.data) {
-                    setUpdateField({ "subTaskSearchQuery": "" });
                     setTaskData(response.data.data);
                     setLoading(false);
+                    setUpdateField({ "subTaskSearchQuery": "" });
                 } else if (response.data.status === "Unauthorized access!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else if (!response.data.data) {
-                    setUpdateField({ "subTaskSearchQuery": "" });
-                    getData()
                     setLoading(false);
+                    setUpdateField({ "subTaskSearchQuery": "" });
+                    setTimeout(()=>{
+                        alert("No Submitted Tasks Found")
+                        getData()
+                    }, 500)
                 } else {
                     alert(response.data.status)
                 }
