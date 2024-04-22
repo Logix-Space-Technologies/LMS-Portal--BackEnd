@@ -265,7 +265,7 @@ Batches.changeRegistrationStatusToNotOpen = (id, result) => {
 }
 
 Batches.getOverallPerformanceOfBatch = (CollegeId, batchId, result) => {
-    db.query(`SELECT studentId, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where CollegeId=? and batchId=? GROUP BY studentId,studName order by studentId;`, [CollegeId, batchId], (err, res) => {
+    db.query(`SELECT studentId, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where CollegeId=? and batchId=? and dueDate < CURRENT_DATE GROUP BY studentId,studName order by studentId;`, [CollegeId, batchId], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
