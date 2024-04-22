@@ -82,11 +82,11 @@ const CollegeStaffViewAllStudents = () => {
       (response) => {
         if (response.data.data) {
           setStudents(response.data.data)
-          setLoading(false)
           setInputField({
-            "collegeId": sessionStorage.getItem("clgstaffviewbatchId"),
+            "batchId": sessionStorage.getItem("clgstaffviewbatchId"),
             "searchQuery": ""
           })
+          setLoading(false)
         } else {
           if (response.data.status === "Unauthorized User!!") {
             sessionStorage.clear()
@@ -94,9 +94,20 @@ const CollegeStaffViewAllStudents = () => {
           } else {
             if (!response.data.data) {
               setLoading(false);
-              fetchStudents()
+              setInputField({
+                "batchId": sessionStorage.getItem("clgstaffviewbatchId"),
+                "searchQuery": ""
+              })
+              setTimeout(() => {
+                fetchStudents()
+                alert("No Students Found !!")
+              }, 500)
             } else {
               setLoading(false);
+              setInputField({
+                "batchId": sessionStorage.getItem("clgstaffviewbatchId"),
+                "searchQuery": ""
+              })
               alert(response.data.status)
             }
           }
