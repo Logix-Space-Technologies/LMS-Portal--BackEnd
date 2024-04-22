@@ -658,16 +658,16 @@ exports.collegeStaffViewBatch = (request, response) => {
   });
 };
 
-exports.searchStudentByCollegeId = (req, res) => {
+exports.searchStudentByBatchId = (req, res) => {
   const searchQuery = req.body.searchQuery;
-  const collegeId = req.body.collegeId;
+  const batchId = req.body.batchId;
   const searchstudToken = req.headers.token;
   jwt.verify(searchstudToken, "lmsappclgstaff", (err, decoded) => {
     if (decoded) {
       if (!searchQuery) {
         return res.json({ "status": "Search query is empty!!" });
       }
-      Student.searchStudentByCollege(searchQuery, collegeId, (err, data) => {
+      Student.searchStudentsOfCollegeByBatchId(searchQuery, batchId, (err, data) => {
         if (err) {
           return res.json({ "status": err });
         } else {

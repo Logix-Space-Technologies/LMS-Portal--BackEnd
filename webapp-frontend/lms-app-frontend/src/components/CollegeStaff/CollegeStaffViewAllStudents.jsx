@@ -5,6 +5,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import ClgStaffNavbar from './ClgStaffNavbar';
 
 const CollegeStaffViewAllStudents = () => {
+  const [inputField, setInputField] = useState(
+    {
+      "batchId": sessionStorage.getItem("clgstaffviewbatchId"),
+      "searchQuery": ""
+    }
+  )
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,6 +24,11 @@ const CollegeStaffViewAllStudents = () => {
   const navigate = useNavigate()
 
   const apiUrl = global.config.urls.api.server + "/api/lms/collegeStaffViewStudent";
+  const apiLink = global.config.urls.api.server + "/api/lms/searchStudent"
+
+  const inputHandler = (event) => {
+    setInputField({ ...inputField, [event.target.name]: event.target.value })
+  }
 
   const fetchStudents = () => {
     const data = { "batchId": sessionStorage.getItem("clgstaffviewbatchId") };
@@ -57,6 +68,43 @@ const CollegeStaffViewAllStudents = () => {
       });
   };
 
+  const readValue = () => {
+    let axiosConfig = {
+      headers: {
+        "content-type": "application/json;charset=UTF-8",
+        "Access-Control-Allow-Origin": "*",
+        "token": sessionStorage.getItem("clgstaffLogintoken"),
+        "key": sessionStorage.getItem("clgstaffkey")
+      }
+    };
+    setLoading(true)
+    axios.post(apiLink, inputField, axiosConfig).then(
+      (response) => {
+        if (response.data.data) {
+          setStudents(response.data.data)
+          setLoading(false)
+          setInputField({
+            "collegeId": sessionStorage.getItem("clgstaffviewbatchId"),
+            "searchQuery": ""
+          })
+        } else {
+          if (response.data.status === "Unauthorized User!!") {
+            sessionStorage.clear()
+            navigate("/clgStafflogin")
+          } else {
+            if (!response.data.data) {
+              setLoading(false);
+              fetchStudents()
+            } else {
+              setLoading(false);
+              alert(response.data.status)
+            }
+          }
+        }
+      }
+    )
+  }
+
   const viewtaskScore = (id) => {
     sessionStorage.setItem("viewscorestudId", id)
     navigate("/clgstaffstudentviewscore")
@@ -84,7 +132,14 @@ const CollegeStaffViewAllStudents = () => {
         <h2 className="text-lg font-bold">College Staff View All Students</h2>
         <Link to="/collegeStaffViewBatch" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
       </div>
-
+      <div className="row g-3">
+        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+          <input onChange={inputHandler} type="text" placeholder='Student Name/Course/Department/Roll No/Admission No' className="form-control" name="searchQuery" value={inputField.searchQuery} />
+        </div>
+        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+          <button onClick={readValue} className="btn btn-warning">Search</button><br /><br />
+        </div>
+      </div>
       {loading ? <div className="col-12 text-center">Loading...</div> : <div className="relative overflow-x-auto shadow-md sm:rounded-lg"><table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
