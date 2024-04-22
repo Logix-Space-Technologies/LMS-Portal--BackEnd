@@ -70,7 +70,7 @@ const AdminViewMsgReceived = () => {
             <div>
                 <Navbar />
                 <br />
-                <strong>Admin View Whatsapp Message Received Log</strong><br /><br />
+                <strong>Admin View Student Whatsapp Message Received Log</strong><br /><br />
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     {isLoading ? <div className="flex justify-center items-center h-full">
                         <div className="text-center py-20">
@@ -109,7 +109,7 @@ const AdminViewMsgReceived = () => {
                                 })
                             ) : (
                                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td colSpan="4" className="px-6 py-4 text-center">No Log Found !!</td>
+                                    <td colSpan="9" className="px-6 py-4 text-center">No Log Found !!</td>
                                 </tr>
                             )}
                         </tbody>
