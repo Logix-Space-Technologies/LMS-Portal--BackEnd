@@ -1503,7 +1503,7 @@ Student.viewPerformance = (collegeId, batchId, id, result) => {
 }
 
 Student.viewPerformanceScore=(studId, result)=>{
-    db.query("SELECT taskName,score,totalScore FROM studentTaskScore where studentId=?;", [studId], (err, res) => {
+    db.query("SELECT taskName,score,totalScore FROM studentTaskScore where studentId=? and dueDate < CURRENT_DATE", [studId], (err, res) => {
         if (err) {
             console.log("Error: ", err)
             return result(err, null)
