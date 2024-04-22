@@ -36,7 +36,6 @@ import CollegeStaffViewAllStudents from './components/CollegeStaff/CollegeStaffV
 import StudentBatchInCharge from './components/Student/StudentBatchInCharge';
 import CollegeStaffChangePassword from './components/CollegeStaff/CollegeStaffChangePassword';
 import CollegeStaffViewAttendance from './components/CollegeStaff/CollegeStaffViewAttendance';
-import CollegeStaffSearchStudent from './components/CollegeStaff/CollegeStaffSearchStudent';
 import StudentViewTransaction from './components/Student/StudentViewTransaction';
 import AdminSearchAdminStaff from './components/Admin/AdminSearchAdminStaff';
 import CollegeStaffViewTask from './components/CollegeStaff/CollegeStaffViewTask';
@@ -224,7 +223,6 @@ function App() {
           <Route path='/collegeStaffViewAllStudents' element={<CollegeStaffViewAllStudents />} />
           <Route path='/clgstaffchangepassword' element={<CollegeStaffChangePassword />} />
           <Route path='/clgstaffviewattendance' element={<CollegeStaffViewAttendance />} />
-          <Route path='/colgstaffsearchstudent' element={<CollegeStaffSearchStudent />} />
           <Route path='/clgstaffviewtask' element={<CollegeStaffViewTask/>}/>
           <Route path='/clgStaffSearchTask' element={<CollegeStaffSearchTask/>}/>
           <Route path='/clgstaffnavbar' element={<ClgStaffNavbar/>}/>
