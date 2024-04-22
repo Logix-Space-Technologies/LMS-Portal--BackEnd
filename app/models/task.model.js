@@ -255,7 +255,15 @@ Tasks.collegeStaffSearchTasks = (searchKey, sessionId, result) => {
                 result(err, null)
                 return
             } else {
-                const formattedViewTask = res.map(tasks => ({ ...tasks, dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
+                const formattedViewTask = res.map(tasks => {
+                    // Convert dueDate to a Date object if it's not 'Past Due Date'
+                    const dueDate = tasks.dueDate === 'Past Due Date' ? 'Past Due Date' : new Date(tasks.dueDate).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' });
+                    return {
+                        ...tasks,
+                        dueDate: dueDate,
+                        addedDate: new Date(tasks.addedDate).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })
+                    }
+                });
                 console.log("Tasks: ", formattedViewTask);
                 result(null, formattedViewTask)
             }
