@@ -248,7 +248,7 @@ Tasks.searchTasks = (sessionId, searchString, result) => {
 Tasks.collegeStaffSearchTasks = (searchKey, sessionId, result) => {
     const searchString = '%' + searchKey + '%'
     db.query("SELECT DISTINCT s.sessionName, t.batchId, t.id, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, CASE WHEN t.dueDate < CURRENT_DATE() THEN 'Past Due Date' ELSE t.dueDate END AS dueDate, t.addedDate FROM task t LEFT JOIN sessiondetails s ON s.id = t.sessionId WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.id = ? AND (t.taskType LIKE ? OR t.taskDesc LIKE ? OR t.taskTitle LIKE ?) ORDER BY dueDate DESC;",
-        [sessionId, searchString, searchString, searchString, searchString],
+        [sessionId, searchString, searchString, searchString],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
