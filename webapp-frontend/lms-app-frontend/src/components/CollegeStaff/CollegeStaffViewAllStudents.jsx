@@ -165,6 +165,7 @@ const CollegeStaffViewAllStudents = () => {
             <th scope="col" className="px-6 py-3">Phone Number</th>
             <th scope="col" className="px-6 py-3">Aadhar No</th>
             <th scope="col" className="px-6 py-3">Membership No.</th>
+            <th scope="col" className="px-6 py-3">Validity</th>
             <th scope="col" className="px-6 py-3"></th>
           </tr>
         </thead>
@@ -184,6 +185,7 @@ const CollegeStaffViewAllStudents = () => {
               <td className="px-6 py-4">{student.studPhNo}</td>
               <td className="px-6 py-4">{student.aadharNo}</td>
               <td className="px-6 py-4">{student.membership_no}</td>
+              <td className="px-6 py-4">{student.validity}</td>
               <td className="px-6 py-4"><button onClick={() => viewtaskScore(student.id)} className="btn btn-primary">View Scores</button></td>
             </tr>
           })}
