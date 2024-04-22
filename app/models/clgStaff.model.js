@@ -324,7 +324,7 @@ CollegeStaff.collegeStaffForgotPassword = (college_staff, result) => {
 
 CollegeStaff.viewStudent = (batchId, result) => {
     db.query(
-        "SELECT DISTINCT c.collegeName, b.batchName, s.id, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.membership_no FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON b.id = s.batchId WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 AND b.id = ? ORDER BY s.membership_no ASC",
+        "SELECT c.collegeName, b.batchName, s.id, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.membership_no, s.validity FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON b.id = s.batchId WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 AND b.id = ? ORDER BY s.membership_no ASC",
         [batchId],
         (err, res) => {
             if (err) {
@@ -332,8 +332,9 @@ CollegeStaff.viewStudent = (batchId, result) => {
                 result(err, null);
                 return;
             } else {
-                console.log("Student Details: ", res);
-                result(null, res);
+                const formattedViewStudent = res.map(student => ({ ...student, validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
+                console.log("Student Details: ", formattedViewStudent);
+                result(null, formattedViewStudent);
             }
         }
     );
@@ -436,8 +437,8 @@ CollegeStaff.verifyStudent = (collegeId, studentId, result) => {
 //College Staff Search Batches
 CollegeStaff.collegeStaffSearchBatch = (searchTerm, collegeId, result) => {
     const clgStaffSearchBatchQuery = '%' + searchTerm + '%'
-    db.query("SELECT DISTINCT c.collegeName, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate FROM batches b JOIN college c ON b.collegeId = c.id JOIN college_staff cs ON c.id = cs.collegeId WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.emailVerified = 1 AND cs.collegeId = ? AND (b.batchName LIKE ? OR b.batchDesc LIKE ?)",
-        [collegeId, clgStaffSearchBatchQuery, clgStaffSearchBatchQuery, clgStaffSearchBatchQuery],
+    db.query("SELECT b.id, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate, COUNT(DISTINCT CASE WHEN st.isVerified = 1 THEN st.id END) AS verifiedStudentCount, COUNT(DISTINCT CASE WHEN STR_TO_DATE(CONCAT(s.date, ' ', s.time), '%Y-%m-%d %H:%i:%s') < NOW() AND s.isActive = 1 AND s.deleteStatus = 0 AND s.cancelStatus = 0 THEN s.id ELSE NULL END) AS sessionCount FROM batches b JOIN college_staff cs ON b.collegeId = cs.collegeId JOIN college c ON b.collegeId = c.id JOIN sessiondetails s ON b.id = s.batchId JOIN student st ON st.batchId = b.id WHERE b.deleteStatus = 0 AND b.isActive = 1 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND cs.emailVerified = 1 AND s.cancelStatus = 0 AND cs.collegeId = ? AND (b.batchName LIKE ? OR b.batchDesc LIKE ?) GROUP BY b.id, b.batchName, b.regStartDate, b.regEndDate, b.batchDesc, b.batchAmount, b.addedDate",
+        [collegeId, clgStaffSearchBatchQuery, clgStaffSearchBatchQuery],
         (err, res) => {
             if (err) {
                 console.log("Error : ", err)
@@ -728,7 +729,7 @@ CollegeStaff.searchClgStaffByCollege = (searchKey, result) => {
     );
 }
 
-CollegeStaff.viewTaskwiseScore=(batchId,taskId,result)=>{
+CollegeStaff.viewTaskwiseScore = (batchId, taskId, result) => {
     db.query(`SELECT studName,score,totalScore FROM studentTaskScore where batchId=? and taskId=?;`, [batchId, taskId], (err, res) => {
         if (err) {
             console.log("error: ", err);
@@ -739,6 +740,25 @@ CollegeStaff.viewTaskwiseScore=(batchId,taskId,result)=>{
             result(null, res);
         }
     })
+}
+
+
+//CollegeStaff Search Session
+CollegeStaff.clgStaffSearchSession = (searchKey, batchId, result) => {
+    const clgStaffSearchSessionQuery = '%' + searchKey + '%'
+    db.query("SELECT DISTINCT b.id AS batchId, s.id, s.sessionName, s.date, s.time, s.type, s.remarks, t.trainerName, s.venueORlink, CASE WHEN s.cancelStatus = 0 THEN 'ACTIVE' WHEN s.cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN batches b ON b.id = s.batchId LEFT JOIN college_staff cs ON cs.collegeId = b.collegeId JOIN trainersinfo t ON s.trainerId = t.id  WHERE s.deleteStatus = 0 AND s.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND s.batchId = ? AND (s.sessionName LIKE ? OR s.type LIKE ? OR t.trainerName LIKE ?) ORDER BY s.date DESC;",
+        [batchId, clgStaffSearchSessionQuery, clgStaffSearchSessionQuery, clgStaffSearchSessionQuery],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                return
+            } else {
+                const formattedSession = res.map(sessions => ({ ...sessions, date: sessions.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
+                console.log("Sessions : ", formattedSession)
+                result(null, formattedSession)
+            }
+        })
 }
 
 module.exports = CollegeStaff

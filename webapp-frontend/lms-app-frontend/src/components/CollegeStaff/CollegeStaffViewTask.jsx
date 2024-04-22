@@ -5,6 +5,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import ClgStaffNavbar from './ClgStaffNavbar';
 
 const CollegeStaffViewTask = () => {
+    const [inputField, setInputField] = useState(
+        {
+            "sessionId": sessionStorage.getItem("viewattendanceid"),
+            "taskQuery": ""
+        }
+    )
     const [taskData, setTaskData] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of students per page
@@ -16,8 +22,13 @@ const CollegeStaffViewTask = () => {
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
     const apiurl = global.config.urls.api.server + "/api/lms/clgstaffviewtask"
+    const apiLink = global.config.urls.api.server + "/api/lms/collegeStaffSearchTasks"
 
     const navigate = useNavigate()
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
+    }
 
     const getData = () => {
         let data = { "sessionId": sessionStorage.getItem("viewattendanceid") }
@@ -44,6 +55,42 @@ const CollegeStaffViewTask = () => {
                             setTaskData([])
                         } else {
                             setLoading(false)
+                            alert(response.data.status)
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+    const readValue = () => {
+        let axiosConfig = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("clgstaffLogintoken"),
+                "key": sessionStorage.getItem("clgstaffkey")
+            }
+        };
+        setLoading(true)
+        axios.post(apiLink, inputField, axiosConfig).then(
+            (response) => {
+                if (response.data.data) {
+                    setTaskData(response.data.data)
+                    setLoading(false)
+                    setInputField({
+                        "sessionId": sessionStorage.getItem("viewattendanceid"),
+                        "taskQuery": ""
+                    })
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        sessionStorage.clear()
+                        navigate("/clgStafflogin")
+                    } else {
+                        if (!response.data.data) {
+                            getData()
+                            setLoading(false);
+                        } else {
                             alert(response.data.status)
                         }
                     }
@@ -90,6 +137,14 @@ const CollegeStaffViewTask = () => {
                                 <Link to="/clgstaffviewsession" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
                             </div>
                             <br />
+                            <div className="row g-3">
+                                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                    <input onChange={inputHandler} type="text" placeholder='Task Name/Task Description/Task Type/Batch Name' className="form-control" name="taskQuery" value={inputField.taskQuery} />
+                                </div>
+                                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                    <button onClick={readValue} className="btn btn-warning">Search</button>
+                                </div>
+                            </div><br />
                             <div className="max-w-full overflow-x-auto">
                                 {loading ? <div className="col-12 text-center">Loading...</div> : <table className="w-full table-auto">
                                     <thead>

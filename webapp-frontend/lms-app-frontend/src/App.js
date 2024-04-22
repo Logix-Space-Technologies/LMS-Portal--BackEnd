@@ -36,14 +36,11 @@ import CollegeStaffViewAllStudents from './components/CollegeStaff/CollegeStaffV
 import StudentBatchInCharge from './components/Student/StudentBatchInCharge';
 import CollegeStaffChangePassword from './components/CollegeStaff/CollegeStaffChangePassword';
 import CollegeStaffViewAttendance from './components/CollegeStaff/CollegeStaffViewAttendance';
-import CollegeStaffSearchStudent from './components/CollegeStaff/CollegeStaffSearchStudent';
-import CollegeStaffSearchBatch from './components/CollegeStaff/CollegeStaffSearchBatch';
 import StudentViewTransaction from './components/Student/StudentViewTransaction';
 import AdminSearchAdminStaff from './components/Admin/AdminSearchAdminStaff';
 import CollegeStaffViewTask from './components/CollegeStaff/CollegeStaffViewTask';
 import AdminViewAdStaffLog from './components/Admin/AdminViewAdStaffLog';
 import StudentViewUpcomingSession from './components/Student/StudentViewUpcomingSession';
-import CollegeStaffSearchTask from './components/CollegeStaff/CollegeStaffSearchTask';
 import AdminChangePassword from './components/Admin/AdminChangePassword';
 import Navbar from './components/Admin/Navbar';
 import AdminViewAllClgStaff from './components/Admin/AdminViewAllClgStaff';
@@ -225,10 +222,7 @@ function App() {
           <Route path='/collegeStaffViewAllStudents' element={<CollegeStaffViewAllStudents />} />
           <Route path='/clgstaffchangepassword' element={<CollegeStaffChangePassword />} />
           <Route path='/clgstaffviewattendance' element={<CollegeStaffViewAttendance />} />
-          <Route path='/colgstaffsearchstudent' element={<CollegeStaffSearchStudent />} />
-          <Route path='/colgstaffsearchbatch' element={<CollegeStaffSearchBatch />} />
           <Route path='/clgstaffviewtask' element={<CollegeStaffViewTask/>}/>
-          <Route path='/clgStaffSearchTask' element={<CollegeStaffSearchTask/>}/>
           <Route path='/clgstaffnavbar' element={<ClgStaffNavbar/>}/>
           <Route path='/clgstaffviewsession' element={<CollegeStaffViewSession/>}/>
           <Route path='/clgstaffviewNotifications' element={<CollegeStaffViewNotifications/>}/>

@@ -112,7 +112,7 @@ router.post("/AddMaterials", MaterialController.createMaterial)
 
 router.post("/CollegeStaffViewBatch", ClgStaffController.collegeStaffViewBatch)
 
-router.post("/searchStudent", ClgStaffController.searchStudentByCollegeId)
+router.post("/searchStudent", ClgStaffController.searchStudentByBatchId)
 
 router.post("/refundRequest", RefundController.createRefundRequest)
 
@@ -399,6 +399,8 @@ router.post('/callbackAPIClgStaff', ClgStaffCallBackController.sendfn)
 router.post('/viewcallbackAPIClgStaff', ClgStaffViewCallBackController.sendfn)
 
 router.post('/viewmsgreceivedAPIClgStaff', ClgStaffViewMsgReceivedController.sendfn)
+
+router.post('/clgStaffSearchSession',ClgStaffController.collegeStaffSearchSession)
 
 
 module.exports = router

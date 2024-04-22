@@ -5,6 +5,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import ClgStaffNavbar from './ClgStaffNavbar';
 
 const CollegeStaffViewSession = () => {
+
+    const [inputField, setInputField] = useState(
+        {
+            "batchId": sessionStorage.getItem("clgstaffbatchId"),
+            "clgStaffSearchSessionQuery": ""
+        }
+    )
+
     const [sessionData, setSessionData] = useState([])
     const [loading, setLoading] = useState(true);
 
@@ -19,6 +27,12 @@ const CollegeStaffViewSession = () => {
     const navigate = useNavigate()
 
     const apiUrl = global.config.urls.api.server + "/api/lms/ClgStaffViewSession";
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/clgStaffSearchSession";
+
+    const inputHandler = (event) => {
+        const { name, value } = event.target;
+        setInputField({ ...inputField, [name]: value });
+    };
 
     const getData = () => {
         const data = { "batchId": sessionStorage.getItem("clgstaffbatchId") };
@@ -50,6 +64,43 @@ const CollegeStaffViewSession = () => {
                 }
             }
         });
+    };
+
+    const searchSession = () => {
+        setLoading(true);
+        const axiosConfig3 = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("clgstaffLogintoken"),
+                "key": sessionStorage.getItem("clgstaffkey")
+            }
+        };
+        const data = {
+            "clgStaffSearchSessionQuery": inputField.clgStaffSearchSessionQuery,
+            "batchId": sessionStorage.getItem("clgstaffbatchId")
+        }
+        axios.post(apiUrl2, data, axiosConfig3).then((response) => {
+            if (response.data.data) {
+                setSessionData(response.data.data);
+                setInputField({ "clgStaffSearchSessionQuery": "" })
+                setLoading(false);
+            } else if (response.data.status === "Unauthorized User!!") {
+                sessionStorage.clear()
+                navigate("/clgStafflogin")
+            } else if (!response.data.data) {
+                setLoading(false);
+                setInputField({ "clgStaffSearchSessionQuery": "" })
+                setTimeout(() => {
+                    getData();
+                    alert("No Session Found !!")
+                }, 500)
+            } else {
+                alert(response.data.status)
+                setInputField({ "clgStaffSearchSessionQuery": "" })
+                setLoading(false);
+            }
+        })
     };
 
     const taskScore = (id) => {
@@ -132,6 +183,27 @@ const CollegeStaffViewSession = () => {
                     <h2 className="text-lg font-bold">College Staff View Session</h2>
                     <Link to="/collegeStaffViewBatch" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
                 </div>
+                <br /><br />
+                <div className="row">
+                    <div className="col">
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Search by Session name, Type, or Trainer Name..."
+                                value={inputField.clgStaffSearchSessionQuery}
+                                onChange={inputHandler}
+                                name="clgStaffSearchSessionQuery"
+                            />
+                        </div>
+                        <br></br>
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            <button onClick={searchSession} className="btn btn-warning">Search</button>
+                        </div>
+                        <br />
+                    </div>
+                </div>
+                <br />
                 {loading ? <div className="col-12 text-center">Loading...</div> : <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
