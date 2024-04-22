@@ -9,8 +9,74 @@ const AdminViewAdStaffLog = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [logsPerPage] = useState(10); // Number of logs per page
     const [isLoading, setIsLoading] = useState(true);
+    const [key, setKey] = useState('');
+    const [inputField, setInputField] = useState(
+        {
+            "SearchQuery": ""
+        }
+    )
     const navigate = useNavigate();
     const apiUrl = global.config.urls.api.server + "/api/lms/viewalladmstafflog";
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
+    }
+
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/searchAdminStaffLog";
+
+    const readSearchValue = () => {
+        setIsLoading(true)
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let axiosConfig3 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        }
+        axios.post(apiUrl4, inputField, axiosConfig3).then(
+            (response) => {
+                if (response.data.data) {
+                    setAdStaffLog(response.data.data)
+                    setInputField(
+                        {
+                            "SearchQuery": ""
+                        }
+                    )
+                    setIsLoading(false)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "SearchQuery": ""
+                        }
+                    )
+                    setTimeout(() => {
+                        getData()
+                        alert("No Log Found !!")
+                    }, 500)
+                } else {
+                    setIsLoading(false)
+                    setInputField(
+                        {
+                            "SearchQuery": ""
+                        }
+                    )
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
 
     useEffect(() => {
         getData();
@@ -74,6 +140,18 @@ const AdminViewAdStaffLog = () => {
                         <div className="w-full px-4">
                             <h1>Admin Staff Log</h1>
                             <br />
+                            <div className="row">
+                                <div className="col">
+                                    <div className="input-group">
+                                        <input onChange={inputHandler} type="text" className="form-control" name="SearchQuery" value={inputField.SearchQuery} placeholder='Action' />
+                                    </div>
+                                    <br></br>
+                                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                        <button onClick={readSearchValue} className="btn btn-warning">Search</button>
+                                    </div>
+                                    <br />
+                                </div>
+                            </div>
                             {isLoading ? <div className="flex justify-center items-center h-full">
                                 <div className="text-center py-20">
                                     <div>Loading...</div>
