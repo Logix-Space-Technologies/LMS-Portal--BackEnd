@@ -289,7 +289,7 @@ College.changeRegistrationStatusToNotOpen = (id, result) => {
 }
 
 College.viewPerformanceOfStudents = (collegeId, result) => {
-    db.query("SELECT batchName, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where CollegeId=? GROUP BY batchName,studentId,studName order by batchName;",[collegeId],(err,res)=>{
+    db.query("SELECT batchName, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where CollegeId=? AND dueDate < CURRENT_DATE GROUP BY batchName,studentId,studName order by batchName;",[collegeId],(err,res)=>{
         if(err){
             console.log("Error : ", err);
             result(err, null);
