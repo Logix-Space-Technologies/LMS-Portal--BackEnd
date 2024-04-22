@@ -145,7 +145,7 @@ const CollegeStaffViewAllStudents = () => {
       </div>
       <div className="row g-3">
         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-          <input onChange={inputHandler} type="text" placeholder='Student Name/Course/Department/Roll No/Admission No' className="form-control" name="searchQuery" value={inputField.searchQuery} />
+          <input onChange={inputHandler} type="text" placeholder='Student Name/Course/Department/Roll No/Admission No/Membership No' className="form-control" name="searchQuery" value={inputField.searchQuery} />
         </div>
         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
           <button onClick={readValue} className="btn btn-warning">Search</button><br /><br />
