@@ -6,6 +6,12 @@ import { useNavigate } from 'react-router-dom';
 
 
 const CollegeStaffViewBatch = () => {
+  const [inputField, setInputField] = useState(
+    {
+      "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+      "clgStaffBatchSearchQuery": ""
+    }
+  )
   const [batches, setBatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [studentCount, setStudentCount] = useState(0);
@@ -19,9 +25,14 @@ const CollegeStaffViewBatch = () => {
   let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
   const apiUrl = global.config.urls.api.server + "/api/lms/collegeStaffViewBatch";
+  const apiLink = global.config.urls.api.server + "/api/lms/clgStaffSearchBatch"
   const token = sessionStorage.getItem("clgstaffLogintoken");
   const collegeId = sessionStorage.getItem("clgStaffCollegeId");
   const navigate = useNavigate()
+
+  const inputHandler = (event) => {
+    setInputField({ ...inputField, [event.target.name]: event.target.value })
+  }
 
   const taskScore = (batchId) => {
     sessionStorage.setItem("viewBatchScoreBatchId", batchId);
@@ -73,6 +84,54 @@ const CollegeStaffViewBatch = () => {
         setLoading(false);
       });
   };
+
+  const readValue = () => {
+    let axiosConfig = {
+      headers: {
+        "content-type": "application/json;charset=UTF-8",
+        "Access-Control-Allow-Origin": "*",
+        "token": sessionStorage.getItem("clgstaffLogintoken"),
+        "key": sessionStorage.getItem("clgstaffkey")
+      }
+    };
+    setLoading(true)
+    axios.post(apiLink, inputField, axiosConfig).then(
+      (response) => {
+        if (response.data.data) {
+          setBatches(response.data.data)
+          setInputField({
+            "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+            "clgStaffBatchSearchQuery": ""
+          })
+          setLoading(false)
+        } else {
+          if (response.data.status === "Unauthorized User!!") {
+            sessionStorage.clear()
+            navigate("/clgStafflogin")
+          } else {
+            if (!response.data.data) {
+              setLoading(false);
+              setInputField({
+                "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+                "clgStaffBatchSearchQuery": ""
+              })
+              setTimeout(() => {
+                fetchBatches()
+                alert("No Batches Found !!")
+              }, 500)
+            } else {
+              setLoading(false);
+              setInputField({
+                "collegeId": sessionStorage.getItem("clgStaffCollegeId"),
+                "clgStaffBatchSearchQuery": ""
+              })
+              alert(response.data.status)
+            }
+          }
+        }
+      }
+    )
+  }
 
 
   const attendancePDFClick = (id, batchName) => {
@@ -130,6 +189,14 @@ const CollegeStaffViewBatch = () => {
                       {!loading && currentBatch.length > 0 && <button className='btn btn-primary' onClick={() => navigate("/clgstaffdownloadbatchwisestudlist")} disabled={studentCount === 0}>
                         Download Batch-Wise Student List PDF
                       </button>}
+                    </div>
+                  </div>
+                  <div className="row g-3">
+                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                      <input onChange={inputHandler} type="text" className="form-control" placeholder='Batch Name/Batch Description' name="clgStaffBatchSearchQuery" value={inputField.clgStaffBatchSearchQuery} />
+                    </div>
+                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                      <button onClick={readValue} className="btn btn-warning">Search</button><br /><br />
                     </div>
                   </div>
                   {loading ? (

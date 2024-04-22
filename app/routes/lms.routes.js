@@ -112,7 +112,7 @@ router.post("/AddMaterials", MaterialController.createMaterial)
 
 router.post("/CollegeStaffViewBatch", ClgStaffController.collegeStaffViewBatch)
 
-router.post("/searchStudent", ClgStaffController.searchStudentByCollegeId)
+router.post("/searchStudent", ClgStaffController.searchStudentByBatchId)
 
 router.post("/refundRequest", RefundController.createRefundRequest)
 

@@ -389,13 +389,13 @@ exports.searchTask = (request, response) => {
 exports.collegeStaffSearchTasks = (request, response) => {
     const taskQuery = request.body.taskQuery;
     const AdStafftaskSearchToken = request.headers.token;
-    const collegeId = request.body.collegeId;
+    const sessionId = request.body.sessionId;
     jwt.verify(AdStafftaskSearchToken, "lmsappclgstaff", (err, decoded) => {
         if (!taskQuery) {
             return response.json({ "status": "Provide a search query" })
         }
         if (decoded) {
-            Tasks.collegeStaffSearchTasks(taskQuery, collegeId, (err, data) => {
+            Tasks.collegeStaffSearchTasks(taskQuery, sessionId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {

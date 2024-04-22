@@ -222,18 +222,18 @@ Student.create = (newStudent, result) => {
     });
 };
 
-Student.searchStudentByCollege = (searchKey, collegeId, result) => {
+Student.searchStudentsOfCollegeByBatchId = (searchKey, batchId, result) => {
     const searchTerm = '%' + searchKey + '%';
     db.query(
-        "SELECT c.collegeName, b.batchName, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.addedDate, s.validity FROM student s JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON s.batchId = b.id WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.isPaid = 1 AND s.emailVerified = 1 AND s.isVerified = 1 AND s.collegeId = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND s.validity > CURRENT_DATE AND (s.studName LIKE ? OR s.rollNo LIKE ? OR s.studDept LIKE ? OR s.course LIKE ? OR s.admNo LIKE ? )",
-        [collegeId, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm],
+        "SELECT c.collegeName, b.batchName, s.id, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.membership_no, s.validity FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON b.id = s.batchId WHERE b.id = ? AND c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 AND (s.studName LIKE ? OR s.membership_no = ? OR s.rollNo = ? OR s.admNo = ? OR s.course LIKE ? OR s.studDept LIKE ?) ORDER BY s.membership_no ASC",
+        [batchId, searchTerm, searchKey, searchKey, searchKey, searchTerm, searchTerm],
         (err, res) => {
             if (err) {
                 console.error("Error while searching student: ", err);
                 result(err, null);
                 return;
             } else {
-                const formattedViewStudent = res.map(student => ({ ...student, addedDate: student.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }), validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
+                const formattedViewStudent = res.map(student => ({ ...student, validity: student.validity.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
                 console.log("Student found: ", formattedViewStudent);
                 result(null, formattedViewStudent);
                 return;
@@ -1503,7 +1503,7 @@ Student.viewPerformance = (collegeId, batchId, id, result) => {
 }
 
 Student.viewPerformanceScore=(studId, result)=>{
-    db.query("SELECT taskName,score,totalScore FROM studentTaskScore where studentId=?;", [studId], (err, res) => {
+    db.query("SELECT taskName,score,totalScore FROM studentTaskScore where studentId=? and dueDate < CURRENT_DATE", [studId], (err, res) => {
         if (err) {
             console.log("Error: ", err)
             return result(err, null)
