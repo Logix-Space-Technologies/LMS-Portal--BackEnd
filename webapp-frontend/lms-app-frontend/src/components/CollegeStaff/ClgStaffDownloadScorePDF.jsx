@@ -173,7 +173,7 @@ const ClgStaffDownloadScorePDF = () => {
                                                                 <tr key={index}>
                                                                     <td style={{ border: '1px solid black', padding: '8px' }}>{student.membership_no}</td>
                                                                     <td style={{ border: '1px solid black', padding: '8px' }}>{student.studName}</td>
-                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.score}</td>
+                                                                    <td style={{ border: '1px solid black', padding: '8px' }}>{student.score.toFixed(2)}</td>
                                                                     <td style={{ border: '1px solid black', padding: '8px' }}>{student.totalScore}</td>
                                                                 </tr>
                                                             ))}
