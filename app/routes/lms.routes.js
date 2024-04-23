@@ -28,6 +28,7 @@ const ClgStaffFirebaseController = require("../controllers/clgStaffFirebaseToken
 const ClgStaffCallBackController = require("../controllers/Whatsapp/callbackAPIClgStaff")
 const ClgStaffViewCallBackController = require("../controllers/Whatsapp/clgStaffwhatsappmsgfeedbackview")
 const ClgStaffViewMsgReceivedController = require("../controllers/Whatsapp/clgstaffwhatsappmsgreceivedview")
+const AdminSearchFeedbackStudController = require("../controllers/Whatsapp/SearchWhatsappFeedbackStud")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -401,6 +402,8 @@ router.post('/viewcallbackAPIClgStaff', ClgStaffViewCallBackController.sendfn)
 router.post('/viewmsgreceivedAPIClgStaff', ClgStaffViewMsgReceivedController.sendfn)
 
 router.post('/clgStaffSearchSession',ClgStaffController.collegeStaffSearchSession)
+
+router.post('/AdminSearchFeedbackStud', AdminSearchFeedbackStudController.sendfn)
 
 
 module.exports = router
