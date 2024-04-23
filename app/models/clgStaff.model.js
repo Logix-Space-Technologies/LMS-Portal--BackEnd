@@ -324,7 +324,7 @@ CollegeStaff.collegeStaffForgotPassword = (college_staff, result) => {
 
 CollegeStaff.viewStudent = (batchId, result) => {
     db.query(
-        "SELECT c.collegeName, b.batchName, s.id, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.membership_no, s.validity FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON cs.collegeId = c.id JOIN batches b ON b.id = s.batchId WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 AND b.id = ? ORDER BY s.membership_no ASC",
+        "SELECT c.collegeName, b.batchName, s.id, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.membership_no, s.validity FROM student s JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.validity > CURRENT_DATE AND s.isVerified = 1 AND b.isActive = 1 AND b.deleteStatus = 0 AND b.id = ? ORDER BY s.membership_no ASC",
         [batchId],
         (err, res) => {
             if (err) {
