@@ -402,5 +402,7 @@ router.post('/viewmsgreceivedAPIClgStaff', ClgStaffViewMsgReceivedController.sen
 
 router.post('/clgStaffSearchSession',ClgStaffController.collegeStaffSearchSession)
 
+router.post("/adminSearchStudLog",studentLogController.adminSearchStudentLog)
+
 
 module.exports = router
