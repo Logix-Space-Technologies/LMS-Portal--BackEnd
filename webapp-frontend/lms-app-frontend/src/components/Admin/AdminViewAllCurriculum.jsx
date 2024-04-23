@@ -62,7 +62,13 @@ const AdminViewAllCurriculum = () => {
 
         axios.post(apiLink, data, axiosConfig3).then(
             (response) => {
-                if (response.data.data) {
+                if (response.data.status === "Search Item is required.") {
+                    setIsLoading(false)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                        getData()
+                    }, 500)
+                } else if (response.data.data) {
                     setCurriculumData(response.data.data)
                     setIsLoading(false);
                     setInputField({

@@ -55,7 +55,13 @@ const AdminViewAllTrainers = () => {
         }
         axios.post(apiUrl3, inputField, axiosConfig).then(
             (response) => {
-                if (response.data.data) {     
+                if (response.data.status === "Search Item is required.") {
+                    setIsLoading(false)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                        getData()
+                    }, 500)
+                } else if (response.data.data) {     
                     setTrainerData(response.data.data) 
                     setIsLoading(false)           
                     setInputField(
