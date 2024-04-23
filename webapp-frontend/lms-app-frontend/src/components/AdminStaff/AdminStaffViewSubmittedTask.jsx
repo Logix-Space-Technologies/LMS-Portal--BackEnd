@@ -115,7 +115,13 @@ const AdminStaffViewSubmittedTask = () => {
         let data = { "sessionId": sessionStorage.getItem("sessionId"), "subTaskSearchQuery": updateField.subTaskSearchQuery }
         axios.post(apiUrl3, data, axiosConfig)
             .then(response => {
-                if (response.data.data) {
+                if (response.data.status === "Search Item is required.") {
+                    setLoading(false)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                        getData()
+                    }, 500)
+                } else if (response.data.data) {
                     setTaskData(response.data.data);
                     setLoading(false);
                     setUpdateField({ "subTaskSearchQuery": "" });

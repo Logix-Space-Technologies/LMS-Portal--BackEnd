@@ -87,7 +87,13 @@ const AdminViewRefundRequests = () => {
     }
     axios.post(apiUrl5, searchField, axiosConfig3).then(
       (response) => {
-        if (response.data.data) {
+        if (response.data.status === "Search Item is required.") {
+          setIsLoading(false)
+          setTimeout(() => {
+            alert(response.data.status)
+            getData()
+          }, 500)
+        } else if (response.data.data) {
           setRefundRequests(response.data.data)
           setSearchField(
             {
@@ -107,7 +113,7 @@ const AdminViewRefundRequests = () => {
           )
           setTimeout(() => {
             getData()
-            alert("No Requesta Found !!")
+            alert("No Refund Request Found !!")
           }, 500)
         } else {
           setIsLoading(false)

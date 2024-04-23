@@ -756,7 +756,7 @@ CollegeStaff.clgStaffSearchSession = (searchKey, batchId, result) => {
             } else {
                 const formattedSession = res.map(sessions => ({ ...sessions, date: sessions.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
                 console.log("Sessions : ", formattedSession)
-                result(null, formattedSession)
+                return result(null, formattedSession)
             }
         })
 }

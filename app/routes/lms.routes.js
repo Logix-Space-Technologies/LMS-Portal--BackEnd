@@ -404,9 +404,12 @@ router.post('/viewmsgreceivedAPIClgStaff', ClgStaffViewMsgReceivedController.sen
 
 router.post('/clgStaffSearchSession',ClgStaffController.collegeStaffSearchSession)
 
+router.post("/adminSearchStudLog",studentLogController.adminSearchStudentLog)
+
 router.post('/AdminSearchFeedbackStud', AdminSearchFeedbackStudController.sendfn)
 
 router.post('/AdminSearchWhatsappMsgReceivedStud', AdminSearchWhatsappMsgReceivedStudController.sendfn)
+
 
 
 module.exports = router

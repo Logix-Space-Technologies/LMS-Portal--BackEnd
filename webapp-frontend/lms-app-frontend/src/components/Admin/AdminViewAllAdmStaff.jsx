@@ -48,7 +48,13 @@ const AdminViewAllAdminStaff = () => {
         // Always stop loading when you get a response
         setIsLoading(false);
 
-        if (response.data.data) {
+        if (response.data.status === "Search Item is required.") {
+          setIsLoading(false)
+          setTimeout(() => {
+            alert(response.data.status)
+            getData()
+          }, 500)
+        } else if (response.data.data) {
           setAdmStaffData(response.data.data);
           setInputField({ "adminStaffSearchQuery": "" });
         } else if (response.data.status === "Unauthorized User!!") {
@@ -70,7 +76,7 @@ const AdminViewAllAdminStaff = () => {
   };
 
   const getData = () => {
-    let axiosConfig = {
+    let axiosConfig2 = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
         "Access-Control-Allow-Origin": "*",
@@ -79,7 +85,7 @@ const AdminViewAllAdminStaff = () => {
       },
     };
 
-    axios.post(apiUrl, {}, axiosConfig).then((response) => {
+    axios.post(apiUrl, {}, axiosConfig2).then((response) => {
       if (response.data) {
         setIsLoading(false)
         setAdmStaffData(response.data);
@@ -102,7 +108,7 @@ const AdminViewAllAdminStaff = () => {
 
   const handleDeleteClick = () => {
     let id = deleteClgStaff
-    const axiosConfig = {
+    const axiosConfig3 = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
         "Access-Control-Allow-Origin": "*",
@@ -111,7 +117,7 @@ const AdminViewAllAdminStaff = () => {
     };
     setShowWaitingModal(true)
     setShowOverlay(true)
-    axios.post(deleteUrl, { id }, axiosConfig).then((response) => {
+    axios.post(deleteUrl, { id }, axiosConfig3).then((response) => {
       if (response.data.status === "Admin Staff Deleted.") {
         closeWaitingModal()
         setTimeout(() => {
