@@ -1483,7 +1483,7 @@ Student.emailVerifyAndPasswordChange = (studEmail, password, result) => {
 
 //Student Performance
 Student.viewPerformance = (collegeId, batchId, id, result) => {
-    db.query("SELECT studName, CASE WHEN sum(score) = 0 THEN 0 ELSE sum(score) END AS score, CASE WHEN sum(totalScore) = 0 THEN 0 ELSE sum(totalScore) END AS totalScore, CASE WHEN COUNT(submitTaskId) = 0 THEN 0 ELSE COUNT(submitTaskId) END AS SubmitTaskCount, CASE WHEN COUNT(taskId) = 0 THEN 0 ELSE COUNT(taskId) END AS TaskCount FROM studentTaskScore where CollegeId=? and batchId=? and studentId = ? GROUP BY studentId,studName order by studentId", [collegeId, batchId, id],
+    db.query("SELECT studName, CASE WHEN sum(score) = 0 THEN 0 ELSE sum(score) END AS score, CASE WHEN sum(totalScore) = 0 THEN 0 ELSE sum(totalScore) END AS totalScore, CASE WHEN COUNT(submitTaskId) = 0 THEN 0 ELSE COUNT(submitTaskId) END AS SubmitTaskCount, CASE WHEN COUNT(taskId) = 0 THEN 0 ELSE COUNT(taskId) END AS TaskCount FROM studentTaskScore where CollegeId=? and batchId=? and studentId = ? and dueDate < CURRENT_DATE GROUP BY studentId,studName order by studentId", [collegeId, batchId, id],
         (err, res) => {
             if (err) {
                 console.log("Error: ", err)
