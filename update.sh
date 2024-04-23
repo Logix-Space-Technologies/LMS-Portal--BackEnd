@@ -26,3 +26,6 @@ git commit -m "added"
 
 # Push the changes to the production branch
 git push -u origin production
+
+
+git checkout development
