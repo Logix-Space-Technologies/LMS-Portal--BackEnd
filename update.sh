@@ -1,5 +1,7 @@
 #!/bin/bash
 
+git checkout production
+
 # Fetch the latest changes from the remote repository
 git fetch
 
