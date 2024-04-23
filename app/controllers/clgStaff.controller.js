@@ -742,12 +742,12 @@ exports.collegeStaffViewStudent = (request, response) => {
       const batchId = request.body.batchId;
       CollegeStaff.viewStudent(batchId, (err, data) => {
         if (err) {
-          response.json({ "status": err });
+          return response.json({ "status": err });
         }
         if (!data || data.length === 0) {
-          response.json({ "status": "No Student found!" });
+          return response.json({ "status": "No Student found!" });
         } else {
-          response.json({ "status": "success", "data": data });
+          return response.json({ "status": "success", "data": data });
         }
       });
     } else {
