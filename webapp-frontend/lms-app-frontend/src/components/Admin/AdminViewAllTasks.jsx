@@ -52,7 +52,13 @@ const AdminViewAllTasks = () => {
         }
         axios.post(apiUrl2, data, axiosConfig)
             .then(response => {
-                if (response.data.data) {
+                if (response.data.status === "Provide a search query") {
+                    setIsLoading(false)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                        getData()
+                    }, 500)
+                } else if (response.data.data) {
                     setTaskData(response.data.data);
                     setInputField({ taskQuery: "" })
                     setIsLoading(false);

@@ -324,7 +324,7 @@ CollegeStaff.collegeStaffForgotPassword = (college_staff, result) => {
 
 CollegeStaff.viewStudent = (batchId, result) => {
     db.query(
-        "SELECT c.collegeName, b.batchName, s.id, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.membership_no, s.validity FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON s.collegeId = c.id LEFT JOIN batches b ON b.id = s.batchId WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 AND b.id = ? ORDER BY s.membership_no ASC",
+        "SELECT c.collegeName, b.batchName, s.id, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.membership_no, s.validity FROM student s JOIN college_staff cs ON s.collegeId = cs.collegeId JOIN college c ON cs.collegeId = c.id JOIN batches b ON b.id = s.batchId WHERE c.deleteStatus = 0 AND c.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.isVerified = 1 AND b.id = ? ORDER BY s.membership_no ASC",
         [batchId],
         (err, res) => {
             if (err) {
@@ -756,7 +756,7 @@ CollegeStaff.clgStaffSearchSession = (searchKey, batchId, result) => {
             } else {
                 const formattedSession = res.map(sessions => ({ ...sessions, date: sessions.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }));
                 console.log("Sessions : ", formattedSession)
-                result(null, formattedSession)
+                return result(null, formattedSession)
             }
         })
 }

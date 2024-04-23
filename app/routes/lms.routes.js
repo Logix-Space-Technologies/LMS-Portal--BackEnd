@@ -28,6 +28,10 @@ const ClgStaffFirebaseController = require("../controllers/clgStaffFirebaseToken
 const ClgStaffCallBackController = require("../controllers/Whatsapp/callbackAPIClgStaff")
 const ClgStaffViewCallBackController = require("../controllers/Whatsapp/clgStaffwhatsappmsgfeedbackview")
 const ClgStaffViewMsgReceivedController = require("../controllers/Whatsapp/clgstaffwhatsappmsgreceivedview")
+const AdminSearchFeedbackStudController = require("../controllers/Whatsapp/SearchWhatsappFeedbackStud")
+const AdminSearchWhatsappMsgReceivedStudController = require("../controllers/Whatsapp/SearchWhatsappMsgReceivedStud")
+const AdminSearchFeedbackClgStaffController = require("../controllers/Whatsapp/SearchClgStaffWhatsappFeedback")
+const AdminSearchWhatsappMsgReceivedClgStaffController = require("../controllers/Whatsapp/SearchClgStaffWhatsappMsgReceived")
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -401,6 +405,17 @@ router.post('/viewcallbackAPIClgStaff', ClgStaffViewCallBackController.sendfn)
 router.post('/viewmsgreceivedAPIClgStaff', ClgStaffViewMsgReceivedController.sendfn)
 
 router.post('/clgStaffSearchSession',ClgStaffController.collegeStaffSearchSession)
+
+router.post("/adminSearchStudLog",studentLogController.adminSearchStudentLog)
+
+router.post('/AdminSearchFeedbackStud', AdminSearchFeedbackStudController.sendfn)
+
+router.post('/AdminSearchWhatsappMsgReceivedStud', AdminSearchWhatsappMsgReceivedStudController.sendfn)
+
+router.post('/AdminSearchFeedbackClgStaff', AdminSearchFeedbackClgStaffController.sendfn)
+
+router.post('/AdminSearchWhatsappMsgReceivedClgStaff', AdminSearchWhatsappMsgReceivedClgStaffController.sendfn)
+
 
 
 module.exports = router

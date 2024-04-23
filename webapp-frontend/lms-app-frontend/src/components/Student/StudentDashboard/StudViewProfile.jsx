@@ -176,6 +176,9 @@ const StudViewProfile = () => {
                                                                 {performanceData.cgpa >= 2 && performanceData.cgpa < 3 && (
                                                                     <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Good 👍...You can improve more!!</p>
                                                                 )}
+                                                                {performanceData.cgpa >= 1 && performanceData.cgpa < 2 && (
+                                                                    <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Very Poor😢...Need to improve. You can do this!!😀💪</p>
+                                                                )}
                                                                 {performanceData.cgpa < 1 && performanceData.cgpa > 0 && (
                                                                     <p style={{ textAlign: 'center' }} className="mb-3 font-normal text-gray-700 dark:text-gray-400">Very Poor😢...Need to improve. You can do this!!😀💪</p>
                                                                 )}

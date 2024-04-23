@@ -31,7 +31,7 @@ const AdminViewSuccessfulRefunds = () => {
 
     const searchHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
-      }
+    }
 
     const readSearchValue = () => {
         setIsLoading(true)
@@ -52,7 +52,13 @@ const AdminViewSuccessfulRefunds = () => {
         }
         axios.post(apiUrl2, inputField, axiosConfig3).then(
             (response) => {
-                if (response.data.data) {
+                if (response.data.status === "Search Item is required.") {
+                    setIsLoading(false)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                        getData()
+                    }, 500)
+                } else if (response.data.data) {
                     setrefundSuccessData(response.data.data)
                     setInputField(
                         {
@@ -72,7 +78,7 @@ const AdminViewSuccessfulRefunds = () => {
                     )
                     setTimeout(() => {
                         getData()
-                        alert("No Successful Found !!")
+                        alert("No Successful Refunds Found !!")
                     }, 500)
                 } else {
                     setIsLoading(false)

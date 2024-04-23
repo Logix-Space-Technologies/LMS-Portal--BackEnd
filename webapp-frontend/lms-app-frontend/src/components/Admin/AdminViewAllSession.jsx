@@ -78,7 +78,13 @@ const AdminViewAllSession = () => {
         }
 
         axios.post(searchApiLink, data, axiosConfig).then((response) => {
-            if (response.data.data) {
+            if (response.data.status === "Search Item is required.") {
+                setIsLoading(false)
+                setTimeout(() => {
+                    alert(response.data.status)
+                    getData()
+                }, 500)
+            } else if (response.data.data) {
                 setSessionData(response.data.data);
                 setIsLoading(false);
                 setInputField({ "SessionSearchQuery": "" });

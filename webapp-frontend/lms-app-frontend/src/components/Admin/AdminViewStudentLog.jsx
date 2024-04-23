@@ -6,6 +6,10 @@ import { useNavigate } from 'react-router-dom';
 
 const AdminViewStudentLog = () => {
 
+    const [inputField, setInputField] = useState({
+        "adminSearchStudLogQuery": ""
+    });
+
     const [studentLogData, setStudentLogData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [logsPerPage] = useState(10); // Number of logs per page
@@ -19,6 +23,12 @@ const AdminViewStudentLog = () => {
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewStudentLog";
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/adminSearchStudLog";
+
+    const inputHandler = (event) => {
+        const { name, value } = event.target;
+        setInputField({ ...inputField, [name]: value });
+    };
 
     const getData = () => {
         let axiosConfig = {
@@ -52,6 +62,48 @@ const AdminViewStudentLog = () => {
         );
     };
 
+    const searchStudLog = () => {
+        setIsLoading(true);
+        const axiosConfig3 = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
+            }
+        };
+        const data = {
+            "adminSearchStudLogQuery": inputField.adminSearchStudLogQuery,
+        }
+        axios.post(apiUrl2, data, axiosConfig3).then((response) => {
+            if (response.data.status === "Search Item is required.") {
+                setIsLoading(false)
+                setTimeout(() => {
+                    alert(response.data.status)
+                    getData()
+                }, 500)
+            } else if (response.data.data) {
+                setStudentLogData(response.data.data);
+                setInputField({ "adminSearchStudLogQuery": "" })
+                setIsLoading(false);
+            } else if (response.data.status === "Unauthorized User!!") {
+                sessionStorage.clear()
+                navigate("/")
+            } else if (!response.data.data) {
+                setIsLoading(false);
+                setInputField({ "adminSearchStudLogQuery": "" })
+                setTimeout(() => {
+                    getData();
+                    alert("No Student Log Found !!")
+                }, 500)
+            } else {
+                alert(response.data.status)
+                setInputField({ "adminSearchStudLogQuery": "" })
+                setIsLoading(false);
+            }
+        })
+    };
+
     useEffect(() => { getData() }, []);
 
     // Logic for displaying current logs
@@ -75,6 +127,26 @@ const AdminViewStudentLog = () => {
             <br />
             <strong>Admin View Student Log</strong><br /><br />
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <br /><br />
+                <div className="row">
+                    <div className="col">
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Search by student name, batch name, membership no or college name..."
+                                value={inputField.adminSearchStudLogQuery}
+                                onChange={inputHandler}
+                                name="adminSearchStudLogQuery"
+                            />
+                        </div>
+                        <br></br>
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            <button onClick={searchStudLog} className="btn btn-warning">Search</button>
+                        </div>
+                        <br />
+                    </div>
+                </div>
                 {isLoading ? <div className="flex justify-center items-center h-full">
                     <div className="text-center py-20">
                         <div>Loading...</div>
@@ -83,6 +155,8 @@ const AdminViewStudentLog = () => {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">S/N</th>
+                            <th scope="col" className="px-6 py-3">College Name</th>
+                            <th scope="col" className="px-6 py-3">Batch Name</th>
                             <th scope="col" className="px-6 py-3">Student Name</th>
                             <th scope="col" className="px-6 py-3">Membership No.</th>
                             <th scope="col" className="px-6 py-3">Action</th>
@@ -95,6 +169,8 @@ const AdminViewStudentLog = () => {
                                 return (
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
+                                        <td className="px-6 py-4">{value.collegeName}</td>
+                                        <td className="px-6 py-4">{value.batchName}</td>
                                         <td className="px-6 py-4">{value.studName}</td>
                                         <td className="px-6 py-4">{value.membership_no}</td>
                                         <td className="px-6 py-4">{value.Action}</td>

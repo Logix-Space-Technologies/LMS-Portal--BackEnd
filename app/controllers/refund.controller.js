@@ -356,6 +356,9 @@ exports.searchRefundRequests = (request, response) => {
     const searchTerm = request.body.searchTerm
 
     jwt.verify(refundToken, key, (err, decoded) => {
+        if (!searchTerm) {
+            return response.json({ "status": "Search Item is required." })
+        }
         if (err) {
             console.log(err)
             return response.json({ "status": "Unauthorized User !!!" })
@@ -365,7 +368,11 @@ exports.searchRefundRequests = (request, response) => {
                     console.log(refErr)
                     return response.json({ "status": refErr })
                 } else {
-                    return response.json({ "status": "success", "data": data })
+                    if (data.length === 0) {
+                        return response.json({ "status": "No Refund Request Found !!" })
+                    } else {
+                        return response.json({ "status": "success", "data": data })
+                    }
                 }
             })
         }
@@ -380,6 +387,9 @@ exports.searchSuccessfulRefunds = (request, response) => {
     const refundSearchTerm = request.body.refundSearchTerm
 
     jwt.verify(refundToken, key, (err, decoded) => {
+        if (!refundSearchTerm) {
+            return response.json({ "status": "Search Item is required." })
+        }
         if (err) {
             console.log(err)
             return response.json({ "status": "Unauthorized User !!!" })
@@ -389,7 +399,11 @@ exports.searchSuccessfulRefunds = (request, response) => {
                     console.log(refErr)
                     return response.json({ "status": refErr })
                 } else {
-                    return response.json({ "status": "success", "data": data })
+                    if (data.length === 0) {
+                        return response.json({ "status": "No Successful Refunds Found !!" })
+                    } else {
+                        return response.json({ "status": "success", "data": data })
+                    }
                 }
             })
         }
