@@ -105,9 +105,7 @@ exports.clgStaffCreate = (request, response) => {
           if (Validator.isEmpty(request.body.department).isValid) {
             validationErrors.dept = Validator.isEmpty(request.body.department).message;
           }
-          if (!Validator.isValidName(request.body.department).isValid) {
-            validationErrors.dept = Validator.isValidName(request.body.department).message
-          }
+
           if (Validator.isEmpty(request.body.password).isValid) {
             validationErrors.password = Validator.isEmpty(request.body.password).message;
           }
