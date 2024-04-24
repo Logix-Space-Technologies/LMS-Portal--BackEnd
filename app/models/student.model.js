@@ -610,13 +610,8 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
                 const dueDateFormatted = formatDate(dueDate);
                 const currentDateFormatted = formatDate(currentDate);
 
-                console.log("Due Date: ", dueDateFormatted);
-                console.log("Current Date: ", currentDateFormatted);
-
                 // Determine if the submission is late
                 const isLateSubmission = dueDateFormatted < currentDateFormatted;
-
-                console.log(isLateSubmission);
 
                 // Save submission in submit_task table
                 db.query("INSERT INTO submit_task SET ?", submission, (submissionErr, submissionRes) => {
