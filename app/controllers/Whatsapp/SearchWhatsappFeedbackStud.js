@@ -16,7 +16,7 @@ const whatsappmsgfeedbacksearchstud = (request, response) => {
                     console.log(err);
                 } else {
                     if (res.length === 0) {
-                        return response.json({ "status": "No data Found !!!" })
+                        return response.json({ "status": "No data Found !!" })
                     } else {
                         const formattedFeedbackLog = res.map(feedbacklog => ({
                             ...feedbacklog,
