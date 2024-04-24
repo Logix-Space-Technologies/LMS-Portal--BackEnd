@@ -50,6 +50,7 @@ const ClgStaffViewScoreStudentWise = () => {
             (response) => {
                 if (response.data.data) {
                     setLoading(false)
+                    console.log(response.data.data)
                     setScoreData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
@@ -152,13 +153,13 @@ const ClgStaffViewScoreStudentWise = () => {
                                                         {value.totalScore}
                                                     </td>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.score >= (value.totalScore * 0.85) ? (
+                                                        {value.score && value.score >= (value.totalScore * 0.85) ? (
                                                             <span className="flex items-center justify-center text-black-500">
                                                                 {value.score.toFixed(2)}
                                                                 <img src="https://www.svgrepo.com/show/475275/star.svg" alt="Excellent" style={{ width: '20px', marginLeft: '10px' }} />
                                                             </span>
                                                         ) : (
-                                                            value.score.toFixed(2)
+                                                            value.score ? value.score.toFixed(2) : "0"
                                                         )}
                                                     </td>
 
