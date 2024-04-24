@@ -761,4 +761,18 @@ CollegeStaff.clgStaffSearchSession = (searchKey, batchId, result) => {
         })
 }
 
+//Generate College Wise Score List PDF By Admin, AdminStaff and CollegeStaff
+CollegeStaff.generateClgPerformancePDF = (collegeId, result) => {
+    let query = "SELECT batchName, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where CollegeId=? AND dueDate < CURRENT_DATE GROUP BY batchName,studentId,studName order by batchName;"
+    db.query(query, [collegeId], (err, response) => {
+        if (err) {
+            console.log("Error executing the query:", err);
+            return result(err, null);
+        } else {
+            console.log("Query results:", response);
+            return result(null, response);
+        }
+    })
+}
+
 module.exports = CollegeStaff
