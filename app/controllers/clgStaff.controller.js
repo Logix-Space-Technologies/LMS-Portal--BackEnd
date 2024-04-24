@@ -515,9 +515,6 @@ exports.collegeStaffUpdate = (req, res) => {
           if (!req.body.department) {
             validationErrors.department = "Department is required.";
           }
-          if (!Validator.isValidName(req.body.department).isValid) {
-            validationErrors.department = Validator.isValidName(req.body.department).message;
-          }
           if (!req.body.aadharNo) {
             validationErrors.aadharnumber = "Aadhar number is required.";
           }
