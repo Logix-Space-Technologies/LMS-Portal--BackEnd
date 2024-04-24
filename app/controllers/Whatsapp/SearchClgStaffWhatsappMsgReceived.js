@@ -11,7 +11,7 @@ const whatsappmsgreceivedsearchclgstaff = (request, response) => {
             return response.json({ "status": "Search query cannot be empty" })
         }
         if (decoded) {
-            db.query("SELECT ce.collegeName, cs.collegeStaffName, w.id, w.messageId, w.message, w.dateTime, w.clgstaffId, c.phone, c.country_code, c.dial_code FROM wtsappmsgreceivedfromclgstaff w JOIN college_staff cs ON cs.id = w.clgstaffId JOIN wtsappmsgcommon c ON c.messageId = w.messageId JOIN college ce ON ce.id = cs.collegeId WHERE ce.collegeName LIKE ? OR cs.collegeStaffName LIKE ? AND w.dateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY w.dateTime ASC;", [searchTerm, searchTerm], (err, res) => {
+            db.query("SELECT ce.collegeName, cs.collegeStaffName, w.id, w.messageId, w.message, w.dateTime, w.clgstaffId, c.phone, c.country_code, c.dial_code FROM wtsappmsgreceivedfromclgstaff w JOIN college_staff cs ON cs.id = w.clgstaffId JOIN wtsappmsgcommon c ON c.messageId = w.messageId JOIN college ce ON ce.id = cs.collegeId WHERE w.dateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) AND (ce.collegeName LIKE ? OR cs.collegeStaffName LIKE ?) ORDER BY w.dateTime ASC;", [searchTerm, searchTerm], (err, res) => {
                 if (err) {
                     console.log(err);
                 } else {
