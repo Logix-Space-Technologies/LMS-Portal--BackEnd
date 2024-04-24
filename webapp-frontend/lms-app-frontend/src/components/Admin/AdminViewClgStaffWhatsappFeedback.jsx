@@ -127,7 +127,7 @@ const AdminViewClgStaffWhatsappFeedback = () => {
                         <input
                             type="text"
                             className="form-control"
-                            placeholder="Search by batch name, college name, student name or membership no..."
+                            placeholder="Search by college name or college staff name..."
                             value={inputField.searchTerm}
                             onChange={inputHandler}
                             name="searchTerm"
