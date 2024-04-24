@@ -186,7 +186,7 @@ const CollegeStaffViewAllStudents = () => {
               <td className="px-6 py-4">{student.aadharNo}</td>
               <td className="px-6 py-4">{student.membership_no}</td>
               <td className="px-6 py-4">{student.validity}</td>
-              <td className="px-6 py-4"><button onClick={() => viewtaskScore(student.id)} className="btn btn-primary">View Scores</button></td>
+              <td className="px-6 py-4"><button onClick={() => viewtaskScore(student.id)} className="btn btn-primary">View Performance</button></td>
             </tr>
           })}
           {students.length === 0 && (

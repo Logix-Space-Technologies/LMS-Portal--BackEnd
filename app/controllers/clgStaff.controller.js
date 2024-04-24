@@ -105,9 +105,7 @@ exports.clgStaffCreate = (request, response) => {
           if (Validator.isEmpty(request.body.department).isValid) {
             validationErrors.dept = Validator.isEmpty(request.body.department).message;
           }
-          if (!Validator.isValidName(request.body.department).isValid) {
-            validationErrors.dept = Validator.isValidName(request.body.department).message
-          }
+
           if (Validator.isEmpty(request.body.password).isValid) {
             validationErrors.password = Validator.isEmpty(request.body.password).message;
           }
@@ -448,9 +446,6 @@ exports.collegeStaffUpdate = (req, res) => {
             if (!req.body.department) {
               validationErrors.department = "Department is required.";
             }
-            if (!Validator.isValidName(req.body.department).isValid) {
-              validationErrors.department = Validator.isValidName(req.body.department).message;
-            }
             if (!req.body.aadharNo) {
               validationErrors.aadharnumber = "Aadhar number is required.";
             }
@@ -519,9 +514,6 @@ exports.collegeStaffUpdate = (req, res) => {
           }
           if (!req.body.department) {
             validationErrors.department = "Department is required.";
-          }
-          if (!Validator.isValidName(req.body.department).isValid) {
-            validationErrors.department = Validator.isValidName(req.body.department).message;
           }
           if (!req.body.aadharNo) {
             validationErrors.aadharnumber = "Aadhar number is required.";
@@ -1174,6 +1166,28 @@ exports.collegeStaffSearchSession = (request, response) => {
       })
     } else {
       return response.json({ "status": "Unauthorized User!!" })
+    }
+  })
+}
+
+//Generate College Wise Score List PDF By Admin, AdminStaff and CollegeStaff
+exports.generateClgWisePerformancePDF = (request, response) => {
+  const token = request.headers.token;
+  const key = request.headers.key;
+  const collegeId = request.body.collegeId;
+  jwt.verify(token, key, (err, decoded) => {
+    if (decoded) {
+      CollegeStaff.generateClgPerformancePDF(collegeId, (err, data) => {
+        if (err) {
+          return response.json({ "status": err });
+        } else if (data.length === 0) {
+          return response.json({ "status": "No data found" });
+        } else {
+          return response.json({ "status": "success", "data": data });
+        }
+      })
+    } else {
+      return response.json({ "status": "Unauthorized User!!" });
     }
   })
 }

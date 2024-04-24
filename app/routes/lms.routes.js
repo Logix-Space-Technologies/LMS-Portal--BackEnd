@@ -416,6 +416,8 @@ router.post('/AdminSearchFeedbackClgStaff', AdminSearchFeedbackClgStaffControlle
 
 router.post('/AdminSearchWhatsappMsgReceivedClgStaff', AdminSearchWhatsappMsgReceivedClgStaffController.sendfn)
 
+router.post('/dwnldClgWiseStudPerformance',ClgStaffController.generateClgWisePerformancePDF)
+
 
 
 module.exports = router

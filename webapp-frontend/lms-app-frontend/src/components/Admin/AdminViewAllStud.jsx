@@ -409,7 +409,7 @@ const AdminViewAllStud = () => {
                                         {value.validity}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button onClick={() => viewtaskScore(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">View Scores</button>
+                                        <button onClick={() => viewtaskScore(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">View Performance</button>
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.communityManager === 0 && (

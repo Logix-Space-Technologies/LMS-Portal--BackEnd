@@ -229,6 +229,9 @@ const StudViewProfile = () => {
                                                     <div style={{ marginRight: '15px', marginBottom: '10px' }}>
                                                         <Link className="btn btn-success btn-lg" to='/studentviewtransaction' style={{ fontSize: '14px' }}>View Transaction Details</Link> {/* Adjust fontSize as needed */}
                                                     </div>
+                                                    <div style={{ marginRight: '15px', marginBottom: '10px' }}>
+                                                        <Link className="btn btn-success btn-lg" to='/studviewperformance' style={{ fontSize: '14px' }}>View Performance</Link> {/* Adjust fontSize as needed */}
+                                                    </div>
                                                     <div style={{ marginBottom: '10px' }}>
                                                         <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                             Exit From Link Ur Codes
