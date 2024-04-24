@@ -119,6 +119,7 @@ import AdminForgotPassword from './components/Admin/AdminForgotPassword';
 import AdminViewClgStaffWhatsappFeedback from './components/Admin/AdminViewClgStaffWhatsappFeedback';
 import AdminViewClgStaffMsgReceivedLog from './components/Admin/AdminViewClgStaffMsgReceivedLog';
 import ClgStaffClgPerformanceDwnldPDF from './components/CollegeStaff/ClgStaffClgPerformanceDwnldPDF';
+import ViewPerformance from './components/Student/ViewPerformance';
 
 
 
@@ -279,6 +280,7 @@ function App() {
           <Route path='/topHeader' element={<TopHeader/>}/>
           <Route path='/studEmailVerification' element={<StudentEmailVerification/>}/>
           <Route path='/studforgotpass' element={<StudentForgotPassword/>}/>
+          <Route path='/studviewperformance' element={<ViewPerformance/>}/>
 
 
 
