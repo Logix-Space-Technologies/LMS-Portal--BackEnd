@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 
 const AdminViewWhatsappFeedback = () => {
+    const [inputField, setInputField] = useState({
+        "searchTerm": ""
+    });
     const [feedbackLogData, setFeedbackLogData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [logsPerPage] = useState(10); // Number of logs per page
@@ -17,6 +20,56 @@ const AdminViewWhatsappFeedback = () => {
     let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
     const apiUrl = global.config.urls.api.server + "/api/lms/viewwhatsappmsgfeedback";
+    const apiUrl2 = global.config.urls.api.server + "/api/lms/AdminSearchFeedbackStud";
+
+    const inputHandler = (event) => {
+        const { name, value } = event.target;
+        setInputField({ ...inputField, [name]: value });
+    };
+
+    const searchLogs = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        setIsLoading(true);
+        const axiosConfig3 = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        };
+        const data = {
+            "searchTerm": inputField.searchTerm
+        }
+        axios.post(apiUrl2, data, axiosConfig3).then((response) => {
+            if (response.data.status === "Search query cannot be empty") {
+                setIsLoading(false)
+                setTimeout(() => {
+                    alert(response.data.status)
+                    getData()
+                }, 500)
+            } else if (response.data.data) {
+                setFeedbackLogData(response.data.data);
+                setInputField({ "searchTerm": "" })
+                setIsLoading(false);
+            } else if (response.data.status === "Unauthorized User!!") {
+                navigate("/")
+                sessionStorage.clear()
+            } else if (!response.data.data) {
+                setIsLoading(false);
+                setInputField({ "searchTerm": "" })
+                setTimeout(() => {
+                    alert("No Logs Found !!")
+                    getData();
+                }, 500)
+            } else {
+                alert(response.data.status)
+                setInputField({ "searchTerm": "" })
+                setIsLoading(false);
+            }
+        })
+    };
 
     const getData = () => {
         let axiosConfig = {
@@ -69,6 +122,25 @@ const AdminViewWhatsappFeedback = () => {
                 <Navbar />
                 <br />
                 <strong>View Student Whatsapp Feedback Log</strong><br /><br />
+                <div className="row">
+                    <div className="col">
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Search by batch name, college name, student name or membership no..."
+                                value={inputField.searchTerm}
+                                onChange={inputHandler}
+                                name="searchTerm"
+                            />
+                        </div>
+                        <br></br>
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            <button onClick={searchLogs} className="btn btn-warning">Search</button>
+                        </div>
+                        <br />
+                    </div>
+                </div>
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     {isLoading ? <div className="flex justify-center items-center h-full">
                         <div className="text-center py-20">
