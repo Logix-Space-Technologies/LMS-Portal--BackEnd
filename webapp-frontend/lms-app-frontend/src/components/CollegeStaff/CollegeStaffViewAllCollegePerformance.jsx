@@ -70,6 +70,10 @@ const CollegeStaffViewAllCollegePerformance = () => {
         )
     }
 
+    const generatePDF = () => {
+        navigate("/clgStaffClgPerformanceDwnldPDF")
+    }
+
     // Logic for displaying current students
     const indexOfLastScore = currentPage * scoresPerPage;
     const indexOfFirstScore = indexOfLastScore - scoresPerPage;
@@ -101,6 +105,7 @@ const CollegeStaffViewAllCollegePerformance = () => {
                                 {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Performance</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Performance</h2> : <h2 className="text-lg font-bold">Admin Staff View Performance</h2>)}
                                 <div className="flex space-x-4">
                                     <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
+                                    <button type='button' onClick={() => generatePDF()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download PDF</button>
                                 </div>
                             </div>
                             <br />
