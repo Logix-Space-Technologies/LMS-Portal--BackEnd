@@ -603,6 +603,17 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
                     subDate: currentDate
                 };
 
+                // Standardize date formats
+                const dueDate = new Date(task.dueDate);
+
+                // Standardize date formats to yyyy-mm-dd
+                const dueDateFormatted = formatDate(dueDate);
+                const currentDateFormatted = formatDate(currentDate);
+
+                // Determine if the submission is late
+                const isLateSubmission = dueDateFormatted < currentDateFormatted;
+
+                // Save submission in submit_task table
                 db.query("INSERT INTO submit_task SET ?", submission, (submissionErr, submissionRes) => {
                     if (submissionErr) {
                         console.error("Error saving submission: ", submissionErr);
@@ -613,8 +624,8 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
                     const submissionId = submissionRes.insertId; // Capture the id of the newly inserted submission
 
                     // Update lateSubDate in task table if submission date is greater than due date
-                    if (currentDate > task.dueDate) {
-                        db.query("UPDATE submit_task SET lateSubDate = CURRENT_DATE() WHERE id = ?", [submissionId], (updateErr, updateRes) => { // Use submissionId instead of taskId
+                    if (isLateSubmission) {
+                        db.query("UPDATE submit_task SET lateSubDate = CURRENT_DATE() WHERE id = ?", [submissionId], (updateErr, updateRes) => {
                             if (updateErr) {
                                 console.error("Error updating lateSubDate: ", updateErr);
                                 result(updateErr, null);
@@ -627,10 +638,22 @@ Student.taskSubmissionByStudent = (submissionData, result) => {
                         result(null, "Submission successful.");
                     }
                 });
+
+
             });
         });
     });
 };
+
+// Function to format date to yyyy-mm-dd
+function formatDate(date) {
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    month = month < 10 ? '0' + month : month;
+    let day = date.getDate();
+    day = day < 10 ? '0' + day : day;
+    return `${year}-${month}-${day}`;
+}
 
 
 
@@ -1495,14 +1518,14 @@ Student.viewPerformance = (collegeId, batchId, id, result) => {
                 let cgpa = (score / totalScore) * 5;
                 let SubmitTaskCount = res[0].SubmitTaskCount;
                 let TaskCount = res[0].TaskCount;
-                return result(null, { cgpa, SubmitTaskCount, TaskCount,cgpaMax:5 })
+                return result(null, { cgpa, SubmitTaskCount, TaskCount, cgpaMax: 5 })
             }
-            return result(null, { cgpa: 0, SubmitTaskCount: 0, TaskCount: 0,cgpaMax:5 })
+            return result(null, { cgpa: 0, SubmitTaskCount: 0, TaskCount: 0, cgpaMax: 5 })
 
         })
 }
 
-Student.viewPerformanceScore=(studId, result)=>{
+Student.viewPerformanceScore = (studId, result) => {
     db.query("SELECT taskName, COUNT(taskId) AS totalTasksAssigned, COUNT(submitTaskId) AS totalTasksSubmitted, SUM(CASE WHEN dueDate < CURRENT_DATE THEN NULL ELSE score END) AS score, SUM(CASE WHEN dueDate < CURRENT_DATE THEN NULL ELSE totalScore END) AS totalScore, COUNT(CASE WHEN lateSubDate IS NOT NULL THEN taskId END) AS tasksSubmittedLate, COUNT(CASE WHEN subDate IS NOT NULL AND subDate != lateSubDate THEN taskId END) AS tasksSubmittedOnTime FROM studentTaskScore WHERE studentId = ?;", [studId], (err, res) => {
         if (err) {
             console.log("Error: ", err)
