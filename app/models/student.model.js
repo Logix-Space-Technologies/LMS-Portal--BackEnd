@@ -1526,7 +1526,7 @@ Student.viewPerformance = (collegeId, batchId, id, result) => {
 }
 
 Student.viewPerformanceScore = (studId, result) => {
-    db.query("SELECT taskName, COUNT(taskId) AS totalTasksAssigned, COUNT(submitTaskId) AS totalTasksSubmitted, SUM(CASE WHEN dueDate < CURRENT_DATE THEN NULL ELSE score END) AS score, SUM(CASE WHEN dueDate < CURRENT_DATE THEN NULL ELSE totalScore END) AS totalScore, COUNT(CASE WHEN lateSubDate IS NOT NULL THEN taskId END) AS tasksSubmittedLate, COUNT(CASE WHEN subDate IS NOT NULL AND subDate != lateSubDate THEN taskId END) AS tasksSubmittedOnTime FROM studentTaskScore WHERE studentId = ?;", [studId], (err, res) => {
+    db.query("SELECT taskName, COUNT(taskId) AS totalTasksAssigned, COUNT(submitTaskId) AS totalTasksSubmitted, SUM(CASE WHEN dueDate < CURRENT_DATE AND subDate IS NOT NULL THEN score ELSE 0 END) AS score, SUM(CASE WHEN dueDate < CURRENT_DATE AND subDate IS NOT NULL THEN totalScore ELSE 0 END) AS totalScore, COUNT(CASE WHEN dueDate < CURRENT_DATE AND subDate IS NOT NULL AND lateSubDate IS NOT NULL THEN taskId END) AS tasksSubmittedLate, COUNT(CASE WHEN dueDate < CURRENT_DATE AND subDate IS NOT NULL AND subDate != lateSubDate THEN taskId END) AS tasksSubmittedOnTime FROM studentTaskScore WHERE studentId = ?", [studId], (err, res) => {
         if (err) {
             console.log("Error: ", err)
             return result(err, null)
