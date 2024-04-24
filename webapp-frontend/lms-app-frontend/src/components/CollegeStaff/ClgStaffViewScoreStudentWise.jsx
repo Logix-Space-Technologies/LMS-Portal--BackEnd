@@ -159,7 +159,7 @@ const ClgStaffViewScoreStudentWise = () => {
                                                                 <img src="https://www.svgrepo.com/show/475275/star.svg" alt="Excellent" style={{ width: '20px', marginLeft: '10px' }} />
                                                             </span>
                                                         ) : (
-                                                            value.score ? value.score.toFixed(2) : "0"
+                                                            value.score.toFixed(2)
                                                         )}
                                                     </td>
 
