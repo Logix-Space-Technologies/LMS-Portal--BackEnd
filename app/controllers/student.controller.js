@@ -1465,5 +1465,19 @@ exports.generateTaskWiseScoreList = (request, response) => {
 }
 
 
+exports.generateListOfBatchWiseStudentsDummy = (request, response) => {
+    const collegeId = request.body.collegeId;
+
+    Student.generateAllBatchWiseList(collegeId, (err, data) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else {
+            return response.json({ "status": "success", "data": data });
+        }
+    });
+}
+
+
+
 
 
