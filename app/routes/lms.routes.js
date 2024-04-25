@@ -418,6 +418,10 @@ router.post('/AdminSearchWhatsappMsgReceivedClgStaff', AdminSearchWhatsappMsgRec
 
 router.post('/dwnldClgWiseStudPerformance',ClgStaffController.generateClgWisePerformancePDF)
 
+// Dummy
+router.post('/generatebatchwisestudListDummy', StudentController.generateListOfBatchWiseStudentsDummy)
 
+router.post('/generatebatchwiseattendanceListDummy', StudentController.generateBatchWiseAttendanceListDummy)
+//Dummy Ends
 
 module.exports = router
