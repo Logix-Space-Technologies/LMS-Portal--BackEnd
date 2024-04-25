@@ -421,6 +421,7 @@ router.post('/dwnldClgWiseStudPerformance',ClgStaffController.generateClgWisePer
 // Dummy
 router.post('/generatebatchwisestudListDummy', StudentController.generateListOfBatchWiseStudentsDummy)
 
+router.post('/generatebatchwiseattendanceListDummy', StudentController.generateBatchWiseAttendanceListDummy)
 //Dummy Ends
 
 module.exports = router

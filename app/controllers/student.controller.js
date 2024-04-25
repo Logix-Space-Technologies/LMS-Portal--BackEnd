@@ -829,19 +829,6 @@ exports.generateSessionWiseAttendanceList = (request, response) => {
 
 
 
-function groupAttendanceBySessionStudent(data) {
-    const groupedData = {};
-    data.forEach(item => {
-        if (!groupedData[item.sessionName]) {
-            groupedData[item.sessionName] = [];
-        }
-        groupedData[item.sessionName].push(item);
-    });
-    return groupedData;
-}
-
-
-
 
 
 
@@ -1464,7 +1451,7 @@ exports.generateTaskWiseScoreList = (request, response) => {
 
 }
 
-
+//Dummy
 exports.generateListOfBatchWiseStudentsDummy = (request, response) => {
     const collegeId = request.body.collegeId;
 
@@ -1478,6 +1465,21 @@ exports.generateListOfBatchWiseStudentsDummy = (request, response) => {
 }
 
 
+exports.generateBatchWiseAttendanceListDummy = (request, response) => {
+    const batchId = request.body.batchId;
+    Student.generateBatchWiseAttendanceList(batchId, (err, data) => {
+        if (err) {
+            return response.json({ "status": err });
+        } else if (data.length === 0) { // Check if data is empty
+            return response.json({ "status": "No data found" }); // Return status if no data is available
+        } else {
+            return response.json({ "status": "success", "data": data });
+        }
+    })
+
+}
+
+//Dummy Ends
 
 
 
