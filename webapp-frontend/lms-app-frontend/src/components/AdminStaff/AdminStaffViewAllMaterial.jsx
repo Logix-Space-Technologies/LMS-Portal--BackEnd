@@ -183,7 +183,7 @@ const AdminStaffViewAllMaterial = () => {
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <br />
-            <strong>AdminStaff View All Materials</strong>
+            {key === 'lmsapp' ? <strong>Admin View All Materials</strong> : <strong>AdminStaff View All Materials</strong>}
             <br /><br />
             <div className="flex justify-between items-center mx-4 my-4">
                 <div className="container">
