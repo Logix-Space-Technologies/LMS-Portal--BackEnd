@@ -3,6 +3,7 @@ import '../../config/config';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AdmStaffNavBar from './AdmStaffNavBar';
+import Navbar from '../Admin/Navbar';
 
 const AdminStaffViewAllMaterial = () => {
     const [inputField, setInputField] = useState({
@@ -15,6 +16,7 @@ const AdminStaffViewAllMaterial = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+    const [key, setKey] = useState('');
 
 
     const rangeSize = 5; // Number of pages to display in the pagination
@@ -37,12 +39,19 @@ const AdminStaffViewAllMaterial = () => {
     }
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "Token": sessionStorage.getItem("admstaffLogintoken"),
-                "Key": sessionStorage.getItem("admstaffkey")
+                "Token": token,
+                "Key": currentKey
             }
         };
         axios.post(apiUrl, {}, axiosConfig).then((response) => {
@@ -64,13 +73,20 @@ const AdminStaffViewAllMaterial = () => {
     };
 
     const readValue = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         setIsLoading(true);
         let axiosConfig = {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey"),
+                "token": token,
+                "key": currentKey
             },
         };
 
@@ -89,7 +105,7 @@ const AdminStaffViewAllMaterial = () => {
                 setInputField({
                     materialQuery: "",
                 });
-                setTimeout(()=>{
+                setTimeout(() => {
                     alert("No Materials Found")
                     getData()
                 }, 500)
@@ -114,8 +130,8 @@ const AdminStaffViewAllMaterial = () => {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": sessionStorage.getItem("admtoken"),
+                "key": sessionStorage.getItem("admkey")
             }
         };
         setShowWaitingModal(true)
@@ -159,11 +175,15 @@ const AdminStaffViewAllMaterial = () => {
         getData();
     }, []);
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
     return (
         <div>
-            <AdmStaffNavBar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <br />
-            <strong>AdminStaff View All Materials</strong>
+            {key === 'lmsapp' ? <strong>Admin View All Materials</strong> : <strong>AdminStaff View All Materials</strong>}
             <br /><br />
             <div className="flex justify-between items-center mx-4 my-4">
                 <div className="container">
@@ -197,7 +217,7 @@ const AdminStaffViewAllMaterial = () => {
                                 <th scope="col" className="px-6 py-3">Added Date</th>
                                 <th scope="col" className="px-6 py-3"></th>
                                 <th scope="col" className="px-6 py-3"></th>
-                                <th scope="col" className="px-6 py-3"></th>
+                                {key === "lmsapp" && <th scope="col" className="px-6 py-3"></th>}
                             </tr>
                         </thead>
                         <tbody>
@@ -217,11 +237,13 @@ const AdminStaffViewAllMaterial = () => {
                                     <td className="px-6 py-4">
                                         <Link to="/AdminStaffUpdateMaterial" onClick={() => { updateClick(value.id); }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</Link>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal4" onClick={() => handleClick(value.id)}>
-                                            Delete
-                                        </button>
-                                    </td>
+                                    {key === "lmsapp" && (
+                                        <td className="px-6 py-4">
+                                            <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal4" onClick={() => handleClick(value.id)}>
+                                                Delete
+                                            </button>
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
                         </tbody>

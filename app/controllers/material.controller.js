@@ -61,8 +61,9 @@ exports.createMaterial = (request, response) => {
 
                 const { batchId, fileName, materialDesc, remarks, materialType, addedby } = request.body
                 const materialToken = request.headers.token
+                const key = request.headers.key
 
-                jwt.verify(materialToken, "lmsappadmstaff", (err, decoded) => {
+                jwt.verify(materialToken, key, (err, decoded) => {
                     if (decoded) {
                         const validationErrors = {};
 
@@ -123,8 +124,9 @@ exports.createMaterial = (request, response) => {
         } else {
             const { batchId, fileName, materialDesc, remarks, materialType, uploadFile, addedby } = request.body
             const materialToken = request.headers.token
+            const key = request.headers.key
 
-            jwt.verify(materialToken, "lmsappadmstaff", (err, decoded) => {
+            jwt.verify(materialToken, key, (err, decoded) => {
                 if (decoded) {
                     const validationErrors = {};
 
@@ -186,9 +188,10 @@ exports.createMaterial = (request, response) => {
 exports.searchMaterial = async (request, response) => {
     const materialQuery = request.body.materialQuery;
     const materialSearchToken = request.headers.token;
+    const key = request.headers.key
 
     try {
-        const decoded = jwt.verify(materialSearchToken, "lmsappadmstaff");
+        const decoded = jwt.verify(materialSearchToken, key);
 
         if (!materialQuery) {
             return response.json({ "status": "Provide a search query" });
@@ -242,8 +245,9 @@ exports.updateMaterial = (request, response) => {
 
                 const { id, batchId, fileName, materialDesc, remarks, materialType, addedby } = request.body;
                 const materialUpdateToken = request.headers.token;
+                const key = request.headers.key
 
-                jwt.verify(materialUpdateToken, "lmsappadmstaff", (err, decoded) => {
+                jwt.verify(materialUpdateToken, key, (err, decoded) => {
                     if (decoded) {
                         const validationErrors = {};
 
@@ -308,8 +312,9 @@ exports.updateMaterial = (request, response) => {
         } else {
             const { id, batchId, fileName, materialDesc, remarks, materialType, uploadFile, addedby } = request.body;
             const materialUpdateToken = request.headers.token;
+            const key = request.headers.key
 
-            jwt.verify(materialUpdateToken, "lmsappadmstaff", (err, decoded) => {
+            jwt.verify(materialUpdateToken, key, (err, decoded) => {
                 if (decoded) {
                     const validationErrors = {};
 
@@ -398,7 +403,7 @@ exports.deleteMaterial = (request, response) => {
         'id': request.body.id
     });
 
-    jwt.verify(deleteToken, "lmsappadmstaff", (err, decoded) => {
+    jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
         if (!decoded) {
             return response.json({ "status": "Unauthorized User!!" });
         }
