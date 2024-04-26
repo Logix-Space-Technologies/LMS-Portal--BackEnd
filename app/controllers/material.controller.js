@@ -188,9 +188,10 @@ exports.createMaterial = (request, response) => {
 exports.searchMaterial = async (request, response) => {
     const materialQuery = request.body.materialQuery;
     const materialSearchToken = request.headers.token;
+    const key = request.headers.token
 
     try {
-        const decoded = jwt.verify(materialSearchToken, "lmsappadmstaff");
+        const decoded = jwt.verify(materialSearchToken, key);
 
         if (!materialQuery) {
             return response.json({ "status": "Provide a search query" });
