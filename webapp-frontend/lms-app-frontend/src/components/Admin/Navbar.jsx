@@ -42,6 +42,7 @@ const Navbar = () => {
                                 <li><Link className="dropdown-item" to="/adminAddtask">Add Task</Link></li>
                                 <li><Link className="dropdown-item" to="/adminAddcurriculum">Add Curriculum</Link></li>
                                 <li><Link className="dropdown-item" to="/adminAddtrainer">Add Trainers</Link></li>
+                                <li><Link className="dropdown-item" to="/adminStaffAddmaterials">Add Materials</Link></li>
                             </ul>
                         </li>
                         <li className="nav-item dropdown">
