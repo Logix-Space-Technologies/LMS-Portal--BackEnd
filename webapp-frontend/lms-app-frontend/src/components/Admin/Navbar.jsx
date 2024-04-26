@@ -42,6 +42,7 @@ const Navbar = () => {
                                 <li><Link className="dropdown-item" to="/adminAddtask">Add Task</Link></li>
                                 <li><Link className="dropdown-item" to="/adminAddcurriculum">Add Curriculum</Link></li>
                                 <li><Link className="dropdown-item" to="/adminAddtrainer">Add Trainers</Link></li>
+                                <li><Link className="dropdown-item" to="/adminStaffAddmaterials">Add Materials</Link></li>
                             </ul>
                         </li>
                         <li className="nav-item dropdown">
@@ -53,6 +54,7 @@ const Navbar = () => {
                                 <li><Link className="dropdown-item" to="/adminviewallclgstaff">View College Staff</Link></li>
                                 <li><Link className="dropdown-item" to="/AdminViewAllAdminStaff">View Admin Staffs</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminStaffViewAllMaterial">View All Materials</Link></li>
                                 <li><Link className="dropdown-item" to="/AdminViewRefundRequests">View Refund Requests</Link></li>
                                 <li><Link className="dropdown-item" to="/adminViewSuccessfulrefunds">View Successful Refunds</Link></li>
                                 <li><Link className="dropdown-item" to="/adminViewlog">View Admin Logs</Link></li>
@@ -74,7 +76,6 @@ const Navbar = () => {
                                 <li><Link className="dropdown-item" to="/adminSearchClg">Search College</Link></li>
                                 <li><Link className="dropdown-item" to="/adminSearchTrainers">Search Trainers</Link></li>
                                 <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search College staffs</Link></li>
-                                <li><Link className="dropdown-item" to="/adminStaffSearchSubmittedTask">Search Submitted Task</Link></li>
                             </ul>
                         </li>
                         <li className="nav-item">

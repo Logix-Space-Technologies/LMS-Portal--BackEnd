@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../../config/config'
 import { Link, useNavigate } from 'react-router-dom';
 import AdmStaffNavBar from './AdmStaffNavBar';
+import Navbar from '../Admin/Navbar';
 
 const AdminStaffAddMaterials = () => {
 
@@ -21,6 +22,8 @@ const AdminStaffAddMaterials = () => {
     const navigate = useNavigate()
 
     const [fileType, setFileType] = useState("");
+
+    const [key, setKey] = useState('');
 
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
@@ -55,12 +58,19 @@ const AdminStaffAddMaterials = () => {
     }
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(apiUrl2, {}, axiosConfig).then(
@@ -69,7 +79,7 @@ const AdminStaffAddMaterials = () => {
                     setOutputField(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/admstafflogin")
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status)
@@ -80,12 +90,19 @@ const AdminStaffAddMaterials = () => {
     }
 
     const getBatches = (collegeId) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(batchUrl, { collegeId }, axiosConfig2).then((response) => {
@@ -93,7 +110,7 @@ const AdminStaffAddMaterials = () => {
                 setBatches(response.data)
             } else {
                 if (response.data.status === "Unauthorized User!!") {
-                    navigate("/admstafflogin")
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
                     alert(response.data.status)
@@ -114,6 +131,13 @@ const AdminStaffAddMaterials = () => {
     };
 
     const readValue = (e) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         e.preventDefault();
         const validationErrors = validateForm(inputField);
         if (Object.keys(validationErrors).length === 0) {
@@ -121,11 +145,16 @@ const AdminStaffAddMaterials = () => {
                 headers: {
                     'content-type': 'multipart/form-data',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("admstaffLogintoken"),
-                    "key": sessionStorage.getItem("admstaffkey")
+                    "token": token,
+                    "key": currentKey
                 }
             }
-            let addedBy = sessionStorage.getItem("admstaffId");
+            let addedBy;
+            if (currentKey === 'lmsapp') {
+                addedBy = 0
+            } else {
+                addedBy = sessionStorage.getItem("admstaffId")
+            }
             let data = {
                 "batchId": inputField.batchId,
                 "fileName": inputField.fileName,
@@ -180,7 +209,7 @@ const AdminStaffAddMaterials = () => {
                                         }, 500)
                                     } else {
                                         if (response.data.status === "Unauthorized User!!") {
-                                            navigate("/admstafflogin")
+                                            { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                                             sessionStorage.clear()
                                         } else {
                                             closeWaitingModal()
@@ -261,9 +290,14 @@ const AdminStaffAddMaterials = () => {
 
     useEffect(() => { getData() }, [])
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
     return (
         <div>
-            <AdmStaffNavBar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">

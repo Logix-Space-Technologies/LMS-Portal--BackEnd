@@ -3,6 +3,7 @@ import '../../config/config'
 import axios from 'axios';
 import AdmStaffNavBar from './AdmStaffNavBar';
 import { Link, useNavigate } from 'react-router-dom';
+import Navbar from '../Admin/Navbar';
 
 const AdminStaffUpdateMaterial = () => {
 
@@ -14,7 +15,7 @@ const AdminStaffUpdateMaterial = () => {
     const [outputField, setOutputField] = useState([])
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
-
+    const [key, setKey] = useState('');
 
     const [updateField, setUpdateField] = useState(
         {
@@ -40,12 +41,19 @@ const AdminStaffUpdateMaterial = () => {
     }
 
     const getClg = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(clgUrl, {}, axiosConfig).then(
@@ -54,7 +62,7 @@ const AdminStaffUpdateMaterial = () => {
                     setOutputField(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/admstafflogin")
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status)
@@ -71,12 +79,19 @@ const AdminStaffUpdateMaterial = () => {
     }
 
     const getBatches = (collegeId) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 'Access-Control-Allow-Origin': '*',
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": token,
+                "key": currentKey
             }
         };
         axios.post(batchUrl, { collegeId }, axiosConfig2).then((response) => {
@@ -84,7 +99,7 @@ const AdminStaffUpdateMaterial = () => {
                 setBatches(response.data)
             } else {
                 if (response.data.status === "Unauthorized User!!") {
-                    navigate("/admstafflogin")
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
                     alert(response.data.status)
@@ -113,6 +128,19 @@ const AdminStaffUpdateMaterial = () => {
     }
 
     const readNewValue = (e) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let addedBy;
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
+        }
         e.preventDefault();
         const validationErrors = validateForm(updateField);
         if (Object.keys(validationErrors).length === 0) {
@@ -120,11 +148,11 @@ const AdminStaffUpdateMaterial = () => {
                 headers: {
                     'content-type': 'multipart/form-data',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("admstaffLogintoken"),
-                    "key": sessionStorage.getItem("admstaffkey")
+                    "token": token,
+                    "key": currentKey
                 }
             }
-            let addedBy = sessionStorage.getItem("admstaffId");
+
             let data = {}
             if (file) {
                 data = {
@@ -172,41 +200,41 @@ const AdminStaffUpdateMaterial = () => {
 
                     } else if (Response.data.status === "Validation failed" && Response.data.data.batchId) {
                         closeWaitingModal()
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             alert(Response.data.data.batchId)
                         }, 500)
                     } else if (Response.data.status === "Validation failed" && Response.data.data.fileName) {
                         closeWaitingModal()
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             alert(Response.data.data.fileName)
                         }, 500)
                     } else if (Response.data.status === "Validation failed" && Response.data.data.remarks) {
                         closeWaitingModal()
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             alert(Response.data.data.remarks)
                         }, 500)
                     } else if (Response.data.status === "Validation failed" && Response.data.data.materialDesc) {
                         closeWaitingModal()
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             alert(Response.data.data.materialDesc)
                         }, 500)
                     } else if (Response.data.status === "Validation failed" && Response.data.data.materialType) {
                         closeWaitingModal()
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             alert(Response.data.data.materialType)
                         }, 500)
                     } else if (Response.data.status === "Validation failed" && Response.data.data.file) {
                         closeWaitingModal()
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             alert(Response.data.data.file)
                         }, 500)
                     } else if (Response.data.status === "Validation failed" && Response.data.data.website) {
                         closeWaitingModal()
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             alert(Response.data.data.website)
                         }, 500)
                     } else if (Response.data.status === "Unauthorized Access!!!") {
-                        navigate("/admstafflogin")
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         closeWaitingModal()
@@ -275,13 +303,20 @@ const AdminStaffUpdateMaterial = () => {
     }
 
     const getData = () => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
         let data = { "id": sessionStorage.getItem("materialId") }
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("admstaffLogintoken"),
-                "key": sessionStorage.getItem("admstaffkey")
+                "token": token,
+                "key": currentKey
             }
         }
         axios.post(apiURL, data, axiosConfig).then(
@@ -291,7 +326,7 @@ const AdminStaffUpdateMaterial = () => {
                     setUpdateField(response.data.Material[0])
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
-                        navigate("/admstafflogin")
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status)
@@ -311,9 +346,14 @@ const AdminStaffUpdateMaterial = () => {
         }
     }, [updateField.collegeId]);
 
+    // Update key state when component mounts
+    useEffect(() => {
+        setKey(sessionStorage.getItem("admkey") || '');
+    }, []);
+
     return (
         <div>
-            <AdmStaffNavBar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
