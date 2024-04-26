@@ -62,7 +62,7 @@ const AdminStaffUpdateMaterial = () => {
                     setOutputField(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/admstafflogin")
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status)
@@ -99,7 +99,7 @@ const AdminStaffUpdateMaterial = () => {
                 setBatches(response.data)
             } else {
                 if (response.data.status === "Unauthorized User!!") {
-                    navigate("/admstafflogin")
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
                     alert(response.data.status)
@@ -128,6 +128,19 @@ const AdminStaffUpdateMaterial = () => {
     }
 
     const readNewValue = (e) => {
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        let addedBy;
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
+        }
         e.preventDefault();
         const validationErrors = validateForm(updateField);
         if (Object.keys(validationErrors).length === 0) {
@@ -135,11 +148,11 @@ const AdminStaffUpdateMaterial = () => {
                 headers: {
                     'content-type': 'multipart/form-data',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("admstaffLogintoken"),
-                    "key": sessionStorage.getItem("admstaffkey")
+                    "token": token,
+                    "key": currentKey
                 }
             }
-            let addedBy = sessionStorage.getItem("admstaffId");
+
             let data = {}
             if (file) {
                 data = {
@@ -221,7 +234,7 @@ const AdminStaffUpdateMaterial = () => {
                             alert(Response.data.data.website)
                         }, 500)
                     } else if (Response.data.status === "Unauthorized Access!!!") {
-                        navigate("/admstafflogin")
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         closeWaitingModal()
@@ -313,7 +326,7 @@ const AdminStaffUpdateMaterial = () => {
                     setUpdateField(response.data.Material[0])
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
-                        navigate("/admstafflogin")
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status)
