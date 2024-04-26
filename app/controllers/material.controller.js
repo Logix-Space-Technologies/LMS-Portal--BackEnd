@@ -124,8 +124,9 @@ exports.createMaterial = (request, response) => {
         } else {
             const { batchId, fileName, materialDesc, remarks, materialType, uploadFile, addedby } = request.body
             const materialToken = request.headers.token
+            const key = request.headers.key
 
-            jwt.verify(materialToken, "lmsappadmstaff", (err, decoded) => {
+            jwt.verify(materialToken, key, (err, decoded) => {
                 if (decoded) {
                     const validationErrors = {};
 
@@ -243,8 +244,9 @@ exports.updateMaterial = (request, response) => {
 
                 const { id, batchId, fileName, materialDesc, remarks, materialType, addedby } = request.body;
                 const materialUpdateToken = request.headers.token;
+                const key = request.headers.key
 
-                jwt.verify(materialUpdateToken, "lmsappadmstaff", (err, decoded) => {
+                jwt.verify(materialUpdateToken, key, (err, decoded) => {
                     if (decoded) {
                         const validationErrors = {};
 
@@ -309,8 +311,9 @@ exports.updateMaterial = (request, response) => {
         } else {
             const { id, batchId, fileName, materialDesc, remarks, materialType, uploadFile, addedby } = request.body;
             const materialUpdateToken = request.headers.token;
+            const key = request.headers.key
 
-            jwt.verify(materialUpdateToken, "lmsappadmstaff", (err, decoded) => {
+            jwt.verify(materialUpdateToken, key, (err, decoded) => {
                 if (decoded) {
                     const validationErrors = {};
 
