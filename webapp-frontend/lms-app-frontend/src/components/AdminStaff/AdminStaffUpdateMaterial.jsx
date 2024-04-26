@@ -3,6 +3,7 @@ import '../../config/config'
 import axios from 'axios';
 import AdmStaffNavBar from './AdmStaffNavBar';
 import { Link, useNavigate } from 'react-router-dom';
+import Navbar from '../Admin/Navbar';
 
 const AdminStaffUpdateMaterial = () => {
 
@@ -339,7 +340,7 @@ const AdminStaffUpdateMaterial = () => {
 
     return (
         <div>
-            <AdmStaffNavBar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
