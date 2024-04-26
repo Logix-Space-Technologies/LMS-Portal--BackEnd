@@ -3,6 +3,7 @@ import '../../config/config';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AdmStaffNavBar from './AdmStaffNavBar';
+import Navbar from '../Admin/Navbar';
 
 const AdminStaffViewAllMaterial = () => {
     const [inputField, setInputField] = useState({
@@ -180,7 +181,7 @@ const AdminStaffViewAllMaterial = () => {
     }, []);
     return (
         <div>
-            <AdmStaffNavBar />
+            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <br />
             <strong>AdminStaff View All Materials</strong>
             <br /><br />
