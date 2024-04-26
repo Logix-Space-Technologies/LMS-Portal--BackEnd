@@ -61,8 +61,9 @@ exports.createMaterial = (request, response) => {
 
                 const { batchId, fileName, materialDesc, remarks, materialType, addedby } = request.body
                 const materialToken = request.headers.token
+                const key = request.headers.key
 
-                jwt.verify(materialToken, "lmsappadmstaff", (err, decoded) => {
+                jwt.verify(materialToken, key, (err, decoded) => {
                     if (decoded) {
                         const validationErrors = {};
 
