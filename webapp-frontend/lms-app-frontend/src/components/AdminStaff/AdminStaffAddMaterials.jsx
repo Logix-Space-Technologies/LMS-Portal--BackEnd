@@ -79,7 +79,7 @@ const AdminStaffAddMaterials = () => {
                     setOutputField(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        navigate("/admstafflogin")
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                         sessionStorage.clear()
                     } else {
                         alert(response.data.status)
@@ -110,7 +110,7 @@ const AdminStaffAddMaterials = () => {
                 setBatches(response.data)
             } else {
                 if (response.data.status === "Unauthorized User!!") {
-                    navigate("/admstafflogin")
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
                     alert(response.data.status)
@@ -149,7 +149,12 @@ const AdminStaffAddMaterials = () => {
                     "key": currentKey
                 }
             }
-            let addedBy = sessionStorage.getItem("admstaffId");
+            let addedBy;
+            if (currentKey === 'lmsapp') {
+                addedBy = 0
+            } else {
+                addedBy = sessionStorage.getItem("admstaffId")
+            }
             let data = {
                 "batchId": inputField.batchId,
                 "fileName": inputField.fileName,
