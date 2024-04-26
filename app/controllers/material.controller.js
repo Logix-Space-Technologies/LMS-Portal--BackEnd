@@ -403,7 +403,7 @@ exports.deleteMaterial = (request, response) => {
         'id': request.body.id
     });
 
-    jwt.verify(deleteToken, "lmsappadmstaff", (err, decoded) => {
+    jwt.verify(deleteToken, "lmsapp", (err, decoded) => {
         if (!decoded) {
             return response.json({ "status": "Unauthorized User!!" });
         }
