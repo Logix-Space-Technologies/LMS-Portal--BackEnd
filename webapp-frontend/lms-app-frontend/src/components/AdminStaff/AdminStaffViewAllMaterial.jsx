@@ -217,7 +217,7 @@ const AdminStaffViewAllMaterial = () => {
                                 <th scope="col" className="px-6 py-3">Added Date</th>
                                 <th scope="col" className="px-6 py-3"></th>
                                 <th scope="col" className="px-6 py-3"></th>
-                                <th scope="col" className="px-6 py-3"></th>
+                                {key === "lmsapp" && <th scope="col" className="px-6 py-3"></th>}
                             </tr>
                         </thead>
                         <tbody>
@@ -237,11 +237,13 @@ const AdminStaffViewAllMaterial = () => {
                                     <td className="px-6 py-4">
                                         <Link to="/AdminStaffUpdateMaterial" onClick={() => { updateClick(value.id); }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</Link>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal4" onClick={() => handleClick(value.id)}>
-                                            Delete
-                                        </button>
-                                    </td>
+                                    {key === "lmsapp" && (
+                                        <td className="px-6 py-4">
+                                            <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal4" onClick={() => handleClick(value.id)}>
+                                                Delete
+                                            </button>
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
                         </tbody>
