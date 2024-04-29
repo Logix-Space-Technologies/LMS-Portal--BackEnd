@@ -77,6 +77,34 @@ exports.collegeStaffViewAttendance = (request, response) => {
     });
 };
 
+exports.collegeStaffSearchAttendance = (request, response) => {
+    const sessionId = request.body.sessionId;
+    const attendenceQuery = request.body.attendanceSearchQuery;//changed
+    const attendanceToken = request.headers.token;
+    const key = request.headers.key;
+
+    jwt.verify(attendanceToken, key, (err, decoded) => {
+        if (!attendenceQuery) {
+            return response.json({ "status": "Search query cannot be empty" })
+        }
+        if (decoded) {
+            Attendence.searchCollegeStaffAttendance(sessionId, attendenceQuery, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        return response.json({ "status": "No search items found." });
+                    } else {
+                        return response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+}
+
 exports.studentViewAttendance = (request, response) => {
     const attendanceToken = request.headers.token;
     const studId = request.body.studId;
