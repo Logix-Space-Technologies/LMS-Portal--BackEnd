@@ -352,7 +352,7 @@ Session.viewOneSession = (sessionId, result) => {
 };
 
 Session.viewSessionwisePerformance = (sessionId, result) =>{
-db.query("SELECT studentId, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where sessionId=? and dueDate < CURRENT_DATE GROUP BY studentId,studName order by studentId, score DESC;", [sessionId], (err, res) => {
+db.query("SELECT studentId, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where sessionId=? and dueDate < CURRENT_DATE GROUP BY studentId,studName order by score DESC;", [sessionId], (err, res) => {
         if(err){
             console.log("error: ", err);
             result(err, null);
