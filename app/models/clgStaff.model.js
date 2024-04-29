@@ -730,7 +730,7 @@ CollegeStaff.searchClgStaffByCollege = (searchKey, result) => {
 }
 
 CollegeStaff.viewTaskwiseScore = (batchId, taskId, result) => {
-    db.query(`SELECT studName,score,totalScore FROM studentTaskScore where batchId=? and taskId=?;`, [batchId, taskId], (err, res) => {
+    db.query(`SELECT studName,score,totalScore FROM studentTaskScore where batchId=? and taskId=? order by score DESC;`, [batchId, taskId], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
