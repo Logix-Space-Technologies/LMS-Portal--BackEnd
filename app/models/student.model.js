@@ -887,7 +887,7 @@ Student.studentNotificationView = (studId, result) => {
 
 Student.viewSession = (batchId, result) => {
     db.query(
-        "SELECT DISTINCT s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink,t.trainerName FROM sessiondetails s JOIN student st ON s.batchId = st.batchId JOIN trainersinfo t ON s.trainerId = t.id  WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND st.deleteStatus = 0 AND st.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;",
+        "SELECT s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink,t.trainerName FROM sessiondetails s JOIN trainersinfo t ON s.trainerId = t.id  WHERE (s.date >= DATE_SUB(NOW(), INTERVAL 1 MONTH)) AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND s.batchId = ? ORDER BY s.date DESC;",
         [batchId],
         (err, res) => {
             if (err) {
