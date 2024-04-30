@@ -13,7 +13,15 @@ const CollegeStaffViewAllCollegePerformance = () => {
     const [scoresPerPage] = useState(10); // Number of students per page
     const [loading, setLoading] = useState(true);
     const [key, setKey] = useState('')
-
+    const [inputField, setInputField] = useState(
+        {
+            "performanceSearchQuery": ""
+        }
+    )
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/searchPerformanceOfStudents";
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
+    }
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(scoreData.length / scoresPerPage); // Calculate the total number of pages
     let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
@@ -22,6 +30,72 @@ const CollegeStaffViewAllCollegePerformance = () => {
     const apiurl = global.config.urls.api.server + "/api/lms/viewPerformanceOfStudents"
 
     const navigate = useNavigate()
+
+    const readSearchValue = () => {
+        setLoading(true)
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
+        let axiosConfig3 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        }
+        const data = { "collegeId": sessionStorage.getItem("ViewAllperformancecollegeId"), "performanceSearchQuery": inputField.performanceSearchQuery };
+        axios.post(apiUrl4, data, axiosConfig3).then(
+            (response) => {
+                if (response.data.status === "Search Item is required.") {
+                    setLoading(false)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                        getData()
+                    }, 500)
+                } else if (response.data.data) {
+                    setScoreData(response.data.data)
+                    setInputField(
+                        {
+                            "performanceSearchQuery": ""
+                        }
+                    )
+                    setLoading(false)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : (key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : navigate("/admstafflogin")) }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setLoading(false)
+                    setInputField(
+                        {
+                            "performanceSearchQuery": ""
+                        }
+                    )
+                    setTimeout(() => {
+                        getData()
+                        alert("No Attendence Found !!")
+                    }, 500)
+                } else {
+                    setLoading(false)
+                    setInputField(
+                        {
+                            "performanceSearchQuery": ""
+                        }
+                    )
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
 
     const getData = () => {
         let data = {
@@ -106,6 +180,18 @@ const CollegeStaffViewAllCollegePerformance = () => {
                                 <div className="flex space-x-4">
                                     <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
                                     <button type='button' onClick={() => generatePDF()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download PDF</button>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col">
+                                    <div className="input-group">
+                                        <input onChange={inputHandler} type="text" className="form-control" name="performanceSearchQuery" value={inputField.performanceSearchQuery} placeholder='Membership no/Student Name/Session Name' />
+                                    </div>
+                                    <br></br>
+                                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                        <button onClick={readSearchValue} className="btn btn-warning">Search</button>
+                                    </div>
+                                    <br />
                                 </div>
                             </div>
                             <br />

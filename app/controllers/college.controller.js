@@ -63,7 +63,7 @@ exports.collegeCreate = (request, response) => {
             key = request.headers.key
             jwt.verify(collegeToken, key, (err, decoded) => {
                 if (decoded) {
-                    
+
                     const validationErrors = {};
 
                     if (Validator.isEmpty(collegeName).isValid) {
@@ -647,6 +647,34 @@ exports.viewPerformanceOfStudents = (request, response) => {
             })
         } else {
             return response.json({ "status": "Unauthorized User !!!" });
+        }
+    })
+}
+
+exports.searchPerformanceOfStudents = (request, response) => {
+    const collegeId = request.body.collegeId;
+    const performanceSearchQuery = request.body.performanceSearchQuery
+    const performanceSearchToken = request.headers.token
+    const performanceSearchKey = request.headers.key
+
+    jwt.verify(performanceSearchToken, performanceSearchKey, (err, decoded) => {
+        if (decoded) {
+            if (!performanceSearchQuery) {
+                return response.json({ "status": "Search Item is required." })
+            }
+            College.searchPerformanceOfStudents(collegeId, performanceSearchQuery, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err })
+                } else {
+                    if (data.length === 0) {
+                        return response.json({ "status": "No Search Items Found." })
+                    } else {
+                        return response.json({ "status": "Result Found", "data": data })
+                    }
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User!!" })
         }
     })
 }
