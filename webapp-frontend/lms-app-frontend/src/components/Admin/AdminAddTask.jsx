@@ -243,6 +243,7 @@ const AdminAddTask = () => {
                             dueDate: '',
                             taskFileUpload: ''
                         })
+                        window.location.reload()
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.batchId) {
                     closeWaitingModal()
