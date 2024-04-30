@@ -289,7 +289,7 @@ College.changeRegistrationStatusToNotOpen = (id, result) => {
 }
 
 College.viewPerformanceOfStudents = (collegeId, result) => {
-    db.query("SELECT batchName, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where CollegeId=? AND dueDate < CURRENT_DATE GROUP BY batchName,studentId,studName order by batchName;",[collegeId],(err,res)=>{
+    db.query("SELECT batchName, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where CollegeId=? AND dueDate < CURRENT_DATE GROUP BY batchName,studentId,studName order by batchName, score DESC;",[collegeId],(err,res)=>{
         if(err){
             console.log("Error : ", err);
             result(err, null);
@@ -298,6 +298,22 @@ College.viewPerformanceOfStudents = (collegeId, result) => {
         console.log("College Performance : ", res);
         result(null, res);
     })
+}
+
+College.searchPerformanceOfStudents = (collegeId,search, result) => {
+    const searchTerm = '%' + search + '%'
+    db.query("SELECT batchName, membership_no, studName, SUM(score) AS score, SUM(totalScore) AS totalScore FROM studentTaskScore WHERE CollegeId=? AND dueDate < CURRENT_DATE AND (batchName LIKE ? OR membership_no = ? OR studName LIKE ?) GROUP BY batchName, studentId, studName ORDER BY batchName, score DESC;",
+        [collegeId,searchTerm, search, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                result
+            } else {
+                console.log("Student Performance : ", res)
+                result(null, res)
+            }
+        })
 }
 
 module.exports = College;

@@ -180,6 +180,7 @@ const AdminStaffAddMaterials = () => {
                             materialType: '',
                             uploadFile: ''
                         })
+                        window.location.reload()
                     }, 500)
                 } else {
                     closeWaitingModal()

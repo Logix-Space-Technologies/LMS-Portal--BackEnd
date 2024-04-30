@@ -71,6 +71,26 @@ Attendence.collegeStaffViewAttendance = (sessionId, result) => {
     });
 };
 
+Attendence.searchCollegeStaffAttendance = (sessionId, search, result) => {
+    const searchTerm = '%' + search + '%';
+    db.query(
+        "SELECT b.batchName, sd.sessionName, sd.date, s.membership_no, s.studName, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendence_status FROM attendence a JOIN sessiondetails sd ON a.sessionId = sd.id JOIN student s ON s.id = a.studId JOIN college c ON c.id = s.collegeId LEFT JOIN batches b ON b.id = sd.batchId WHERE sd.id = ? AND sd.cancelStatus = 0 AND s.isVerified = 1 AND (s.membership_no LIKE ? OR s.studName LIKE ? OR sd.sessionName LIKE ?) ORDER BY b.batchName, sd.sessionName, s.membership_no;",
+        [sessionId, searchTerm, searchTerm, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                // Format the date for each session
+                const formattedViewAttendance = res.map(attendance => ({ ...attendance, date: attendance.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' })}));
+                console.log("attendance: ", formattedViewAttendance);
+                result(null, formattedViewAttendance);
+            }
+        }
+    );
+};
+
 Attendence.studentViewAttendance = (studentId, result) => {
     db.query("SELECT sd.sessionName, sd.date, CASE WHEN a.status = 0 THEN 'Absent' WHEN a.status = 1 THEN 'Present' ELSE 'Unknown' END AS attendence_status FROM attendence a JOIN sessiondetails sd ON a.sessionId = sd.id JOIN student s ON s.id = a.studId WHERE sd.cancelStatus = 0 AND s.id = ? AND sd.date<=CURRENT_DATE() ", [studentId], (err, res) => {
         if (err) {

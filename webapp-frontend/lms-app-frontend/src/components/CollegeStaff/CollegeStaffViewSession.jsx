@@ -271,7 +271,7 @@ const CollegeStaffViewSession = () => {
                                             {value.type}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {value.remarks}
+                                            {value.remarks ? (value.remarks) : <p>NIL</p>}
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.trainerName}

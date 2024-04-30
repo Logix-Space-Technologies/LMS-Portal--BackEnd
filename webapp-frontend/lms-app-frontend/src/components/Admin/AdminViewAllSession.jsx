@@ -496,7 +496,7 @@ const AdminViewAllSession = () => {
                                 <td className="px-6 py-4">{value.date}</td>
                                 <td className="px-6 py-4">{formatTime(value.time)}</td>
                                 <td className="px-6 py-4">{value.type}</td>
-                                <td className="px-6 py-4">{value.remarks}</td>
+                                <td className="px-6 py-4">{value.remarks ? (value.remarks) : <p>NIL</p>}</td>
                                 <td className="px-6 py-4">
                                     <p className="text-sm text-gray-600">
                                         {isSpecialDomain(value.venueORlink) ? (

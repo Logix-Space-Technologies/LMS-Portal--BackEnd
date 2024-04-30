@@ -110,6 +110,7 @@ const AdminAddTrainer = () => {
                             confirmpassword: '',
                             profilePicture: ''
                         })
+                        window.location.reload()
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.trainerName) {
                     closeWaitingModal()

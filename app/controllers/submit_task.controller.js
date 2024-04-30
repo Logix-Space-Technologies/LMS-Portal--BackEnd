@@ -49,3 +49,49 @@ exports.evaluateTask = (request, response) => {
     });
 };
   
+
+exports.updateTaskScore = (request, response) => {
+    const evaluateToken = request.headers.token;
+    const key = request.headers.key;
+
+    jwt.verify(evaluateToken, key, (error, decoded) => {
+        if (decoded) {
+            const id = request.body.id
+            const adminstaffId = request.body.adminstaffId
+            const newScore = request.body.score;
+            const evaluatorRemarks = request.body.evaluatorRemarks
+            const validationErrors = {};
+
+            if (!newScore) {
+                validationErrors.score = "Score cannot be empty";
+            } else if (newScore < 0) {
+                validationErrors.score = "Score cannot be less than 0";
+            }
+
+            if (Object.keys(validationErrors).length > 0) {
+                return response.json({ "status": "Validation failed", "data": validationErrors });
+            }
+
+            const updateScore = new SubmitTask({
+                id: id,
+                adminstaffId: adminstaffId,
+                score: newScore,
+                evaluatorRemarks : evaluatorRemarks
+            });
+
+            SubmitTask.updateTaskScore(updateScore, (error, data) => {
+                if (error) {
+                    return response.json({ "status": error });
+                } else {
+                    const studentId = data.student_id;
+                    const sessionName = data.sessionName;
+                    const taskTitle = data.taskTitle;
+
+                    return response.json({ "status": "Task score updated successfully" });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};

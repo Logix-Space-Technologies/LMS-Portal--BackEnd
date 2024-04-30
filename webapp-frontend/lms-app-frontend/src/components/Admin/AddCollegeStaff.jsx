@@ -151,6 +151,7 @@ const AddCollegeStaff = () => {
                 confirmpassword: '',
                 profilePic: ''
               })
+              window.location.reload()
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.dept) {
             closeWaitingModal()
