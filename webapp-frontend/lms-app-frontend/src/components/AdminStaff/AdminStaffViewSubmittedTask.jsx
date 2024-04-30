@@ -178,9 +178,6 @@ const AdminStaffViewSubmittedTask = () => {
     const evaluateTask = () => {
         let newErrors = {};
         let addedBy;
-        if (!inputField.evaluatorRemarks.trim()) {
-            newErrors.evaluatorRemarks = "Remarks required!";
-        }
 
         if (!inputField.score.trim()) {
             newErrors.score = "Score required!";
@@ -270,10 +267,7 @@ const AdminStaffViewSubmittedTask = () => {
     const updateEvaluatedTask = () => {
         let newErrors = {};
         let updatedBy;
-        if (!changeScoreField.evaluatorRemarks.trim()) {
-            newErrors.updateEvaluatorRemarks = "Remarks required!";
-        }
-
+    
         if (!changeScoreField.score.trim()) {
             newErrors.updateScore = "Score required!";
         }
@@ -661,7 +655,6 @@ const AdminStaffViewSubmittedTask = () => {
                                     <div className="mb-3">
                                         <label htmlFor="message-text" className="col-form-label">Evaluator Remarks:</label>
                                         <textarea name="evaluatorRemarks" className="form-control" value={inputField.evaluatorRemarks} onChange={inputHandler} />
-                                        {errors.evaluatorRemarks && <span style={{ color: 'red' }} className="error">{errors.evaluatorRemarks}</span>}
                                     </div>
                                 </form>
                             </div>
@@ -700,7 +693,6 @@ const AdminStaffViewSubmittedTask = () => {
                                     <div className="mb-3">
                                         <label htmlFor="message-text" className="col-form-label">Evaluator Remarks:</label>
                                         <textarea name="evaluatorRemarks" className="form-control" value={changeScoreField.evaluatorRemarks} onChange={changeScoreHandler} />
-                                        {errors.updateEvaluatorRemarks && <span style={{ color: 'red' }} className="error">{errors.updateEvaluatorRemarks}</span>}
                                     </div>
                                 </form>
                             </div>
