@@ -272,9 +272,6 @@ const AdminAddSession = () => {
         if (!data.sessionName.trim()) {
             errors.sessionName = 'Session name is required';
         }
-        if (!data.remarks.trim()) {
-            errors.remarks = 'Remark is required';
-        }
         if (!data.date.trim()) {
             errors.date = 'Date is required';
         }

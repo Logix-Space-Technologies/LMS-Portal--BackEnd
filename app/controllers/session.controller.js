@@ -61,10 +61,6 @@ exports.createSession = (request, response) => {
                 validationErrors.type = Validator.isEmpty(request.body.type).message;
             }
 
-            if (Validator.isEmpty(request.body.remarks).isValid) {
-                validationErrors.remarks = Validator.isEmpty(request.body.remarks).message;
-            }
-
             if (Validator.isEmpty(request.body.venueORlink).isValid) {
                 validationErrors.venueORlink = Validator.isEmpty(request.body.venueORlink).message;
             }
