@@ -421,4 +421,6 @@ router.post('/generatebatchwisestudListDummy', StudentController.generateListOfB
 router.post('/generatebatchwiseattendanceListDummy', StudentController.generateBatchWiseAttendanceListDummy)
 //Dummy Ends
 
+router.post('/updateSubmittedTaskScore',SubmitTaskController.updateTaskScore)
+
 module.exports = router
