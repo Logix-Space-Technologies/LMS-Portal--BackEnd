@@ -9,7 +9,7 @@ const ViewPerformance = () => {
 
     const navigate = useNavigate()
 
-    const apiurl = global.config.urls.api.server + "/api/lms/studentViewPerformance"
+    const apiurl = global.config.urls.api.server + "/api/lms/overallstudperformancestudwise"
 
     const getData = () => {
         let data = {
