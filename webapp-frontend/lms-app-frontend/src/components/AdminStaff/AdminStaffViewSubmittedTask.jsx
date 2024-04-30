@@ -18,6 +18,7 @@ const AdminStaffViewSubmittedTask = () => {
     const [key, setKey] = useState('')
 
     let [submittedTaskId, setSubmittedTaskId] = useState("")
+    let [updateSubmittedTaskId, setUpdateSubmittedTaskId] = useState({})
 
     const [taskData, setTaskData] = useState([])
 
@@ -27,9 +28,16 @@ const AdminStaffViewSubmittedTask = () => {
         "score": ""
     });
 
+    const [changeScoreField, setChangeScoreField] = useState({
+        "adminstaffId": "",
+        "evaluatorRemarks": "",
+        "score": ""
+    })
+
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of students per page
 
+    const [showUpdateScoreModal, setShowUpdateScoreModal] = useState(false)
     const [showModal, setShowModal] = useState(false);
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
@@ -42,6 +50,7 @@ const AdminStaffViewSubmittedTask = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/adSfViewSubmittedTask"
     const apiUrl3 = global.config.urls.api.server + '/api/lms/admstaffsearchsubtask'
     const apiUrl2 = global.config.urls.api.server + "/api/lms/evaluateTask"
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/updateSubmittedTaskScore"
 
     const closeModal = () => {
         setShowModal(false);
@@ -51,6 +60,21 @@ const AdminStaffViewSubmittedTask = () => {
             "evaluatorRemarks": "",
             "score": ""
         });
+    };
+
+    const closeUpdateScoreModal = () => {
+        setShowUpdateScoreModal(false);
+        setShowOverlay(false);
+        setErrors({})
+        setChangeScoreField({
+            "evaluatorRemarks": "",
+            "score": ""
+        });
+        setUpdateSubmittedTaskId({})
+    };
+
+    const changeScoreHandler = (event) => {
+        setChangeScoreField({ ...changeScoreField, [event.target.name]: event.target.value });
     };
 
     const updateHandler = (event) => {
@@ -131,7 +155,7 @@ const AdminStaffViewSubmittedTask = () => {
                 } else if (!response.data.data) {
                     setLoading(false);
                     setUpdateField({ "subTaskSearchQuery": "" });
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert("No Submitted Tasks Found")
                         getData()
                     }, 500)
@@ -224,7 +248,7 @@ const AdminStaffViewSubmittedTask = () => {
                         setShowOverlay(true)
                     }, 500)
                 } else if (response.data.status === "Unauthorized access!!") {
-                    navigate("/admstafflogin")
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
                     closeWaitingModal()
@@ -243,9 +267,108 @@ const AdminStaffViewSubmittedTask = () => {
         )
     }
 
+    const updateEvaluatedTask = () => {
+        let newErrors = {};
+        let updatedBy;
+        if (!changeScoreField.evaluatorRemarks.trim()) {
+            newErrors.updateEvaluatorRemarks = "Remarks required!";
+        }
+
+        if (!changeScoreField.score.trim()) {
+            newErrors.updateScore = "Score required!";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            setShowUpdateScoreModal(true)
+            setShowOverlay(true)
+            return;
+        }
+        let currentKey = sessionStorage.getItem("admkey");
+        let token = sessionStorage.getItem("admtoken");
+        if (currentKey !== 'lmsapp') {
+            currentKey = sessionStorage.getItem("admstaffkey");
+            token = sessionStorage.getItem("admstaffLogintoken");
+            setKey(currentKey); // Update the state if needed
+        }
+        if (currentKey === 'lmsapp') {
+            updatedBy = 0
+        } else {
+            updatedBy = sessionStorage.getItem("admstaffId")
+        }
+        let axiosConfig4 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        }
+        let data4 = {
+            "id": updateSubmittedTaskId.id,
+            "adminstaffId": updatedBy,
+            "evaluatorRemarks": changeScoreField.evaluatorRemarks,
+            "score": changeScoreField.score
+        }
+        setShowUpdateScoreModal(false)
+        setShowWaitingModal(true)
+        setShowOverlay(true)
+        axios.post(apiUrl4, data4, axiosConfig4).then(
+            (response) => {
+                if (response.data.status === "Task score updated successfully") {
+                    closeWaitingModal()
+                    setChangeScoreField({
+                        "evaluatorRemarks": "",
+                        "score": ""
+                    });
+                    setTimeout(() => {
+                        alert("Task score updated successfully")
+                        getData()
+                        setUpdateSubmittedTaskId({})
+                    }, 500)
+
+                } else if (response.data.status === "Validation failed" && response.data.data.evaluatorRemarks) {
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.evaluatorRemarks);
+                        setShowUpdateScoreModal(true)
+                        setShowOverlay(true)
+                    }, 500)
+                } else if (response.data.status === "Validation failed" && response.data.data.score) {
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        alert(response.data.data.score);
+                        setShowUpdateScoreModal(true)
+                        setShowOverlay(true)
+                    }, 500)
+                } else if (response.data.status === "Unauthorized access!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else {
+                    closeWaitingModal()
+                    setChangeScoreField({
+                        "evaluatorRemarks": "",
+                        "score": ""
+                    });
+                    setTimeout(() => {
+                        alert(response.data.status);
+                        setShowUpdateScoreModal(true)
+                        setShowOverlay(true)
+                    }, 500)
+                }
+
+            }
+        )
+    }
+
     const readValue = (id) => {
         setSubmittedTaskId(id)
         setShowModal(true)
+        setShowOverlay(true)
+    }
+
+    const UpdateScoreValue = (id, score) => {
+        setUpdateSubmittedTaskId({ id, score })
+        setShowUpdateScoreModal(true)
         setShowOverlay(true)
     }
 
@@ -433,6 +556,9 @@ const AdminStaffViewSubmittedTask = () => {
                                     <td className="px-6 py-4" style={{ whiteSpace: 'nowrap' }}>
                                         <button onClick={() => readValue(value.submitTaskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" disabled={value.evalDate !== null}>Evaluate Task</button>
                                     </td>
+                                    <td className="px-6 py-4" style={{ whiteSpace: 'nowrap' }}>
+                                        <button onClick={() => UpdateScoreValue(value.submitTaskId, value.score)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" disabled={value.evalDate === null}>Update Evaluation</button>
+                                    </td>
                                 </tr>
                             }
                         )) : !loading && <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
@@ -546,6 +672,46 @@ const AdminStaffViewSubmittedTask = () => {
                     </div>
                 </div>
             </div>}
+
+            {/* Update Score Modal */}
+
+            {showUpdateScoreModal && <div className="flex justify-end">
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel">Update Evaluated Task Score</h1>
+                                <button type="button" className="btn-close" onClick={closeUpdateScoreModal} />
+                            </div>
+                            <div className="modal-body">
+                                <form>
+                                    <div className="mb-3">
+                                        <label htmlFor="recipient-name" className="col-form-label">Score:</label>
+                                        <input type="text" name="score" className="form-control" value={updateSubmittedTaskId.score} disabled/>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="recipient-name" className="col-form-label">New Score:</label>
+                                        <input type="text" name="score" className="form-control" value={changeScoreField.score} onChange={changeScoreHandler} />
+                                        {errors.updateScore && <span style={{ color: 'red' }} className="error">{errors.updateScore}</span>}
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="message-text" className="col-form-label">Evaluator Remarks:</label>
+                                        <textarea name="evaluatorRemarks" className="form-control" value={changeScoreField.evaluatorRemarks} onChange={changeScoreHandler} />
+                                        {errors.updateEvaluatorRemarks && <span style={{ color: 'red' }} className="error">{errors.updateEvaluatorRemarks}</span>}
+                                    </div>
+                                </form>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={closeUpdateScoreModal}>Close</button>
+                                <button onClick={() => updateEvaluatedTask()} type="button" className="btn btn-primary">
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>}
+
             {showWaitingModal && (
                 <div className="modal show d-block" tabIndex={-1}>
                     <div className="modal-dialog">
