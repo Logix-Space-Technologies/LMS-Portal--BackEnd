@@ -48,7 +48,7 @@ const StudNavBar = () => {
                                 <Link className="nav-link" to="/studMaterialView">View Materials</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/studviewCommunityManager">Community Manager</Link>
+                                <Link className="nav-link" to="/studviewCommunityManager">Community Managers</Link>
                             </li>
                             <StudHeader />
                             {/* <li className="nav-item">
