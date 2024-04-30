@@ -226,7 +226,7 @@ const StudViewProfile = () => {
                                                         <Link className="btn btn-success btn-lg" to='/studentviewtransaction' style={{ fontSize: '14px' }}>View Transaction Details</Link> {/* Adjust fontSize as needed */}
                                                     </div>
                                                     <div style={{ marginRight: '15px', marginBottom: '10px' }}>
-                                                        <Link className="btn btn-success btn-lg" to='/studviewperformance' style={{ fontSize: '14px' }}>View Performance</Link> {/* Adjust fontSize as needed */}
+                                                        <Link className="btn btn-success btn-lg" to='/studviewperformance' style={{ fontSize: '14px' }}>View Overall Performance</Link> {/* Adjust fontSize as needed */}
                                                     </div>
                                                 </div>
 
