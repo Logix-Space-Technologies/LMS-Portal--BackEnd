@@ -473,6 +473,9 @@ const AdminStaffViewSubmittedTask = () => {
                             <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
 
                             </th>
+                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
+
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -520,7 +523,7 @@ const AdminStaffViewSubmittedTask = () => {
                                             <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '10px' }} />
                                         )}
                                     </td>
-                                    {!value.evalDate === null && (
+                                    {value.evalDate !== null && (
                                         <td className="px-6 py-4">
                                             {value.evalDate}
                                         </td>
@@ -530,7 +533,7 @@ const AdminStaffViewSubmittedTask = () => {
                                             NIL
                                         </td>
                                     )}
-                                    {!value.evaluatorRemarks === null && (
+                                    {value.evaluatorRemarks !== null && (
                                         <td className="px-6 py-4">
                                             {value.evaluatorRemarks}
                                         </td>
@@ -540,7 +543,7 @@ const AdminStaffViewSubmittedTask = () => {
                                             NIL
                                         </td>
                                     )}
-                                    {!value.score === null && (
+                                    {value.score !== null && (
                                         <td className="px-6 py-4">
                                             {value.score}
                                         </td>

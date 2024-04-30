@@ -59,6 +59,7 @@ exports.updateTaskScore = (request, response) => {
             const id = request.body.id
             const adminstaffId = request.body.adminstaffId
             const newScore = request.body.score;
+            const evaluatorRemarks = request.body.evaluatorRemarks
             const validationErrors = {};
 
             if (!newScore) {
@@ -74,7 +75,8 @@ exports.updateTaskScore = (request, response) => {
             const updateScore = new SubmitTask({
                 id: id,
                 adminstaffId: adminstaffId,
-                score: newScore
+                score: newScore,
+                evaluatorRemarks : evaluatorRemarks
             });
 
             SubmitTask.updateTaskScore(updateScore, (error, data) => {
