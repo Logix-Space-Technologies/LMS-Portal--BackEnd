@@ -730,7 +730,7 @@ CollegeStaff.searchClgStaffByCollege = (searchKey, result) => {
 }
 
 CollegeStaff.viewTaskwiseScore = (batchId, taskId, result) => {
-    db.query(`SELECT studName,score,totalScore FROM studentTaskScore where batchId=? and taskId=?;`, [batchId, taskId], (err, res) => {
+    db.query(`SELECT studName,score,totalScore FROM studentTaskScore where batchId=? and taskId=? order by score DESC;`, [batchId, taskId], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -763,7 +763,7 @@ CollegeStaff.clgStaffSearchSession = (searchKey, batchId, result) => {
 
 //Generate College Wise Score List PDF By Admin, AdminStaff and CollegeStaff
 CollegeStaff.generateClgPerformancePDF = (collegeId, result) => {
-    let query = "SELECT batchName, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where CollegeId=? AND dueDate < CURRENT_DATE GROUP BY batchName,studentId,studName order by batchName;"
+    let query = "SELECT batchName, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where CollegeId=? AND dueDate < CURRENT_DATE GROUP BY batchName,studentId,studName order by batchName, score DESC;"
     db.query(query, [collegeId], (err, response) => {
         if (err) {
             console.log("Error executing the query:", err);

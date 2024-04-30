@@ -423,4 +423,6 @@ router.post('/generatebatchwiseattendanceListDummy', StudentController.generateB
 
 router.post('/updateSubmittedTaskScore',SubmitTaskController.updateTaskScore)
 
+router.post('/colgstaffSearchattendance', AttendenceController.collegeStaffSearchAttendance)
+
 module.exports = router
