@@ -78,6 +78,10 @@ const StudHeader = () => {
             }
         )
     }
+    
+    const navRefund = () => {
+        navigate("/refundrequest")
+    }
 
 
     function formatTime(timeString) {
@@ -157,6 +161,9 @@ const StudHeader = () => {
                         })}
                         <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                             <Link to="/studChangePassword" className="dropdown-item">Change Password</Link>
+                            <button className="dropdown-item" data-bs-toggle="modal" data-bs-target="#exitModal">
+                                Exit From Link Ur Codes
+                            </button>
                             <Link to="/" className="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
                                 Log Out
                             </Link>
@@ -182,6 +189,25 @@ const StudHeader = () => {
                             <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleLogoutConfirm}>
                                 Logout
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="modal fade" id="exitModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to apply for refund?</h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div className="modal-body">
+                                <p>This action cannot be undone.</p>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No, cancel</button>
+                                <button onClick={navRefund} type="button" className="btn btn-danger" data-bs-dismiss="modal">Yes, I'm sure</button>
+                            </div>
                         </div>
                     </div>
                 </div>

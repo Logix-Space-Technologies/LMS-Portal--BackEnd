@@ -887,7 +887,7 @@ Student.studentNotificationView = (studId, result) => {
 
 Student.viewSession = (batchId, result) => {
     db.query(
-        "SELECT DISTINCT s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink,t.trainerName FROM sessiondetails s JOIN student st ON s.batchId = st.batchId JOIN trainersinfo t ON s.trainerId = t.id  WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND st.deleteStatus = 0 AND st.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;",
+        "SELECT s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink,t.trainerName FROM sessiondetails s JOIN trainersinfo t ON s.trainerId = t.id  WHERE (s.date >= DATE_SUB(NOW(), INTERVAL 1 MONTH)) AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND s.batchId = ? ORDER BY s.date DESC;",
         [batchId],
         (err, res) => {
             if (err) {
@@ -1526,7 +1526,7 @@ Student.viewPerformance = (collegeId, batchId, id, result) => {
 }
 
 Student.viewPerformanceScore = (studId, result) => {
-    db.query("SELECT COUNT(taskId) AS totalTasksAssigned, COUNT(submitTaskId) AS totalTasksSubmitted, SUM(CASE WHEN dueDate < CURRENT_DATE AND subDate IS NOT NULL THEN score ELSE 0 END) AS score, SUM(CASE WHEN dueDate < CURRENT_DATE THEN totalScore ELSE 0 END) AS totalScore, COUNT(CASE WHEN dueDate < CURRENT_DATE AND lateSubDate IS NOT NULL THEN taskId END) AS tasksSubmittedLate, COUNT(CASE WHEN subDate IS NOT NULL AND lateSubDate IS NULL THEN taskId END) AS tasksSubmittedOnTime FROM studentTaskScore WHERE studentId = ?", [studId], (err, res) => {
+    db.query("SELECT taskName, score, totalScore FROM studentTaskScore WHERE studentId = ? ORDER BY score DESC", [studId], (err, res) => {
         if (err) {
             console.log("Error: ", err)
             return result(err, null)
@@ -1536,6 +1536,18 @@ Student.viewPerformanceScore = (studId, result) => {
         }
     })
 
+}
+
+Student.viewOverallPerformanceStudWise = (studId, result) => {
+    db.query("SELECT COUNT(taskId) AS totalTasksAssigned, COUNT(submitTaskId) AS totalTasksSubmitted, SUM(CASE WHEN dueDate < CURRENT_DATE AND subDate IS NOT NULL THEN score ELSE 0 END) AS score, SUM(CASE WHEN dueDate < CURRENT_DATE THEN totalScore ELSE 0 END) AS totalScore, COUNT(CASE WHEN dueDate < CURRENT_DATE AND lateSubDate IS NOT NULL THEN taskId END) AS tasksSubmittedLate, COUNT(CASE WHEN subDate IS NOT NULL AND lateSubDate IS NULL THEN taskId END) AS tasksSubmittedOnTime FROM studentTaskScore WHERE studentId = ?", [studId], (err, res) => {
+        if (err) {
+            console.log("Error: ", err)
+            return result(err, null)
+        } else {
+            console.log(res)
+            return result(null, res)
+        }
+    })
 }
 
 
