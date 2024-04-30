@@ -181,7 +181,7 @@ const AdminAddSession = () => {
                 "date": inputField.date,
                 "time": inputField.time,
                 "type": inputField.type,
-                "remarks": inputField.remarks,
+                "remarks": inputField.remarks ? inputField.remarks : null,
                 "venueORlink": inputField.venueORlink,
                 "trainerId": inputField.trainerId,
                 "addedby": addedBy
