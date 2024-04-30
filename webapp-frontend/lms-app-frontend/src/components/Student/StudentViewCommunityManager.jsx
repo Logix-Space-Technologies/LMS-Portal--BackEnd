@@ -86,7 +86,6 @@ const StudentViewCommunityManager = () => {
                                                         <li className="mb-2 display-28"><span className="text-secondary me-2 font-weight-600">Batch Name : {value.batchName}</span></li>
                                                         <li className="mb-2 display-28"><span className="text-secondary me-2 font-weight-600">Email : {value.studEmail}</span></li>
                                                         <li className="mb-2 display-28"><span className="text-secondary me-2 font-weight-600">Phone No : {value.studPhNo}</span></li>
-                                                        <li className="mb-2 display-28"><span className="text-secondary me-2 font-weight-600">Aadhar No : {value.aadharNo}</span></li>
                                                         <li className="mb-2 display-28"><span className="text-secondary me-2 font-weight-600">Membership No : {value.membership_no}</span></li>
                                                     </ul>
                                                 </div>
