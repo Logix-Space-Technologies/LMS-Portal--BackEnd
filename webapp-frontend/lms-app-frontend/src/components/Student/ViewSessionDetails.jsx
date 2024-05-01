@@ -140,6 +140,9 @@ const SessionView = () => {
           <option value="">All Sessions</option>
           <option value="1">Within 1 month</option>
           <option value="2">Within 2 months</option>
+          <option value="3">Within 3 months</option>
+          <option value="4">Within 4 months</option>
+          <option value="5">Within 5 months</option>
         </select>
       </div>
       <br />
