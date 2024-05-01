@@ -13,8 +13,10 @@ const firebasetokens = require("../models/firebaseTokens.model");
 require('dotenv').config({ path: '../../.env' });
 const whatsAppcancelsession = require("./Whatsapp/cancelSession")
 const WhatsAppupcomingSession = require("./Whatsapp/upcomingSession")
+const WhatsApprescheduleSession = require("./Whatsapp/rescheduleSession")
 const whatsappclgstaffupcomingsession = require("./Whatsapp/collegeStaffUpcomingSession")
 const whatsappclgstaffcancelsession = require("./Whatsapp/cancelSessionClgStaff")
+const whatsappclgstaffreschedulesession = require("./Whatsapp/rescheduleSessionClgStaff")
 const clgstaffFirebaseTokens = require('../models/clgStaffFirebaseToken.model')
 
 
@@ -284,6 +286,7 @@ exports.sessionUpdate = (request, response) => {
             let isTrainerChanged = false;
             let originalTrainer = ""
             let updatedTrainer = ""
+            let whatsapporiginaltime = ""
 
             Session.updateSession(upSession, (err, data) => {
                 if (err) {
@@ -297,6 +300,7 @@ exports.sessionUpdate = (request, response) => {
                     updatedVenueOrLink = upSession.venueORlink;
                     originalTrainer = data.originalTrainer;
                     updatedTrainer = upSession.trainerId;
+                    whatsapporiginaltime = formatTime(data.originalTime)
 
                     if (sessionDate === originaldate && originaltime === upSession.time && originalVenueOrLink !== updatedVenueOrLink) {
                         isVenueOrLinkChangedOnly = true;
@@ -323,6 +327,8 @@ exports.sessionUpdate = (request, response) => {
                                 const studName = element.studName
                                 const studentEmail = element.studEmail;
                                 const studentid = element.id;
+                                const studentPhno = element.studPhNo;
+                                const batchName = element.batchName;
                                 firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "Session Rescheduled", body: `Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding` } }, (err, data) => {
                                     if (err) {
                                         return response.json({ "status": err });
@@ -342,9 +348,9 @@ exports.sessionUpdate = (request, response) => {
                                         const upcomingSessionTextContent = mailContents.reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
                                         mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
                                     }
+                                    const formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
+                                    WhatsApprescheduleSession.sendfn(formattedPhoneNumber, studName, batchName, originaldate, whatsapporiginaltime, sessionDate, sessionTime, upSession.venueORlink, upSession.type, studentid)
                                 }
-
-
                             });
 
                             CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
@@ -355,10 +361,14 @@ exports.sessionUpdate = (request, response) => {
                                         let clgstaffEmail = element.email
                                         let batchName = element.batchName
                                         let collegeStaffName = element.collegeStaffName
+                                        const clgstaffPhNo = element.phNo
+                                        const clgstaffId = element.id
                                         if (isTrainerChanged === false) {
                                             const upcomingSessionHtmlContent = mailContents.reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
                                             const upcomingSessionTextContent = mailContents.reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
                                             mail.sendEmail(clgstaffEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                            const formattedPhoneNumber = clgstaffPhNo.startsWith('91') ? clgstaffPhNo : `91${clgstaffPhNo}`;
+                                            whatsappclgstaffreschedulesession.sendfn(formattedPhoneNumber, collegeStaffName, batchName, originaldate, whatsapporiginaltime, sessionDate, sessionTime, upSession.venueORlink, upSession.type, clgstaffId)
                                         }
                                     })
 
