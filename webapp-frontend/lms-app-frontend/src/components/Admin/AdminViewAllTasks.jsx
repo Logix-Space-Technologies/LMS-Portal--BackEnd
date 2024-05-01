@@ -92,6 +92,11 @@ const AdminViewAllTasks = () => {
         navigate("/collegestaffviewscore")
     }
 
+    const subtaskClick = (id) => {
+        sessionStorage.setItem("taskId", id)
+        navigate("/adminstaffviewsubmittedtask")
+    }
+
     const closeWaitingModal = () => {
         setShowOverlay(false)
         setShowWaitingModal(false)
@@ -273,6 +278,7 @@ const AdminViewAllTasks = () => {
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
+                            <th scope="col" className="px-6 py-3"></th>
                             {key === "lmsapp" && (
                                 <th scope="col" className="px-6 py-3"></th>
                             )}
@@ -311,6 +317,13 @@ const AdminViewAllTasks = () => {
                                         <td className="px-6 py-4">
                                             {value.taskFileUpload !== null && (
                                                 <Link target="_blank" to={value.taskFileUpload} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View File</Link>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {isLateSubmission && (
+                                                <button onClick={() => subtaskClick(value.id)} className="btn btn-primary btn-sm me-2">
+                                                    View Submitted Tasks
+                                                </button>
                                             )}
                                         </td>
                                         <td className="px-6 py-4">

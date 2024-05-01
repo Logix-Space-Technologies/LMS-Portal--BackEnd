@@ -38,6 +38,7 @@ const AdminViewAllSession = () => {
     const [key, setKey] = useState('')
     const [isLoading, setIsLoading] = useState(true);
     const [inputField, setInputField] = useState({ "SessionSearchQuery": "" });
+    const [filterCriteria, setFilterCriteria] = useState(null);
 
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchSession";
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
@@ -142,6 +143,33 @@ const AdminViewAllSession = () => {
                 }
             }
         );
+    };
+
+    // Function to filter sessions based on date criteria
+    const filterSessionsByDate = () => {
+        if (!filterCriteria) {
+            return sessionData; // If no filter is selected, return all sessions
+        }
+
+        // Calculate date range based on filter criteria
+        const currentDate = new Date();
+        const startDate = new Date(currentDate);
+        startDate.setMonth(startDate.getMonth() - filterCriteria);
+
+        // Convert session dates to Date objects for comparison
+        const filteredSessions = sessionData.filter(session => {
+            const sessionDateParts = session.date.split('/');
+            const sessionDate = new Date(`${sessionDateParts[1]}/${sessionDateParts[0]}/${sessionDateParts[2]}`);
+            return sessionDate >= startDate && sessionDate <= currentDate;
+        });
+
+        return filteredSessions;
+    };
+
+    // Function to handle filter criteria change
+    const handleFilterChange = (event) => {
+        const selectedCriteria = parseInt(event.target.value);
+        setFilterCriteria(selectedCriteria);
     };
 
     const viewsessionId = (attendanceid) => {
@@ -254,24 +282,19 @@ const AdminViewAllSession = () => {
         navigate("/AdminViewAllTasks")
     }
 
-    const subtaskClick = (id) => {
-        sessionStorage.setItem("sessionId", id)
-        navigate("/adminstaffviewsubmittedtask")
-    }
-
     // Logic for displaying current sessions
     const indexOfLastSession = currentPage * sessionsPerPage;
     const indexOfFirstSession = indexOfLastSession - sessionsPerPage;
-    const currentSessions = sessionData ? sessionData.slice(indexOfFirstSession, indexOfLastSession) : [];
+    const filteredSessions = filterSessionsByDate();
+    const currentSessions = filteredSessions.slice(indexOfFirstSession, indexOfLastSession);
 
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
     // Total pages
     let totalPages = []
-    if (sessionData && sessionData.length > 0) {
-        totalPages = Math.ceil(sessionData.length / sessionsPerPage);
-    }
+    // Calculate total pages based on filtered session data
+    totalPages = Math.ceil(filteredSessions.length / sessionsPerPage);
 
     const calculateSerialNumber = (index) => {
         return ((currentPage - 1) * sessionsPerPage) + index + 1;
@@ -457,7 +480,7 @@ const AdminViewAllSession = () => {
                 <div className="text-center py-20">
                     <div>Loading...</div>
                 </div>
-            </div> : (<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            </div> : (<div className="relative overflow-x shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -471,7 +494,6 @@ const AdminViewAllSession = () => {
                             <th scope="col" className="px-6 py-3">Trainer Name</th>
                             <th scope="col" className="px-6 py-3">Cancel Status</th>
                             <th scope="col" className="px-6 py-3">Attendence Code</th>
-                            <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
                             <th scope="col" className="px-6 py-3"></th>
@@ -536,13 +558,6 @@ const AdminViewAllSession = () => {
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {value.cancelStatus === "ACTIVE" && (
-                                        <button onClick={() => subtaskClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
-                                            View Submitted Tasks
-                                        </button>
-                                    )}
-                                </td>
-                                <td className="px-6 py-4">
                                     {isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
                                         <button onClick={() => taskScore(value.id)} className="btn btn-primary" style={{ marginRight: '20px' }}>
                                             View Performance
@@ -600,26 +615,37 @@ const AdminViewAllSession = () => {
                             </p>
                         </div>
                         <div>
-                            <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                                <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
-                                    <span className="sr-only">Previous</span>
-                                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                        <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-                                    </svg>
-                                </button>
-                                {/* Dynamically generate Link components for each page number */}
-                                {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-                                    <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
-                                        {startPage + index}
+                            <div className="flex items-center">
+                                <label htmlFor="filterCriteria" className="mr-2" style={{ whiteSpace: 'nowrap' }}>Filter by Date:</label>
+                                <select style={{ marginRight: '20px' }} id="filterCriteria" className="form-select" value={filterCriteria || ''} onChange={handleFilterChange}>
+                                    <option value="">Select Filter</option>
+                                    <option value="1">Within 1 month</option>
+                                    <option value="2">Within 2 months</option>
+                                    <option value="3">Within 3 months</option>
+                                    <option value="4">Within 4 months</option>
+                                    <option value="5">Within 5 months</option>
+                                </select>
+                                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                    <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
+                                        <span className="sr-only">Previous</span>
+                                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                                        </svg>
                                     </button>
-                                ))}
-                                <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
-                                    <span className="sr-only">Next</span>
-                                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                        <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                                    </svg>
-                                </button>
-                            </nav>
+                                    {/* Dynamically generate Link components for each page number */}
+                                    {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                                        <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
+                                            {startPage + index}
+                                        </button>
+                                    ))}
+                                    <button onClick={() => currentPage < totalPages && paginate(currentPage + 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === totalPages ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === totalPages}>
+                                        <span className="sr-only">Next</span>
+                                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </nav>
+                            </div>
                         </div>
                     </div>
                 </div>
