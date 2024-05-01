@@ -139,6 +139,7 @@ const AddCollegeStaff = () => {
             closeWaitingModal()
             setTimeout(() => {
               alert("College Staff Added Successfully !!")
+              window.location.reload()
               setInputField({
                 collegeId: '',
                 collegeStaffName: '',
@@ -151,7 +152,6 @@ const AddCollegeStaff = () => {
                 confirmpassword: '',
                 profilePic: ''
               })
-              window.location.reload()
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.dept) {
             closeWaitingModal()

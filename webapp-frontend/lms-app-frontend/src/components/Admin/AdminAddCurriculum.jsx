@@ -164,6 +164,7 @@ const AdminAddCurriculum = () => {
                     closeWaitingModal()
                     setTimeout(() => {
                         alert('Curriculum Added Successfully !!');
+                        window.location.reload()
                         setInputField({
                             collegeId: '',
                             batchId: '',
@@ -171,7 +172,6 @@ const AdminAddCurriculum = () => {
                             curriculumDesc: '',
                             curriculumFileLink: '',
                         })
-                        window.location.reload()
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.addedBy) {
                     closeWaitingModal()

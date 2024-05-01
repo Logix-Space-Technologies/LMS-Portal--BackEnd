@@ -101,6 +101,7 @@ const AddCollege = () => {
             closeWaitingModal()
             setTimeout(() => {
               alert("College Details Added Successfully.")
+              window.location.reload()
               setInputField({
                 collegeName: '',
                 collegeCode: '',
@@ -111,7 +112,6 @@ const AddCollege = () => {
                 collegeMobileNumber: '',
                 collegeImage: ''
               })
-              window.location.reload()
             }, 500)
           } else if (response.data.status === "Validation failed" && response.data.data.name) {
             closeWaitingModal()
