@@ -134,7 +134,7 @@ const SessionView = () => {
       <br />
       <div style={{ marginLeft: '20px' }}>
         <label style={{ marginRight: '10px' }}>
-          Filter by Date Range:
+          Filter By Date Range:
         </label>
         <select value={filterValue} onChange={(e) => setFilterValue(parseInt(e.target.value))}>
           <option value={null}>All Sessions</option>
