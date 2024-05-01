@@ -14,6 +14,7 @@ require('dotenv').config({ path: '../../.env' });
 const whatsAppcancelsession = require("./Whatsapp/cancelSession")
 const WhatsAppupcomingSession = require("./Whatsapp/upcomingSession")
 const whatsappclgstaffupcomingsession = require("./Whatsapp/collegeStaffUpcomingSession")
+const whatsappclgstaffcancelsession = require("./Whatsapp/cancelSessionClgStaff")
 const clgstaffFirebaseTokens = require('../models/clgStaffFirebaseToken.model')
 
 
@@ -250,9 +251,6 @@ exports.sessionUpdate = (request, response) => {
             }
             if (Validator.isEmpty(request.body.type).isValid) {
                 validationErrors.type = Validator.isEmpty(request.body.type).message;
-            }
-            if (Validator.isEmpty(request.body.remarks).isValid) {
-                validationErrors.remarks = Validator.isEmpty(request.body.remarks).message;
             }
             if (Validator.isEmpty(request.body.venueORlink).isValid) {
                 validationErrors.venueORlink = Validator.isEmpty(request.body.venueORlink).message;
@@ -596,9 +594,13 @@ exports.cancelSession = (request, response) => {
                             res.forEach(element => {
                                 let clgstaffEmail = element.email
                                 let clgstaffName = element.collegeStaffName
+                                let phNoclgStaff = element.phNo
+                                let clgStaffId = element.id
                                 const cancelSessionClgStaffHtmlContent = mailContents.cancelSessionClgStaffHTMLContent(clgstaffName, sessionDate, sessiontime, sessionName, batchName);
                                 const cancelSessionClgStaffTextContent = mailContents.cancelSessionClgStaffTextContent(clgstaffName, sessionDate, sessiontime, sessionName, batchName);
                                 mail.sendEmail(clgstaffEmail, `Cancellation of the Scheduled Session on ${sessionDate}`, cancelSessionClgStaffHtmlContent, cancelSessionClgStaffTextContent);
+                                const formattedPhoneNumber = phNoclgStaff.startsWith('91') ? phNoclgStaff : `91${phNoclgStaff}`;
+                                whatsappclgstaffcancelsession.sendfn(formattedPhoneNumber, clgstaffName, batchName, sessionDate, sessiontime, clgStaffId)
                             })
                         }
                     })

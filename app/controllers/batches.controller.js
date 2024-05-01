@@ -41,10 +41,6 @@ exports.batchCreate = (request, response) => {
                 validationErrors.regenddate = Validator.isValidDate(request.body.regEndDate).message
             }
 
-            if (Validator.isEmpty(request.body.batchDesc).isValid) {
-                validationErrors.description = Validator.isEmpty(request.body.batchDesc).message
-            }
-
             if (!Validator.isValidAmount(request.body.batchAmount).isValid) {
                 validationErrors.amount = Validator.isValidAmount(request.body.batchAmount).message
             }
