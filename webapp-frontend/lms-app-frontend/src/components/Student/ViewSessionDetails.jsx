@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 const SessionView = () => {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filterValue, setFilterValue] = useState(null);
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -108,6 +109,20 @@ const SessionView = () => {
     return now >= sessionDateTime;
   };
 
+  const filterSessions = (session) => {
+    // console.log("Session Date:", session.date);
+    // console.log("Filter Value:", filterValue);
+    if (!filterValue) return true; // Show all sessions if no filter applied
+    const dateParts = session.date.split('/');
+    const sessionDate = new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`);
+    // console.log("Parsed Date:", sessionDate);
+    const currentDate = new Date();
+    const diffMonths = (currentDate.getFullYear() - sessionDate.getFullYear()) * 12 + currentDate.getMonth() - sessionDate.getMonth();
+    // console.log("Diff Months:", diffMonths);
+    return diffMonths <= filterValue;
+  };
+
+
 
 
   return (
@@ -117,14 +132,25 @@ const SessionView = () => {
       <br />
       <h1 style={{ marginLeft: '20px', textAlign: 'center' }}>View All Sessions</h1>
       <br />
+      <div style={{ marginLeft: '20px' }}>
+        <label style={{ marginRight: '10px' }}>
+          Filter By Date Range:
+        </label>
+        <select value={filterValue} onChange={(e) => setFilterValue(parseInt(e.target.value))}>
+          <option value="">All Sessions</option>
+          <option value="1">Within 1 month</option>
+          <option value="2">Within 2 months</option>
+        </select>
+      </div>
+      <br />
       {loading ? (
         <div className="col-12 text-center">Loading...</div>
       ) : (
         sessions.length === 0 ? (
           <div className="col-12 text-center">No sessions found!</div>
         ) : (
-          sessions.map((session, index) => (
-            <div class="max-w-2xl mx-auto">
+          sessions.filter(filterSessions).map((session, index) => (
+            <div className="max-w-2xl mx-auto">
               <div key={index} className="flex mb-6">
                 <div className="w-2 rounded-l-xl" style={{ backgroundColor: getSessionStatusColor(session.date, formatTime(session.time)) }}></div>
                 <div className="flex-grow bg-white rounded-r-xl shadow-lg p-6">
@@ -152,10 +178,10 @@ const SessionView = () => {
                     {session.venueORlink.includes("youtube.com") && (
                       <Link to={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Video Link</Link>
                     )}
-                    {session.venueORlink.includes("vimeo.com")  && (
+                    {session.venueORlink.includes("vimeo.com") && (
                       <Link to={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Video Link</Link>
                     )}
-                    {session.venueORlink.includes("teams.microsoft.com")  && (
+                    {session.venueORlink.includes("teams.microsoft.com") && (
                       <Link to={session.venueORlink} target='_blank' rel='noopener noreferrer' className="text-white bg-blue-500 px-3 py-1 rounded-full text-xs font-semibold">Meeting Link</Link>
                     )}
                     {isSessionAccessible(session.date) ? (

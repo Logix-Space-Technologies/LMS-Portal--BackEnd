@@ -171,6 +171,7 @@ const AdminStaffAddMaterials = () => {
                     closeWaitingModal()
                     setTimeout(() => {
                         alert('Material Added Successfully !!');
+                        window.location.reload()
                         setInputField({
                             collegeId: '',
                             batchId: '',
@@ -180,7 +181,6 @@ const AdminStaffAddMaterials = () => {
                             materialType: '',
                             uploadFile: ''
                         })
-                        window.location.reload()
                     }, 500)
                 } else {
                     closeWaitingModal()

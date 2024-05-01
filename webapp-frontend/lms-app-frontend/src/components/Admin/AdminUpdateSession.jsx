@@ -105,7 +105,7 @@ const AdminUpdateSession = () => {
         "date": updateField.date,
         "time": updateField.time,
         "type": updateField.type,
-        "remarks": updateField.remarks,
+        "remarks": updateField.remarks ? updateField.remarks : null,
         "venueORlink": updateField.venueORlink,
         "trainerId": updateField.trainerId,
         "updatedby": updatedBy
