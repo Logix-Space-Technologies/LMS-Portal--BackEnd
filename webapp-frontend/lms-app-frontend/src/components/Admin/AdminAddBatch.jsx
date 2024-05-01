@@ -100,7 +100,7 @@ const AdminAddBatch = () => {
                 "batchName": inputField.batchName,
                 "regStartDate": inputField.regStartDate,
                 "regEndDate": inputField.regEndDate,
-                "batchDesc": inputField.batchDesc,
+                "batchDesc": inputField.batchDesc ? inputField.batchDesc : null,
                 "batchAmount": inputField.batchAmount,
                 "addedby": addedBy
             };
