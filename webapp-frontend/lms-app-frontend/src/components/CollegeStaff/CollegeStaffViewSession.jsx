@@ -362,7 +362,9 @@ const CollegeStaffViewSession = () => {
                                         <option value="">Select Filter</option>
                                         <option value="1">Within 1 month</option>
                                         <option value="2">Within 2 months</option>
-                                        {/* Add more options for other date ranges */}
+                                        <option value="3">Within 3 months</option>
+                                        <option value="4">Within 4 months</option>
+                                        <option value="5">Within 5 months</option>
                                     </select>
                                     <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
                                         <button onClick={() => currentPage > 1 && paginate(currentPage - 1)} className={`relative inline-flex items-center px-2 py-2 text-sm font-medium ${currentPage === 1 ? 'cursor-not-allowed text-gray-500' : 'text-gray-700 hover:bg-gray-50'} disabled:opacity-50`} disabled={currentPage === 1}>
