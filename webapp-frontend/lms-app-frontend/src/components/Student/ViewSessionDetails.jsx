@@ -110,15 +110,15 @@ const SessionView = () => {
   };
 
   const filterSessions = (session) => {
-    console.log("Session Date:", session.date);
-    console.log("Filter Value:", filterValue);
+    // console.log("Session Date:", session.date);
+    // console.log("Filter Value:", filterValue);
     if (!filterValue) return true; // Show all sessions if no filter applied
     const dateParts = session.date.split('/');
     const sessionDate = new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`);
-    console.log("Parsed Date:", sessionDate);
+    // console.log("Parsed Date:", sessionDate);
     const currentDate = new Date();
     const diffMonths = (currentDate.getFullYear() - sessionDate.getFullYear()) * 12 + currentDate.getMonth() - sessionDate.getMonth();
-    console.log("Diff Months:", diffMonths);
+    // console.log("Diff Months:", diffMonths);
     return diffMonths <= filterValue;
   };
 
