@@ -327,6 +327,7 @@ exports.sessionUpdate = (request, response) => {
                                 const studentEmail = element.studEmail;
                                 const studentid = element.id;
                                 const studentPhno = element.studPhNo;
+                                const batchName = element.batchName;
                                 firebasetokens.sendNotificationByStudId(studentid, { notification: { title: "Session Rescheduled", body: `Due to unforeseen circumstances, we need to reschedule the upcoming session originally scheduled for ${originaldate} to the new date ${sessionDate}. We apologize for any inconvenience this may cause and appreciate your understanding` } }, (err, data) => {
                                     if (err) {
                                         return response.json({ "status": err });
@@ -348,7 +349,7 @@ exports.sessionUpdate = (request, response) => {
                                     }
                                 }
                                 const formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
-                                WhatsApprescheduleSession.sendfn(formattedPhoneNumber, studName, originaldate, whatsapporiginaltime, sessionDate, sessionTime, upSession.venueORlink, upSession.type, studentid)
+                                WhatsApprescheduleSession.sendfn(formattedPhoneNumber, studName, batchName, originaldate, whatsapporiginaltime, sessionDate, sessionTime, upSession.venueORlink, upSession.type, studentid)
 
                             });
 
