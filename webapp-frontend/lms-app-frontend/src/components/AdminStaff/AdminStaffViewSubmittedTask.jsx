@@ -211,7 +211,7 @@ const AdminStaffViewSubmittedTask = () => {
         let data2 = {
             "id": submittedTaskId,
             "adminstaffId": addedBy,
-            "evaluatorRemarks": inputField.evaluatorRemarks,
+            "evaluatorRemarks": inputField.evaluatorRemarks ? inputField.evaluatorRemarks : null,
             "score": inputField.score
         }
         setShowModal(false)
@@ -523,16 +523,9 @@ const AdminStaffViewSubmittedTask = () => {
                                     <td className="px-6 py-4">
                                         {value.evaluatorRemarks !== null ? (value.evaluatorRemarks) : "NIL"}
                                     </td>
-                                    {value.score !== null && (
-                                        <td className="px-6 py-4">
-                                            {value.score}
-                                        </td>
-                                    )}
-                                    {value.score === null && (
-                                        <td className="px-6 py-4">
-                                            NIL
-                                        </td>
-                                    )}
+                                    <td className="px-6 py-4">
+                                        {value.score !== null ? (value.score) : "NIL"}
+                                    </td>
                                     <td className="px-6 py-4">
                                         {value.totalScore}
                                     </td>
@@ -643,7 +636,7 @@ const AdminStaffViewSubmittedTask = () => {
                                         {errors.score && <span style={{ color: 'red' }} className="error">{errors.score}</span>}
                                     </div>
                                     <div className="mb-3">
-                                        <label htmlFor="message-text" className="col-form-label">Evaluator Remarks:</label>
+                                        <label htmlFor="message-text" className="col-form-label">Evaluator Remarks (Optional):</label>
                                         <textarea name="evaluatorRemarks" className="form-control" value={inputField.evaluatorRemarks} onChange={inputHandler} />
                                     </div>
                                 </form>
