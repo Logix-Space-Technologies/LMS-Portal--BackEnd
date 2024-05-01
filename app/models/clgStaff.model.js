@@ -513,7 +513,7 @@ CollegeStaff.viewOneClgStaff = (id, result) => {
 }
 
 CollegeStaff.viewSession = (batchId, result) => {
-    db.query("SELECT DISTINCT b. id AS batchId, s.id,s.sessionName, s.date, s.time, s.type, s.remarks, t.trainerName, s.venueORlink, CASE WHEN s.cancelStatus = 0 THEN 'ACTIVE' WHEN s.cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN batches b ON b.id = s.batchId LEFT JOIN college_staff cs ON cs.collegeId = b.collegeId JOIN trainersinfo t ON s.trainerId = t.id  WHERE s.deleteStatus = 0 AND s.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;", batchId,
+    db.query("SELECT b.id AS batchId, s.id,s.sessionName, s.date, s.time, s.type, s.remarks, t.trainerName, s.venueORlink, CASE WHEN s.cancelStatus = 0 THEN 'ACTIVE' WHEN s.cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN batches b ON b.id = s.batchId JOIN trainersinfo t ON s.trainerId = t.id  WHERE (s.date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)) AND s.deleteStatus = 0 AND s.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;", [batchId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -746,7 +746,7 @@ CollegeStaff.viewTaskwiseScore = (batchId, taskId, result) => {
 //CollegeStaff Search Session
 CollegeStaff.clgStaffSearchSession = (searchKey, batchId, result) => {
     const clgStaffSearchSessionQuery = '%' + searchKey + '%'
-    db.query("SELECT DISTINCT b.id AS batchId, s.id, s.sessionName, s.date, s.time, s.type, s.remarks, t.trainerName, s.venueORlink, CASE WHEN s.cancelStatus = 0 THEN 'ACTIVE' WHEN s.cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN batches b ON b.id = s.batchId LEFT JOIN college_staff cs ON cs.collegeId = b.collegeId JOIN trainersinfo t ON s.trainerId = t.id  WHERE s.deleteStatus = 0 AND s.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND s.batchId = ? AND (s.sessionName LIKE ? OR s.type LIKE ? OR t.trainerName LIKE ?) ORDER BY s.date DESC;",
+    db.query("SELECT b.id AS batchId, s.id, s.sessionName, s.date, s.time, s.type, s.remarks, t.trainerName, s.venueORlink, CASE WHEN s.cancelStatus = 0 THEN 'ACTIVE' WHEN s.cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN batches b ON b.id = s.batchId JOIN trainersinfo t ON s.trainerId = t.id WHERE (s.date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)) AND s.deleteStatus = 0 AND s.isActive = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND cs.deleteStatus = 0 AND cs.isActive = 1 AND s.batchId = ? AND (s.sessionName LIKE ? OR s.type LIKE ? OR t.trainerName LIKE ?) ORDER BY s.date DESC;",
         [batchId, clgStaffSearchSessionQuery, clgStaffSearchSessionQuery, clgStaffSearchSessionQuery],
         (err, res) => {
             if (err) {
