@@ -197,11 +197,11 @@ const StudentViewAttendance = () => {
                                         </button>
                                     </td>
                                     <td className="px-6 py-4">
-                                        {isSessionCurrentDate && !isPresent && (
+                                        {isSessionCurrentDate && !isPresent ? (
                                             <Link type="button" class="btn btn-primary" onClick={openModal}>
                                                 Mark Attendance
                                             </Link>
-                                        )}
+                                        ): <p>Not Available</p>}
                                     </td>
                                 </tr>
 

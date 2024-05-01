@@ -139,6 +139,7 @@ const AddCollegeStaff = () => {
             closeWaitingModal()
             setTimeout(() => {
               alert("College Staff Added Successfully !!")
+              window.location.reload()
               setInputField({
                 collegeId: '',
                 collegeStaffName: '',

@@ -379,7 +379,7 @@ const AdminViewAllBatch = () => {
                                 <td className="px-6 py-4">{value.batchName}</td>
                                 <td className="px-6 py-4">{value.regStartDate}</td>
                                 <td className="px-6 py-4">{value.regEndDate}</td>
-                                <td className="px-6 py-4">{value.batchDesc}</td>
+                                <td className="px-6 py-4">{value.batchDesc ? (value.batchDesc) : "NIL"}</td>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                     <img src="https://www.svgrepo.com/show/389251/indian-rupee.svg" alt="rupee" style={{ marginLeft: '24px', height: '14px', verticalAlign: 'middle' }} />
                                     <td className="px-6 py-4">{value.batchAmount}</td>

@@ -100,7 +100,7 @@ const AdminAddBatch = () => {
                 "batchName": inputField.batchName,
                 "regStartDate": inputField.regStartDate,
                 "regEndDate": inputField.regEndDate,
-                "batchDesc": inputField.batchDesc,
+                "batchDesc": inputField.batchDesc ? inputField.batchDesc : null,
                 "batchAmount": inputField.batchAmount,
                 "addedby": addedBy
             };
@@ -174,9 +174,6 @@ const AdminAddBatch = () => {
         }
         if (!data.batchName.trim()) {
             errors.batchName = 'Name is required';
-        }
-        if (!data.batchDesc.trim()) {
-            errors.batchDesc = 'Description is required';
         }
         if (!(data.batchAmount > 0)) {
             errors.batchAmount = 'Amount must be greater than zero';
@@ -315,7 +312,7 @@ const AdminAddBatch = () => {
                                     </div>
                                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                         <label htmlFor="batchDesc" className="form-label">
-                                            Batch Description <span className="text-danger">*</span>
+                                            Batch Description (Optional)
                                         </label>
                                         <textarea
                                             className="form-control"

@@ -164,6 +164,7 @@ const AdminAddCurriculum = () => {
                     closeWaitingModal()
                     setTimeout(() => {
                         alert('Curriculum Added Successfully !!');
+                        window.location.reload()
                         setInputField({
                             collegeId: '',
                             batchId: '',

@@ -101,6 +101,7 @@ const AdminAddTrainer = () => {
                     closeWaitingModal()
                     setTimeout(() => {
                         alert('Trainer Added Successfully !!');
+                        window.location.reload()
                         setInputField({
                             trainerName: '',
                             about: '',

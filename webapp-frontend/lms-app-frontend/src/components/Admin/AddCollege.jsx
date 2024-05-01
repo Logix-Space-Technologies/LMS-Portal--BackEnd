@@ -101,6 +101,7 @@ const AddCollege = () => {
             closeWaitingModal()
             setTimeout(() => {
               alert("College Details Added Successfully.")
+              window.location.reload()
               setInputField({
                 collegeName: '',
                 collegeCode: '',

@@ -9,7 +9,7 @@ const ViewPerformance = () => {
 
     const navigate = useNavigate()
 
-    const apiurl = global.config.urls.api.server + "/api/lms/studentViewPerformance"
+    const apiurl = global.config.urls.api.server + "/api/lms/overallstudperformancestudwise"
 
     const getData = () => {
         let data = {
@@ -56,7 +56,7 @@ const ViewPerformance = () => {
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                                <h2 className="text-lg font-bold">View Performance</h2>
+                                <h2 className="text-lg font-bold">Overall Performance</h2>
                                 <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</button>
                             </div>
                             <br />

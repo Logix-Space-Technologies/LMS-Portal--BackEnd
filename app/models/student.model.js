@@ -244,7 +244,7 @@ Student.searchStudentsOfCollegeByBatchId = (searchKey, batchId, result) => {
 
 Student.searchStudentByBatch = (searchKey, result) => {
     db.query(
-        "SELECT `id`, `collegeId`, `batchId`, `membership_no`, `studName`, `admNo`, `rollNo`, `studDept`, `course`, `studEmail`, `studPhNo`, `studProfilePic`, `aadharNo`, `password`, `addedDate`, `updatedDate`, `validity`, `isPaid`, `isVerified`, `isActive`, `emailVerified`, `pwdUpdateStatus`, `updateStatus`, `deleteStatus` FROM `student` WHERE `batchId`= ? AND `isVerified` = 1 AND `emailVerified` = 1 AND `deleteStatus` = 0 AND `isActive` = 1 AND `validity` > CURRENT_DATE",
+        "SELECT b.batchName, s.id, s.collegeId, s.batchId, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.password, s.addedDate, s.updatedDate, s.validity, s.isPaid, s.isVerified, s.isActive, s.emailVerified, s.pwdUpdateStatus, s.updateStatus, s.deleteStatus FROM student s JOIN batches b ON b.id = s.batchId WHERE s.batchId = ? AND s.isVerified = 1 AND s.emailVerified = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.validity > CURRENT_DATE",
         [searchKey],
         (err, res) => {
             if (err) {
@@ -301,7 +301,8 @@ Tasks.studentTaskView = (studId, result) => {
                     dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }),
                     subDate: tasks.subDate ? tasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
                     lateSubDate: tasks.lateSubDate ? tasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
-                    updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null
+                    updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
+                    taskFileUpload: tasks.taskFileUpload ? tasks.taskFileUpload : 'N/A'
                 }));
                 // Formats the date as 'YYYY-MM-DD'
                 console.log("Tasks: ", formattedTasks);
@@ -326,7 +327,8 @@ Tasks.studentSessionRelatedTaskView = (studId, sessionId, result) => {
                     dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }),
                     subDate: tasks.subDate ? tasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
                     lateSubDate: tasks.lateSubDate ? tasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
-                    updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null
+                    updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
+                    taskFileUpload: tasks.taskFileUpload ? tasks.taskFileUpload : 'N/A'
                 }));
                 console.log("Tasks: ", formattedTasks);
                 result(null, formattedTasks);
@@ -887,7 +889,7 @@ Student.studentNotificationView = (studId, result) => {
 
 Student.viewSession = (batchId, result) => {
     db.query(
-        "SELECT DISTINCT s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink,t.trainerName FROM sessiondetails s JOIN student st ON s.batchId = st.batchId JOIN trainersinfo t ON s.trainerId = t.id  WHERE s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND st.deleteStatus = 0 AND st.isActive = 1 AND s.batchId = ? ORDER BY s.date DESC;",
+        "SELECT s.id,s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink,t.trainerName FROM sessiondetails s JOIN trainersinfo t ON s.trainerId = t.id  WHERE (s.date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)) AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND s.batchId = ? ORDER BY s.date DESC;",
         [batchId],
         (err, res) => {
             if (err) {
@@ -1526,7 +1528,7 @@ Student.viewPerformance = (collegeId, batchId, id, result) => {
 }
 
 Student.viewPerformanceScore = (studId, result) => {
-    db.query("SELECT COUNT(taskId) AS totalTasksAssigned, COUNT(submitTaskId) AS totalTasksSubmitted, SUM(CASE WHEN dueDate < CURRENT_DATE AND subDate IS NOT NULL THEN score ELSE 0 END) AS score, SUM(CASE WHEN dueDate < CURRENT_DATE THEN totalScore ELSE 0 END) AS totalScore, COUNT(CASE WHEN dueDate < CURRENT_DATE AND lateSubDate IS NOT NULL THEN taskId END) AS tasksSubmittedLate, COUNT(CASE WHEN subDate IS NOT NULL AND lateSubDate IS NULL THEN taskId END) AS tasksSubmittedOnTime FROM studentTaskScore WHERE studentId = ?", [studId], (err, res) => {
+    db.query("SELECT taskName, score, totalScore FROM studentTaskScore WHERE studentId = ? ORDER BY score DESC", [studId], (err, res) => {
         if (err) {
             console.log("Error: ", err)
             return result(err, null)
@@ -1536,6 +1538,18 @@ Student.viewPerformanceScore = (studId, result) => {
         }
     })
 
+}
+
+Student.viewOverallPerformanceStudWise = (studId, result) => {
+    db.query("SELECT COUNT(taskId) AS totalTasksAssigned, COUNT(submitTaskId) AS totalTasksSubmitted, SUM(CASE WHEN dueDate < CURRENT_DATE AND subDate IS NOT NULL THEN score ELSE 0 END) AS score, SUM(CASE WHEN dueDate < CURRENT_DATE THEN totalScore ELSE 0 END) AS totalScore, COUNT(CASE WHEN dueDate < CURRENT_DATE AND lateSubDate IS NOT NULL THEN taskId END) AS tasksSubmittedLate, COUNT(CASE WHEN subDate IS NOT NULL AND lateSubDate IS NULL THEN taskId END) AS tasksSubmittedOnTime FROM studentTaskScore WHERE studentId = ?", [studId], (err, res) => {
+        if (err) {
+            console.log("Error: ", err)
+            return result(err, null)
+        } else {
+            console.log(res)
+            return result(null, res)
+        }
+    })
 }
 
 

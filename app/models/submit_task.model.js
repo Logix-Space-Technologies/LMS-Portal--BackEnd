@@ -109,7 +109,7 @@ Submit_task.updateTaskScore = (update_score, result) => {
                 return;
             }
             // Update the score of the evaluated task
-            db.query("UPDATE submit_task SET score=?, admStaffId=?, evalDate= CURRENT_DATE() WHERE id=? AND isEvaluated = 1", [update_score.score, update_score.adminstaffId, update_score.id], (updateErr, updateRes) => {
+            db.query("UPDATE submit_task SET score=?, admStaffId=?, evaluatorRemarks=?, evalDate= CURRENT_DATE() WHERE id=? AND isEvaluated = 1", [update_score.score, update_score.adminstaffId, update_score.evaluatorRemarks, update_score.id], (updateErr, updateRes) => {
                 if (updateErr) {
                     console.log("Error updating submit_task score: ", updateErr);
                     result(updateErr, null);

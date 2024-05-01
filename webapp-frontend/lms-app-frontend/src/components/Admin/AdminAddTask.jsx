@@ -232,6 +232,7 @@ const AdminAddTask = () => {
                     closeWaitingModal()
                     setTimeout(() => {
                         alert('Task Added Successfully !!');
+                        window.location.reload()
                         setInputField({
                             collegeId: '',
                             batchId: '',

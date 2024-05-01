@@ -1428,6 +1428,27 @@ exports.studentViewPerformanceScore = (req, res) => {
     });
 }
 
+
+exports.viewOverallPerformanceStudWise = (req, res) => {
+    const studId = req.body.studId
+    const token = req.headers.token
+    const key = req.headers.key
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Student.viewOverallPerformanceStudWise(studId, (err, data) => {
+                if (err) {
+                    return res.json({ "status": err });
+                } else {
+                    return res.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return res.json({ "status": "Unauthorized User!!" });
+        }
+    });
+}
+
+
 //Generate Task Wise Score List PDF By Admin and CollegeStaff
 exports.generateTaskWiseScoreList = (request, response) => {
     const token = request.headers.token;

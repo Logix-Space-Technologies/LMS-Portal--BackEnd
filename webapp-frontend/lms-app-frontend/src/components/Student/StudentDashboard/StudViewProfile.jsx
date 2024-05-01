@@ -15,10 +15,6 @@ const StudViewProfile = () => {
         sessionStorage.clear()
     }
 
-    const navRefund = () => {
-        navigate("/refundrequest")
-    }
-
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
         let axiosConfig = {
@@ -230,12 +226,7 @@ const StudViewProfile = () => {
                                                         <Link className="btn btn-success btn-lg" to='/studentviewtransaction' style={{ fontSize: '14px' }}>View Transaction Details</Link> {/* Adjust fontSize as needed */}
                                                     </div>
                                                     <div style={{ marginRight: '15px', marginBottom: '10px' }}>
-                                                        <Link className="btn btn-success btn-lg" to='/studviewperformance' style={{ fontSize: '14px' }}>View Performance</Link> {/* Adjust fontSize as needed */}
-                                                    </div>
-                                                    <div style={{ marginBottom: '10px' }}>
-                                                        <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                            Exit From Link Ur Codes
-                                                        </button>
+                                                        <Link className="btn btn-success btn-lg" to='/studviewperformance' style={{ fontSize: '14px' }}>View Overall Performance</Link> {/* Adjust fontSize as needed */}
                                                     </div>
                                                 </div>
 
@@ -253,27 +244,6 @@ const StudViewProfile = () => {
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="row">
-                <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Are you sure you want to apply for refund?</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                <p>This action cannot be undone.</p>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No, cancel</button>
-                                <button onClick={navRefund} type="button" className="btn btn-danger" data-bs-dismiss="modal">Yes, I'm sure</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
             </div>
         </div >
     )

@@ -59,7 +59,7 @@ const AdminStaffViewAllMaterial = () => {
                 setIsLoading(false)
                 setMaterialData(response.data.data);
             } else if (response.data.status === "Unauthorized User!!") {
-                navigate("/admstafflogin");
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                 sessionStorage.clear();
             } else if (!response.data.data) {
                 setIsLoading(false)
@@ -98,8 +98,8 @@ const AdminStaffViewAllMaterial = () => {
                     materialQuery: "",
                 });
             } else if (response.data.status === "Unauthorized User!!") {
+                { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                 sessionStorage.clear();
-                navigate("/admstafflogin");
             } else if (!response.data.data) {
                 setIsLoading(false);
                 setInputField({
@@ -145,7 +145,7 @@ const AdminStaffViewAllMaterial = () => {
                     setMaterialData(materialData.filter(material => material.id !== deleteId));
                 }, 500)
             } else if (response.data.status === "Unauthorized User!!") {
-                navigate("/admstafflogin")
+                navigate("/")
                 sessionStorage.clear()
             } else {
                 closeWaitingModal()

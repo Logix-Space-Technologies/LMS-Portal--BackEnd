@@ -427,4 +427,6 @@ router.post('/colgstaffSearchattendance', AttendenceController.collegeStaffSearc
 
 router.post('/searchPerformanceOfStudents',CollegeController.searchPerformanceOfStudents)
 
+router.post('/overallstudperformancestudwise', StudentController.viewOverallPerformanceStudWise)
+
 module.exports = router

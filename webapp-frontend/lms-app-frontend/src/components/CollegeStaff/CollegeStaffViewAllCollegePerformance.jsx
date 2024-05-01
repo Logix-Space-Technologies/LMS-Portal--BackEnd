@@ -82,7 +82,7 @@ const CollegeStaffViewAllCollegePerformance = () => {
                     )
                     setTimeout(() => {
                         getData()
-                        alert("No Attendence Found !!")
+                        alert("No Performance Found !!")
                     }, 500)
                 } else {
                     setLoading(false)
@@ -185,7 +185,7 @@ const CollegeStaffViewAllCollegePerformance = () => {
                             <div className="row">
                                 <div className="col">
                                     <div className="input-group">
-                                        <input onChange={inputHandler} type="text" className="form-control" name="performanceSearchQuery" value={inputField.performanceSearchQuery} placeholder='Membership no/Student Name/Session Name' />
+                                        <input onChange={inputHandler} type="text" className="form-control" name="performanceSearchQuery" value={inputField.performanceSearchQuery} placeholder='Membership no/Student Name/Batch Name' />
                                     </div>
                                     <br></br>
                                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
