@@ -244,7 +244,7 @@ Student.searchStudentsOfCollegeByBatchId = (searchKey, batchId, result) => {
 
 Student.searchStudentByBatch = (searchKey, result) => {
     db.query(
-        "SELECT `id`, `collegeId`, `batchId`, `membership_no`, `studName`, `admNo`, `rollNo`, `studDept`, `course`, `studEmail`, `studPhNo`, `studProfilePic`, `aadharNo`, `password`, `addedDate`, `updatedDate`, `validity`, `isPaid`, `isVerified`, `isActive`, `emailVerified`, `pwdUpdateStatus`, `updateStatus`, `deleteStatus` FROM `student` WHERE `batchId`= ? AND `isVerified` = 1 AND `emailVerified` = 1 AND `deleteStatus` = 0 AND `isActive` = 1 AND `validity` > CURRENT_DATE",
+        "SELECT b.batchName, s.id, s.collegeId, s.batchId, s.membership_no, s.studName, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.studProfilePic, s.aadharNo, s.password, s.addedDate, s.updatedDate, s.validity, s.isPaid, s.isVerified, s.isActive, s.emailVerified, s.pwdUpdateStatus, s.updateStatus, s.deleteStatus FROM student s JOIN batches b ON b.id = s.batchId WHERE s.batchId = ? AND s.isVerified = 1 AND s.emailVerified = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND s.validity > CURRENT_DATE",
         [searchKey],
         (err, res) => {
             if (err) {
