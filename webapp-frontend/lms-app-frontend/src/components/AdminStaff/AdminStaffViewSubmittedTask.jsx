@@ -267,7 +267,7 @@ const AdminStaffViewSubmittedTask = () => {
     const updateEvaluatedTask = () => {
         let newErrors = {};
         let updatedBy;
-    
+
         if (!changeScoreField.score.trim()) {
             newErrors.updateScore = "Score required!";
         }
@@ -300,7 +300,7 @@ const AdminStaffViewSubmittedTask = () => {
         let data4 = {
             "id": updateSubmittedTaskId.id,
             "adminstaffId": updatedBy,
-            "evaluatorRemarks": changeScoreField.evaluatorRemarks,
+            "evaluatorRemarks": changeScoreField.evaluatorRemarks ? changeScoreField.evaluatorRemarks : null,
             "score": changeScoreField.score
         }
         setShowUpdateScoreModal(false)
@@ -517,26 +517,12 @@ const AdminStaffViewSubmittedTask = () => {
                                             <img src="https://www.svgrepo.com/show/451892/task-past-due.svg" alt="Late Submission" style={{ width: '20px', marginLeft: '10px' }} />
                                         )}
                                     </td>
-                                    {value.evalDate !== null && (
-                                        <td className="px-6 py-4">
-                                            {value.evalDate}
-                                        </td>
-                                    )}
-                                    {value.evalDate === null && (
-                                        <td className="px-6 py-4">
-                                            NIL
-                                        </td>
-                                    )}
-                                    {value.evaluatorRemarks !== null && (
-                                        <td className="px-6 py-4">
-                                            {value.evaluatorRemarks}
-                                        </td>
-                                    )}
-                                    {value.evaluatorRemarks === null && (
-                                        <td className="px-6 py-4">
-                                            NIL
-                                        </td>
-                                    )}
+                                    <td className="px-6 py-4">
+                                        {value.evalDate !== null ? (value.evalDate) : "NIL"}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {value.evaluatorRemarks !== null ? (value.evaluatorRemarks) : "NIL"}
+                                    </td>
                                     {value.score !== null && (
                                         <td className="px-6 py-4">
                                             {value.score}
@@ -551,10 +537,14 @@ const AdminStaffViewSubmittedTask = () => {
                                         {value.totalScore}
                                     </td>
                                     <td className="px-6 py-4" style={{ whiteSpace: 'nowrap' }}>
-                                        <button onClick={() => readValue(value.submitTaskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" disabled={value.evalDate !== null}>Evaluate Task</button>
+                                        {value.evalDate === null && (
+                                            <button onClick={() => readValue(value.submitTaskId)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Evaluate Task</button>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4" style={{ whiteSpace: 'nowrap' }}>
-                                        <button onClick={() => UpdateScoreValue(value.submitTaskId, value.score)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md" disabled={value.evalDate === null}>Update Evaluation</button>
+                                        {value.evalDate !== null && (
+                                            <button onClick={() => UpdateScoreValue(value.submitTaskId, value.score)} type="button" className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Update Evaluation</button>
+                                        )}
                                     </td>
                                 </tr>
                             }
@@ -683,7 +673,7 @@ const AdminStaffViewSubmittedTask = () => {
                                 <form>
                                     <div className="mb-3">
                                         <label htmlFor="recipient-name" className="col-form-label">Score:</label>
-                                        <input type="text" name="score" className="form-control" value={updateSubmittedTaskId.score} disabled/>
+                                        <input type="text" name="score" className="form-control" value={updateSubmittedTaskId.score} disabled />
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="recipient-name" className="col-form-label">New Score:</label>
