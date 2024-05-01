@@ -347,9 +347,9 @@ exports.sessionUpdate = (request, response) => {
                                         const upcomingSessionTextContent = mailContents.reschedulingSessionRecordedTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, studName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
                                         mail.sendEmail(studentEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
                                     }
+                                    const formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
+                                    WhatsApprescheduleSession.sendfn(formattedPhoneNumber, studName, batchName, originaldate, whatsapporiginaltime, sessionDate, sessionTime, upSession.venueORlink, upSession.type, studentid)
                                 }
-                                const formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
-                                WhatsApprescheduleSession.sendfn(formattedPhoneNumber, studName, batchName, originaldate, whatsapporiginaltime, sessionDate, sessionTime, upSession.venueORlink, upSession.type, studentid)
                             });
 
                             CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
