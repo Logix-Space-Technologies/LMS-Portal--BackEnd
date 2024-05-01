@@ -192,7 +192,7 @@ Session.updateSession = (sessionUpdate, result) => {
 };
 
 Session.viewSessions = (batchId, result) => {
-    const query = "SELECT s.id, s.batchId, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, t.trainerName, s.attendenceCode, s.addedDate, s.updatedDate, CASE WHEN s.cancelStatus = 0 THEN 'ACTIVE' WHEN s.cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN trainersinfo t ON s.trainerId = t.id WHERE s.isActive = 1 AND s.deleteStatus = 0 AND s.batchId = ? ORDER BY s.date DESC";
+    const query = "SELECT s.id, s.batchId, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, t.trainerName, s.attendenceCode, s.addedDate, s.updatedDate, CASE WHEN s.cancelStatus = 0 THEN 'ACTIVE' WHEN s.cancelStatus = 1 THEN 'CANCELLED' ELSE 'unknown' END AS cancelStatus FROM sessiondetails s JOIN trainersinfo t ON s.trainerId = t.id WHERE (s.date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)) AND s.isActive = 1 AND s.deleteStatus = 0 AND s.batchId = ? ORDER BY s.date DESC";
     db.query(query, [batchId], (err, res) => {
         if (err) {
             console.log("error: ", err);
