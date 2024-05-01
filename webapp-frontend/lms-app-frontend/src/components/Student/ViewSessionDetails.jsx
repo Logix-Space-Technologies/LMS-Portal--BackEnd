@@ -150,7 +150,7 @@ const SessionView = () => {
           <div className="col-12 text-center">No sessions found!</div>
         ) : (
           sessions.filter(filterSessions).map((session, index) => (
-            <div class="max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto">
               <div key={index} className="flex mb-6">
                 <div className="w-2 rounded-l-xl" style={{ backgroundColor: getSessionStatusColor(session.date, formatTime(session.time)) }}></div>
                 <div className="flex-grow bg-white rounded-r-xl shadow-lg p-6">
