@@ -16,6 +16,7 @@ const WhatsAppupcomingSession = require("./Whatsapp/upcomingSession")
 const WhatsApprescheduleSession = require("./Whatsapp/rescheduleSession")
 const whatsappclgstaffupcomingsession = require("./Whatsapp/collegeStaffUpcomingSession")
 const whatsappclgstaffcancelsession = require("./Whatsapp/cancelSessionClgStaff")
+const whatsappclgstaffreschedulesession = require("./Whatsapp/rescheduleSessionClgStaff")
 const clgstaffFirebaseTokens = require('../models/clgStaffFirebaseToken.model')
 
 
@@ -360,10 +361,14 @@ exports.sessionUpdate = (request, response) => {
                                         let clgstaffEmail = element.email
                                         let batchName = element.batchName
                                         let collegeStaffName = element.collegeStaffName
+                                        const clgstaffPhNo = element.phNo
+                                        const clgstaffId = element.id
                                         if (isTrainerChanged === false) {
                                             const upcomingSessionHtmlContent = mailContents.reschedulingSessionClgStaffHTMLContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
                                             const upcomingSessionTextContent = mailContents.reschedulingSessionClgStaffTextContent(originaldate, sessionDate, sessionTime, upSession.type, upSession.venueORlink, batchName, collegeStaffName, isVenueOrLinkChangedOnly, isTimeChangeOnly);
                                             mail.sendEmail(clgstaffEmail, `Reschedule Announcement For Session Scheduled On ${sessionDate}`, upcomingSessionHtmlContent, upcomingSessionTextContent);
+                                            const formattedPhoneNumber = clgstaffPhNo.startsWith('91') ? clgstaffPhNo : `91${clgstaffPhNo}`;
+                                            whatsappclgstaffreschedulesession.sendfn(formattedPhoneNumber, collegeStaffName, batchName, originaldate, whatsapporiginaltime, sessionDate, sessionTime, upSession.venueORlink, upSession.type, clgstaffId)
                                         }
                                     })
 
