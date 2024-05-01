@@ -350,7 +350,6 @@ exports.sessionUpdate = (request, response) => {
                                 }
                                 const formattedPhoneNumber = studentPhno.startsWith('91') ? studentPhno : `91${studentPhno}`;
                                 WhatsApprescheduleSession.sendfn(formattedPhoneNumber, studName, batchName, originaldate, whatsapporiginaltime, sessionDate, sessionTime, upSession.venueORlink, upSession.type, studentid)
-
                             });
 
                             CollegeStaff.searchClgStaffByCollege(batchId, (err, res) => {
