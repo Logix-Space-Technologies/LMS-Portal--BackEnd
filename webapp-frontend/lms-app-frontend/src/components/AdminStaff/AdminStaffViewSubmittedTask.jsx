@@ -97,7 +97,7 @@ const AdminStaffViewSubmittedTask = () => {
                 "key": currentKey
             }
         }
-        axios.post(apiUrl, { sessionId: sessionStorage.getItem("sessionId") }, axiosConfig).then(
+        axios.post(apiUrl, { taskId: sessionStorage.getItem("taskId") }, axiosConfig).then(
             (response) => {
                 if (response.data.data) {
                     setLoading(false)
