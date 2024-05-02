@@ -351,9 +351,9 @@ Session.viewOneSession = (sessionId, result) => {
         });
 };
 
-Session.viewSessionwisePerformance = (sessionId, result) =>{
-db.query("SELECT studentId, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where sessionId=? and dueDate < CURRENT_DATE GROUP BY studentId,studName order by score DESC;", [sessionId], (err, res) => {
-        if(err){
+Session.viewSessionwisePerformance = (sessionId, result) => {
+    db.query("SELECT studentId, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where sessionId=? and dueDate < CURRENT_DATE GROUP BY studentId,studName order by score DESC;", [sessionId], (err, res) => {
+        if (err) {
             console.log("error: ", err);
             result(err, null);
             return;
@@ -361,6 +361,20 @@ db.query("SELECT studentId, membership_no, studName,sum(score) as score ,sum(tot
         console.log("data: ", res);
         result(null, res);
     });
+}
+
+//Generate Session Wise Score List PDF By Admin, AdminStaff and CollegeStaff
+Session.generateSessionWisePerformancePDF = (sessionId, result) => {
+    let query = "SELECT sessionName, studentId, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where sessionId=? and dueDate < CURRENT_DATE GROUP BY studentId,studName order by score DESC;"
+    db.query(query, [sessionId], (err, response) => {
+        if (err) {
+            console.log("Error executing the query:", err);
+            return result(err, null);
+        } else {
+            console.log("Query results:", response);
+            return result(null, response);
+        }
+    })
 }
 
 module.exports = Session
