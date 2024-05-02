@@ -277,5 +277,21 @@ Batches.getOverallPerformanceOfBatch = (CollegeId, batchId, result) => {
     })
 }
 
+Batches.searchOverallPerformanceOfBatch = (collegeId, batchId, search, result) => {
+    const searchTerm = '%' + search + '%'
+    db.query("SELECT studentId, membership_no, studName, SUM(score) AS score, SUM(totalScore) AS totalScore FROM studentTaskScore WHERE CollegeId = ? AND batchId = ? AND dueDate < CURRENT_DATE AND (membership_no = ? OR studName LIKE ?) GROUP BY studentId, studName ORDER BY score DESC;",
+        [collegeId, batchId, search, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                result
+            } else {
+                console.log("Batch Performance : ", res)
+                result(null, res)
+            }
+        })
+}
+
 module.exports = Batches;
 
