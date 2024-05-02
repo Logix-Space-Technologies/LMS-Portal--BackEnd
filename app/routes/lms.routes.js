@@ -431,4 +431,7 @@ router.post('/overallstudperformancestudwise', StudentController.viewOverallPerf
 
 router.post('/searchOverallPerformanceOfBatch',BatchesController.searchOverallBatchEvaluation)
 
+router.post('/dwnldSessionWisePerformancePDF',SessionsController.generateSessionWiseScorePerformancePDF)
+
+
 module.exports = router

@@ -102,7 +102,7 @@ function isValidWebsite(website) {
         };
     }
 
-    const regex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}.*$/;
+    const regex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/\S*)?$/;
     const isValid = regex.test(website);
 
     return {
