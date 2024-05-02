@@ -120,6 +120,7 @@ import AdminViewClgStaffWhatsappFeedback from './components/Admin/AdminViewClgSt
 import AdminViewClgStaffMsgReceivedLog from './components/Admin/AdminViewClgStaffMsgReceivedLog';
 import ClgStaffClgPerformanceDwnldPDF from './components/CollegeStaff/ClgStaffClgPerformanceDwnldPDF';
 import ViewPerformance from './components/Student/ViewPerformance';
+import ClgStaffSessionWisePerformanceDwldPDF from './components/CollegeStaff/ClgStaffSessionWisePerformanceDwldPDF';
 
 
 
@@ -239,6 +240,7 @@ function App() {
           <Route path='/clgstaffdownloadscorelist' element={<ClgStaffDownloadScorePDF/>}/>
           <Route path='/clgStaffviewSessionWisePerformance' element={<CollegeStaffViewSessionWisePerformance/>}/>
           <Route path='/clgStaffClgPerformanceDwnldPDF' element={<ClgStaffClgPerformanceDwnldPDF/>}/>
+          <Route path='/clgStaffSessionWisePerformanceDwldPDF' element={<ClgStaffSessionWisePerformanceDwldPDF/>}/>
 
 
 

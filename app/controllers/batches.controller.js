@@ -373,3 +373,32 @@ exports.getOverallBatchEvaluation = (request, response) => {
         }
     })
 }
+
+exports.searchOverallBatchEvaluation = (request, response) => {
+    const batchId = request.body.batchId;
+    const CollegeId = request.body.CollegeId;
+    const batchQuery = request.body.batchQuery;
+    const batchToken = request.headers.token;
+    key = request.headers.key;
+
+    jwt.verify(batchToken, key, (err, decoded) => {
+        if (!batchQuery) {
+            return response.json({ "status": "Search query cannot be empty" })
+        }
+        if (decoded) {
+            Batches.searchOverallPerformanceOfBatch(CollegeId, batchId, batchQuery, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        return response.json({ "status": "No search items found." });
+                    } else {
+                        return response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+}

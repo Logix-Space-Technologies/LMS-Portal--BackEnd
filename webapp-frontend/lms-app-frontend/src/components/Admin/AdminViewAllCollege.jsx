@@ -333,7 +333,7 @@ const AdminViewAllCollege = () => {
                                 S/N
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Name
+                                College Name
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 College Code

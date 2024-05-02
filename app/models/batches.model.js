@@ -202,7 +202,7 @@ Batches.ClgStaffNotificationView = (id, result) => {
                 return;
             }
             db.query(
-                "SELECT notifications.message, notifications.sendBy, notifications.title, notifications.addedDate, notifications.sendDateTime, CASE WHEN TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()), ' minute', IF(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) = 1, '', 's')) WHEN TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()), ' hour', IF(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) = 1, '', 's')) ELSE CONCAT(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()), ' day', IF(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()) = 1, '', 's')) END AS formattedDateTime, CASE WHEN notifications.sendBy = 0 THEN 'Admin' ELSE coalesce(admin_staff.AdStaffName, 'Unknown') END AS senderName FROM notifications LEFT JOIN admin_staff ON notifications.sendBy = admin_staff.id WHERE notifications.batchId = ? AND notifications.sendDateTime >= DATE_SUB(NOW(), INTERVAL 14 DAY) ORDER BY notifications.sendDateTime DESC;",
+                "SELECT notifications.message, notifications.sendBy, notifications.title, notifications.addedDate, notifications.sendDateTime, CASE WHEN TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) < 1 THEN 'now' WHEN TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()), 'm ago') WHEN TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()), 'h ago') ELSE CONCAT(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()), 'd ago') END AS formattedDateTime, CASE WHEN notifications.sendBy = 0 THEN 'Admin' ELSE coalesce(admin_staff.AdStaffName, 'Unknown') END AS senderName FROM notifications LEFT JOIN admin_staff ON notifications.sendBy = admin_staff.id WHERE notifications.batchId = ? AND notifications.sendDateTime >= DATE_SUB(NOW(), INTERVAL 14 DAY) ORDER BY notifications.sendDateTime DESC;",
                 [id],
                 (err, notificationsRes) => {
                     if (err) {
@@ -275,6 +275,22 @@ Batches.getOverallPerformanceOfBatch = (CollegeId, batchId, result) => {
             result(null, res);
         }
     })
+}
+
+Batches.searchOverallPerformanceOfBatch = (collegeId, batchId, search, result) => {
+    const searchTerm = '%' + search + '%'
+    db.query("SELECT studentId, membership_no, studName, SUM(score) AS score, SUM(totalScore) AS totalScore FROM studentTaskScore WHERE CollegeId = ? AND batchId = ? AND dueDate < CURRENT_DATE AND (membership_no = ? OR studName LIKE ?) GROUP BY studentId, studName ORDER BY score DESC;",
+        [collegeId, batchId, search, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                result
+            } else {
+                console.log("Batch Performance : ", res)
+                result(null, res)
+            }
+        })
 }
 
 module.exports = Batches;

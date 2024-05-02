@@ -13,6 +13,11 @@ const AdminViewOverallBatchPerformance = () => {
     const [scoresPerPage] = useState(10); // Number of students per page
     const [loading, setLoading] = useState(true);
     const [key, setKey] = useState('')
+    const [inputField, setInputField] = useState(
+        {
+            "batchQuery": ""
+        }
+    )
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(scoreData.length / scoresPerPage); // Calculate the total number of pages
@@ -21,6 +26,82 @@ const AdminViewOverallBatchPerformance = () => {
 
 
     const apiurl = global.config.urls.api.server + "/api/lms/getOverallPerformanceOfBatch"
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/searchOverallPerformanceOfBatch";
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
+    }
+
+    const readSearchValue = () => {
+        setLoading(false)
+        let data = {
+            "CollegeId": sessionStorage.getItem("viewBatchScoreCollegeId"),
+            "batchId": sessionStorage.getItem("viewBatchScoreBatchId"),
+            "batchQuery": inputField.batchQuery
+        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
+        let axiosConfig3 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        }
+        axios.post(apiUrl4, data, axiosConfig3).then(
+            (response) => {
+                if (response.data.status === "Search query cannot be empty") {
+                    setLoading(false)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                        getData()
+                    }, 500)
+                } else if (response.data.data) {
+                    setScoreData(response.data.data)
+                    setInputField(
+                        {
+                            "batchQuery": ""
+                        }
+                    )
+                    setLoading(false)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setLoading(false)
+                    setInputField(
+                        {
+                            "batchQuery": ""
+                        }
+                    )
+                    setTimeout(() => {
+                        getData()
+                        alert("No Students Found !!")
+                    }, 500)
+                } else {
+                    setLoading(false)
+                    setInputField(
+                        {
+                            "batchQuery": ""
+                        }
+                    )
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
+
 
     const navigate = useNavigate()
 
@@ -101,6 +182,18 @@ const AdminViewOverallBatchPerformance = () => {
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
                                 {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Batch Performance</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Batch Performance</h2> : <h2 className="text-lg font-bold">Admin Staff View Batch Performance</h2>)}
                                 <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</button>
+                            </div>
+                            <div className="row">
+                                <div className="col">
+                                    <div className="input-group">
+                                        <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} placeholder='Student Name/Membership No:' />
+                                    </div>
+                                    <br></br>
+                                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                        <button onClick={readSearchValue} className="btn btn-warning">Search</button>
+                                    </div>
+                                    <br />
+                                </div>
                             </div>
                             <br />
                             <div className="max-w-full overflow-x-auto">

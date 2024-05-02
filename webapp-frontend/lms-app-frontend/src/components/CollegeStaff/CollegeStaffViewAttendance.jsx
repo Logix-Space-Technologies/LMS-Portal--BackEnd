@@ -175,7 +175,7 @@ const CollegeStaffViewAttendance = () => {
             <div className="row">
                 <div className="col">
                     <div className="input-group">
-                        <input onChange={inputHandler} type="text" className="form-control" name="attendanceSearchQuery" value={inputField.attendanceSearchQuery} placeholder='Membership no/Student Name/Session Name' />
+                        <input onChange={inputHandler} type="text" className="form-control" name="attendanceSearchQuery" value={inputField.attendanceSearchQuery} placeholder='Membership no/Student Name' />
                     </div>
                     <br></br>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -189,9 +189,6 @@ const CollegeStaffViewAttendance = () => {
                     <tr>
                         <th scope="col" className="px-6 py-3">
                             S/L
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Session Name
                         </th>
                         <th scope="col" className="px-6 py-3">
                             Date
@@ -215,9 +212,6 @@ const CollegeStaffViewAttendance = () => {
                             <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td className="p-4 whitespace-nowrap">
                                     {calculateSerialNumber(index)}
-                                </td >
-                                <td className="p-4 whitespace-nowrap">
-                                    {value.sessionName}
                                 </td >
                                 <td className="p-4 whitespace-nowrap">
                                     {value.date}

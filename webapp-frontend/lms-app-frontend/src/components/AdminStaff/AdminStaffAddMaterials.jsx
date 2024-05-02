@@ -155,14 +155,27 @@ const AdminStaffAddMaterials = () => {
             } else {
                 addedBy = sessionStorage.getItem("admstaffId")
             }
-            let data = {
-                "batchId": inputField.batchId,
-                "fileName": inputField.fileName,
-                "materialDesc": inputField.materialDesc,
-                "remarks": inputField.remarks,
-                "materialType": inputField.materialType,
-                "uploadFile": file,
-                "addedby": addedBy
+            let data;
+            if (file) {
+                data = {
+                    "batchId": inputField.batchId,
+                    "fileName": inputField.fileName,
+                    "materialDesc": inputField.materialDesc,
+                    "remarks": inputField.remarks,
+                    "materialType": inputField.materialType,
+                    "uploadFile": file,
+                    "addedby": addedBy
+                }
+            } else {
+                data = {
+                    "batchId": inputField.batchId,
+                    "fileName": inputField.fileName,
+                    "materialDesc": inputField.materialDesc,
+                    "remarks": inputField.remarks,
+                    "materialType": inputField.materialType,
+                    "uploadFile": inputField.uploadFile,
+                    "addedby": addedBy
+                }
             }
             setShowWaitingModal(true)
             setShowOverlay(true)
@@ -188,42 +201,37 @@ const AdminStaffAddMaterials = () => {
                         setTimeout(() => {
                             alert(response.data.data.batchId)
                         }, 500)
+                    } else if (response.data.status === "Validation failed" && response.data.data.fileName) {
+                        setTimeout(() => {
+                            alert(response.data.data.fileName)
+                        }, 500)
+                    } else if (response.data.status === "Validation failed" && response.data.data.materialDesc) {
+                        setTimeout(() => {
+                            alert(response.data.data.materialDesc)
+                        }, 500)
+                    } else if (response.data.status === "Validation failed" && response.data.data.remarks) {
+                        setTimeout(() => {
+                            alert(response.data.data.remarks)
+                        }, 500)
+                    } else if (response.data.status === "Validation failed" && response.data.data.materialType) {
+                        setTimeout(() => {
+                            alert(response.data.data.materialType)
+                        }, 500)
+                    } else if (response.data.status === "Validation failed" && response.data.data.website) {
+                        setTimeout(() => {
+                            alert(response.data.data.website)
+                        }, 500)
+                    } else if (response.data.status === "Unauthorized User!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.fileName) {
-                            setTimeout(() => {
-                                alert(response.data.data.fileName)
-                            }, 500)
-                        } else {
-                            if (response.data.status === "Validation failed" && response.data.data.materialDesc) {
-                                setTimeout(() => {
-                                    alert(response.data.data.materialDesc)
-                                }, 500)
-                            } else {
-                                if (response.data.status === "Validation failed" && response.data.data.remarks) {
-                                    setTimeout(() => {
-                                        alert(response.data.data.remarks)
-                                    }, 500)
-                                } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.materialType) {
-                                        setTimeout(() => {
-                                            alert(response.data.data.materialType)
-                                        }, 500)
-                                    } else {
-                                        if (response.data.status === "Unauthorized User!!") {
-                                            { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
-                                            sessionStorage.clear()
-                                        } else {
-                                            closeWaitingModal()
-                                            setTimeout(() => {
-                                                alert(response.data.status)
-                                            }, 500)
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status)
+                        }, 500)
                     }
                 }
+
             }
             ).catch(error => {
                 closeWaitingModal()
@@ -285,6 +293,12 @@ const AdminStaffAddMaterials = () => {
         }
         if (!data.materialType.trim()) {
             errors.materialType = 'Material Type is required';
+        }
+        if (data.materialType === "Link" && !data.uploadFile.trim()) {
+            errors.website = 'Website is required';
+        }
+        if (data.materialType !== "Link" && !data.uploadFile.trim()) {
+            errors.file = 'File is required';
         }
         return errors;
     }
