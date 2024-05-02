@@ -188,42 +188,37 @@ const AdminStaffAddMaterials = () => {
                         setTimeout(() => {
                             alert(response.data.data.batchId)
                         }, 500)
+                    } else if (response.data.status === "Validation failed" && response.data.data.fileName) {
+                        setTimeout(() => {
+                            alert(response.data.data.fileName)
+                        }, 500)
+                    } else if (response.data.status === "Validation failed" && response.data.data.materialDesc) {
+                        setTimeout(() => {
+                            alert(response.data.data.materialDesc)
+                        }, 500)
+                    } else if (response.data.status === "Validation failed" && response.data.data.remarks) {
+                        setTimeout(() => {
+                            alert(response.data.data.remarks)
+                        }, 500)
+                    } else if (response.data.status === "Validation failed" && response.data.data.materialType) {
+                        setTimeout(() => {
+                            alert(response.data.data.materialType)
+                        }, 500)
+                    } else if (response.data.status === "Validation failed" && response.data.data.website) {
+                        setTimeout(() => {
+                            alert(response.data.data.website)
+                        }, 500)
+                    } else if (response.data.status === "Unauthorized User!!") {
+                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                        sessionStorage.clear()
                     } else {
-                        if (response.data.status === "Validation failed" && response.data.data.fileName) {
-                            setTimeout(() => {
-                                alert(response.data.data.fileName)
-                            }, 500)
-                        } else {
-                            if (response.data.status === "Validation failed" && response.data.data.materialDesc) {
-                                setTimeout(() => {
-                                    alert(response.data.data.materialDesc)
-                                }, 500)
-                            } else {
-                                if (response.data.status === "Validation failed" && response.data.data.remarks) {
-                                    setTimeout(() => {
-                                        alert(response.data.data.remarks)
-                                    }, 500)
-                                } else {
-                                    if (response.data.status === "Validation failed" && response.data.data.materialType) {
-                                        setTimeout(() => {
-                                            alert(response.data.data.materialType)
-                                        }, 500)
-                                    } else {
-                                        if (response.data.status === "Unauthorized User!!") {
-                                            { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
-                                            sessionStorage.clear()
-                                        } else {
-                                            closeWaitingModal()
-                                            setTimeout(() => {
-                                                alert(response.data.status)
-                                            }, 500)
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        closeWaitingModal()
+                        setTimeout(() => {
+                            alert(response.data.status)
+                        }, 500)
                     }
                 }
+
             }
             ).catch(error => {
                 closeWaitingModal()
