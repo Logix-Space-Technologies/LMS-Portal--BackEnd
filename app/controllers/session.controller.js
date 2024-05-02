@@ -775,3 +775,26 @@ exports.viewSessionwisePerformance = (request, response) => {
         }
     });
 }
+
+
+//Generate Session Wise Score List PDF By Admin, AdminStaff and CollegeStaff
+exports.generateSessionWiseScorePerformancePDF = (request, response) => {
+    const token = request.headers.token;
+    const key = request.headers.key;
+    const sessionId = request.body.sessionId;
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Session.generateSessionWisePerformancePDF(sessionId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else if (data.length === 0) {
+                    return response.json({ "status": "No data found" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}

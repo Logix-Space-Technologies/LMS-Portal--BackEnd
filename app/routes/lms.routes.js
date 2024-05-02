@@ -429,4 +429,6 @@ router.post('/searchPerformanceOfStudents',CollegeController.searchPerformanceOf
 
 router.post('/overallstudperformancestudwise', StudentController.viewOverallPerformanceStudWise)
 
+router.post('/dwnldSessionWisePerformancePDF',SessionsController.generateSessionWiseScorePerformancePDF)
+
 module.exports = router
