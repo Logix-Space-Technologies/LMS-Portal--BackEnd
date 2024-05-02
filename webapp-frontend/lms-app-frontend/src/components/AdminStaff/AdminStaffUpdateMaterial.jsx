@@ -288,16 +288,27 @@ const AdminStaffUpdateMaterial = () => {
 
         if (!data.batchId) {
             errors.batchId = 'Batch Name is required';
-        } else if (!data.collegeId) {
+        }
+        if (!data.collegeId) {
             errors.collegeId = 'College Name is required';
-        } else if (!data.fileName) {
+        }
+        if (!data.fileName) {
             errors.fileName = 'Material Title is required';
-        } else if (!data.materialDesc) {
+        }
+        if (!data.materialDesc) {
             errors.materialDesc = 'Material Description is required';
-        } else if (!data.remarks) {
+        }
+        if (!data.remarks) {
             errors.remarks = 'Remarks are required';
-        } else if (!data.materialType) {
+        }
+        if (!data.materialType) {
             errors.materialType = 'Material Type is required';
+        }
+        if (data.materialType === "Link" && !data.uploadFile) {
+            errors.website = 'Website is required';
+        }
+        if (data.materialType !== "Link" && !data.uploadFile) {
+            errors.file = 'File is required';
         }
         return errors;
     }
@@ -450,6 +461,7 @@ const AdminStaffUpdateMaterial = () => {
                                                 {updateField.materialType === "Link" ? (
                                                     <>
                                                         <input type="text" onChange={updateHandler} className="form-control" name="uploadFile" value={updateField.uploadFile} />
+                                                        {errors.website && (<span style={{ color: 'red' }} className="error">{errors.website}</span>)}
                                                     </>
                                                 ) : (
                                                     <>
@@ -457,7 +469,6 @@ const AdminStaffUpdateMaterial = () => {
                                                         {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
                                                     </>
                                                 )}
-                                                {errors.website && (<span style={{ color: 'red' }} className="error">{errors.website}</span>)}
                                             </div>
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
