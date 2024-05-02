@@ -155,14 +155,27 @@ const AdminStaffAddMaterials = () => {
             } else {
                 addedBy = sessionStorage.getItem("admstaffId")
             }
-            let data = {
-                "batchId": inputField.batchId,
-                "fileName": inputField.fileName,
-                "materialDesc": inputField.materialDesc,
-                "remarks": inputField.remarks,
-                "materialType": inputField.materialType,
-                "uploadFile": file,
-                "addedby": addedBy
+            let data;
+            if (file) {
+                data = {
+                    "batchId": inputField.batchId,
+                    "fileName": inputField.fileName,
+                    "materialDesc": inputField.materialDesc,
+                    "remarks": inputField.remarks,
+                    "materialType": inputField.materialType,
+                    "uploadFile": file,
+                    "addedby": addedBy
+                }
+            } else {
+                data = {
+                    "batchId": inputField.batchId,
+                    "fileName": inputField.fileName,
+                    "materialDesc": inputField.materialDesc,
+                    "remarks": inputField.remarks,
+                    "materialType": inputField.materialType,
+                    "uploadFile": inputField.uploadFile,
+                    "addedby": addedBy
+                }
             }
             setShowWaitingModal(true)
             setShowOverlay(true)
@@ -280,6 +293,12 @@ const AdminStaffAddMaterials = () => {
         }
         if (!data.materialType.trim()) {
             errors.materialType = 'Material Type is required';
+        }
+        if (data.materialType === "Link" && !data.uploadFile.trim()) {
+            errors.website = 'Website is required';
+        }
+        if (data.materialType !== "Link" && !data.uploadFile.trim()) {
+            errors.file = 'File is required';
         }
         return errors;
     }
