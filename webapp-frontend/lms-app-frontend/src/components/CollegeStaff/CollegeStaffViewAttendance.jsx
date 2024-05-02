@@ -175,7 +175,7 @@ const CollegeStaffViewAttendance = () => {
             <div className="row">
                 <div className="col">
                     <div className="input-group">
-                        <input onChange={inputHandler} type="text" className="form-control" name="attendanceSearchQuery" value={inputField.attendanceSearchQuery} placeholder='Membership no/Student Name/Session Name' />
+                        <input onChange={inputHandler} type="text" className="form-control" name="attendanceSearchQuery" value={inputField.attendanceSearchQuery} placeholder='Membership no/Student Name' />
                     </div>
                     <br></br>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
