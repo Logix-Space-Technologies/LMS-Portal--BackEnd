@@ -433,5 +433,7 @@ router.post('/searchOverallPerformanceOfBatch',BatchesController.searchOverallBa
 
 router.post('/dwnldSessionWisePerformancePDF',SessionsController.generateSessionWiseScorePerformancePDF)
 
+router.post('/searchSessionwisePerformance',SessionsController.SearchSessionwisePerformance)
+
 
 module.exports = router
