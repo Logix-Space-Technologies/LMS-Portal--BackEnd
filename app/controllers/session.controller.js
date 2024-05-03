@@ -776,6 +776,34 @@ exports.viewSessionwisePerformance = (request, response) => {
     });
 }
 
+exports.SearchSessionwisePerformance = (request, response) => {
+    const sessionId = request.body.sessionId;
+    const sessionQuery = request.body.sessionQuery;
+    const sessionToken = request.headers.token;
+    key = request.headers.key;
+
+    jwt.verify(sessionToken, key, (err, decoded) => {
+        if (!sessionQuery) {
+            return response.json({ "status": "Search query cannot be empty" })
+        }
+        if (decoded) {
+            Session.searchSessionwisePerformance(sessionId, sessionQuery, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        return response.json({ "status": "No search items found." });
+                    } else {
+                        return response.json({ "status": "success", "data": data });
+                    }
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    });
+}
+
 
 //Generate Session Wise Score List PDF By Admin, AdminStaff and CollegeStaff
 exports.generateSessionWiseScorePerformancePDF = (request, response) => {

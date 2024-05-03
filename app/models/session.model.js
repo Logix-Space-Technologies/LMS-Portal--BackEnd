@@ -363,6 +363,22 @@ Session.viewSessionwisePerformance = (sessionId, result) => {
     });
 }
 
+Session.searchSessionwisePerformance = (sessionId, search, result) => {
+    const searchTerm = '%' + search + '%'
+    db.query("SELECT studentId, membership_no, studName, SUM(score) as score, SUM(totalScore) as totalScore FROM studentTaskScore WHERE sessionId=? AND dueDate < CURRENT_DATE AND (membership_no = ? OR studName LIKE ?) GROUP BY studentId, studName ORDER BY score DESC;",
+        [sessionId, search, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("Error : ", err)
+                result(err, null)
+                result
+            } else {
+                console.log("Session Performance : ", res)
+                result(null, res)
+            }
+        })
+}
+
 //Generate Session Wise Score List PDF By Admin, AdminStaff and CollegeStaff
 Session.generateSessionWisePerformancePDF = (sessionId, result) => {
     let query = "SELECT sessionName, studentId, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where sessionId=? and dueDate < CURRENT_DATE GROUP BY studentId,studName order by score DESC;"
