@@ -177,8 +177,9 @@ const AdminViewAllSession = () => {
         navigate("/clgstaffviewattendance")
     }
 
-    const taskScore = (id) => {
+    const taskScore = (id, sessionName) => {
         sessionStorage.setItem("ViewsessionperformanceSessionId", id)
+        sessionStorage.setItem("ViewsessionperformanceSessionName", sessionName)
         navigate("/clgStaffviewSessionWisePerformance")
     }
 
@@ -555,7 +556,7 @@ const AdminViewAllSession = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
-                                        <button onClick={() => taskScore(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none" style={{ marginRight: '20px' }}>
+                                        <button onClick={() => taskScore(value.id, value.sessionName)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none" style={{ marginRight: '20px' }}>
                                             View Performance
                                         </button>
                                     )}
