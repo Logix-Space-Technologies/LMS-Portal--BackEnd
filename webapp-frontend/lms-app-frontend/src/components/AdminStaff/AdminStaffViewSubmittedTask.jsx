@@ -410,7 +410,7 @@ const AdminStaffViewSubmittedTask = () => {
                         View All Submitted Tasks {currentTasks.length > 0 ?
                             <>
                                 ( Task Name: {currentTasks[0].taskTitle},
-                                  Due Date: <span style={{ color: 'red' }}> {currentTasks[0].dueDate}</span> )
+                                Due Date: <span style={{ color: 'red' }}> {currentTasks[0].dueDate}</span> )
                             </>
                             : ''}
                     </strong>
@@ -419,7 +419,7 @@ const AdminStaffViewSubmittedTask = () => {
                 </div>
                 <div className="col col-md-6 mx-auto">
                     <div className="input-group mb-3">
-                        <input onChange={updateHandler} type="text" className="form-control" name="subTaskSearchQuery" value={updateField.subTaskSearchQuery} placeholder='Batch Name/College Name/Task Title' />
+                        <input onChange={updateHandler} type="text" className="form-control" name="subTaskSearchQuery" value={updateField.subTaskSearchQuery} placeholder='Student Name/Membership No' />
                         <button onClick={searchSubmittedTasks} className="btn btn-warning ms-2">Search</button>
                     </div>
                 </div>
