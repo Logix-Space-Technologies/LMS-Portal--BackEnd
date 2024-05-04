@@ -20,6 +20,8 @@ const AdminViewAllTasks = () => {
         "taskQuery": ""
     });
 
+    let SessionName = sessionStorage.getItem('viewsessionName')
+
     const apiUrl = global.config.urls.api.server + "/api/lms/viewtasks"
     const deleteUrl = global.config.urls.api.server + '/api/lms/deleteTask'
     const apiUrl2 = global.config.urls.api.server + '/api/lms/searchTasks'
@@ -86,9 +88,10 @@ const AdminViewAllTasks = () => {
             });
     };
 
-    const taskScore = (batchId, id) => {
+    const taskScore = (batchId, id, taskName) => {
         sessionStorage.setItem("viewScoreBatchId", batchId);
         sessionStorage.setItem("viewScoreTaskId", id);
+        sessionStorage.setItem("viewScoreTaskName", taskName);
         navigate("/collegestaffviewscore")
     }
 
@@ -234,7 +237,7 @@ const AdminViewAllTasks = () => {
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
-                <strong>View All Tasks</strong>
+                <strong>View All Tasks (Session Name {`- ${SessionName}`})</strong>
 
                 <div></div>
             </div>
@@ -325,7 +328,7 @@ const AdminViewAllTasks = () => {
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {isLateSubmission && <button onClick={() => taskScore(value.batchId, value.id)} className="btn btn-primary btn-sm me-2">View Score</button>}
+                                            {isLateSubmission && <button onClick={() => taskScore(value.batchId, value.id, value.taskTitle)} className="btn btn-primary btn-sm me-2">View Performance</button>}
                                         </td>
                                         <td className="px-6 py-4">
                                             <button onClick={() => handleUpdateClick(value.id)} className="btn btn-primary btn-sm me-2">Update</button>

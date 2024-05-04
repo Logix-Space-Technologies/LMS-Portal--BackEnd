@@ -278,8 +278,9 @@ const AdminViewAllSession = () => {
         navigate("/AdminUpdateSession")
     }
 
-    const sessionClick = (id) => {
+    const sessionClick = (id, sessionName) => {
         sessionStorage.setItem("viewtaskId", id)
+        sessionStorage.setItem("viewsessionName", sessionName)
         navigate("/AdminViewAllTasks")
     }
 
@@ -549,7 +550,7 @@ const AdminViewAllSession = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.cancelStatus === "ACTIVE" && isSessionInPast(value.date, value.time) && (
-                                        <button onClick={() => sessionClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                        <button onClick={() => sessionClick(value.id, value.sessionName)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                             View Tasks
                                         </button>
                                     )}
