@@ -136,7 +136,7 @@ const AdminStaffViewSubmittedTask = () => {
                 "key": currentKey
             }
         }
-        let data = { "sessionId": sessionStorage.getItem("sessionId"), "subTaskSearchQuery": updateField.subTaskSearchQuery }
+        let data = { "taskId": sessionStorage.getItem("taskId") , "subTaskSearchQuery": updateField.subTaskSearchQuery }
         axios.post(apiUrl3, data, axiosConfig)
             .then(response => {
                 if (response.data.status === "Search Item is required.") {
