@@ -100,9 +100,10 @@ const CollegeStaffViewTask = () => {
         )
     }
 
-    const taskScore = (batchId, id) => {
+    const taskScore = (batchId, id, taskName) => {
         sessionStorage.setItem("viewScoreBatchId", batchId);
         sessionStorage.setItem("viewScoreTaskId", id);
+        sessionStorage.setItem("viewScoreTaskName", taskName);
         navigate("/collegestaffviewscore")
     }
 
@@ -221,7 +222,7 @@ const CollegeStaffViewTask = () => {
                                                     )}
                                                     <td className="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.dueDate === "Past Due Date" && (
-                                                            <button onClick={() => taskScore(value.batchId, value.id)} className="btn btn-primary">View Score</button>
+                                                            <button onClick={() => taskScore(value.batchId, value.id, value.taskTitle)} className="btn btn-primary">View Score</button>
                                                         )}
                                                     </td>
                                                 </tr>
