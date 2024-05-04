@@ -110,7 +110,7 @@ const CollegeStaffViewScore = () => {
                                 {key === 'lmsapp' ? <h2 className="text-lg font-bold">View Performance Task-Wise (Task Name {`- ${TaskName}`})</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">View Performance Task-Wise (Task Name {`- ${TaskName}`})</h2> : <h2 className="text-lg font-bold">View Performance Task-Wise (Task Name {`- ${TaskName}`})</h2>)}
                                 <div className="flex space-x-4">
                                     <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
-                                    <button type='button' onClick={() => generatePDF()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download Score List PDF</button>
+                                    <button type='button' onClick={() => generatePDF()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download PDF</button>
                                 </div>
                             </div>
                             <br />
