@@ -134,7 +134,7 @@ const CollegeStaffViewTask = () => {
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                                <h2 className="text-lg font-bold">College Staff View All Tasks  (Session Name {`- ${SessionName}`})</h2>
+                                <h2 className="text-lg font-bold">View All Tasks  (Session Name {`- ${SessionName}`})</h2>
                                 <Link to="/clgstaffviewsession" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
                             </div>
                             <br />
@@ -152,9 +152,6 @@ const CollegeStaffViewTask = () => {
                                         <tr className="text-center bg-primary">
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 S/L
-                                            </th>
-                                            <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                Session Name
                                             </th>
                                             <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 Title
@@ -185,9 +182,6 @@ const CollegeStaffViewTask = () => {
                                                 return <tr key={index}>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {calculateSerialNumber(index)}
-                                                    </td>
-                                                    <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.sessionName}
                                                     </td>
                                                     <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.taskTitle}
