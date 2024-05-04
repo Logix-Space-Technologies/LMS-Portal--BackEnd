@@ -406,7 +406,14 @@ const AdminStaffViewSubmittedTask = () => {
                 <div className="flex justify-between items-center mx-4 my-4">
                     <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
-                    <strong>View All Submitted Tasks</strong>
+                    <strong>
+                        View All Submitted Tasks {currentTasks.length > 0 ?
+                            <>
+                                ( Task Name: {currentTasks[0].taskTitle},
+                                  Due Date: <span style={{ color: 'red' }}> {currentTasks[0].dueDate}</span> )
+                            </>
+                            : ''}
+                    </strong>
 
                     <div></div>
                 </div>
@@ -430,12 +437,6 @@ const AdminStaffViewSubmittedTask = () => {
                             </th>
                             <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
                                 Student Name
-                            </th>
-                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                Task Title
-                            </th>
-                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                Due Date
                             </th>
                             <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
                                 Git Link
@@ -484,12 +485,6 @@ const AdminStaffViewSubmittedTask = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.studName}
-                                    </td>
-                                    <td className="px-6 py-4" style={{ whiteSpace: 'nowrap' }}>
-                                        {value.taskTitle}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {value.dueDate}
                                     </td>
                                     <td className="px-6 py-4">
                                         <Link to={value.gitLink} className='btn btn-primary' target="_blank" rel="noopener noreferrer">
