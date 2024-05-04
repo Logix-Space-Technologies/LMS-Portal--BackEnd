@@ -146,8 +146,9 @@ const CollegeStaffViewSession = () => {
         navigate("/clgstaffdownloadsessionattendancelist")
     }
 
-    const viewtasksessionId = (attendanceid) => {
+    const viewtasksessionId = (attendanceid, sessionName) => {
         sessionStorage.setItem("viewattendanceid", attendanceid)
+        sessionStorage.setItem("viewsessionName", sessionName)
         navigate("/clgstaffviewtask")
     }
 
@@ -332,7 +333,7 @@ const CollegeStaffViewSession = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.cancelStatus === "ACTIVE" && (
-                                                <button onClick={() => viewtasksessionId(value.id)} type="button" class="btn btn-primary" disabled={!sessionIsPast}>
+                                                <button onClick={() => viewtasksessionId(value.id, value.sessionName)} type="button" class="btn btn-primary" disabled={!sessionIsPast}>
                                                     View Tasks
                                                 </button>
                                             )}

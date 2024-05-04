@@ -15,6 +15,7 @@ const CollegeStaffViewTask = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of students per page
     const [loading, setLoading] = useState(true);
+    let SessionName = sessionStorage.getItem('viewsessionName')
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(taskData.length / tasksPerPage); // Calculate the total number of pages
@@ -133,7 +134,7 @@ const CollegeStaffViewTask = () => {
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                                <h2 className="text-lg font-bold">College Staff View Tasks</h2>
+                                <h2 className="text-lg font-bold">College Staff View All Tasks  (Session Name {`- ${SessionName}`})</h2>
                                 <Link to="/clgstaffviewsession" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
                             </div>
                             <br />
