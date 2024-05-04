@@ -125,8 +125,9 @@ const CollegeStaffViewSession = () => {
         return filteredSessions;
     };
 
-    const taskScore = (id) => {
+    const taskScore = (id, sessionName) => {
         sessionStorage.setItem("ViewsessionperformanceSessionId", id)
+        sessionStorage.setItem("ViewsessionperformanceSessionName", sessionName)
         navigate("/clgStaffviewSessionWisePerformance")
     }
 
@@ -337,7 +338,7 @@ const CollegeStaffViewSession = () => {
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <button onClick={() => taskScore(value.id)} className="btn btn-primary" style={{ marginRight: '20px' }} disabled={!sessionIsPast}>
+                                            <button onClick={() => taskScore(value.id, value.sessionName)} className="btn btn-primary" style={{ marginRight: '20px' }} disabled={!sessionIsPast}>
                                                 View Performance
                                             </button>
                                         </td>
