@@ -282,7 +282,7 @@ const AdminViewAllStud = () => {
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
-                <strong>View All Students</strong>
+                <strong>View All Students ( {currentStudents.length > 0 ? `Batch Name - ${currentStudents[0].batchName}` : ''})</strong>
 
                 <div></div>
             </div>
@@ -325,9 +325,6 @@ const AdminViewAllStud = () => {
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Membership No.
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Batch Name
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Admission No.
@@ -390,9 +387,6 @@ const AdminViewAllStud = () => {
 
                                     <td className="px-6 py-4">
                                         {value.membership_no}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {value.batchName}
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.admNo}
