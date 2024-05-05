@@ -34,9 +34,10 @@ const CollegeStaffViewBatch = () => {
     setInputField({ ...inputField, [event.target.name]: event.target.value })
   }
 
-  const taskScore = (batchId) => {
+  const taskScore = (batchId, batchName) => {
     sessionStorage.setItem("viewBatchScoreBatchId", batchId);
     sessionStorage.setItem("viewBatchScoreCollegeId", collegeId);
+    sessionStorage.setItem("viewBatchName", batchName);
     navigate("/adminviewoverallBatchPerformance")
   }
 
@@ -212,7 +213,7 @@ const CollegeStaffViewBatch = () => {
                               <div className="card-body">
                                 <div className="flex justify-between items-center mx-4 my-4">
                                   <h5 className="card-title">{batch.batchName}</h5>
-                                  <button onClick={() => taskScore(batch.id)} className="btn btn-primary" style={{ marginRight: '20px' }}>
+                                  <button onClick={() => taskScore(batch.id, batch.batchName)} className="btn btn-primary" style={{ marginRight: '20px' }}>
                                     View Batch Performance
                                   </button>
                                 </div>
