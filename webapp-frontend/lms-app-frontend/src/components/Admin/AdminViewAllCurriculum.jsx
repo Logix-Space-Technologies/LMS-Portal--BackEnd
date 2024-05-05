@@ -216,12 +216,16 @@ const AdminViewAllCurriculum = () => {
                 <div></div>
             </div>
             <br />
-            <div className="row g-3">
-                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                    <input onChange={inputHandler} type="text" className="form-control" name="CurriculumSearchQuery" value={inputField.CurriculumSearchQuery} placeholder='Search By Title/Description' />
-                </div>
-                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                    <button onClick={readValue} className="btn btn-warning">Search</button>
+            <div className="row">
+                <div className="col col-12">
+                    <div className="row g-3">
+                        <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+                            <div className="input-group mb-3"> {/* Use an input group */}
+                                <input onChange={inputHandler} type="text" className="form-control" name="CurriculumSearchQuery" value={inputField.CurriculumSearchQuery} placeholder='Search By Title/Description' />
+                                <button onClick={readValue} className="btn btn-warning ms-2">Search</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div><br />
             {isLoading ? <div className="flex justify-center items-center h-full">
