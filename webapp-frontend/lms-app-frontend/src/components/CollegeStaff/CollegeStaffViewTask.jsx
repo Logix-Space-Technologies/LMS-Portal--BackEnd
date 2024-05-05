@@ -141,7 +141,7 @@ const CollegeStaffViewTask = () => {
                             <br />
                             <div className="row g-3">
                                 <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                    <input onChange={inputHandler} type="text" placeholder='Task Name/Task Description/Task Type/Batch Name' className="form-control" name="taskQuery" value={inputField.taskQuery} />
+                                    <input onChange={inputHandler} type="text" placeholder='Task Name/Task Description/Task Type' className="form-control" name="taskQuery" value={inputField.taskQuery} />
                                 </div>
                                 <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                     <button onClick={readValue} className="btn btn-warning">Search</button>
