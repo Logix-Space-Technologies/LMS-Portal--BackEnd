@@ -65,7 +65,6 @@ const AdminViewAllBatch = () => {
                 if (response.data.status === "Registration Status Changed To Open.") {
                     closeWaitingModal()
                     setTimeout(() => {
-                        alert("Registration Status Set To Open")
                         getData();
                     }, 500)
                 } else if (response.data.status === "Unauthorized User !!!") {
@@ -109,7 +108,6 @@ const AdminViewAllBatch = () => {
                 if (response.data.status === "Registration Status Changed To Unavailable.") {
                     closeWaitingModal()
                     setTimeout(() => {
-                        alert("Registration Status Set To Closed")
                         getData();
                     }, 500)
                 } else {
