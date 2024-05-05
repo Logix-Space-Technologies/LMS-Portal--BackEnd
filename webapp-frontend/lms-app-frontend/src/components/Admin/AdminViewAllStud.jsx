@@ -177,9 +177,8 @@ const AdminViewAllStud = () => {
             (response) => {
                 if (response.data.status === "success") {
                     closeWaitingModal()
-                    getData();
                     setTimeout(() => {
-                        alert("Student Assigned As Community Manager !!!")
+                        getData();
                     }, 500)
                 } else if (response.data.status === "Validation failed") {
                     closeWaitingModal()
@@ -225,9 +224,8 @@ const AdminViewAllStud = () => {
             (response) => {
                 if (response.data.status === "success") {
                     closeWaitingModal()
-                    getData();
                     setTimeout(() => {
-                        alert("Community Manager Status Removed !!!")
+                        getData();
                     }, 500)
                 } else if (response.data.status === "Unauthorized User !!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
