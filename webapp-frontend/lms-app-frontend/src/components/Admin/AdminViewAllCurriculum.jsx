@@ -19,6 +19,7 @@ const AdminViewAllCurriculum = () => {
             "CurriculumSearchQuery": ""
         }
     )
+    const BatchName = sessionStorage.getItem('viewBatchName')
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
@@ -211,7 +212,7 @@ const AdminViewAllCurriculum = () => {
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />} <br />
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
-                <strong>View All Curriculum {currentCurriculum.length > 0 ? `( Batch Name - ${currentCurriculum[0].batchName} )` : ''}</strong>
+                <strong>View All Curriculum {`( Batch Name - ${BatchName} )`}</strong>
                 <div></div>
             </div>
             <br />

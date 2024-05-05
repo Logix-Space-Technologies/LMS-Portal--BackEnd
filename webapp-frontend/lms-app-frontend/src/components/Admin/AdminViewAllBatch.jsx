@@ -268,8 +268,9 @@ const AdminViewAllBatch = () => {
         navigate("/adminviewoverallBatchPerformance")
     }
 
-    const viewAllCurr = (id) => {
+    const viewAllCurr = (id, batchName) => {
         sessionStorage.setItem("currbatchId", id)
+        sessionStorage.setItem("viewBatchName", batchName);
     }
 
     const UpdateClick = (id) => {
@@ -396,7 +397,7 @@ const AdminViewAllBatch = () => {
                                     <Link to="/adminviewallstudents" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Students</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id)} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>
+                                    <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id, value.batchName)} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>
                                 </td>
                                 <td className="px-6 py-4">
                                     <button onClick={() => taskScore(value.id, value.collegeId, value.batchName)} className="font-medium text-blue-600 dark:text-blue-500" style={{ whiteSpace: 'nowrap' }}>View Performance</button>
