@@ -302,24 +302,23 @@ const AdminViewAllCollege = () => {
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <br />
             <div className="flex justify-between items-center mx-4 my-4">
-
+                <div></div>
                 <strong>View All Colleges</strong>
-
                 <div></div>
             </div>
-            <br /><br />
             <div className="row">
-                <div className="col">
-                    <div className="input-group">
-                        <input onChange={inputHandler} type="text" className="form-control" name="collegeSearchQuery" value={inputField.collegeSearchQuery} placeholder='College Name/Address/Website/Email/Phone No./Mobile No.' />
+                <div className="col col-12">
+                    <div className="row g-3">
+                        <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+                            <div className="input-group mb-3"> {/* Use an input group */}
+                                <input onChange={inputHandler} type="text" className="form-control" name="collegeSearchQuery" value={inputField.collegeSearchQuery} placeholder='College Name/Address/Website/Email/Phone No./Mobile No.' />
+                                <button onClick={readSearchValue} className="btn btn-warning ms-2">Search</button>
+                            </div>
+                        </div>
                     </div>
-                    <br></br>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                        <button onClick={readSearchValue} className="btn btn-warning">Search</button>
-                    </div>
-                    <br />
                 </div>
             </div>
+            <br />
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">
                     <div>Loading...</div>
@@ -416,7 +415,7 @@ const AdminViewAllCollege = () => {
                                     </td>
                                 )}
                                 <td className="px-6 py-4">
-                                    <button onClick={() => taskScore(value.id, value.collegeName)} className="btn btn-primary" style={{ marginRight: '20px' }}>
+                                    <button onClick={() => taskScore(value.id, value.collegeName)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" style={{ marginRight: '20px' }}>
                                         View Performance
                                     </button>
                                 </td>
