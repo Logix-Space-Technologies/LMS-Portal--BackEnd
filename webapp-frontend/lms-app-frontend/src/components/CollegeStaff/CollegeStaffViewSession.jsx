@@ -19,6 +19,7 @@ const CollegeStaffViewSession = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [sessionsPerPage] = useState(10); // Number of students per page
+    const BatchName = sessionStorage.getItem('clgstaffattendancepdfbatchName')
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(sessionData.length / sessionsPerPage); // Calculate the total number of pages
@@ -211,7 +212,7 @@ const CollegeStaffViewSession = () => {
                 <br />
                 <br />
                 <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                    <h2 className="text-lg font-bold">View All Session</h2>
+                    <h2 className="text-lg font-bold">View All Session {`(Batch Name - ${BatchName})`}</h2>
                     <Link to="/collegeStaffViewBatch" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
                 </div>
                 <br /><br />
