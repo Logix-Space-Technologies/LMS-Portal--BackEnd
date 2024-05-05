@@ -211,7 +211,6 @@ const AdminViewAllCollege = () => {
                 if (response.data.status === "Registration Status Changed To Open.") {
                     closeWaitingModal()
                     setTimeout(() => {
-                        alert("Registration Status Set To Open")
                         getData();
                     }, 500)
                 } else if (response.data.status === "Unauthorized User !!!") {
@@ -253,7 +252,6 @@ const AdminViewAllCollege = () => {
                 if (response.data.status === "Registration Status Changed To Unavailable.") {
                     closeWaitingModal()
                     setTimeout(() => {
-                        alert("Registration Status Set To Closed")
                         getData();
                     }, 500)
                 } else {
@@ -400,10 +398,10 @@ const AdminViewAllCollege = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.registrationStatus === 0 && (
-                                        <button onClick={() => openRegistration(value.id)} style={{ fontSize: '12px' }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Open Registration</button>
+                                        <button onClick={() => openRegistration(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">Open Registration</button>
                                     )}
                                     {value.registrationStatus === 1 && (
-                                        <button onClick={() => { closeRegistration(value.id) }} style={{ fontSize: '12px' }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Close Registration</button>
+                                        <button onClick={() => { closeRegistration(value.id) }} style={{ fontSize: '12px' }} className="btn btn-danger">Close Registration</button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
