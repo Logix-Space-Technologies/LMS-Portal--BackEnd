@@ -22,6 +22,7 @@ const StudentUpdateProfile = () => {
             "studProfilePic": file
         }
     )
+    const [key, setKey] = useState('')
 
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
@@ -81,12 +82,25 @@ const StudentUpdateProfile = () => {
                     "aadharNo": updateField.aadharNo
                 }
             }
+            // Retrieve key and token from sessionStorage without providing the key
+            let currentKey, token;
+            Object.entries(sessionStorage).forEach(([key, value]) => {
+                if (key.includes('key')) {
+                    currentKey = value;
+                } else if (key.includes('token')) {
+                    token = value;
+                }
+            });
+
+            // Update the state with the current key
+            setKey(currentKey);
+
             let axiosConfig = {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     "Access-Control-Allow-Origin": "*",
-                    "token": sessionStorage.getItem("studLoginToken"),
-                    "key": sessionStorage.getItem("studentkey")
+                    "token": token,
+                    "key": currentKey
                 }
             };
             setShowWaitingModal(true)
@@ -163,12 +177,24 @@ const StudentUpdateProfile = () => {
 
     const getData = () => {
         let data = { "studId": sessionStorage.getItem("studentId") }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("studLoginToken"),
-                "key": sessionStorage.getItem("studentkey")
+                "token": token,
+                "key": currentKey
             }
         }
         axios.post(apiURL, data, axiosConfig).then(
@@ -285,7 +311,7 @@ const StudentUpdateProfile = () => {
                                         </div>
                                         <br></br>
                                         <div className="mb-3">
-                                            <Link className="btn btn-danger" to="/studdashboard">Back</Link>
+                                            <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
                                         </div>
                                     </ul>
                                 </div>

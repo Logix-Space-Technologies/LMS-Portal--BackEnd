@@ -263,7 +263,10 @@ const AdminViewAllStud = () => {
         return differenceInDays <= 45;
     };
 
-
+    const UpdateClick = (id) => {
+        sessionStorage.setItem('studentId', id)
+        navigate("/studentupdateprofile");
+    };
 
     useEffect(() => { getData() }, []);
 
@@ -355,6 +358,9 @@ const AdminViewAllStud = () => {
                             <th scope="col" className="px-6 py-3">
 
                             </th>
+                            <th scope="col" className="px-6 py-3">
+
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -410,6 +416,9 @@ const AdminViewAllStud = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         <button onClick={() => viewtaskScore(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">View Performance</button>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <button onClick={() => UpdateClick(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">Update Profile</button>
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.communityManager === 0 && (
