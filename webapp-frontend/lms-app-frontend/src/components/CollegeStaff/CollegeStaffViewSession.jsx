@@ -137,8 +137,9 @@ const CollegeStaffViewSession = () => {
         return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
     }
 
-    const viewsessionId = (attendanceid) => {
+    const viewsessionId = (attendanceid, sessionName) => {
         sessionStorage.setItem("viewattendanceid", attendanceid)
+        sessionStorage.setItem("viewattendancesessionName", sessionName)
         navigate("/clgstaffviewattendance")
     }
 
@@ -327,7 +328,7 @@ const CollegeStaffViewSession = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.cancelStatus === "ACTIVE" && (
-                                                <button onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary" disabled={!sessionIsPast}>
+                                                <button onClick={() => viewsessionId(value.id, value.sessionName)} type="button" class="btn btn-primary" disabled={!sessionIsPast}>
                                                     View Attendance List
                                                 </button>
                                             )}
