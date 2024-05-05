@@ -173,8 +173,9 @@ const AdminViewAllSession = () => {
         setFilterCriteria(selectedCriteria);
     };
 
-    const viewsessionId = (attendanceid) => {
+    const viewsessionId = (attendanceid, sessionName) => {
         sessionStorage.setItem("viewattendanceid", attendanceid)
+        sessionStorage.setItem("viewattendancesessionName", sessionName)
         navigate("/clgstaffviewattendance")
     }
 
@@ -544,7 +545,7 @@ const AdminViewAllSession = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.cancelStatus === "ACTIVE" && sessionIsPast === true && (
-                                        <button onClick={() => viewsessionId(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                        <button onClick={() => viewsessionId(value.id, value.sessionName)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                             View Attendance List
                                         </button>
                                     )}
