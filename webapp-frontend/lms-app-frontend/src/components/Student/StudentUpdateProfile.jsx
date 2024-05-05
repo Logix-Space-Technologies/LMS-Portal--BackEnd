@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import '../../config/config'
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from '../Admin/Navbar';
+import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+
 
 
 const StudentUpdateProfile = () => {
@@ -243,121 +246,123 @@ const StudentUpdateProfile = () => {
     useEffect(() => { getData() }, [])
 
     return (
-        <div className="container">
-            <div className="row">
-                <div className="col-lg-12 mb-4 mb-sm-5">
-                    <br></br>
-                    <div className="flex justify-between items-center mx-4 my-4">
-                        <button onClick={() => navigate(-1)} className="btn bg-red-700 text-white px-4 py-2 rounded-md">Back</button>
+        <div>
+            {key === 'lmsappstud' ? '' : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
+            <div className="container">
+                <div className="row">
+                    <div className="col-lg-12 mb-4 mb-sm-5">
+                        <div className="flex justify-between items-center mx-4 my-4">
+                            <button onClick={() => navigate(-1)} className="btn bg-red-700 text-white px-4 py-2 rounded-md">Back</button>
 
-                        <strong>Update Student Profile</strong>
+                            <strong>Update Student Profile</strong>
 
-                        <div></div>
-                    </div>
-                    <div className="card card-style1 --bs-primary-border-subtle border-5">
-                        <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
-                            <div className="row align-items-center">
-                                <div className="col-lg-6 mb-4 mb-lg-0">
-                                    <img height="300px" src={studData.studProfilePic} alt="" />
-                                </div>
-                                <div className="col-lg-6 px-xl-10">
-                                    <div className=" d-lg-inline-block py-1-9 px-1-9 px-sm-6 mb-1-9 rounded">
-                                    </div>
-                                    <ul className="list-unstyled mb-1-9">
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            {/* <label htmlFor="" className="form-label">College Name :   </label> */}
-                                            <input type="hidden" className="form-control" name="collegeName" value={studData.collegeName} disabled />
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            {/* <label htmlFor="" className="form-label">Batch ID : </label> */}
-                                            <input type="hidden" className="form-control" name="batchId" value={studData.batchId} disabled />
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Student Name :</label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="studName" value={updateField.studName} />
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Admission No :  </label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="admNo" value={updateField.admNo} />
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Roll No : </label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="rollNo" value={updateField.rollNo} />
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Department : </label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="studDept" value={updateField.studDept} />
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Course : </label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="course" value={updateField.course} />
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Phone No : </label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="studPhNo" value={updateField.studPhNo} />
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Aadhar No : </label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="aadharNo" value={updateField.aadharNo} />
-                                        </div>
-                                        <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                            <label htmlFor="studProfilePic" className="form-label">
-                                                Profile Picture <span className="text-danger">*</span>
-                                            </label>
-                                            <input onChange={fileUploadHandler} type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" />
-                                            {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
-                                        </div>
-                                        <br></br>
-                                        <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
-                                            <Link onClick={readNewValue} className="btn btn-warning">Update</Link>
-                                        </div>
-                                    </ul>
-                                </div>
-                            </div>
-
+                            <div></div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            {showWaitingModal && (
-                <div className="modal show d-block" tabIndex={-1}>
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
-                            </div>
-                            <div className="modal-body">
-                                <>
-                                    <div className="mb-3">
-                                        <p>Processing Request. Do Not Refresh.</p>
+                        <div className="card card-style1 --bs-primary-border-subtle border-5">
+                            <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
+                                <div className="row align-items-center">
+                                    <div className="col-lg-6 mb-4 mb-lg-0">
+                                        <img height="300px" src={studData.studProfilePic} alt="" />
                                     </div>
-                                </>
-                            </div>
-                            <div className="modal-footer">
+                                    <div className="col-lg-6 px-xl-10">
+                                        <div className=" d-lg-inline-block py-1-9 px-1-9 px-sm-6 mb-1-9 rounded">
+                                        </div>
+                                        <ul className="list-unstyled mb-1-9">
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                {/* <label htmlFor="" className="form-label">College Name :   </label> */}
+                                                <input type="hidden" className="form-control" name="collegeName" value={studData.collegeName} disabled />
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                {/* <label htmlFor="" className="form-label">Batch ID : </label> */}
+                                                <input type="hidden" className="form-control" name="batchId" value={studData.batchId} disabled />
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">Student Name :</label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="studName" value={updateField.studName} />
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">Admission No :  </label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="admNo" value={updateField.admNo} />
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">Roll No : </label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="rollNo" value={updateField.rollNo} />
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">Department : </label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="studDept" value={updateField.studDept} />
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">Course : </label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="course" value={updateField.course} />
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">Phone No : </label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="studPhNo" value={updateField.studPhNo} />
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">Aadhar No : </label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="aadharNo" value={updateField.aadharNo} />
+                                            </div>
+                                            <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                                <label htmlFor="studProfilePic" className="form-label">
+                                                    Profile Picture <span className="text-danger">*</span>
+                                                </label>
+                                                <input onChange={fileUploadHandler} type="file" className="form-control" name="studProfilePic" id="studProfilePic" accept="image/*" />
+                                                {errors.file && (<span style={{ color: 'red' }} className="error">{errors.file}</span>)}
+                                            </div>
+                                            <br></br>
+                                            <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
+                                                <Link onClick={readNewValue} className="btn btn-warning">Update</Link>
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
-            )}
-            {showOverlay && (
-                <div
-                    className="modal-backdrop fade show"
-                    onClick={() => {
-                        setShowWaitingModal(false);
-                        setShowOverlay(false);
-                    }}
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        zIndex: 1040, // Ensure this is below your modal's z-index
-                    }}
-                ></div>
-            )}
-        </div >
+                {showWaitingModal && (
+                    <div className="modal show d-block" tabIndex={-1}>
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                                </div>
+                                <div className="modal-body">
+                                    <>
+                                        <div className="mb-3">
+                                            <p>Processing Request. Do Not Refresh.</p>
+                                        </div>
+                                    </>
+                                </div>
+                                <div className="modal-footer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {showOverlay && (
+                    <div
+                        className="modal-backdrop fade show"
+                        onClick={() => {
+                            setShowWaitingModal(false);
+                            setShowOverlay(false);
+                        }}
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            zIndex: 1040, // Ensure this is below your modal's z-index
+                        }}
+                    ></div>
+                )}
+            </div >
+        </div>
     );
 };
 
