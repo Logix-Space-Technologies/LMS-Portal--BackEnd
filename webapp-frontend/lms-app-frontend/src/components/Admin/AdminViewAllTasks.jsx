@@ -243,26 +243,18 @@ const AdminViewAllTasks = () => {
 
                 <div></div>
             </div>
-            <div className="row mb-3">
-                <div className="col">
-                    <div className="input-group">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Search by title, description, or type..."
-                            value={inputField.taskQuery}
-                            onChange={inputHandler}
-                            name="taskQuery"
-                        />
+            <div className="row">
+                <div className="col col-12">
+                    <div className="row g-3">
+                        <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+                            <div className="input-group mb-3"> {/* Use an input group */}
+                                <input onChange={inputHandler} type="text" className="form-control" name="taskQuery" value={inputField.taskQuery} placeholder='Search by title, description, or type...' />
+                                <button onClick={searchTasks} className="btn btn-warning ms-2">Search</button>
+                            </div>
+                        </div>
                     </div>
-                    <br></br>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                        <button onClick={searchTasks} className="btn btn-warning">Search</button>
-                    </div>
-                    <br />
                 </div>
-            </div>
-            <br /><br />
+            </div><br />
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">
                     <div>Loading...</div>
