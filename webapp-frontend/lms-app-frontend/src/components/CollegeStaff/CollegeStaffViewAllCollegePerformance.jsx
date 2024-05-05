@@ -18,7 +18,11 @@ const CollegeStaffViewAllCollegePerformance = () => {
             "performanceSearchQuery": ""
         }
     )
+
+    const CollegeName = sessionStorage.getItem('ViewAllperformancecollegeName')
+
     const apiUrl4 = global.config.urls.api.server + "/api/lms/searchPerformanceOfStudents";
+
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
     }
@@ -176,7 +180,7 @@ const CollegeStaffViewAllCollegePerformance = () => {
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                                {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View College Performance</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View College Performance</h2> : <h2 className="text-lg font-bold">Admin Staff View College Performance</h2>)}
+                                {key === 'lmsapp' ? <h2 className="text-lg font-bold">View Performance College-Wise (College Name {`- ${CollegeName}`})</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">View Performance College-Wise</h2> : <h2 className="text-lg font-bold">View Performance College-Wise</h2>)}
                                 <div className="flex space-x-4">
                                     <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
                                     <button type='button' onClick={() => generatePDF()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download PDF</button>

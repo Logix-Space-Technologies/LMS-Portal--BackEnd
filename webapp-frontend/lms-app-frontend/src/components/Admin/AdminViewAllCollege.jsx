@@ -37,8 +37,9 @@ const AdminViewAllCollege = () => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
     }
 
-    const taskScore = (id) => {
+    const taskScore = (id, collegeName) => {
         sessionStorage.setItem("ViewAllperformancecollegeId", id)
+        sessionStorage.setItem("ViewAllperformancecollegeName", collegeName)
         navigate("/clgStaffviewAllClgPerformance")
     }
 
@@ -417,7 +418,7 @@ const AdminViewAllCollege = () => {
                                     </td>
                                 )}
                                 <td className="px-6 py-4">
-                                    <button onClick={() => taskScore(value.id)} className="btn btn-primary" style={{ marginRight: '20px' }}>
+                                    <button onClick={() => taskScore(value.id, value.collegeName)} className="btn btn-primary" style={{ marginRight: '20px' }}>
                                         View Performance
                                     </button>
                                 </td>
