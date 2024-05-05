@@ -329,26 +329,20 @@ const AdminViewAllBatch = () => {
 
                 <div></div>
             </div>
-            <br /><br />
+            <br />
             <div className="row">
-                <div className="col">
-                    <div className="input-group">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Search by batch name, college name, or description..."
-                            value={inputField.batchQuery}
-                            onChange={inputHandler}
-                            name="batchQuery"
-                        />
+                <div className="col col-12">
+                    <div className="row g-3">
+                        <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+                            <div className="input-group mb-3"> {/* Use an input group */}
+                                <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} placeholder='Search by batch name, college name, or description...' />
+                                <button onClick={searchBatches} className="btn btn-warning ms-2">Search</button>
+                            </div>
+                        </div>
                     </div>
-                    <br></br>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                        <button onClick={searchBatches} className="btn btn-warning">Search</button>
-                    </div>
-                    <br />
                 </div>
             </div>
+            <br />
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">
                     <div>Loading...</div>
