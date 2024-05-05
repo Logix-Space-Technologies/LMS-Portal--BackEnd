@@ -211,7 +211,7 @@ const AdminViewAllCurriculum = () => {
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />} <br />
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
-                <strong>View All Curriculum</strong>
+                <strong>View All Curriculum {currentCurriculum.length > 0 ? `( Batch Name - ${currentCurriculum[0].batchName} )` : ''}</strong>
                 <div></div>
             </div>
             <br />
@@ -232,9 +232,8 @@ const AdminViewAllCurriculum = () => {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">S/L</th>
-                            <th scope="col" className="px-6 py-3">Batch Name</th>
                             <th scope="col" className="px-6 py-3">Curriculum Title</th>
-                            <th scope="col" className="px-6 py-3">Curriculum Description</th>
+                            <th scope="col" className="px-6 py-3">Description</th>
                             <th scope="col" className="px-6 py-3">Added Date</th>
                             <th scope="col" className="px-6 py-3">Added By</th>
                             <th scope="col" className="px-6 py-3">Updated By</th>
@@ -250,7 +249,6 @@ const AdminViewAllCurriculum = () => {
                                 return (
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
-                                        <td className="px-6 py-4">{value.batchName}</td>
                                         <td className="px-6 py-4">{value.curriculumTitle}</td>
                                         <td className="px-6 py-4">{value.curriculumDesc}</td>
                                         <td className="px-6 py-4">{value.addedDate}</td>
@@ -268,7 +266,7 @@ const AdminViewAllCurriculum = () => {
                                             <td className="px-6 py-4">NIL</td>
                                         )}
                                         <td className="px-6 py-4">
-                                            <Link target="_blank" to={value.curriculumFileLink} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Curriculum</Link>
+                                            <Link target="_blank" to={value.curriculumFileLink} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View</Link>
                                         </td>
                                         <td className="p-4 whitespace-nowrap">
                                             {key === "lmsapp" && (
@@ -276,7 +274,7 @@ const AdminViewAllCurriculum = () => {
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <a onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Curriculum</a>
+                                            <a onClick={() => { UpdateClick(value.id) }} className="btn btn-success">Update</a>
                                         </td>
                                     </tr>
                                 );
