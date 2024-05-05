@@ -55,7 +55,7 @@ const ClgStaffViewScoreStudentWise = () => {
                     setScoreData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        {key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : (key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin"))}
+                        { key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : (key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")) }
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
@@ -91,9 +91,9 @@ const ClgStaffViewScoreStudentWise = () => {
     useEffect(() => { getData() }, [])
 
 
-  return (
-    <div>
-        {key === 'lmsappclgstaff' ? <ClgStaffNavbar /> : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
+    return (
+        <div>
+            {key === 'lmsappclgstaff' ? <ClgStaffNavbar /> : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
             {/* ====== Table Section Start */}
             <section className="bg-gray-100 dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
@@ -112,6 +112,9 @@ const ClgStaffViewScoreStudentWise = () => {
                                                 S/L
                                             </th>
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                                                Session Name
+                                            </th>
+                                            <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 Task Name
                                             </th>
                                             <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
@@ -128,6 +131,9 @@ const ClgStaffViewScoreStudentWise = () => {
                                                 return <tr key={index}>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {calculateSerialNumber(index)}
+                                                    </td>
+                                                    <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                        {value.sessionName}
                                                     </td>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.taskName}
@@ -197,8 +203,8 @@ const ClgStaffViewScoreStudentWise = () => {
                 </div>
             </section>
             {/* ====== Table Section End */}
-    </div>
-  )
+        </div>
+    )
 }
 
 export default ClgStaffViewScoreStudentWise
