@@ -296,7 +296,7 @@ const AdminViewAllStud = () => {
                             className="form-control"
                             name="studentSearchQuery"
                             value={inputField.studentSearchQuery}
-                            placeholder="Student Name/Phone No/Address/Aadhar No/Email"
+                            placeholder="Student Name/Phone No/Membership No."
                         />
                         <button onClick={readValue} className="btn btn-warning">
                             Search
