@@ -148,9 +148,10 @@ const CollegeStaffViewBatch = () => {
     sessionStorage.setItem("clgstaffattendancepdfbatchName", batchName)
   }
 
-  const studentClick = (id) => {
+  const studentClick = (id, batchName) => {
     navigate("/collegeStaffViewAllStudents")
     sessionStorage.setItem("clgstaffviewbatchId", id)
+    sessionStorage.setItem("viewbatchName", batchName);
   }
 
   const notificationClick = (id) => {
@@ -237,7 +238,7 @@ const CollegeStaffViewBatch = () => {
                                 <button onClick={() => batchClick(batch.id, batch.batchName)} className="btn btn-primary" style={{ marginLeft: '20px' }}>
                                   View Session
                                 </button>
-                                <button className="btn btn-primary" onClick={() => studentClick(batch.id)} style={{ marginLeft: '20px' }}>
+                                <button className="btn btn-primary" onClick={() => studentClick(batch.id, batch.batchName)} style={{ marginLeft: '20px' }}>
                                   View All Students
                                 </button>
                                 <button className="btn btn-primary" onClick={() => notificationClick(batch.id)} style={{ marginLeft: '20px' }}>

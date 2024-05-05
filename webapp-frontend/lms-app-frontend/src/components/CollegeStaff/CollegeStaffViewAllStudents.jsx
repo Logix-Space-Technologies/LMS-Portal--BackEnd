@@ -15,6 +15,7 @@ const CollegeStaffViewAllStudents = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [studentsPerPage] = useState(10); // Number of students per page
+  const BatchName = sessionStorage.getItem('viewbatchName')
 
   const rangeSize = 5; // Number of pages to display in the pagination
   const lastPage = Math.ceil(students.length / studentsPerPage); // Calculate the total number of pages
@@ -141,7 +142,7 @@ const CollegeStaffViewAllStudents = () => {
       <ClgStaffNavbar />
       <br /><br />
       <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-        <h2 className="text-lg font-bold">College Staff View All Students</h2>
+        <h2 className="text-lg font-bold">View All Students {`( Batch Name: ${BatchName} )`}</h2>
         <Link to="/collegeStaffViewBatch" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
       </div>
       <div className="row g-3">
