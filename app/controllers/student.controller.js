@@ -344,8 +344,9 @@ exports.StdChangePassword = (request, response) => {
 exports.studentViewProfile = (request, response) => {
     const studId = request.body.studId
     const studProfileToken = request.headers.token
+    const key = request.headers.key
 
-    jwt.verify(studProfileToken, "lmsappstud", (err, decoded) => {
+    jwt.verify(studProfileToken, key, (err, decoded) => {
         if (decoded) {
             Student.viewStudentProfile(studId, (err, data) => {
                 if (err) {
@@ -387,8 +388,9 @@ exports.profileUpdateStudent = (request, response) => {
 
                 const { studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = request.body;
                 const updateProfileToken = request.headers.token;
-                console.log(request.body)
-                jwt.verify(updateProfileToken, "lmsappstud", async (err, decoded) => {
+                const key = request.headers.key;
+                
+                jwt.verify(updateProfileToken, key, async (err, decoded) => {
                     if (decoded) {
                         // Validation
                         const validationErrors = {};
@@ -479,8 +481,8 @@ exports.profileUpdateStudent = (request, response) => {
             // Handle if no file is uploaded
             const { studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = request.body;
             const updateProfileToken = request.headers.token;
-            console.log(request.body)
-            jwt.verify(updateProfileToken, "lmsappstud", async (err, decoded) => {
+            const key = request.headers.key;
+            jwt.verify(updateProfileToken, key, async (err, decoded) => {
                 if (decoded) {
                     // Validation
                     const validationErrors = {};
