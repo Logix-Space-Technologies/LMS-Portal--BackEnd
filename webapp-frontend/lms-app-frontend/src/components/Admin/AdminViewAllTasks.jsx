@@ -95,8 +95,10 @@ const AdminViewAllTasks = () => {
         navigate("/collegestaffviewscore")
     }
 
-    const subtaskClick = (id) => {
+    const subtaskClick = (id, taskTitle, dueDate) => {
         sessionStorage.setItem("taskId", id)
+        sessionStorage.setItem("taskTitle", taskTitle)
+        sessionStorage.setItem("taskdueDate", dueDate)
         navigate("/adminstaffviewsubmittedtask")
     }
 
@@ -322,7 +324,7 @@ const AdminViewAllTasks = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             {isLateSubmission && (
-                                                <button onClick={() => subtaskClick(value.id)} className="btn btn-primary btn-sm me-2">
+                                                <button onClick={() => subtaskClick(value.id, value.taskTitle, value.dueDate)} className="btn btn-primary btn-sm me-2">
                                                     View Submitted Tasks
                                                 </button>
                                             )}

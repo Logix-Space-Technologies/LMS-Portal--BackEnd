@@ -42,6 +42,9 @@ const AdminStaffViewSubmittedTask = () => {
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
+    const TaskTitle = sessionStorage.getItem('taskTitle')
+    const TaskDueDate = sessionStorage.getItem('taskdueDate')
+
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(taskData.length / tasksPerPage); // Calculate the total number of pages
     let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
@@ -136,7 +139,7 @@ const AdminStaffViewSubmittedTask = () => {
                 "key": currentKey
             }
         }
-        let data = { "taskId": sessionStorage.getItem("taskId") , "subTaskSearchQuery": updateField.subTaskSearchQuery }
+        let data = { "taskId": sessionStorage.getItem("taskId"), "subTaskSearchQuery": updateField.subTaskSearchQuery }
         axios.post(apiUrl3, data, axiosConfig)
             .then(response => {
                 if (response.data.status === "Search Item is required.") {
@@ -407,12 +410,8 @@ const AdminStaffViewSubmittedTask = () => {
                     <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
                     <strong>
-                        View All Submitted Tasks {currentTasks.length > 0 ?
-                            <>
-                                ( Task Name: {currentTasks[0].taskTitle},
-                                Due Date: <span style={{ color: 'red' }}> {currentTasks[0].dueDate}</span> )
-                            </>
-                            : ''}
+                        View All Submitted Tasks ( Task Name: {TaskTitle} ,
+                        Due Date: <span style={{ color: '#BA0F30' }}> {TaskDueDate} </span>)
                     </strong>
 
                     <div></div>
