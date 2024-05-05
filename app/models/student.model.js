@@ -1528,7 +1528,7 @@ Student.viewPerformance = (collegeId, batchId, id, result) => {
 }
 
 Student.viewPerformanceScore = (studId, result) => {
-    db.query("SELECT taskName, score, totalScore FROM studentTaskScore WHERE studentId = ? ORDER BY score DESC", [studId], (err, res) => {
+    db.query("SELECT sessionName, taskName, score, totalScore FROM studentTaskScore WHERE studentId = ? ORDER BY score DESC", [studId], (err, res) => {
         if (err) {
             console.log("Error: ", err)
             return result(err, null)
