@@ -311,7 +311,7 @@ const AdminViewAllCollege = () => {
             <div className="row">
                 <div className="col">
                     <div className="input-group">
-                        <input onChange={inputHandler} type="text" className="form-control" name="collegeSearchQuery" value={inputField.collegeSearchQuery} placeholder='College Name/College Address/Website/Email/College Contact Number' />
+                        <input onChange={inputHandler} type="text" className="form-control" name="collegeSearchQuery" value={inputField.collegeSearchQuery} placeholder='College Name/Address/Website/Email/Phone No./Mobile No.' />
                     </div>
                     <br></br>
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
