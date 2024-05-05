@@ -296,7 +296,7 @@ const AdminViewAllStud = () => {
                             className="form-control"
                             name="studentSearchQuery"
                             value={inputField.studentSearchQuery}
-                            placeholder="Student Name/Phone No/Membership No."
+                            placeholder="Student Name/Phone No/Membership No./Department/Course"
                         />
                         <button onClick={readValue} className="btn btn-warning">
                             Search
@@ -417,10 +417,10 @@ const AdminViewAllStud = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.communityManager === 0 && (
-                                            <button onClick={() => assignCommunityManager(value.id, value.batchId)} style={{ fontSize: '12px' }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Assign Community Manager</button>
+                                            <button onClick={() => assignCommunityManager(value.id, value.batchId)} style={{ fontSize: '12px' }} className="btn btn-primary">Assign Community Manager</button>
                                         )}
                                         {value.communityManager === 1 && (
-                                            <button onClick={() => { removeCommunityManager(value.commManagerId) }} style={{ fontSize: '12px' }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Remove Community Manager</button>
+                                            <button onClick={() => { removeCommunityManager(value.commManagerId) }} style={{ fontSize: '12px' }} className="btn btn-danger">Remove Community Manager</button>
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
