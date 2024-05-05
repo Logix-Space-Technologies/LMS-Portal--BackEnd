@@ -58,8 +58,8 @@ Curriculum.curriculumCreate = (newCurriculum, result) => {
 
 Curriculum.searchCurriculum = (batchId, search , result)=>{
     const searchTerm = '%'+ search + '%'
-    db.query("SELECT b.batchName, c.id, c.curriculumTitle, c.curriculumDesc, COALESCE(asa.AdStaffName, CASE WHEN c.addedBy = 0 THEN 'Admin' ELSE c.addedBy END) AS addedBy, c.curriculumFileLink, c.addedDate, COALESCE(usf.AdStaffName, CASE WHEN c.updatedBy = 0 THEN 'Admin' ELSE c.updatedBy END) AS updatedBy, c.updatedDate FROM curriculum c JOIN batches b ON c.batchId = b.id JOIN college co ON b.collegeId = co.id LEFT JOIN admin_staff asa ON c.addedBy = asa.id AND asa.AdStaffName IS NOT NULL LEFT JOIN admin_staff usf ON c.updatedBy = usf.id AND usf.AdStaffName IS NOT NULL WHERE b.id = ? AND c.isActive = 1 AND c.deleteStatus = 0 AND b.isActive = 1 AND b.deleteStatus = 0 AND co.isActive = 1 AND co.deleteStatus = 0 AND ( c.curriculumTitle LIKE ? OR c.curriculumDesc LIKE ? OR b.batchName LIKE ? OR co.collegeName LIKE ?)",
-    [batchId, searchTerm, searchTerm, searchTerm,searchTerm],
+    db.query("SELECT b.batchName, c.id, c.curriculumTitle, c.curriculumDesc, COALESCE(asa.AdStaffName, CASE WHEN c.addedBy = 0 THEN 'Admin' ELSE c.addedBy END) AS addedBy, c.curriculumFileLink, c.addedDate, COALESCE(usf.AdStaffName, CASE WHEN c.updatedBy = 0 THEN 'Admin' ELSE c.updatedBy END) AS updatedBy, c.updatedDate FROM curriculum c JOIN batches b ON c.batchId = b.id JOIN college co ON b.collegeId = co.id LEFT JOIN admin_staff asa ON c.addedBy = asa.id AND asa.AdStaffName IS NOT NULL LEFT JOIN admin_staff usf ON c.updatedBy = usf.id AND usf.AdStaffName IS NOT NULL WHERE b.id = ? AND c.isActive = 1 AND c.deleteStatus = 0 AND b.isActive = 1 AND b.deleteStatus = 0 AND co.isActive = 1 AND co.deleteStatus = 0 AND ( c.curriculumTitle LIKE ? OR c.curriculumDesc LIKE ? )",
+    [batchId, searchTerm, searchTerm],
     (err, res) => {
         if (err) {
             console.log("Error : ", err)
