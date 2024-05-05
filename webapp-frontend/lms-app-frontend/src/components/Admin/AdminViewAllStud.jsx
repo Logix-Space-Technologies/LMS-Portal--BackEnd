@@ -25,8 +25,9 @@ const AdminViewAllStud = () => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
 
-    const viewtaskScore = (id) => {
+    const viewtaskScore = (id, studName) => {
         sessionStorage.setItem("viewscorestudId", id)
+        sessionStorage.setItem("viewscorestudName", studName)
         navigate("/clgstaffstudentviewscore")
     }
 
@@ -415,7 +416,7 @@ const AdminViewAllStud = () => {
                                         {value.validity}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button onClick={() => viewtaskScore(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">View Performance</button>
+                                        <button onClick={() => viewtaskScore(value.id, value.studName)} style={{ fontSize: '12px' }} className="btn btn-primary">View Performance</button>
                                     </td>
                                     <td className="px-6 py-4">
                                         <button onClick={() => UpdateClick(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">Update Profile</button>
