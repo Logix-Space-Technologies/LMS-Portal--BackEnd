@@ -319,7 +319,7 @@ const AdminViewAllBatch = () => {
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
-                <strong>View All Batches</strong>
+                <strong>View All Batches {currentBatches.length > 0 ? `( College Name - ${currentBatches[0].collegeName} )` : ''}</strong>
 
                 <div></div>
             </div>
@@ -353,7 +353,6 @@ const AdminViewAllBatch = () => {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">S/N</th>
-                            <th scope="col" className="px-6 py-3">College Name</th>
                             <th scope="col" className="px-6 py-3">Batch Name</th>
                             <th scope="col" className="px-6 py-3">Reg Start Date</th>
                             <th scope="col" className="px-6 py-3">Reg End Date</th>
@@ -375,7 +374,6 @@ const AdminViewAllBatch = () => {
                         {currentBatches.length > 0 ? currentBatches.map((value, index) => {
                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
-                                <td className="px-6 py-4">{value.collegeName}</td>
                                 <td className="px-6 py-4">{value.batchName}</td>
                                 <td className="px-6 py-4">{value.regStartDate}</td>
                                 <td className="px-6 py-4">{value.regEndDate}</td>
@@ -386,10 +384,10 @@ const AdminViewAllBatch = () => {
                                 </div>
                                 <td className="px-6 py-4">
                                     {value.registrationStatus === 0 && (
-                                        <button onClick={() => openRegistration(value.id)} style={{ fontSize: '12px' }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Open Registration</button>
+                                        <button onClick={() => openRegistration(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">Open Registration</button>
                                     )}
                                     {value.registrationStatus === 1 && (
-                                        <button onClick={() => { closeRegistration(value.id) }} style={{ fontSize: '12px' }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Close Registration</button>
+                                        <button onClick={() => { closeRegistration(value.id) }} style={{ fontSize: '12px' }} className="btn btn-danger">Close Registration</button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
@@ -401,8 +399,8 @@ const AdminViewAllBatch = () => {
                                 <td className="px-6 py-4">
                                     <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id)} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>
                                 </td>
-                                <td className="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                    <button onClick={() => taskScore(value.id, value.collegeId)} className="btn btn-primary">View Batch Peformance</button>
+                                <td className="px-6 py-4">
+                                    <button onClick={() => taskScore(value.id, value.collegeId)} className="font-medium text-blue-600 dark:text-blue-500" style={{ whiteSpace: 'nowrap' }}>View Peformance</button>
                                 </td>
                                 <td className="px-6 py-4">
                                     <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success">Update</button>
