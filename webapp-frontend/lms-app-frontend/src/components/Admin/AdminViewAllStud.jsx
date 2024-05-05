@@ -12,6 +12,8 @@ const AdminViewAllStud = () => {
     const [studentsPerPage] = useState(10); // Number of students per page
     const [isLoading, setIsLoading] = useState(true);
     const [inputField, setInputField] = useState({ studentSearchQuery: '' });
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
     const navigate = useNavigate()
 
@@ -24,6 +26,11 @@ const AdminViewAllStud = () => {
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
+
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
 
     const viewtaskScore = (id, studName) => {
         sessionStorage.setItem("viewscorestudId", id)
@@ -164,21 +171,31 @@ const AdminViewAllStud = () => {
                 "key": currentKey
             }
         };
-
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, data, axiosConfig2).then(
             (response) => {
                 if (response.data.status === "success") {
-                    // Assuming "Assigned to Community Manager" is a message you want to display
-                    getData(); // Ensure getData() is defined and fetches the latest data
+                    closeWaitingModal()
+                    getData();
+                    setTimeout(() => {
+                        alert("Student Assigned As Community Manager !!!")
+                    }, 500)
                 } else if (response.data.status === "Validation failed") {
-                    // Handle validation errors
-                    alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        // Handle validation errors
+                        alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User !!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
-                    // Handle other errors
-                    alert(response.data.status);
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        // Handle other errors
+                        alert(response.data.status);
+                    }, 500)
                 }
             }
         )
@@ -202,17 +219,24 @@ const AdminViewAllStud = () => {
                 "key": currentKey
             }
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl3, data, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    getData()
+                    closeWaitingModal()
+                    getData();
+                    setTimeout(() => {
+                        alert("Community Manager Status Removed !!!")
+                    }, 500)
+                } else if (response.data.status === "Unauthorized User !!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Unauthorized User !!!") {
-                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
-                        sessionStorage.clear()
-                    } else {
+                    closeWaitingModal()
+                    setTimeout(() => {
                         alert(response.data.status);
-                    }
+                    }, 500)
                 }
             }
         )
@@ -473,6 +497,44 @@ const AdminViewAllStud = () => {
                         </div>
                     </div>
                 </div>
+            )}
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
             )}
         </div>
     );
