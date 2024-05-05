@@ -17,6 +17,7 @@ const ClgStaffClgPerformanceDwnldPDF = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/dwnldClgWiseStudPerformance"
 
     const collegeId = sessionStorage.getItem("ViewAllperformancecollegeId");
+    const CollegeName = sessionStorage.getItem('ViewAllperformancecollegeName')
 
     const getScorePDFData = () => {
         const data = {
@@ -152,6 +153,8 @@ const ClgStaffClgPerformanceDwnldPDF = () => {
                                     <div ref={pdfContentRef}>
                                         <img width="200px" src='/logo.png' alt="" />
                                         <p style={{ textAlign: "center", fontSize: "22px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>College-Wise Performance List Of Students</p>
+                                        <br />
+                                        <p style={{ textAlign: "center", fontSize: "20px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>{`College Name: ${CollegeName}`}</p>
                                         <br />
                                         {Object.keys(groupedData).map(batchName => {
                                             return (
