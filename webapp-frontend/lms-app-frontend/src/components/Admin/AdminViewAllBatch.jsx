@@ -21,6 +21,7 @@ const AdminViewAllBatch = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+    const CollegeName = sessionStorage.getItem('clgName')
 
     const inputHandler = (event) => {
         const { name, value } = event.target;
@@ -319,7 +320,7 @@ const AdminViewAllBatch = () => {
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
-                <strong>View All Batches {currentBatches.length > 0 ? `( College Name - ${currentBatches[0].collegeName} )` : ''}</strong>
+                <strong>View All Batches {`( College Name - ${CollegeName} )`}</strong>
 
                 <div></div>
             </div>

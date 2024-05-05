@@ -176,9 +176,9 @@ const AdminViewAllCollege = () => {
         )
     }
 
-    const UpdateClick = (id) => {
-        let data = id
-        sessionStorage.setItem("clgId", data)
+    const UpdateClick = (id, collegeName) => {
+        sessionStorage.setItem("clgId", id)
+        sessionStorage.setItem("clgName", collegeName)
     }
 
     const readValue = (id) => {
@@ -406,7 +406,7 @@ const AdminViewAllCollege = () => {
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/adminviewallbatches" onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Batches</Link>
+                                    <Link to="/adminviewallbatches" onClick={() => { UpdateClick(value.id, value.collegeName) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Batches</Link>
                                 </td>
                                 <td className="px-6 py-4">
                                     <Link to="/adminUpdateclg" onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update College</Link>
