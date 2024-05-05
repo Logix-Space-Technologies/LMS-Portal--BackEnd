@@ -335,7 +335,7 @@ const AdminViewAllBatch = () => {
                     <div className="row g-3">
                         <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
                             <div className="input-group mb-3"> {/* Use an input group */}
-                                <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} placeholder='Search by batch name, college name, or description...' />
+                                <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} placeholder='Search by batch name or description...' />
                                 <button onClick={searchBatches} className="btn btn-warning ms-2">Search</button>
                             </div>
                         </div>
