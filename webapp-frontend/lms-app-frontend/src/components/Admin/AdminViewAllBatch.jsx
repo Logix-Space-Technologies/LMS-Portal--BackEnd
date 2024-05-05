@@ -280,8 +280,9 @@ const AdminViewAllBatch = () => {
         navigate("/adminupdatebatch");
     };
 
-    const batchClick = (id) => {
+    const batchClick = (id, batchName) => {
         sessionStorage.setItem("viewbatchId", id);
+        sessionStorage.setItem("viewsessionbatchName", batchName);
     }
 
     const batchStudClick = (id, batchName) => {
@@ -396,7 +397,7 @@ const AdminViewAllBatch = () => {
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/AdminViewAllSession" onClick={() => batchClick(value.id)} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Sessions</Link>
+                                    <Link to="/AdminViewAllSession" onClick={() => batchClick(value.id, value.batchName)} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Sessions</Link>
                                 </td>
                                 <td className="px-6 py-4">
                                     <Link to="/adminviewallstudents" onClick={() => batchStudClick(value.id, value.batchName)} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Students</Link>

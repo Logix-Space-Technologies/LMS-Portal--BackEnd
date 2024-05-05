@@ -39,6 +39,7 @@ const AdminViewAllSession = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [inputField, setInputField] = useState({ "SessionSearchQuery": "" });
     const [filterCriteria, setFilterCriteria] = useState(null);
+    const BatchName = sessionStorage.getItem('viewsessionbatchName')
 
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchSession";
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
@@ -462,7 +463,7 @@ const AdminViewAllSession = () => {
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
-                <strong>View All Sessions</strong>
+                <strong>View All Sessions {`( Batch Name - ${BatchName} )`}</strong>
                 <div></div>
             </div>
             <div className="row">
