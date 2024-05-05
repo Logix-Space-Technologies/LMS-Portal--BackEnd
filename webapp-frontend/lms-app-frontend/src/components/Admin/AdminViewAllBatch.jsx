@@ -281,8 +281,12 @@ const AdminViewAllBatch = () => {
     };
 
     const batchClick = (id) => {
-        let data = id;
-        sessionStorage.setItem("viewbatchId", data);
+        sessionStorage.setItem("viewbatchId", id);
+    }
+
+    const batchStudClick = (id, batchName) => {
+        sessionStorage.setItem("viewbatchId", id);
+        sessionStorage.setItem("viewbatchName", batchName);
     }
 
     // Logic for displaying current batches
@@ -392,10 +396,10 @@ const AdminViewAllBatch = () => {
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Sessions</Link>
+                                    <Link to="/AdminViewAllSession" onClick={() => batchClick(value.id)} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Sessions</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/adminviewallstudents" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Students</Link>
+                                    <Link to="/adminviewallstudents" onClick={() => batchStudClick(value.id, value.batchName)} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Students</Link>
                                 </td>
                                 <td className="px-6 py-4">
                                     <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id, value.batchName)} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>

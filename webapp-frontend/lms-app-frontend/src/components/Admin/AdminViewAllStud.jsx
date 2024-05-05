@@ -14,6 +14,7 @@ const AdminViewAllStud = () => {
     const [inputField, setInputField] = useState({ studentSearchQuery: '' });
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+    const BatchName = sessionStorage.getItem('viewbatchName')
 
     const navigate = useNavigate()
 
@@ -304,7 +305,7 @@ const AdminViewAllStud = () => {
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
-                <strong>View All Students {currentStudents.length > 0 ? `( Batch Name - ${currentStudents[0].batchName} )` : ''}</strong>
+                <strong>View All Students {`( Batch Name - ${BatchName} )`}</strong>
 
                 <div></div>
             </div>
