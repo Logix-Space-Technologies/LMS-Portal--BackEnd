@@ -12,7 +12,8 @@ const ClgStaffDownloadScorePDF = () => {
     const [scorePDFData, setScorePDFData] = useState([]);
     const [key, setKey] = useState('')
     const navigate = useNavigate();
-
+    const batchName = sessionStorage.getItem("viewsessionbatchName");
+    let SessionName = sessionStorage.getItem('viewsessionName')
     const apiUrl = global.config.urls.api.server + "/api/lms/viewScoreOfStudPDF"
 
     const taskId = sessionStorage.getItem("viewScoreTaskId");
@@ -151,6 +152,8 @@ const ClgStaffDownloadScorePDF = () => {
                                     <div ref={pdfContentRef}>
                                         <img width="200px" src='/logo.png' alt="" />
                                         <p style={{ textAlign: "center", fontSize: "22px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Task-Wise Score List Of Students</p>
+                                        <p style={{ textAlign: "center", fontSize: "20px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>{`Batch Name: ${batchName}`}</p>
+                                        <p style={{ textAlign: "center", fontSize: "19px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>{`Session Name: ${SessionName}`}</p>
                                         <br />
                                         {Object.keys(groupedData).map(taskName => {
                                             return (

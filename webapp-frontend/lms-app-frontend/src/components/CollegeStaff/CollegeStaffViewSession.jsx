@@ -19,7 +19,7 @@ const CollegeStaffViewSession = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [sessionsPerPage] = useState(10); // Number of students per page
-    const BatchName = sessionStorage.getItem('clgstaffattendancepdfbatchName')
+    const BatchName = sessionStorage.getItem('viewsessionbatchName')
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(sessionData.length / sessionsPerPage); // Calculate the total number of pages

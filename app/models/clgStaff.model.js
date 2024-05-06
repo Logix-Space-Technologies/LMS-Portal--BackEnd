@@ -730,7 +730,7 @@ CollegeStaff.searchClgStaffByCollege = (searchKey, result) => {
 }
 
 CollegeStaff.viewTaskwiseScore = (batchId, taskId, result) => {
-    db.query(`SELECT studName,score,totalScore FROM studentTaskScore where batchId=? and taskId=? order by score DESC;`, [batchId, taskId], (err, res) => {
+    db.query(`SELECT membership_no,studName,score,totalScore FROM studentTaskScore where batchId=? and taskId=? order by score DESC;`, [batchId, taskId], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -773,6 +773,22 @@ CollegeStaff.generateClgPerformancePDF = (collegeId, result) => {
             return result(null, response);
         }
     })
+}
+
+CollegeStaff.clgStaffSearchTaskwiseScore = (searchKey, batchId, taskId, result) => {
+    const clgStaffSearchScoreQuery = '%' + searchKey + '%'
+    db.query("SELECT membership_no, studName, score, totalScore FROM studentTaskScore WHERE (membership_no = ? OR studName LIKE ?) and batchId=? and taskId=? ORDER BY score DESC;",
+        [searchKey, clgStaffSearchScoreQuery, batchId, taskId],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                console.log("Taskwise Score: ", res);
+                result(null, res);
+            }
+        })
 }
 
 module.exports = CollegeStaff
