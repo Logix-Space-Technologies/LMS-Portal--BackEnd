@@ -94,19 +94,19 @@ const AdminUpdateBatch = () => {
                     } else {
                         closeWaitingModal()
                         if (response.data.status === "Validation Failed" && response.data.data.batchName) {
-                            setTimeout(() => {alert(response.data.data.batchName)}, 500) 
+                            setTimeout(() => { alert(response.data.data.batchName) }, 500)
                         } else {
                             if (response.data.status === "Validation Failed" && response.data.data.regStartDate) {
-                                setTimeout(() => {alert(response.data.data.regStartDate)}, 500)
+                                setTimeout(() => { alert(response.data.data.regStartDate) }, 500)
                             } else {
                                 if (response.data.status === "Validation Failed" && response.data.data.regEndDate) {
-                                    setTimeout(() => {alert(response.data.data.regEndDate)}, 500)
+                                    setTimeout(() => { alert(response.data.data.regEndDate) }, 500)
                                 } else {
                                     if (response.data.status === "Validation Failed" && response.data.data.batchDesc) {
-                                        setTimeout(() => {alert(response.data.data.batchDesc)}, 500)
+                                        setTimeout(() => { alert(response.data.data.batchDesc) }, 500)
                                     } else {
                                         if (response.data.status === "Validation Failed" && response.data.data.batchAmount) {
-                                            setTimeout(() => {alert("batch amount: ", response.data.data.batchAmount)}, 500)
+                                            setTimeout(() => { alert("batch amount: ", response.data.data.batchAmount) }, 500)
                                         } else {
                                             if (response.data.status === "Unauthorized User!!") {
                                                 { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
@@ -228,10 +228,13 @@ const AdminUpdateBatch = () => {
                     <div className="col-lg-12 mb-4 mb-sm-5">
                         <br></br>
                         <br></br>
-                        <br></br>
-                        <br></br>
-                        <h3 className="h2 text-black mb-0">Update Batch Details</h3>
-                        <br></br>
+                        <div className="flex justify-between items-center mx-4 my-4">
+                            <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+                            <p style={{ fontSize: '20px', fontWeight: 'bold' }}>Update Batch Details</p>
+
+                            <div></div>
+                        </div>
                         <div className="card card-style1 --bs-primary-border-subtle border-5">
                             <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
                                 <div className="row align-items-center">
@@ -287,10 +290,6 @@ const AdminUpdateBatch = () => {
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
                                                 <button onClick={readNewValue} className="btn btn-warning">Update</button>
-                                            </div>
-                                            <br></br>
-                                            <div className="mb-3">
-                                                <button className="btn btn-danger" onClick={handleBack}>Back</button>
                                             </div>
                                         </ul>
                                     </div>
