@@ -144,8 +144,13 @@ const AdminViewAdStaffLog = () => {
                 <div className="container mx-auto">
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
-                            <h1>Admin Staff Log</h1>
-                            <br />
+                            <div className="flex justify-between items-center mx-4 my-4">
+                                <div></div>
+
+                                <p style={{ fontSize: '20px', fontWeight: 'bold' }}>View Admin Staff Log</p>
+
+                                <div></div>
+                            </div>
                             <div className="row">
                                 <div className="col">
                                     <div className="input-group">
