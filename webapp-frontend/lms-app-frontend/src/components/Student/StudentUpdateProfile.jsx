@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../Admin/Navbar';
 import AdmStaffNavBar from '../AdminStaff/AdmStaffNavBar';
+import StudNavBar from './StudNavBar';
 
 
 
@@ -252,7 +253,7 @@ const StudentUpdateProfile = () => {
 
     return (
         <div>
-            {key === 'lmsappstud' ? '' : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
+            {key === 'lmsappstud' ? <StudNavBar/> : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
