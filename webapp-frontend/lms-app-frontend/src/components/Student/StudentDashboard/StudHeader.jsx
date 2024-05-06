@@ -34,6 +34,7 @@ const StudHeader = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
+                console.log(response.data)
                 if (response.data.data) {
                     setStudData(response.data.data)
                 } else {
@@ -61,6 +62,7 @@ const StudHeader = () => {
         }
         axios.post(apiUrl2, data2, axiosConfig2).then(
             (response) => {
+                console.log(response.data)
                 if (response.data.data) {
                     setSessionData(response.data.data)
                 } else {
