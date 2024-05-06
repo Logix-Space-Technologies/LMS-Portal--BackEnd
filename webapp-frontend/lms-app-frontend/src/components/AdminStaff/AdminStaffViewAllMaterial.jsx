@@ -182,9 +182,13 @@ const AdminStaffViewAllMaterial = () => {
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
-            <br />
-            {key === 'lmsapp' ? <strong>Admin View All Materials</strong> : <strong>AdminStaff View All Materials</strong>}
-            <br /><br />
+            <div className="flex justify-between items-center mx-4 my-4">
+                <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+                <p style={{ fontSize: '20px', fontWeight: 'bold' }}>View All Materials</p>
+
+                <div></div>
+            </div>
             <div className="flex justify-between items-center mx-4 my-4">
                 <div className="container">
                     <div className="row g-3">
@@ -235,7 +239,7 @@ const AdminStaffViewAllMaterial = () => {
                                         <Link target="_blank" to={value.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <Link to="/AdminStaffUpdateMaterial" onClick={() => { updateClick(value.id); }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</Link>
+                                        <Link to="/AdminStaffUpdateMaterial" onClick={() => { updateClick(value.id); }} className="btn btn-success">Update</Link>
                                     </td>
                                     {key === "lmsapp" && (
                                         <td className="px-6 py-4">
