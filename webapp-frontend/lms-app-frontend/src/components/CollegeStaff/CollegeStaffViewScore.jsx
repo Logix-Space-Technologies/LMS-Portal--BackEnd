@@ -22,6 +22,7 @@ const CollegeStaffViewScore = () => {
 
 
     const apiurl = global.config.urls.api.server + "/api/lms/getTaskwiseScores"
+    const apiurl2 = global.config.urls.api.server + "/api/lms/SearchTaskwiseScore"
 
     const navigate = useNavigate()
 
