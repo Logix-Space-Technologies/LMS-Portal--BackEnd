@@ -12,6 +12,7 @@ const ClgStaffSessionWisePerformanceDwldPDF = () => {
     const [scorePDFData, setScorePDFData] = useState([]);
     const [key, setKey] = useState('')
     const navigate = useNavigate();
+    const BatchName = sessionStorage.getItem('viewsessionbatchName')
 
     const apiUrl = global.config.urls.api.server + "/api/lms/dwnldSessionWisePerformancePDF"
 
@@ -151,6 +152,7 @@ const ClgStaffSessionWisePerformanceDwldPDF = () => {
                                     <div ref={pdfContentRef}>
                                         <img width="200px" src='/logo.png' alt="" />
                                         <p style={{ textAlign: "center", fontSize: "22px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Session-Wise Performance List Of Students</p>
+                                        <p style={{ textAlign: "center", fontSize: "20px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>{`Batch Name: ${BatchName}`}</p>
                                         <br />
                                         {Object.keys(groupedData).map(sessionName => {
                                             return (

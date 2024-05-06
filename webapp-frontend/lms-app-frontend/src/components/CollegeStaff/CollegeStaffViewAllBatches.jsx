@@ -145,7 +145,7 @@ const CollegeStaffViewBatch = () => {
   const batchClick = (id, batchName) => {
     navigate("/clgstaffviewsession")
     sessionStorage.setItem("clgstaffbatchId", id)
-    sessionStorage.setItem("clgstaffattendancepdfbatchName", batchName)
+    sessionStorage.setItem("viewsessionbatchName", batchName)
   }
 
   const studentClick = (id, batchName) => {
