@@ -483,7 +483,7 @@ exports.viewOneMaterial = (request, response) => {
 
 exports.searchSubmittedTask = (request, response) => {
     const subTaskSearchQuery = request.body.subTaskSearchQuery;
-    const sessionId = request.body.sessionId;
+    const taskId = request.body.taskId;
     const searchSubmittedTaskToken = request.headers.token;
     const key = request.headers.key;
 
@@ -493,7 +493,7 @@ exports.searchSubmittedTask = (request, response) => {
                 console.log("Search Item is required.");
                 return response.json({ "status": "Search Item is required." });
             }
-            AdminStaff.searchSubmittedTask(sessionId, subTaskSearchQuery, (error, data) => {
+            AdminStaff.searchSubmittedTask(taskId, subTaskSearchQuery, (error, data) => {
                 if (error) {
                     return response.json({ "status": error });
                 } else {

@@ -39,6 +39,7 @@ const AdminViewAllSession = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [inputField, setInputField] = useState({ "SessionSearchQuery": "" });
     const [filterCriteria, setFilterCriteria] = useState(null);
+    const BatchName = sessionStorage.getItem('viewsessionbatchName')
 
     const searchApiLink = global.config.urls.api.server + "/api/lms/searchSession";
     const apiUrl = global.config.urls.api.server + "/api/lms/viewSessions";
@@ -172,13 +173,15 @@ const AdminViewAllSession = () => {
         setFilterCriteria(selectedCriteria);
     };
 
-    const viewsessionId = (attendanceid) => {
+    const viewsessionId = (attendanceid, sessionName) => {
         sessionStorage.setItem("viewattendanceid", attendanceid)
+        sessionStorage.setItem("viewattendancesessionName", sessionName)
         navigate("/clgstaffviewattendance")
     }
 
-    const taskScore = (id) => {
+    const taskScore = (id, sessionName) => {
         sessionStorage.setItem("ViewsessionperformanceSessionId", id)
+        sessionStorage.setItem("ViewsessionperformanceSessionName", sessionName)
         navigate("/clgStaffviewSessionWisePerformance")
     }
 
@@ -277,8 +280,9 @@ const AdminViewAllSession = () => {
         navigate("/AdminUpdateSession")
     }
 
-    const sessionClick = (id) => {
+    const sessionClick = (id, sessionName) => {
         sessionStorage.setItem("viewtaskId", id)
+        sessionStorage.setItem("viewsessionName", sessionName)
         navigate("/AdminViewAllTasks")
     }
 
@@ -460,7 +464,7 @@ const AdminViewAllSession = () => {
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
-                <strong>View All Sessions</strong>
+                <strong>View All Sessions {`( Batch Name - ${BatchName} )`}</strong>
                 <div></div>
             </div>
             <div className="row">
@@ -507,7 +511,7 @@ const AdminViewAllSession = () => {
                         {currentSessions.length > 0 ? currentSessions.map((value, index) => {
                             // Check if the session is in the past
                             const sessionIsPast = isSessionPast(value.date, value.time);
-                            console.log(sessionIsPast)
+                            
                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
                                 <td className="px-6 py-4" style={{ fontWeight: 'bold' }}>{value.sessionName}</td>
@@ -541,21 +545,21 @@ const AdminViewAllSession = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.cancelStatus === "ACTIVE" && sessionIsPast === true && (
-                                        <button onClick={() => viewsessionId(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                        <button onClick={() => viewsessionId(value.id, value.sessionName)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                             View Attendance List
                                         </button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.cancelStatus === "ACTIVE" && isSessionInPast(value.date, value.time) && (
-                                        <button onClick={() => sessionClick(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
+                                        <button onClick={() => sessionClick(value.id, value.sessionName)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none">
                                             View Tasks
                                         </button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
                                     {isSessionInPast(value.date, value.time) && value.cancelStatus === "ACTIVE" && (
-                                        <button onClick={() => taskScore(value.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none" style={{ marginRight: '20px' }}>
+                                        <button onClick={() => taskScore(value.id, value.sessionName)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline focus:outline-none" style={{ marginRight: '20px' }}>
                                             View Performance
                                         </button>
                                     )}

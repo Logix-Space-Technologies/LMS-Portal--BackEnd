@@ -54,10 +54,10 @@ const AdminViewAllClgStaff = () => {
       if (response.data.status === "Search query is required.") {
         setIsLoading(false)
         setTimeout(() => {
-            alert(response.data.status)
-            getData()
+          alert(response.data.status)
+          getData()
         }, 500)
-    } else if (response.data.data) {
+      } else if (response.data.data) {
         setClgStaffData(response.data.data);
         setIsLoading(false);
         setInputField(
@@ -76,7 +76,7 @@ const AdminViewAllClgStaff = () => {
             searchQuery: ""
           }
         )
-        setTimeout(()=>{
+        setTimeout(() => {
           getData()
           alert("No College Staffs Found !!!")
         })
@@ -217,7 +217,13 @@ const AdminViewAllClgStaff = () => {
       {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
       <section className="bg-gray-100 min-h-screen p-4">
         <div className="container mx-auto">
-          <h1 className="text-3xl font-semibold text-gray-800 mb-6">College Staff List</h1>
+          <div className="flex justify-between items-center mx-4 my-4">
+            <div></div>
+
+            <p style={{ fontSize: '20px', fontWeight: 'bold' }}>View All College Staffs</p>
+
+            <div></div>
+          </div>
           <div className="row justify-content-center">
             <div className="col-12 col-md-8 text-center">
               <div className="d-flex justify-content-center align-items-center">

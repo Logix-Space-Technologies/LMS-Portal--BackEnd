@@ -366,10 +366,10 @@ AdminStaff.viewOneMaterial = (materialId, result) => {
         })
 }
 
-AdminStaff.searchSubmittedTask = (sessionId, searchSubTask, result) => {
+AdminStaff.searchSubmittedTask = (taskId, searchSubTask, result) => {
     const searchString = '%' + searchSubTask + '%';
-    db.query("SELECT c.collegeName, b.batchName, sd.sessionName, s.membership_no, s.studName, t.id, t.taskTitle, t.dueDate, t.totalScore, st.id AS 'submitTaskId', st.gitLink, st.remarks, st.subDate, st.evalDate, st.lateSubDate, st.evaluatorRemarks, st.score FROM submit_task st JOIN task t ON st.taskId = t.id JOIN student s ON st.studId = s.id JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id JOIN sessiondetails sd ON sd.id = t.sessionId WHERE sd.id = ? AND t.deleteStatus = 0 AND t.isActive = 1 AND s.validity > CURRENT_DATE() AND s.isVerified = 1 AND s.isActive = 1 AND s.emailVerified = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND (c.collegeName LIKE ? OR b.batchName LIKE ? OR t.taskTitle LIKE ? OR sd.sessionName LIKE ?) ORDER BY t.dueDate ASC",
-        [sessionId, searchString, searchString, searchString, searchString],
+    db.query("SELECT c.collegeName, b.batchName, sd.sessionName, s.membership_no, s.studName, t.id, t.taskTitle, t.dueDate, t.totalScore, st.id AS 'submitTaskId', st.gitLink, st.remarks, st.subDate, st.evalDate, st.lateSubDate, st.evaluatorRemarks, st.score FROM submit_task st JOIN task t ON st.taskId = t.id JOIN student s ON st.studId = s.id JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id JOIN sessiondetails sd ON sd.id = t.sessionId WHERE t.id = ? AND t.deleteStatus = 0 AND t.isActive = 1 AND s.validity > CURRENT_DATE() AND s.isVerified = 1 AND s.isActive = 1 AND s.emailVerified = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND (s.membership_no = ? OR s.studName LIKE ?) ORDER BY t.dueDate ASC",
+        [taskId, searchSubTask, searchString],
         (err, res) => {
             if (err) {
                 console.log("Error: ", err);

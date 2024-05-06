@@ -736,8 +736,8 @@ Student.refundAmountReceivedStatus = (studId, result) => {
 Student.searchStudentsByAdmAndAdmstf = (batchId, search, result) => {
     const searchString = '%' + search + '%';
     db.query(
-        "SELECT cm.id AS commManagerId, s.studName, s.id, s.studProfilePic, b.batchName, c.collegeName, s.collegeId, s.batchId, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.aadharNo, s.membership_no, s.validity, CASE WHEN cm.studentId IS NOT NULL AND cm.deleteStatus = 0 AND cm.isActive = 1 THEN TRUE ELSE FALSE END AS communityManager FROM student s LEFT JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id LEFT JOIN communitymanagers cm ON s.id = cm.studentId WHERE s.batchId = ? AND s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND (s.id LIKE ? OR s.collegeId LIKE ? OR s.batchId LIKE ? OR s.studName LIKE ? OR s.admNo LIKE ? OR s.rollNo LIKE ? OR s.studDept LIKE ? OR s.course LIKE ? OR s.studEmail LIKE ? OR s.studPhNo LIKE ? OR s.aadharNo LIKE ? OR s.membership_no LIKE ?) ORDER BY s.membership_no, c.collegeName, b.batchName, s.validity",
-        [batchId, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString, searchString],
+        "SELECT cm.id AS commManagerId, s.studName, s.id, s.studProfilePic, b.batchName, c.collegeName, s.collegeId, s.batchId, s.admNo, s.rollNo, s.studDept, s.course, s.studEmail, s.studPhNo, s.aadharNo, s.membership_no, s.validity, CASE WHEN cm.studentId IS NOT NULL AND cm.deleteStatus = 0 AND cm.isActive = 1 THEN TRUE ELSE FALSE END AS communityManager FROM student s LEFT JOIN college c ON s.collegeId = c.id JOIN batches b ON s.batchId = b.id LEFT JOIN communitymanagers cm ON s.id = cm.studentId WHERE s.batchId = ? AND s.validity > CURRENT_DATE AND s.isPaid = 1 AND s.isVerified = 1 AND s.emailVerified = 1 AND s.isActive = 1 AND s.deleteStatus = 0 AND c.deleteStatus = 0 AND c.isActive = 1 AND c.emailVerified = 1 AND b.deleteStatus = 0 AND b.isActive = 1 AND (s.studName LIKE ? OR s.studDept LIKE ? OR s.course LIKE ? OR s.studPhNo = ? OR s.membership_no = ?) ORDER BY s.membership_no, s.validity",
+        [batchId, searchString, searchString, searchString, search, search],
         (err, res) => {
             if (err) {
                 console.log("Error: ", err);
@@ -1528,7 +1528,7 @@ Student.viewPerformance = (collegeId, batchId, id, result) => {
 }
 
 Student.viewPerformanceScore = (studId, result) => {
-    db.query("SELECT taskName, score, totalScore FROM studentTaskScore WHERE studentId = ? ORDER BY score DESC", [studId], (err, res) => {
+    db.query("SELECT sessionName, taskName, score, totalScore FROM studentTaskScore WHERE studentId = ? ORDER BY score DESC", [studId], (err, res) => {
         if (err) {
             console.log("Error: ", err)
             return result(err, null)

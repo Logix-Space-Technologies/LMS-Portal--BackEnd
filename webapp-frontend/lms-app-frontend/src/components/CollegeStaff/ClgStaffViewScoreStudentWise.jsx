@@ -12,6 +12,7 @@ const ClgStaffViewScoreStudentWise = () => {
     const [scoresPerPage] = useState(10); // Number of students per page
     const [loading, setLoading] = useState(true);
     const [key, setKey] = useState('')
+    const studentName = sessionStorage.getItem('viewscorestudName')
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(scoreData.length / scoresPerPage); // Calculate the total number of pages
@@ -54,7 +55,7 @@ const ClgStaffViewScoreStudentWise = () => {
                     setScoreData(response.data.data)
                 } else {
                     if (response.data.status === "Unauthorized User!!") {
-                        {key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : (key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin"))}
+                        { key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : (key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin")) }
                         sessionStorage.clear()
                     } else {
                         if (!response.data.data) {
@@ -90,16 +91,16 @@ const ClgStaffViewScoreStudentWise = () => {
     useEffect(() => { getData() }, [])
 
 
-  return (
-    <div>
-        {key === 'lmsappclgstaff' ? <ClgStaffNavbar /> : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
+    return (
+        <div>
+            {key === 'lmsappclgstaff' ? <ClgStaffNavbar /> : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
             {/* ====== Table Section Start */}
             <section className="bg-gray-100 dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                                {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Performance</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Performance</h2> : <h2 className="text-lg font-bold">Admin Staff View Performance</h2>)}
+                                {key === 'lmsapp' ? <h2 className="text-lg font-bold">View Performance (Student Name {`- ${studentName}`})</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">View Performance (Student Name {`- ${studentName}`})</h2> : <h2 className="text-lg font-bold">View Performance (Student Name {`- ${studentName}`})</h2>)}
                                 <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</button>
                             </div>
                             <br />
@@ -109,6 +110,9 @@ const ClgStaffViewScoreStudentWise = () => {
                                         <tr className="text-center bg-primary">
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 S/L
+                                            </th>
+                                            <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                                                Session Name
                                             </th>
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 Task Name
@@ -127,6 +131,9 @@ const ClgStaffViewScoreStudentWise = () => {
                                                 return <tr key={index}>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {calculateSerialNumber(index)}
+                                                    </td>
+                                                    <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                        {value.sessionName}
                                                     </td>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.taskName}
@@ -196,8 +203,8 @@ const ClgStaffViewScoreStudentWise = () => {
                 </div>
             </section>
             {/* ====== Table Section End */}
-    </div>
-  )
+        </div>
+    )
 }
 
 export default ClgStaffViewScoreStudentWise

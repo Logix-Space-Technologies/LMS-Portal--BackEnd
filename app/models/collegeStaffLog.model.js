@@ -48,8 +48,8 @@ CollegeStaffLog.getAll = async (result) => {
 
 CollegeStaffLog.searchCollegeStaffLog = (search, result) => {
     const searchTerm = '%' + search + '%'
-    db.query("SELECT c.collegeName, cs.collegeStaffName, csl.* FROM clgstafflog csl JOIN college_staff cs ON csl.ClgStaffId = cs.id JOIN college c ON cs.collegeId = c.id WHERE cs.deleteStatus = 0 AND cs.isActive = 1 AND (c.collegeName LIKE ? OR cs.collegeStaffName LIKE ?) AND csl.DateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY csl.DateTime DESC;",
-        [searchTerm, searchTerm],
+    db.query("SELECT c.collegeName, cs.collegeStaffName, csl.* FROM clgstafflog csl JOIN college_staff cs ON csl.ClgStaffId = cs.id JOIN college c ON cs.collegeId = c.id WHERE cs.deleteStatus = 0 AND cs.isActive = 1 AND (c.collegeName LIKE ? OR cs.collegeStaffName LIKE ? OR csl.Action LIKE ?) AND csl.DateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY csl.DateTime DESC;",
+        [searchTerm, searchTerm, searchTerm],
         (err, res) => {
             if (err) {
                 console.log("Error : ", err)

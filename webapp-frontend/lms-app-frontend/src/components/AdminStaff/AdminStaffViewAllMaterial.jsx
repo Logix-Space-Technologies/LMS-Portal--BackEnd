@@ -91,7 +91,13 @@ const AdminStaffViewAllMaterial = () => {
         };
 
         axios.post(apiLink, inputField, axiosConfig).then((response) => {
-            if (response.data.data) {
+            if (response.data.status === "Provide a search query") {
+                setIsLoading(false)
+                setTimeout(() => {
+                    alert(response.data.status)
+                    getData()
+                }, 500)
+            } else if (response.data.data) {
                 setMaterialData(response.data.data);
                 setIsLoading(false);
                 setInputField({
@@ -182,15 +188,19 @@ const AdminStaffViewAllMaterial = () => {
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
-            <br />
-            {key === 'lmsapp' ? <strong>Admin View All Materials</strong> : <strong>AdminStaff View All Materials</strong>}
-            <br /><br />
+            <div className="flex justify-between items-center mx-4 my-4">
+                <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+                <p style={{ fontSize: '20px', fontWeight: 'bold' }}>View All Materials</p>
+
+                <div></div>
+            </div>
             <div className="flex justify-between items-center mx-4 my-4">
                 <div className="container">
                     <div className="row g-3">
                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                             <label htmlFor="" className="form-label"></label>
-                            <input onChange={inputHandler} type="text" className="form-control" name="materialQuery" value={inputField.materialQuery} placeholder='Search By fileName/Description/Batch Name' />
+                            <input onChange={inputHandler} type="text" className="form-control" name="materialQuery" value={inputField.materialQuery} placeholder='Search By College Name/Batch Name/File Name/Description' />
                         </div>
                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                             <button onClick={readValue} className="btn btn-warning">Search</button>
@@ -235,7 +245,7 @@ const AdminStaffViewAllMaterial = () => {
                                         <Link target="_blank" to={value.uploadFile} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Material</Link>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <Link to="/AdminStaffUpdateMaterial" onClick={() => { updateClick(value.id); }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Material</Link>
+                                        <Link to="/AdminStaffUpdateMaterial" onClick={() => { updateClick(value.id); }} className="btn btn-success">Update</Link>
                                     </td>
                                     {key === "lmsapp" && (
                                         <td className="px-6 py-4">

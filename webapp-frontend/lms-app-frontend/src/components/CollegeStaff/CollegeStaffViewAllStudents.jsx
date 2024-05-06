@@ -15,6 +15,7 @@ const CollegeStaffViewAllStudents = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [studentsPerPage] = useState(10); // Number of students per page
+  const BatchName = sessionStorage.getItem('viewbatchName')
 
   const rangeSize = 5; // Number of pages to display in the pagination
   const lastPage = Math.ceil(students.length / studentsPerPage); // Calculate the total number of pages
@@ -116,8 +117,9 @@ const CollegeStaffViewAllStudents = () => {
     )
   }
 
-  const viewtaskScore = (id) => {
+  const viewtaskScore = (id, studName) => {
     sessionStorage.setItem("viewscorestudId", id)
+    sessionStorage.setItem("viewscorestudName", studName)
     navigate("/clgstaffstudentviewscore")
   }
 
@@ -140,7 +142,7 @@ const CollegeStaffViewAllStudents = () => {
       <ClgStaffNavbar />
       <br /><br />
       <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-        <h2 className="text-lg font-bold">College Staff View All Students</h2>
+        <h2 className="text-lg font-bold">View All Students {`( Batch Name: ${BatchName} )`}</h2>
         <Link to="/collegeStaffViewBatch" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
       </div>
       <div className="row g-3">
@@ -154,7 +156,6 @@ const CollegeStaffViewAllStudents = () => {
       {loading ? <div className="col-12 text-center">Loading...</div> : <div className="relative overflow-x-auto shadow-md sm:rounded-lg"><table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
-            <th scope="col" className="px-6 py-3">Batch Name</th>
             <th scope="col" className="px-6 py-3"></th>
             <th scope="col" className="px-6 py-3">Name</th>
             <th scope="col" className="px-6 py-3">Department</th>
@@ -172,7 +173,6 @@ const CollegeStaffViewAllStudents = () => {
         <tbody>
           {currentStudents.map((student, index) => {
             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td className="px-6 py-4">{student.batchName}</td>
               <td className="px-6 py-4">
                 {student.studProfilePic && <img className="w-10 h-10 rounded-full" src={student.studProfilePic} alt={student.studName} />}
               </td>
@@ -186,7 +186,7 @@ const CollegeStaffViewAllStudents = () => {
               <td className="px-6 py-4">{student.aadharNo}</td>
               <td className="px-6 py-4">{student.membership_no}</td>
               <td className="px-6 py-4">{student.validity}</td>
-              <td className="px-6 py-4"><button onClick={() => viewtaskScore(student.id)} className="btn btn-primary">View Performance</button></td>
+              <td className="px-6 py-4"><button onClick={() => viewtaskScore(student.id, student.studName)} className="btn btn-primary">View Performance</button></td>
             </tr>
           })}
           {students.length === 0 && (

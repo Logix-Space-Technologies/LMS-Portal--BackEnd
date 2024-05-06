@@ -19,6 +19,7 @@ const CollegeStaffViewSession = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [sessionsPerPage] = useState(10); // Number of students per page
+    const BatchName = sessionStorage.getItem('clgstaffattendancepdfbatchName')
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(sessionData.length / sessionsPerPage); // Calculate the total number of pages
@@ -125,8 +126,9 @@ const CollegeStaffViewSession = () => {
         return filteredSessions;
     };
 
-    const taskScore = (id) => {
+    const taskScore = (id, sessionName) => {
         sessionStorage.setItem("ViewsessionperformanceSessionId", id)
+        sessionStorage.setItem("ViewsessionperformanceSessionName", sessionName)
         navigate("/clgStaffviewSessionWisePerformance")
     }
 
@@ -135,8 +137,9 @@ const CollegeStaffViewSession = () => {
         return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], options);
     }
 
-    const viewsessionId = (attendanceid) => {
+    const viewsessionId = (attendanceid, sessionName) => {
         sessionStorage.setItem("viewattendanceid", attendanceid)
+        sessionStorage.setItem("viewattendancesessionName", sessionName)
         navigate("/clgstaffviewattendance")
     }
 
@@ -145,8 +148,9 @@ const CollegeStaffViewSession = () => {
         navigate("/clgstaffdownloadsessionattendancelist")
     }
 
-    const viewtasksessionId = (attendanceid) => {
+    const viewtasksessionId = (attendanceid, sessionName) => {
         sessionStorage.setItem("viewattendanceid", attendanceid)
+        sessionStorage.setItem("viewsessionName", sessionName)
         navigate("/clgstaffviewtask")
     }
 
@@ -209,7 +213,7 @@ const CollegeStaffViewSession = () => {
                 <br />
                 <br />
                 <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                    <h2 className="text-lg font-bold">College Staff View Session</h2>
+                    <h2 className="text-lg font-bold">View All Session {`(Batch Name - ${BatchName})`}</h2>
                     <Link to="/collegeStaffViewBatch" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
                 </div>
                 <br /><br />
@@ -324,20 +328,20 @@ const CollegeStaffViewSession = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.cancelStatus === "ACTIVE" && (
-                                                <button onClick={() => viewsessionId(value.id)} type="button" class="btn btn-primary" disabled={!sessionIsPast}>
+                                                <button onClick={() => viewsessionId(value.id, value.sessionName)} type="button" class="btn btn-primary" disabled={!sessionIsPast}>
                                                     View Attendance List
                                                 </button>
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
                                             {value.cancelStatus === "ACTIVE" && (
-                                                <button onClick={() => viewtasksessionId(value.id)} type="button" class="btn btn-primary" disabled={!sessionIsPast}>
+                                                <button onClick={() => viewtasksessionId(value.id, value.sessionName)} type="button" class="btn btn-primary" disabled={!sessionIsPast}>
                                                     View Tasks
                                                 </button>
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <button onClick={() => taskScore(value.id)} className="btn btn-primary" style={{ marginRight: '20px' }} disabled={!sessionIsPast}>
+                                            <button onClick={() => taskScore(value.id, value.sessionName)} className="btn btn-primary" style={{ marginRight: '20px' }} disabled={!sessionIsPast}>
                                                 View Performance
                                             </button>
                                         </td>

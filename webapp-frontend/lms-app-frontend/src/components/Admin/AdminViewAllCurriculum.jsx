@@ -19,6 +19,7 @@ const AdminViewAllCurriculum = () => {
             "CurriculumSearchQuery": ""
         }
     )
+    const BatchName = sessionStorage.getItem('viewBatchName')
 
     const inputHandler = (event) => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
@@ -211,16 +212,20 @@ const AdminViewAllCurriculum = () => {
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />} <br />
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
-                <strong>View All Curriculum</strong>
+                <strong>View All Curriculum {`( Batch Name - ${BatchName} )`}</strong>
                 <div></div>
             </div>
             <br />
-            <div className="row g-3">
-                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                    <input onChange={inputHandler} type="text" className="form-control" name="CurriculumSearchQuery" value={inputField.CurriculumSearchQuery} placeholder='Search By Title/Description/Batch Name/College Name' />
-                </div>
-                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                    <button onClick={readValue} className="btn btn-warning">Search</button>
+            <div className="row">
+                <div className="col col-12">
+                    <div className="row g-3">
+                        <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+                            <div className="input-group mb-3"> {/* Use an input group */}
+                                <input onChange={inputHandler} type="text" className="form-control" name="CurriculumSearchQuery" value={inputField.CurriculumSearchQuery} placeholder='Search By Title/Description' />
+                                <button onClick={readValue} className="btn btn-warning ms-2">Search</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div><br />
             {isLoading ? <div className="flex justify-center items-center h-full">
@@ -232,9 +237,8 @@ const AdminViewAllCurriculum = () => {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">S/L</th>
-                            <th scope="col" className="px-6 py-3">Batch Name</th>
                             <th scope="col" className="px-6 py-3">Curriculum Title</th>
-                            <th scope="col" className="px-6 py-3">Curriculum Description</th>
+                            <th scope="col" className="px-6 py-3">Description</th>
                             <th scope="col" className="px-6 py-3">Added Date</th>
                             <th scope="col" className="px-6 py-3">Added By</th>
                             <th scope="col" className="px-6 py-3">Updated By</th>
@@ -250,7 +254,6 @@ const AdminViewAllCurriculum = () => {
                                 return (
                                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
-                                        <td className="px-6 py-4">{value.batchName}</td>
                                         <td className="px-6 py-4">{value.curriculumTitle}</td>
                                         <td className="px-6 py-4">{value.curriculumDesc}</td>
                                         <td className="px-6 py-4">{value.addedDate}</td>
@@ -268,7 +271,7 @@ const AdminViewAllCurriculum = () => {
                                             <td className="px-6 py-4">NIL</td>
                                         )}
                                         <td className="px-6 py-4">
-                                            <Link target="_blank" to={value.curriculumFileLink} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View Curriculum</Link>
+                                            <Link target="_blank" to={value.curriculumFileLink} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">View</Link>
                                         </td>
                                         <td className="p-4 whitespace-nowrap">
                                             {key === "lmsapp" && (
@@ -276,7 +279,7 @@ const AdminViewAllCurriculum = () => {
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <a onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Curriculum</a>
+                                            <a onClick={() => { UpdateClick(value.id) }} className="btn btn-success">Update</a>
                                         </td>
                                     </tr>
                                 );

@@ -37,8 +37,9 @@ const AdminViewAllCollege = () => {
         setInputField({ ...inputField, [event.target.name]: event.target.value })
     }
 
-    const taskScore = (id) => {
+    const taskScore = (id, collegeName) => {
         sessionStorage.setItem("ViewAllperformancecollegeId", id)
+        sessionStorage.setItem("ViewAllperformancecollegeName", collegeName)
         navigate("/clgStaffviewAllClgPerformance")
     }
 
@@ -176,9 +177,9 @@ const AdminViewAllCollege = () => {
         )
     }
 
-    const UpdateClick = (id) => {
-        let data = id
-        sessionStorage.setItem("clgId", data)
+    const UpdateClick = (id, collegeName) => {
+        sessionStorage.setItem("clgId", id)
+        sessionStorage.setItem("clgName", collegeName)
     }
 
     const readValue = (id) => {
@@ -210,7 +211,6 @@ const AdminViewAllCollege = () => {
                 if (response.data.status === "Registration Status Changed To Open.") {
                     closeWaitingModal()
                     setTimeout(() => {
-                        alert("Registration Status Set To Open")
                         getData();
                     }, 500)
                 } else if (response.data.status === "Unauthorized User !!!") {
@@ -252,7 +252,6 @@ const AdminViewAllCollege = () => {
                 if (response.data.status === "Registration Status Changed To Unavailable.") {
                     closeWaitingModal()
                     setTimeout(() => {
-                        alert("Registration Status Set To Closed")
                         getData();
                     }, 500)
                 } else {
@@ -303,24 +302,23 @@ const AdminViewAllCollege = () => {
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
             <br />
             <div className="flex justify-between items-center mx-4 my-4">
-
+                <div></div>
                 <strong>View All Colleges</strong>
-
                 <div></div>
             </div>
-            <br /><br />
             <div className="row">
-                <div className="col">
-                    <div className="input-group">
-                        <input onChange={inputHandler} type="text" className="form-control" name="collegeSearchQuery" value={inputField.collegeSearchQuery} placeholder='College Name/College Address/Website/Email/College Contact Number' />
+                <div className="col col-12">
+                    <div className="row g-3">
+                        <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+                            <div className="input-group mb-3"> {/* Use an input group */}
+                                <input onChange={inputHandler} type="text" className="form-control" name="collegeSearchQuery" value={inputField.collegeSearchQuery} placeholder='College Name/Address/Website/Email/Phone No./Mobile No.' />
+                                <button onClick={readSearchValue} className="btn btn-warning ms-2">Search</button>
+                            </div>
+                        </div>
                     </div>
-                    <br></br>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                        <button onClick={readSearchValue} className="btn btn-warning">Search</button>
-                    </div>
-                    <br />
                 </div>
             </div>
+            <br />
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">
                     <div>Loading...</div>
@@ -399,14 +397,14 @@ const AdminViewAllCollege = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {value.registrationStatus === 0 && (
-                                        <button onClick={() => openRegistration(value.id)} style={{ fontSize: '12px' }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Open Registration</button>
+                                        <button onClick={() => openRegistration(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">Open Registration</button>
                                     )}
                                     {value.registrationStatus === 1 && (
-                                        <button onClick={() => { closeRegistration(value.id) }} style={{ fontSize: '12px' }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Close Registration</button>
+                                        <button onClick={() => { closeRegistration(value.id) }} style={{ fontSize: '12px' }} className="btn btn-danger">Close Registration</button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/adminviewallbatches" onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Batches</Link>
+                                    <Link to="/adminviewallbatches" onClick={() => { UpdateClick(value.id, value.collegeName) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Batches</Link>
                                 </td>
                                 <td className="px-6 py-4">
                                     <Link to="/adminUpdateclg" onClick={() => { UpdateClick(value.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Update College</Link>
@@ -417,7 +415,7 @@ const AdminViewAllCollege = () => {
                                     </td>
                                 )}
                                 <td className="px-6 py-4">
-                                    <button onClick={() => taskScore(value.id)} className="btn btn-primary" style={{ marginRight: '20px' }}>
+                                    <button onClick={() => taskScore(value.id, value.collegeName)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline" style={{ marginRight: '20px' }}>
                                         View Performance
                                     </button>
                                 </td>

@@ -15,6 +15,7 @@ const CollegeStaffViewTask = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10); // Number of students per page
     const [loading, setLoading] = useState(true);
+    let SessionName = sessionStorage.getItem('viewsessionName')
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(taskData.length / tasksPerPage); // Calculate the total number of pages
@@ -99,9 +100,10 @@ const CollegeStaffViewTask = () => {
         )
     }
 
-    const taskScore = (batchId, id) => {
+    const taskScore = (batchId, id, taskName) => {
         sessionStorage.setItem("viewScoreBatchId", batchId);
         sessionStorage.setItem("viewScoreTaskId", id);
+        sessionStorage.setItem("viewScoreTaskName", taskName);
         navigate("/collegestaffviewscore")
     }
 
@@ -133,13 +135,13 @@ const CollegeStaffViewTask = () => {
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                                <h2 className="text-lg font-bold">College Staff View Tasks</h2>
+                                <h2 className="text-lg font-bold">View All Tasks  (Session Name {`- ${SessionName}`})</h2>
                                 <Link to="/clgstaffviewsession" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
                             </div>
                             <br />
                             <div className="row g-3">
                                 <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                    <input onChange={inputHandler} type="text" placeholder='Task Name/Task Description/Task Type/Batch Name' className="form-control" name="taskQuery" value={inputField.taskQuery} />
+                                    <input onChange={inputHandler} type="text" placeholder='Task Name/Task Description/Task Type' className="form-control" name="taskQuery" value={inputField.taskQuery} />
                                 </div>
                                 <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                     <button onClick={readValue} className="btn btn-warning">Search</button>
@@ -151,9 +153,6 @@ const CollegeStaffViewTask = () => {
                                         <tr className="text-center bg-primary">
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 S/L
-                                            </th>
-                                            <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
-                                                Session Name
                                             </th>
                                             <th className="w-1/6 min-w-[160px] py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 Title
@@ -184,9 +183,6 @@ const CollegeStaffViewTask = () => {
                                                 return <tr key={index}>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {calculateSerialNumber(index)}
-                                                    </td>
-                                                    <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                                        {value.sessionName}
                                                     </td>
                                                     <td className="text-dark border-b border-[#E8E8E8] bg-[#F3F6FF] dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.taskTitle}
@@ -226,7 +222,7 @@ const CollegeStaffViewTask = () => {
                                                     )}
                                                     <td className="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.dueDate === "Past Due Date" && (
-                                                            <button onClick={() => taskScore(value.batchId, value.id)} className="btn btn-primary">View Score</button>
+                                                            <button onClick={() => taskScore(value.batchId, value.id, value.taskTitle)} className="btn btn-primary">View Score</button>
                                                         )}
                                                     </td>
                                                 </tr>

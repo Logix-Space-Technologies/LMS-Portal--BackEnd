@@ -172,9 +172,6 @@ const AdminUpdateSession = () => {
     if (!data.sessionName.trim()) {
       errors.sessionName = 'Session name is required';
     }
-    if (!data.remarks.trim()) {
-      errors.remarks = 'Remark is required';
-    }
     if (!data.date.trim()) {
       errors.date = 'Date is required';
     }
@@ -286,191 +283,191 @@ const AdminUpdateSession = () => {
   }, []);
 
   return (
-    <div className="container">
+    <div>
       {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
-      <div className="row">
-        <div className="col-lg-12 mb-4 mb-sm-5">
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
-          <h3 className="h2 text-black mb-0">Reschedule Session</h3>
-          <br></br>
-          <div className="card card-style1 --bs-primary-border-subtle border-5">
-            <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
-              <div className="row align-items-center">
-                <div className="col-lg-6 px-xl-10">
-                  <ul className="list-unstyled mb-1-9">
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                      {/* <label htmlFor="" className="form-label">
+      <div className="container">
+        <div className="row">
+          <div className="col-lg-12 mb-4 mb-sm-5">
+            <br></br>
+            <div className="flex justify-between items-center mx-4 my-4">
+              <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+              <p style={{ fontSize: '20px', fontWeight: 'bold' }}>Reschedule Session</p>
+
+              <div></div>
+            </div>
+            <div className="card card-style1 --bs-primary-border-subtle border-5">
+              <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
+                <div className="row align-items-center">
+                  <div className="col-lg-6 px-xl-10">
+                    <ul className="list-unstyled mb-1-9">
+                      <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        {/* <label htmlFor="" className="form-label">
                         Id
                       </label> */}
-                      <input
-                        type="hidden"
-                        className="form-control"
-                        name="id"
-                        value={updateField.id}
-                        disabled
-                      />
-                    </div>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                      <label htmlFor="" className="form-label">
-                        Session Name
-                      </label>
-                      <input
-                        onChange={updateHandler}
-                        type="text"
-                        className="form-control"
-                        name="sessionName"
-                        value={updateField.sessionName}
-                      />
-                      {errors.sessionName && (<span style={{ color: 'red' }} className="error">{errors.sessionName}</span>)}
-                    </div>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                      <label htmlFor="" className="form-label">
-                        Date
-                      </label>
-                      <input
-                        onChange={updateHandler}
-                        type="date"
-                        className="form-control"
-                        name="date"
-                        value={updateField.date}
-                      />
-                      {errors.date && (<span style={{ color: 'red' }} className="error">{errors.date}</span>)}
-                    </div>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                      <label htmlFor="" className="form-label">
-                        Time
-                      </label>
-                      <input
-                        onChange={updateHandler}
-                        type="time"
-                        className="form-control"
-                        name="time"
-                        value={updateField.time}
-                      />
-                      {errors.time && (<span style={{ color: 'red' }} className="error">{errors.time}</span>)}
-                    </div>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                      <label htmlFor="" className="form-label">
-                        Type
-                      </label>
-                      <select
-                        className="form-select"
-                        name="type"
-                        id="type"
-                        value={updateField.type}
-                        onChange={updateHandler}
-                      >
-                        <option value="">Select Type</option>
-                        <option value="Online">Online</option>
-                        <option value="Offline">Offline</option>
-                        <option value="Recorded">Recorded</option>
-                      </select>
-                      {errors.type && (<span style={{ color: 'red' }} className="error">{errors.type}</span>)}
-                    </div>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                      <label htmlFor="" className="form-label">
-                        Remarks
-                      </label>
-                      <input
-                        onChange={updateHandler}
-                        type="text"
-                        className="form-control"
-                        name="remarks"
-                        value={updateField.remarks}
-                      />
-                      {errors.remarks && (<span style={{ color: 'red' }} className="error">{errors.remarks}</span>)}
-                    </div>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                      <label htmlFor="" className="form-label">
-                        Venue/Link
-                      </label>
-                      <input
-                        onChange={updateHandler}
-                        type="text"
-                        className="form-control"
-                        name="venueORlink"
-                        value={updateField.venueORlink}
-                      />
-                      {errors.venueORlink && (<span style={{ color: 'red' }} className="error">{errors.venueORlink}</span>)}
-                    </div>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                      <label htmlFor="" className="form-label">
-                        Trainer Name
-                      </label>
-                      <select
-                        name="trainerId"
-                        value={updateField.trainerId}
-                        onChange={updateHandler}
-                        id="trainerId"
-                        className="form-control"
-                      >
-                        <option value="">Select</option>
-                        {trainers.map((trainer) => {
-                          return <option key={trainer.id} value={trainer.id}>
-                            {trainer.trainerName}
-                          </option>
-                        })}
-                      </select>
-                      {errors.trainerId && (<span style={{ color: 'red' }} className="error">{errors.trainerId}</span>)}
-                    </div>
-                    <br></br>
-                    <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
-                      <button onClick={readNewValue} className="btn btn-warning">
-                        Update
-                      </button>
-                    </div>
-                    <br></br>
-                    <div class="mb-3">
-                      <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
-                    </div>
-                  </ul>
+                        <input
+                          type="hidden"
+                          className="form-control"
+                          name="id"
+                          value={updateField.id}
+                          disabled
+                        />
+                      </div>
+                      <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <label htmlFor="" className="form-label">
+                          Session Name
+                        </label>
+                        <input
+                          onChange={updateHandler}
+                          type="text"
+                          className="form-control"
+                          name="sessionName"
+                          value={updateField.sessionName}
+                        />
+                        {errors.sessionName && (<span style={{ color: 'red' }} className="error">{errors.sessionName}</span>)}
+                      </div>
+                      <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <label htmlFor="" className="form-label">
+                          Date
+                        </label>
+                        <input
+                          onChange={updateHandler}
+                          type="date"
+                          className="form-control"
+                          name="date"
+                          value={updateField.date}
+                        />
+                        {errors.date && (<span style={{ color: 'red' }} className="error">{errors.date}</span>)}
+                      </div>
+                      <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <label htmlFor="" className="form-label">
+                          Time
+                        </label>
+                        <input
+                          onChange={updateHandler}
+                          type="time"
+                          className="form-control"
+                          name="time"
+                          value={updateField.time}
+                        />
+                        {errors.time && (<span style={{ color: 'red' }} className="error">{errors.time}</span>)}
+                      </div>
+                      <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <label htmlFor="" className="form-label">
+                          Type
+                        </label>
+                        <select
+                          className="form-select"
+                          name="type"
+                          id="type"
+                          value={updateField.type}
+                          onChange={updateHandler}
+                        >
+                          <option value="">Select Type</option>
+                          <option value="Online">Online</option>
+                          <option value="Offline">Offline</option>
+                          <option value="Recorded">Recorded</option>
+                        </select>
+                        {errors.type && (<span style={{ color: 'red' }} className="error">{errors.type}</span>)}
+                      </div>
+                      <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <label htmlFor="" className="form-label">
+                          Remarks
+                        </label>
+                        <input
+                          onChange={updateHandler}
+                          type="text"
+                          className="form-control"
+                          name="remarks"
+                          value={updateField.remarks}
+                        />
+                        {errors.remarks && (<span style={{ color: 'red' }} className="error">{errors.remarks}</span>)}
+                      </div>
+                      <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <label htmlFor="" className="form-label">
+                          Venue/Link
+                        </label>
+                        <input
+                          onChange={updateHandler}
+                          type="text"
+                          className="form-control"
+                          name="venueORlink"
+                          value={updateField.venueORlink}
+                        />
+                        {errors.venueORlink && (<span style={{ color: 'red' }} className="error">{errors.venueORlink}</span>)}
+                      </div>
+                      <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                        <label htmlFor="" className="form-label">
+                          Trainer Name
+                        </label>
+                        <select
+                          name="trainerId"
+                          value={updateField.trainerId}
+                          onChange={updateHandler}
+                          id="trainerId"
+                          className="form-control"
+                        >
+                          <option value="">Select</option>
+                          {trainers.map((trainer) => {
+                            return <option key={trainer.id} value={trainer.id}>
+                              {trainer.trainerName}
+                            </option>
+                          })}
+                        </select>
+                        {errors.trainerId && (<span style={{ color: 'red' }} className="error">{errors.trainerId}</span>)}
+                      </div>
+                      <br></br>
+                      <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
+                        <button onClick={readNewValue} className="btn btn-warning">
+                          Update
+                        </button>
+                      </div>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      {showWaitingModal && (
-        <div className="modal show d-block" tabIndex={-1}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
-              </div>
-              <div className="modal-body">
-                <>
-                  <div className="mb-3">
-                    <p>Processing Request. Do Not Refresh.</p>
-                  </div>
-                </>
-              </div>
-              <div className="modal-footer">
+        {showWaitingModal && (
+          <div className="modal show d-block" tabIndex={-1}>
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                </div>
+                <div className="modal-body">
+                  <>
+                    <div className="mb-3">
+                      <p>Processing Request. Do Not Refresh.</p>
+                    </div>
+                  </>
+                </div>
+                <div className="modal-footer">
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-      {showOverlay && (
-        <div
-          className="modal-backdrop fade show"
-          onClick={() => {
-            setShowWaitingModal(false);
-            setShowOverlay(false);
-          }}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            zIndex: 1040, // Ensure this is below your modal's z-index
-          }}
-        ></div>
-      )}
+        )}
+        {showOverlay && (
+          <div
+            className="modal-backdrop fade show"
+            onClick={() => {
+              setShowWaitingModal(false);
+              setShowOverlay(false);
+            }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              zIndex: 1040, // Ensure this is below your modal's z-index
+            }}
+          ></div>
+        )}
+      </div>
     </div>
   );
 };

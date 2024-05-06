@@ -13,6 +13,16 @@ const CollegeStaffViewSessionWisePerformance = () => {
     const [scoresPerPage] = useState(10); // Number of students per page
     const [loading, setLoading] = useState(true);
     const [key, setKey] = useState('')
+    const [inputField, setInputField] = useState(
+        {
+            "sessionQuery": ""
+        }
+    )
+    const apiUrl4 = global.config.urls.api.server + "/api/lms/searchSessionwisePerformance";
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
+    }
+    let SessionName = sessionStorage.getItem('ViewsessionperformanceSessionName')
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(scoreData.length / scoresPerPage); // Calculate the total number of pages
@@ -22,6 +32,72 @@ const CollegeStaffViewSessionWisePerformance = () => {
     const apiurl = global.config.urls.api.server + "/api/lms/viewSessionwisePerformance"
 
     const navigate = useNavigate()
+
+    const readSearchValue = () => {
+        setLoading(true)
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
+        let axiosConfig3 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        }
+        const data = { "sessionId": sessionStorage.getItem("ViewsessionperformanceSessionId"), "sessionQuery": inputField.sessionQuery };
+        axios.post(apiUrl4, data, axiosConfig3).then(
+            (response) => {
+                if (response.data.status === "Search Item is required.") {
+                    setLoading(false)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                        getData()
+                    }, 500)
+                } else if (response.data.data) {
+                    setScoreData(response.data.data)
+                    setInputField(
+                        {
+                            "sessionQuery": ""
+                        }
+                    )
+                    setLoading(false)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : (key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : navigate("/admstafflogin")) }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setLoading(false)
+                    setInputField(
+                        {
+                            "sessionQuery": ""
+                        }
+                    )
+                    setTimeout(() => {
+                        getData()
+                        alert("No Performance Found !!")
+                    }, 500)
+                } else {
+                    setLoading(false)
+                    setInputField(
+                        {
+                            "sessionQuery": ""
+                        }
+                    )
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
 
     const getData = () => {
         let data = {
@@ -101,13 +177,25 @@ const CollegeStaffViewSessionWisePerformance = () => {
                     <div className="flex flex-wrap -mx-4">
                         <div className="w-full px-4">
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
-                                {key === 'lmsapp' ? <h2 className="text-lg font-bold">Admin View Session Performance</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">College Staff View Session Performance</h2> : <h2 className="text-lg font-bold">Admin Staff View Session Performance</h2>)}
+                                {key === 'lmsapp' ? <h2 className="text-lg font-bold">View Performance Session-Wise (Session Name {`- ${SessionName}`}) </h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">View Performance Session-Wise (Session Name {`- ${SessionName}`}) </h2> : <h2 className="text-lg font-bold">View Performance Session-Wise (Session Name {`- ${SessionName}`}) </h2>)}
                                 <div className="flex space-x-4">
                                     <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
                                     <button type='button' onClick={() => generatePDF()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download PDF</button>
                                 </div>
                             </div>
                             <br />
+                            <div className="row">
+                                <div className="col">
+                                    <div className="input-group">
+                                        <input onChange={inputHandler} type="text" className="form-control" name="sessionQuery" value={inputField.sessionQuery} placeholder='Membership no/Student Name' />
+                                    </div>
+                                    <br></br>
+                                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                        <button onClick={readSearchValue} className="btn btn-warning">Search</button>
+                                    </div>
+                                    <br />
+                                </div>
+                            </div>
                             <div className="max-w-full overflow-x-auto">
                                 {loading ? <div className="col-12 text-center">Loading...</div> : <table className="w-full table-auto">
                                     <thead>

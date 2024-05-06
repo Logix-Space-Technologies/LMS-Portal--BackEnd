@@ -42,6 +42,9 @@ const AdminStaffViewSubmittedTask = () => {
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
 
+    const TaskTitle = sessionStorage.getItem('taskTitle')
+    const TaskDueDate = sessionStorage.getItem('taskdueDate')
+
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(taskData.length / tasksPerPage); // Calculate the total number of pages
     let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
@@ -136,7 +139,7 @@ const AdminStaffViewSubmittedTask = () => {
                 "key": currentKey
             }
         }
-        let data = { "sessionId": sessionStorage.getItem("sessionId"), "subTaskSearchQuery": updateField.subTaskSearchQuery }
+        let data = { "taskId": sessionStorage.getItem("taskId"), "subTaskSearchQuery": updateField.subTaskSearchQuery }
         axios.post(apiUrl3, data, axiosConfig)
             .then(response => {
                 if (response.data.status === "Search Item is required.") {
@@ -397,6 +400,17 @@ const AdminStaffViewSubmittedTask = () => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
 
+    const handleDueDateColor = (dueDate) => {
+        const currentDate = new Date();
+        const parts = dueDate.split('/');
+        // new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]]]]])
+        const formattedDueDate = new Date(parts[2], parts[1] - 1, parts[0]);
+        if (formattedDueDate > currentDate) {
+            return '#32CD30';
+        } else {
+            return '#DB1F48';
+        }
+    };
 
     return (
         <>
@@ -406,13 +420,16 @@ const AdminStaffViewSubmittedTask = () => {
                 <div className="flex justify-between items-center mx-4 my-4">
                     <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
-                    <strong>View All Submitted Tasks</strong>
+                    <strong>
+                        View All Submitted Tasks ( Task Name: {TaskTitle} ,
+                        Due Date: <span style={{ color: handleDueDateColor(TaskDueDate) }}> {TaskDueDate}</span> )
+                    </strong>
 
                     <div></div>
                 </div>
                 <div className="col col-md-6 mx-auto">
                     <div className="input-group mb-3">
-                        <input onChange={updateHandler} type="text" className="form-control" name="subTaskSearchQuery" value={updateField.subTaskSearchQuery} placeholder='Batch Name/College Name/Task Title' />
+                        <input onChange={updateHandler} type="text" className="form-control" name="subTaskSearchQuery" value={updateField.subTaskSearchQuery} placeholder='Student Name/Membership No' />
                         <button onClick={searchSubmittedTasks} className="btn btn-warning ms-2">Search</button>
                     </div>
                 </div>
@@ -426,22 +443,10 @@ const AdminStaffViewSubmittedTask = () => {
                                 S/L
                             </th>
                             <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                College Name
-                            </th>
-                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                Batch Name
-                            </th>
-                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
                                 Membership No.
                             </th>
                             <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
                                 Student Name
-                            </th>
-                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                Task Title
-                            </th>
-                            <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
-                                Due Date
                             </th>
                             <th scope="col" className="px-6 py-3" style={{ whiteSpace: 'nowrap' }}>
                                 Git Link
@@ -486,22 +491,10 @@ const AdminStaffViewSubmittedTask = () => {
                                         {calculateSerialNumber(index)}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {value.collegeName}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {value.batchName}
-                                    </td>
-                                    <td className="px-6 py-4">
                                         {value.membership_no}
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.studName}
-                                    </td>
-                                    <td className="px-6 py-4" style={{ whiteSpace: 'nowrap' }}>
-                                        {value.taskTitle}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {value.dueDate}
                                     </td>
                                     <td className="px-6 py-4">
                                         <Link to={value.gitLink} className='btn btn-primary' target="_blank" rel="noopener noreferrer">

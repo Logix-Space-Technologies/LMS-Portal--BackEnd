@@ -19,8 +19,6 @@ const CollegeStaffDashboard = () => {
         <br></br>
         <CollegeStaffFooter />
       </div>
-      {/* Back to Top */}
-      <Link to="#" className="btn btn-lg btn-primary btn-lg-square back-to-top"><i className="bi bi-arrow-up" /></Link>
     </div>
   )
 }

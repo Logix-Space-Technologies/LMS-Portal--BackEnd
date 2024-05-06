@@ -34,9 +34,10 @@ const CollegeStaffViewBatch = () => {
     setInputField({ ...inputField, [event.target.name]: event.target.value })
   }
 
-  const taskScore = (batchId) => {
+  const taskScore = (batchId, batchName) => {
     sessionStorage.setItem("viewBatchScoreBatchId", batchId);
     sessionStorage.setItem("viewBatchScoreCollegeId", collegeId);
+    sessionStorage.setItem("viewBatchName", batchName);
     navigate("/adminviewoverallBatchPerformance")
   }
 
@@ -147,9 +148,10 @@ const CollegeStaffViewBatch = () => {
     sessionStorage.setItem("clgstaffattendancepdfbatchName", batchName)
   }
 
-  const studentClick = (id) => {
+  const studentClick = (id, batchName) => {
     navigate("/collegeStaffViewAllStudents")
     sessionStorage.setItem("clgstaffviewbatchId", id)
+    sessionStorage.setItem("viewbatchName", batchName);
   }
 
   const notificationClick = (id) => {
@@ -212,7 +214,7 @@ const CollegeStaffViewBatch = () => {
                               <div className="card-body">
                                 <div className="flex justify-between items-center mx-4 my-4">
                                   <h5 className="card-title">{batch.batchName}</h5>
-                                  <button onClick={() => taskScore(batch.id)} className="btn btn-primary" style={{ marginRight: '20px' }}>
+                                  <button onClick={() => taskScore(batch.id, batch.batchName)} className="btn btn-primary" style={{ marginRight: '20px' }}>
                                     View Batch Performance
                                   </button>
                                 </div>
@@ -236,7 +238,7 @@ const CollegeStaffViewBatch = () => {
                                 <button onClick={() => batchClick(batch.id, batch.batchName)} className="btn btn-primary" style={{ marginLeft: '20px' }}>
                                   View Session
                                 </button>
-                                <button className="btn btn-primary" onClick={() => studentClick(batch.id)} style={{ marginLeft: '20px' }}>
+                                <button className="btn btn-primary" onClick={() => studentClick(batch.id, batch.batchName)} style={{ marginLeft: '20px' }}>
                                   View All Students
                                 </button>
                                 <button className="btn btn-primary" onClick={() => notificationClick(batch.id)} style={{ marginLeft: '20px' }}>

@@ -21,6 +21,7 @@ const AdminViewAllBatch = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+    const CollegeName = sessionStorage.getItem('clgName')
 
     const inputHandler = (event) => {
         const { name, value } = event.target;
@@ -65,7 +66,6 @@ const AdminViewAllBatch = () => {
                 if (response.data.status === "Registration Status Changed To Open.") {
                     closeWaitingModal()
                     setTimeout(() => {
-                        alert("Registration Status Set To Open")
                         getData();
                     }, 500)
                 } else if (response.data.status === "Unauthorized User !!!") {
@@ -109,7 +109,6 @@ const AdminViewAllBatch = () => {
                 if (response.data.status === "Registration Status Changed To Unavailable.") {
                     closeWaitingModal()
                     setTimeout(() => {
-                        alert("Registration Status Set To Closed")
                         getData();
                     }, 500)
                 } else {
@@ -263,14 +262,16 @@ const AdminViewAllBatch = () => {
         setShowConfirmation(false);
     };
 
-    const taskScore = (batchId, CollegeId) => {
+    const taskScore = (batchId, CollegeId, batchName) => {
         sessionStorage.setItem("viewBatchScoreBatchId", batchId);
         sessionStorage.setItem("viewBatchScoreCollegeId", CollegeId);
+        sessionStorage.setItem("viewBatchName", batchName);
         navigate("/adminviewoverallBatchPerformance")
     }
 
-    const viewAllCurr = (id) => {
+    const viewAllCurr = (id, batchName) => {
         sessionStorage.setItem("currbatchId", id)
+        sessionStorage.setItem("viewBatchName", batchName);
     }
 
     const UpdateClick = (id) => {
@@ -279,9 +280,14 @@ const AdminViewAllBatch = () => {
         navigate("/adminupdatebatch");
     };
 
-    const batchClick = (id) => {
-        let data = id;
-        sessionStorage.setItem("viewbatchId", data);
+    const batchClick = (id, batchName) => {
+        sessionStorage.setItem("viewbatchId", id);
+        sessionStorage.setItem("viewsessionbatchName", batchName);
+    }
+
+    const batchStudClick = (id, batchName) => {
+        sessionStorage.setItem("viewbatchId", id);
+        sessionStorage.setItem("viewbatchName", batchName);
     }
 
     // Logic for displaying current batches
@@ -319,30 +325,24 @@ const AdminViewAllBatch = () => {
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
-                <strong>View All Batches</strong>
+                <strong>View All Batches {`( College Name - ${CollegeName} )`}</strong>
 
                 <div></div>
             </div>
-            <br /><br />
+            <br />
             <div className="row">
-                <div className="col">
-                    <div className="input-group">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Search by batch name, college name, or description..."
-                            value={inputField.batchQuery}
-                            onChange={inputHandler}
-                            name="batchQuery"
-                        />
+                <div className="col col-12">
+                    <div className="row g-3">
+                        <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+                            <div className="input-group mb-3"> {/* Use an input group */}
+                                <input onChange={inputHandler} type="text" className="form-control" name="batchQuery" value={inputField.batchQuery} placeholder='Search by batch name or description...' />
+                                <button onClick={searchBatches} className="btn btn-warning ms-2">Search</button>
+                            </div>
+                        </div>
                     </div>
-                    <br></br>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                        <button onClick={searchBatches} className="btn btn-warning">Search</button>
-                    </div>
-                    <br />
                 </div>
             </div>
+            <br />
             {isLoading ? <div className="flex justify-center items-center h-full">
                 <div className="text-center py-20">
                     <div>Loading...</div>
@@ -353,7 +353,6 @@ const AdminViewAllBatch = () => {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">S/N</th>
-                            <th scope="col" className="px-6 py-3">College Name</th>
                             <th scope="col" className="px-6 py-3">Batch Name</th>
                             <th scope="col" className="px-6 py-3">Reg Start Date</th>
                             <th scope="col" className="px-6 py-3">Reg End Date</th>
@@ -375,7 +374,6 @@ const AdminViewAllBatch = () => {
                         {currentBatches.length > 0 ? currentBatches.map((value, index) => {
                             return <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td className="px-6 py-4">{calculateSerialNumber(index)}</td>
-                                <td className="px-6 py-4">{value.collegeName}</td>
                                 <td className="px-6 py-4">{value.batchName}</td>
                                 <td className="px-6 py-4">{value.regStartDate}</td>
                                 <td className="px-6 py-4">{value.regEndDate}</td>
@@ -386,23 +384,23 @@ const AdminViewAllBatch = () => {
                                 </div>
                                 <td className="px-6 py-4">
                                     {value.registrationStatus === 0 && (
-                                        <button onClick={() => openRegistration(value.id)} style={{ fontSize: '12px' }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Open Registration</button>
+                                        <button onClick={() => openRegistration(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">Open Registration</button>
                                     )}
                                     {value.registrationStatus === 1 && (
-                                        <button onClick={() => { closeRegistration(value.id) }} style={{ fontSize: '12px' }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Close Registration</button>
+                                        <button onClick={() => { closeRegistration(value.id) }} style={{ fontSize: '12px' }} className="btn btn-danger">Close Registration</button>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/AdminViewAllSession" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Sessions</Link>
+                                    <Link to="/AdminViewAllSession" onClick={() => batchClick(value.id, value.batchName)} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Sessions</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/adminviewallstudents" onClick={() => { batchClick(value.id) }} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Students</Link>
+                                    <Link to="/adminviewallstudents" onClick={() => batchStudClick(value.id, value.batchName)} style={{ whiteSpace: 'nowrap' }} className="font-medium text-blue-600 dark:text-blue-500">View Students</Link>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id)} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>
+                                    <Link to="/adminviewallcurriculum" style={{ whiteSpace: 'nowrap' }} onClick={() => viewAllCurr(value.id, value.batchName)} className="font-medium text-blue-600 dark:text-blue-500">View Curriculum</Link>
                                 </td>
-                                <td className="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
-                                    <button onClick={() => taskScore(value.id, value.collegeId)} className="btn btn-primary">View Batch Peformance</button>
+                                <td className="px-6 py-4">
+                                    <button onClick={() => taskScore(value.id, value.collegeId, value.batchName)} className="font-medium text-blue-600 dark:text-blue-500" style={{ whiteSpace: 'nowrap' }}>View Performance</button>
                                 </td>
                                 <td className="px-6 py-4">
                                     <button onClick={() => { UpdateClick(value.id) }} className="btn btn-success">Update</button>

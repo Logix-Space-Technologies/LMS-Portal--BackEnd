@@ -12,6 +12,9 @@ const AdminViewAllStud = () => {
     const [studentsPerPage] = useState(10); // Number of students per page
     const [isLoading, setIsLoading] = useState(true);
     const [inputField, setInputField] = useState({ studentSearchQuery: '' });
+    const [showWaitingModal, setShowWaitingModal] = useState(false);
+    const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+    const BatchName = sessionStorage.getItem('viewbatchName')
 
     const navigate = useNavigate()
 
@@ -25,8 +28,14 @@ const AdminViewAllStud = () => {
         setInputField({ ...inputField, [event.target.name]: event.target.value });
     };
 
-    const viewtaskScore = (id) => {
+    const closeWaitingModal = () => {
+        setShowOverlay(false)
+        setShowWaitingModal(false)
+    }
+
+    const viewtaskScore = (id, studName) => {
         sessionStorage.setItem("viewscorestudId", id)
+        sessionStorage.setItem("viewscorestudName", studName)
         navigate("/clgstaffstudentviewscore")
     }
 
@@ -163,21 +172,30 @@ const AdminViewAllStud = () => {
                 "key": currentKey
             }
         };
-
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl2, data, axiosConfig2).then(
             (response) => {
                 if (response.data.status === "success") {
-                    // Assuming "Assigned to Community Manager" is a message you want to display
-                    getData(); // Ensure getData() is defined and fetches the latest data
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        getData();
+                    }, 500)
                 } else if (response.data.status === "Validation failed") {
-                    // Handle validation errors
-                    alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        // Handle validation errors
+                        alert("Validation failed. Please check the following errors: " + JSON.stringify(response.data.data));
+                    }, 500)
                 } else if (response.data.status === "Unauthorized User !!!") {
                     { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
                     sessionStorage.clear()
                 } else {
-                    // Handle other errors
-                    alert(response.data.status);
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        // Handle other errors
+                        alert(response.data.status);
+                    }, 500)
                 }
             }
         )
@@ -201,17 +219,23 @@ const AdminViewAllStud = () => {
                 "key": currentKey
             }
         };
+        setShowWaitingModal(true)
+        setShowOverlay(true)
         axios.post(apiUrl3, data, axiosConfig).then(
             (response) => {
                 if (response.data.status === "success") {
-                    getData()
+                    closeWaitingModal()
+                    setTimeout(() => {
+                        getData();
+                    }, 500)
+                } else if (response.data.status === "Unauthorized User !!!") {
+                    { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
+                    sessionStorage.clear()
                 } else {
-                    if (response.data.status === "Unauthorized User !!!") {
-                        { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
-                        sessionStorage.clear()
-                    } else {
+                    closeWaitingModal()
+                    setTimeout(() => {
                         alert(response.data.status);
-                    }
+                    }, 500)
                 }
             }
         )
@@ -263,7 +287,10 @@ const AdminViewAllStud = () => {
         return differenceInDays <= 45;
     };
 
-
+    const UpdateClick = (id) => {
+        sessionStorage.setItem('studentId', id)
+        navigate("/studentupdateprofile");
+    };
 
     useEffect(() => { getData() }, []);
 
@@ -278,7 +305,7 @@ const AdminViewAllStud = () => {
             <div className="flex justify-between items-center mx-4 my-4">
                 <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
-                <strong>View All Students</strong>
+                <strong>View All Students {`( Batch Name - ${BatchName} )`}</strong>
 
                 <div></div>
             </div>
@@ -292,7 +319,7 @@ const AdminViewAllStud = () => {
                             className="form-control"
                             name="studentSearchQuery"
                             value={inputField.studentSearchQuery}
-                            placeholder="Student Name/Phone No/Address/Aadhar No/Email"
+                            placeholder="Student Name/Phone No/Membership No./Department/Course"
                         />
                         <button onClick={readValue} className="btn btn-warning">
                             Search
@@ -323,9 +350,6 @@ const AdminViewAllStud = () => {
                                 Membership No.
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Batch Name
-                            </th>
-                            <th scope="col" className="px-6 py-3">
                                 Admission No.
                             </th>
                             <th scope="col" className="px-6 py-3">
@@ -345,6 +369,9 @@ const AdminViewAllStud = () => {
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Valid Upto
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+
                             </th>
                             <th scope="col" className="px-6 py-3">
 
@@ -385,9 +412,6 @@ const AdminViewAllStud = () => {
                                         {value.membership_no}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {value.batchName}
-                                    </td>
-                                    <td className="px-6 py-4">
                                         {value.admNo}
                                     </td>
                                     <td className="px-6 py-4">
@@ -409,14 +433,17 @@ const AdminViewAllStud = () => {
                                         {value.validity}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button onClick={() => viewtaskScore(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">View Performance</button>
+                                        <button onClick={() => viewtaskScore(value.id, value.studName)} style={{ fontSize: '12px' }} className="btn btn-primary">View Performance</button>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <button onClick={() => UpdateClick(value.id)} style={{ fontSize: '12px' }} className="btn btn-primary">Update Profile</button>
                                     </td>
                                     <td className="px-6 py-4">
                                         {value.communityManager === 0 && (
-                                            <button onClick={() => assignCommunityManager(value.id, value.batchId)} style={{ fontSize: '12px' }} className="btn bg-blue-500 text-white px-4 py-2 rounded-md">Assign Community Manager</button>
+                                            <button onClick={() => assignCommunityManager(value.id, value.batchId)} style={{ fontSize: '12px' }} className="btn btn-primary">Assign Community Manager</button>
                                         )}
                                         {value.communityManager === 1 && (
-                                            <button onClick={() => { removeCommunityManager(value.commManagerId) }} style={{ fontSize: '12px' }} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Remove Community Manager</button>
+                                            <button onClick={() => { removeCommunityManager(value.commManagerId) }} style={{ fontSize: '12px' }} className="btn btn-danger">Remove Community Manager</button>
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
@@ -469,6 +496,44 @@ const AdminViewAllStud = () => {
                         </div>
                     </div>
                 </div>
+            )}
+            {showWaitingModal && (
+                <div className="modal show d-block" tabIndex={-1}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="mb-3">
+                                        <p>Processing Request. Do Not Refresh.</p>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showOverlay && (
+                <div
+                    className="modal-backdrop fade show"
+                    onClick={() => {
+                        setShowWaitingModal(false);
+                        setShowOverlay(false);
+                    }}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1040, // Ensure this is below your modal's z-index
+                    }}
+                ></div>
             )}
         </div>
     );
