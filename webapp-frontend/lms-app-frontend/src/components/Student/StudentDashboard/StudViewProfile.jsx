@@ -27,7 +27,6 @@ const StudViewProfile = () => {
         }
         axios.post(apiURL, data, axiosConfig).then(
             (response) => {
-                console.log(response.data)
                 if (response.data.data) {
                     setStudData(response.data.data)
                 } else {
