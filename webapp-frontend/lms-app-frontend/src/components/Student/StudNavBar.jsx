@@ -3,15 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import StudHeader from './StudentDashboard/StudHeader';
 
 const StudNavBar = () => {
-    const navigate = useNavigate()
-    const logOut = () => {
-        sessionStorage.clear()
-        navigate("/studentLogin")
-    }
+    // const navigate = useNavigate()
+    // const logOut = () => {
+    //     sessionStorage.clear()
+    //     navigate("/studentLogin")
+    // }
 
-    const handleLogoutConfirm = () => {
-        logOut();
-    };
+    // const handleLogoutConfirm = () => {
+    //     logOut();
+    // };
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">

@@ -29,7 +29,8 @@ const StudHeader = () => {
             headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
-                "token": sessionStorage.getItem("studLoginToken")
+                "token": sessionStorage.getItem("studLoginToken"),
+                "key": sessionStorage.getItem("studentkey")
             }
         }
         axios.post(apiURL, data, axiosConfig).then(
