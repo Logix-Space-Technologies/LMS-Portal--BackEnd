@@ -151,37 +151,37 @@ const AdminUpdateCollegeStaff = () => {
                     }
                 }).catch(error => {
                     closeWaitingModal()
-                if (error.response) {
-                    // Extract the status code from the response
-                    const statusCode = error.response.status;
+                    if (error.response) {
+                        // Extract the status code from the response
+                        const statusCode = error.response.status;
 
-                    if (statusCode === 400) {
-                        setTimeout(()=>{
-                            alert(error.response.data.status)
+                        if (statusCode === 400) {
+                            setTimeout(() => {
+                                alert(error.response.data.status)
+                            }, 500)
+                        } else if (statusCode === 500) {
+                            setTimeout(() => {
+                                alert(error.response.data.status)
+                            }, 500)
+                        } else {
+                            setTimeout(() => {
+                                alert(error.response.data.status)
+                            }, 500)
+                        }
+                    } else if (error.request) {
+                        setTimeout(() => {
+                            alert(error.request);
                         }, 500)
-                    } else if (statusCode === 500) {
-                        setTimeout(()=>{
-                            alert(error.response.data.status)
+                    } else if (error.message) {
+                        setTimeout(() => {
+                            alert('Error', error.message);
                         }, 500)
                     } else {
-                        setTimeout(()=>{
-                            alert(error.response.data.status)
+                        setTimeout(() => {
+                            alert(error.config);
                         }, 500)
                     }
-                } else if (error.request) {
-                    setTimeout(()=>{
-                        alert(error.request);
-                    }, 500)
-                } else if (error.message) {
-                    setTimeout(()=>{
-                        alert('Error', error.message);
-                    }, 500)
-                } else {
-                    setTimeout(()=>{
-                        alert(error.config);
-                    }, 500)
-                }
-            })
+                })
         } else {
             setErrors(validationErrors)
         }
@@ -270,119 +270,119 @@ const AdminUpdateCollegeStaff = () => {
     }, []);
 
     return (
-        <div className="container">
+        <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
-            <div className="row">
-                <div className="col-lg-12 mb-4 mb-sm-5">
-                    <br></br>
-                    <br></br>
-                    <br></br>
-                    <br></br>
-                    <h3 className="h2 text-black mb-0">Update College Staff Details</h3>
-                    <br></br>
-                    <div className="card card-style1 --bs-primary-border-subtle border-5">
-                        <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
-                            <div className="row align-items-center">
-                                <div className="col-lg-6 mb-4 mb-lg-0">
-                                    <img height="300px" src={updateField.profilePic} alt="" />
-                                </div>
-                                <div className="col-lg-6 px-xl-10">
-                                    <ul className="list-unstyled mb-1-9">
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            {/* <label htmlFor="" className="form-label">collegeId </label> */}
-                                            <input onChange={updateHandler} type="hidden" className="form-control" name="collegeId" value={updateField.collegeId} disabled />
-                                        </div>
+            <div className="container">
+                <div className="row">
+                    <div className="col-lg-12 mb-4 mb-sm-5">
+                        <br></br>
+                        <div className="flex justify-between items-center mx-4 my-4">
+                            <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
 
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">College Staff Name</label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="collegeStaffName" value={updateField.collegeStaffName} />
-                                            {errors.collegeStaffName && <span style={{ color: 'red' }} className="error">{errors.collegeStaffName}</span>}
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Email</label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="email" value={updateField.email} disabled />
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Phone No.</label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="phNo" value={updateField.phNo} />
-                                            {errors.phNo && <span style={{ color: 'red' }} className="error">{errors.phNo}</span>}
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Aadhar No.</label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="aadharNo" value={updateField.aadharNo} />
-                                            {errors.aadharNo && <span style={{ color: 'red' }} className="error">{errors.aadharNo}</span>}
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Department</label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="department" value={updateField.department} />
-                                            {errors.department && <span style={{ color: 'red' }} className="error">{errors.department}</span>}
-                                        </div>
-                                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                            <label htmlFor="" className="form-label">Address</label>
-                                            <input onChange={updateHandler} type="text" className="form-control" name="clgStaffAddress" value={updateField.clgStaffAddress} />
-                                            {errors.clgStaffAddress && <span style={{ color: 'red' }} className="error">{errors.clgStaffAddress}</span>}
-                                        </div>
-                                        <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                            <label for="studProfilePic" className="form-label">
-                                                Profile Picture  <span className="text-danger">*</span>
-                                            </label>
-                                            <input type="file" onChange={fileUploadHandler} className="form-control" name="profilePic" id="profilePic" accept="image/*" />
-                                            {errors.file && <span style={{ color: 'red' }} className="error">{errors.file}</span>}
-                                        </div>
-                                        <br></br>
-                                        <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
-                                            <button onClick={readNewValue} className="btn btn-warning">Update</button>
-                                        </div>
-                                        <br></br>
-                                        <div class="mb-3">
-                                            <button onClick={() => navigate(-1)} className="btn bg-red-500 text-white px-4 py-2 rounded-md">Back</button>
-                                        </div>
-                                    </ul>
+                            <p style={{ fontSize: '20px', fontWeight: 'bold' }}>Update College Staff Details</p>
+
+                            <div></div>
+                        </div>
+                        <div className="card card-style1 --bs-primary-border-subtle border-5">
+                            <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
+                                <div className="row align-items-center">
+                                    <div className="col-lg-6 mb-4 mb-lg-0">
+                                        <img height="300px" src={updateField.profilePic} alt="" />
+                                    </div>
+                                    <div className="col-lg-6 px-xl-10">
+                                        <ul className="list-unstyled mb-1-9">
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                {/* <label htmlFor="" className="form-label">collegeId </label> */}
+                                                <input onChange={updateHandler} type="hidden" className="form-control" name="collegeId" value={updateField.collegeId} disabled />
+                                            </div>
+
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">College Staff Name</label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="collegeStaffName" value={updateField.collegeStaffName} />
+                                                {errors.collegeStaffName && <span style={{ color: 'red' }} className="error">{errors.collegeStaffName}</span>}
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">Email</label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="email" value={updateField.email} disabled />
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">Phone No.</label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="phNo" value={updateField.phNo} />
+                                                {errors.phNo && <span style={{ color: 'red' }} className="error">{errors.phNo}</span>}
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">Aadhar No.</label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="aadharNo" value={updateField.aadharNo} />
+                                                {errors.aadharNo && <span style={{ color: 'red' }} className="error">{errors.aadharNo}</span>}
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">Department</label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="department" value={updateField.department} />
+                                                {errors.department && <span style={{ color: 'red' }} className="error">{errors.department}</span>}
+                                            </div>
+                                            <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                                <label htmlFor="" className="form-label">Address</label>
+                                                <input onChange={updateHandler} type="text" className="form-control" name="clgStaffAddress" value={updateField.clgStaffAddress} />
+                                                {errors.clgStaffAddress && <span style={{ color: 'red' }} className="error">{errors.clgStaffAddress}</span>}
+                                            </div>
+                                            <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                                <label for="studProfilePic" className="form-label">
+                                                    Profile Picture  <span className="text-danger">*</span>
+                                                </label>
+                                                <input type="file" onChange={fileUploadHandler} className="form-control" name="profilePic" id="profilePic" accept="image/*" />
+                                                {errors.file && <span style={{ color: 'red' }} className="error">{errors.file}</span>}
+                                            </div>
+                                            <br></br>
+                                            <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
+                                                <button onClick={readNewValue} className="btn btn-warning">Update</button>
+                                            </div>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            {showWaitingModal && (
-                <div className="modal show d-block" tabIndex={-1}>
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
-                            </div>
-                            <div className="modal-body">
-                                <>
-                                    <div className="mb-3">
-                                        <p>Processing Request. Do Not Refresh.</p>
-                                    </div>
-                                </>
-                            </div>
-                            <div className="modal-footer">
+                {showWaitingModal && (
+                    <div className="modal show d-block" tabIndex={-1}>
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h1 className="modal-title fs-5" id="exampleModalLabel"></h1>
+                                </div>
+                                <div className="modal-body">
+                                    <>
+                                        <div className="mb-3">
+                                            <p>Processing Request. Do Not Refresh.</p>
+                                        </div>
+                                    </>
+                                </div>
+                                <div className="modal-footer">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
-            {showOverlay && (
-                <div
-                    className="modal-backdrop fade show"
-                    onClick={() => {
-                        setShowWaitingModal(false);
-                        setShowOverlay(false);
-                    }}
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        zIndex: 1040, // Ensure this is below your modal's z-index
-                    }}
-                ></div>
-            )}
-        </div >
+                )}
+                {showOverlay && (
+                    <div
+                        className="modal-backdrop fade show"
+                        onClick={() => {
+                            setShowWaitingModal(false);
+                            setShowOverlay(false);
+                        }}
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            zIndex: 1040, // Ensure this is below your modal's z-index
+                        }}
+                    ></div>
+                )}
+            </div >
+        </div>
     )
 }
 
