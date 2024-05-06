@@ -402,3 +402,25 @@ exports.searchOverallBatchEvaluation = (request, response) => {
         }
     });
 }
+
+exports.viewOverallBatchPerformancePDF = () => {
+    const batchId = request.body.batchId;
+    const token = request.headers.token;
+    const key = request.headers.key;
+
+    jwt.verify(token, key, (err, decoded) => {
+        if (decoded) {
+            Batches.viewOverallBatchPerformancePDF(batchId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else if (data.length === 0) {
+                    return response.json({ "status": "No data found for this batch" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User !!!" });
+        }
+    })
+}

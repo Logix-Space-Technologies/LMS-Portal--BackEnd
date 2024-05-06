@@ -293,5 +293,18 @@ Batches.searchOverallPerformanceOfBatch = (collegeId, batchId, search, result) =
         })
 }
 
+Batches.viewOverallBatchPerformancePDF = (batchId, result) => {
+    db.query(`SELECT studentId, membership_no, studName,sum(score) as score ,sum(totalScore) as totalScore FROM studentTaskScore where batchId=? and dueDate < CURRENT_DATE GROUP BY studentId,studName order by score DESC`, [batchId], (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        } else {
+            console.log("Overall Performance of Batch: ", res);
+            result(null, res);
+        }
+    })
+}
+
 module.exports = Batches;
 
