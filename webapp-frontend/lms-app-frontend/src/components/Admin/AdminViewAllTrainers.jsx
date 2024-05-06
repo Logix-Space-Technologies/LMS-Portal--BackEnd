@@ -25,7 +25,7 @@ const AdminViewAllTrainers = () => {
     const apiUrl = global.config.urls.api.server + "/api/lms/viewAllTrainer";
     const apiUrlTwo = global.config.urls.api.server + "/api/lms/deleteTrainer";
     const apiUrl3 = global.config.urls.api.server + "/api/lms/searchTrainer"
-    
+
     const closeWaitingModal = () => {
         setShowOverlay(false)
         setShowWaitingModal(false)
@@ -61,9 +61,9 @@ const AdminViewAllTrainers = () => {
                         alert(response.data.status)
                         getData()
                     }, 500)
-                } else if (response.data.data) {     
-                    setTrainerData(response.data.data) 
-                    setIsLoading(false)           
+                } else if (response.data.data) {
+                    setTrainerData(response.data.data)
+                    setIsLoading(false)
                     setInputField(
                         {
                             "TrainerSearchQuery": ""
@@ -210,19 +210,21 @@ const AdminViewAllTrainers = () => {
     return (
         <div>
             {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}<br />
-            <strong>View All Trainers</strong>
-            <br /><br />
+            <div className="flex justify-between items-center mx-4 my-4">
+                <div></div>
+
+                <strong>View All Trainers</strong>
+
+                <div></div>
+            </div>
             <div className="row">
-                <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                <div className="col col-12">
                     <div className="row g-3">
-                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                            <h1>Search Trainers</h1>
-                        </div>
-                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                            <input onChange={inputHandler} type="text" className="form-control" name="TrainerSearchQuery" value={inputField.TrainerSearchQuery} placeholder='Trainer Name/Email/Contact No.' />
-                        </div>
-                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                            <button onClick={searchValue} className="btn btn-warning">Search</button>
+                        <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+                            <div className="input-group mb-3"> {/* Use an input group */}
+                                <input onChange={inputHandler} type="text" className="form-control" name="TrainerSearchQuery" value={inputField.TrainerSearchQuery} placeholder='Trainer Name/Email/Contact No.' />
+                                <button onClick={searchValue} className="btn btn-warning ms-2">Search</button>
+                            </div>
                         </div>
                     </div>
                 </div>
