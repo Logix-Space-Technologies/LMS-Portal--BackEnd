@@ -335,7 +335,6 @@ const AdminStaffUpdateMaterial = () => {
                 if (response.data.Material) {
                     setMaterialData(response.data.Material)
                     setUpdateField(response.data.Material[0])
-                    console.log(response.data.Material[0])
                 } else {
                     if (response.data.status === "Unauthorized access!!") {
                         { key === 'lmsapp' ? navigate("/") : navigate("/admstafflogin") }
