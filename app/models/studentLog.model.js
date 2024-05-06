@@ -51,8 +51,8 @@ StudentLog.getAll = async (result) => {
 //Admin & AdminStaff Search StudentLog
 StudentLog.adminSearchStudLog = (searchKey, result ) => {
     const adminSearchStudLogQuery = '%' + searchKey + '%'
-    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, stl.* FROM studentlogs stl JOIN student s ON stl.StudentId = s.id JOIN college c ON c.id = s.collegeId JOIN batches b ON b.id = s.batchId WHERE s.deleteStatus = 0 AND s.isActive = 1 AND stl.DateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) AND (c.collegeName LIKE ? OR b.batchName LIKE ? OR s.membership_no LIKE ? OR s.studName LIKE ?) ORDER BY stl.DateTime DESC;",
-    [adminSearchStudLogQuery, adminSearchStudLogQuery, adminSearchStudLogQuery, adminSearchStudLogQuery],
+    db.query("SELECT c.collegeName, b.batchName, s.membership_no, s.studName, stl.* FROM studentlogs stl JOIN student s ON stl.StudentId = s.id JOIN college c ON c.id = s.collegeId JOIN batches b ON b.id = s.batchId WHERE s.deleteStatus = 0 AND s.isActive = 1 AND stl.DateTime >= DATE_SUB(NOW(), INTERVAL 1 MONTH) AND (c.collegeName LIKE ? OR b.batchName LIKE ? OR s.membership_no LIKE ? OR s.studName LIKE ? OR stl.Action LIKE ?) ORDER BY stl.DateTime DESC;",
+    [adminSearchStudLogQuery, adminSearchStudLogQuery, adminSearchStudLogQuery, adminSearchStudLogQuery, adminSearchStudLogQuery],
     (err, res) => {
         if (err) {
             console.log("Error : ", err)
