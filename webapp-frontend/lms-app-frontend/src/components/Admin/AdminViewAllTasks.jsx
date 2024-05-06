@@ -315,11 +315,9 @@ const AdminViewAllTasks = () => {
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {isLateSubmission && (
-                                                <button onClick={() => subtaskClick(value.id, value.taskTitle, value.dueDate)} className="btn btn-primary btn-sm me-2">
-                                                    View Submitted Tasks
-                                                </button>
-                                            )}
+                                            <button onClick={() => subtaskClick(value.id, value.taskTitle, value.dueDate)} className="btn btn-primary btn-sm me-2">
+                                                View Submitted Tasks
+                                            </button>
                                         </td>
                                         <td className="px-6 py-4">
                                             {isLateSubmission && <button onClick={() => taskScore(value.batchId, value.id, value.taskTitle)} className="btn btn-primary btn-sm me-2">View Performance</button>}
