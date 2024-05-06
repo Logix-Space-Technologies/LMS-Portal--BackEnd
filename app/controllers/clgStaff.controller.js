@@ -1205,7 +1205,7 @@ exports.searchTaskwiseScore = (request, response) => {
         console.log("Search Item is required.")
         return response.json({ "status": "Search Item is required." })
       }
-      CollegeStaff.viewTaskwiseScore(clgStaffSearchScoreQuery, batchId, taskId, (err, data) => {
+      CollegeStaff.clgStaffSearchTaskwiseScore(clgStaffSearchScoreQuery, batchId, taskId, (err, data) => {
         if (err) {
           return response.json({ "status": err });
         } else {
