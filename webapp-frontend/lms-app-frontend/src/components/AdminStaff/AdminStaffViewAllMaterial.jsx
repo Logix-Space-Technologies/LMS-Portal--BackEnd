@@ -92,7 +92,11 @@ const AdminStaffViewAllMaterial = () => {
 
         axios.post(apiLink, inputField, axiosConfig).then((response) => {
             if (response.data.status === "Provide a search query") {
-                alert(response.data.status)
+                setIsLoading(false)
+                setTimeout(() => {
+                    alert(response.data.status)
+                    getData()
+                }, 500)
             } else if (response.data.data) {
                 setMaterialData(response.data.data);
                 setIsLoading(false);
