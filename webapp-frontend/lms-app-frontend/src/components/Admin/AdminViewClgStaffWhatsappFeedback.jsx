@@ -120,24 +120,23 @@ const AdminViewClgStaffWhatsappFeedback = () => {
         <div>
             <Navbar />
             <br />
-            <strong>View College Staff Whatsapp Feedback Log</strong><br /><br />
+            <div className="flex justify-between items-center mx-4 my-4">
+                <div></div>
+
+                <p style={{ fontSize: '20px', fontWeight: 'bold' }}>View College Staff Whatsapp Feedback Log</p>
+
+                <div></div>
+            </div>
             <div className="row">
-                <div className="col">
-                    <div className="input-group">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Search by college name or college staff name..."
-                            value={inputField.searchTerm}
-                            onChange={inputHandler}
-                            name="searchTerm"
-                        />
+                <div className="col col-12">
+                    <div className="row g-3">
+                        <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+                            <div className="input-group mb-3"> {/* Use an input group */}
+                                <input onChange={inputHandler} type="text" className="form-control" name="searchTerm" value={inputField.searchTerm} placeholder='Search by college name or college staff name...' />
+                                <button onClick={searchLogs} className="btn btn-warning ms-2">Search</button>
+                            </div>
+                        </div>
                     </div>
-                    <br></br>
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                        <button onClick={searchLogs} className="btn btn-warning">Search</button>
-                    </div>
-                    <br />
                 </div>
             </div>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
