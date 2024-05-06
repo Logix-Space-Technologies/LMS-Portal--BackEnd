@@ -14,6 +14,11 @@ const CollegeStaffViewScore = () => {
     const [loading, setLoading] = useState(true);
     const [key, setKey] = useState('')
     let TaskName = sessionStorage.getItem('viewScoreTaskName')
+    const [inputField, setInputField] = useState(
+        {
+            "clgStaffSearchScoreQuery": ""
+        }
+    )
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(scoreData.length / scoresPerPage); // Calculate the total number of pages
@@ -23,6 +28,10 @@ const CollegeStaffViewScore = () => {
 
     const apiurl = global.config.urls.api.server + "/api/lms/getTaskwiseScores"
     const apiurl2 = global.config.urls.api.server + "/api/lms/SearchTaskwiseScore"
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
+    }
 
     const navigate = useNavigate()
 
@@ -74,6 +83,76 @@ const CollegeStaffViewScore = () => {
         )
     }
 
+    const readSearchValue = () => {
+        setLoading(true)
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
+        let axiosConfig3 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        }
+        let data = {
+            "clgStaffSearchScoreQuery": inputField.clgStaffSearchScoreQuery,
+            "batchId": sessionStorage.getItem("viewScoreBatchId"),
+            "taskId": sessionStorage.getItem("viewScoreTaskId")
+        }
+        axios.post(apiurl2, data, axiosConfig3).then(
+            (response) => {
+                if (response.data.status === "Search Item is required.") {
+                    setLoading(false)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                        getData()
+                    }, 500)
+                } else if (response.data.data) {
+                    setScoreData(response.data.data)
+                    setInputField(
+                        {
+                            "clgStaffSearchScoreQuery": ""
+                        }
+                    )
+                    setLoading(false)
+                } else if (response.data.status === "Unauthorized User!!") {
+                    { key === 'lmsapp' ? navigate("/") : (key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : navigate("/admstafflogin")) }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setLoading(false)
+                    setInputField(
+                        {
+                            "clgStaffSearchScoreQuery": ""
+                        }
+                    )
+                    setTimeout(() => {
+                        getData()
+                        alert("No Performance Found !!")
+                    }, 500)
+                } else {
+                    setLoading(false)
+                    setInputField(
+                        {
+                            "clgStaffSearchScoreQuery": ""
+                        }
+                    )
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
+
     const generatePDF = () => {
         navigate("/clgstaffdownloadscorelist")
     }
@@ -114,6 +193,18 @@ const CollegeStaffViewScore = () => {
                                     <button type='button' onClick={() => generatePDF()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download PDF</button>
                                 </div>
                             </div>
+                            <div className="row">
+                                <div className="col">
+                                    <div className="input-group">
+                                        <input onChange={inputHandler} type="text" className="form-control" name="clgStaffSearchScoreQuery" value={inputField.clgStaffSearchScoreQuery} placeholder='Membership no/Student Name' />
+                                    </div>
+                                    <br></br>
+                                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                        <button onClick={readSearchValue} className="btn btn-warning">Search</button>
+                                    </div>
+                                    <br />
+                                </div>
+                            </div>
                             <br />
                             <div className="max-w-full overflow-x-auto">
                                 {loading ? <div className="col-12 text-center">Loading...</div> : <table className="w-full table-auto">
@@ -121,6 +212,9 @@ const CollegeStaffViewScore = () => {
                                         <tr className="text-center bg-primary">
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 S/L
+                                            </th>
+                                            <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
+                                                Membership No.
                                             </th>
                                             <th className="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4">
                                                 Student Name
@@ -139,6 +233,9 @@ const CollegeStaffViewScore = () => {
                                                 return <tr key={index}>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {calculateSerialNumber(index)}
+                                                    </td>
+                                                    <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
+                                                        {value.membership_no}
                                                     </td>
                                                     <td className="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium">
                                                         {value.studName}
