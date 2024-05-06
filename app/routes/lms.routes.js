@@ -437,5 +437,7 @@ router.post('/searchSessionwisePerformance', SessionsController.SearchSessionwis
 
 router.post('/ViewBatchWisePerformancePDF', BatchesController.viewOverallBatchPerformancePDF)
 
+router.post('/ViewOneProfileStudUpdate', StudentController.studentViewOneProfileUpdate)
+
 
 module.exports = router

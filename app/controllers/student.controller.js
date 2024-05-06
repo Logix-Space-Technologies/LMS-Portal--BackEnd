@@ -360,6 +360,26 @@ exports.studentViewProfile = (request, response) => {
     })
 }
 
+exports.studentViewOneProfileUpdate = (request, response) => {
+    const studId = request.body.studId
+    const studProfileToken = request.headers.token
+    const key = request.headers.key
+
+    jwt.verify(studProfileToken, key, (err, decoded) => {
+        if (decoded) {
+            Student.viewStudentProfile(studId, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err })
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+
 
 exports.profileUpdateStudent = (request, response) => {
     let uploadSingle = upload.single('studProfilePic');
@@ -388,7 +408,7 @@ exports.profileUpdateStudent = (request, response) => {
                 const { studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = request.body;
                 const updateProfileToken = request.headers.token;
                 const key = request.headers.key;
-                
+
                 jwt.verify(updateProfileToken, key, async (err, decoded) => {
                     if (decoded) {
                         // Validation

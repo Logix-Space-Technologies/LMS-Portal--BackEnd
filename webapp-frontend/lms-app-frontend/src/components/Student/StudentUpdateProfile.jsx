@@ -29,7 +29,7 @@ const StudentUpdateProfile = () => {
 
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
-    const apiURL = global.config.urls.api.server + "/api/lms/studentViewProfile";
+    const apiURL = global.config.urls.api.server + "/api/lms/ViewOneProfileStudUpdate";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/studentUpdateProfile";
     const navigate = useNavigate()
 
