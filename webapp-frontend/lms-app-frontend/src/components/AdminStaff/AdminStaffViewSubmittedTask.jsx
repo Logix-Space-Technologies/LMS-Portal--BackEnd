@@ -400,6 +400,17 @@ const AdminStaffViewSubmittedTask = () => {
         setKey(sessionStorage.getItem("admkey") || '');
     }, []);
 
+    const handleDueDateColor = (dueDate) => {
+        const currentDate = new Date();
+        const parts = dueDate.split('/');
+        // new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]]]]])
+        const formattedDueDate = new Date(parts[2], parts[1] - 1, parts[0]);
+        if (formattedDueDate > currentDate) {
+            return '#32CD30';
+        } else {
+            return '#DB1F48';
+        }
+    };
 
     return (
         <>
@@ -411,7 +422,7 @@ const AdminStaffViewSubmittedTask = () => {
 
                     <strong>
                         View All Submitted Tasks ( Task Name: {TaskTitle} ,
-                        Due Date: <span style={{ color: '#BA0F30' }}> {TaskDueDate} </span>)
+                        Due Date: <span style={{ color: handleDueDateColor(TaskDueDate) }}> {TaskDueDate}</span> )
                     </strong>
 
                     <div></div>
