@@ -174,11 +174,13 @@ const AdminUpdateAdminStaff = () => {
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
                         <br></br>
-                        <br></br>
-                        <br></br>
-                        <br></br>
-                        <h3 className="h2 text-black mb-0">Update Admin Staff Details</h3>
-                        <br></br>
+                        <div className="flex justify-between items-center mx-4 my-4">
+                            <button onClick={() => navigate(-1)} className="btn bg-gray-500 text-white px-4 py-2 rounded-md">Back</button>
+
+                            <p style={{ fontSize: '20px', fontWeight: 'bold' }}>Update Admin Staff Details</p>
+
+                            <div></div>
+                        </div>
                         <div className="card card-style1 --bs-primary-border-subtle border-5">
                             <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
                                 <div className="row align-items-center">
@@ -217,10 +219,6 @@ const AdminUpdateAdminStaff = () => {
                                             <br></br>
                                             <div className="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
                                                 <button onClick={readNewValue} className="btn btn-warning">Update</button>
-                                            </div>
-                                            <br></br>
-                                            <div class="mb-3">
-                                                <Link class="btn btn-danger" to="/AdminViewAllAdminStaff">Back</Link>
                                             </div>
                                         </ul>
                                     </div>
