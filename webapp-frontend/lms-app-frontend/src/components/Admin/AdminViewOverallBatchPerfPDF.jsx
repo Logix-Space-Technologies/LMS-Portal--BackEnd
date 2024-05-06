@@ -143,7 +143,7 @@ const AdminViewOverallBatchPerfPDF = () => {
                                     <div ref={pdfContentRef}>
                                         <img width="200px" src='/logo.png' alt="" />
                                         <p style={{ textAlign: "center", fontSize: "22px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>Batch-Wise Score List Of Students</p>
-                                        <p style={{ textAlign: "center", fontSize: "22px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>{`Batch Name: ${BatchName}`}</p>
+                                        <p style={{ textAlign: "center", fontSize: "20px", fontWeight: 'bold', marginBottom: '10px', textDecoration: "underline" }}>{`Batch Name: ${BatchName}`}</p>
                                         <br />
                                         <table style={{ borderCollapse: 'collapse', width: '100%' }}>
                                             <thead>
