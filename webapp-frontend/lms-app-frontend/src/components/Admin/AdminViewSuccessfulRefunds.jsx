@@ -164,8 +164,13 @@ const AdminViewSuccessfulRefunds = () => {
                     <div className="container mx-auto">
                         <div className="flex flex-wrap -mx-4">
                             <div className="w-full px-4">
-                                <h1>View Successful Refunds</h1>
-                                <br />
+                                <div className="flex justify-between items-center mx-4 my-4">
+                                    <div></div>
+
+                                    <p style={{ fontSize: '20px', fontWeight: 'bold' }}>View Successful Refunds</p>
+
+                                    <div></div>
+                                </div>
                                 <div className="row">
                                     <div className="col">
                                         <div className="input-group">
