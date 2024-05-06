@@ -110,6 +110,7 @@ const StudentUpdateProfile = () => {
             setShowOverlay(true)
             axios.post(apiUrl2, data, axiosConfig).then(
                 (Response) => {
+                    console.log(Response.data)
                     if (Response.data.status === "success") {
                         closeWaitingModal()
                         setTimeout(() => {
@@ -179,20 +180,22 @@ const StudentUpdateProfile = () => {
 
 
     const getData = () => {
-        let data = { "studId": sessionStorage.getItem("studentId") }
+        let data2 = { "studId": sessionStorage.getItem("studentId") }
         // Retrieve key and token from sessionStorage without providing the key
-        let currentKey, token;
+        let currentKey;
+        let token;
         Object.entries(sessionStorage).forEach(([key, value]) => {
             if (key.includes('key')) {
                 currentKey = value;
-            } else if (key.includes('token')) {
+            } else if (key.includes('token') || key.includes('Token')) {
                 token = value;
             }
         });
 
         // Update the state with the current key
         setKey(currentKey);
-        let axiosConfig = {
+
+        let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
@@ -200,8 +203,10 @@ const StudentUpdateProfile = () => {
                 "key": currentKey
             }
         }
-        axios.post(apiURL, data, axiosConfig).then(
+        console.log(axiosConfig2)
+        axios.post(apiURL, data2, axiosConfig2).then(
             (response) => {
+                console.log(response.data)
                 if (response.data.data) {
                     setStudData(response.data.data[0])
                     setUpdateField(response.data.data[0])
