@@ -64,7 +64,7 @@ const AdmStaffNavBar = () => {
                                     <li><Link className="dropdown-item" to="/AdminViewRefundRequests">View Refund Requests</Link></li>
                                     <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
                                     <li><Link className="dropdown-item" to="/AdminStaffViewAllMaterial">View All Materials</Link></li>
-                                    <li><Link className="dropdown-item" to="/adminviewallclgstaff">View All College Staffs</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminviewallclgstaff">View All College Staff</Link></li>
                                     <li><Link className="dropdown-item" to="/adminViewSuccessfulrefunds">View Successful Refunds</Link></li>
                                 </ul>
                             </li>

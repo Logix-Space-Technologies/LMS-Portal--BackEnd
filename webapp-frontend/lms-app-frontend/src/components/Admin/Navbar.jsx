@@ -51,8 +51,8 @@ const Navbar = () => {
                             </Link>
                             <ul className="dropdown-menu">
                                 <li><Link className="dropdown-item" to="/adminviewallcollege">View All College</Link></li>
-                                <li><Link className="dropdown-item" to="/adminviewallclgstaff">View All College Staffs</Link></li>
-                                <li><Link className="dropdown-item" to="/AdminViewAllAdminStaff">View All Admin Staffs</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewallclgstaff">View All College Staff</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminViewAllAdminStaff">View All Admin Staff</Link></li>
                                 <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
                                 <li><Link className="dropdown-item" to="/AdminStaffViewAllMaterial">View All Materials</Link></li>
                                 <li><Link className="dropdown-item" to="/AdminViewRefundRequests">View Refund Requests</Link></li>

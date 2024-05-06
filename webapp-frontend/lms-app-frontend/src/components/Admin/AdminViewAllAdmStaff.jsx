@@ -182,7 +182,13 @@ const AdminViewAllAdminStaff = () => {
       <Navbar /><br />
       <section className="bg-gray-100 min-h-screen p-4">
         <div className="container mx-auto">
-          <h1 className="text-3xl font-semibold text-gray-800 mb-6">Admin Staff List</h1>
+          <div className="flex justify-between items-center mx-4 my-4">
+            <div></div>
+
+            <p style={{ fontSize: '20px', fontWeight: 'bold' }}>View All Admin Staffs</p>
+
+            <div></div>
+          </div>
           <div className="row">
             <div className="col col-12">
               <br />
