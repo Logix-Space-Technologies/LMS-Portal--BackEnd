@@ -344,9 +344,8 @@ exports.StdChangePassword = (request, response) => {
 exports.studentViewProfile = (request, response) => {
     const studId = request.body.studId
     const studProfileToken = request.headers.token
-    const key = request.headers.key
 
-    jwt.verify(studProfileToken, key, (err, decoded) => {
+    jwt.verify(studProfileToken, "lmsappstud", (err, decoded) => {
         if (decoded) {
             Student.viewStudentProfile(studId, (err, data) => {
                 if (err) {

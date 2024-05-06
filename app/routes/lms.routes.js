@@ -359,21 +359,21 @@ router.post('/changeregstatustoopen', CollegeController.changeRegistrationStatus
 
 router.post('/changeregstatustoclose', CollegeController.changeRegistrationStatusToNotOpen)
 
-router.post('/clgStaffAddFirebaseToken',ClgStaffFirebaseController.createTokens)
+router.post('/clgStaffAddFirebaseToken', ClgStaffFirebaseController.createTokens)
 
 router.post('/sendFirebaseNotificationByclgStaffId', ClgStaffFirebaseController.sendNotificationByclgStaffId)
 
 router.get('/viewClgStaffFirebaseTokens', ClgStaffFirebaseController.viewTokens)
 
-router.post('/viewPerformancebyEachStud',StudentController.studentPerformance)
+router.post('/viewPerformancebyEachStud', StudentController.studentPerformance)
 
 router.post('/changeregstatustoopenforbatch', BatchesController.changeRegistrationStatusToAvailable)
 
 router.post('/changeregstatustocloseforbatch', BatchesController.changeRegistrationStatusToNotAvailable)
 
-router.post('/getOverallPerformanceOfBatch',BatchesController.getOverallBatchEvaluation)
+router.post('/getOverallPerformanceOfBatch', BatchesController.getOverallBatchEvaluation)
 
-router.post('/getTaskwiseScores',ClgStaffController.viewTaskwiseScore)
+router.post('/getTaskwiseScores', ClgStaffController.viewTaskwiseScore)
 
 router.post('/searchRefundRequests', RefundController.searchRefundRequests)
 
@@ -381,29 +381,29 @@ router.post('/searchSuccessfulRefundRequests', RefundController.searchSuccessful
 
 router.post('/studentViewPerformance', StudentController.studentViewPerformanceScore)
 
-router.post('/viewPerformanceOfStudents',CollegeController.viewPerformanceOfStudents)
+router.post('/viewPerformanceOfStudents', CollegeController.viewPerformanceOfStudents)
 
-router.post('/viewScoreOfStudPDF',StudentController.generateTaskWiseScoreList)
+router.post('/viewScoreOfStudPDF', StudentController.generateTaskWiseScoreList)
 
-router.post('/viewSessionwisePerformance',SessionsController.viewSessionwisePerformance)
+router.post('/viewSessionwisePerformance', SessionsController.viewSessionwisePerformance)
 
-router.post('/searchCollegeStaffLog',ClgStaffLogController.searchCollegeStaffLog)
+router.post('/searchCollegeStaffLog', ClgStaffLogController.searchCollegeStaffLog)
 
 router.post("/searchAdminStaffLog", AdminStaffLogController.searchAdminStaffLog)
 
 router.post("/adminSearchLog", AdminController.searchAdminLog);
 
-router.post('/adminForgotPasswordOTPSend',AdminController.forgotPassword)
+router.post('/adminForgotPasswordOTPSend', AdminController.forgotPassword)
 
-router.post('/adminForgotPasswordVerifyOTP',AdminController.verifyOtp)
+router.post('/adminForgotPasswordVerifyOTP', AdminController.verifyOtp)
 
 router.post('/viewcallbackAPIClgStaff', ClgStaffViewCallBackController.sendfn)
 
 router.post('/viewmsgreceivedAPIClgStaff', ClgStaffViewMsgReceivedController.sendfn)
 
-router.post('/clgStaffSearchSession',ClgStaffController.collegeStaffSearchSession)
+router.post('/clgStaffSearchSession', ClgStaffController.collegeStaffSearchSession)
 
-router.post("/adminSearchStudLog",studentLogController.adminSearchStudentLog)
+router.post("/adminSearchStudLog", studentLogController.adminSearchStudentLog)
 
 router.post('/AdminSearchFeedbackStud', AdminSearchFeedbackStudController.sendfn)
 
@@ -413,7 +413,7 @@ router.post('/AdminSearchFeedbackClgStaff', AdminSearchFeedbackClgStaffControlle
 
 router.post('/AdminSearchWhatsappMsgReceivedClgStaff', AdminSearchWhatsappMsgReceivedClgStaffController.sendfn)
 
-router.post('/dwnldClgWiseStudPerformance',ClgStaffController.generateClgWisePerformancePDF)
+router.post('/dwnldClgWiseStudPerformance', ClgStaffController.generateClgWisePerformancePDF)
 
 // Dummy
 router.post('/generatebatchwisestudListDummy', StudentController.generateListOfBatchWiseStudentsDummy)
@@ -421,19 +421,21 @@ router.post('/generatebatchwisestudListDummy', StudentController.generateListOfB
 router.post('/generatebatchwiseattendanceListDummy', StudentController.generateBatchWiseAttendanceListDummy)
 //Dummy Ends
 
-router.post('/updateSubmittedTaskScore',SubmitTaskController.updateTaskScore)
+router.post('/updateSubmittedTaskScore', SubmitTaskController.updateTaskScore)
 
 router.post('/colgstaffSearchattendance', AttendenceController.collegeStaffSearchAttendance)
 
-router.post('/searchPerformanceOfStudents',CollegeController.searchPerformanceOfStudents)
+router.post('/searchPerformanceOfStudents', CollegeController.searchPerformanceOfStudents)
 
 router.post('/overallstudperformancestudwise', StudentController.viewOverallPerformanceStudWise)
 
-router.post('/searchOverallPerformanceOfBatch',BatchesController.searchOverallBatchEvaluation)
+router.post('/searchOverallPerformanceOfBatch', BatchesController.searchOverallBatchEvaluation)
 
-router.post('/dwnldSessionWisePerformancePDF',SessionsController.generateSessionWiseScorePerformancePDF)
+router.post('/dwnldSessionWisePerformancePDF', SessionsController.generateSessionWiseScorePerformancePDF)
 
-router.post('/searchSessionwisePerformance',SessionsController.SearchSessionwisePerformance)
+router.post('/searchSessionwisePerformance', SessionsController.SearchSessionwisePerformance)
+
+router.post('/ViewBatchWisePerformancePDF', BatchesController.viewOverallBatchPerformancePDF)
 
 
 module.exports = router
