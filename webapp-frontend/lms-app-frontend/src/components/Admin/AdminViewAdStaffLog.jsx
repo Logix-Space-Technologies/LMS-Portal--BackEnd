@@ -43,6 +43,7 @@ const AdminViewAdStaffLog = () => {
         }
         axios.post(apiUrl4, inputField, axiosConfig3).then(
             (response) => {
+                console.log(response)
                 if (response.data.status === "Search Item is required.") {
                     setIsLoading(false)
                     setTimeout(() => {

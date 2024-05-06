@@ -51,8 +51,8 @@ AdminStaffLog.getAll = async (result) => {
 
 AdminStaffLog.searchAdminStaffLog = (search, result) => {
     const searchTerm = '%' + search + '%'
-    db.query("SELECT asg.AdStaffName, asl.* FROM adminstafflog asl JOIN admin_staff asg ON asl.AdmStaffId = asg.id WHERE asg.deleteStatus = 0 AND asg.isActive = 1 AND asg.AdStaffName LIKE ? AND asl.DateTime >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH) AND asl.DateTime <= CURRENT_TIMESTAMP() ORDER BY asl.DateTime DESC;",
-        [searchTerm],
+    db.query("SELECT asg.AdStaffName, asl.* FROM adminstafflog asl JOIN admin_staff asg ON asl.AdmStaffId = asg.id WHERE asg.deleteStatus = 0 AND asg.isActive = 1 AND (asg.AdStaffName LIKE ? OR asl.Action LIKE ?) AND asl.DateTime >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH) AND asl.DateTime <= CURRENT_TIMESTAMP() ORDER BY asl.DateTime DESC;",
+        [searchTerm, searchTerm],
         (err, res) => {
             if (err) {
                 console.log("Error : ", err)
