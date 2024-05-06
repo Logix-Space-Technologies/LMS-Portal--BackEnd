@@ -91,7 +91,9 @@ const AdminStaffViewAllMaterial = () => {
         };
 
         axios.post(apiLink, inputField, axiosConfig).then((response) => {
-            if (response.data.data) {
+            if (response.data.status === "Provide a search query") {
+                alert(response.data.status)
+            } else if (response.data.data) {
                 setMaterialData(response.data.data);
                 setIsLoading(false);
                 setInputField({
@@ -194,7 +196,7 @@ const AdminStaffViewAllMaterial = () => {
                     <div className="row g-3">
                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                             <label htmlFor="" className="form-label"></label>
-                            <input onChange={inputHandler} type="text" className="form-control" name="materialQuery" value={inputField.materialQuery} placeholder='Search By fileName/Description/Batch Name' />
+                            <input onChange={inputHandler} type="text" className="form-control" name="materialQuery" value={inputField.materialQuery} placeholder='Search By College Name/Batch Name/File Name/Description' />
                         </div>
                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                             <button onClick={readValue} className="btn btn-warning">Search</button>
