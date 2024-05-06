@@ -43,7 +43,6 @@ const AdminViewAdStaffLog = () => {
         }
         axios.post(apiUrl4, inputField, axiosConfig3).then(
             (response) => {
-                console.log(response)
                 if (response.data.status === "Search Item is required.") {
                     setIsLoading(false)
                     setTimeout(() => {
@@ -155,7 +154,7 @@ const AdminViewAdStaffLog = () => {
                             <div className="row">
                                 <div className="col">
                                     <div className="input-group">
-                                        <input onChange={inputHandler} type="text" className="form-control" name="SearchQuery" value={inputField.SearchQuery} placeholder='Action' />
+                                        <input onChange={inputHandler} type="text" className="form-control" name="SearchQuery" value={inputField.SearchQuery} placeholder='Admin Staff Name/Action' />
                                     </div>
                                     <br></br>
                                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
