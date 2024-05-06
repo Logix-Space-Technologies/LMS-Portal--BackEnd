@@ -403,7 +403,7 @@ exports.searchOverallBatchEvaluation = (request, response) => {
     });
 }
 
-exports.viewOverallBatchPerformancePDF = () => {
+exports.viewOverallBatchPerformancePDF = (request, response) => {
     const batchId = request.body.batchId;
     const token = request.headers.token;
     const key = request.headers.key;
