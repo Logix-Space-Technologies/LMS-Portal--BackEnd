@@ -294,7 +294,8 @@ const AdminUpdateTask = () => {
     }, []);
 
     return (
-        <div>{key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+        <div>
+            {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
             <div className="container">
 
                 <div className="row">
