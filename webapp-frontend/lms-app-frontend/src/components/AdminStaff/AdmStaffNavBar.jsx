@@ -1,27 +1,59 @@
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const AdmStaffNavBar = () => {
 
-    const navigate = useNavigate();
+    const [admStaffData, setAdmStaffData] = useState([])
+
+    const apiUrl = global.config.urls.api.server + "/api/lms/profileViewByAdmStaff"
+
+    const getData = () => {
+        let data = { "id": sessionStorage.getItem("admstaffId") }
+        let axiosConfig = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("admstaffLogintoken"),
+                "key": sessionStorage.getItem("admstaffkey")
+            }
+        }
+        axios.post(apiUrl, data, axiosConfig).then(
+            (response) => {
+                if (response.data.data) {
+                    setAdmStaffData(response.data.data)
+                } else {
+                    if (response.data.status === "Unauthorized User!!") {
+                        navigate("/admstafflogin")
+                        sessionStorage.clear()
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
+            }
+        )
+    }
+
+    const navigate = useNavigate()
 
     const logOut = () => {
-        navigate('/admstafflogin');
         sessionStorage.clear()
+        navigate('/admstafflogin');
     }
 
     const handleLogoutConfirm = () => {
         logOut();
     };
 
+    useEffect(() => { getData() }, [])
+
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
-                    <Link className="navbar-brand" to="#">Admin Staff</Link>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
+                    <h2 className="text-primary mb-0">
+                        <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
+                    </h2>
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav">
                             <li className="nav-item">
@@ -68,12 +100,22 @@ const AdmStaffNavBar = () => {
                                     <li><Link className="dropdown-item" to="/adminViewSuccessfulrefunds">View Successful Refunds</Link></li>
                                 </ul>
                             </li>
-                            <li className="nav-item">
-                                <button className="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutConfirmationModal">
-                                    Log Out
-                                </button>
-                            </li>
                         </ul>
+                    </div>
+                </div>
+                <div className="navbar-nav align-items-center ms-auto">
+                    <div className="nav-item dropdown">
+                        <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <img className="rounded-circle me-lg-2" src="./person.svg" alt="" style={{ width: 40, height: 40 }} />
+                            <span className="d-none d-lg-inline-flex">{admStaffData.AdStaffName}</span>
+                        </Link>
+                        <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                            <Link to="/AdminStaffChangePassword" className="dropdown-item">Change Password</Link>
+                            <Link to="/" className="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutConfirmationModal">
+                                Log Out
+                            </Link>
+                        </div>
+
                     </div>
                 </div>
             </nav >
