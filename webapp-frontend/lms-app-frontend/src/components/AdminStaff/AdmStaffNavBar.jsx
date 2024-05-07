@@ -57,7 +57,7 @@ const AdmStaffNavBar = () => {
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav">
                             <li className="nav-item">
-                                <Link className="nav-link active" aria-current="page" to="/admstaffdashboard">Dashboard</Link>
+                                <Link className="nav-link active" aria-current="page" to="/admstaffdashboard" style={{ marginLeft: '20px' }}>Dashboard</Link>
                             </li>
                             <li>
                                 <Link className="nav-link active" aria-current="page" to="/AdminSendNotification">Send Notifications</Link>
