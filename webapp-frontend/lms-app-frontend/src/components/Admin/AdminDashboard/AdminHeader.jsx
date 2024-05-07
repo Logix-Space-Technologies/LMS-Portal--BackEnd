@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const AdminHeader = () => {
@@ -46,7 +46,7 @@ const AdminHeader = () => {
                             </div> */}
                     <div className="nav-item dropdown">
                         <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img className="rounded-circle me-lg-2" src="https://www.pngmart.com/files/22/User-Avatar-Profile-PNG-Isolated-Transparent-HD-Photo.png" alt style={{ width: 40, height: 40 }} />
+                            <img className="rounded-circle me-lg-2" src="./person.svg" alt="" style={{ width: 40, height: 40 }} />
                             <span className="d-none d-lg-inline-flex">Admin</span>
                         </Link>
                         <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
