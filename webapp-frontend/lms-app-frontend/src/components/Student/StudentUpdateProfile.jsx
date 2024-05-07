@@ -250,7 +250,7 @@ const StudentUpdateProfile = () => {
 
     return (
         <div>
-            {key === 'lmsappstud' ? '' : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
+            {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : (key === 'lmsappstud' ? '' : <Navbar />)}
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">
