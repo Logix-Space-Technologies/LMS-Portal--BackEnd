@@ -32,13 +32,18 @@ const AdminViewAllClgStaff = () => {
 
 
   const searchCollegeStaff = () => {
-    let currentKey = sessionStorage.getItem("admkey");
-    let token = sessionStorage.getItem("admtoken");
-    if (currentKey !== 'lmsapp') {
-      currentKey = sessionStorage.getItem("admstaffkey");
-      token = sessionStorage.getItem("admstaffLogintoken");
-      setKey(currentKey); // Update the state if needed
-    }
+    // Retrieve key and token from sessionStorage without providing the key
+    let currentKey, token;
+    Object.entries(sessionStorage).forEach(([key, value]) => {
+        if (key.includes('key')) {
+            currentKey = value;
+        } else if (key.includes('token')) {
+            token = value;
+        }
+    });
+
+    // Update the state with the current key
+    setKey(currentKey);
     setIsLoading(true);
 
     let axiosConfig = {
@@ -98,13 +103,18 @@ const AdminViewAllClgStaff = () => {
   }
 
   const getData = () => {
-    let currentKey = sessionStorage.getItem("admkey");
-    let token = sessionStorage.getItem("admtoken");
-    if (currentKey !== 'lmsapp') {
-      currentKey = sessionStorage.getItem("admstaffkey");
-      token = sessionStorage.getItem("admstaffLogintoken");
-      setKey(currentKey); // Update the state if needed
-    }
+    // Retrieve key and token from sessionStorage without providing the key
+    let currentKey, token;
+    Object.entries(sessionStorage).forEach(([key, value]) => {
+        if (key.includes('key')) {
+            currentKey = value;
+        } else if (key.includes('token')) {
+            token = value;
+        }
+    });
+
+    // Update the state with the current key
+    setKey(currentKey);
     let axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
@@ -207,14 +217,9 @@ const AdminViewAllClgStaff = () => {
     getData();
   }, []);
 
-  // Update key state when component mounts
-  useEffect(() => {
-    setKey(sessionStorage.getItem("admkey") || '');
-  }, []);
-
   return (
     <div>
-      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+      {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
       <section className="bg-gray-100 min-h-screen p-4">
         <div className="container mx-auto">
           <div className="flex justify-between items-center mx-4 my-4">

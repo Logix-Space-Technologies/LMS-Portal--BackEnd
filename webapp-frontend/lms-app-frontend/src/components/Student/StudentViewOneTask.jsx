@@ -49,14 +49,15 @@ const StudentViewOneTask = () => {
                 if (response.data.data) {
                     setLoading(false)
                     setStudViewTaskData(response.data.data);
+                } else if (response.data.status === "Unauthorized User!!") {
+                    navigate("/studentLogin")
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setLoading(false)
+                    setStudViewTaskData([]);
                 } else {
-                    if (response.data.status === "Unauthorized User!!") {
-                        navigate("/studentLogin")
-                        sessionStorage.clear()
-                    } else {
-                        setLoading(false)
-                        alert(response.data.status)
-                    }
+                    setLoading(false)
+                    alert(response.data.status)
                 }
             }
         ).catch(error => console.error("Error:", error));

@@ -150,7 +150,7 @@ const AdminSendNotification = () => {
                 setTimeout(() => {
                     const errorMessage = Object.values(response.data.data)[0]; // Extracting the first validation error message
                     alert(errorMessage); // Alerting the validation error message
-                },500)
+                }, 500)
             } else if (response.data.status === 'Success') {
                 closeWaitingModal();
                 setTimeout(() => {
@@ -176,7 +176,7 @@ const AdminSendNotification = () => {
             }, 500);
         }
     };
-    
+
 
     // Inline styles
     const styles = {
@@ -236,7 +236,7 @@ const AdminSendNotification = () => {
 
     return (
         <div>
-            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
             <div style={styles.container}>
 
                 <br />

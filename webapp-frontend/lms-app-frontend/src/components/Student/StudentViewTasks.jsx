@@ -50,19 +50,15 @@ const StudentViewTasks = () => {
                 if (response.data.data) {
                     setLoading(false);
                     setStudViewTaskData(response.data.data);
+                } else if (response.data.status === "Unauthorized User!!") {
+                    navigate("/studentLogin")
+                    sessionStorage.clear()
+                } else if (response.data.status === "No tasks found!") {
+                    setStudViewTaskData([])
+                    setLoading(false)
                 } else {
-                    if (response.data.status === "Unauthorized User!!") {
-                        navigate("/studentLogin")
-                        sessionStorage.clear()
-                    } else {
-                        if (response.data.status === "No tasks found!") {
-                            setStudViewTaskData([])
-                            setLoading(false)
-                        } else {
-                            setLoading(false)
-                            alert(response.data.status)
-                        }
-                    }
+                    setLoading(false)
+                    alert(response.data.status)
                 }
             }
         );

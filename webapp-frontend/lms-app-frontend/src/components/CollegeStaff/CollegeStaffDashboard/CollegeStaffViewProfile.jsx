@@ -46,8 +46,6 @@ const CollegeStaffViewProfile = () => {
                 <div className="col-lg-12 mb-4 mb-sm-5">
                     <br></br>
                     <br></br>
-                    <br></br>
-                    <br></br>
                     <div className="card card-style1 --bs-primary-border-subtle border-5">
                         <div className="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
                             <div className="row align-items-center">

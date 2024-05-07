@@ -93,7 +93,7 @@ const ClgStaffViewScoreStudentWise = () => {
 
     return (
         <div>
-            {key === 'lmsappclgstaff' ? <ClgStaffNavbar /> : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
+            {key === 'lmsappclgstaff' ? <ClgStaffNavbar /> : (key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />)}
             {/* ====== Table Section Start */}
             <section className="bg-gray-100 dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
