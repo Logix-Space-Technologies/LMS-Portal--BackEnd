@@ -197,6 +197,9 @@ const CollegeStaffViewSession = () => {
     // Calculate total pages based on filtered session data
     const totalPages = Math.ceil(filteredSessions.length / sessionsPerPage);
 
+    // Update total results to reflect filtered sessions
+    let totalResults = filteredSessions.length;
+
     const calculateSerialNumber = (index) => {
         return ((currentPage - 1) * sessionsPerPage) + index + 1;
     }
@@ -356,7 +359,7 @@ const CollegeStaffViewSession = () => {
                         <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                             <div>
                                 <p className="text-sm text-gray-700">
-                                    Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > sessionData.length ? sessionData.length : indexOfLastSession}</span> of <span className="font-medium">{sessionData.length}</span> results
+                                    Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > totalResults ? totalResults : indexOfLastSession}</span> of <span className="font-medium">{totalResults}</span> results
                                 </p>
                             </div>
                             <div>

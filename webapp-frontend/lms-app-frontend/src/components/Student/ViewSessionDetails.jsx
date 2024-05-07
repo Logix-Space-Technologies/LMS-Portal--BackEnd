@@ -149,17 +149,14 @@ const SessionView = () => {
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
   // Total pages
-  let totalPages = []
-  // Calculate total pages based on filtered session data
-  totalPages = Math.ceil(filteredSessions.length / sessionsPerPage);
-
-  const calculateSerialNumber = (index) => {
-    return ((currentPage - 1) * sessionsPerPage) + index + 1;
-  }
+  let totalPages = Math.ceil(filteredSessions.length / sessionsPerPage);
 
   // Integration of new pagination logic
   const startPage = currentPage > 2 ? currentPage - 2 : 1;
   const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
+
+  // Update total results to reflect filtered sessions
+  let totalResults = filteredSessions.length;
 
   return (
 
@@ -242,7 +239,7 @@ const SessionView = () => {
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > sessions.length ? sessions.length : indexOfLastSession}</span> of <span className="font-medium">{sessions.length}</span> results
+                Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > totalResults  ? totalResults  : indexOfLastSession}</span> of <span className="font-medium">{totalResults }</span> results
               </p>
             </div>
             <div>
@@ -263,7 +260,7 @@ const SessionView = () => {
                       <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
                     </svg>
                   </button>
-                  {/* Dynamically generate Link components for each page number */}
+                  {/* Dynamically generate Link components for each page number based on filtered sessions */}
                   {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
                     <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
                       {startPage + index}
