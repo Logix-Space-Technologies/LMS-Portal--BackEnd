@@ -18,6 +18,8 @@ const AdminDashboard = () => {
           {/* <AdminSideBar /> */}
           {/* Admin SideBar End */}
           {/* /Count view */}
+          <br />
+          <h1 className="text-center" style={{fontWeight:'bold', fontSize:'20px'}}>Admin Dashboard</h1>
           <AdminCountView />
           {/* Table View */}
           <AdminTableView />

@@ -305,7 +305,7 @@ const AddCollegeStaff = () => {
 
   return (
     <div>
-      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+      {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
       <div className="container">
         <div class="bg-light py-3 py-md-5">
           <div class="container">
