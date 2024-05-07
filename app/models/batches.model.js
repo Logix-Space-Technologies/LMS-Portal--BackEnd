@@ -97,7 +97,7 @@ Batches.batchView = (result) => {
 Batches.searchBatch = (collegeId, search, result) => {
     const searchTerm = '%' + search + '%';
     db.query(
-        "SELECT b.id, c.collegeName, b.batchName, b.batchDesc, b.regStartDate, b.regEndDate, b.batchAmount FROM batches b JOIN college c ON b.collegeId = c.id WHERE c.id = ? AND b.deleteStatus = 0 AND b.isActive = 1 AND (b.batchName LIKE ? OR b.batchDesc LIKE ?)",
+        "SELECT c.collegeName, b.* FROM batches b JOIN college c ON b.collegeId = c.id WHERE c.id = ? AND b.deleteStatus = 0 AND b.isActive = 1 AND (b.batchName LIKE ? OR b.batchDesc LIKE ?)",
         [collegeId, searchTerm, searchTerm],
         (err, res) => {
             if (err) {
