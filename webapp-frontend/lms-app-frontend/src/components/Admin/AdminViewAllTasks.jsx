@@ -32,13 +32,18 @@ const AdminViewAllTasks = () => {
     };
 
     const searchTasks = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         setIsLoading(true);
         const axiosConfig = {
             headers: {
@@ -108,13 +113,18 @@ const AdminViewAllTasks = () => {
     }
 
     const getData = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let data = { "sessionId": sessionStorage.getItem("viewtaskId") }
         let axiosConfig = {
             headers: {
@@ -227,11 +237,6 @@ const AdminViewAllTasks = () => {
     };
 
     useEffect(() => { getData() }, []);
-
-    // Update key state when component mounts
-    useEffect(() => {
-        setKey(sessionStorage.getItem("admkey") || '');
-    }, []);
 
     return (
         <div>
