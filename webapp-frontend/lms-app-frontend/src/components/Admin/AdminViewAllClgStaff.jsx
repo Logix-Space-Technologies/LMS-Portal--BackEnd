@@ -214,7 +214,7 @@ const AdminViewAllClgStaff = () => {
 
   return (
     <div>
-      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+      {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
       <section className="bg-gray-100 min-h-screen p-4">
         <div className="container mx-auto">
           <div className="flex justify-between items-center mx-4 my-4">

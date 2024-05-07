@@ -557,7 +557,7 @@ const AdminViewRefundRequests = () => {
 
   return (
     <div>
-      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+      {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
       <div>
         {/* ====== Table Section Start */}
         <section className="bg-white dark:bg-dark py-20 lg:py-[120px]">
