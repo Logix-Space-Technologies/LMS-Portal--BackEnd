@@ -79,16 +79,6 @@ const AdmStaffNavBar = () => {
                             </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Search
-                                </Link>
-                                <ul className="dropdown-menu">
-                                    <li><Link className="dropdown-item" to="/adminSearchClg">Search Colleges</Link></li>
-                                    <li><Link className="dropdown-item" to="/adminSearchTrainers">Search Trainers</Link></li>
-                                    <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search College Staff</Link></li>
-                                </ul>
-                            </li>
-                            <li className="nav-item dropdown">
-                                <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     View
                                 </Link>
                                 <ul className="dropdown-menu">
@@ -98,6 +88,16 @@ const AdmStaffNavBar = () => {
                                     <li><Link className="dropdown-item" to="/AdminStaffViewAllMaterial">View All Materials</Link></li>
                                     <li><Link className="dropdown-item" to="/adminviewallclgstaff">View All College Staff</Link></li>
                                     <li><Link className="dropdown-item" to="/adminViewSuccessfulrefunds">View Successful Refunds</Link></li>
+                                </ul>
+                            </li>
+                            <li className="nav-item dropdown">
+                                <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Search
+                                </Link>
+                                <ul className="dropdown-menu">
+                                    <li><Link className="dropdown-item" to="/adminSearchClg">Search Colleges</Link></li>
+                                    <li><Link className="dropdown-item" to="/adminSearchTrainers">Search Trainers</Link></li>
+                                    <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search College Staff</Link></li>
                                 </ul>
                             </li>
                         </ul>

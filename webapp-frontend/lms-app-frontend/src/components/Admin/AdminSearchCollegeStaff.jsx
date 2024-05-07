@@ -152,11 +152,12 @@ const AdminSearchCollegeStaff = () => {
 
     return (
         <div>
-            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="col-12 col-md-8 text-center">
-                        <h1>Search College Staff</h1>
+                        <br />
+                        <h1>Search College Staff</h1><br />
                         <div className="d-flex justify-content-center align-items-center">
                             <input onChange={inputHandler} type="text" className="form-control" name="searchQuery" value={inputField.searchQuery} placeholder='Name/College/Email/Phone No./Department' />
                             <button onClick={searchCollegeStaff} className="btn btn-warning ms-2">Search</button>
@@ -166,7 +167,6 @@ const AdminSearchCollegeStaff = () => {
                 <br />
                 {searchPerformed && !isLoading && collegeStaff && collegeStaff.length > 0 && (
                     <div>
-                        <strong>College Staff Details</strong>
                         <br /><br />
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
