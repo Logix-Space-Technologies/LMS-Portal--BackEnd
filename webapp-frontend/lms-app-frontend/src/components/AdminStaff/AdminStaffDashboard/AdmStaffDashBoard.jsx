@@ -7,7 +7,6 @@ import AdmStaffNavBar from '../AdmStaffNavBar'
 
 const AdmStaffDashBoard = () => {
   return (
-
     <div>
       <AdmStaffNavBar/>
       <div className="container-xxl position-relative bg-white d-flex p-0">
@@ -23,7 +22,6 @@ const AdmStaffDashBoard = () => {
         </div>
       </div>
     </div>
-
   )
 }
 
