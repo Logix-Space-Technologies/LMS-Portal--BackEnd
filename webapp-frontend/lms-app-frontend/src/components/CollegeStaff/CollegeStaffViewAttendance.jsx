@@ -169,7 +169,7 @@ const CollegeStaffViewAttendance = () => {
 
     return (
         <div>
-            {key === 'lmsappclgstaff' ? <ClgStaffNavbar /> : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
+            {key === 'lmsapp' ? <Navbar /> : (key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <ClgStaffNavbar />)}
             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
                 <div></div>
                 {key === 'lmsapp' ? <h2 className="text-lg font-bold">View Attendance Session-Wise {`( Session Name - ${SessionName} )`}</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">View Attendance Session-Wise {`( Session Name - ${SessionName} )`}</h2> : <h2 className="text-lg font-bold">View Attendance Session-Wise {`( Session Name - ${SessionName} )`}</h2>)}
