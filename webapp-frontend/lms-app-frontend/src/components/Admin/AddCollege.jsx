@@ -25,6 +25,8 @@ const AddCollege = () => {
   const navigate = useNavigate()
   const [showWaitingModal, setShowWaitingModal] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+  // Retrieve key and token from sessionStorage without providing the key
+  let currentKey, token;
 
 
   const fileUploadHandler = (event) => {
@@ -56,19 +58,7 @@ const AddCollege = () => {
   }
 
   const handleSubmit = (e) => {
-    // Retrieve key and token from sessionStorage without providing the key
-    let currentKey, token;
     let addedBy;
-    Object.entries(sessionStorage).forEach(([key, value]) => {
-        if (key.includes('key')) {
-            currentKey = value;
-        } else if (key.includes('token')) {
-            token = value;
-        }
-    });
-
-    // Update the state with the current key
-    setKey(currentKey);
     if (currentKey === 'lmsapp') {
       addedBy = 0
     } else {
@@ -236,9 +226,24 @@ const AddCollege = () => {
     return errors;
   };
 
+
+  useEffect(() => {
+    // Retrieve key and token from sessionStorage without providing the key
+    Object.entries(sessionStorage).forEach(([key, value]) => {
+      if (key.includes('key')) {
+        currentKey = value;
+      } else if (key.includes('token')) {
+        token = value;
+      }
+    });
+
+    // Update the state with the current key
+    setKey(currentKey);
+  }, []); // Empty dependency array ensures that this effect runs only once after the initial render
+
   return (
     <div>
-      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+      {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
       <div className="bg-light py-3 py-md-5">
         <div className="container">
           <div className="row justify-content-md-center">

@@ -28,6 +28,8 @@ const AdminAddTrainer = () => {
     const [fileType, setFileType] = useState("");
 
     const [key, setKey] = useState('');
+    let currentKey;
+    let token;
 
     const fileUploadHandler = (event) => {
         setErrors({});
@@ -58,14 +60,7 @@ const AdminAddTrainer = () => {
     }
 
     const readValue = (e) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
         let addedBy;
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
         if (currentKey === 'lmsapp') {
             addedBy = 0
         } else {
@@ -233,7 +228,20 @@ const AdminAddTrainer = () => {
         return errors;
     }
 
-    useEffect(() => { setKey(sessionStorage.getItem("admkey") || '') }, []);
+    useEffect(() => {
+        // Retrieve key and token from sessionStorage without providing the key
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
+    }, []); // Empty dependency array ensures that this effect runs only once after the initial render
+
 
     return (
         <div>
