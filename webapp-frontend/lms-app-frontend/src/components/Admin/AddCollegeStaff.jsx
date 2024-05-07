@@ -56,13 +56,18 @@ const AddCollegeStaff = () => {
 
 
   const getData = () => {
-    let currentKey = sessionStorage.getItem("admkey");
-    let token = sessionStorage.getItem("admtoken");
-    if (currentKey !== 'lmsapp') {
-      currentKey = sessionStorage.getItem("admstaffkey");
-      token = sessionStorage.getItem("admstaffLogintoken");
-      setKey(currentKey); // Update the state if needed
-    }
+    // Retrieve key and token from sessionStorage without providing the key
+    let currentKey, token;
+    Object.entries(sessionStorage).forEach(([key, value]) => {
+      if (key.includes('key')) {
+        currentKey = value;
+      } else if (key.includes('token')) {
+        token = value;
+      }
+    });
+
+    // Update the state with the current key
+    setKey(currentKey);
     let axiosConfig = {
       headers: {
         'content-type': 'multipart/form-data',
@@ -98,13 +103,18 @@ const AddCollegeStaff = () => {
   };
 
   const readValue = (e) => {
-    let currentKey = sessionStorage.getItem("admkey");
-    let token = sessionStorage.getItem("admtoken");
-    if (currentKey !== 'lmsapp') {
-      currentKey = sessionStorage.getItem("admstaffkey");
-      token = sessionStorage.getItem("admstaffLogintoken");
-      setKey(currentKey); // Update the state if needed
-    }
+    // Retrieve key and token from sessionStorage without providing the key
+    let currentKey, token;
+    Object.entries(sessionStorage).forEach(([key, value]) => {
+      if (key.includes('key')) {
+        currentKey = value;
+      } else if (key.includes('token')) {
+        token = value;
+      }
+    });
+
+    // Update the state with the current key
+    setKey(currentKey);
     e.preventDefault();
     // Check if file is uploaded, if not, use a default image
     let collegestaffImage = file ? file : getDefaultImage();
@@ -130,7 +140,7 @@ const AddCollegeStaff = () => {
         "confirmpassword": inputField.confirmpassword,
         "profilePic": collegestaffImage
       }
-      
+
       setShowWaitingModal(true)
       setShowOverlay(true)
       axios.post(apiUrl, data, axiosConfig).then(
@@ -297,11 +307,6 @@ const AddCollegeStaff = () => {
   };
 
   useEffect(() => { getData() }, [])
-
-  // Update key state when component mounts
-  useEffect(() => {
-    setKey(sessionStorage.getItem("admkey") || '');
-  }, []);
 
   return (
     <div>

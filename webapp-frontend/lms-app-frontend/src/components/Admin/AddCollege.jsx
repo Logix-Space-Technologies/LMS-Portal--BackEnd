@@ -56,14 +56,19 @@ const AddCollege = () => {
   }
 
   const handleSubmit = (e) => {
-    let currentKey = sessionStorage.getItem("admkey");
-    let token = sessionStorage.getItem("admtoken");
+    // Retrieve key and token from sessionStorage without providing the key
+    let currentKey, token;
     let addedBy;
-    if (currentKey !== 'lmsapp') {
-      currentKey = sessionStorage.getItem("admstaffkey");
-      token = sessionStorage.getItem("admstaffLogintoken");
-      setKey(currentKey); // Update the state if needed
-    }
+    Object.entries(sessionStorage).forEach(([key, value]) => {
+        if (key.includes('key')) {
+            currentKey = value;
+        } else if (key.includes('token')) {
+            token = value;
+        }
+    });
+
+    // Update the state with the current key
+    setKey(currentKey);
     if (currentKey === 'lmsapp') {
       addedBy = 0
     } else {
@@ -231,14 +236,9 @@ const AddCollege = () => {
     return errors;
   };
 
-  // Update key state when component mounts
-  useEffect(() => {
-    setKey(sessionStorage.getItem("admkey") || '');
-  }, []);
-
   return (
     <div>
-      {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
+      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
       <div className="bg-light py-3 py-md-5">
         <div className="container">
           <div className="row justify-content-md-center">
