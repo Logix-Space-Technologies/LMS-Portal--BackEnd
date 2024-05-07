@@ -139,13 +139,18 @@ const AdminViewAllBatch = () => {
 
 
     const searchBatches = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         setIsLoading(true);
         const axiosConfig3 = {
             headers: {

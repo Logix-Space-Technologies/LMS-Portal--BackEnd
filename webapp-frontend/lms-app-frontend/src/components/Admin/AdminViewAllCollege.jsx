@@ -45,13 +45,18 @@ const AdminViewAllCollege = () => {
 
     const readSearchValue = () => {
         setIsLoading(true)
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig3 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -104,13 +109,18 @@ const AdminViewAllCollege = () => {
     }
 
     const getData = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -188,13 +198,18 @@ const AdminViewAllCollege = () => {
 
     // Open Registration
     const openRegistration = (id) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let collegeId = { "id": id };
         let axiosConfig2 = {
             headers: {
@@ -229,13 +244,18 @@ const AdminViewAllCollege = () => {
 
     // Close Registration
     const closeRegistration = (id) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let collegeId = { "id": id };
         let axiosConfig = {
             headers: {
@@ -290,10 +310,6 @@ const AdminViewAllCollege = () => {
     // Integration of new pagination logic
     const startPage = currentPage > 2 ? currentPage - 2 : 1;
     const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
-
-    useEffect(() => {
-        setKey(sessionStorage.getItem("admkey") || '');
-    }, []);
 
     useEffect(() => { getData() }, [])
 
