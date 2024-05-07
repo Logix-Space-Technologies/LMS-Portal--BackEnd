@@ -40,13 +40,18 @@ const AdminAddSession = () => {
     const trainerUrl = global.config.urls.api.server + "/api/lms/viewAllTrainer";
 
     const getTrainer = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig = {
             headers: {
                 'content-type': 'multipart/form-data',
@@ -77,13 +82,18 @@ const AdminAddSession = () => {
     }
 
     const getData = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig = {
             headers: {
                 'content-type': 'multipart/form-data',
@@ -109,13 +119,18 @@ const AdminAddSession = () => {
     }
 
     const getBatches = (collegeId) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -151,14 +166,19 @@ const AdminAddSession = () => {
     };
 
     const readValue = (e) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
         let addedBy;
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         if (currentKey === 'lmsapp') {
             addedBy = 0
         } else {
@@ -207,42 +227,42 @@ const AdminAddSession = () => {
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.batchId) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.batchId)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.sessionName) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.sessionName)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.date) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.date)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.time) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.time)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.type) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.type)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.remarks) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.remarks)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.venueORlink) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.venueORlink)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.trainerId) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.trainerId)
                     }, 500)
                 } else if (response.data.status === "Unauthorized User!!") {
@@ -250,7 +270,7 @@ const AdminAddSession = () => {
                     sessionStorage.clear()
                 } else {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.status)
                     }, 500)
                 }
@@ -325,9 +345,6 @@ const AdminAddSession = () => {
     useEffect(() => {
         getTrainer()
     }, [])
-
-
-    useEffect(() => { setKey(sessionStorage.getItem("admkey") || '') }, []);
 
     return (
         <div>
