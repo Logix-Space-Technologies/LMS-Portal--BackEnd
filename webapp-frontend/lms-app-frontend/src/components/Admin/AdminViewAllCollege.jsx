@@ -299,7 +299,7 @@ const AdminViewAllCollege = () => {
 
     return (
         <div>
-            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
             <br />
             <div className="flex justify-between items-center mx-4 my-4">
                 <div></div>
