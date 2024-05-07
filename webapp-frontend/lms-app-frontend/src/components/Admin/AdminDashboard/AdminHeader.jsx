@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const AdminHeader = () => {
@@ -15,38 +15,72 @@ const AdminHeader = () => {
     return (
         <div>
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-                <Link to="/admdashboard" className="navbar-brand d-flex d-lg-none me-4">
-                    <h2 className="text-primary mb-0">
-                        <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" /></h2>
-                </Link>
+                <h2 className="text-primary mb-0">
+                    <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
+                </h2>
+                <div className="collapse navbar-collapse" id="navbarNav">
+                    <ul className="navbar-nav">
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/admdashboard">Admin Dashboard</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/AdminSendNotification">Send notifications</Link>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Add
+                            </Link>
+                            <ul className="dropdown-menu">
+                                <li><Link className="dropdown-item" to="/addAdminStaff">Add Admin Staff</Link></li>
+                                <li><Link className="dropdown-item" to="/addcollege">Add College</Link></li>
+                                <li><Link className="dropdown-item" to="/addcollegestaff">Add College Staff</Link></li>
+                                <li><Link className="dropdown-item" to="/adminaddbatch">Add Batch</Link></li>
+                                <li><Link className="dropdown-item" to="/adminaddsession">Add Session</Link></li>
+                                <li><Link className="dropdown-item" to="/adminAddtask">Add Task</Link></li>
+                                <li><Link className="dropdown-item" to="/adminAddcurriculum">Add Curriculum</Link></li>
+                                <li><Link className="dropdown-item" to="/adminAddtrainer">Add Trainers</Link></li>
+                                <li><Link className="dropdown-item" to="/adminStaffAddmaterials">Add Materials</Link></li>
+                            </ul>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                View
+                            </Link>
+                            <ul className="dropdown-menu">
+                                <li><Link className="dropdown-item" to="/adminviewallcollege">View All College</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewallclgstaff">View All College Staff</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminViewAllAdminStaff">View All Admin Staff</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewalltrainers">View All Trainers</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminStaffViewAllMaterial">View All Materials</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminViewRefundRequests">View Refund Requests</Link></li>
+                                <li><Link className="dropdown-item" to="/adminViewSuccessfulrefunds">View Successful Refunds</Link></li>
+                                <li><Link className="dropdown-item" to="/adminViewlog">View Admin Logs</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewadstafflog">View Admin Staff Log</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewCollegeStaffLog">View College Staff Log</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminViewStudentLog">View Student Log</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewwhtsappfeedback">View Student Whatsapp Feedback Log</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewclgstaffwtsappfeedback">View College Staff Whatsapp Feedback Log</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewwhtsappmsgreceived">View Student Whatsapp Message Received Log</Link></li>
+                                <li><Link className="dropdown-item" to="/adminviewclgstaffwtsappmsgreceived">View College Staff Whatsapp Message Received Log</Link></li>
+                            </ul>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Search
+                            </Link>
+                            <ul className="dropdown-menu">
+                                <li><Link className="dropdown-item" to="/adminsearchadminstaff">Search Admin Staff</Link></li>
+                                <li><Link className="dropdown-item" to="/adminSearchClg">Search College</Link></li>
+                                <li><Link className="dropdown-item" to="/adminSearchTrainers">Search Trainers</Link></li>
+                                <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search College staffs</Link></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
                 <div className="navbar-nav align-items-center ms-auto">
-                    {/* <div className="nav-item dropdown">
-                                <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                                    <i className="fa fa-bell me-lg-2" />
-                                    <span className="d-none d-lg-inline-flex">Notification</span>
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                                    <a href="#" className="dropdown-item">
-                                        <h6 className="fw-normal mb-0">Profile updated</h6>
-                                        <small>15 minutes ago</small>
-                                    </a>
-                                    <hr className="dropdown-divider" />
-                                    <a href="#" className="dropdown-item">
-                                        <h6 className="fw-normal mb-0">New user added</h6>
-                                        <small>15 minutes ago</small>
-                                    </a>
-                                    <hr className="dropdown-divider" />
-                                    <a href="#" className="dropdown-item">
-                                        <h6 className="fw-normal mb-0">Password changed</h6>
-                                        <small>15 minutes ago</small>
-                                    </a>
-                                    <hr className="dropdown-divider" />
-                                    <a href="#" className="dropdown-item text-center">See all notifications</a>
-                                </div>
-                            </div> */}
                     <div className="nav-item dropdown">
                         <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img className="rounded-circle me-lg-2" src="./person.svg" alt="" style={{ width: 40, height: 40 }} />
+                            <img className="rounded-circle me-lg-2" src="./person.svg" alt style={{ width: 40, height: 40 }} />
                             <span className="d-none d-lg-inline-flex">Admin</span>
                         </Link>
                         <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">

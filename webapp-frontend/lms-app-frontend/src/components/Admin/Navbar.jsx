@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
-    
+
     const navigate = useNavigate()
     const logout = () => {
         sessionStorage.clear()
@@ -15,16 +15,15 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <div className="container-fluid">
-                <Link className="navbar-brand" to="#">Admin</Link>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
+        <div>
+            <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
+                <h2 className="text-primary mb-0">
+                    <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
+                </h2>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/admdashboard">Admin Dashboard</Link>
+                        <li className="nav-item" style={{ marginLeft: '20px' }}>
+                            <Link className="nav-link" to="/admdashboard">Dashboard</Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="/AdminSendNotification">Send notifications</Link>
@@ -78,37 +77,46 @@ const Navbar = () => {
                                 <li><Link className="dropdown-item" to="/AdminSearchCollegeStaff">Search College staffs</Link></li>
                             </ul>
                         </li>
-                        <li className="nav-item">
+                    </ul>
+                </div>
+                <div className="navbar-nav align-items-center ms-auto">
+                    <div className="nav-item dropdown">
+                        <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <img className="rounded-circle me-lg-2" src="./person.svg" alt style={{ width: 40, height: 40 }} />
+                            <span className="d-none d-lg-inline-flex">Admin</span>
+                        </Link>
+                        <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                            <Link to="/adminchangepassword" className="dropdown-item">Change Password</Link>
                             <Link to="/" className="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
                                 Log Out
                             </Link>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
-                {/* Delete Confirmation Modal */}
-                <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="deleteConfirmationModalLabel">Logout Confirmation</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                Are you sure you want to Logout?
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
-                                    Close
-                                </button>
-                                <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleLogoutConfirm}>
-                                    Logout
-                                </button>
-                            </div>
+            </nav>
+            {/* Delete Confirmation Modal */}
+            <div className="modal fade" id="deleteConfirmationModal" tabIndex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="deleteConfirmationModalLabel">Logout Confirmation</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            Are you sure you want to Logout?
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                                Close
+                            </button>
+                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleLogoutConfirm}>
+                                Logout
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </nav>
+        </div>
     )
 }
 
