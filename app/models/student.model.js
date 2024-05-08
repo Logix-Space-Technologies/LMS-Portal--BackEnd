@@ -1540,6 +1540,20 @@ Student.viewPerformanceScore = (studId, result) => {
 
 }
 
+Student.searchPerformanceScore = (studId, searchKey, result) => {
+    const searchTerm = '%' + searchKey + '%'
+    db.query("SELECT sessionName, taskName, score, totalScore FROM studentTaskScore WHERE studentId = ? AND (sessionName LIKE ? OR taskName LIKE ?) ORDER BY score DESC;", [studId, searchTerm, searchTerm], (err, res) => {
+        if (err) {
+            console.log("Error: ", err)
+            return result(err, null)
+        } else {
+            console.log(res)
+            return result(null, res)
+        }
+    })
+
+}
+
 Student.viewOverallPerformanceStudWise = (studId, result) => {
     db.query("SELECT COUNT(taskId) AS totalTasksAssigned, COUNT(submitTaskId) AS totalTasksSubmitted, SUM(CASE WHEN dueDate < CURRENT_DATE AND subDate IS NOT NULL THEN score ELSE 0 END) AS score, SUM(CASE WHEN dueDate < CURRENT_DATE THEN totalScore ELSE 0 END) AS totalScore, COUNT(CASE WHEN dueDate < CURRENT_DATE AND lateSubDate IS NOT NULL THEN taskId END) AS tasksSubmittedLate, COUNT(CASE WHEN subDate IS NOT NULL AND lateSubDate IS NULL THEN taskId END) AS tasksSubmittedOnTime FROM studentTaskScore WHERE studentId = ?", [studId], (err, res) => {
         if (err) {

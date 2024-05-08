@@ -445,5 +445,6 @@ router.post('/studSearchBatchMaterials',MaterialController.studentSearchMaterial
 
 router.post('/studSearchSession', StudentController.studSearchSession)
 
+router.post('/searchStudPerformanceByAdmin', StudentController.studSearchPerformanceByTask)
 
 module.exports = router
