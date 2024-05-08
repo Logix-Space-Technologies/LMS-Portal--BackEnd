@@ -37,13 +37,18 @@ const AdminSendNotification = () => {
     }
 
     const getData = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -73,13 +78,18 @@ const AdminSendNotification = () => {
     }
 
     const getBatches = (collegeId) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig3 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -113,14 +123,19 @@ const AdminSendNotification = () => {
     }
 
     const handleSubmit = async (event) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let sendby;
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
         if (currentKey === 'lmsapp') {
             sendby = 0;
         } else {
@@ -231,8 +246,6 @@ const AdminSendNotification = () => {
     };
 
     useEffect(() => { getData() }, [])
-
-    useEffect(() => { setKey(sessionStorage.getItem("admkey") || '') }, []);
 
     return (
         <div>
