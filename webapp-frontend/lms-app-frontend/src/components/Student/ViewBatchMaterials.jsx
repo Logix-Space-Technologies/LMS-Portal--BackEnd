@@ -22,8 +22,8 @@ const MaterialView = () => {
 
   const apiUrl = global.config.urls.api.server + "/api/lms/viewBatchMaterials";
   const apiUrl1 = global.config.urls.api.server + "/api/lms/studSearchBatchMaterials";
-  const batchId = sessionStorage.getItem("studBatchId");
-  const token = sessionStorage.getItem("studLoginToken");
+  let batchId = sessionStorage.getItem("studBatchId");
+  let token = sessionStorage.getItem("studLoginToken");
 
   const inputHandler = (event) => {
     setInputField({ ...inputField, [event.target.name]: event.target.value });
