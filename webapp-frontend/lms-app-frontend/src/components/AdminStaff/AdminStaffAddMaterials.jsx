@@ -312,9 +312,9 @@ const AdminStaffAddMaterials = () => {
         if (data.materialType === "Link" && !data.uploadFile.trim()) {
             errors.website = 'Website is required';
         }
-        // if (data.materialType !== "Link" && !data.uploadFile.trim()) {
-        //     errors.file = 'File is required';
-        // }
+        if (data.materialType !== "Link" && !data.uploadFile.trim()) {
+            errors.file = 'File is required';
+        }
         return errors;
     }
 
