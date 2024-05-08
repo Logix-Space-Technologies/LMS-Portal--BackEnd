@@ -184,6 +184,9 @@ const AdminStaffAddMaterials = () => {
         }
         const validationErrors = validateForm(inputField);
         if (Object.keys(validationErrors).length === 0) {
+            if (data.materialType !== "Link" && !data.uploadFile) {
+                errors.file = 'File is required';
+            }
             let axiosConfig3 = {
                 headers: {
                     'content-type': 'multipart/form-data',
@@ -311,9 +314,6 @@ const AdminStaffAddMaterials = () => {
         }
         if (data.materialType === "Link" && !data.uploadFile.trim()) {
             errors.website = 'Website is required';
-        }
-        if (data.materialType !== "Link" && !data.uploadFile.trim()) {
-            errors.file = 'File is required';
         }
         return errors;
     }
