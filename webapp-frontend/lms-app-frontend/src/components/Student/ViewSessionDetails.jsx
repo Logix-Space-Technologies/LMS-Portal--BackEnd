@@ -11,16 +11,20 @@ const SessionView = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sessionsPerPage] = useState(2); // Number of sessions per page
   const navigate = useNavigate()
+  const [inputField, setInputField] = useState({
+    "searchTerm": "",
+  });
+
+  const apiUrl = global.config.urls.api.server + "/api/lms/studentViewSession";
+  const apiUrl2 = global.config.urls.api.server + "/api/lms/studSearchSession";
+  let batchId = sessionStorage.getItem("studBatchId");
+  let token = sessionStorage.getItem("studLoginToken");
 
   useEffect(() => {
     fetchSessions();
   }, []);
 
   const fetchSessions = () => {
-    const apiUrl = global.config.urls.api.server + "/api/lms/studentViewSession";
-    const batchId = sessionStorage.getItem("studBatchId");
-    const token = sessionStorage.getItem("studLoginToken");
-
     let axiosConfig = {
       headers: {
         "content-type": "application/json;charset=UTF-8",
@@ -54,6 +58,70 @@ const SessionView = () => {
         setLoading(false);
       });
   };
+
+  const inputHandler = (event) => {
+    setInputField({ ...inputField, [event.target.name]: event.target.value });
+  };
+
+
+  const readSearchValue = () => {
+    setLoading(true)
+    let axiosConfig2 = {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*",
+        "token": token,
+        "key": sessionStorage.getItem("studentkey")
+      }
+    }
+    let data = {
+      "batchId": batchId,
+      "searchTerm": inputField.searchTerm,
+    }
+    axios.post(apiUrl2, data, axiosConfig2).then(
+      (response) => {
+        if (response.data.status === "Search Item is required.") {
+          setLoading(false)
+          setTimeout(() => {
+            alert(response.data.status)
+            fetchSessions()
+          }, 500)
+        } else if (response.data.data) {
+          setSessions(response.data.data)
+          setInputField(
+            {
+              "searchTerm": ""
+            }
+          )
+          setLoading(false)
+        } else if (response.data.status === "Unauthorized access!!") {
+          navigate("/studentLogin")
+          sessionStorage.clear()
+        } else if (!response.data.data) {
+          setLoading(false)
+          setInputField(
+            {
+              "searchTerm": ""
+            }
+          )
+          setTimeout(() => {
+            fetchSessions()
+            alert("No Session Found !!")
+          }, 500)
+        } else {
+          setLoading(false)
+          setInputField(
+            {
+              "searchTerm": ""
+            }
+          )
+          alert(response.data.status)
+        }
+      }
+    )
+  }
+
+
 
   function formatTime(timeString) {
     const options = { hour: '2-digit', minute: '2-digit', hour12: true };
@@ -165,6 +233,18 @@ const SessionView = () => {
       <br />
       <h1 style={{ marginLeft: '20px', textAlign: 'center' }}>View All Sessions</h1>
       <br />
+      <div className="row">
+        <div className="col col-12">
+          <div className="row g-3">
+            <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+              <div className="input-group mb-3"> {/* Use an input group */}
+                <input onChange={inputHandler} type="text" className="form-control" name="searchTerm" value={inputField.searchTerm} placeholder='Search by session name/type/trainer name' />
+                <button onClick={readSearchValue} className="btn btn-warning ms-2">Search</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       {loading ? (
         <div className="col-12 text-center">Loading...</div>
       ) : (
@@ -239,7 +319,7 @@ const SessionView = () => {
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > totalResults  ? totalResults  : indexOfLastSession}</span> of <span className="font-medium">{totalResults }</span> results
+                Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > totalResults ? totalResults : indexOfLastSession}</span> of <span className="font-medium">{totalResults}</span> results
               </p>
             </div>
             <div>

@@ -1567,5 +1567,25 @@ Student.generateTaskWiseScoreList = (taskId, result) => {
     })
 }
 
+
+Student.searchSession = (batchId, searchKey, result) => {
+    const searchTerm = '%' + searchKey + '%'
+    db.query(
+        "SELECT s.id, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, t.trainerName FROM sessiondetails s JOIN trainersinfo t ON s.trainerId = t.id  WHERE (s.date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)) AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND s.batchId = ? AND (s.sessionName LIKE ? OR t.trainerName LIKE ? OR s.type LIKE ?) ORDER BY s.date DESC;",
+        [batchId, searchTerm, searchTerm, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
+                console.log("Session Details: ", formattedViewSession);
+                result(null, formattedViewSession);
+            }
+        }
+    );
+};
+
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 
