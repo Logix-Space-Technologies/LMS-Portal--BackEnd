@@ -28,7 +28,7 @@ const AdminStaffAddMaterials = () => {
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
     // Retrieve key and token from sessionStorage without providing the key
-        let currentKey, token;
+    let currentKey, token;
 
     const fileUploadHandler = (event) => {
         setErrors({});
@@ -154,6 +154,34 @@ const AdminStaffAddMaterials = () => {
         // Update the state with the current key
         setKey(currentKey);
         e.preventDefault();
+        let data;
+        let addedBy;
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
+        }
+        if (file) {
+            data = {
+                "batchId": inputField.batchId,
+                "fileName": inputField.fileName,
+                "materialDesc": inputField.materialDesc,
+                "remarks": inputField.remarks,
+                "materialType": inputField.materialType,
+                "uploadFile": file,
+                "addedby": addedBy
+            }
+        } else {
+            data = {
+                "batchId": inputField.batchId,
+                "fileName": inputField.fileName,
+                "materialDesc": inputField.materialDesc,
+                "remarks": inputField.remarks,
+                "materialType": inputField.materialType,
+                "uploadFile": inputField.uploadFile,
+                "addedby": addedBy
+            }
+        }
         const validationErrors = validateForm(inputField);
         if (Object.keys(validationErrors).length === 0) {
             let axiosConfig3 = {
@@ -162,34 +190,6 @@ const AdminStaffAddMaterials = () => {
                     "Access-Control-Allow-Origin": "*",
                     "token": token,
                     "key": currentKey
-                }
-            }
-            let addedBy;
-            if (currentKey === 'lmsapp') {
-                addedBy = 0
-            } else {
-                addedBy = sessionStorage.getItem("admstaffId")
-            }
-            let data;
-            if (file) {
-                data = {
-                    "batchId": inputField.batchId,
-                    "fileName": inputField.fileName,
-                    "materialDesc": inputField.materialDesc,
-                    "remarks": inputField.remarks,
-                    "materialType": inputField.materialType,
-                    "uploadFile": file,
-                    "addedby": addedBy
-                }
-            } else {
-                data = {
-                    "batchId": inputField.batchId,
-                    "fileName": inputField.fileName,
-                    "materialDesc": inputField.materialDesc,
-                    "remarks": inputField.remarks,
-                    "materialType": inputField.materialType,
-                    "uploadFile": inputField.uploadFile,
-                    "addedby": addedBy
                 }
             }
             setShowWaitingModal(true)
@@ -312,9 +312,9 @@ const AdminStaffAddMaterials = () => {
         if (data.materialType === "Link" && !data.uploadFile.trim()) {
             errors.website = 'Website is required';
         }
-        if (data.materialType !== "Link" && !data.uploadFile.trim()) {
-            errors.file = 'File is required';
-        }
+        // if (data.materialType !== "Link" && !data.uploadFile.trim()) {
+        //     errors.file = 'File is required';
+        // }
         return errors;
     }
 
