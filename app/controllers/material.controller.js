@@ -269,7 +269,7 @@ exports.updateMaterial = (request, response) => {
                         if (Validator.isEmpty(materialType).isValid) {
                             validationErrors.materialType = Validator.isEmpty(materialType).message;
                         }
-                    
+
                         if (!request.file) {
                             validationErrors.file = 'Please upload a file'
                         }
@@ -422,4 +422,36 @@ exports.deleteMaterial = (request, response) => {
             }
         })
     })
+}
+
+
+//Student Search Batch Materials
+exports.studentSearchMaterials = async (request, response) => {
+    const studentSearchMaterialQuery = request.body.studentSearchMaterialQuery
+    const token = request.headers.token
+
+    try {
+        const decoded = jwt.verify(token, "lmsappstud");
+        if (!studentSearchMaterialQuery) {
+            return response.json({ "status": "Provide a search query" });
+        }
+
+        if (decoded) {
+            Material.studSearchMaterial(studentSearchMaterialQuery, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        return response.json({ "status": "No Search Items Found" });
+                    } else {
+                        return response.json({ "status": "success", "data": data });
+                    }
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    } catch (error) {
+        return response.json({ "status": "Error: " + error.message });
+    }
 }

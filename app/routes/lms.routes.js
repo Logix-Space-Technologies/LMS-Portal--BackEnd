@@ -441,5 +441,7 @@ router.post('/ViewOneProfileStudUpdate', StudentController.studentViewOneProfile
 
 router.post('/SearchTaskwiseScore', ClgStaffController.searchTaskwiseScore)
 
+router.post('/studSearchBatchMaterials',MaterialController.studentSearchMaterials)
+
 
 module.exports = router
