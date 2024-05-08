@@ -428,6 +428,7 @@ exports.deleteMaterial = (request, response) => {
 //Student Search Batch Materials
 exports.studentSearchMaterials = async (request, response) => {
     const studentSearchMaterialQuery = request.body.studentSearchMaterialQuery
+    const batchId = request.body.batchId
     const token = request.headers.token
 
     try {
@@ -437,7 +438,7 @@ exports.studentSearchMaterials = async (request, response) => {
         }
 
         if (decoded) {
-            Material.studSearchMaterial(studentSearchMaterialQuery, (err, data) => {
+            Material.studSearchMaterial(batchId, studentSearchMaterialQuery, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {

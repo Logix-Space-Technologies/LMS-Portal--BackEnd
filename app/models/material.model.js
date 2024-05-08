@@ -1,7 +1,4 @@
 const db = require('../models/db')
-const { response } = require('express')
-
-
 
 
 const Material = function (material) {
@@ -197,16 +194,15 @@ Material.materialDelete = (materialId, result) => {
 //Student Search Batch Materials
 Material.studSearchMaterial = (searchTerm, batchId, result) => {
     const searchKey = '%' + searchTerm + '%'
-    db.query("SELECT b.batchName, m.* FROM materials m JOIN batches b ON m.batchId = b.id WHERE b.id = ? AND (m.fileName LIKE ? OR m.materialType LIKE ? OR m.materialDesc LIKE ?) AND m.deleteStatus = 0 AND m.isActive = 1 ORDER BY m.addedDate DESC",
+    db.query("SELECT m.* FROM materials m JOIN batches b ON m.batchId = b.id WHERE b.id = ? AND (m.fileName LIKE ? OR m.materialType LIKE ? OR m.materialDesc LIKE ?) AND m.deleteStatus = 0 AND m.isActive = 1 ORDER BY m.addedDate DESC",
         [batchId, searchKey, searchKey, searchKey],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
-                result(err, null)
-                return
+                return result(err, null)
             } else {
                 console.log("Materials: ", res);
-                return result(null, formattedMaterials);
+                return result(null, res);
             }
         })
 }

@@ -5,6 +5,10 @@ import StudNavBar from './StudNavBar';
 import { Link, useNavigate } from 'react-router-dom';
 
 const MaterialView = () => {
+
+  const [inputField, setInputField] = useState({
+    "studentSearchMaterialQuery": "",
+  });
   const [materials, setMaterials] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [materialsPerPage] = useState(10);
@@ -16,14 +20,16 @@ const MaterialView = () => {
   let startPage = Math.floor((currentPage - 1) / rangeSize) * rangeSize + 1; // Calculate the starting page for the current range
   let endPage = Math.min(startPage + rangeSize - 1, lastPage); // Calculate the ending page for the current range
 
+  const apiUrl = global.config.urls.api.server + "/api/lms/viewBatchMaterials";
+  const apiUrl1 = global.config.urls.api.server + "/api/lms/studSearchBatchMaterials";
+  const batchId = sessionStorage.getItem("studBatchId");
+  const token = sessionStorage.getItem("studLoginToken");
 
+  const inputHandler = (event) => {
+    setInputField({ ...inputField, [event.target.name]: event.target.value });
+  };
 
   const fetchMaterials = () => {
-    const apiUrl = global.config.urls.api.server + "/api/lms/viewBatchMaterials";
-    const apiUrl1 = global.config.urls.api.server + "/api/lms/studSearchBatchMaterials";
-    const batchId = sessionStorage.getItem("studBatchId");
-    const token = sessionStorage.getItem("studLoginToken");
-
     let axiosConfig = {
       headers: {
         "content-type": "application/json;charset=UTF-8",
@@ -61,6 +67,51 @@ const MaterialView = () => {
       });
   };
 
+  const readValue = () => {
+    let axiosConfig1 = {
+      headers: {
+        "content-type": "application/json;charset=UTF-8",
+        "Access-Control-Allow-Origin": "*",
+        "token": token,
+        "key": sessionStorage.getItem("studentkey")
+      },
+    };
+    let data2 = {
+      "batchId" : batchId,
+      "studentSearchMaterialQuery" : inputField.studentSearchMaterialQuery
+    }
+
+    axios.post(apiUrl1, data2, axiosConfig1).then((response) => {
+      if (response.data.status === "Provide a search query") {
+        setLoading(false)
+        setTimeout(() => {
+          alert(response.data.status)
+          fetchMaterials()
+        }, 500)
+      } else if (response.data.data) {
+        setMaterials(response.data.data);
+        setLoading(false);
+        setInputField({
+          "studentSearchMaterialQuery": "",
+        });
+      } else if (response.data.status === "Unauthorized User!!") {
+        navigate("/studentLogin");
+        sessionStorage.clear();
+      } else if (!response.data.data) {
+        setLoading(false);
+        setInputField({
+          "studentSearchMaterialQuery": "",
+        });
+        setTimeout(() => {
+          alert("No Materials Found")
+          fetchMaterials()
+        }, 500)
+      } else {
+        alert(response.data.status);
+      }
+    });
+  };
+
   // Logic for displaying current logs
   const indexOfLastMaterial = currentPage * materialsPerPage;
   const indexOfFirstMaterial = indexOfLastMaterial - materialsPerPage;
@@ -87,11 +138,24 @@ const MaterialView = () => {
                     <h3>Batch Materials</h3>
                     {/* View Batch Materials Table */}
                   </div>
+                  <div className="flex justify-between items-center mx-4 my-4">
+                    <div className="container">
+                      <div className="row g-3">
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                          <label htmlFor="" className="form-label"></label>
+                          <input onChange={inputHandler} type="text" className="form-control" name="studentSearchMaterialQuery" value={inputField.studentSearchMaterialQuery} placeholder='Search By File Name/Description/Material Type' />
+                        </div>
+                        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                          <button onClick={readValue} className="btn btn-warning">Search</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                       <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                        
+
                           <th scope="col" className="px-6 py-3">
                             Material Name
                           </th>
@@ -120,7 +184,7 @@ const MaterialView = () => {
                           ) : (
                             currentMaterials.map((material, index) => (
                               <tr key={index} className={index % 2 === 0 ? 'even:bg-gray-50 even:dark:bg-gray-800' : 'odd:bg-white odd:dark:bg-gray-900 border-b dark:border-gray-700'}>
-                                
+
                                 <td className="px-6 py-4">
                                   {material.fileName}
                                 </td>
