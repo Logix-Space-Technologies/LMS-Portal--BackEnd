@@ -289,7 +289,7 @@ Student.findByEmail = (Email, result) => {
 
 
 Tasks.studentTaskView = (studId, result) => {
-    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, sd.sessionName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, CASE WHEN st.admStaffId = 0 THEN 'Admin' ELSE (SELECT asf.AdStaffName FROM admin_staff asf WHERE asf.id = st.admStaffId) END AS evaluatorName, st.score, st.lateSubDate, st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id LEFT JOIN sessiondetails sd ON t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND sd.cancelStatus = 0 AND sd.date <= CURDATE() ORDER BY t.dueDate DESC;", [studId],
+    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, sd.sessionName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, CASE WHEN st.admStaffId = 0 THEN 'Admin' ELSE (SELECT asf.AdStaffName FROM admin_staff asf WHERE asf.id = st.admStaffId) END AS evaluatorName, st.score, st.lateSubDate, st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id LEFT JOIN sessiondetails sd ON t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND sd.cancelStatus = 0 AND sd.date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) ORDER BY t.dueDate DESC;", [studId],
         (err, res) => {
             if (err) {
                 console.log("error: ", err);
@@ -1540,6 +1540,20 @@ Student.viewPerformanceScore = (studId, result) => {
 
 }
 
+Student.searchPerformanceScore = (studId, searchKey, result) => {
+    const searchTerm = '%' + searchKey + '%'
+    db.query("SELECT sessionName, taskName, score, totalScore FROM studentTaskScore WHERE studentId = ? AND (sessionName LIKE ? OR taskName LIKE ?) ORDER BY score DESC;", [studId, searchTerm, searchTerm], (err, res) => {
+        if (err) {
+            console.log("Error: ", err)
+            return result(err, null)
+        } else {
+            console.log(res)
+            return result(null, res)
+        }
+    })
+
+}
+
 Student.viewOverallPerformanceStudWise = (studId, result) => {
     db.query("SELECT COUNT(taskId) AS totalTasksAssigned, COUNT(submitTaskId) AS totalTasksSubmitted, SUM(CASE WHEN dueDate < CURRENT_DATE AND subDate IS NOT NULL THEN score ELSE 0 END) AS score, SUM(CASE WHEN dueDate < CURRENT_DATE THEN totalScore ELSE 0 END) AS totalScore, COUNT(CASE WHEN dueDate < CURRENT_DATE AND lateSubDate IS NOT NULL THEN taskId END) AS tasksSubmittedLate, COUNT(CASE WHEN subDate IS NOT NULL AND lateSubDate IS NULL THEN taskId END) AS tasksSubmittedOnTime FROM studentTaskScore WHERE studentId = ?", [studId], (err, res) => {
         if (err) {
@@ -1566,6 +1580,26 @@ Student.generateTaskWiseScoreList = (taskId, result) => {
         }
     })
 }
+
+
+Student.searchSession = (batchId, searchKey, result) => {
+    const searchTerm = '%' + searchKey + '%'
+    db.query(
+        "SELECT s.id, s.sessionName, s.date, s.time, s.type, s.remarks, s.venueORlink, t.trainerName FROM sessiondetails s JOIN trainersinfo t ON s.trainerId = t.id  WHERE (s.date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)) AND s.deleteStatus = 0 AND s.isActive = 1 AND s.cancelStatus = 0 AND s.batchId = ? AND (s.sessionName LIKE ? OR t.trainerName LIKE ? OR s.type LIKE ?) ORDER BY s.date DESC;",
+        [batchId, searchTerm, searchTerm, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } else {
+                const formattedViewSession = res.map(viewsession => ({ ...viewsession, date: viewsession.date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) }))
+                console.log("Session Details: ", formattedViewSession);
+                result(null, formattedViewSession);
+            }
+        }
+    );
+};
 
 module.exports = { Student, Payment, Tasks, SubmitTask, Session };
 

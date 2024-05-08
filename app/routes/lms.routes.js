@@ -443,5 +443,8 @@ router.post('/SearchTaskwiseScore', ClgStaffController.searchTaskwiseScore)
 
 router.post('/studSearchBatchMaterials',MaterialController.studentSearchMaterials)
 
+router.post('/studSearchSession', StudentController.studSearchSession)
+
+router.post('/searchStudPerformanceByAdmin', StudentController.studSearchPerformanceByTask)
 
 module.exports = router

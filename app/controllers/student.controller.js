@@ -1523,5 +1523,56 @@ exports.generateBatchWiseAttendanceListDummy = (request, response) => {
 
 //Dummy Ends
 
+//Student search session details
+exports.studSearchSession = (request, response) => {
+    const viewSessionToken = request.headers.token;
+    jwt.verify(viewSessionToken, "lmsappstud", (error, decoded) => {
+        if (decoded) {
+            const batchId = request.body.batchId;
+            const searchTerm = request.body.searchTerm;
+            if (!searchTerm) {
+                return response.json({ "status": "Search Item is required." })
+            }
+            Student.searchSession(batchId, searchTerm, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No Session found!" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
 
+
+exports.studSearchPerformanceByTask = (request, response) => {
+    const viewSessionToken = request.headers.token;
+    const key = request.headers.key
+    jwt.verify(viewSessionToken, key, (error, decoded) => {
+        if (decoded) {
+            const studId = request.body.studId;
+            const searchTerm = request.body.searchTerm;
+            if (!searchTerm) {
+                return response.json({ "status": "Search Item is required." })
+            }
+            Student.searchPerformanceScore(studId, searchTerm, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                }
+                if (data.length === 0) {
+                    return response.json({ "status": "No Score found!" });
+                } else {
+                    return response.json({ "status": "success", "data": data });
+                }
+            });
+        } else {
+            return response.json({ "status": "Unauthorized access!!" });
+        }
+    });
+};
 
