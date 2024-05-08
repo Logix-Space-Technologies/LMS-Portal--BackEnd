@@ -438,7 +438,7 @@ exports.studentSearchMaterials = async (request, response) => {
         }
 
         if (decoded) {
-            Material.studSearchMaterial(batchId, studentSearchMaterialQuery, (err, data) => {
+            Material.studSearchMaterial(studentSearchMaterialQuery, batchId, (err, data) => {
                 if (err) {
                     return response.json({ "status": err });
                 } else {
