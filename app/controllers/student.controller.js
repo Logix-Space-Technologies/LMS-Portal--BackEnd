@@ -1576,3 +1576,29 @@ exports.studSearchPerformanceByTask = (request, response) => {
     });
 };
 
+exports.studentSearchTasks = (request, response) => {
+    const studId = request.body.id
+    const searchTerm = request.body.searchTerm
+    const studTaskToken = request.headers.token
+    jwt.verify(studTaskToken, "lmsappstud", (err, decoded) => {
+        if (decoded) {
+            if (!searchTerm) {
+                return response.json({ "status": "Search Item Is Required." });
+            }
+            Tasks.studentSearchTasks(studId, searchTerm, (err, data) => {
+                if (err) {
+                    return response.json({ "status": err });
+                } else {
+                    if (data.length === 0) {
+                        return response.json({ "status": "No tasks found!" });
+                    } else {
+                        return response.json({ "status": "success", "data": data });
+                    }
+                }
+            })
+        } else {
+            return response.json({ "status": "Unauthorized User!!" });
+        }
+    })
+}
+

@@ -312,6 +312,33 @@ Tasks.studentTaskView = (studId, result) => {
         })
 }
 
+
+Tasks.studentSearchTasks = (studId, searchKey, result) => {
+    const searchTerm = '%' + searchKey + '%'
+    db.query("SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, sd.sessionName, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, CASE WHEN st.admStaffId = 0 THEN 'Admin' ELSE (SELECT asf.AdStaffName FROM admin_staff asf WHERE asf.id = st.admStaffId) END AS evaluatorName, st.score, st.lateSubDate, st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id LEFT JOIN sessiondetails sd ON t.sessionId = sd.id WHERE s.id = ? AND t.deleteStatus = 0 AND t.isActive = 1 AND s.deleteStatus = 0 AND s.isActive = 1 AND sd.cancelStatus = 0 AND sd.date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) AND (sd.sessionName LIKE ? OR t.taskTitle LIKE ?) ORDER BY t.dueDate DESC;", [studId, searchTerm, searchTerm],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null)
+                return
+            } else {
+                const formattedTasks = res.map(tasks => ({
+                    ...tasks,
+                    dueDate: tasks.dueDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }),
+                    subDate: tasks.subDate ? tasks.subDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
+                    lateSubDate: tasks.lateSubDate ? tasks.lateSubDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
+                    updatedDate: tasks.updatedDate ? tasks.updatedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: 'numeric' }) : null,
+                    taskFileUpload: tasks.taskFileUpload ? tasks.taskFileUpload : 'N/A'
+                }));
+                // Formats the date as 'YYYY-MM-DD'
+                console.log("Tasks: ", formattedTasks);
+                result(null, formattedTasks)
+                return
+            }
+        })
+}
+
+
 Tasks.studentSessionRelatedTaskView = (studId, sessionId, result) => {
     db.query(
         "SELECT t.id AS taskId, st.id AS submitTaskId, s.batchId, t.taskTitle, t.taskDesc, t.taskType, t.taskFileUpload, t.totalScore, t.dueDate, st.subDate, st.gitLink, st.remarks, st.evaluatorRemarks, CASE WHEN st.admStaffId = 0 THEN 'Admin' ELSE (SELECT asf.AdStaffName FROM admin_staff asf WHERE asf.id = st.admStaffId) END AS evaluatorName, st.score, st.lateSubDate, st.updatedDate, CASE WHEN st.studId IS NOT NULL AND st.taskId IS NOT NULL THEN 'Task Submitted' ELSE 'Task Not Submitted' END AS taskStatus, CASE WHEN st.evalDate IS NOT NULL THEN 'Evaluated' ELSE 'Not Evaluated' END AS evaluateStatus FROM task t JOIN student s ON s.batchId = t.batchId LEFT JOIN submit_task st ON st.taskId = t.id AND st.studId = s.id LEFT JOIN admin_staff asf ON st.admStaffId = asf.id JOIN sessiondetails sd ON t.batchId = sd.batchId AND t.sessionId = sd.id WHERE t.deleteStatus = 0 AND t.isActive = 1 AND s.id = ? AND s.deleteStatus = 0 AND s.isActive = 1 AND sd.id = ? ORDER BY t.addedDate DESC",
