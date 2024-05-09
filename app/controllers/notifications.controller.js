@@ -70,7 +70,7 @@ exports.createNotifications = (request, response) => {
                         });
                     });
                 });
-                return response.json({ "status": "Success", "message": "Notification created successfully" });
+                return response.json({ "status": "Success", "message": "Notification sent successfully" });
             });
         } else {
             return response.json({ "status": "Error", "message": "Invalid token" });
