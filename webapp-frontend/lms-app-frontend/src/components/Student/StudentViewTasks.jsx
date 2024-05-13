@@ -19,7 +19,7 @@ const StudentViewTasks = () => {
     const [inputField, setInputField] = useState({
         "gitLink": "",
         "remarks": "",
-        "searchTerm": "",
+        "searchTerm": ""
     });
 
     let [taskId, setTaskId] = useState({})
@@ -42,14 +42,14 @@ const StudentViewTasks = () => {
                 "key": "lmsappstud"
             }
         }
-        let id = { "id": sessionStorage.getItem("studentId") };
-        axios.post(apiUrl3, id, axiosConfig2).then(
+        let data2 = { "id": sessionStorage.getItem("studentId"), "searchTerm": inputField.searchTerm };
+        axios.post(apiUrl3, data2, axiosConfig2).then(
             (response) => {
                 if (response.data.status === "Search Item Is Required.") {
                     setLoading(false)
                     setTimeout(() => {
+                        getData()
                         alert(response.data.status)
-                        setStudViewTaskData([])
                     }, 500)
                 } else if (response.data.data) {
                     setStudViewTaskData(response.data.data);
@@ -70,7 +70,7 @@ const StudentViewTasks = () => {
                         }
                     )
                     setTimeout(() => {
-                        setStudViewTaskData([])
+                        getData()
                         alert("No Task Found !!")
                     }, 500)
                 } else {
@@ -254,7 +254,7 @@ const StudentViewTasks = () => {
                     <div className="row g-3">
                         <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
                             <div className="input-group mb-3"> {/* Use an input group */}
-                                <input onChange={inputHandler} type="text" className="form-control" name="searchTerm" value={inputField.searchTerm} placeholder='Search by Task Name' />
+                                <input onChange={inputHandler} type="text" className="form-control" name="searchTerm" value={inputField.searchTerm} placeholder='Search by Task Name/Session Name' />
                                 <button onClick={readSearchValue} className="btn btn-warning ms-2">Search</button>
                             </div>
                         </div>
