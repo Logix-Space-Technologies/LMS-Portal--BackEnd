@@ -40,13 +40,18 @@ const AdminUpdateSession = () => {
   }
 
   const getTrainer = () => {
-    let currentKey = sessionStorage.getItem("admkey");
-    let token = sessionStorage.getItem("admtoken");
-    if (currentKey !== 'lmsapp') {
-      currentKey = sessionStorage.getItem("admstaffkey");
-      token = sessionStorage.getItem("admstaffLogintoken");
-      setKey(currentKey); // Update the state if needed
-    }
+    // Retrieve key and token from sessionStorage without providing the key
+    let currentKey, token;
+    Object.entries(sessionStorage).forEach(([key, value]) => {
+      if (key.includes('key')) {
+        currentKey = value;
+      } else if (key.includes('token')) {
+        token = value;
+      }
+    });
+
+    // Update the state with the current key
+    setKey(currentKey);
     let axiosConfig = {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
@@ -76,14 +81,19 @@ const AdminUpdateSession = () => {
   }
 
   const readNewValue = () => {
-    let currentKey = sessionStorage.getItem("admkey");
-    let token = sessionStorage.getItem("admtoken");
+    // Retrieve key and token from sessionStorage without providing the key
+    let currentKey, token;
+    Object.entries(sessionStorage).forEach(([key, value]) => {
+      if (key.includes('key')) {
+        currentKey = value;
+      } else if (key.includes('token')) {
+        token = value;
+      }
+    });
+
+    // Update the state with the current key
+    setKey(currentKey);
     let updatedBy;
-    if (currentKey !== 'lmsapp') {
-      currentKey = sessionStorage.getItem("admstaffkey");
-      token = sessionStorage.getItem("admstaffLogintoken");
-      setKey(currentKey); // Update the state if needed
-    }
     if (currentKey === 'lmsapp') {
       updatedBy = 0
     } else {
@@ -219,13 +229,18 @@ const AdminUpdateSession = () => {
   }
 
   const getData = () => {
-    let currentKey = sessionStorage.getItem("admkey");
-    let token = sessionStorage.getItem("admtoken");
-    if (currentKey !== 'lmsapp') {
-      currentKey = sessionStorage.getItem("admstaffkey");
-      token = sessionStorage.getItem("admstaffLogintoken");
-      setKey(currentKey); // Update the state if needed
-    }
+    // Retrieve key and token from sessionStorage without providing the key
+    let currentKey, token;
+    Object.entries(sessionStorage).forEach(([key, value]) => {
+      if (key.includes('key')) {
+        currentKey = value;
+      } else if (key.includes('token')) {
+        token = value;
+      }
+    });
+
+    // Update the state with the current key
+    setKey(currentKey);
     let data = { "id": sessionStorage.getItem('sessionId') };
     let axiosConfig = {
       headers: {
@@ -277,14 +292,9 @@ const AdminUpdateSession = () => {
     getTrainer()
   }, [])
 
-  // Update key state when component mounts
-  useEffect(() => {
-    setKey(sessionStorage.getItem("admkey") || '');
-  }, []);
-
   return (
     <div>
-      {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+      {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
       <div className="container">
         <div className="row">
           <div className="col-lg-12 mb-4 mb-sm-5">

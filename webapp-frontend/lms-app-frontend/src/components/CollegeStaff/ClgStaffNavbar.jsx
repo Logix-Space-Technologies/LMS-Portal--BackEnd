@@ -1,8 +1,39 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const ClgStaffNavbar = () => {
+    const [colgStaffData, setColgStaffData] = useState({});
+
+    const apiURL = global.config.urls.api.server + "/api/lms/profileViewByCollegeStaff";
+
     const navigate = useNavigate()
+
+    const getData = () => {
+        let data = { "id": sessionStorage.getItem("clgStaffId") };
+        let axiosConfig = {
+            headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("clgstaffLogintoken"),
+                "key": sessionStorage.getItem("clgstaffkey")
+            }
+        }
+        axios.post(apiURL, data, axiosConfig).then(
+            (response) => {
+                if (response.data.data) {
+                    setColgStaffData(response.data.data);
+                } else {
+                    if (response.data.status === "Unauthorized Access !!!") {
+                        logOut()
+                        navigate("/clgStafflogin")
+                    } else {
+                        alert(response.data.status)
+                    }
+                }
+            }
+        )
+    }
 
     const logOut = () => {
         sessionStorage.clear()
@@ -12,16 +43,20 @@ const ClgStaffNavbar = () => {
     const handleLogoutConfirm = () => {
         logOut();
     };
+
+    useEffect(() => { getData() }, [])
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
-                    <Link className="navbar-brand" to="#">Batch-In-Charge</Link>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
+                    <h2 className="text-primary mb-0">
+                        <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
+                    </h2>
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav">
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/collegeStaffDashboard" style={{ marginLeft: '20px' }}>Dashboard</Link>
+                            </li>
                             <li className="nav-item">
                                 <Link className="nav-link active" aria-current="page" to="/studentverification">Student Verification</Link>
                             </li>
@@ -31,15 +66,21 @@ const ClgStaffNavbar = () => {
                             <li className="nav-item">
                                 <Link className="nav-link" to="/collegeStaffViewBatch">View All Batches</Link>
                             </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/collegeStaffDashboard">Dashboard</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to="/" className="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
-                                    Log Out
-                                </Link>
-                            </li>
                         </ul>
+                    </div>
+                </div>
+                <div className="navbar-nav align-items-center ms-auto">
+                    <div className="nav-item dropdown">
+                        <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <img className="rounded-circle me-lg-2" src={colgStaffData.profilePic} alt style={{ width: 40, height: 40 }} />
+                            <span className="d-none d-lg-inline-flex">{colgStaffData.collegeStaffName}</span>
+                        </Link>
+                        <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                            <Link to="/clgstaffchangepassword" className="dropdown-item">Change Password</Link>
+                            <Link to="/" className="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
+                                Log Out
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </nav>

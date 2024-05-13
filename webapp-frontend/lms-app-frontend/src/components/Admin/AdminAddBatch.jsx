@@ -29,13 +29,18 @@ const AdminAddBatch = () => {
     const apiUrl2 = global.config.urls.api.server + '/api/lms/addBatches';
 
     const getData = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig = {
             headers: {
                 'content-type': 'multipart/form-data',
@@ -71,14 +76,19 @@ const AdminAddBatch = () => {
     };
 
     const readValue = (e) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
         let addedBy;
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         if (currentKey === 'lmsapp') {
             addedBy = 0
         } else {
@@ -122,32 +132,32 @@ const AdminAddBatch = () => {
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.collegeid) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.collegeid)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.name) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.name)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.regstartdate) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.regstartdate)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.regenddate) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.regenddate)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.description) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.description)
                     }, 500)
                 } else if (response.data.status === "Validation failed" && response.data.data.amount) {
                     closeWaitingModal()
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         alert(response.data.data.amount)
                     }, 500)
                 } else if (response.data.status === "Unauthorized User!!") {
@@ -195,14 +205,9 @@ const AdminAddBatch = () => {
     }, []);
 
 
-    // Update key state when component mounts
-    useEffect(() => {
-        setKey(sessionStorage.getItem("admkey") || '');
-    }, []);
-
     return (
         <div>
-            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">

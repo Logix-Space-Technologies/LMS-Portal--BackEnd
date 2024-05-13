@@ -439,5 +439,14 @@ router.post('/ViewBatchWisePerformancePDF', BatchesController.viewOverallBatchPe
 
 router.post('/ViewOneProfileStudUpdate', StudentController.studentViewOneProfileUpdate)
 
+router.post('/SearchTaskwiseScore', ClgStaffController.searchTaskwiseScore)
+
+router.post('/studSearchBatchMaterials',MaterialController.studentSearchMaterials)
+
+router.post('/studSearchSession', StudentController.studSearchSession)
+
+router.post('/searchStudPerformanceByAdmin', StudentController.studSearchPerformanceByTask)
+
+router.post('/searchStudTasks', StudentController.studentSearchTasks)
 
 module.exports = router

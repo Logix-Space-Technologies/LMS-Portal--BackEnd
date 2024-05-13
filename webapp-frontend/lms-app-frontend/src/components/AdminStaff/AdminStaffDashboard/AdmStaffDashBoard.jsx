@@ -3,23 +3,28 @@ import AdminStaffHeader from './AdminStaffHeader'
 import AdminStaffSideBar from './AdminStaffSideBar'
 import AdminStaffFooter from './AdminStaffFooter'
 import AdmStaffViewProfile from './AdmStaffViewProfile'
+import AdmStaffNavBar from '../AdmStaffNavBar'
 
 const AdmStaffDashBoard = () => {
   return (
-
-    <div className="container-xxl position-relative bg-white d-flex p-0">
-      <div className="content">
-        <AdminStaffHeader />
-        <AdminStaffSideBar />
-        <AdmStaffViewProfile />
-        <br />
-        <br />
-        <br />
-        <br />
-        <AdminStaffFooter />
+    <div>
+      <AdmStaffNavBar/>
+      <div className="container">
+        <div className="content">
+          {/* <AdminStaffHeader />
+          <AdminStaffSideBar /> */}
+          <br />
+          <h1 className="text-center" style={{fontWeight:'bold', fontSize:'20px'}}>Admin Staff Dashboard</h1>
+          <AdmStaffViewProfile />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br /><br /><br /><br /><br /><br />
+          <AdminStaffFooter />
+        </div>
       </div>
     </div>
-
   )
 }
 

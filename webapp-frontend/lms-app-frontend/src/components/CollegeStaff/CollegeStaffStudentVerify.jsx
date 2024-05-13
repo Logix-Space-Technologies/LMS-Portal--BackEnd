@@ -118,7 +118,7 @@ const CollegeStaffStudentVerify = () => {
       <ClgStaffNavbar />
       <br /><br />
       <div className="flex justify-center items-center mt-2 ml-16 mb-4">
-        <h2 className="text-lg font-bold">College Staff Verify Student</h2>
+        <h2 className="text-lg font-bold" style={{fontSize:'20px'}}>Batch In-Charge Verify Student</h2>
       </div>
       {isLoading ? <div className="flex justify-center items-center h-full">
         <div className="text-center py-20">

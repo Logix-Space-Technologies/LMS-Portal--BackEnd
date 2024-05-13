@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import '../../config/config'
 import axios from 'axios';
+import StudNavBar from './StudNavBar';
 
 const StudentViewOneTask = () => {
     const [studViewTaskData, setStudViewTaskData] = useState([]);
@@ -49,14 +50,15 @@ const StudentViewOneTask = () => {
                 if (response.data.data) {
                     setLoading(false)
                     setStudViewTaskData(response.data.data);
+                } else if (response.data.status === "Unauthorized User!!") {
+                    navigate("/studentLogin")
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setLoading(false)
+                    setStudViewTaskData([]);
                 } else {
-                    if (response.data.status === "Unauthorized User!!") {
-                        navigate("/studentLogin")
-                        sessionStorage.clear()
-                    } else {
-                        setLoading(false)
-                        alert(response.data.status)
-                    }
+                    setLoading(false)
+                    alert(response.data.status)
                 }
             }
         ).catch(error => console.error("Error:", error));
@@ -186,8 +188,9 @@ const StudentViewOneTask = () => {
     useEffect(() => { getData(); }, []);
     return (
         <div>
+            <StudNavBar/>
             <div className="flex justify-between items-center mt-4 ml-4 mb-4">
-                <h2 className="text-lg font-bold">Student View Tasks</h2>
+                <h2 className="text-lg font-bold">Student View Session-Wise Tasks</h2>
                 <Link to="/studSessionView" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</Link>
             </div>
             {loading && <div>Loading...</div>}

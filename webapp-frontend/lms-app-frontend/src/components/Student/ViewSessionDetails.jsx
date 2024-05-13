@@ -11,16 +11,20 @@ const SessionView = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sessionsPerPage] = useState(2); // Number of sessions per page
   const navigate = useNavigate()
+  const [inputField, setInputField] = useState({
+    "searchTerm": "",
+  });
+
+  const apiUrl = global.config.urls.api.server + "/api/lms/studentViewSession";
+  const apiUrl2 = global.config.urls.api.server + "/api/lms/studSearchSession";
+  let batchId = sessionStorage.getItem("studBatchId");
+  let token = sessionStorage.getItem("studLoginToken");
 
   useEffect(() => {
     fetchSessions();
   }, []);
 
   const fetchSessions = () => {
-    const apiUrl = global.config.urls.api.server + "/api/lms/studentViewSession";
-    const batchId = sessionStorage.getItem("studBatchId");
-    const token = sessionStorage.getItem("studLoginToken");
-
     let axiosConfig = {
       headers: {
         "content-type": "application/json;charset=UTF-8",
@@ -54,6 +58,70 @@ const SessionView = () => {
         setLoading(false);
       });
   };
+
+  const inputHandler = (event) => {
+    setInputField({ ...inputField, [event.target.name]: event.target.value });
+  };
+
+
+  const readSearchValue = () => {
+    setLoading(true)
+    let axiosConfig2 = {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*",
+        "token": token,
+        "key": sessionStorage.getItem("studentkey")
+      }
+    }
+    let data = {
+      "batchId": batchId,
+      "searchTerm": inputField.searchTerm,
+    }
+    axios.post(apiUrl2, data, axiosConfig2).then(
+      (response) => {
+        if (response.data.status === "Search Item is required.") {
+          setLoading(false)
+          setTimeout(() => {
+            alert(response.data.status)
+            fetchSessions()
+          }, 500)
+        } else if (response.data.data) {
+          setSessions(response.data.data)
+          setInputField(
+            {
+              "searchTerm": ""
+            }
+          )
+          setLoading(false)
+        } else if (response.data.status === "Unauthorized access!!") {
+          navigate("/studentLogin")
+          sessionStorage.clear()
+        } else if (!response.data.data) {
+          setLoading(false)
+          setInputField(
+            {
+              "searchTerm": ""
+            }
+          )
+          setTimeout(() => {
+            fetchSessions()
+            alert("No Session Found !!")
+          }, 500)
+        } else {
+          setLoading(false)
+          setInputField(
+            {
+              "searchTerm": ""
+            }
+          )
+          alert(response.data.status)
+        }
+      }
+    )
+  }
+
+
 
   function formatTime(timeString) {
     const options = { hour: '2-digit', minute: '2-digit', hour12: true };
@@ -149,17 +217,14 @@ const SessionView = () => {
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
   // Total pages
-  let totalPages = []
-  // Calculate total pages based on filtered session data
-  totalPages = Math.ceil(filteredSessions.length / sessionsPerPage);
-
-  const calculateSerialNumber = (index) => {
-    return ((currentPage - 1) * sessionsPerPage) + index + 1;
-  }
+  let totalPages = Math.ceil(filteredSessions.length / sessionsPerPage);
 
   // Integration of new pagination logic
   const startPage = currentPage > 2 ? currentPage - 2 : 1;
   const endPage = startPage + 4 <= totalPages ? startPage + 4 : totalPages;
+
+  // Update total results to reflect filtered sessions
+  let totalResults = filteredSessions.length;
 
   return (
 
@@ -168,6 +233,18 @@ const SessionView = () => {
       <br />
       <h1 style={{ marginLeft: '20px', textAlign: 'center' }}>View All Sessions</h1>
       <br />
+      <div className="row">
+        <div className="col col-12">
+          <div className="row g-3">
+            <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+              <div className="input-group mb-3"> {/* Use an input group */}
+                <input onChange={inputHandler} type="text" className="form-control" name="searchTerm" value={inputField.searchTerm} placeholder='Search by session name/type/trainer name' />
+                <button onClick={readSearchValue} className="btn btn-warning ms-2">Search</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       {loading ? (
         <div className="col-12 text-center">Loading...</div>
       ) : (
@@ -242,7 +319,7 @@ const SessionView = () => {
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > sessions.length ? sessions.length : indexOfLastSession}</span> of <span className="font-medium">{sessions.length}</span> results
+                Showing <span className="font-medium">{indexOfFirstSession + 1}</span> to <span className="font-medium">{indexOfLastSession > totalResults ? totalResults : indexOfLastSession}</span> of <span className="font-medium">{totalResults}</span> results
               </p>
             </div>
             <div>
@@ -263,7 +340,7 @@ const SessionView = () => {
                       <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
                     </svg>
                   </button>
-                  {/* Dynamically generate Link components for each page number */}
+                  {/* Dynamically generate Link components for each page number based on filtered sessions */}
                   {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
                     <button key={startPage + index} onClick={() => paginate(startPage + index)} className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'}`}>
                       {startPage + index}

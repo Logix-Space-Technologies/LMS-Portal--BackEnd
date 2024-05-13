@@ -79,7 +79,7 @@ const NotificationView = () => {
                   {value.message}
                 </p>
                 <br />
-                <p className="text-xs text-gray-500">Send By : {value.senderName}</p>
+                <p className="text-xs text-gray-500">Sent By : {value.senderName}</p>
               </div>
             ))}
           </div>

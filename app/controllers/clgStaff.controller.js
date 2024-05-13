@@ -1191,3 +1191,29 @@ exports.generateClgWisePerformancePDF = (request, response) => {
     }
   })
 }
+
+exports.searchTaskwiseScore = (request, response) => {
+  const clgStaffSearchScoreQuery = request.body.clgStaffSearchScoreQuery
+  const token = request.headers.token;
+  const batchId = request.body.batchId;
+  const taskId = request.body.taskId;
+  const key = request.headers.key
+
+  jwt.verify(token, key, (err, decoded) => {
+    if (decoded) {
+      if (!clgStaffSearchScoreQuery) {
+        console.log("Search Item is required.")
+        return response.json({ "status": "Search Item is required." })
+      }
+      CollegeStaff.clgStaffSearchTaskwiseScore(clgStaffSearchScoreQuery, batchId, taskId, (err, data) => {
+        if (err) {
+          return response.json({ "status": err });
+        } else {
+          return response.json({ "status": "success", "data": data });
+        }
+      });
+    } else {
+      return response.json({ "status": "Unauthorized User!!" });
+    }
+  });
+}

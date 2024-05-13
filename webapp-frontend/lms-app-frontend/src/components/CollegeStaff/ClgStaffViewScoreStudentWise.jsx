@@ -13,6 +13,11 @@ const ClgStaffViewScoreStudentWise = () => {
     const [loading, setLoading] = useState(true);
     const [key, setKey] = useState('')
     const studentName = sessionStorage.getItem('viewscorestudName')
+    const [inputField, setInputField] = useState(
+        {
+            "searchTerm": ""
+        }
+    )
 
     const rangeSize = 5; // Number of pages to display in the pagination
     const lastPage = Math.ceil(scoreData.length / scoresPerPage); // Calculate the total number of pages
@@ -22,6 +27,11 @@ const ClgStaffViewScoreStudentWise = () => {
     const navigate = useNavigate()
 
     const apiurl = global.config.urls.api.server + "/api/lms/studentViewPerformance"
+    const apiurl2 = global.config.urls.api.server + "/api/lms/searchStudPerformanceByAdmin"
+
+    const inputHandler = (event) => {
+        setInputField({ ...inputField, [event.target.name]: event.target.value })
+    }
 
     const getData = () => {
         let data = {
@@ -71,6 +81,77 @@ const ClgStaffViewScoreStudentWise = () => {
         )
     }
 
+    const readSearchValue = () => {
+        setLoading(true)
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
+        let axiosConfig3 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": token,
+                "key": currentKey
+            }
+        }
+        let data = {
+            "studId": sessionStorage.getItem("viewscorestudId"),
+            "searchTerm": inputField.searchTerm
+        }
+        axios.post(apiurl2, data, axiosConfig3).then(
+            (response) => {
+                if (response.data.status === "Search Item is required.") {
+                    setLoading(false)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                        getData()
+                    }, 500)
+                } else if (response.data.data) {
+                    setScoreData(response.data.data)
+                    setInputField(
+                        {
+                            "searchTerm": ""
+                        }
+                    )
+                    setLoading(false)
+                } else if (response.data.status === "Unauthorized access!!") {
+                    { key === 'lmsapp' ? navigate("/") : (key === 'lmsappclgstaff' ? navigate("/clgStafflogin") : navigate("/admstafflogin")) }
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setLoading(false)
+                    setInputField(
+                        {
+                            "searchTerm": ""
+                        }
+                    )
+                    setTimeout(() => {
+                        getData()
+                        alert("No Performance Found !!")
+                    }, 500)
+                } else {
+                    setLoading(false)
+                    setInputField(
+                        {
+                            "searchTerm": ""
+                        }
+                    )
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
+
+
+
     // Logic for displaying current students
     const indexOfLastScore = currentPage * scoresPerPage;
     const indexOfFirstScore = indexOfLastScore - scoresPerPage;
@@ -93,7 +174,7 @@ const ClgStaffViewScoreStudentWise = () => {
 
     return (
         <div>
-            {key === 'lmsappclgstaff' ? <ClgStaffNavbar /> : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
+            {key === 'lmsappclgstaff' ? <ClgStaffNavbar /> : (key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />)}
             {/* ====== Table Section Start */}
             <section className="bg-gray-100 dark:bg-dark py-20 lg:py-[120px]">
                 <div className="container mx-auto">
@@ -102,6 +183,18 @@ const ClgStaffViewScoreStudentWise = () => {
                             <div className="flex justify-between items-center mt-8 ml-4 mb-4">
                                 {key === 'lmsapp' ? <h2 className="text-lg font-bold">View Performance (Student Name {`- ${studentName}`})</h2> : (key === 'lmsappclgstaff' ? <h2 className="text-lg font-bold">View Performance (Student Name {`- ${studentName}`})</h2> : <h2 className="text-lg font-bold">View Performance (Student Name {`- ${studentName}`})</h2>)}
                                 <button type='button' onClick={() => navigate(-1)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style={{ marginRight: '20px' }}>Back</button>
+                            </div>
+                            <div className="row">
+                                <div className="col">
+                                    <div className="input-group">
+                                        <input onChange={inputHandler} type="text" className="form-control" name="searchTerm" value={inputField.searchTerm} placeholder='Session Name/Task Name' />
+                                    </div>
+                                    <br></br>
+                                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                        <button onClick={readSearchValue} className="btn btn-warning">Search</button>
+                                    </div>
+                                    <br />
+                                </div>
                             </div>
                             <br />
                             <div className="max-w-full overflow-x-auto">

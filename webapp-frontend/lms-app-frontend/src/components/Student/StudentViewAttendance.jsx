@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../../config/config';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import StudNavBar from './StudNavBar';
 
 
 const StudentViewAttendance = () => {
@@ -141,6 +142,7 @@ const StudentViewAttendance = () => {
 
     return (
         <div>
+            <StudNavBar/>
             <br />
             <br />
             <div className="flex justify-between items-center mt-8 ml-4 mb-4">

@@ -52,13 +52,18 @@ const AdminAddCurriculum = () => {
     const batchUrl = global.config.urls.api.server + "/api/lms/adminviewbatch";
 
     const getData = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -84,13 +89,18 @@ const AdminAddCurriculum = () => {
     }
 
     const getBatches = (collegeId) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -126,14 +136,19 @@ const AdminAddCurriculum = () => {
     };
 
     const readValue = (e) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
         let addedBy;
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         if (currentKey === 'lmsapp') {
             addedBy = 0
         } else {
@@ -265,11 +280,9 @@ const AdminAddCurriculum = () => {
 
     useEffect(() => { getData() }, [])
 
-    useEffect(() => { setKey(sessionStorage.getItem("admkey") || '') }, []);
-
     return (
         <div>
-            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">

@@ -12,7 +12,7 @@ const CollegeStaffDownloadAttendancePDF = () => {
 
     const apiUrl = global.config.urls.api.server + "/api/lms/GenerateSessionWiseAttendancePdf";
 
-    const batchName = sessionStorage.getItem("clgstaffattendancepdfbatchName");
+    const batchName = sessionStorage.getItem("viewsessionbatchName");
     const sessionId = sessionStorage.getItem("downloadattendanceid");
     const token = sessionStorage.getItem("clgstaffLogintoken");
 

@@ -1,7 +1,4 @@
 const db = require('../models/db')
-const { response } = require('express')
-
-
 
 
 const Material = function (material) {
@@ -69,7 +66,7 @@ Material.searchMaterial = (searchString, result) => {
                 result(err, null);
                 return;
             } else {
-                const formattedMaterials = res.map(materials => ({ ...materials, addedDate: materials.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) })); 
+                const formattedMaterials = res.map(materials => ({ ...materials, addedDate: materials.addedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) }));
                 console.log("Materials: ", formattedMaterials);
                 result(null, formattedMaterials);
             }
@@ -190,6 +187,23 @@ Material.materialDelete = (materialId, result) => {
                     console.log("Delete Material with id : ", { id: materialId.id });
                     return result(null, { id: materialId.id });
                 })
+        })
+}
+
+
+//Student Search Batch Materials
+Material.studSearchMaterial = (searchTerm, batchId, result) => {
+    const searchKey = '%' + searchTerm + '%'
+    db.query("SELECT m.* FROM materials m JOIN batches b ON m.batchId = b.id WHERE b.id = ? AND (m.fileName LIKE ? OR m.materialType LIKE ? OR m.materialDesc LIKE ?) AND m.deleteStatus = 0 AND m.isActive = 1 ORDER BY m.addedDate DESC",
+        [batchId, searchKey, searchKey, searchKey],
+        (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                return result(err, null)
+            } else {
+                console.log("Materials: ", res);
+                return result(null, res);
+            }
         })
 }
 

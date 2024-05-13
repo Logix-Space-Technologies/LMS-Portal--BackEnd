@@ -57,13 +57,18 @@ const AdminUpdateCollegeStaff = () => {
     }
 
     const readNewValue = (e) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         e.preventDefault()
         const validationErrors = validateForm(updateField)
         if (Object.keys(validationErrors).length === 0) {
@@ -212,13 +217,18 @@ const AdminUpdateCollegeStaff = () => {
     };
 
     const getData = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let data = { "id": sessionStorage.getItem("clgStaffId") }
         let axiosConfig = {
             headers: {
@@ -264,14 +274,9 @@ const AdminUpdateCollegeStaff = () => {
         getData()
     }, [])
 
-    // Update key state when component mounts
-    useEffect(() => {
-        setKey(sessionStorage.getItem("admkey") || '');
-    }, []);
-
     return (
         <div>
-            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">

@@ -90,7 +90,7 @@ const StudentUpdateProfile = () => {
             Object.entries(sessionStorage).forEach(([key, value]) => {
                 if (key.includes('key')) {
                     currentKey = value;
-                } else if (key.includes('token')) {
+                } else if (key.includes('token') || key.includes('Token')) {
                     token = value;
                 }
             });
@@ -110,7 +110,6 @@ const StudentUpdateProfile = () => {
             setShowOverlay(true)
             axios.post(apiUrl2, data, axiosConfig).then(
                 (Response) => {
-                    console.log(Response.data)
                     if (Response.data.status === "success") {
                         closeWaitingModal()
                         setTimeout(() => {
@@ -203,10 +202,9 @@ const StudentUpdateProfile = () => {
                 "key": currentKey
             }
         }
-        console.log(axiosConfig2)
+
         axios.post(apiURL, data2, axiosConfig2).then(
             (response) => {
-                console.log(response.data)
                 if (response.data.data) {
                     setStudData(response.data.data[0])
                     setUpdateField(response.data.data[0])
@@ -252,7 +250,7 @@ const StudentUpdateProfile = () => {
 
     return (
         <div>
-            {key === 'lmsappstud' ? '' : (key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />)}
+            {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : (key === 'lmsappstud' ? '' : <Navbar />)}
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12 mb-4 mb-sm-5">

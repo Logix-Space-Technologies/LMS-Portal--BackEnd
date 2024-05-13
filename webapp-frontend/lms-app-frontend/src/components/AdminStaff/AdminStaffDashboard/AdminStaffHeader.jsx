@@ -51,11 +51,9 @@ const AdminStaffHeader = () => {
     return (
         <div>
             <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-                <Link to="#" className="navbar-brand d-flex d-lg-none me-4">
-                    <h2 className="text-primary mb-0">
-                        <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
-                    </h2>
-                </Link>
+                <h2 className="text-primary mb-0">
+                    <img src="https://www.linkurcodes.com/images/logo.png" alt="" height="50px" width="180px" />
+                </h2>
                 <div className="navbar-nav align-items-center ms-auto">
                     <div className="nav-item dropdown">
                         <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">

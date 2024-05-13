@@ -27,6 +27,8 @@ const AdminStaffAddMaterials = () => {
 
     const [showWaitingModal, setShowWaitingModal] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // New state for overlay
+    // Retrieve key and token from sessionStorage without providing the key
+    let currentKey, token;
 
     const fileUploadHandler = (event) => {
         setErrors({});
@@ -58,13 +60,16 @@ const AdminStaffAddMaterials = () => {
     }
 
     const getData = () => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -90,13 +95,18 @@ const AdminStaffAddMaterials = () => {
     }
 
     const getBatches = (collegeId) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         let axiosConfig2 = {
             headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -131,50 +141,58 @@ const AdminStaffAddMaterials = () => {
     };
 
     const readValue = (e) => {
-        let currentKey = sessionStorage.getItem("admkey");
-        let token = sessionStorage.getItem("admtoken");
-        if (currentKey !== 'lmsapp') {
-            currentKey = sessionStorage.getItem("admstaffkey");
-            token = sessionStorage.getItem("admstaffLogintoken");
-            setKey(currentKey); // Update the state if needed
-        }
+        // Retrieve key and token from sessionStorage without providing the key
+        let currentKey, token;
+        Object.entries(sessionStorage).forEach(([key, value]) => {
+            if (key.includes('key')) {
+                currentKey = value;
+            } else if (key.includes('token')) {
+                token = value;
+            }
+        });
+
+        // Update the state with the current key
+        setKey(currentKey);
         e.preventDefault();
+        let data;
+        let addedBy;
+        if (currentKey === 'lmsapp') {
+            addedBy = 0
+        } else {
+            addedBy = sessionStorage.getItem("admstaffId")
+        }
+        if (file) {
+            data = {
+                "batchId": inputField.batchId,
+                "fileName": inputField.fileName,
+                "materialDesc": inputField.materialDesc,
+                "remarks": inputField.remarks,
+                "materialType": inputField.materialType,
+                "uploadFile": file,
+                "addedby": addedBy
+            }
+        } else {
+            data = {
+                "batchId": inputField.batchId,
+                "fileName": inputField.fileName,
+                "materialDesc": inputField.materialDesc,
+                "remarks": inputField.remarks,
+                "materialType": inputField.materialType,
+                "uploadFile": inputField.uploadFile,
+                "addedby": addedBy
+            }
+        }
         const validationErrors = validateForm(inputField);
         if (Object.keys(validationErrors).length === 0) {
+            if (data.materialType !== "Link" && !data.uploadFile) {
+                errors.file = 'File is required';
+            }
             let axiosConfig3 = {
                 headers: {
                     'content-type': 'multipart/form-data',
                     "Access-Control-Allow-Origin": "*",
                     "token": token,
                     "key": currentKey
-                }
-            }
-            let addedBy;
-            if (currentKey === 'lmsapp') {
-                addedBy = 0
-            } else {
-                addedBy = sessionStorage.getItem("admstaffId")
-            }
-            let data;
-            if (file) {
-                data = {
-                    "batchId": inputField.batchId,
-                    "fileName": inputField.fileName,
-                    "materialDesc": inputField.materialDesc,
-                    "remarks": inputField.remarks,
-                    "materialType": inputField.materialType,
-                    "uploadFile": file,
-                    "addedby": addedBy
-                }
-            } else {
-                data = {
-                    "batchId": inputField.batchId,
-                    "fileName": inputField.fileName,
-                    "materialDesc": inputField.materialDesc,
-                    "remarks": inputField.remarks,
-                    "materialType": inputField.materialType,
-                    "uploadFile": inputField.uploadFile,
-                    "addedby": addedBy
                 }
             }
             setShowWaitingModal(true)
@@ -297,22 +315,14 @@ const AdminStaffAddMaterials = () => {
         if (data.materialType === "Link" && !data.uploadFile.trim()) {
             errors.website = 'Website is required';
         }
-        if (data.materialType !== "Link" && !data.uploadFile.trim()) {
-            errors.file = 'File is required';
-        }
         return errors;
     }
 
     useEffect(() => { getData() }, [])
 
-    // Update key state when component mounts
-    useEffect(() => {
-        setKey(sessionStorage.getItem("admkey") || '');
-    }, []);
-
     return (
         <div>
-            {key === 'lmsapp' ? <Navbar /> : <AdmStaffNavBar />}
+            {key === 'lmsappadmstaff' ? <AdmStaffNavBar /> : <Navbar />}
             <div className="bg-light py-3 py-md-5">
                 <div className="container">
                     <div className="row justify-content-md-center">
