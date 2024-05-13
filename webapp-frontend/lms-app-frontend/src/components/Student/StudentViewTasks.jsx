@@ -18,7 +18,8 @@ const StudentViewTasks = () => {
     const [errors, setErrors] = useState({});
     const [inputField, setInputField] = useState({
         "gitLink": "",
-        "remarks": ""
+        "remarks": "",
+        "searchTerm": "",
     });
 
     let [taskId, setTaskId] = useState({})
@@ -29,6 +30,61 @@ const StudentViewTasks = () => {
 
     const apiUrl = global.config.urls.api.server + "/api/lms/studViewTask";
     const apiUrl2 = global.config.urls.api.server + "/api/lms/tasksubmissionByStudent";
+    const apiUrl3 = global.config.urls.api.server + "/api/lms/searchStudTasks";
+
+    const readSearchValue = () => {
+        setLoading(true)
+        let axiosConfig2 = {
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+                "token": sessionStorage.getItem("studLoginToken"),
+                "key": "lmsappstud"
+            }
+        }
+        let id = { "id": sessionStorage.getItem("studentId") };
+        axios.post(apiUrl3, id, axiosConfig2).then(
+            (response) => {
+                if (response.data.status === "Search Item Is Required.") {
+                    setLoading(false)
+                    setTimeout(() => {
+                        alert(response.data.status)
+                        setStudViewTaskData([])
+                    }, 500)
+                } else if (response.data.data) {
+                    setStudViewTaskData(response.data.data);
+                    setInputField(
+                        {
+                            "searchTerm": ""
+                        }
+                    )
+                    setLoading(false)
+                } else if (response.data.status === "Unauthorized access!!") {
+                    navigate("/studentLogin")
+                    sessionStorage.clear()
+                } else if (!response.data.data) {
+                    setLoading(false)
+                    setInputField(
+                        {
+                            "searchTerm": ""
+                        }
+                    )
+                    setTimeout(() => {
+                        setStudViewTaskData([])
+                        alert("No Task Found !!")
+                    }, 500)
+                } else {
+                    setLoading(false)
+                    setInputField(
+                        {
+                            "searchTerm": ""
+                        }
+                    )
+                    alert(response.data.status)
+                }
+            }
+        )
+    }
 
     const closeWaitingModal = () => {
         setShowWaitingModal(false)
@@ -193,6 +249,18 @@ const StudentViewTasks = () => {
             <StudNavBar />
             <br />
             <h1 style={{ marginLeft: "20px", marginBottom: "32px", textAlign: "center" }}>Student View Tasks</h1>
+            <div className="row">
+                <div className="col col-12">
+                    <div className="row g-3">
+                        <div className="col col-md-6 mx-auto"> {/* Center-align the search bar */}
+                            <div className="input-group mb-3"> {/* Use an input group */}
+                                <input onChange={inputHandler} type="text" className="form-control" name="searchTerm" value={inputField.searchTerm} placeholder='Search by Task Name' />
+                                <button onClick={readSearchValue} className="btn btn-warning ms-2">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {loading && <div>Loading...</div>}
             {!loading && (<section className="flex flex-col justify-center items-center antialiased bg-gray-100 text-gray-600 p-4 pt-2 pb-2">
                 <div className="h-full">
