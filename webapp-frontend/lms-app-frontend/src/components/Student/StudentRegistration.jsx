@@ -206,7 +206,7 @@ const StudentRegistration = () => {
     script.onload = () => {
       //initialize razorpay
       const rzp = new window.Razorpay({
-        key: 'rzp_test_ZqcybzHd1QkWg8',
+        key: 'rzp_live_dUnqwXAyfPl7BC',
         amount: batchAmount * 100,
         name: 'Logix Space Technologies Pvt Ltd',
         description: 'Link Ur Codes Payment',

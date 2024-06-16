@@ -221,7 +221,7 @@ exports.studLog = (request, response) => {
         const passwordMatch = bcrypt.compareSync(password, stud.password)
         if (passwordMatch) {
             jwt.sign({ studEmail: getStudEmail, password: getPassword }, "lmsappstud", {
-                expiresIn: (type === 'web') ? '30m' : ((type === 'mobile') ? '30d' : undefined)
+                expiresIn: (type === 'web') ? '30d' : ((type === 'mobile') ? '180d' : undefined)
             },
                 (error, token) => {
                     if (error) {
