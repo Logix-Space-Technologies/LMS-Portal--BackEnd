@@ -590,7 +590,7 @@ exports.profileUpdateStudentMobile = (req, res) => {
     try {
         const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
         const imagePath = req.file ? req.file.path : 'No image uploaded';
-
+        console.log('Form Data:'+req.body);
         // Log the form data and file details
         console.log('Form Data:');
         console.log({ id });
