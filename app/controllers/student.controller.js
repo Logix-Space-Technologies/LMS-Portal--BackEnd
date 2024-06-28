@@ -637,22 +637,67 @@ exports.profileUpdateStudent = (request, response) => {
 //     }
 // };
 
-exports.profileUpdateStudentMobile = (req, res) => {
+// exports.profileUpdateStudentMobile = (req, res) => {
+//     try {
+//         const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
+//         const imagePath = req.file ? req.file.path : 'No image uploaded';
+
+//         // Log the received data
+//         console.log('Form Data:');
+//         console.log({ id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo });
+//         console.log('File Path:', imagePath);
+
+//         res.status(200).json({ message: 'Form data received and logged', imagePath: imagePath });
+//     } catch (error) {
+//         console.error('Error handling form submission:', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// }
+
+
+
+exports.profileUpdateStudentMobile = async (req, res) => {
     try {
         const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
-        const imagePath = req.file ? req.file.path : 'No image uploaded';
+        const file1 = req.file;
 
-        // Log the received data
-        console.log('Form Data:');
-        console.log({ id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo });
-        console.log('File Path:', imagePath);
+        if (!file1) {
+            return res.status(400).json({ error: 'No image uploaded Test' });
+        }
 
-        res.status(200).json({ message: 'Form data received and logged', imagePath: imagePath });
+        // const fileStream1 = fs.createReadStream(file.path);
+        // const uploadParams = {
+        //     Bucket: process.env.AWS_BUCKET_NAME,
+        //     Key: student-profiles/${file.filename},
+        //     Body: fileStream,
+        //     ContentType: file.mimetype,
+        // };
+
+        const command = new PutObjectCommand(uploadParams);
+
+        try {
+            // await s3Client.send(command);
+            // const imageUrl = https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/student-profiles/${file.filename};
+
+            // // Clean up the local file after upload
+            // fs.unlinkSync(file.path);
+
+            // Log the received data
+            console.log('Form Data:');
+            console.log({ id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo });
+            console.log('File URL:', imageUrl);
+
+            res.status(200).json({ message: 'Form data received and logged', imageUrl });
+        } catch (err) {
+            console.error('Error uploading to S3:', err);
+            res.status(500).json({ error: 'Error uploading to S3' });
+        }
     } catch (error) {
         console.error('Error handling form submission:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-}
+};
+
 exports.viewUnverifiedStudents = (request, response) => {
     const token = request.headers.token;
 
