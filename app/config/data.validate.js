@@ -48,7 +48,7 @@ function isValidImageWith1mbConstratint(file) {
     if (!extensionIsValid && !sizeIsValid) {
         return {
             isValid: false,
-            message: 'Invalid image format and size exceeds the limit of 2 MB.'
+            message: 'Invalid image format and size exceeds the limit of 10 MB.'
         };
     } else if (!extensionIsValid) {
         return {
@@ -58,7 +58,7 @@ function isValidImageWith1mbConstratint(file) {
     } else if (!sizeIsValid) {
         return {
             isValid: false,
-            message: 'Image size exceeds the limit of 2 MB.'
+            message: 'Image size exceeds the limit of 10 MB.'
         };
     }
 
