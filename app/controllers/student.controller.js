@@ -15,6 +15,7 @@ const path = require("path");
 const whatsApp = require("./Whatsapp/sendWhatsappMessage")
 const whatsappotp = require("./Whatsapp/otp")
 const { StudentLog, logStudent } = require("../models/studentLog.model");
+const { error } = require("console");
 
 // const { Session } = require("inspector");
 
@@ -714,6 +715,7 @@ exports.profileUpdateStudentMobile = async (req, res) => {
 
             // If validation fails
             if (Object.keys(validationErrors).length > 0) {
+                console.log(validationErrors)
                 return res.status(422).json({ status: 'Validation failed', errors: validationErrors });
             }
 
