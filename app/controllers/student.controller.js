@@ -748,7 +748,7 @@ exports.profileUpdateStudentMobile = async (req, res) => {
                     studDept,
                     course,
                     studPhNo: formattedPhoneNumber,
-                    studProfilePic,
+                    imageUrl,
                     aadharNo
                 };
 
