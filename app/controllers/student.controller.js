@@ -657,7 +657,7 @@ exports.profileUpdateStudentMobile = async (req, res) => {
                 Bucket: process.env.S3_BUCKET,
                 Key: `student-profiles/${file.filename}`,
                 Body: fileStream,
-                ContentType: file.mimetype,
+                ContentType: 'multipart/form-data',
             };
 
             const command = new PutObjectCommand(uploadParams);
