@@ -31,6 +31,7 @@ const AdminSearchFeedbackStudController = require("../controllers/Whatsapp/Searc
 const AdminSearchWhatsappMsgReceivedStudController = require("../controllers/Whatsapp/SearchWhatsappMsgReceivedStud")
 const AdminSearchFeedbackClgStaffController = require("../controllers/Whatsapp/SearchClgStaffWhatsappFeedback")
 const AdminSearchWhatsappMsgReceivedClgStaffController = require("../controllers/Whatsapp/SearchClgStaffWhatsappMsgReceived")
+const upload = require('../middleware/upload');
 
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
@@ -133,7 +134,7 @@ router.post("/studentViewProfile", StudentController.studentViewProfile)
 
 router.post("/studentUpdateProfile", StudentController.profileUpdateStudent)
 
-router.post("/studentUpdateProfileMobile", StudentController.profileUpdateStudentMobile)
+router.post('/studentUpdateProfileMobile', upload.single('studProfilePic'), StudentController.profileUpdateStudentMobile);
 
 router.post("/searchMaterial", MaterialController.searchMaterial)
 
