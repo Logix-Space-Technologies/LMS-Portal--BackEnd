@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const multer = require('multer')
 const AdminController = require('../controllers/admin.controller')
 const CollegeController = require('../controllers/college.controller')
 const AdminStaffController = require('../controllers/adminStaff.controller')
@@ -133,7 +134,20 @@ router.post("/studentViewProfile", StudentController.studentViewProfile)
 
 router.post("/studentUpdateProfile", StudentController.profileUpdateStudent)
 
-router.post('/studentUpdateProfileMobile', upload.single('studProfilePic'), (req, res) => {
+
+
+// const upload = multer({
+//     storage: storage, limits: { fileSize: 2 * 1024 * 1024 },
+//     fileFilter: (req, file, cb) => {
+//         if (file.mimetype.startsWith('image/')) {
+//             cb(null, true);
+//         } else {
+//             cb(new Error('Only image files are allowed!'), false);
+//         }
+//     }
+// });
+
+router.post('/studentUpdateProfileMobile', (req, res) => {
     try {
       const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
       const imagePath = req.file ? req.file.path : 'No image uploaded';
