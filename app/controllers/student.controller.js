@@ -670,7 +670,7 @@ exports.profileUpdateStudentMobile = async (req, res) => {
 
         const fileStream = fs.createReadStream(file.path);
         const uploadParams = {
-            Bucket: process.env.AWS_BUCKET_NAME,
+            Bucket: process.env.S3_BUCKET,
             Key: `student-profiles/${file.filename}`,
             Body: fileStream,
             ContentType: file.mimetype,
