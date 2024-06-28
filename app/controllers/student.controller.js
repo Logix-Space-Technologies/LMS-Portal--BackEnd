@@ -390,7 +390,6 @@ exports.profileUpdateStudent = (request, response) => {
         if (error) {
             return response.status(500).json({ "status": error.message });
         }
-        console.log(error.message)
         if (request.file) {
             const file = request.file;
             const fileStream = fs.createReadStream(file.path);
