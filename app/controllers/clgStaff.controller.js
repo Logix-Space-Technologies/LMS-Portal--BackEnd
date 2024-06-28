@@ -550,6 +550,110 @@ exports.collegeStaffUpdate = (req, res) => {
 };
 
 
+//mobileapp
+//profilePic
+// exports.collegeStaffUpdateMobile = (req, res) => {
+//   const token = req.headers.token;
+//   const file = req.file;
+
+//   try {
+//       // Verify JWT token
+//       jwt.verify(token,"lmsappclgstaff", async (err, decoded) => {
+//           if (err) {
+//               return res.status(401).json({ error: 'Unauthorized User!!' });
+//           }
+
+//           // Handle file upload
+//           if (!file) {
+//               return res.status(400).json({ error: 'No image uploaded' });
+//           }
+
+//           // Validation
+//           const validationErrors = {};
+
+//           if (!req.body.collegeStaffName) {
+//             validationErrors.name = "Name is required.";
+//           }
+//           if (!Validator.isValidName(req.body.collegeStaffName).isValid) {
+//             validationErrors.name = Validator.isValidName(req.body.collegeStaffName).message;
+//           }
+//           if (!req.body.clgStaffAddress) {
+//             validationErrors.address = "Address is required.";
+//           }
+//           if (!Validator.isValidAddress(req.body.clgStaffAddress).isValid) {
+//             validationErrors.address = Validator.isValidAddress(req.body.clgStaffAddress).message;
+//           }
+//           if (!req.body.phNo) {
+//             validationErrors.phNo = "Mobile number is required.";
+//           }
+//           if (!Validator.isValidMobileNumber(req.body.phNo).isValid) {
+//             validationErrors.phNo = Validator.isValidMobileNumber(req.body.phNo).message;
+//           }
+//           if (!Validator.isValidImageWith1mbConstratint(req.file).isValid) {
+//             validationErrors.image = Validator.isValidImageWith1mbConstratint(req.file).message;
+//           }
+//           if (!req.body.department) {
+//             validationErrors.department = "Department is required.";
+//           }
+//           if (!req.body.aadharNo) {
+//             validationErrors.aadharnumber = "Aadhar number is required.";
+//           }
+//           if (!Validator.isValidAadharNumber(req.body.aadharNo).isValid) {
+//             validationErrors.aadharnumber = Validator.isValidAadharNumber(req.body.aadharNo).message;
+//           }
+//           if (Object.keys(validationErrors).length > 0) {
+//             return res.json({ "status": "Validation failed", "data": validationErrors });
+//           }
+
+//           let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(req.body.phNo) ? studPhNo.replace(/^(\+91\s?|91\s?)/, '') : req.body.phNo;
+
+//           const fileStream = fs.createReadStream(file.path);
+//           const uploadParams = {
+//               Bucket: process.env.S3_BUCKET,
+//               Key: `uploads/${file.filename}`,
+//               Body: fileStream,
+//               ContentType: 'multipart/form-data',
+//           };
+
+//           const command = new PutObjectCommand(uploadParams);
+
+//           try {
+//               await s3Client.send(command);
+//               const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/uploads/${file.filename}`;
+
+//               // Clean up the local file after upload
+//               fs.unlinkSync(file.path);
+
+//               const clgstaff = new CollegeStaff({
+//                 id: req.body.id,
+//                 collegeId: req.body.collegeId,
+//                 collegeStaffName: req.body.collegeStaffName,
+//                 phNo: formattedPhoneNumber,
+//                 clgStaffAddress: req.body.clgStaffAddress,
+//                 profilePic: imageUrl,
+//                 department: req.body.department,
+//                 aadharNo: req.body.aadharNo
+//               });
+
+//               CollegeStaff.updateCollegeStaff(clgstaff, (err, data) => {
+//                 if (err) {
+//                   return res.json({ "status": err });
+//                 }
+//                 return res.json({ "status": "success", "data": data });
+//               });
+
+//           } catch (err) {
+//               console.error('Error uploading to S3:', err);
+//               res.status(500).json({ error: 'Error uploading to S3' });
+//           }
+//       });
+//   } catch (error) {
+//       console.error('Error handling form submission:', error);
+//       res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// };
+
+
 exports.searchCollegeStaff = (request, response) => {
   const searchQuery = request.body.searchQuery;
   const collegeStaffToken = request.headers.token;
