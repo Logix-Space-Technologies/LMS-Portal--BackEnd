@@ -2,7 +2,7 @@ const multer = require('multer');
 const path = require('path');
 
 // List of allowed image extensions
-const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.heic', '.heif'];
 
 // Multer configuration for file uploads with unique filenames
 const storage = multer.diskStorage({
