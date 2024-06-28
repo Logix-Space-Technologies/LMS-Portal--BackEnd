@@ -477,7 +477,7 @@ exports.profileUpdateStudent = (request, response) => {
                             studProfilePic,
                             aadharNo
                         };
-                        
+
                         Student.updateStudentProfile(newStudent, (err, data) => {
                             if (err) {
                                 if (err.kind === "not_found") {
@@ -499,7 +499,7 @@ exports.profileUpdateStudent = (request, response) => {
                 });
             } catch (err) {
                 fs.unlinkSync(file.path);
-                console.log("catch section err:"+err.message)
+                console.log("catch section err:" + err.message)
                 response.status(500).json({ "status": err.message });
             }
         } else {
@@ -587,23 +587,15 @@ exports.profileUpdateStudent = (request, response) => {
 //for mobile app only
 
 exports.profileUpdateStudentMobile = (req, res) => {
-    
-    try {
-        let uploadSingle = upload.single('studProfilePic');
 
-    uploadSingle(request, response, async (error) => {
-        console.log("upload file started")
-        if (error) {
-            console.log("status"+ error.message)
-            return response.status(500).json({ "status": error.message });
-        }
-    })
+    try {
+        
         const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
         const imagePath = req.file ? req.file.path : 'No image uploaded';
-    
+
         // Log the form data and file details
         console.log('Form Data:');
-        console.log({id});
+        console.log({ id });
         console.log(studName);
         console.log(admNo);
         console.log(rollNo);
@@ -612,12 +604,20 @@ exports.profileUpdateStudentMobile = (req, res) => {
         console.log(studPhNo);
         console.log(aadharNo);
         console.log(imagePath);
-    
+
+
+        uploadSingle(request, response, async (error) => {
+            console.log("upload file started")
+            if (error) {
+                console.log("status" + error.message)
+                return response.status(500).json({ "status": error.message });
+            }
+        })
         res.status(200).json({ message: 'Form data received and logged' });
-      } catch (error) {
+    } catch (error) {
         console.error('Error handling form submission:', error);
         res.status(500).json({ error: 'Internal Server Error' });
-      }
+    }
 };
 
 exports.viewUnverifiedStudents = (request, response) => {
