@@ -133,6 +133,8 @@ router.post("/studentViewProfile", StudentController.studentViewProfile)
 
 router.post("/studentUpdateProfile", StudentController.profileUpdateStudent)
 
+router.post("/studentUpdateProfileMobile", StudentController.profileUpdateStudentMobile)
+
 router.post("/searchMaterial", MaterialController.searchMaterial)
 
 router.post("/getAllRefundRequests", RefundController.getRefundRequests)
