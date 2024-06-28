@@ -587,202 +587,37 @@ exports.profileUpdateStudent = (request, response) => {
 //for mobile app only
 
 exports.profileUpdateStudentMobile = (request, response) => {
-    let uploadSingle = upload.single('studProfilePic');
+    
+    try {
+        let uploadSingle = upload.single('studProfilePic');
 
     uploadSingle(request, response, async (error) => {
+        console.log("upload file started")
         if (error) {
+            console.log("status"+ error.message)
             return response.status(500).json({ "status": error.message });
         }
-
-        if (request.file) {
-            const file = request.file;
-            const fileStream = fs.createReadStream(file.path);
-
-            const uploadParams = {
-                Bucket: process.env.S3_BUCKET,
-                Key: `uploads/${file.filename}`,
-                Body: fileStream
-            };
-
-            try {
-                await s3Client.send(new PutObjectCommand(uploadParams));
-                const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
-                // Remove the file from local storage
-                fs.unlinkSync(file.path);
-
-                // const { studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = request.body;
-                const updateProfileToken = request.headers.token;
-                const key = request.headers.key;
-                const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
-                const imagePath = req.file ? req.file.path : 'No image uploaded';
-
-                jwt.verify(updateProfileToken, key, async (err, decoded) => {
-                    if (decoded) {
-                        // Validation
-                        const validationErrors = {};
-
-                        if (Validator.isEmpty(studName).isValid) {
-                            validationErrors.studName = Validator.isEmpty(studName).message;
-                        }
-
-                        if (!Validator.isValidName(studName).isValid) {
-                            validationErrors.studName = Validator.isValidName(studName).message;
-                        }
-
-                        if (Validator.isEmpty(admNo).isValid) {
-                            validationErrors.admNo = Validator.isEmpty(admNo).message;
-                        }
-
-                        if (Validator.isEmpty(rollNo).isValid) {
-                            validationErrors.rollNo = Validator.isEmpty(rollNo).message;
-                        }
-
-                        if (Validator.isEmpty(studDept).isValid) {
-                            validationErrors.studDept = Validator.isEmpty(studDept).message;
-                        }
-
-                        if (Validator.isEmpty(course).isValid) {
-                            validationErrors.course = Validator.isEmpty(course).message;
-                        }
-
-                        if (Validator.isEmpty(aadharNo).isValid) {
-                            validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
-                        }
-
-                        if (!Validator.isValidAadharNumber(aadharNo).isValid) {
-                            validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
-                        }
-
-                        if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
-                            validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
-                        }
-
-
-                        if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
-                            validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
-                        }
-
-                        // If validation fails
-                        if (Object.keys(validationErrors).length > 0) {
-                            return response.json({ "status": "Validation failed", "data": validationErrors });
-                        }
-
-                        const studProfilePic = imageUrl;
-
-                        let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(studPhNo) ? studPhNo.replace(/^(\+91\s?|91\s?)/, '') : studPhNo;
-
-                        const newStudent = {
-                            'id': request.body.id,
-                            studName,
-                            admNo,
-                            rollNo,
-                            studDept,
-                            course,
-                            studPhNo: formattedPhoneNumber,
-                            studProfilePic,
-                            aadharNo
-                        };
-
-                        Student.updateStudentProfile(newStudent, (err, data) => {
-                            if (err) {
-                                if (err.kind === "not_found") {
-                                    return response.json({ "status": "Student with provided Id and batchId is not found." });
-                                } else {
-                                    return response.json({ "status": err.message });
-                                }
-                            } else {
-                                return response.json({ "status": "success", "data": data });
-                            }
-                        });
-
-                    } else {
-                        return response.json({ "status": "Unauthorized User!!" });
-                    }
-                });
-            } catch (err) {
-                fs.unlinkSync(file.path);
-                response.status(500).json({ "status": err.message });
-            }
-        } else {
-            // Handle if no file is uploaded
-            const { studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = request.body;
-            const updateProfileToken = request.headers.token;
-            const key = request.headers.key;
-            jwt.verify(updateProfileToken, key, async (err, decoded) => {
-                if (decoded) {
-                    // Validation
-                    const validationErrors = {};
-
-                    if (Validator.isEmpty(studName).isValid) {
-                        validationErrors.studName = Validator.isEmpty(studName).message;
-                    }
-
-                    if (!Validator.isValidName(studName).isValid) {
-                        validationErrors.studName = Validator.isValidName(studName).message;
-                    }
-
-                    if (Validator.isEmpty(admNo).isValid) {
-                        validationErrors.admNo = Validator.isEmpty(admNo).message;
-                    }
-
-                    if (Validator.isEmpty(rollNo).isValid) {
-                        validationErrors.rollNo = Validator.isEmpty(rollNo).message;
-                    }
-
-                    if (Validator.isEmpty(studDept).isValid) {
-                        validationErrors.studDept = Validator.isEmpty(studDept).message;
-                    }
-
-                    if (Validator.isEmpty(course).isValid) {
-                        validationErrors.course = Validator.isEmpty(course).message;
-                    }
-
-                    if (Validator.isEmpty(aadharNo).isValid) {
-                        validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
-                    }
-
-                    if (!Validator.isValidAadharNumber(aadharNo).isValid) {
-                        validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
-                    }
-
-                    if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
-                        validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
-                    }
-
-                    // If validation fails
-                    if (Object.keys(validationErrors).length > 0) {
-                        return response.json({ "status": "Validation failed", "data": validationErrors });
-                    }
-
-                    const newStudent = {
-                        'id': request.body.id,
-                        studName,
-                        admNo,
-                        rollNo,
-                        studDept,
-                        course,
-                        studPhNo,
-                        aadharNo
-                    };
-
-                    Student.updateStudentProfile(newStudent, (err, data) => {
-                        if (err) {
-                            if (err.kind === "not_found") {
-                                return response.json({ "status": "Student with provided Id and batchId is not found." });
-                            } else {
-                                return response.json({ "status": err.message });
-                            }
-                        } else {
-                            return response.json({ "status": "success", "data": data });
-                        }
-                    });
-
-                } else {
-                    return response.json({ "status": "Unauthorized User!!" });
-                }
-            });
-        }
-    });
+    })
+        const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
+        const imagePath = req.file ? req.file.path : 'No image uploaded';
+    
+        // Log the form data and file details
+        console.log('Form Data:');
+        console.log({id});
+        console.log(studName);
+        console.log(admNo);
+        console.log(rollNo);
+        console.log(studDept);
+        console.log(course);
+        console.log(studPhNo);
+        console.log(aadharNo);
+        console.log(imagePath);
+    
+        res.status(200).json({ message: 'Form data received and logged' });
+      } catch (error) {
+        console.error('Error handling form submission:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
 };
 
 exports.viewUnverifiedStudents = (request, response) => {
