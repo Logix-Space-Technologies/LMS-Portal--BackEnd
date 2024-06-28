@@ -656,32 +656,34 @@ exports.profileUpdateStudent = (request, response) => {
 
 
 
-
 exports.profileUpdateStudentMobile = async (req, res) => {
     try {
         const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
-        const file1 = req.file;
+        const file = req.file;
 
-        if (!file1) {
+        if (!file) {
             return res.status(400).json({ error: 'No image uploaded' });
         }
 
-        const fileStream1 = fs.createReadStream(file1.path);
+        console.log('AWS_BUCKET_NAME:', process.env.AWS_BUCKET_NAME);
+        console.log('AWS_REGION:', process.env.AWS_REGION);
+
+        const fileStream = fs.createReadStream(file.path);
         const uploadParams = {
             Bucket: process.env.AWS_BUCKET_NAME,
-            Key: `student-profiles/${file1.filename}`,
-            Body: fileStream1,
-            ContentType: file1.mimetype,
+            Key: `student-profiles/${file.filename}`,
+            Body: fileStream,
+            ContentType: file.mimetype,
         };
 
         const command = new PutObjectCommand(uploadParams);
 
         try {
-            const data = await s3Client.send(command);
-            const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/student-profiles/${file1.filename}`;
+            await s3Client.send(command);
+            const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/student-profiles/${file.filename}`; // Ensure imageUrl is correctly formatted
 
             // Clean up the local file after upload
-            fs.unlinkSync(file1.path);
+            fs.unlinkSync(file.path);
 
             // Log the received data
             console.log('Form Data:');
