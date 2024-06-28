@@ -1,5 +1,4 @@
 const { request, response } = require("express");
-const express = require("express");
 const { Student, Payment, Tasks, SubmitTask, Session } = require("../models/student.model");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
@@ -16,7 +15,7 @@ const path = require("path");
 const whatsApp = require("./Whatsapp/sendWhatsappMessage")
 const whatsappotp = require("./Whatsapp/otp")
 const { StudentLog, logStudent } = require("../models/studentLog.model");
-
+const express = require("express");
 // const { Session } = require("inspector");
 
 // AWS S3 Client Configuration
@@ -619,27 +618,27 @@ exports.profileUpdateStudent = (request, response) => {
 //     }
 // };
 
-exports.profileUpdateStudentMobile = (req, res) => {
-    try {
-        const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
-        const imagePath = req.file ? req.file.path : 'No image uploaded';
+// exports.profileUpdateStudentMobile = (req, res) => {
+//     try {
+//         const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
+//         const imagePath = req.file ? req.file.path : 'No image uploaded';
 
-        // Log the form data and file details
-        console.log('Form Data:');
-        console.log({ id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo });
-        console.log('File Path:', imagePath);
+//         // Log the form data and file details
+//         console.log('Form Data:');
+//         console.log({ id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo });
+//         console.log('File Path:', imagePath);
 
-        // Here you can upload the file to AWS S3 or perform any other necessary actions
+//         // Here you can upload the file to AWS S3 or perform any other necessary actions
 
-        res.status(200).json({ message: 'Form data received and logged', imagePath: imagePath });
-    } catch (error) {
-        console.error('Error handling form submission:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-};
+//         res.status(200).json({ message: 'Form data received and logged', imagePath: imagePath });
+//     } catch (error) {
+//         console.error('Error handling form submission:', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// };
 
-const app = express();
-app.post('/studentUpdateProfileMobile2', upload.single('studProfilePic'), (req, res) => {
+const app = express.Router();
+app.post('/api/lms/studentUpdateProfileMobile', upload.single('studProfilePic'), (req, res) => {
     try {
         const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
         const imagePath = req.file ? req.file.path : 'No image uploaded';
