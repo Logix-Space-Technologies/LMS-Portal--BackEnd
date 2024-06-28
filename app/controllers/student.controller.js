@@ -682,23 +682,23 @@ exports.profileUpdateStudentMobile = async (req, res) => {
                 validationErrors.studName = Validator.isValidName(studName).message;
             }
 
-            if (!Validator.isEmpty(admNo).isValid) {
+            if (Validator.isEmpty(admNo).isValid) {
                 validationErrors.admNo = Validator.isEmpty(admNo).message;
             }
 
-            if (!Validator.isEmpty(rollNo).isValid) {
+            if (Validator.isEmpty(rollNo).isValid) {
                 validationErrors.rollNo = Validator.isEmpty(rollNo).message;
             }
 
-            if (!Validator.isEmpty(studDept).isValid) {
+            if (Validator.isEmpty(studDept).isValid) {
                 validationErrors.studDept = Validator.isEmpty(studDept).message;
             }
 
-            if (!Validator.isEmpty(course).isValid) {
+            if (Validator.isEmpty(course).isValid) {
                 validationErrors.course = Validator.isEmpty(course).message;
             }
 
-            if (!Validator.isEmpty(aadharNo).isValid) {
+            if (Validator.isEmpty(aadharNo).isValid) {
                 validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
             }
 
