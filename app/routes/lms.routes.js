@@ -48,6 +48,8 @@ router.post("/viewalladmstaff", AdminStaffController.viewalladmstaff)
 
 router.post("/updateClgStaff", ClgStaffController.collegeStaffUpdate);
 
+router.post("/updateClgStaffMobile",upload.single('profilePic'), ClgStaffController.collegeStaffUpdateMobile);
+
 router.post("/viewonecollgestaff", ClgStaffController.viewOneClgStaff);
 
 router.post("/deletecolgstaff", ClgStaffController.clgStaffDelete);
