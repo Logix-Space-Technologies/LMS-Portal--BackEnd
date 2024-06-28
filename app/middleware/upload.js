@@ -21,6 +21,8 @@ const upload = multer({
         if (file.mimetype.startsWith('image/')) {
             cb(null, true);
         } else {
+            console.log(file.path)
+            console.log(file.mimetype)
             cb(new Error('Only image files are allowed!'), false);
         }
     }
