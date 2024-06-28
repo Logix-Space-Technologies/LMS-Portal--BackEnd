@@ -673,7 +673,7 @@ exports.profileUpdateStudentMobile = async (req, res) => {
         //     ContentType: file.mimetype,
         // };
 
-        const command = new PutObjectCommand(uploadParams);
+        // const command = new PutObjectCommand(uploadParams);
 
         try {
             // await s3Client.send(command);
