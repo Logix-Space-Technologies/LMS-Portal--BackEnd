@@ -657,44 +657,123 @@ exports.profileUpdateStudent = (request, response) => {
 
 
 exports.profileUpdateStudentMobile = async (req, res) => {
+    const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
+    const token = req.headers.token;
+    const key = req.headers.key;
+    const file = req.file;
+
     try {
-        const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
-        const file = req.file;
+        // Verify JWT token
+        jwt.verify(token, key, async (err, decoded) => {
+            if (err) {
+                return res.status(401).json({ error: 'Unauthorized User!!' });
+            }
 
-        if (!file) {
-            return res.status(400).json({ error: 'No image uploaded' });
-        }
+            // Handle file upload
+            if (!file) {
+                return res.status(400).json({ error: 'No image uploaded' });
+            }
+            const validationErrors = {};
 
-        console.log('AWS_BUCKET_NAME:', process.env.S3_BUCKET);
-        console.log('AWS_REGION:', process.env.AWS_REGION);
+            if (Validator.isEmpty(studName).isValid) {
+                validationErrors.studName = Validator.isEmpty(studName).message;
+            }
 
-        const fileStream = fs.createReadStream(file.path);
-        const uploadParams = {
-            Bucket: process.env.S3_BUCKET,
-            Key: `student-profiles/${file.filename}`,
-            Body: fileStream,
-            ContentType: file.mimetype,
-        };
+            if (!Validator.isValidName(studName).isValid) {
+                validationErrors.studName = Validator.isValidName(studName).message;
+            }
 
-        const command = new PutObjectCommand(uploadParams);
+            if (Validator.isEmpty(admNo).isValid) {
+                validationErrors.admNo = Validator.isEmpty(admNo).message;
+            }
 
-        try {
-            await s3Client.send(command);
-            const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/student-profiles/${file.filename}`; // Ensure imageUrl is correctly formatted
+            if (Validator.isEmpty(rollNo).isValid) {
+                validationErrors.rollNo = Validator.isEmpty(rollNo).message;
+            }
 
-            // Clean up the local file after upload
-            fs.unlinkSync(file.path);
+            if (Validator.isEmpty(studDept).isValid) {
+                validationErrors.studDept = Validator.isEmpty(studDept).message;
+            }
 
-            // Log the received data
-            console.log('Form Data:');
-            console.log({ id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo });
-            console.log('File URL:', imageUrl);
+            if (Validator.isEmpty(course).isValid) {
+                validationErrors.course = Validator.isEmpty(course).message;
+            }
 
-            res.status(200).json({ message: 'Form data received and logged', imageUrl });
-        } catch (err) {
-            console.error('Error uploading to S3:', err);
-            res.status(500).json({ error: 'Error uploading to S3' });
-        }
+            if (Validator.isEmpty(aadharNo).isValid) {
+                validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
+            }
+
+            if (!Validator.isValidAadharNumber(aadharNo).isValid) {
+                validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
+            }
+
+            if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+                validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
+            }
+
+
+            if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
+                validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+            }
+
+            // If validation fails
+            if (Object.keys(validationErrors).length > 0) {
+                return response.json({ "status": "Validation failed", "data": validationErrors });
+            }
+            let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(studPhNo) ? studPhNo.replace(/^(\+91\s?|91\s?)/, '') : studPhNo;
+
+
+            const fileStream = fs.createReadStream(file.path);
+            const uploadParams = {
+                Bucket: process.env.S3_BUCKET,
+                Key: `student-profiles/${file.filename}`,
+                Body: fileStream,
+                ContentType: file.mimetype,
+            };
+
+            const command = new PutObjectCommand(uploadParams);
+
+            try {
+                await s3Client.send(command);
+                const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/student-profiles/${file.filename}`;
+
+                // Clean up the local file after upload
+                fs.unlinkSync(file.path);
+
+                const newStudent = {
+                    id: id,
+                    studName,
+                    admNo,
+                    rollNo,
+                    studDept,
+                    course,
+                    studPhNo: formattedPhoneNumber,
+                    studProfilePic,
+                    aadharNo
+                };
+
+                Student.updateStudentProfile(newStudent, (err, data) => {
+                    if (err) {
+                        if (err.kind === "not_found") {
+                            return response.json({ "status": "Student with provided Id and batchId is not found." });
+                        } else {
+                            console.log(err.message)
+                            return response.json({ "status": err.message });
+                        }
+                    } else {
+                        console.log("edited")
+                        console.log(data)
+                        return response.json({ "status": "success", "data": data });
+                    }
+                });
+
+
+                res.status(200).json({ message: 'Form data received and logged', imageUrl });
+            } catch (err) {
+                console.error('Error uploading to S3:', err);
+                res.status(500).json({ error: 'Error uploading to S3' });
+            }
+        });
     } catch (error) {
         console.error('Error handling form submission:', error);
         res.status(500).json({ error: 'Internal Server Error' });
