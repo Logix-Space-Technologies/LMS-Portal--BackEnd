@@ -665,7 +665,7 @@ exports.profileUpdateStudentMobile = async (req, res) => {
             return res.status(400).json({ error: 'No image uploaded' });
         }
 
-        console.log('AWS_BUCKET_NAME:', process.env.AWS_BUCKET_NAME);
+        console.log('AWS_BUCKET_NAME:', process.env.S3_BUCKET);
         console.log('AWS_REGION:', process.env.AWS_REGION);
 
         const fileStream = fs.createReadStream(file.path);
@@ -680,7 +680,7 @@ exports.profileUpdateStudentMobile = async (req, res) => {
 
         try {
             await s3Client.send(command);
-            const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/student-profiles/${file.filename}`; // Ensure imageUrl is correctly formatted
+            const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/student-profiles/${file.filename}`; // Ensure imageUrl is correctly formatted
 
             // Clean up the local file after upload
             fs.unlinkSync(file.path);
