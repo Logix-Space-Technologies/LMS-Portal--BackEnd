@@ -655,7 +655,6 @@ exports.profileUpdateStudent = (request, response) => {
 // }
 
 
-
 exports.profileUpdateStudentMobile = async (req, res) => {
     const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
     const token = req.headers.token;
@@ -673,33 +672,31 @@ exports.profileUpdateStudentMobile = async (req, res) => {
             if (!file) {
                 return res.status(400).json({ error: 'No image uploaded' });
             }
-            const validationErrors = {};
 
-            if (Validator.isEmpty(studName).isValid) {
-                validationErrors.studName = Validator.isEmpty(studName).message;
-            }
+            // Validation
+            const validationErrors = {};
 
             if (!Validator.isValidName(studName).isValid) {
                 validationErrors.studName = Validator.isValidName(studName).message;
             }
 
-            if (Validator.isEmpty(admNo).isValid) {
+            if (!Validator.isEmpty(admNo).isValid) {
                 validationErrors.admNo = Validator.isEmpty(admNo).message;
             }
 
-            if (Validator.isEmpty(rollNo).isValid) {
+            if (!Validator.isEmpty(rollNo).isValid) {
                 validationErrors.rollNo = Validator.isEmpty(rollNo).message;
             }
 
-            if (Validator.isEmpty(studDept).isValid) {
+            if (!Validator.isEmpty(studDept).isValid) {
                 validationErrors.studDept = Validator.isEmpty(studDept).message;
             }
 
-            if (Validator.isEmpty(course).isValid) {
+            if (!Validator.isEmpty(course).isValid) {
                 validationErrors.course = Validator.isEmpty(course).message;
             }
 
-            if (Validator.isEmpty(aadharNo).isValid) {
+            if (!Validator.isEmpty(aadharNo).isValid) {
                 validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
             }
 
@@ -711,17 +708,16 @@ exports.profileUpdateStudentMobile = async (req, res) => {
                 validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
             }
 
-
-            if (request.file && !Validator.isValidImageWith1mbConstratint(request.file).isValid) {
-                validationErrors.image = Validator.isValidImageWith1mbConstratint(request.file).message;
+            if (!Validator.isValidImageWith1mbConstratint(file).isValid) {
+                validationErrors.image = Validator.isValidImageWith1mbConstratint(file).message;
             }
 
             // If validation fails
             if (Object.keys(validationErrors).length > 0) {
-                return response.json({ "status": "Validation failed", "data": validationErrors });
+                return res.status(422).json({ status: 'Validation failed', errors: validationErrors });
             }
-            let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(studPhNo) ? studPhNo.replace(/^(\+91\s?|91\s?)/, '') : studPhNo;
 
+            let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(studPhNo) ? studPhNo.replace(/^(\+91\s?|91\s?)/, '') : studPhNo;
 
             const fileStream = fs.createReadStream(file.path);
             const uploadParams = {
@@ -755,20 +751,17 @@ exports.profileUpdateStudentMobile = async (req, res) => {
                 Student.updateStudentProfile(newStudent, (err, data) => {
                     if (err) {
                         if (err.kind === "not_found") {
-                            return response.json({ "status": "Student with provided Id and batchId is not found." });
+                            return res.status(404).json({ status: "Student not found" });
                         } else {
-                            console.log(err.message)
-                            return response.json({ "status": err.message });
+                            console.error('Database update error:', err);
+                            return res.status(500).json({ status: 'Error updating student profile' });
                         }
                     } else {
-                        console.log("edited")
-                        console.log(data)
-                        return response.json({ "status": "success", "data": data });
+                        console.log("Student profile updated successfully");
+                        return res.status(200).json({ status: "success", data });
                     }
                 });
 
-
-                res.status(200).json({ message: 'Form data received and logged', imageUrl });
             } catch (err) {
                 console.error('Error uploading to S3:', err);
                 res.status(500).json({ error: 'Error uploading to S3' });
