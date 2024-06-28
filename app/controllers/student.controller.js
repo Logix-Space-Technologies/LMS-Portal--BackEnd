@@ -658,6 +658,7 @@ exports.profileUpdateStudent = (request, response) => {
 
 exports.profileUpdateStudentMobile = async (req, res) => {
     const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
+    console.log(req.body)
     const token = req.headers.token;
     const key = req.headers.key;
     const file = req.file;
