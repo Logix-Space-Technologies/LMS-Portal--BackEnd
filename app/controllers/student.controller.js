@@ -586,7 +586,7 @@ exports.profileUpdateStudent = (request, response) => {
 
 //for mobile app only
 
-exports.profileUpdateStudentMobile = (request, response) => {
+exports.profileUpdateStudentMobile = (req, res) => {
     
     try {
         let uploadSingle = upload.single('studProfilePic');
