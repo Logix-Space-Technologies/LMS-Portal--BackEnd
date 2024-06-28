@@ -618,24 +618,42 @@ exports.profileUpdateStudent = (request, response) => {
 //     }
 // };
 
-exports.profileUpdateStudentMobile = (req, res) => {
+// exports.profileUpdateStudentMobile = (req, res) => {
+//     try {
+//         const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
+//         const imagePath = req.file ? req.file.path : 'No image uploaded';
+
+//         // Log the form data and file details
+//         console.log('Form Data:');
+//         console.log({ id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo });
+//         console.log('File Path:', imagePath);
+
+//         // Here you can upload the file to AWS S3 or perform any other necessary actions
+
+//         res.status(200).json({ message: 'Form data received and logged', imagePath: imagePath });
+//     } catch (error) {
+//         console.error('Error handling form submission:', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// };
+
+const app = express();
+app.post('/api/lms/studentUpdateProfileMobile', upload.single('studProfilePic'), (req, res) => {
     try {
         const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
         const imagePath = req.file ? req.file.path : 'No image uploaded';
 
-        // Log the form data and file details
+        // Log the received data
         console.log('Form Data:');
         console.log({ id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo });
         console.log('File Path:', imagePath);
-
-        // Here you can upload the file to AWS S3 or perform any other necessary actions
 
         res.status(200).json({ message: 'Form data received and logged', imagePath: imagePath });
     } catch (error) {
         console.error('Error handling form submission:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-};
+});
 
 exports.viewUnverifiedStudents = (request, response) => {
     const token = request.headers.token;
