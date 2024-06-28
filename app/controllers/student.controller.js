@@ -637,6 +637,7 @@ exports.profileUpdateStudent = (request, response) => {
 //     }
 // };
 
+
 const app = express();
 app.post('/api/lms/studentUpdateProfileMobile', upload.single('studProfilePic'), (req, res) => {
     try {
