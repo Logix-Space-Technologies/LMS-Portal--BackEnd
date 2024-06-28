@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const multer = require('multer')
 const AdminController = require('../controllers/admin.controller')
 const CollegeController = require('../controllers/college.controller')
 const AdminStaffController = require('../controllers/adminStaff.controller')
@@ -134,42 +133,7 @@ router.post("/studentViewProfile", StudentController.studentViewProfile)
 
 router.post("/studentUpdateProfile", StudentController.profileUpdateStudent)
 
-
-
-// const upload = multer({
-//     storage: storage, limits: { fileSize: 2 * 1024 * 1024 },
-//     fileFilter: (req, file, cb) => {
-//         if (file.mimetype.startsWith('image/')) {
-//             cb(null, true);
-//         } else {
-//             cb(new Error('Only image files are allowed!'), false);
-//         }
-//     }
-// });
-
-router.post('/studentUpdateProfileMobile', (req, res) => {
-    try {
-      const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
-      const imagePath = req.file ? req.file.path : 'No image uploaded';
-  
-      // Log the form data and file details
-      console.log('Form Data:');
-      console.log({ id });
-      console.log(studName);
-      console.log(admNo);
-      console.log(rollNo);
-      console.log(studDept);
-      console.log(course);
-      console.log(studPhNo);
-      console.log(aadharNo);
-      console.log(imagePath);
-  
-      res.status(200).json({ message: 'Form data received and logged' });
-    } catch (error) {
-      console.error('Error handling form submission:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
+router.post("/studentUpdateProfileMobile", StudentController.profileUpdateStudentMobile)
 
 router.post("/searchMaterial", MaterialController.searchMaterial)
 
