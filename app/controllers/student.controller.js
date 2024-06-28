@@ -586,32 +586,51 @@ exports.profileUpdateStudent = (request, response) => {
 
 //for mobile app only
 
+// exports.profileUpdateStudentMobile = (req, res) => {
+//     try {
+//         const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
+//         const imagePath = req.file ? req.file.path : 'No image uploaded';
+//         console.log('Form Data:'+req);
+//         // Log the form data and file details
+//         console.log('Form Data:');
+//         console.log({ id });
+//         console.log(studName);
+//         console.log(admNo);
+//         console.log(rollNo);
+//         console.log(studDept);
+//         console.log(course);
+//         console.log(studPhNo);
+//         console.log(aadharNo);
+//         console.log(imagePath);
+
+//         let uploadSingle = upload.single('studProfilePic');
+//         uploadSingle(req, res, async (error) => {
+//             console.log("upload file started");
+//             if (error) {
+//                 console.log("status" + error.message);
+//                 return res.status(500).json({ "status": error.message });
+//             }
+//             res.status(200).json({ message: 'Form data received and logged' });
+//         });
+//     } catch (error) {
+//         console.error('Error handling form submission:', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// };
+
 exports.profileUpdateStudentMobile = (req, res) => {
     try {
         const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
         const imagePath = req.file ? req.file.path : 'No image uploaded';
-        console.log(req.body);
+
         // Log the form data and file details
         console.log('Form Data:');
-        console.log({ id });
-        console.log(studName);
-        console.log(admNo);
-        console.log(rollNo);
-        console.log(studDept);
-        console.log(course);
-        console.log(studPhNo);
-        console.log(aadharNo);
-        console.log(imagePath);
+        console.log({ id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo });
+        console.log('File Path:', imagePath);
 
-        let uploadSingle = upload.single('studProfilePic');
-        uploadSingle(req, res, async (error) => {
-            console.log("upload file started");
-            if (error) {
-                console.log("status" + error.message);
-                return res.status(500).json({ "status": error.message });
-            }
-            res.status(200).json({ message: 'Form data received and logged' });
-        });
+        // Here you can upload the file to AWS S3 or perform any other necessary actions
+
+        res.status(200).json({ message: 'Form data received and logged', imagePath: imagePath });
     } catch (error) {
         console.error('Error handling form submission:', error);
         res.status(500).json({ error: 'Internal Server Error' });
