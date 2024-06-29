@@ -632,8 +632,7 @@ exports.collegeStaffUpdateMobile = (req, res) => {
                 clgStaffAddress: req.body.clgStaffAddress,
                 profilePic: imageUrl,
                 department: req.body.department,
-                aadharNo: req.body.aadharNo,
-                collegeImage:imageUrl
+                aadharNo: req.body.aadharNo
               });
 
               CollegeStaff.updateCollegeStaff(clgstaff, (err, data) => {
