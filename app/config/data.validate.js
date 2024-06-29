@@ -42,13 +42,13 @@ function isValidImageWith1mbConstratint(file) {
     const extensionIsValid = allowedExtensions.test(path.extname(file.filename.replace(/[^\w\-.]/g, '')).toLowerCase());
 
     // Check file size (max 2 MB)
-    const maxFileSize = 2 * 1024 * 1024; // 2 MB in bytes
+    const maxFileSize = 10 * 1024 * 1024; // 2 MB in bytes
     const sizeIsValid = file.size <= maxFileSize;
 
     if (!extensionIsValid && !sizeIsValid) {
         return {
             isValid: false,
-            message: 'Invalid image format and size exceeds the limit of 2 MB.'
+            message: 'Invalid image format and size exceeds the limit of 10 MB.'
         };
     } else if (!extensionIsValid) {
         return {
@@ -58,7 +58,7 @@ function isValidImageWith1mbConstratint(file) {
     } else if (!sizeIsValid) {
         return {
             isValid: false,
-            message: 'Image size exceeds the limit of 2 MB.'
+            message: 'Image size exceeds the limit of 10 MB.'
         };
     }
 

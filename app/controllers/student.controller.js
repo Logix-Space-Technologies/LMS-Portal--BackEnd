@@ -15,6 +15,7 @@ const path = require("path");
 const whatsApp = require("./Whatsapp/sendWhatsappMessage")
 const whatsappotp = require("./Whatsapp/otp")
 const { StudentLog, logStudent } = require("../models/studentLog.model");
+const { error } = require("console");
 
 // const { Session } = require("inspector");
 
@@ -42,7 +43,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({
-    storage: storage, limits: { fileSize: 2 * 1024 * 1024 },
+    storage: storage, limits: { fileSize: 10 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         if (file.mimetype.startsWith('image/')) {
             cb(null, true);
@@ -389,7 +390,6 @@ exports.profileUpdateStudent = (request, response) => {
         if (error) {
             return response.status(500).json({ "status": error.message });
         }
-        console.log(error.message)
         if (request.file) {
             const file = request.file;
             const fileStream = fs.createReadStream(file.path);
@@ -477,7 +477,7 @@ exports.profileUpdateStudent = (request, response) => {
                             studProfilePic,
                             aadharNo
                         };
-                        
+
                         Student.updateStudentProfile(newStudent, (err, data) => {
                             if (err) {
                                 if (err.kind === "not_found") {
@@ -499,7 +499,7 @@ exports.profileUpdateStudent = (request, response) => {
                 });
             } catch (err) {
                 fs.unlinkSync(file.path);
-                console.log("catch section err:"+err.message)
+                console.log("catch section err:" + err.message)
                 response.status(500).json({ "status": err.message });
             }
         } else {
@@ -584,40 +584,126 @@ exports.profileUpdateStudent = (request, response) => {
     });
 };
 
-//for mobile app only
+//only for mobile app  student profile update
 
-exports.profileUpdateStudentMobile = (req, res) => {
-    
+exports.profileUpdateStudentMobile = async (req, res) => {
+    const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
+    console.log(req.body)
+    const token = req.headers.token;
+    const key = req.headers.key;
+    const file = req.file;
+
     try {
-        let uploadSingle = upload.single('studProfilePic');
+        // Verify JWT token
+        jwt.verify(token, key, async (err, decoded) => {
+            if (err) {
+                return res.status(401).json({ error: 'Unauthorized User!!' });
+            }
 
-    uploadSingle(request, response, async (error) => {
-        console.log("upload file started")
-        if (error) {
-            console.log("status"+ error.message)
-            return response.status(500).json({ "status": error.message });
-        }
-    })
-        const { id, studName, admNo, rollNo, studDept, course, studPhNo, aadharNo } = req.body;
-        const imagePath = req.file ? req.file.path : 'No image uploaded';
-    
-        // Log the form data and file details
-        console.log('Form Data:');
-        console.log({id});
-        console.log(studName);
-        console.log(admNo);
-        console.log(rollNo);
-        console.log(studDept);
-        console.log(course);
-        console.log(studPhNo);
-        console.log(aadharNo);
-        console.log(imagePath);
-    
-        res.status(200).json({ message: 'Form data received and logged' });
-      } catch (error) {
+            // Handle file upload
+            if (!file) {
+                return res.status(400).json({ error: 'No image uploaded' });
+            }
+
+            // Validation
+            const validationErrors = {};
+
+            if (!Validator.isValidName(studName).isValid) {
+                validationErrors.studName = Validator.isValidName(studName).message;
+            }
+
+            if (Validator.isEmpty(admNo).isValid) {
+                validationErrors.admNo = Validator.isEmpty(admNo).message;
+            }
+
+            if (Validator.isEmpty(rollNo).isValid) {
+                validationErrors.rollNo = Validator.isEmpty(rollNo).message;
+            }
+
+            if (Validator.isEmpty(studDept).isValid) {
+                validationErrors.studDept = Validator.isEmpty(studDept).message;
+            }
+
+            if (Validator.isEmpty(course).isValid) {
+                validationErrors.course = Validator.isEmpty(course).message;
+            }
+
+            if (Validator.isEmpty(aadharNo).isValid) {
+                validationErrors.aadharNo = Validator.isEmpty(aadharNo).message;
+            }
+
+            if (!Validator.isValidAadharNumber(aadharNo).isValid) {
+                validationErrors.aadharNo = Validator.isValidAadharNumber(aadharNo).message;
+            }
+
+            if (!Validator.isValidPhoneNumber(studPhNo).isValid) {
+                validationErrors.studPhNo = Validator.isValidPhoneNumber(studPhNo).message;
+            }
+
+            if (!Validator.isValidImageWith1mbConstratint(file).isValid) {
+                validationErrors.image = Validator.isValidImageWith1mbConstratint(file).message;
+            }
+
+            // If validation fails
+            if (Object.keys(validationErrors).length > 0) {
+                console.log(validationErrors)
+                return res.status(422).json({ status: 'Validation failed', errors: validationErrors });
+            }
+
+            let formattedPhoneNumber = /^(\+91\s?|91\s?)/.test(studPhNo) ? studPhNo.replace(/^(\+91\s?|91\s?)/, '') : studPhNo;
+
+            const fileStream = fs.createReadStream(file.path);
+            const uploadParams = {
+                Bucket: process.env.S3_BUCKET,
+                Key: `student-profiles/${file.filename}`,
+                Body: fileStream,
+                ContentType: 'multipart/form-data',
+            };
+
+            const command = new PutObjectCommand(uploadParams);
+
+            try {
+                await s3Client.send(command);
+                const imageUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/student-profiles/${file.filename}`;
+
+                // Clean up the local file after upload
+                fs.unlinkSync(file.path);
+
+                const newStudent = {
+                    id: id,
+                    studName,
+                    admNo,
+                    rollNo,
+                    studDept,
+                    course,
+                    studPhNo: formattedPhoneNumber,
+                    studProfilePic:imageUrl,
+                    aadharNo
+                };
+
+                Student.updateStudentProfile(newStudent, (err, data) => {
+                    if (err) {
+                        if (err.kind === "not_found") {
+                            return res.status(404).json({ status: "Student not found" });
+                        } else {
+                            console.error('Database update error:', err);
+                            return res.status(500).json({ status: 'Error updating student profile' });
+                        }
+                    } else {
+                        console.log("Student profile updated successfully");
+                        return res.status(200).json({ status: "success", data });
+                    }
+                });
+
+            } catch (err) {
+                console.error('Error uploading to S3:', err);
+                res.status(500).json({ error: 'Error uploading to S3' });
+            }
+        });
+    } catch (error) {
         console.error('Error handling form submission:', error);
         res.status(500).json({ error: 'Internal Server Error' });
-      }
+    }
 };
 
 exports.viewUnverifiedStudents = (request, response) => {
