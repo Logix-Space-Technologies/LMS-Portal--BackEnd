@@ -1,54 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../../config/config'
+import '../../config/config';
 import StudNavBar from './StudNavBar';
 import { useNavigate } from 'react-router-dom';
 
 const NotificationView = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchNotifications();
   }, []);
 
-  const fetchNotifications = () => {
-    const apiUrl = global.config.urls.api.server + "/api/lms/studentNofificationView";
-    let data = { "studId": sessionStorage.getItem("studentId") }
+  const fetchNotifications = async () => {
+    const apiUrl = `${global.config.urls.api.server}/api/lms/studentNofificationView`;
+    const data = {
+      studId: sessionStorage.getItem("studentId"),
+      batchId: sessionStorage.getItem("studBatchId") 
+    };
     const token = sessionStorage.getItem("studLoginToken");
-    let axiosConfig = {
+    const axiosConfig = {
       headers: {
-        "content-type": "application/json;charset=UTF-8",
+        "Content-Type": "application/json;charset=UTF-8",
         "Access-Control-Allow-Origin": "*",
         "token": token,
         "key": sessionStorage.getItem("studentkey")
       }
     };
 
-    axios.post(apiUrl, data, axiosConfig)
-      .then(response => {
-        if (response.data.status === 'success') {
-          setNotifications(response.data.data);
-        } else {
-          if (response.data.status === "Unauthorized User") {
-            navigate("/studentLogin")
-            sessionStorage.clear()
-          } else {
-            if (!response.data.data) {
-              setNotifications([])
-            } else {
-              alert(response.data.status);
-            }
-          }
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching notifications:', error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const response = await axios.post(apiUrl, data, axiosConfig);
+      if (response.data.status === 'success') {
+        setNotifications(response.data.data);
+      } else if (response.data.status === "Unauthorized User") {
+        navigate("/studentLogin");
+        sessionStorage.clear();
+      } else {
+        setNotifications([]);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      setNotifications([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -68,7 +64,6 @@ const NotificationView = () => {
                     <div>
                       <h3 className="font-bold text-base text-gray-800">{value.title}</h3>
                       <p className="text-xs text-gray-500">Team Link Ur Codes</p>
-
                     </div>
                   </div>
                   <p className="text-xs text-gray-500">
@@ -79,7 +74,7 @@ const NotificationView = () => {
                   {value.message}
                 </p>
                 <br />
-                <p className="text-xs text-gray-500">Sent By : {value.senderName}</p>
+                <p className="text-xs text-gray-500">Sent By: {value.senderName}</p>
               </div>
             ))}
           </div>
@@ -88,7 +83,6 @@ const NotificationView = () => {
         <p className="text-center mt-10">No Notifications!!!</p>
       )}
     </div>
-
   );
 };
 
