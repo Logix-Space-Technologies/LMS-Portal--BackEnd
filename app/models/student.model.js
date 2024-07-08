@@ -916,6 +916,10 @@ Student.studentNotificationView = (studId, batchId, result) => {
                     console.error("Error fetching notifications:", err);
                     return result(err, null);
                 }
+                if (notificationsRes.length === 0) {
+                    console.log("No notifications found");
+                    return result("No notifications found", null);
+                }
                 console.log("Notifications:", notificationsRes);
                 return result(null, notificationsRes);
             });
