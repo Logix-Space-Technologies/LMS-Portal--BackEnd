@@ -977,20 +977,20 @@ exports.generateSessionWiseAttendanceList = (request, response) => {
 
 
 
-
-
-
 exports.studentNotificationView = (request, response) => {
     const studId = request.body.studId;
+    const batchId = request.body.batchId;
     const studTaskToken = request.headers.token;
-
+    if(!batchId){
+        return response.json({ "status": "Batch Id is required" });
+    }
     jwt.verify(studTaskToken, "lmsappstud", (err, decoded) => {
         if (err) {
             return response.json({ "status": "Unauthorized User" });
         } else {
-            Student.studentNotificationView(studId, (err, data) => {
+            Student.studentNotificationView(studId, batchId, (err, data) => {
                 if (err) {
-                    return response.json({ "status": err });
+                    return response.json({ "status": "error", "message": err });
                 } else {
                     return response.json({ "status": "success", "data": data });
                 }
@@ -998,6 +998,7 @@ exports.studentNotificationView = (request, response) => {
         }
     });
 };
+
 
 
 //Student view session details
