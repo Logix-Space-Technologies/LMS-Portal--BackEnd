@@ -103,16 +103,18 @@ CollegeStaff.updateCollegeStaff = (clgstaff, result) => {
         let updateQuery;
         let updateValues;
 
-        if (clgstaff.collegeImage) {
+        if (clgstaff.profilePic) {
             updateQuery = "UPDATE college_staff SET collegeId=?, collegeStaffName=?, phNo=?, clgStaffAddress=?, profilePic=?, department=?, updatedDate = CURRENT_DATE() WHERE id=? AND deleteStatus = 0 AND isActive = 1";
             updateValues = [
                 clgstaff.collegeId,
                 clgstaff.collegeStaffName,
                 clgstaff.phNo,
                 clgstaff.clgStaffAddress,
+                clgstaff.profilePic,
                 clgstaff.department,
                 clgstaff.id,
-                clgstaff.profilePic
+            
+                // clgstaff.aadharNo
             ];
         } else {
             updateQuery = "UPDATE college_staff SET collegeId=?, collegeStaffName=?, phNo=?, clgStaffAddress=?, department=?, updatedDate = CURRENT_DATE() WHERE id=? AND deleteStatus = 0 AND isActive = 1";
