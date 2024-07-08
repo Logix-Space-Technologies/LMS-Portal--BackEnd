@@ -14,7 +14,7 @@ const NotificationView = () => {
   }, []);
 
   const fetchNotifications = async () => {
-    const apiUrl = `${global.config.urls.api.server}/api/lms/studentNofificationView`;
+    const apiUrl = `${global.config.urls.api.server}/api/lms/studentNofificationViewUpdate`;
     const data = {
       studId: sessionStorage.getItem("studentId"),
       batchId: sessionStorage.getItem("studBatchId") 
