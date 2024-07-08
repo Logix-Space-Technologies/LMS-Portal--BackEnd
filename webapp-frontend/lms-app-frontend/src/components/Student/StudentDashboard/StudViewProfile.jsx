@@ -150,9 +150,9 @@ const StudViewProfile = () => {
                                                             </div>
                                                             <div className="col-6">
                                                                 <div>
-                                                                    <p style={{ textAlign: 'center', fontSize: '16px' }} className="mt-10 font-bold text-gray-700 dark:text-gray-400">
+                                                                    {/* <p style={{ textAlign: 'center', fontSize: '16px' }} className="mt-10 font-bold text-gray-700 dark:text-gray-400">
                                                                         Dev Rating : {performanceData.cgpa && performanceData.cgpa > 0 ? performanceData.cgpa.toFixed(1) : performanceData.cgpa}/{performanceData.cgpaMax}
-                                                                    </p>
+                                                                    </p> */}
                                                                     {/* Render star rating */}
                                                                     <div style={{ textAlign: 'center' }}>
                                                                         {renderStarRating(performanceData.cgpa)}
