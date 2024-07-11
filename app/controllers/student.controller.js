@@ -980,9 +980,7 @@ exports.generateSessionWiseAttendanceList = (request, response) => {
 exports.studentNotificationView = (request, response) => {
     const studId = request.body.studId;
     const studTaskToken = request.headers.token;
-    if(!batchId){
-        return response.json({ "status": "Batch Id is required" });
-    }
+
     jwt.verify(studTaskToken, "lmsappstud", (err, decoded) => {
         if (err) {
             return response.json({ "status": "Unauthorized User" });
