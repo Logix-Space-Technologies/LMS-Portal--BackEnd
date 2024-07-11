@@ -867,48 +867,82 @@ Session.generateSessionAttendanceList = (sessionId, result) => {
 
 
 Student.studentNotificationView = (studId, result) => {
-    db.query("SELECT * FROM student WHERE id = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1 AND isVerified = 1 AND isPaid = 1", [studId], (err, studentRes) => {
-        if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return;
-        } else {
+    // Query to fetch the student details using student ID
+    db.query(
+        "SELECT * FROM student WHERE id = ? AND deleteStatus = 0 AND isActive = 1 AND emailVerified = 1 AND isVerified = 1 AND isPaid = 1", 
+        [studId], 
+        (err, studentRes) => {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            } 
+
             if (studentRes.length === 0) {
                 console.log("Student not found or not verified");
                 result("Student not found or not verified", null);
                 return;
             }
+
             const batchId = studentRes[0].batchId;
-            db.query("SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1", [batchId], (err, batchRes) => {
-                if (err) {
-                    console.log("error: ", err);
-                    result(err, null);
-                    return;
-                } else {
+
+            // Query to fetch batch details using batch ID
+            db.query(
+                "SELECT * FROM batches WHERE id = ? AND deleteStatus = 0 AND isActive = 1", 
+                [batchId], 
+                (err, batchRes) => {
+                    if (err) {
+                        console.log("error: ", err);
+                        result(err, null);
+                        return;
+                    } 
+
                     if (batchRes.length === 0) {
                         console.log("Batch not found");
                         result("Batch not found", null);
                         return;
                     }
+
+                    // Query to fetch notifications for the given batch ID
                     db.query(
-                        "SELECT notifications.message, notifications.sendBy, notifications.title, notifications.addedDate, notifications.sendDateTime, CASE WHEN TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()), ' minute', IF(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) = 1, '', 's')) WHEN TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()), ' hour', IF(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) = 1, '', 's')) ELSE CONCAT(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()), ' day', IF(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()) = 1, '', 's')) END AS formattedDateTime, CASE WHEN notifications.sendBy = 0 THEN 'Admin' ELSE coalesce(admin_staff.AdStaffName, 'Unknown') END AS senderName FROM notifications LEFT JOIN admin_staff ON notifications.sendBy = admin_staff.id WHERE notifications.batchId = ? AND notifications.sendDateTime >= DATE_SUB(NOW(), INTERVAL 14 DAY) ORDER BY notifications.sendDateTime DESC;",
-                        [batchId],
+                        `SELECT 
+                            notifications.message, 
+                            notifications.sendBy, 
+                            notifications.title, 
+                            notifications.addedDate, 
+                            notifications.sendDateTime, 
+                            CASE 
+                                WHEN TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) < 60 
+                                    THEN CONCAT(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()), ' minute', IF(TIMESTAMPDIFF(MINUTE, notifications.sendDateTime, NOW()) = 1, '', 's')) 
+                                WHEN TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) < 24 
+                                    THEN CONCAT(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()), ' hour', IF(TIMESTAMPDIFF(HOUR, notifications.sendDateTime, NOW()) = 1, '', 's')) 
+                                ELSE CONCAT(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()), ' day', IF(TIMESTAMPDIFF(DAY, notifications.sendDateTime, NOW()) = 1, '', 's')) 
+                            END AS formattedDateTime, 
+                            CASE 
+                                WHEN notifications.sendBy = 0 
+                                    THEN 'Admin' 
+                                ELSE coalesce(admin_staff.AdStaffName, 'Unknown') 
+                            END AS senderName 
+                        FROM notifications 
+                        LEFT JOIN admin_staff ON notifications.sendBy = admin_staff.id 
+                        WHERE notifications.batchId = ? AND notifications.sendDateTime >= DATE_SUB(NOW(), INTERVAL 14 DAY) 
+                        ORDER BY notifications.sendDateTime DESC;`, 
+                        [batchId], 
                         (err, notificationsRes) => {
                             if (err) {
                                 console.log("error: ", err);
                                 result(err, null);
                                 return;
-                            } else {
-                                console.log("Notifications: ", notificationsRes);
-                                result(null, notificationsRes);
-                                return;
-                            }
+                            } 
+
+                            console.log("Notifications: ", notificationsRes);
+                            result(null, notificationsRes);
                         }
                     );
                 }
-            });
+            );
         }
-    });
+    );
 };
 
 
