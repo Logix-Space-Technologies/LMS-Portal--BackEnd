@@ -236,8 +236,9 @@ const StudentRegistration = () => {
             "studProfilePic": file,
             "rpPaymentId": PaymentId,
             "rpOrderId": orderId,
-            "rpAmount": 3600
+            "rpAmount": batchAmount
           };
+          console.log(data)
           let axiosConfig = {
             headers: {
               'content-type': 'multipart/form-data',
