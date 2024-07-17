@@ -238,7 +238,6 @@ const StudentRegistration = () => {
             "rpOrderId": orderId,
             "rpAmount": batchAmount
           };
-          console.log(data)
           let axiosConfig = {
             headers: {
               'content-type': 'multipart/form-data',
