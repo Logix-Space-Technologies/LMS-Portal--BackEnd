@@ -185,9 +185,9 @@ const AdminAddBatch = () => {
         if (!data.batchName.trim()) {
             errors.batchName = 'Name is required';
         }
-        if (!(data.batchAmount > 0)) {
-            errors.batchAmount = 'Amount must be greater than zero';
-        }
+        // if (!(data.batchAmount > 0)) {
+        //     errors.batchAmount = 'Amount must be greater than zero';
+        // }
         if (!data.regStartDate.trim()) {
             errors.regStartDate = 'Date is required';
         }

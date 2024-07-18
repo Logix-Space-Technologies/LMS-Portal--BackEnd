@@ -58,6 +58,17 @@ const AddCollege = () => {
   }
 
   const handleSubmit = (e) => {
+    // Retrieve key and token from sessionStorage without providing the key
+    Object.entries(sessionStorage).forEach(([key, value]) => {
+      if (key.includes('key')) {
+        currentKey = value;
+      } else if (key.includes('token')) {
+        token = value;
+      }
+    });
+
+    // Update the state with the current key
+    setKey(currentKey);
     let addedBy;
     if (currentKey === 'lmsapp') {
       addedBy = 0
@@ -226,20 +237,6 @@ const AddCollege = () => {
     return errors;
   };
 
-
-  useEffect(() => {
-    // Retrieve key and token from sessionStorage without providing the key
-    Object.entries(sessionStorage).forEach(([key, value]) => {
-      if (key.includes('key')) {
-        currentKey = value;
-      } else if (key.includes('token')) {
-        token = value;
-      }
-    });
-
-    // Update the state with the current key
-    setKey(currentKey);
-  }, []); // Empty dependency array ensures that this effect runs only once after the initial render
 
   return (
     <div>
