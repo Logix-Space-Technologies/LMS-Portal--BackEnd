@@ -57,7 +57,7 @@ const StudentRegistration = () => {
 
   const [batches, setBatches] = useState([])
 
-  const [amount, setAmount] = useState('')
+  const [amount, setAmount] = useState(0)
 
   const [updateField, setUpdateField] = useState({
     "otp": ""
@@ -163,9 +163,10 @@ const StudentRegistration = () => {
           if (currentAmount !== batchAmount) {
             setAmount(currentAmount); // Update the state if needed
           }
+          setAmount(response.data.data)
           setbatchAmount(response.data.data)
         } else {
-          setAmount('')
+          setAmount(0)
           setbatchAmount(0)
         }
       }
@@ -236,7 +237,7 @@ const StudentRegistration = () => {
             "studProfilePic": file,
             "rpPaymentId": PaymentId,
             "rpOrderId": orderId,
-            "rpAmount": 3600
+            "rpAmount": batchAmount
           };
           let axiosConfig = {
             headers: {
@@ -276,7 +277,7 @@ const StudentRegistration = () => {
                 alert(response.data.data.password)
               } else {
                 closeWaitingModal()
-                setTimeout(()=>{
+                setTimeout(() => {
                   alert(response.data.status)
                 }, 500)
               }
@@ -305,11 +306,80 @@ const StudentRegistration = () => {
     };
     axios.post(verifyOtpUrl, data, axiosConfig).then(
       (response) => {
-        if (response.data.status === "OTP verified successfully") {
+        if (response.data.status === "OTP verified successfully" && batchAmount > 0) {
           setShowModal(false)
           setShowOverlay(false)
           loadRazorpayScript()
           setUpdateField({ "otp": "" })
+        } else if (response.data.status === "OTP verified successfully" && batchAmount === 0) {
+          setShowModal(false)
+          setShowOverlay(false)
+          setUpdateField({ "otp": "" })
+          setShowWaitingModal(true)
+          setShowOverlay(true)
+          // Call Registration API and pass the details to the server
+          let data = {
+            "collegeId": inputField.collegeId,
+            "batchId": inputField.batchId,
+            "studName": inputField.studName,
+            "admNo": inputField.admNo,
+            "rollNo": inputField.rollNo,
+            "studDept": inputField.studDept,
+            "course": inputField.course,
+            "studEmail": inputField.studEmail,
+            "studPhNo": inputField.studPhNo,
+            "aadharNo": inputField.aadharNo,
+            "password": inputField.password,
+            "studProfilePic": file,
+            "rpPaymentId": "default",
+            "rpOrderId": "default",
+            "rpAmount": batchAmount
+          };
+          let axiosConfig = {
+            headers: {
+              'content-type': 'multipart/form-data',
+            }
+          };
+          axios.post(apiUrl, data, axiosConfig).then(
+            (response) => {
+              if (response.data.status === "success") {
+                closeWaitingModal()
+                setTimeout(() => {
+                  alert("User Registered Successfully !!!")
+                  closeAndNavigate()
+                  setInputField({ "collegeId": "", "batchId": "", "studName": "", "admNo": "", "rollNo": "", "studDept": "", "course": "", "studEmail": "", "studPhNo": "", "studProfilePic": "", "aadharNo": "", "password": "", "confirmpassword": "" })
+                }, 500)
+              } else if (response.data.status === "Validation failed" && response.data.data.college) {
+                alert(response.data.data.college)
+              } else if (response.data.status === "Validation failed" && response.data.data.batch) {
+                alert(response.data.data.batch)
+              } else if (response.data.status === "Validation failed" && response.data.data.name) {
+                alert(response.data.data.name)
+              } else if (response.data.status === "Validation failed" && response.data.data.admNo) {
+                alert(response.data.data.admNo)
+              } else if (response.data.status === "Validation failed" && response.data.data.rollNo) {
+                alert(response.data.data.rollNo)
+              } else if (response.data.status === "Validation failed" && response.data.data.department) {
+                alert(response.data.data.department)
+              } else if (response.data.status === "Validation failed" && response.data.data.course) {
+                alert(response.data.data.course)
+              } else if (response.data.status === "Validation failed" && response.data.data.email) {
+                alert(response.data.data.email)
+              } else if (response.data.status === "Validation failed" && response.data.data.phone) {
+                alert(response.data.data.phone)
+              } else if (response.data.status === "Validation failed" && response.data.data.aadharNo) {
+                alert(response.data.data.aadharNo)
+              } else if (response.data.status === "Validation failed" && response.data.data.password) {
+                alert(response.data.data.password)
+              } else {
+                closeWaitingModal()
+                setTimeout(() => {
+                  alert(response.data.status)
+                }, 500)
+              }
+            }
+          )
+
         } else if (response.data.status === "Invalid OTP") {
           alert("Invalid OTP")
           setUpdateField({ "otp": "" })
