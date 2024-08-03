@@ -3954,7 +3954,7 @@ function refundRequestApprovalNotificationHTMLContent(studName, approvedamnt) {
         as previously discussed, has been successfully approved from our end today. This is in relation to your
         withdrawal request from the "Link Ur Codes" skill development program. Please expect the amount to
         be credited in your
-        bank account within the next 3 to 4 working days.</p>
+        bank account within the next 25 to 30 working days.</p>
   
       <p>If, for any reason, the amount has not been credited to your account within this timeframe, we kindly ask you to
         contact us
@@ -3980,7 +3980,7 @@ function refundRequestApprovalNotificationTextContent(studName, approvedamnt) {
   const currentYear = new Date().getFullYear();
   content = `Dear ${studName},
 
-  We hope this message finds you well. We are writing to inform you that the refund amount of INR ${approvedamnt}, as previously discussed, has been successfully approved from our end today. This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. Please expect the amount to be credited in your bank account within the next 3 to 4 working days.
+  We hope this message finds you well. We are writing to inform you that the refund amount of INR ${approvedamnt}, as previously discussed, has been successfully approved from our end today. This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. Please expect the amount to be credited in your bank account within the next 25 to 30 working days.
   
   If, for any reason, the amount has not been credited to your account within this timeframe, we kindly ask you to contact us immediately for further assistance.
   
