@@ -17,6 +17,12 @@ const Refund = function (refund) {
 };
 
 Refund.createRefundRequest = (newRefund, result) => {
+    const formatDate = (date) => {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
     // Step 1: Check for existing active refund requests
     db.query(
         "SELECT id FROM refund WHERE studId = ? AND cancelStatus = 0",
@@ -71,18 +77,24 @@ Refund.createRefundRequest = (newRefund, result) => {
                             // Calculate refund amount based on payment history and remaining payment period
                             let totalPayment = 0;
                             for (const payment of paymentRes) {
-                                totalPayment += payment.rpAmount;
+                                totalPayment = totalPayment + payment.rpAmount.toFixed(1);
                             }
 
                             console.log("Total payment:", totalPayment);
 
                             // Calculate the remaining payment period in days
-                            const currentDate = new Date();
-                            const paymentStartDate = new Date(paymentRes[0].paymentdate);
+                            const currentDate = formatDate(new Date());
+                            console.log("current date: ", currentDate)
+                            const paymentStartDate = formatDate(paymentRes[0].paymentdate);
+                            console.log("payment start date: ", paymentStartDate)
                             let daysSincePaymentStart = Math.floor(
-                                (currentDate - paymentStartDate) / (24 * 60 * 60 * 1000)
+                                (new Date(currentDate.split('/').reverse().join('-')) - new Date(paymentStartDate.split('/').reverse().join('-'))) / (24 * 60 * 60 * 1000)
                             );
+                            // console.log("current date: ", new Date(currentDate.split('/').reverse().join('-')))
+                            // console.log("payment date: ", new Date(paymentStartDate.split('/').reverse().join('-')))
+                            // console.log("Initial: ", daysSincePaymentStart)
                             daysSincePaymentStart = daysSincePaymentStart - 1
+                            // console.log("Final: ", daysSincePaymentStart)
                             if (daysSincePaymentStart < 0) {
                                 console.error("Error calculating days since payment start:", daysSincePaymentStart);
                                 result("Error calculating days since payment start.", null);
@@ -105,7 +117,7 @@ Refund.createRefundRequest = (newRefund, result) => {
                                 // Calculate the remaining payment amount, handling NaN case
                                 const remainingPaymentAmount = (totalPayment / 365) * remainingPaymentPeriod || 0;
 
-                                newRefund.refundAmnt = remainingPaymentAmount.toFixed(2);
+                                newRefund.refundAmnt = remainingPaymentAmount.toFixed(1);
 
 
                                 db.query("INSERT INTO refund SET ?", newRefund, (refundErr, refundRes) => {
