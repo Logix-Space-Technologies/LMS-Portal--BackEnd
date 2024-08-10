@@ -77,7 +77,7 @@ Refund.createRefundRequest = (newRefund, result) => {
                             // Calculate refund amount based on payment history and remaining payment period
                             let totalPayment = 0;
                             for (const payment of paymentRes) {
-                                totalPayment = totalPayment + payment.rpAmount.toFixed(1);
+                                totalPayment = payment.rpAmount.toFixed(1);
                             }
 
                             console.log("Total payment:", totalPayment);
