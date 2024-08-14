@@ -346,9 +346,9 @@ exports.updateCollege = (request, response) => {
                         }
 
                         // College website validation
-                        if (!Validator.isValidWebsite(request.body.website).isValid) {
-                            validationErrors.website = Validator.isValidWebsite(request.body.website).message;
-                        }
+                        // if (!Validator.isValidWebsite(request.body.website).isValid) {
+                        //     validationErrors.website = Validator.isValidWebsite(request.body.website).message;
+                        // }
 
                         // College phone number validation
                         if (!Validator.isValidPhoneNumber(request.body.collegePhNo).isValid) {
@@ -434,9 +434,9 @@ exports.updateCollege = (request, response) => {
                     }
 
                     // College website validation
-                    if (!Validator.isValidWebsite(request.body.website).isValid) {
-                        validationErrors.website = Validator.isValidWebsite(request.body.website).message;
-                    }
+                    // if (!Validator.isValidWebsite(request.body.website).isValid) {
+                    //     validationErrors.website = Validator.isValidWebsite(request.body.website).message;
+                    // }
 
                     // College phone number validation
                     if (!Validator.isValidPhoneNumber(request.body.collegePhNo).isValid) {
