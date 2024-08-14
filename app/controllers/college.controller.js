@@ -85,9 +85,9 @@ exports.collegeCreate = (request, response) => {
                     if (Validator.isEmpty(collegeAddress).isValid) {
                         validationErrors.address = Validator.isEmpty(collegeAddress).message;
                     }
-                    if (!Validator.isValidWebsite(website).isValid) {
-                        validationErrors.website = Validator.isValidWebsite(website).message;
-                    }
+                    // if (!Validator.isValidWebsite(website).isValid) {
+                    //     validationErrors.website = Validator.isValidWebsite(website).message;
+                    // }
 
                     if (!Validator.isValidEmail(email).isValid) {
                         validationErrors.email = Validator.isValidEmail(email).message;
@@ -197,9 +197,9 @@ exports.collegeCreate = (request, response) => {
                         if (Validator.isEmpty(collegeAddress).isValid) {
                             validationErrors.address = Validator.isEmpty(collegeAddress).message;
                         }
-                        if (!Validator.isValidWebsite(website).isValid) {
-                            validationErrors.website = Validator.isValidWebsite(website).message;
-                        }
+                        // if (!Validator.isValidWebsite(website).isValid) {
+                        //     validationErrors.website = Validator.isValidWebsite(website).message;
+                        // }
 
                         if (!Validator.isValidEmail(email).isValid) {
                             validationErrors.email = Validator.isValidEmail(email).message;
