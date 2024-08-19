@@ -410,6 +410,8 @@ const StudentRegistration = () => {
     }
     if (!data.studName.trim()) {
       errors.studName = 'Name is required';
+    } else if (!/^[a-zA-Z\s]*$/.test(data.studName)) {
+      errors.studName = 'Only Letters Are Allowed In "Name" Field. Special Characters Are Not Allowed.';
     }
     if (!data.admNo.trim()) {
       errors.admNo = 'Admission number is required';
