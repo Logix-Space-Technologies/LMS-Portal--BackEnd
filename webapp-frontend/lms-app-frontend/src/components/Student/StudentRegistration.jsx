@@ -278,7 +278,7 @@ const StudentRegistration = () => {
               } else {
                 closeWaitingModal()
                 setTimeout(() => {
-                  alert(response.data.status)
+                  alert(response.data.data)
                 }, 500)
               }
             }
@@ -374,7 +374,7 @@ const StudentRegistration = () => {
               } else {
                 closeWaitingModal()
                 setTimeout(() => {
-                  alert(response.data.status)
+                  alert(response.data.data)
                 }, 500)
               }
             }
@@ -410,6 +410,8 @@ const StudentRegistration = () => {
     }
     if (!data.studName.trim()) {
       errors.studName = 'Name is required';
+    } else if (!/^[a-zA-Z\s]*$/.test(data.studName)) {
+      errors.studName = 'Only Letters Are Allowed In "Name" Field. Special Characters Are Not Allowed.';
     }
     if (!data.admNo.trim()) {
       errors.admNo = 'Admission number is required';
@@ -428,6 +430,14 @@ const StudentRegistration = () => {
     }
     if (!file) {
       errors.studProfilePic = 'Profile Image is required';
+    } else {
+      // Check if file is an image
+      const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heif'];
+      if (!validImageTypes.includes(file.type)) {
+        errors.studProfilePic = 'Profile Image must be a valid image file (JPEG, PNG, JPG, WEBP, HEIF)';
+      } else if (file.size > 10 * 1024 * 1024) { // 10 MB in bytes
+        errors.studProfilePic = 'Profile Image size should be less than 10 MB';
+      }
     }
     if (!data.studPhNo.trim()) {
       errors.studPhNo = 'Phone No is required';
@@ -621,7 +631,7 @@ const StudentRegistration = () => {
                 </div>
                 <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                   <label htmlFor="aadharNo" className="form-label">
-                    AadharNo <span className="text-danger">*</span>
+                    Aadhar No <span className="text-danger">*</span>
                   </label>
                   <input
                     type="text"
