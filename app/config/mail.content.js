@@ -3576,7 +3576,7 @@ function refundRequestConfirmationHtmlContent(studName, requestedDate, addedDate
           your withdrawal date, there are ${remainingPaymentPeriod} days remaining in your subscription period. In line with
           our commitment at the time of registration, we will calculate the refund on a pro-rata basis. Please be assured
           that the amount will be refunded to the bank account details you have provided. The process will be initiated, and
-          you can expect the amount to be credited within 20 to 25 working days.</p>
+          you can expect the amount to be credited within 65 to 75 WORKING Days.</p>
         <p>We would also like to remind you that as per our policy, withdrawing from the program means that rejoining at a
           later date is not an option. Therefore, we are extending a consideration period of 5 days from the date of this
           correspondence. Should you decide to continue with the program within this timeframe, please inform us
@@ -3604,7 +3604,7 @@ function refundRequestConfirmationTextContent(studName, requestedDate, addedDate
 
   Dear ${studName},
   
-  We acknowledge the receipt of your email dated ${requestedDate}, regarding your decision to withdraw from the "Link Ur Codes" skill development program. As per the details you provided, you joined the program on ${addedDate}, and based on your withdrawal date, there are ${remainingPaymentPeriod} days remaining in your subscription period. In line with our commitment at the time of registration, we will calculate the refund on a pro-rata basis. Please be assured that the amount will be refunded to the bank account details you have provided. The process will be initiated, and you can expect the amount to be credited within 20 to 25 working days.
+  We acknowledge the receipt of your email dated ${requestedDate}, regarding your decision to withdraw from the "Link Ur Codes" skill development program. As per the details you provided, you joined the program on ${addedDate}, and based on your withdrawal date, there are ${remainingPaymentPeriod} days remaining in your subscription period. In line with our commitment at the time of registration, we will calculate the refund on a pro-rata basis. Please be assured that the amount will be refunded to the bank account details you have provided. The process will be initiated, and you can expect the amount to be credited within 65 to 75 WORKING Days.
   
   We would also like to remind you that as per our policy, withdrawing from the program means that rejoining at a later date is not an option. Therefore, we are extending a consideration period of 5 days from the date of this correspondence. Should you decide to continue with the program within this timeframe, please inform us immediately, and we will halt the refund process.
   
@@ -3954,7 +3954,7 @@ function refundRequestApprovalNotificationHTMLContent(studName, approvedamnt) {
         as previously discussed, has been successfully approved from our end today. This is in relation to your
         withdrawal request from the "Link Ur Codes" skill development program. Please expect the amount to
         be credited in your
-        bank account within the next 25 to 30 working days.</p>
+        bank account within the next 65 to 75 WORKING DAYS.</p>
   
       <p>If, for any reason, the amount has not been credited to your account within this timeframe, we kindly ask you to
         contact us
@@ -3980,7 +3980,7 @@ function refundRequestApprovalNotificationTextContent(studName, approvedamnt) {
   const currentYear = new Date().getFullYear();
   content = `Dear ${studName},
 
-  We hope this message finds you well. We are writing to inform you that the refund amount of INR ${approvedamnt}, as previously discussed, has been successfully approved from our end today. This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. Please expect the amount to be credited in your bank account within the next 25 to 30 working days.
+  We hope this message finds you well. We are writing to inform you that the refund amount of INR ${approvedamnt}, as previously discussed, has been successfully approved from our end today. This is in relation to your withdrawal request from the "Link Ur Codes" skill development program. Please expect the amount to be credited in your bank account within the next 25 to 30 WORKING Days.
   
   If, for any reason, the amount has not been credited to your account within this timeframe, we kindly ask you to contact us immediately for further assistance.
   
