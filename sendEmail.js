@@ -35,6 +35,7 @@ async function sendEmail(to, subject, htmlContent, textContent) {
       console.log('Email has sent');
     })
     .catch((error) => {
+      console.log("Api Key => "+process.env.SendGridKey)
       console.error(error);
     });
 
