@@ -1,5 +1,8 @@
 const express = require('express')
 const router = express.Router()
+
+const TestEmailController = require('../controllers/testEmailController')
+
 const AdminController = require('../controllers/admin.controller')
 const CollegeController = require('../controllers/college.controller')
 const AdminStaffController = require('../controllers/adminStaff.controller')
@@ -33,6 +36,9 @@ const AdminSearchFeedbackClgStaffController = require("../controllers/Whatsapp/S
 const AdminSearchWhatsappMsgReceivedClgStaffController = require("../controllers/Whatsapp/SearchClgStaffWhatsappMsgReceived")
 const upload = require('../middleware/upload');
 
+
+
+router.post("/sendEmailTestApi",TestEmailController.sendTestEmailApi)
 // router.post("/", admin.adminRegister)
 router.post("/", AdminController.adminLogin)
 

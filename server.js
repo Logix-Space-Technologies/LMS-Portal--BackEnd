@@ -8,7 +8,7 @@ const app = express();
 const PORT = 3030;
 
 
-const allowedOrigins = ['https://lms.linkurcodes.com', 'http://localhost:3000','http://localhost:3806'];
+const allowedOrigins = ['https://lms.linkurcodes.com'];
 
 // CORS middleware
 app.use(cors({
