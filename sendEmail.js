@@ -1,6 +1,10 @@
 require('dotenv').config({ path: '../../.env' });
 const { SendMailClient } = require('zeptomail');
 
+console.log("tkn")
+console.log(process.env.ZEPTO_API_TOKEN)
+
+
 // Initialize ZeptoMail client
 const zeptoClient = new SendMailClient({
   url: 'https://api.zeptomail.in/v1.1/email',
