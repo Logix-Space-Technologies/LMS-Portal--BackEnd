@@ -3,8 +3,8 @@ const { SendMailClient } = require('zeptomail');
 
 // Initialize ZeptoMail client
 const zeptoClient = new SendMailClient({
-  url: 'https://api.zeptomail.in/',
-  token: `Zoho-enczapikey ${process.env.ZEPTO_API_TOKEN}`,
+  url: 'api.zeptomail.in',
+  token: process.env.ZEPTO_API_TOKEN,
 });
 
 async function sendEmail(to, subject, htmlContent, textContent) {
@@ -17,7 +17,7 @@ async function sendEmail(to, subject, htmlContent, textContent) {
       {
         email_address: {
           address: to,
-          name: '', // You can add recipient's name here if available
+          name: '', // Optionally add recipient's name here
         },
       },
     ],
