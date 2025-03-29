@@ -3,7 +3,7 @@ const { SendMailClient } = require('zeptomail');
 
 // Initialize ZeptoMail client
 const zeptoClient = new SendMailClient({
-  url: 'api.zeptomail.in',
+  url: 'https://api.zeptomail.in/',
   token: `Zoho-enczapikey ${process.env.ZEPTO_API_TOKEN}`,
 });
 
