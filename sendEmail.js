@@ -1,8 +1,14 @@
-require('dotenv').config({ path: '../../.env' });
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+
+// require('dotenv').config({ path: '../../.env' });
 const { SendMailClient } = require('zeptomail');
+
+console.log('Current working directory:', process.cwd());
 
 console.log("tkn")
 console.log(process.env.ZEPTO_API_TOKEN)
+console.log('ZEPTO_API_TOKEN:', process.env.ZEPTO_API_TOKEN);
 
 
 // Initialize ZeptoMail client
