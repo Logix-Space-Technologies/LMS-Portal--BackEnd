@@ -1,5 +1,5 @@
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+require('dotenv').config();
 
 // require('dotenv').config({ path: '../../.env' });
 const { SendMailClient } = require('zeptomail');
